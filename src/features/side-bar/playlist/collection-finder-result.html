@@ -1,0 +1,17 @@
+<template>
+  <div class="collection-finder-result content-stateable content-state-${itemStateClass}">
+    <div class="item-state content-state-c-bgd-border pull-left"></div>
+    <div class="item-scope pull-left">
+      <span class="icon ${scopeIcon}"></span>
+    </div>
+    <div class="pull-left">
+      <div class="item-text">
+        <span innerHTML.bind="model.name | highlight:findModel.searchItem"></span>
+      </div>
+      <div class="item-subtext">
+        <span class="mod-count">${model.modsCount} MODS</span>
+        <span class="author">By <a class="text-link" href="/u/${model.authorSlug}">${model.typeScope == 1 ? model.author : 'you'}</a></span>
+      </div>
+    </div>
+  </div>
+</template>

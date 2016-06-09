@@ -1,0 +1,17 @@
+<template>
+  <ai-dialog class="ai-dialog user-error-dialog">
+    <ai-dialog-header>
+      <h2 innerHTML.bind="model.errorMessage | text"></h2>
+    </ai-dialog-header>
+    <ai-dialog-body>
+      <div innerHTML.bind="model.errorCauseOrResolution | text"></div>
+      <div if.bind="inputView">
+        <compose view.bind="inputView"></compose>
+      </div>
+    </ai-dialog-body>
+    <ai-dialog-footer>
+      <template repeat.for="c of model.recoveryOptions">
+        <button click.delegate="handle(c)" class="${c.commandName.toLowerCase()}">${c.commandName}</button>
+      </template>
+    </ai-dialog-footer>
+  </ai-dialog>

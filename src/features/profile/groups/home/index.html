@@ -1,0 +1,63 @@
+<template>
+  <div class="pull-right">
+    <command-button model.bind="leaveGroup" if.bind="!isAdmin"></command-button>
+    <div if.bind="isAdmin">
+      <div class="pull-right">
+        <command-button model.bind="deleteGroup"></command-button>
+        <command-button model.bind="editConfig.edit"></command-button>
+      </div>
+      <div show.bind="editConfig.enabled">
+        <command-button model.bind="save" type="submit"></command-button>
+        <command-button model.bind="cancel"></command-button>
+        <command-button model.bind="close"></command-button>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <!-- Can't use if.bind on the form elements or validation will not work properly
+         As alternative we could perhaps put the if.bind on the whole form, but then we need to separate the form view from the user view.. -->
+    <form role="form" validate.bind="validation">
+      <field-set disabled.bind="save.isExecuting">
+        <compose if.bind="!editConfig.enabled" view="../_header.html"></compose>
+        <div show.bind="editConfig.enabled" class="form-group">
+          <label for="name">Name:</label>
+          <input type="text" class="form-control" name="name" id="name" value.bind="group.name">
+        </div>
+
+        <div class="tile">
+          <div class="form-group">
+            <img show.bind="group.backgroundUrl" src.bind="backgroundUrl" />
+            <div show.bind="editConfig.enabled">
+              <label for="cover">Cover: <i>(MIN. 1920x400, MAX. 300KB PNG)</i></label>
+              <input type="file" accept=".png" name="cover" id="cover" class="form-control" change.delegate="coverSelected($event)" files.bind="uploadModel.cover">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <img show.bind="group.avatarUrl" src.bind="avatarUrl" />
+            <div class="form-group" show.bind="editConfig.enabled">
+              <label for="logo">Logo: <i>(MIN. 400x400, MAX. 300 KB, PNG TRANSPARENT BACKGROUND RECOMMNEDED)</i></label>
+              <input type="file" accept=".png" name="logo" id="logo" class="form-control" change.delegate="logoSelected($event)" files.bind="uploadModel.logo">
+            </div>
+          </div>
+
+          <div show.bind="isAdmin" class="form-group">
+            <label for="join-token">Join Token:</label>
+            <input class="form-control" id="join-token" name="join-token" type="text" value.bind="joinToken" readonly>
+            <command-button model.bind="copyJoinToken"></command-button>
+            <command-button model.bind="generateNewJoinToken"></command-button>
+          </div>
+
+          <div show.bind="group.homepage && !editConfig.enabled">
+            <a href.bind="group.homepage" target="_blank">Homepage</a>
+          </div>
+          <div class="form-group" show.bind="editConfig.enabled">
+            <label for="homepage">Homepage:</label>
+            <input type="text" class="form-control" name="homepage" id="homepage" value.bind="group.homepage">
+          </div>
+        </div>
+      </field-set>
+    </form>
+  </div>
+</template>

@@ -1,0 +1,70 @@
+<template>
+  <div id="search-results" if.bind="open">
+    <div class="pull-right">
+      <button click.delegate="closeNow()">X</button>
+    </div>
+    <!-- <div class="form-group">
+      <select multiple value.bind="types" class="form-control"
+        change.delegate="onChange($event)">
+        <option repeat.for="c of contentTypes">${c}</option>
+      </select>
+    </div> -->
+
+    <div>
+      <h2>Results for ${resultQ}</h2>
+
+      <div if.bind="!hasResults">Loading ...</div>
+
+      <div if.bind="hasResults && !anyResults">No results</div>
+
+      <button class="ignore-close" click.delegate="goBackToOverview()" if.bind="fullView">Go back to overview</button>
+
+      <div class="row">
+        <!-- if.bind breaks on FireFox/Edge. But not on Chrome -->
+        <template repeat.for="result of results">
+          <div class="col-sm-4 search-results" if.bind="result.key.loading || result.value.length > 0">
+            <div class="pull-right tiny">
+              <i class="fa fa-spinner" if.bind="result.key.processing"></i>
+              <span if.bind="result.value.length > 0">
+              ${result.value.length}${result.value.length != result.key.totalCount ? '/' + result.key.totalCount : ''} results
+            </span>
+            </div>
+            <div class="pull-left">${result.key.type}</div>
+            <div class="clearfix"></div>
+
+            <hr/>
+
+            <div if.bind="!result.key.loading">
+              <ul if.bind="result.value.length > 0">
+                <li repeat.for="v of result.value">
+                  <span if.bind="v.isPrivate" class="icon withSIX-icon-Lock"></span>
+                  <a if.bind="v.gameSlug" href="/p/${gameSlug || v.gameSlug}/${result.key.type.toLowerCase()}/${v.slug}" title="${v.name} by ${v.authorDisplayName}">
+                    <b>${v.name}</b>
+                  </a>
+                  <a if.bind="v.gameSlug" href="/p/${v.gameSlug}">for ${v.gameName}</a>
+                  <a if.bind="v.gameSlug && v.authorUserName" href="/u/${v.authorUserName.sluggifyEntityName()}" title.bind="v.authorDisplayName">
+                          by ...
+                        </a>
+                  <a if.bind="result.key.type.endsWith('Authors')" href="/u/${v.authorUserName.sluggifyEntityName()}">
+                    <b>${v.name}</b>
+                  </a>
+                  <a if.bind="result.key.type == 'Groups'" href="/me/groups/${v.slug}">
+                    <b>${v.name}</b>
+                  </a>
+                </li>
+              </ul>
+
+              <div if.bind="!fullView && result.key.totalCount != result.value.length" class="view-all-results">
+                <hr/>
+                <button class="anchor ignore-close" type="button" click.delegate="searchOneType(result.key.itemType)">
+                  <span class="withSIX-icon-Arrow-Right-Big pull-left"></span>
+                  <span class="pull-right">view all results in <b>${result.key.type}</b></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+</template>

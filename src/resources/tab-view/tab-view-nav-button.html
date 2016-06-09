@@ -1,0 +1,28 @@
+<template>
+  <div mouseenter.trigger="hovering = true" mouseleave.trigger="hovering = false">
+    <span if.bind="tab.notificationCount > 0" class="indicator sphere orange" title="${tab.notificationCount} notifications"></span>
+
+    <div class="indicator icon withSIX-icon-arrow-omni arrow"></div>
+
+    <div if.bind="tab.notification" class="notification ${tabNotificationActive ? 'active' : 'inactive'} ${lastNotificationClass}">
+      <div class="notification-inner">
+        <compose view.bind="tab.notification.view || './tab-notification.html'" view-model="./tab-notification" model.bind="tab.notification"></compose>
+      </div>
+    </div>
+
+    <div class="item-progress-bar ${progressClass}" title.bind="tab.header">
+      <conditional-title desired-title.bind="tab.progressInfo.text" condition.bind="tab.progressInfo && tab.progressInfo.text != null">
+        <button click.trigger="toggleTab(tab)" click.delegate="removeNotification()" disabled.bind="tab.disabled && !tab.disabledAction" class="tab-button ${tabNotificationActive ? 'notification' : ''} ${lastNotificationClass} ${tab.disabled ? 'disabled' : ''}">
+          <div class="item-progress-width item-progress-c-bgd"></div>
+
+          <div class="tab-btn-inner">
+            <div class="inner">
+              <compose view="./tab-view-nav-button-content.html" if.bind="!tab.headerViewModel"></compose>
+              <compose view-model.bind="tab.headerViewModel" model.bind="tab" if.bind="tab.headerViewModel"></compose>
+            </div>
+          </div>
+        </button>
+      </conditional-title>
+    </div>
+  </div>
+</template>

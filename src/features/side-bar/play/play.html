@@ -1,0 +1,10 @@
+<template>
+  <require from="./play.scss"></require>
+  <div class="tab-header">${model.header}</div>
+
+  <div class="the-content" scroll.trigger="closeDropdowns()">
+    <loading-composer view-model="features/side-bar/play/game-list"></loading-composer>
+  </div>
+
+  <button class="naked-button default bottom" click.delegate="openGames()">Show all games</button>
+</template>

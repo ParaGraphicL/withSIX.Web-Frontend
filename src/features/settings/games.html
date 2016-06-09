@@ -1,0 +1,9 @@
+<template>
+  <select value.bind="selectedGame">
+    <option repeat.for="game of games" model.bind="game">${game.name}</option>
+  </select>
+
+  <div class="game" if.bind="selectedGame">
+    <compose model.bind="selectedGame" view-model="./games/${selectedGame.slug.toLowerCase()}" view="./games/${selectedGame.slug.toLowerCase()}.html"></compose>
+  </div>
+</template>

@@ -1,0 +1,13 @@
+<template>
+  <!-- <require from="./notifications.scss"></require> -->
+  <div class="tab-header">${model.header}</div>
+
+  <ul class="menu main the-content">
+    <li repeat.for="notification of notifications">
+      <button class="pull-right ignore-close" click.delegate="clearNotification(notification)">X</button>
+      <compose view-model="./notification" model.bind="notification"></compose>
+    </li>
+  </ul>
+
+  <command-button model.bind="clearNotifications" class="bottom"></command-button>
+</template>

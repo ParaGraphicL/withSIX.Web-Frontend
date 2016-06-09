@@ -1,0 +1,12 @@
+<template>
+  <div class="form-group">
+    <label for="game-directory">Game Directory</label>
+    <input id="game-directory" name="game-directory" type="text" value.bind="model.gameDirectory"></input>
+    <button click.delegate="browseGameDirectory()">Browse</button>
+  </div>
+  <div class="form-group">
+    <label for="synq-directory">Synq Directory</label>
+    <input id="synq-directory" name="synq-directory" type="text" value.bind="model.repoDirectory"></input>
+    <button click.delegate="browseRepoDirectory()">Browse</button>
+  </div>
+</template>

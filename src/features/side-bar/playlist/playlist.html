@@ -1,0 +1,93 @@
+<template>
+  <require from="./playlist.scss"></require>
+
+  <div class="basket-state-${activeStateClass} ${isCollection ? 'collection' : ''}" click.delegate="closeSearch()">
+    <header class="tab-header">
+      <div>
+        <div class="pull-right">
+          <dropdown-menu class="pull-right" items.bind="menuItems"></dropdown-menu>
+          <button class="text-button ignore-close search-button" hover.bind="hovered" click.delegate="toggleSearch()">
+            <span class="extended" show.bind="hovered">
+              <span class="icon withSIX-icon-Nav-Collection"></span>
+            <span class="small">Load collection...</span>
+            </span>
+            <span class="icon withSIX-icon-Search"></span>
+          </button>
+        </div>
+        <span class="main-text">${model.header}</span>
+        <a class="active-game" hide.bind="hovered" href="/p/${w6.activeGame.slug}">${activeGameName}</a>
+      </div>
+      <div class="clearfix"></div>
+      <hr />
+    </header>
+
+    <header class="collection-header" show.bind="isCollection">
+      <div>
+        <command-button class="pull-right" cls.bind="text-button" model.bind="unloadCollection"></command-button>
+        <div class="collection-name" title.bind="collection.name"><a href.bind="collection.url" class="text-link">${collection.name}</a></div>
+        <div class="collection-author" if.bind="!isYourCollection">by <a class="text-link" href="/u/${collection.authorSlug}">${collection.author}</a></div>
+        <div class="clearfix"></div>
+      </div>
+
+      <div>
+        <div class="pull-right subscribers"><i>${collection.subscribersCount} subscribers</i></div>
+
+        <div class="collection-scope" title.bind="collectionScopeHint">
+          <span class="icon ${collectionScopeIcon}"></span>
+          <span if.bind="!isYourCollection">&nbsp;${CollectionScope[collection.scope]}</span>
+          <select class="naked" value.bind="collection.scope" if.bind="isYourCollection">
+            <option repeat.for="scope of scopes" model.bind="scope" title.bind="$parent.scopeHints[scope]">${$parent.CollectionScope[scope]}</option>
+          </select>
+        </div>
+        <div class="clearfix"></div>
+      </div>
+    </header>
+
+    <header class="title">
+      <div class="pull-right">
+        <command-button class="pull-left whisper save-as-collection" model.bind="saveBasket2" if.bind="!isCollection"></command-button>
+        <command-button class="pull-left whisper save-as-collection" model.bind="saveBasket3" if.bind="isCollection && !isYourCollection"></command-button>
+        <div class="pull-left buttons" if.bind="isCollection" class="buttons">
+          <command-button class="shout" model.bind="saveCollection"></command-button>
+          <command-button class="shout" model.bind="undoCollection"></command-button>
+        </div>
+        <dropdown-menu class="pull-left" items.bind="collectionMenu" if.bind="isCollection"></dropdown-menu>
+      </div>
+      <span class="header-text">
+          <span class="mods shout" title="${basketCount} mods with ${basketTotalCount - basketCount} dependencies"><span class="count">${basketTotalCount}</span> mods</span>
+      <span class="size">size <span innerHTML.bind="basketTotalSize | size"></span></span>
+      </span>
+
+      <div class="clearfix"></div>
+    </header>
+
+    <div class="the-content" scroll.trigger="closeDropdowns()">
+      <compose if.bind="shown" view="features/side-bar/playlist/playlist-content.html"></compose>
+      <!-- Doesnt work because view-model does not inherit <loading-composer shown.bind="shown" view="features/side-bar/playlist/playlist-content.html"></loading-composer> -->
+    </div>
+
+    <button class="naked-button default bottom basket-state-colored ignore-close" command.bind="action">
+      <span class="icon basket-state-icon"></span>
+      <span class="basket-state-text"></span>
+      <span>${isCollection ? 'COLLECTION' : 'PLAYLIST'}</span>
+    </button>
+    <command-button class="bottom" model.bind="abort"></command-button>
+  </div>
+
+
+  <header class="collection-search" show.bind="isSearchOpen">
+    <div>
+      <div class="pull-left finder-icon">
+        <span class="icon withSIX-icon-Nav-Collection"></span>
+      </div>
+      <finder placeholder="search collection" model.bind="findModel" show-button="true" icon="withSIX-icon-Search" text=""></finder>
+      <div class="clearfix"></div>
+    </div>
+    <hr />
+    <finder-results model.bind="findModel" button-cls="ignore-close" text="" icon="withSIX-icon-Arrow-Left-Open" select-is-execute="true" show-total-results.bind="false" show-close.bind="false">
+      <template replace-part="item">
+        <compose view-model="./collection-finder-result" model.bind="{model: item, findModel: model}"></compose>
+      </template>
+    </finder-results>
+  </header>
+</template>

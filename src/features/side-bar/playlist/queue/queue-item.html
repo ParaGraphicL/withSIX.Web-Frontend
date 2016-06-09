@@ -1,0 +1,15 @@
+<template>
+  <div class="queue-item ${progressClass}">
+    <div class="item-progress-width">&nbsp;</div>
+    <div class="content" title.bind="model.created">
+      <div class="actions pull-right">
+        <command-button if.bind="!model.state" model.bind="cancel"></command-button>
+        <command-button if.bind="model.state" model.bind="remove"></command-button>
+        <!-- <command-button if.bind="model.state" model.bind="pause"></command-button> -->
+      </div>
+      <div>${model.title} <span if.bind="model.state > 0">[${CompletionState[model.state]}]</span></div>
+      <div if.bind="model.progressState" class="tiny" title="model.progressState.lastUpdate">${model.progressState.action} ${model.progressState.speed | speed:'B':false}</div>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</template>

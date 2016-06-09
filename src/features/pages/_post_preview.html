@@ -1,0 +1,46 @@
+<template>
+  <article class="tile blog-tile clearfix"
+           itemscope itemtype="http://schema.org/BlogPosting">
+
+      <h3 itemprop="name headline">
+          <a href="/blog/${post.slug}">${post.isTeam ? '[Team] ' : ''}${post.title}</a>
+      </h3>
+      <h4 if.bind="!post.isPublished">
+          <i>Not published yet!</i>
+      </h4>
+
+      <header>
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+              <a href="${post.author.profileUrl}" rel="author">
+                  <img src.bind="w6.url.calculateAvatarUrl(post.author, 48)" />
+              </a>
+              <em class="date">
+                  Posted by
+                  <a href="${w6.url.connectSsl}/u/${post.author.slug}" rel="author">${post.author.displayName}</a>,
+              </em>
+          </span>
+          &nbsp;
+          <em>
+              <time-ago time.bind="post.updated"></time-ago>
+          </em>
+
+          <a href="/blog/${post.slug}#comments" class="comments">
+              <span if.bind="post.commentsCount == 1">1 comment</span>
+              <span if.bind="post.commentsCount > 0 && post.commentsCount != 1">${post.commentsCount} comments</span>
+              <span if.bind="post.commentsCount == 0">No comments yet</span>
+          </a>
+          <span class="pull-right" if.bind="likedPosts">${post.likesCount} likes</span>
+          <br/>
+      </header>
+
+      <div class="contentrender" innerHtml.bind="post.summary" itemprop="articleBody"></div>
+
+      <!-- Read more btn -->
+      <footer>
+          <a href="/blog/${post.slug}" class="btn">
+              Read On
+              <span class="fa fa-arrow-right"></span>
+          </a>
+      </footer>
+  </article>
+</template>

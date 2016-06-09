@@ -1,0 +1,17 @@
+<template>
+  <ul if.bind="w6.userInfo.id">
+    <li> <a href="/me">Home</a> </li>
+    <li> <a href="/u/${w6.userInfo.slug}">Profile</a> </li>
+    <li>
+      <button type="button" class="anchor" click.delegate="logout()">
+        <span>Logout</span>
+      </button>
+    </li>
+  </ul>
+
+  <ul if.bind="!w6.userInfo.id">
+    <li>
+      <a class="login" click.delegate="login.login() && $event.preventDefault()" title="or register">Login</a>
+    </li>
+  </ul>
+</template>

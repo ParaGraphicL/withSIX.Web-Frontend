@@ -1,0 +1,28 @@
+@import "../../../templates/_v2.scss";
+.tab-header.upload {
+  button {
+    .inner {
+      @include border-radius(4px);
+      color: $colorSixBlue;
+      background-color: white;
+      height: 32px;
+      width: 32px;
+      margin: 8px;
+      .icon {
+        line-height: 32px;
+        vertical-align: middle;
+      }
+    }
+    &.disabled,
+    &:disabled {
+      .inner {
+        background-color: $colorSixLightGray;
+      }
+    }
+  }
+}
+#tab-view-render-upload {
+  .icon {
+    color: $colorSixBlue;
+  }
+}

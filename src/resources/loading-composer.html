@@ -1,0 +1,4 @@
+<template>
+  <compose view-model.bind="viewModel" model.bind="model" view.bind="currentView" compose.ref="composer"></compose>
+  <center class="loading" if.bind="!shown || !composer.currentController || !composer.currentController.isBound">Loading..</center>
+</template>

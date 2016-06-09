@@ -1,0 +1,594 @@
+@import "../../../templates/_v2.scss";
+@import '_content';
+$barHeight: 40px;
+$basket-title-height: 40px;
+$basket-title-icon-height: 16px;
+$basket-content-icon-height: 16px;
+$basket-headerline-height: 4px;
+$basket-subheader-height: 20px;
+$basket-content-height: 24px;
+$expandHeight: 240px;
+$basket-onmi-color: $colorSixBlue;
+$basketBodyBackgroundColor: $colorSixGray;
+$basketHeaderBackgroundColor: $colorSixDarkGray;
+$basket-client-footer-background-color: $colorSixBlue;
+$basket-width: 366px;
+$basket-right-padd: 40px;
+$basket-header-font-size: $font-size-medium;
+$status-icon-width: 70px;
+$status-width: 330px;
+$font-size-small: 12px;
+$status-total-width: $status-icon-width + $status-width;
+@mixin basket-title-icon($icon-size, $line-height, $vert-align: true) {
+  text-align: center;
+  vertical-align: middle;
+  @if $vert-align {
+     @include v-align-content($line-height);
+  }
+  //& > :first-child {
+  .icon {
+    font-size: $icon-size;
+    //padding-right: 3px;
+    //vertical-align: sub;
+    &:last-child:first-child {
+      padding-right: 0;
+    }
+  }
+  //}
+}
+// workaround for utf8 issue, again
+.dummy-cls {
+  color: black;
+}
+.tab-header.playlist {
+  $colorStart: $colorSixGray;
+  $colorEnd: $colorSixGreen;
+  .notification.start {
+    background-color: $colorStart;
+    .notification-inner button:hover {
+      background-color: $colorEnd;
+    }
+  }
+  .notification.end {
+    background-color: $colorEnd;
+    .notification-inner button:hover {
+      background-color: $colorStart;
+    }
+  }
+}
+#tab-view-render-playlist {
+  header.tab-header {
+    hr {
+      margin: 8px 0 16px;
+    }
+    .search-button {
+      color: $colorSixGray;
+      padding: 8px;
+      margin-top: -8px;
+      text-transform: none;
+      &:hover {
+        background-color: $colorSixGray;
+        color: white;
+      }
+    }
+  }
+  header.title {
+    margin-top: 16px;
+    font-size: $font-size-tiny;
+    .header-text {
+      color: $colorSixLightGray;
+      .size {
+        font-size: $font-size-micro;
+        .count,
+        .unit {
+          font-weight: $font-weight-medium;
+        }
+      }
+    }
+    .save-as-collection {
+      button {
+        margin-top: -6px;
+        @include fixed-width-button();
+        @include button-height(24px, 4px);
+        @include transparent-button($colorSixOrange);
+        padding: 2px 8px;
+        .text {
+          font-size: $font-size-micro;
+        }
+        .icon {
+          font-size: $font-size-small;
+        }
+      }
+    }
+    dropdown-menu {
+      margin-left: 8px;
+    }
+    .buttons {
+      margin-top: -8px;
+      button {
+        width: 60px;
+      }
+    }
+  }
+  header.collection-header {
+    color: $colorSixGray;
+    font-size: $font-size-magic;
+    font-weight: $font-weight-medium;
+    .collection-name {
+      color: white;
+      @include limit-lines(1);
+    }
+    .collection-author {
+      font-size: $font-size-micro;
+      position: absolute;
+      line-height: 1;
+      font-style: italic;
+    }
+    .collection-scope {
+      color: white;
+      margin-top: 12px;
+      .icon {
+        margin-right: -4px;
+      }
+    }
+    .subscribers {
+      color: $colorSixLightGray;
+      font-style: italic;
+      font-size: $font-size-micro;
+      font-weight: $font-weight-base;
+      margin-right: 24px;
+    }
+    select {
+      option {
+        background-color: $colorSixDarkGray;
+      }
+    }
+  }
+  header.collection-search {
+    background-color: $colorSixDarkGray;
+    position: absolute;
+    top: 48px;
+    left: 8px;
+    right: 8px;
+    hr {
+      margin: 0;
+    }
+  }
+  .the-content {
+    top: 92px;
+    right: 0;
+    hr {
+      margin-right: 8px;
+    }
+  }
+  .collection {
+    .the-content {
+      top: 164px;
+    }
+  }
+  button.abort-btn {
+    right: 0;
+    width: 42px;
+    left: initial;
+    position: absolute;
+    margin-top: -42px;
+    height: 42px;
+  }
+  .finder-icon {
+    background-color: white;
+    height: 32px;
+    padding: 4px;
+  }
+  finder {
+    input {
+      border: 0;
+      padding: 4px;
+    }
+  }
+  .collection-finder-result {
+    $itemHeight: 32px;
+    $itemHeightMinusPadding: $itemHeight - 8px;
+    padding: 4px;
+    height: $itemHeight;
+    color: $colorSixGray;
+    line-height: 1;
+    &:hover {
+      background-color: $colorSixSoftGray;
+    }
+    .item-scope {
+      margin-left: 4px;
+      margin-right: 8px;
+      line-height: $itemHeightMinusPadding;
+      vertical-align: middle;
+      font-size: $font-size-small;
+    }
+    .item-text {
+      font-size: $font-size-medium;
+      @include limit-lines(1);
+      max-width: 200px;
+      margin-bottom: 2px;
+    }
+    .item-subtext {
+      font-size: $font-size-tiny;
+      max-width: 200px;
+      .author {
+        font-style: italic;
+      }
+    }
+    .content-state-c-bgd-border {
+      border-left: 2px solid;
+      height: $itemHeightMinusPadding;
+    }
+  }
+  finder-results {
+    padding: 0;
+    background-color: white;
+    color: $colorSixMediumGray;
+    z-index: 10;
+    // position: absolute;
+    // top: 112px;
+    // right: 0;
+    // left: 0;
+    max-height: 400px;
+    .results {
+      padding-top: 4px;
+      padding-bottom: 4px;
+    }
+  }
+  @mixin basket-state-inner($color, $text, $icon: false) {
+    .basket-state-colored {
+      @include transition(background-color 0.5s ease);
+      background-color: $color;
+    }
+    .basket-state-text:before {
+      content: $text;
+    }
+    @if not $icon {}
+    @else {
+      .basket-state-icon:before {
+        font-family: "icons-withSIX";
+        speak: none;
+        font-style: normal;
+        font-weight: normal;
+        font-variant: normal;
+        text-transform: none;
+        line-height: 1;
+        -webkit-font-smoothing: antialiased;
+        content: $icon;
+      }
+    }
+    /*&[class^="basket-progress-"], &[class*=" basket-progress-"] {
+        @include color-creator(".basket-state-progress", $color, $basketHeaderBackgroundColor);
+    }*/
+  }
+  [class*=" basket-state-"],
+  [class^="basket-state-"] {
+    @include progress-class-creator(".basket-progress-", ".basket-state-progress-width", ".basket-state-progress-text");
+  }
+  .basket-state-install {
+    @include basket-state-inner($colorSixBlue, "INSTALL", "");
+  }
+  .basket-state-syncing {
+    @include basket-state-inner($colorSixLightGray, "SYNCING", "");
+  }
+  .basket-state-update {
+    @include basket-state-inner($colorSixOrange, "UPDATE", "");
+  }
+  .basket-state-play {
+    @include basket-state-inner($colorSixGreen, "LAUNCH", "");
+    &.has-servers {
+      @include basket-state-inner($colorSixGreen, "JOIN", "");
+    }
+  }
+  .basket-state-launching {
+    @include basket-state-inner($colorSixGreen, "Launching...");
+  }
+  .basket-state-no-client {
+    @include basket-state-inner($colorSixDarkGray, "NO CLIENT");
+    .basket-header-icon {
+      color: white;
+    }
+  }
+  .basket-state-busy {
+    @include basket-state-inner($colorSixDarkGray, "Busy...");
+    .basket-header-icon {
+      color: white;
+    }
+  }
+  .basket-state-busy-active {
+    @include basket-state-inner($colorSixOrange, "Downloading...");
+    .basket-header-icon {
+      color: white;
+    }
+  }
+  .basket-item {
+    .alternative-game {
+      margin-top: -6px;
+    }
+    .update-available {
+      color: $colorSixOrange;
+      .version {
+        font-style: italic;
+      }
+    }
+    //min-height: $basket-content-height;
+    .basket-content {
+      overflow: hidden;
+      dropdown-menu {
+        margin-left: 4px;
+        display: none;
+      }
+      .imageholder {
+        overflow: hidden;
+        .actions {
+          display: none;
+          li {
+            width: 46.6px;
+            button.anchor {
+              height: 24px;
+              width: 100%;
+              text-align: center;
+              &:hover {
+                color: inherit;
+              }
+            }
+            span.spacer,
+            span.text {
+              display: none;
+            }
+          }
+        }
+      }
+      &:hover {
+        dropdown-menu {
+          display: block;
+        }
+        background-color: $colorSixMediumGray;
+        .imageholder {
+          .actions {
+            background-color: $colorSixGreen;
+            color: white;
+            display: block;
+            button.active {
+              span.icon {
+                display: none;
+              }
+            }
+          }
+        }
+      }
+    }
+    $borderColor: $colorSixMediumGray;
+    .dependencies {
+      header {
+        color: $colorSixLightGray;
+        background-color: $borderColor;
+        font-size: $font-size-medium;
+        .inner {
+          margin-left: 8px;
+          margin-right: 8px;
+          .text {
+            text-transform: uppercase;
+          }
+          .text-button {
+            color: inherit;
+            .icon {
+              color: inherit;
+              vertical-align: middle;
+            }
+          }
+        }
+      }
+      section {
+        .withSIX-icon-Link {
+          color: white;
+          vertical-align: middle;
+          line-height: $basket-content-height;
+          font-size: 8px;
+          margin-left: 8px;
+        }
+      }
+    }
+    &.level-0 {
+      > .dependencies {
+        margin-top: 4px;
+        margin-bottom: 4px;
+        > section {
+          $borderSize: 2px;
+          border-left: $borderSize solid $borderColor;
+          border-bottom: $borderSize solid $borderColor;
+          padding-top: 4px;
+          padding-bottom: 4px;
+          padding-left: 8px;
+        }
+      }
+    }
+  }
+  .basket-content {
+    color: white;
+    @include no-margin-h;
+    @include extend-content-state-colors("bgd-border", true, "border-left-color");
+    @include progress-class-creator(".content-progress-", ".content-state-progress-width", ".content-state-progress-text");
+    height: $basket-content-height + 8px;
+    overflow: hidden;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    .progress {
+      top: initial;
+    }
+    .basket-content-progess-bar {
+      height: $basket-content-height;
+    }
+    @include has-progress-container {
+      // .basket-content-icon > :first-child {
+      //   visibility: visible;
+      // }
+    }
+    .basket-content-progess-background {
+      //@include basket-cell(100%);
+      height: $basket-content-height;
+    }
+    .basket-content-icon {
+      @include basket-title-icon($basket-content-icon-height, $basket-content-height);
+      //@include basket-cell(38px);
+      height: $basket-content-height;
+      font-size: 8pt;
+      // & > :first-child {
+      //   visibility: hidden;
+      // }
+    }
+    .content-state-c-bgd-border {
+      $borderWidth: 2px;
+      height: $basket-content-height;
+      border-left-width: $borderWidth;
+      border-left-style: solid;
+    }
+    .basket-content-image {
+      margin-left: 8px;
+      action-bar {
+        li {
+          button {
+            margin-top: -6px;
+            margin-left: -1px;
+          }
+        }
+      }
+      .imageholder {
+        height: 24px;
+        width: 42.66px;
+      }
+      // button {
+      //   position: absolute;
+      //   right: 4px;
+      //   top: 4px;
+      //   height: 11px;
+      //   width: 11px;
+      //   background-color: $colorSixSoftRed;
+      //   color: white;
+      //   font-weight: bold;
+      //   border: none;
+      //   font-size: $font-size-small;
+      //   padding: 0;
+      //   span {
+      //     position: relative;
+      //     top: -1px;
+      //     left: 0.5px;
+      //   }
+      // }
+    }
+    .basket-content-title {
+      overflow: hidden;
+      $space: 208px - $scrollBarSize;
+      $margin: 8px;
+      margin-left: 8px;
+      margin-right: 8px;
+      max-width: $space - ($margin * 2);
+      font-size: $font-size-small;
+      font-weight: $font-weight-medium;
+      line-height: 1;
+      .basket-content-name {
+        @include text-overflow;
+        margin-bottom: 3px;
+      }
+      .basket-content-info {
+        @include text-overflow;
+      }
+      .size {
+        font-weight: $font-weight-medium;
+      }
+      .basket-content-author {
+        font-style: italic;
+      }
+    }
+  }
+  .basket-content-empty {
+    font-size: xx-large;
+    height: auto;
+    width: calc(100% - 40px);
+    margin: 20px 20px 20px 30px;
+    .basket-content-empty-icon {
+      @include basket-title-icon(42px, $basket-content-height, true);
+      text-align: right;
+      padding-right: 10px;
+    }
+    .basket-content-empty-text {
+      text-align: center;
+      .basket-content-empty-text-title {
+        font-size: 14pt;
+        color: $colorSixOrange;
+      }
+      .basket-content-empty-text-subtitle {
+        font-size: 8pt;
+      }
+      p {
+        margin: 0;
+      }
+    }
+  }
+}
+@mixin basket-state-inner($color, $text, $icon: false) {
+  .basket-state-colored {
+    @include transition(background-color 0.5s ease);
+    background-color: $color;
+  }
+  .basket-state-text:before {
+    content: $text;
+  }
+  @if not $icon {}
+  @else {
+    .basket-state-icon:before {
+      font-family: "icons-withSIX";
+      speak: none;
+      font-style: normal;
+      font-weight: normal;
+      font-variant: normal;
+      text-transform: none;
+      line-height: 1;
+      -webkit-font-smoothing: antialiased;
+      content: $icon;
+    }
+  }
+  /*&[class^="basket-progress-"], &[class*=" basket-progress-"] {
+      @include color-creator(".basket-state-progress", $color, $basketHeaderBackgroundColor);
+  }*/
+}
+[class*=" basket-state-"],
+[class^="basket-state-"] {
+  @include progress-class-creator(".basket-progress-", ".basket-state-progress-width", ".basket-state-progress-text");
+}
+.basket-state-install {
+  @include basket-state-inner($colorSixBlue, "INSTALL", "");
+}
+.basket-state-syncing {
+  @include basket-state-inner($colorSixLightGray, "SYNCING", "");
+}
+.basket-state-update {
+  @include basket-state-inner($colorSixOrange, "UPDATE", "");
+}
+.basket-state-launch {
+  @include basket-state-inner($colorSixGreen, "LAUNCH", "");
+  &.has-servers {
+    @include basket-state-inner($colorSixGreen, "JOIN", "");
+  }
+}
+.basket-state-launching {
+  @include basket-state-inner($colorSixGreen, "Launching...");
+}
+.basket-state-no-client {
+  @include basket-state-inner($colorSixDarkGray, "NO CLIENT");
+  .basket-header-icon {
+    color: white;
+  }
+}
+.basket-state-busy {
+  @include basket-state-inner($colorSixDarkGray, "Busy...");
+  .basket-header-icon {
+    color: white;
+  }
+}
+.basket-state-busy-active {
+  @include basket-state-inner($colorSixOrange, "Downloading...");
+  .basket-header-icon {
+    color: white;
+  }
+}

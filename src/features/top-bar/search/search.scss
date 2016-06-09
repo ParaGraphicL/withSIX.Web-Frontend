@@ -1,0 +1,92 @@
+@import "../../../templates/_v2.scss";
+
+#search {
+  $height: 32px;
+  //float: left;
+  //margin-left: 8px;
+  line-height: $height;
+  vertical-align: middle;
+  position: absolute;
+  top: 8px;
+  left: $sideHeaderSize;
+  right: 160px;
+  padding-left: 0;
+  padding-right: 0;
+  // @media (min-width: 1800px) {
+  //   left: 0;
+  // }
+  .bar {
+    height: $height;
+    max-width: 480px;
+    background-color: rgba(0,0,0,0.3);
+    @media (max-width: 639px) {
+      background-color: transparent;
+    }
+    .form-group {
+      margin: 0;
+      display: flex;
+      flex-direction: row
+    }
+    .icon {
+      @media (max-width: 639px) {
+        display: none;
+      }
+      line-height: $height;
+      &:hover {
+        cursor: pointer;
+      }
+      &.active-game {
+        padding-left: 8px;
+      }
+      &.withSIX-icon-Search {
+        float: right;
+        padding-right: 8px;
+      }
+    }
+    input {
+      padding: 0;
+      background-color: transparent;
+      border: 0;
+      color: white;
+      flex: 1;
+      min-height: $height;
+      padding-left: 8px;
+      padding-right: 8px;
+      @media (max-width: 639px) {
+        display: none;
+      }
+      &:focus {
+        outline: none;
+      }
+    }
+
+    .active-game {
+      height: $height;
+      padding-left: 8px;
+      img {
+        height: $height;
+        vertical-align: inherit;
+      }
+    }
+  }
+}
+
+#search-results {
+  padding: 16px;
+  position: fixed;
+  top: $headerSize;
+  left: $sideHeaderSize;
+  bottom: 0;
+  right: 0;
+  background-color: white;
+  color: black;
+  overflow-y: auto;
+  //height: 100%; // makes scroll not work properly.
+  z-index: $headerZindex;
+  button {
+    color: black;
+  }
+  .search-results {
+    margin-bottom: 32px;
+  }
+}

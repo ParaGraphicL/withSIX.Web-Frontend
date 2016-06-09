@@ -1,0 +1,11 @@
+<template>
+  <!-- <require from="./quick-actions.scss"></require> -->
+  <ul>
+    <li>
+      <button click.delegate="addQuickAction()">
+        <span class="icon withSIX-icon-Hexagon-Add"></span>
+      </button>
+    </li>
+    <li repeat.for="qa of quickActions">${qa.name}</li>
+  </ul>
+</template>

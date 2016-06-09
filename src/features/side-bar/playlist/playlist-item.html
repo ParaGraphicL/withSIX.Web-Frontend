@@ -1,0 +1,83 @@
+<template>
+  <div>
+    <div class="basket-item content-stateable content-state-${itemStateClass} ${progressClass} level-${level}">
+      <conditional-title desired-title="${state.progress | progress} @ ${state.speed | speed:'B':false}" condition.bind="state && (state.progress || state.speed)" class="basket-content-level-${level}">
+        <div class="basket-content">
+          <div class="basket-content-progess-bar content-state-progress-width content-state-progress-c-bgd">&nbsp;</div>
+          <!-- <div class="basket-content-progess-background">&nbsp;</div> -->
+          <!--<div class="pull-left basket-content-icon">
+            <div>
+            <span class="icon withSIX-icon-Synq"></span>
+            <br />
+            <p class="tiny content-state-progress-text"></p>
+            </div>
+          </div>-->
+
+          <div class="basket-content-omnibutton pull-right">
+            <dropdown-menu class="hide-until-open" items.bind="menuItems" menu-cls="content-stateable content-state-${itemStateClass}" item-cls="ignore-close">
+              <template replace-part="header">
+                <span class="icon withSIX-icon-Share-Dots-V"></span>
+              </template>
+            </dropdown-menu>
+          </div>
+
+          <div class="content-state-c-bgd-border pull-left"></div>
+
+          <div class="pull-left" if.bind="level > 0">
+            <span class="icon withSIX-icon-Link" title="dependency"></span>
+          </div>
+
+          <div class="pull-left basket-content-image">
+            <div class="imageholder basket-content-imageholder" back-img.bind="image">
+              <div class="actions content-state-c-bgd">
+                <action-bar items.bind="bottomActions" item-cls="ignore-close"></action-bar>
+              </div>
+            </div>
+          </div>
+
+          <div class="pull-left basket-content-title">
+            <div>
+              <div class="alternative-game" if.bind="!isForActiveGame" title="This content was made for ARMA 2">
+                <img src="${w6.url.cdn}/img/play.withSIX/games/Arma-2/arma2-blck.png" />
+              </div>
+              <div class="basket-content-name" title.bind="model.name">
+                <a class="text-link" href.bind="url">${model.name}</a>
+              </div>
+              <div class="basket-content-info tiny">
+                <span class="update-available" if.bind="hasUpdateAvailable" title="current version: v${state.version}">Update available <span class="version">v${model.constraint || model.version}</span></span>
+                <span class="size" innerHTML.bind="model.sizePacked | size"></span>
+                <span class="basket-content-author" if.bind="model.author" title.bind="model.author">by: ${model.author}</span>
+                <span if.bind="model.constraint">
+                    <span class="icon withSIX-icon-Lock"></span>
+                <!--  title.bind="model.constraint" -->
+                v${model.constraint}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="clearfix"></div>
+      </conditional-title>
+
+      <div class="dependencies" if.bind="dependencies.length > 0">
+        <header if.bind="level == 0">
+          <div class="inner">
+            <button class="pull-right text-button ignore-close" click.delegate="showDependencies = !showDependencies">
+              ${showDependencies | hideShowText }
+              <span class="icon ${showDependencies | hideShowIcon}"></span>
+            </button>
+            <span class="text">${localChain.length | pluralize:'dependency'}.</span>
+            <span><span innerHTML.bind="dependencySize | size"></span> total</span>
+          </div>
+        </header>
+        <section class="dependency-items" show.bind="showDependencies">
+          <template repeat.for="dep of dependencies">
+            <!--  | filterOnExisting:'id':$parent.$parent.itemIds -->
+            <compose model.bind="{item: dep, isDependency: true, stat: $parent.stat, chain: $parent.chain, level: $parent.level + 1, localChain: $parent.localChain, currentGameId: $parent.currentGameId}" view-model="./playlist-item"></compose>
+          </template>
+        </section>
+      </div>
+    </div>
+    <div class="clearfix" if.bind="level > 0"></div>
+  </div>
+</template>

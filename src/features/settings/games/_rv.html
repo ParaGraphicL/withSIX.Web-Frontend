@@ -1,0 +1,9 @@
+<template>
+  <compose view="./_paths.html"></compose>
+  <div class="form-group">
+    <label for="mod-directory">Mod Directory</label>
+    <input id="mod-directory" name="mod-directory" type="text" value.bind="model.packageDirectory"></input>
+    <button click.delegate="browsePackageDirectory()">Browse</button>
+  </div>
+  <compose view="./_startup.html"></compose>
+</template>

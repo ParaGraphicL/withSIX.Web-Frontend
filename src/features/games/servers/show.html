@@ -1,0 +1,36 @@
+<template>
+  <div class="container-fluid">
+    <labs lab-link="https://community.withsix.com/topic/85/add-a-server-browser-to-sync-web-vote-here/2"></labs>
+    <div class="tile">
+      <td>${model.ping}ms</td>
+      <td>
+        <command-button model.bind="refresh">
+          <template replace-part="content">
+          <span class="icon ${refresh.icon}"></span>
+        </template>
+        </command-button>
+      </td>
+      <td><command-button model.bind="join">
+        <template replace-part="content">
+          <span class="icon ${join.icon}"></span>
+      </template></command-button></td>
+      <td>${model.numPlayers} / ${model.maxPlayers} plyrs |</td>
+      <td>
+        <i class="icon withSIX-icon-Lock" if.bind="model.passwordRequired"></i>
+        <a href="/p/Arma-3/servers/${slug}">${model.name}</a> [${model.gameState} | ${model.gameType}] |
+        v${model.gameVersion} |
+      </td>
+      <td>${model.mods.length} mods |</td>
+      <td>[${model.missionName} @ ${model.mapName}]</td>
+
+    <div>
+      Players:
+      <ul>
+        <li repeat.for="p of model.players">
+          ${p.name} | ${p.score} | ${p.deaths}
+        </li>
+      </ul>
+    </div>
+  </div>
+  </div>
+</template>

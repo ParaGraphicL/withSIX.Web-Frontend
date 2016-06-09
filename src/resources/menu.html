@@ -1,0 +1,18 @@
+<template>
+  <ul>
+    <li repeat.for="item of items" class="${item.cls} ${item.fullSegment | routeSegmentActive}">
+      <a href.bind="item.url" if.bind="item.url" target.bind="item.target">
+        <span class="${item.cls}">
+                <span if.bind="item.icon" class="icon ${item.icon}"></span>
+        <span class.bind="item.textCls" class="text">${item.header}</span>
+        </span>
+      </a>
+      <a href="${item.segment | routeSegmentUrl }" if.bind="!item.url">
+        <span class="${item.cls}">
+                <span if.bind="item.icon" class="icon ${item.icon}"></span>
+        <span class.bind="item.textCls" class="text">${item.header}</span>
+        </span>
+      </a>
+    </li>
+  </ul>
+</template>

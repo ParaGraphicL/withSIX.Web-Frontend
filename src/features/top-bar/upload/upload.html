@@ -1,0 +1,11 @@
+<template>
+  <require from="./upload.scss"></require>
+
+  <div class="tab-header">${model.header}</div>
+
+  <div class="the-content" scroll.trigger="closeDropdowns()">
+    <action-bar id="upload-menu" class="main" items.bind="uploadMenu" orientation="vertical"></action-bar>
+  </div>
+
+  <command-button model.bind="updateContent" class="bottom"></command-button>
+</template>

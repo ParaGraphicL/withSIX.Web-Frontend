@@ -1,0 +1,17 @@
+<template>
+  <dropdown-menu class="pull-right" items.bind="menuItems"></dropdown-menu>
+
+  <a href="/p/${model.slug}">
+    <span class="logo">
+      <span class="imagecontent imageholder">
+        <img itemprop="image" src.bind="image">
+      </span>
+    </span>
+    <span class="bg-hover" css="background-image: url(${bgUrl});"></span>
+    <span>${game.name}</span>
+    <span class="is-current-game">
+      <small>active</small>
+    </span>
+  </a>
+  <div class="clearfix"></div>
+</template>

@@ -1,0 +1,16 @@
+<template>
+  <ai-dialog class="ai-dialog message-dialog">
+    <ai-dialog-header>
+      <h2 innerHTML.bind="model.title | text"></h2>
+    </ai-dialog-header>
+    <ai-dialog-body>
+      <div innerHTML.bind="model.message | text"></div>
+    </ai-dialog-body>
+    <ai-dialog-footer>
+      <div class="buttons">
+        <template repeat.for="c of model.buttons">
+          <button click.delegate="handle(c.toLowerCase())" class="default ${c.toLowerCase()}">${c}</button>
+        </template>
+      </div>
+    </ai-dialog-footer>
+  </ai-dialog>

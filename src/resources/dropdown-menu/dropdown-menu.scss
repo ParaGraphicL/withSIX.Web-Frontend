@@ -1,0 +1,36 @@
+@import "base";
+ul.au-dropdown-menu {
+  font-size: $font-size-small;
+  background-color: $colorSixDarkGray;
+  border-color: $colorSixBlue;
+  li {
+    color: white;
+    padding: 0;
+    line-height: 1;
+    border-color: $colorSixGray;
+    button {
+      padding: 8px 16px;
+      width: 100%;
+      text-align: left;
+      &:hover {
+        background-color: $colorSixBlue;
+        &:disabled {
+          background-color: transparent;
+        }
+      }
+    }
+    .icon {
+      margin-right: 4px;
+      height: 14px;
+      width: 14px;
+      vertical-align: middle;
+      text-align: center;
+    }
+  }
+}
+.dropdown-toggle {
+  background-color: transparent;
+  color: inherit;
+  border: 0;
+  padding: 0;
+}

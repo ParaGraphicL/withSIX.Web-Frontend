@@ -1,0 +1,31 @@
+<template>
+  <ul>
+    <template if.bind="items">
+      <template repeat.for="item of items">
+        <li>
+          <compose class="content-basketable" model.bind="item" view-model="${$parent.viewPath}${item.type || $parent.itemType}"></compose>
+        </li>
+        <li if.bind="w6.renderAds && showAds && $index == ads[0]">
+          <ad-unit unit-id.bind="adUnitId1"></ad-unit>
+        </li>
+        <li if.bind="w6.renderAds && showAds && $index == ads[1]">
+          <ad-unit unit-id.bind="adUnitId2"></ad-unit>
+        </li>
+      </template>
+    </template>
+
+    <template if.bind="itemsMap">
+      <template repeat.for="[key, item] of itemsMap">
+        <li>
+          <compose class="content-basketable" model.bind="item" view-model="${$parent.viewPath}${item.type || $parent.itemType}"></compose>
+        </li>
+        <li if.bind="w6.renderAds && showAds && $index == ads[0]">
+          <ad-unit unit-id="angular-ad1"></ad-unit>
+        </li>
+        <li if.bind="w6.renderAds && showAds && $index == ads[1]">
+          <ad-unit unit-id="angular-ad2"></ad-unit>
+        </li>
+      </template>
+    </template>
+  </ul>
+</template>

@@ -1,0 +1,16 @@
+<template>
+  <require from="./search.scss"></require>
+  <form role="form" validate.bind="validation" autocomplete="off">
+    <div class="form-group">
+      <span class="active-game" if.bind="w6.activeGame.id">
+        <a href="/p/${w6.activeGame.slug}" click.trigger="closeTabs()">
+          <img src.bind="activeGameImage"></img>
+        </a>
+      </span>
+
+      <input id="search-input" name="search-input" placeholder="Search games, mods, missions and collections" value.bind="searchInput" class="form-control-static" focus.trigger="openIfValid()"></input>
+
+      <span class="icon withSIX-icon-Search" click.delegate="openIfValid()"></span>
+    </div>
+  </form>
+</template>

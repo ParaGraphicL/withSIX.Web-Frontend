@@ -1,0 +1,16 @@
+<template>
+  <require from="./settings.scss"></require>
+  <ai-dialog class="ai-dialog" id="settings-dialog">
+    <ai-dialog-header>
+      <h1>Settings</h1>
+    </ai-dialog-header>
+
+    <ai-dialog-body>
+      <ul class="horizontal">
+        <li class="${page == 'general' ? 'active' : ''}"><button class="default" click.delegate="page = 'general'">General</button></li>
+        <li class="${page == 'games' ? 'active' : ''}"><button class="default" click.delegate="page = 'games'">Games</button></li>
+      </ul>
+      <compose view-model="./${page}" model.bind="model[page]"></compose>
+    </ai-dialog-body>
+  </ai-dialog>
+</template>

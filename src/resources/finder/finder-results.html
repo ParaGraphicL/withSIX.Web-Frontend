@@ -1,0 +1,29 @@
+<template show.bind="showResults">
+  <require from="./finder.scss"></require>
+  <div class="finder-results">
+    <button class="pull-right naked-button ${buttonCls}" if.bind="showClose" click.delegate="close()">
+      <span class="icon withSIX-icon-Window-Close"></span>
+    </button>
+    <div if.bind="showTotalResults">${model.results.length} results</div>
+    <div class="clearfix"></div>
+    <div class="results">
+      <ul>
+        <template repeat.for="item of model.results">
+          <li class="result">
+            <button class="pull-right naked-button execute ${buttonCls}" click.delegate="$parent.execute(item)" if.bind="$parent.model.execute && !$parent.selectIsExecute" show.bind="!item.selected">
+              <span class="icon ${$parent.icon}" if.bind="$parent.icon"></span>
+              <span class.bind="$parent.textCls" if.bind="$parent.text">${$parent.text}</span>
+            </button>
+            <div class="input-container ${item.selected ? 'included' : ''}" click.delegate="$parent.clicked(item)">
+              <template replaceable part="item">
+                <button class="text-button ${buttonCls}">
+                  <span innerHTML.bind="$parent.model.display(item) | highlight:model.searchItem"></span>
+                </button>
+              </template>
+            </div>
+          </li>
+        </template>
+      </ul>
+    </div>
+  </div>
+</template>

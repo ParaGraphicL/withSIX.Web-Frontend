@@ -1,0 +1,39 @@
+<template>
+	<section class="au-animate" id="my-library-show-home">
+		<compose view="../_header.html"></compose>
+
+		<button click.delegate="openGameSettings()" class="default row-header-button">Settings</button>
+
+		<div class="tile" if.bind="!clientEnabled">
+			<compose view="features/_get_client.html"></compose>
+		</div>
+		<div if.bind="clientEnabled">
+			<div class="row">
+				<div class="col1">
+					<h3 class="row-header">Recently played</h3>
+					<card-view items.bind="recent" card-container-cls="col-md-12" card-cls="content-basketable" ad-unit-id1="angular-ad-sky" view-path="features/profile/content/"></card-view>
+				</div>
+
+				<div class="col2">
+					<div>
+						<dropdown-menu class="row-header-button c-blue pull-right new-style" items.bind="addContentMenu">
+							<template replace-part="header">
+								<span class="icon withSIX-icon-Add"></span> Add content
+							</template>
+						</dropdown-menu>
+						<h3 class="row-header">New</h3>
+					</div>
+					<card-view items.bind="newContent" card-container-cls="col-md-12" card-cls="content-basketable" ad-unit-id1="angular-ad-sky2" view-path="features/profile/content/"></card-view>
+				</div>
+
+				<div class="col3">
+					<div>
+						<command-button class="row-header-button pull-right" model.bind="updateAll">Update all</command-button>
+						<h3 class="row-header">Updates ${updates.length}</h3>
+					</div>
+					<card-view items.bind="updates" card-container-cls="col-md-12" card-cls="content-basketable" ad-unit-id1="angular-ad-sky2" view-path="features/profile/content/"></card-view>
+				</div>
+			</div>
+		</div>
+	</section>
+</template>

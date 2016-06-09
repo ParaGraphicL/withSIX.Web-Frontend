@@ -1,0 +1,320 @@
+@import "_v2";
+@mixin anim($what, $value0, $value100: 0px, $timeout: 0.5s) {
+  #{$what}: $value0;
+  overflow: hidden;
+  @include transition($what, $timeout);
+  &.active {
+    #{$what}: $value100;
+  }
+}
+@mixin anim-inner($what, $value0, $value100: 0px, $timeout: 0.5s) {
+  .tab-content-inner {
+    overflow: hidden;
+    #{$what}: $value0;
+  }
+  @include transition($what, $timeout);
+  &.active {
+    .tab-content-inner {
+      #{$what}: $value100;
+    }
+  }
+}
+.v2 {
+  .shell-bar {
+    .btn,
+    button {
+      height: $headerSize;
+      width: $sideHeaderSize;
+      background-color: transparent;
+      border: 0;
+      padding: 0;
+      color: $barColor;
+      // padding-top: $buttonMargin;
+      // padding-bottom: $buttonMargin;
+      border: 0;
+      &:focus {
+        outline: none;
+      }
+      .icon {
+        font-size: $headerSize / 2;
+      }
+    }
+    ul {
+      margin: 0;
+      padding: 0;
+      & > li {
+        list-style-type: none;
+      }
+    }
+  }
+  .tab-strip {
+    button {
+      &.disabled,
+      &:disabled {
+        color: $colorSixLightGray;
+      }
+    }
+    .tab-header {
+      .item-progress-width {
+        height: $headerSize;
+        margin-top: -12px; // hmm
+      }
+    }
+    li.active.tab {
+      background-color: $colorSixMediumGray;
+    }
+  }
+  .tab-content-container {
+    z-index: $headerZindex + 2;
+    position: fixed;
+    top: $headerSize;
+    &.tab {
+      bottom: 0; // height: 100%;
+    }
+    .tab-header {
+      margin-bottom: 12px;
+    }
+    header {
+      color: $colorSixLightGray;
+    }
+    action-bar.main > ul.menu,
+    ul.menu.main {
+      > li {
+        @include text-overflow;
+        margin-top: 8px;
+        // &:first-child {
+        //   margin-top: 0;
+        // }
+        &.separator {
+          hr {
+            margin: 0;
+          }
+        }
+      }
+    }
+    &.tab {
+      width: $tabWidth;
+      background-color: $colorSixDarkGray;
+      color: $barColor;
+      .tab-content {
+        .the-content {
+          top: 60px;
+          left: 8px;
+          right: 8px;
+          bottom: 70px;
+          position: absolute;
+          overflow-y: auto;
+        }
+        button.bottom,
+        command-button.bottom {
+          position: absolute;
+          bottom: 8px;
+          width: 284px;
+          button {
+            width: 284px;
+          }
+        }
+      }
+    }
+    .tab-content-inner {
+      .tab-header {
+        a.active-game {
+          font-size: $font-size-tiny;
+        }
+      }
+    }
+    &.dropdown {
+      width: $dropdownWidth;
+      color: $colorSixGray;
+      //bottom: auto;
+      //max-height: 100%;
+      ul {
+        font-weight: $font-weight-medium;
+        font-size: $font-size-medium;
+        li.item {
+          height: $font-size-medium + 8px;
+        }
+      }
+      hr {
+        margin: 8px 0;
+        opacity: 0.5;
+      }
+      .icon {
+        font-size: $font-size-base;
+      }
+      .the-content {
+        //margin-bottom: 48px;
+        position: inherit; // Temporary workaround
+      }
+      .tab-content {
+        button.bottom,
+        command-button.bottom {
+          //position: absolute;
+          //bottom: 8px;
+          //width: 284px;
+          display: block;
+          margin-top: 16px;
+          margin-bottom: -16px;
+          width: 168px;
+          button {
+            width: 168px;
+          }
+        }
+      }
+      .tab-content-inner {
+        background-color: white;
+        .tab-content {
+          padding: 16px;
+        }
+      }
+      action-bar {
+        ul.menu {
+          span {
+            vertical-align: middle;
+          }
+          .icon {
+            margin-right: 8px;
+          }
+        }
+      }
+    }
+  }
+  // legacy
+  #header-row {
+    $desiredHeight: 164px;
+    min-height: $desiredHeight;
+    .overlay {
+      min-height: $desiredHeight;
+    }
+  }
+  .main {
+    &.home {
+      #header-row {
+        $desiredHeight: 240px;
+        min-height: $desiredHeight;
+        .overlay {
+          min-height: $desiredHeight;
+        }
+      }
+    }
+  }
+  .play-game {
+    #header-row {
+      $desiredHeight: 190px;
+      min-height: $desiredHeight;
+      .overlay {
+        min-height: $desiredHeight;
+      }
+    }
+  }
+  .no-adds.play-game {
+    #header-row {
+      $desiredHeight: 128px;
+      min-height: $desiredHeight;
+      .overlay {
+        min-height: $desiredHeight;
+      }
+    }
+  }
+  #content-view {
+    //margin-top: $headerSize;
+    position: absolute;
+    top: $headerSize;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow-x: hidden;
+    #left-tabs {
+      .tab-content {
+        //@include animate(margin-left, 0px, -$tabWidth);
+      }
+      .tab-content-container {
+        &.tab {
+          @include anim(margin-left, -$tabWidth);
+        }
+        &.dropdown {
+          @include anim(max-height, 0, 300px);
+        }
+      }
+    }
+    #right-tabs {
+      .tab-content {
+        //  @include animate(margin-right, 0px, -$tabWidth);
+      }
+      .tab-content-container {
+        right: 0;
+        &.tab {
+          @include anim(margin-right, -$tabWidth);
+        }
+        &.dropdown {
+          @include anim(max-height, 0, 300px);
+        }
+      }
+    }
+    #footer-row {}
+  }
+  #tab-overlay {
+    //position: relative;
+    &:after {
+      content: " ";
+      z-index: $headerZindex + 1;
+      display: block;
+      position: fixed;
+      height: 100%;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    }
+    &.tab:after {
+      background: rgba(0, 0, 0, 0.5);
+    }
+  }
+  .show-sidebar {
+    #content-view {
+      margin-left: $sideHeaderSize;
+    }
+    // #left-tabs {
+    //   .tab-content-container {
+    //     left: $headerSize;
+    //   }
+    // }
+  }
+  .sphere {
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 500%;
+    position: relative;
+    //box-shadow: inset -10px -10px 100px #000, 10px 10px 20px black, inset 0px 0px 10px black;
+    display: inline-block;
+    &.red {
+      background-color: red;
+    }
+    &.green {
+      background-color: green;
+    }
+    &.blue {
+      background-color: blue;
+    }
+    &.yellow {
+      background-color: yellow;
+    }
+    &.orange {
+      background-color: $colorSixOrange;
+    }
+  }
+  .sphere::after {
+    background-color: rgba(255, 255, 255, 0.3);
+    content: '';
+    height: 45%;
+    width: 12%;
+    position: absolute;
+    top: 4%;
+    left: 15%;
+    border-radius: 50%;
+    transform: rotate(40deg);
+  }
+}

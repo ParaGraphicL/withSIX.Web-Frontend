@@ -1,0 +1,8 @@
+**/*.css
+**/*.css.map
+**/*.js
+**/*.js.map
+bower_components/
+dist/
+jspm_packages/
+!/*.js

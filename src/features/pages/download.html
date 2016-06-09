@@ -1,0 +1,160 @@
+<template>
+	<div class="container-fluid">
+		<div class="tabbar">
+			<menu items.bind="menuItems"></menu>
+		</div>
+	</div>
+	<div class="download" id="download-page">
+		<div class="container-fluid">
+			<h1>Download</h1>
+
+			<div class="row">
+				<div class="col-md-7">
+
+					<!-- <iframe width="560" height="315" src="https://www.youtube.com/embed/UdwtKCurq6g" frameborder="0" allowfullscreen></iframe> -->
+					<style>
+						.embed-container {
+							position: relative;
+							padding-bottom: 56.25%;
+							height: 0;
+							overflow: hidden;
+							max-width: 100%;
+						}
+
+						.embed-container iframe,
+						.embed-container object,
+						.embed-container embed {
+							position: absolute;
+							top: 0;
+							left: 0;
+							width: 100%;
+							height: 100%;
+						}
+
+					</style>
+					<div class='embed-container'>
+						<iframe src='https://www.youtube.com/embed/UdwtKCurq6g' frameborder='0' allowfullscreen></iframe>
+					</div>
+
+					<div class="sync-client-info">
+						<h2>Try our latest client: Sync <strong>withSIX</strong></h2>
+						<h2><i>more than just a downloader</i></h2>
+					</div>
+
+					<div class="tile">
+						<!-- <h2>Download latest</h2> -->
+
+						<div>
+							<div class="download-button">
+								<a href="${w6.url.main}/download/start?type=0&basket=1${redir}" rel="nofollow" class="calltoaction maindownload">
+									Download
+									<strong>Sync withSIX</strong>
+									<em>Windows only, 70MB</em>
+									<span class="iconbg">
+											<em class="icon withSIX-icon-Logo-Sync"></em>
+									</span>
+
+									<span class="requirements">
+										<compose view="./_requirements.html"></compose>
+									</span>
+							</a>
+							</div>
+
+							<center>
+								or try the
+								<a href="${url.main}/download/start?type=1&basket=1${redir}" rel="nofollow">BETA version</a>
+							</center>
+						</div>
+
+						<div class="changelog">
+							<a href="${url.main}/update">Changelog</a>
+						</div>
+					</div>
+
+					<section class="pitch">
+						<div id="smart">
+							<div class="img pull-left">
+								<span class="icon withSIX-icon-Tools"></span>
+							</div>
+							<div class="tile text">
+								<h2>Light, fast and smart</h2> This mini client is built to handle downloads and complex, game specific installations. Using delta patching technology it saves bandwidth and is easy on CPU and memory.
+							</div>
+						</div>
+
+						<div id="sync">
+							<div class="img pull-left">
+								<span class="icon withSIX-icon-Nav-Server"></span>
+							</div>
+							<div class="tile text">
+								<h2>Stay in Sync</h2> All content specific information are synced in real time. You can check the status of any mod, local or online and interact with it via the client and on the website.
+							</div>
+						</div>
+
+						<div id="play">
+							<div class="img pull-left">
+								<span class="icon withSIX-icon-Joystick"></span>
+							</div>
+							<div class="tile text">
+								<h2>Click and play</h2> No matter if on withSIX.com or the client interface, downloads, updates and launching of any mod or collection is just a click away. The choice is yours!
+							</div>
+						</div>
+					</section>
+
+					<br />
+					<br />
+
+					<div class="tile">
+						<h2>Or download the Play withSIX client</h2>
+
+						<div>
+							<div class="download-button">
+								<a href="${w6.url.main}/download/start?type=0&basket=0${redir}" rel="nofollow" class="calltoaction maindownload">
+										Download
+										<strong>Play withSIX</strong>
+										<em>Windows only, 70MB</em>
+										<span class="iconbg">
+												<em class="icon withSIX-icon-Logo"></em>
+										</span>
+
+										<span class="requirements">
+											<compose view="./_requirements.html"></compose>
+										</span>
+								</a>
+							</div>
+
+							<center>
+								or try the
+								<a href="${url.main}/download/start?type=1&basket=0${redir}" rel="nofollow">BETA version</a>
+							</center>
+						</div>
+
+						<div class="changelog">
+							<a href="${url.main}/changelog">Changelog</a>
+						</div>
+					</div>
+				</div>
+
+				<div class="col-md-5">
+					<div class="tile">
+						<compose view="./_donate.html"></compose>
+					</div>
+
+					<div class="tile get-premium" if.bind="!w6.userInfo.isPremium">
+						<h2>Get Premium</h2>
+						<p>Subscribe to our premium service for ad-free access to all withSIX services and to improve your experience!</p>
+
+						<a class="calltoaction" href="gopremium">Learn more about Premium!</a>
+					</div>
+
+					<div class="tile" if.bind="w6.renderAds">
+						<ad-unit unit-id="angular-ad1"></ad-unit>
+					</div>
+
+					<div class="tile" if.bind="w6.renderAds">
+						<ad-unit unit-id="angular-ad-sky"></ad-unit>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</template>

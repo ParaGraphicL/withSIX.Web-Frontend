@@ -1,0 +1,16 @@
+<template>
+  <header class="title">
+    <dropdown-menu class="pull-right" items.bind="menuItems" item-cls="ignore-close"></dropdown-menu>
+    <a class="text-link shout" href="/me/library/${w6.activeGame.slug}">Recent</a>
+  </header>
+
+  <ul class="menu main">
+    <li repeat.for="r of model.recent">
+      <compose view-model="features/profile/content/${r.type}" view="./_item.html" model.bind="r"></compose>
+    </li>
+  </ul>
+
+  <center if.bind="model.recent.length >= 10">
+    <a class="text-link shout" href="/me/library/${w6.activeGame.slug}">View all</a>
+  </center>
+</template>

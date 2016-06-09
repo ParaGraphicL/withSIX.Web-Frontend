@@ -1,0 +1,5 @@
+<template>
+  <span if.bind="item.icon" class="icon ${item.icon}" title.bind="item.name" if.bind="item.icon && (item.name || !item.action.isExecuting)"></span>
+  <span if.bind="item.icon && item.name" class="spacer"></span>
+  <span class.bind="item.textCls" class="text">${item.name}</span>
+</template>

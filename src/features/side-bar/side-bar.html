@@ -1,0 +1,23 @@
+<template>
+  <bar>
+    <!-- the click.trigger disables native behavior of anchors in child elements -->
+    <require from="./side-bar.scss"></require>
+    <require from="./playlist/playlist.scss"></require>
+
+    <tab-view tab-view.ref="tabView" tabs.bind="tabs" selected-tab.bind="selectedTab" render-view="">
+      <template replace-part="middle">
+        <div id="quick-actions" if.bind="quickActionsEnabled">
+          <compose view-model="./quick-actions/quick-actions"></compose>
+        </div>
+      </template>
+      <template replace-part="end">
+        <div id="client-logo">
+          <button command.bind="openClientSettings">
+            <!-- div or it won't spin -->
+            <div class="icon withSIX-icon-Logo-Sync"></div>
+          </button>
+        </div>
+      </template>
+    </tab-view>
+  </bar>
+</template>

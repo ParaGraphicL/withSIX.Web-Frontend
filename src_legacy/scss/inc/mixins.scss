@@ -1,0 +1,459 @@
+@function compact($args...) {
+  $first: nth($args, 1);
+  $sep: comma;
+  $list: ();
+  @if length($args) == 1 and type_of($first) == 'list' {
+    $args: $first;
+    $sep: list-separator($args);
+  }
+  @for $index from 1 through length($args) {
+    $arg: nth($args, $index);
+    @if $arg {
+      $list: append($list, $arg, $sep);
+    }
+  }
+  @return $list;
+}
+@mixin centerBox($centerHorizontally: false, $centerVertically: true) {
+  display: flex;
+  @if $centerVertically {
+    align-items: center;
+  }
+  @if $centerHorizontally {
+    justify-content: center;
+  }
+}
+$scrollBarSize: 12px;
+@mixin hideVerticalScrollBase() {
+  overflow: hidden;
+  overflow-y: scroll;
+}
+@mixin hideVerticalScroll() {
+   @include hideVerticalScrollBase;
+  margin-right: -$scrollBarSize !important;
+}
+// The parent element must have position: relative;
+@mixin hideVerticalScroll2() {
+   @include hideVerticalScrollBase;
+  position: absolute;
+  left: 0;
+  right: -$scrollBarSize;
+}
+@mixin hideVerticalScroll3($width) {
+  position: absolute;
+  right: -$scrollBarSize;
+  width: $width + $scrollBarSize;
+}
+@mixin transition($transition...) {
+  -moz-transition: $transition;
+  -o-transition: $transition;
+  -webkit-transition: $transition;
+  transition: $transition;
+}
+@mixin transition-property($property...) {
+  -moz-transition-property: $property;
+  -o-transition-property: $property;
+  -webkit-transition-property: $property;
+  transition-property: $property;
+}
+@mixin transition-duration($duration...) {
+  -moz-transition-property: $duration;
+  -o-transition-property: $duration;
+  -webkit-transition-property: $duration;
+  transition-property: $duration;
+}
+@mixin transition-timing-function($timing...) {
+  -moz-transition-timing-function: $timing;
+  -o-transition-timing-function: $timing;
+  -webkit-transition-timing-function: $timing;
+  transition-timing-function: $timing;
+}
+@mixin transition-delay($delay...) {
+  -moz-transition-delay: $delay;
+  -o-transition-delay: $delay;
+  -webkit-transition-delay: $delay;
+  transition-delay: $delay;
+}
+@mixin basictransition {
+  -webkit-transition: 0.3s;
+  -moz-transition: 0.3s;
+  -o-transition: 0.3s;
+  transition: 0.3s;
+}
+@mixin standard-shadow {
+   @include filter(drop-shadow(0px 0px 8px rgba(0, 0, 0, 0.75)));
+}
+@mixin standard-bg {
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+@mixin icon-size($fontSize) {
+  display: inline-block;
+  line-height: inherit;
+  font-size: $fontSize;
+  text-align: center;
+  vertical-align: bottom;
+}
+@mixin wide($factor: 1) {
+   @include size($factor * 16, $factor * 9);
+}
+@mixin wide-from-width($width, $prefix: max-) {
+  width: $width;
+  #{$prefix}height: $width / 16 * 9;
+}
+@mixin wide-from-height($height, $prefix: max-) {
+  #{$prefix}width: $height / 9 * 16;
+  height: $height;
+}
+@mixin square-lh($size) {
+   @include square($size);
+  line-height: $size;
+}
+@mixin size-lh($width, $height) {
+   @include size($width, $height);
+  line-height: $height;
+}
+@mixin height-lh($height) {
+  height: $height;
+  line-height: $height;
+}
+@mixin min-height-lh($height) {
+  height: $height;
+  line-height: $height;
+}
+@mixin strike($color) {
+  .strike > span:after,
+  .strike > span:before {
+    background: $color;
+  }
+}
+@mixin list {
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    li {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 16px;
+      &:after {
+        @include clearfix;
+      }
+    }
+  }
+}
+@mixin tabbar {
+  min-height: $tabbarHeight;
+  clear: both;
+  line-height: $tabbarHeight;
+  background-color: $color1;
+  border-bottom: 1px solid $color2;
+  //margin-bottom: 48px;
+  padding-left: 8px;
+  padding-right: 8px;
+  position: relative;
+  z-index: 2;
+  ul {
+    //clear: both;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    white-space: nowrap;
+    li {
+      float: left;
+      margin-right: 12px;
+      &.right {
+        float: right;
+        margin-right: 0;
+        margin-left: 12px;
+      }
+      a {
+        text-decoration: none;
+        color: $color3;
+        display: block;
+        @include height-lh($tabbarHeight);
+        padding-left: 12px;
+        padding-right: 12px;
+        span.icon {
+          padding-right: 6px;
+        }
+      }
+      &.active a,
+      &.active a:hover,
+      a:hover {
+        border-bottom: $tabbarBorderBottom solid $primarycolor;
+      }
+      a:hover {
+        border-color: $color3;
+      }
+      &.active a {
+        color: $colorSixBlue;
+      }
+    }
+  }
+}
+@mixin limit-lines($linesToShow, $fontSize: $font-size-base, $lineHeight: $line-height-base, $line-height-base: $line-height-base) {
+  // Single line could actually work without all the height magic etc and requires no-wrap..
+  max-height: $fontSize * $lineHeight * $linesToShow;
+  display: block;
+  //display: -webkit-box; // insane, this does weird things on some places.
+  margin: 0 auto;
+  $margin: ($line-height-base * $fontSize) - ($lineHeight * $fontSize); // TODO: Only if lineHeight is smaller than base
+  //margin-top: $margin /2;
+  margin-bottom: $margin /2;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: $linesToShow;
+  @include text-overflow;
+  white-space: normal;
+}
+@mixin limit-lines-static($linesToShow, $fontSize: $font-size-base, $lineHeight: $line-height-base) {
+   @include limit-lines($linesToShow, $fontSize, $lineHeight);
+  height: $fontSize * $lineHeight * $linesToShow;
+}
+@mixin padding-h($padding: 0) {
+  padding-left: $padding;
+  padding-right: $padding;
+}
+@mixin margin-h($margin: 0) {
+  margin-left: $margin;
+  margin-right: $margin;
+}
+@mixin no-margin-h {
+   @include margin-h;
+}
+@mixin no-padding-h {
+   @include padding-h;
+}
+@mixin make-column-fixed($size, $padding: false) {
+   @include make-xs-column($size);
+  @include make-sm-column($size);
+  @include make-md-column($size);
+  @include make-lg-column($size);
+  @if not $padding {}
+  @else {
+     @include padding-h($padding);
+  }
+}
+@mixin make-column-fluid($lgSize, $mdSize, $smSize, $sxSize, $padding: false) {
+   @include make-xs-column($smSize);
+  @include make-sm-column($smSize);
+  @include make-md-column($lgSize);
+  @include make-lg-column($lgSize);
+  @if not $padding {}
+  @else {
+     @include padding-h($padding);
+  }
+}
+@mixin maintain-ratio($ratio: 1 1) {
+   @if length($ratio) < 2 or length($ratio) > 2{
+    @warn "$ratio must be a list with two values.";
+  }
+  $width: 100%;
+  $height: percentage(nth($ratio, 2) / nth($ratio, 1));
+  width: $width;
+  height: 0;
+  padding-bottom: $height;
+}
+@mixin v-align-content($line-height) {
+  height: $line-height;
+  -webkit-transform-style: preserve-3d;
+  -moz-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+  & > :first-child {
+    @include vertical-align;
+  }
+}
+@mixin vertical-align {
+  position: relative;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+@mixin withSIX-icon($icon) {
+  font-family: 'icons-withSIX';
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  &:before {
+    content: $icon;
+  }
+}
+@mixin squareImg($baseSize: 64px, $fontScale: 0.5) {
+  $outline: $baseSize * 2;
+  $fontSize: $outline * $fontScale;
+  $offset: ($outline - $fontSize) / 2;
+  @include square($outline);
+  text-align: center;
+  span {
+    position: relative;
+    top: $offset;
+    //color: white;
+    font-size: $fontSize;
+  }
+}
+@mixin bg-mask($color) {
+  background-color: $color;
+  &:hover {
+    background-color: rgba($color, 0.8);
+  }
+}
+@mixin color-button($color, $isLight: false) {
+   @include bg-mask($color);
+  border: 0;
+  box-shadow: none;
+  @if not $isLight {
+    color: white;
+  }
+  // &:hover {
+  //   color: $colorSixDarkGray;
+  // }
+  &:disabled {
+    cursor: default;
+    opacity: 0.45;
+    // cancel the hover
+    // @if not $isLight {
+    //   color: white;
+    // } else {
+    //   color: inherit;
+    // }
+  }
+}
+// http://hugogiraudel.com/2013/08/08/advanced-sass-list-functions/
+@function first($list) {
+   @return nth($list, 1);
+}
+@function last($list) {
+   @return nth($list, length($list));
+}
+@function to-string($list, $glue: '', $is-nested: false) {
+  $result: null;
+  @for $i from 1 through length($list) {
+    $e: nth($list, $i);
+    @if type-of($e) == list {
+      $result: $result#{to-string($e, $glue, true)};
+    }
+    @else {
+      $result: if($i != length($list) or $is-nested, $result#{$e}#{$glue}, $result#{$e});
+    }
+  }
+  @return $result;
+}
+@function reverse($list, $recursive: false) {
+  $result: ();
+  @for $i from length($list)*-1 through -1 {
+     @if type-of(nth($list, abs($i))) == list and $recursive{
+      $result: append($result, reverse(nth($list, abs($i)), $recursive));
+    }
+    @else {
+      $result: append($result, nth($list, abs($i)));
+    }
+  }
+  @return $result;
+}
+@mixin fade($what) {
+   @-webkit-keyframes #{$what}{
+    @content;
+  }
+  @keyframes #{$what} {
+     @content;
+  }
+}
+@mixin fadeOut {
+   @-webkit-keyframes fadeOut{
+    @content;
+  }
+  @keyframes fadeOut {
+     @content;
+  }
+}
+@mixin fadeAnimation($type, $time: 0.4s) {
+  -webkit-animation: $type $time;
+  animation: $type $time;
+}
+@mixin keyFrames($what, $keysIn, $valuesIn) {
+   @each $key in $keysIn{
+    $i: index($keysIn, $key);
+    #{$key}% {
+      #{$what}: nth($valuesIn, $i);
+    }
+  }
+}
+@mixin animate-list($what, $valuesIn, $valuesOut, $keysIn: 0 100, $keysOut: 0 100, $fadeInTime: 0.5s, $fadeOutTime: 0.4s) {
+  &.au-enter {
+    #{$what}: first($valuesIn) !important;
+  }
+  &.au-leave-active {
+    @include fadeAnimation(fadeOut, $fadeOutTime);
+  }
+  &.au-enter-active {
+    @include fadeAnimation(fadeIn, $fadeInTime);
+  }
+  /* CSS3-Animations */
+  @include fade(fadeIn) {
+     @include keyFrames($what, $keysIn, $valuesIn);
+  }
+  @include fade(fadeOut) {
+     @include keyFrames($what, $keysOut, $valuesOut);
+  }
+}
+@mixin animate-list-symmetric($what, $values, $keys: 0 100, $fadeInTime: 0.5s, $fadeOutTime: 0.4s) {
+   @include animate-list($what, $values, reverse($values), $keys, $keys, $fadeInTime, $fadeOutTime);
+}
+@mixin animate($what, $value100, $value0: 0px, $fadeInTime: 0.5s, $fadeOutTime: 0.4s) {
+   @include animate-list-symmetric($what, $value0 $value100, 0 100, $fadeInTime, $fadeOutTime);
+}
+@mixin anim-transition($what, $timeout: 0.5s) {
+  -webkit-transition: $what $timeout;
+  /* Safari 3.1 to 6.0 */
+  transition: $what $timeout;
+}
+@mixin scrollbars($size, $foreground-color, $background-color: mix($foreground-color, white, 50%)) {
+  ::-webkit-scrollbar {
+    width: $size;
+    height: $size;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: $foreground-color;
+  }
+  ::-webkit-scrollbar-track {
+    background: $background-color;
+  }
+  // For Internet Explorer
+  body {
+    scrollbar-face-color: $foreground-color;
+    scrollbar-track-color: $background-color;
+  }
+}
+@mixin button-height($height, $padding: 0px) {
+  height: $height;
+  .icon {
+    line-height: $height - $padding;
+  }
+}
+@mixin fixed-width-button($textWidth: auto) {
+  //width: $width;
+  .text {
+    display: block;
+    text-align: left;
+    float: left;
+    line-height: 1;
+  }
+  .icon {
+    display: block;
+    float: left;
+  }
+}
+@mixin transparent-button($backgroundHover) {
+  background-color: transparent;
+  &:hover {
+    background-color: $backgroundHover;
+  }
+}

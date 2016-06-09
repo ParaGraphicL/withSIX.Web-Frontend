@@ -1,0 +1,20 @@
+@import "../../../templates/_v2.scss";
+
+#tab-view-render-groups {
+  li.group {
+    .logo {
+      display: inline-block;
+      @include wide-from-height(32px,'');
+      img {
+        @include wide-from-height(32px);
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+      }
+    }
+    .imageholder {
+      display: block;
+      @include wide-from-height(32px,'');
+    }
+  }
+}

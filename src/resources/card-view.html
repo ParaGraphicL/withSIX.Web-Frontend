@@ -1,0 +1,47 @@
+<template class="row">
+  <require from="./card-view.scss"></require>
+
+  <template replaceable part="prepend-items"></template>
+
+  <template if.bind="items">
+    <template repeat.for="item of items">
+      <div class.bind="cardContainerCls">
+        <div class="card ${cardCls}">
+          <compose model.bind="item" view-model="${viewPath}${item.type || itemType}"></compose>
+        </div>
+      </div>
+      <div class.bind="cardContainerCls" if.bind="w6.renderAds && showAds && $index == ads[0]">
+        <div class="card ${cardCls}">
+          <ad-unit unit-id="angular-ad1"></ad-unit>
+        </div>
+      </div>
+      <div class.bind="cardContainerCls" if.bind="w6.renderAds && showAds && $index == ads[1]">
+        <div class="card ${cardCls}">
+          <ad-unit unit-id="angular-ad2"></ad-unit>
+        </div>
+      </div>
+    </template>
+  </template>
+
+  <template if.bind="itemsMap">
+    <template repeat.for="[key, item] of itemsMap">
+      <div class.bind="cardContainerCls">
+        <div class="card ${cardCls}">
+          <compose model.bind="item" view-model="${viewPath}${item.type || itemType}"></compose>
+        </div>
+      </div>
+      <div class.bind="cardContainerCls" if.bind="w6.renderAds && showAds && $index == ads[0]">
+        <div class="card ${cardCls}">
+          <ad-unit unit-id="angular-ad1"></ad-unit>
+        </div>
+      </div>
+      <div class.bind="cardContainerCls" if.bind="w6.renderAds && showAds && $index == ads[1]">
+        <div class="card ${cardCls}">
+          <ad-unit unit-id="angular-ad2"></ad-unit>
+        </div>
+      </div>
+    </template>
+  </template>
+
+  <template replaceable part="additional-items"></template>
+</template>

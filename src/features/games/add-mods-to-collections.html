@@ -1,0 +1,27 @@
+<template>
+  <ai-dialog class="ai-dialog">
+    <ai-dialog-header>
+      <h2>Add mods to collections</h2>
+    </ai-dialog-header>
+
+    <ai-dialog-body>
+      Adding
+      <ul><li repeat.for="m of model.mods">${m.name} [${m.packageName}]</li></ul>
+
+      To
+      <form role="form">
+        <div repeat.for="c of collections">
+          <label>
+            <input type="checkbox" model.bind="c" checked.bind="$parent.selectedCollections">
+            <span>${c.name}</span>
+          </label>
+        </div>
+      </form>
+    </ai-dialog-body>
+
+    <ai-dialog-footer>
+      <command-button model.bind="ok"></command-button>
+      <command-button model.bind="cancel"></command-button>
+    </ai-dialog-footer>
+  </ai-dialog>
+</template>

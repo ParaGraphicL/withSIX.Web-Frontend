@@ -1,0 +1,53 @@
+<template>
+	<section class="au-animate library" id="my-home">
+		<h2 class="page-title">${heading | usertitle}</h2>
+
+		<div class="tile" if.bind="!clientEnabled">
+			<compose view="features/_get_client.html"></compose>
+		</div>
+
+		<div class="row">
+			<div class="col-md-4" if.bind="clientEnabled">
+				<h3 class="row-header">Recently played</h3>
+				<card-view items-map.bind="model.recent" card-container-cls="col-sm-6 col-md-12" card-cls="content-basketable" view-path="features/profile/content/"></card-view>
+			</div>
+
+			<div class="col-md-8">
+				<h3 class="row-header">Your games</h3>
+				<card-view items-map.bind="model.games" show-ads.bind="false" card-container-cls="col-sm-2 game" card-cls="content-basketable" view-path="features/profile/content/" item-type="game-box" class="games">
+					<template replace-part="additional-items">
+						<div class="col-sm-6 col-md-2 game">
+							<div class="card img">
+								<a href="/me/library">
+									<span class="imageholder au-target" back-img.bind="image" au-target-id="186" style="background-image: url(http://i.imgur.com/JkMOiIw.png);"></span>
+								</a>
+							</div>
+						</div>
+					</template>
+				</card-view>
+
+				<div if.bind="clientEnabled">
+					<div class="row subcontent-row">
+						<div class="col-sm-6">
+							<h3 class="row-header">New installs</h3>
+						</div>
+						<div class="col-sm-6">
+							<command-button class="pull-right row-header-button" model.bind="updateAll">Update all</command-button>
+							<h3 class="row-header">Updates ${model.updates.size}</h3>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-6">
+						<card-view items-map.bind="model.newContent" card-container-cls="col-sm-6 col-md-12" card-cls="horizontal content-basketable" ad-unit-id1="angular-ad2" view-path="features/profile/content/"></card-view>
+					</div>
+					<div class="col-sm-6">
+						<card-view items-map.bind="model.updates" card-container-cls="col-sm-6 col-md-12" card-cls="horizontal content-basketable" ad-unit-id1="angular-ad2" view-path="features/profile/content/"></card-view>
+					</div>
+				</div>
+			</div>
+
+		</div>
+		</div>
+	</section>
+</template>

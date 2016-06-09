@@ -1,0 +1,36 @@
+<template>
+  <div>
+    <div class="form-group">
+      <label for="start-with-windows">Start with Windows</label>
+      <input name="start-with-windows" id="start-with-windows" type="checkbox" checked.bind="model.launchWithWindows"></input>
+    </div>
+    <div class="form-group">
+      <label for="opt-out-error-reports">Opt-out automatic error reporting</label>
+      <input name="opt-out-error-reports" id="opt-out-error-reports" type="checkbox" checked.bind="model.optOutErrorReports"></input>
+    </div>
+    <div class="form-group">
+      <label for="enable-desktop-notifications">Enable desktop notifications</label>
+      <input name="enable-desktop-notifications" id="enable-desktop-notifications" type="checkbox" checked.bind="model.enableDesktopNotifications"></input>
+    </div>
+  </div>
+
+  <div>
+    <h3>Mod upload</h3>
+    <command-button model.bind="installExtension"></command-button>
+    <command-button model.bind="uninstallExtension"></command-button>
+  </div>
+
+  <div>
+    v${model.version}
+    <a href="/legal" click.delegate="cancel()">License</a>
+  </div>
+
+  <div class="buttons">
+    <div class="form-controls pull-right">
+      <!-- <button class="naked-button prominent" click.delegate="openHelp()">Help</button> -->
+      <button class="cancel" click.delegate="cancel()">Cancel</button>
+      <button class="ok" click.delegate="ok()">Save</button>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+</template>

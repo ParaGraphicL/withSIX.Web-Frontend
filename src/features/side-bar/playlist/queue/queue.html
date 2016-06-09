@@ -1,0 +1,32 @@
+<template>
+  <require from="./queue.scss"></require>
+  <div class="queue" hover.bind="hovered" if.bind="items.length > 0">
+    <div class="content">
+      <div class="pull-right">
+        <button class="text-button" click.delegate="isExpanded = !isExpanded" title="${active | active:items.length} activity">
+          ${active | active:items.length}
+          <i if.bind="active" class="fa fa-circle-o-notch fa-spin"></i>
+        </button>
+      </div>
+    </div>
+    <div class="expand au-animate">
+      <div class="basket-body" show.bind="isExpanded">
+        <header>
+          <div class="title">
+            Queue
+          </div>
+        </header>
+        <div class="body-content">
+          <div class="no-items" if.bind="items.length == 0">
+            No items queued currently
+          </div>
+          <ul if.bind="items.length > 0">
+            <li repeat.for="item of items">
+              <compose view-model="./queue-item" model.bind="item"></compose>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>

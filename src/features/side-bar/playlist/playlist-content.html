@@ -1,0 +1,5 @@
+<template>
+  <template repeat.for="item of basketItems">
+    <compose model.one-time="{item: item, stat: stat, chain: chain, level: 0, currentGameId: basket.gameId}" view-model="./playlist-item"></compose>
+  </template>
+</template>

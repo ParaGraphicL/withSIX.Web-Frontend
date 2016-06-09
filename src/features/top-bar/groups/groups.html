@@ -1,0 +1,12 @@
+<template>
+  <require from="./groups.scss"></require>
+  <div id="top-bar-groups">
+    <div class="tab-header">${model.header}</div>
+
+    <div class="the-content" scroll.trigger="closeDropdowns()">
+      <loading-composer view-model="features/top-bar/groups/group-list"></loading-composer>
+    </div>
+
+    <command-button model.bind="createGroup" class="bottom"></command-button>
+  </div>
+</template>

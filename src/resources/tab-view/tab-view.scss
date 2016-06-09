@@ -1,0 +1,302 @@
+@import "_base";
+@import '_content';
+tab-view {}
+$iconSize: 16px;
+$iconCntr: $iconSize / 2;
+$height: 48px;
+$indicatorX: -12px;
+$indicatorY: 34px;
+$lineSize: 1px;
+$lineMargin: 8px;
+@function offSetIndicator($input, $offset) {
+   @return $input - $iconCntr + $offset;
+}
+nav.tab-strip {
+  text-align: center;
+  vertical-align: middle;
+  .indicator {
+    position: absolute;
+    z-index: 2;
+    &.arrow {
+      color: white;
+      display: none;
+      font-size: 24px;
+    }
+  }
+  .tab-btn-inner {
+    z-index: 1;
+    position: relative;
+  }
+  @mixin notification($start, $end) {
+    background-color: $start;
+    .notification-inner button:hover {
+      background-color: $end;
+    }
+  }
+  @mixin notificationDifferent($start, $end) {
+    background-color: $start;
+    .notification-inner {
+      command-button {
+        background-color: white;
+      }
+      button {
+        @include bg-mask($end);
+      }
+    }
+  }
+  .notification,
+  button.notification {
+    @include anim-transition(background-color);
+    $startedColor: $colorSixMediumGray;
+    $startColor: $colorSixGreen;
+    $restartColor: $colorSixOrange;
+    $failColor: $colorSixSoftRed;
+    $successColor: $colorSixBlue;
+    //@include notification($startedColor, $successColor);
+    &.start-state {
+      @include notification($startedColor, $restartColor);
+      button {
+        color: $colorSixLightGray;
+        &:hover {
+          color: white;
+        }
+        &.cancel {
+          &:hover {
+            background-color: $failColor;
+          }
+        }
+      }
+    }
+    &.cancel-state {
+      @include notificationDifferent($startedColor, $restartColor);
+    }
+    &.end-state,
+    &.success-state {
+      @include notificationDifferent($successColor, $startColor);
+    }
+    &.error-state {
+      @include notificationDifferent($failColor, $restartColor);
+    }
+  }
+  div.notification {
+    .notification-inner {
+      width: 0;
+      @include anim-transition(width);
+      button {
+        display: none;
+        background-color: transparent;
+      }
+    }
+    &.active {
+      .notification-inner {
+        width: 300px;
+        button {
+          display: block;
+        }
+      }
+    }
+    text-align: left;
+    font-size: $font-size-small;
+    position: absolute;
+    height: 48px;
+    //text-align: center;
+    vertical-align: middle;
+    //line-height: 24px;
+    margin-left: 64px; // todo: left and top instead?
+    //padding: 0px 4px;
+    .content {
+      padding: 4px 8px;
+    }
+    .row1,
+    .row2 {
+      @include limit-lines(1,$font-size-small);
+    }
+    .title {
+      text-transform: uppercase;
+    }
+    .text {
+      font-weight: $font-weight-medium;
+    }
+    .icon {
+      font-size: $font-size-small;
+      vertical-align: middle;
+    }
+    button {
+      .icon {
+        font-size: $font-size-big;
+      }
+    }
+  }
+  .progress-title {
+    font-size: $font-size-tiny;
+  }
+  button {
+    @include anim-transition(background-color);
+  }
+  .active {
+    //&.dropdown {
+    .indicator {
+      &.arrow {
+        display: inline-block;
+      }
+    }
+    //}
+  }
+  .tab-component.end {
+    position: absolute;
+    right: 0;
+  }
+  &.bottom,
+  &.top {
+    .line {
+      width: $lineSize;
+      border-right: $lineSize inset white;
+      height: $height - ($lineMargin * 2);
+      margin: $lineMargin;
+      float: left;
+    }
+    .tab-component {
+      &.end,
+      &.middle,
+      &.start,
+      tab-view-items {
+        float: left;
+      }
+    }
+  }
+  &.top {
+    .indicator {
+      margin-top: (-$iconCntr * 2) + $height + 4px;
+      margin-left: (-$iconCntr * 2) + ($height / 2) + 2px;
+      &.arrow {
+        margin-top: $indicatorY;
+        margin-left: $indicatorX;
+        &:before {
+          content: "\e652";
+        }
+      }
+    }
+  }
+  &.bottom {
+    .indicator {
+      position: absolute;
+      margin-left: -$iconCntr;
+      margin-top: -$iconCntr;
+      &.arrow {
+        margin-left: $indicatorX;
+        margin-top: $indicatorX;
+        &:before {
+          content: "\e65c";
+        }
+      }
+    }
+  }
+  &.left,
+  &.right {
+    .line {
+      margin: $lineMargin;
+      border-top: $lineSize inset white;
+    }
+  }
+  &.left {
+    float: left;
+    .indicator {
+      position: absolute;
+      margin-top: (-$iconCntr * 2) + $height + 2px;
+      margin-left: 20px; //(-$iconCntr * 2) + $height + 4px; // Why don't we need the off-center here, but do for top?
+      &.arrow {
+        margin-top: 14px;
+        margin-left: 17px;
+        &:before {
+          content: "\e659";
+        }
+      }
+    }
+    .tab-component.end {
+      right: auto;
+      bottom: 0;
+    }
+  }
+  &.right {
+    float: right;
+    margin-top: (-$iconCntr * 2) + $height + 2px;
+    margin-left: (-$iconCntr * 2) - (($height / 2) + 4px);
+    .tab-component.end {
+      right: auto;
+      bottom: 0;
+    }
+    .indicator {
+      &.arrow {
+        &:before {
+          content: "\e656";
+        }
+      }
+    }
+  }
+  .tab-header {
+    @include progress-class-creator(".item-progress-", ".item-progress-width", ".item-progress-text");
+    .item-progress-width {
+      background-color: $colorSixBlue;
+      position: absolute;
+    }
+    @include progress-class-creator(".item2-progress-", ".item2-progress-width", ".item2-progress-text");
+    .item2-progress-width {
+      background-color: $colorSixOrange;
+      position: absolute;
+      margin-top: 28px;
+      height: 8px;
+    }
+  }
+}
+.tab-content-container {
+  &.active {
+    -webkit-filter: drop-shadow(0px 0px 8px rgba(0, 0, 0, 0.75));
+    filter:drop-shadow(0px 0px 8px rgba(0, 0, 0, 0.75));
+  }
+  center.loading,
+  span.loading {
+    color: $colorSixGray;
+  }
+  .tab-content-inner {
+    .tab-content {
+      padding: 16px 8px;
+    }
+    overflow-y: auto;
+    overflow-x: hidden;
+    /* header */
+    header {
+      .dropdown-toggle {
+        color: $colorSixGray;
+      }
+    }
+    .tab-header {
+      text-transform: uppercase;
+      .main-text {
+        font-weight: $font-weight-bold;
+      }
+      a {
+        color: $colorSixGray;
+      }
+    }
+    // .title {
+    //   margin-top: 16px;
+    //   margin-bottom: 8px;
+    //   text-transform: uppercase;
+    //   a {
+    //     text-decoration: none;
+    //     color: white;
+    //     font-size: $font-size-medium;
+    //   }
+    // }
+    .dropdown-toggle {
+      margin-top: -6px;
+    }
+  }
+  .tab-header {
+    line-height: 1.0;
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+  }
+}

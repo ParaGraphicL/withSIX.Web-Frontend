@@ -1,0 +1,18 @@
+<template>
+  <div class="container-fluid">
+    Server index
+    <labs lab-link="https://community.withsix.com/topic/85/add-a-server-browser-to-sync-web-vote-here/2"></labs>
+    <!-- <table class="virtual-table">
+      <tr virtual-repeat.for="item of model.addresses">
+        <compose view-model="./server-item" model.bind="item"></compose>
+      </tr>
+    </table> -->
+    <div class="tile">
+      <virtual-list items.bind="model.addresses">
+        <template replace-part="item-template">
+          <compose view-model="./server-item" model.bind="item"></compose>
+        </template>
+      </virtual-list>
+    </div>
+  </div>
+</template>

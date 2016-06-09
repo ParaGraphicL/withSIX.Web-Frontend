@@ -1,0 +1,100 @@
+<template>
+	<div class="container-fluid">
+		<div class="tabbar">
+			<menu items.bind="menuItems"></menu>
+		</div>
+	</div>
+
+	<div class="container-fluid" id="update-page">
+		<h1 class="pagetitle"><b>Sync withSIX</b> Updates</h1>
+		<div class="row">
+			<div class="col-md-6">
+				<div class="tile" if.bind="w6.renderAds">
+					<ad-unit unit-id="angular-ad1"></ad-unit>
+				</div>
+
+				<section class="tile client-info" style="height:220px">
+					<div>
+						<div class="pull-right">
+							<div><a class="btn" href="https://trello.com/b/EQeUdFGd/withsix-report-issues" target="_blank" style="margin-top: 40px;padding-left: 24px;">REPORT <b>ISSUES</b></a>
+							</div>
+							<div><a class="btn" href="https://community.withsix.com/category/4/comments-feedback" target="_blank" style="margin-top: 15px;padding-left: 24px;">GIVE <b>FEEDBACK</b></a>
+							</div>
+						</div>
+
+						<div>
+							<span if.bind="isConnected && clientInfo">
+								<h2>Update to the latest version of Sync withSIX now</h2>
+								<br />
+								<small>Your current version: ${clientInfo.version}</small>
+							</span>
+							<span if.bind="!isConnected && !model.updated">No client detected</span>
+						</div>
+					</div>
+
+					<div if.bind="w6.isFirefox && !isConnected">
+						<h2>Firefox Security Exception</h2>
+						<p>
+							In order to use Sync with Firefox you need to accept the Firefox Security Exception
+							<a target="_blank" href.bind="w6.client.endpoint">click here</a> to allow SYNC to connect to Firefox and then just refresh this page.
+						</p>
+					</div>
+
+					<div if.bind="!isConnected && !clientInfo">
+						<h2>Trouble updating?</h2>
+						<ol>
+							<li>Close the Sync withSIX client</li>
+							<li><a href="/download">Download and install the latest version</a></li>
+						</ol>
+					</div>
+
+					<!-- TODO: Progress reporting? -->
+				</section>
+
+				<div if.bind="model.updated || isConnected">
+					<button class="btn updatebtn ${!isConnected ? 'noclient' : ''} ${isConnected && hasUpdates ? 'updateavailable' : ''}" style="text-align: center" command.bind="updateClient">
+						<span class="no-tween-out" if.bind="!isConnected">
+							<span class="no-tween-out" if.bind="!model.updated">No Client detected</span>
+						<span class="no-tween-out" if.bind="model.updated">Waiting for client restart..</span>
+						</span>
+						<span class="no-tween-out" if.bind="isUptodate">Your client is uptodate!</span>
+						<span class="no-tween-out" if.bind="updateState == 3">Downloading update</span>
+						<span class="no-tween-out" if.bind="updateState == 4">Installing update</span>
+						<span class="no-tween-out" if.bind="hasUpdates">Update Sync withSIX to ${clientInfo.newVersionAvailable}</span>
+					</button>
+				</div>
+
+				<section class="blog">
+					<div class="header">
+						<span class="share-buttons pull-right">
+							<!--  disabled because it pushes the last button out of view. <a class="tiny">FOLLOW <b>US</b></a> -->
+							<a class="tiny">FOLLOW <b>US</b></a>
+							<a href="https://twitter.com/SixNetworks" rel="external" class="icon twitter" target="_blank">
+								<span class="icon withSIX-icon-Social-Twitter"></span>
+						</a>
+						<a href="https://www.facebook.com/withSIX" rel="external" class="icon facebook" target="_blank">
+							<span class="icon withSIX-icon-Social-Facebook"></span>
+						</a>
+						</span>
+						<h2 class="stream-title">withSIX blog</h2>
+
+						<template repeat.for="post of model.blogPosts">
+							<compose view="./_post_preview.html"></compose>
+						</template>
+					</div>
+				</section>
+			</div>
+
+			<section class="col-md-6 changelog">
+				<div class="tile">
+					<compose view="./_donate.html"></compose>
+				</div>
+				<div>
+					<h2>Changelogs</h2>
+					<div innerHTML.bind="changelog | pagedown" class="tile entries"></div>
+				</div>
+				<ad-unit unit-id="angular-ad2"></ad-unit>
+			</section>
+		</div>
+	</div>
+</template>

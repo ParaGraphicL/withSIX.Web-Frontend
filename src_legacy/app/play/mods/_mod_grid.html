@@ -1,0 +1,92 @@
+<div class="content-basketable {{getItemClass(item)}}" ng-class="{'content-stateable': w6.enableBasket, 'in-basket': isInBasket(item), 'followed': followed[item.id]}" itemscope itemtype="http://schema.org/CreativeWork">
+  <div class="basket-content-progess-bar content-state-progress-width content-state-progress-c-bgd">&nbsp;</div>
+  <div class="img">
+    <div ng-if="w6.enableBasket && canAddToBasket()" class="pull-left">
+      <button class="content-basketable-button" ng-click="addToBasket(item) && $event.stopPropagation()">
+        <span class="content-basketable-icon"></span>
+        <span class="content-basketable-text"></span>
+      </button>
+      <!--        <button ng-click="directDownload(item) && $event.stopPropagation()"
+                  ng-disabled="processing || (clientInfo.globalLock || clientInfo.gameLock)"
+                  http-progress="content.installContent"
+                  http-processing="processing"
+                  http-pending="Installing..."
+                  http-success="Installed!"
+                  http-error="Failed...">
+              DL
+          </button>-->
+    </div>
+    <div class="dropdown std-dropdown pull-right" ng-if="w6.userInfo.id">
+      <button class="dropdown-toggle text-button" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" ng-click="$event.preventDefault()">
+        <span class="icon withSIX-icon-Share-Dots-V"></span>
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+        <li>
+          <a href="#" ng-click="addToCollections(item)">Add to ...</a>
+        </li>
+      </ul>
+    </div>
+    <a ng-href="{{::getItemUrl(item)}}">
+      <span class="imageholder" sx-back-img="{{getImage(item.avatar, item.avatarUpdatedAt)}}">
+      </span>
+      <!--
+        <div class="stats details-overlay-reverse tiny" ng-hide="views.grid.overlays[$index]">
+            <div>
+                <span>{{item.modsCount}}</span>
+                <span class="withSIX-icon-Nav-Mod"></span>
+            </div>
+        </div>
+        -->
+    </a>
+  </div>
+
+  <div class="info content-state-c-bgd-border" ng-init="isForActiveGame = item.gameId == game.id">
+    <div class="title">
+      <div ng-if="!isForActiveGame" class="alternative-game" title="This content was made for {{item.game.name}}">
+        <img ng-src="{{w6.url.cdn}}/img/play.withSIX/games/{{item.game.slug}}/{{item.game.slug == 'arma-2' ? 'arma2-blck' : 'logo-overview'}}.png" />
+      </div>
+      <a ng-href="{{::getItemUrl(item)}}" ng-class="{'with-alternative-game': !isForActiveGame}">
+        <span>{{::item.name || item.packageName}}</span>
+      </a>
+      <span class="small"><i title="{{item.latestStableVersion && item.latestStableVersion != item.modVersion ? 'newer dev version: ' + item.modVersion : ''}}">{{formatVersion(versionConstraints[item.id] || item.latestStableVersion || item.modVersion)}}</i></span>
+    </div>
+    <div class="tiny">
+      <div class="pull-left" ng-include="'/src_legacy/app/play/shared/_author.html'" ng-init="author = item.author; authorText = item.authorText"></div>
+      <div class="pull-right">
+        <i>{{item.stat.install}} installs</i>
+      </div>
+    </div>
+  </div>
+
+  <div class="details-overlay" ng-hide="!views.grid.overlays[$index]">
+    <a ng-href="{{::getItemUrl(item)}}">
+      <div class="bg"></div>
+      <!-- <div class="description small">
+        <span>{{::getDescription(item) | htmlToPlaintext2}}</span>
+      </div> -->
+
+      <div class="microinfo tiny pull-right">
+        <div class="tags" title="tags" itemprop="keywords">
+          <a class="tag" ng-href="{{getTagLink(item, tag)}}" title="{{tag}}" ng-repeat="tag in item.tags | limitTo:4">{{tag}}</a>
+        </div>
+        <div title="{{item.size | bytes:2}} unpacked">{{item.sizePacked | bytes:2}}</div>
+        <br/>
+        <div title="followers">
+          <span>{{item.stat.installs}}</span>
+          <span class="withSIX-icon-Follow"></span>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <div class="content-state-c-bgd details-overlay-footer" ng-if="w6.enableBasket">
+    <!-- <div ng-if="w6.enableBasket" class="pull-right details-overlay-footer-localstate">
+      <span class="pull-right" style="display:none;">Installed {{::item.version && item.version[0] != 'v' ? 'v' + item.version : item.version}}</span>
+    </div> -->
+    <button class="details-overlay-footer-state" ng-click="directDownload(item);">
+      <span class="content-state-icon"></span>
+      <span class="content-state-text"></span>
+    </button>
+    <button class="details-overlay-footer-state" ng-if="isActive(item)" ng-click="abort(item)">Pause</button>
+  </div>
+</div>

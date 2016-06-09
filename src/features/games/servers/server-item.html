@@ -1,0 +1,27 @@
+<template>
+  <div if.bind="loading">
+    Loading ${model.address | ipEndpoint}
+  </div>
+  <div if.bind="!loading">
+    <td>${model.ping}ms</td>
+    <td>
+      <command-button model.bind="refresh">
+        <template replace-part="content">
+        <span class="icon ${refresh.icon}"></span>
+      </template>
+      </command-button>
+    </td>
+    <td><command-button model.bind="join">
+      <template replace-part="content">
+        <span class="icon ${join.icon}"></span>
+    </template></command-button></td>
+    <td>${model.numPlayers} / ${model.maxPlayers} plyrs |</td>
+    <td>
+      <i class="icon withSIX-icon-Lock" if.bind="model.passwordRequired"></i>
+      <a href="/p/Arma-3/servers/${slug}">${model.name}</a> [${model.gameState} | ${model.gameType}] |
+      v${model.gameVersion} |
+    </td>
+    <td>${model.mods.length} mods |</td>
+    <td>[${model.missionName} @ ${model.mapName}]</td>
+  </div>
+</template>

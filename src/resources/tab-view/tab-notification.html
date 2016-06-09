@@ -1,0 +1,27 @@
+<template>
+  <command-button class="pull-right" model.bind="model.command" if.bind="model.command"></command-button>
+  <div class="content">
+    <conditional-title condition.bind="model.details != null" desired-title.bind="model.details">
+      <a href.bind="model.href" class="text-link" if.bind="model.href" click.trigger="visit()">
+        <div class="row1">
+          <span class="title" show.bind="model.title">${model.title}</span>
+          <span class="progress-title" show.bind="model.progress != null">${model.progress | progress} <span show.bind="model.speed != null">@ ${model.speed | speed:'B':false}</span></span>
+        </div>
+        <div class="row2">
+          <span class="icon ${model.icon}" if.bind="model.icon"></span>
+          <span class="text" show.bind="model.text" title.bind="model.text">${model.text}</span>
+        </div>
+      </a>
+      <div if.bind="!model.href">
+        <div class="row1">
+          <span class="title" show.bind="model.title">${model.title}</span>
+          <span class="progress-title" show.bind="model.progress != null">${model.progress | progress} <span show.bind="model.speed != null">@ ${model.speed | speed:'B':false}</span></span>
+        </div>
+        <div class="row2">
+          <span class="icon ${model.icon}" if.bind="model.icon"></span>
+          <span class="text" show.bind="model.text" title.bind="model.text">${model.text}</span>
+        </div>
+      </div>
+    </conditional-title>
+  </div>
+</template>

@@ -1,0 +1,323 @@
+@import "_base";
+@import '_content';
+#my-games,
+#my-library,
+#my-library-show-home,
+.library {
+  .col1 {
+    @include make-md-column(5);
+  }
+  .col2 {
+    @include make-md-column(3.5);
+  }
+  .col3 {
+    @include make-md-column(3.5);
+  }
+  button.row-header-button,
+  command-button.row-header-button button,
+  dropdown-menu.row-header-button button {
+    font-size: 0.7em;
+    text-decoration: inherit;
+    height: 28px;
+    position: relative;
+    top: -3px;
+    border: none;
+    padding: 0 20px;
+    //margin-top: 24px;
+    &.c-blue {
+      background-color: $colorSixBlue;
+      color: white;
+    }
+    &.c-orange {
+      background-color: $colorSixOrange;
+      color: white;
+    }
+  }
+  .row-header-button {
+    &.c-blue {
+      button {
+        background-color: $colorSixBlue;
+        color: white;
+      }
+    }
+    &.c-orange {
+      button {
+        background-color: $colorSixOrange;
+        color: white;
+      }
+    }
+  }
+  card-view {
+    .details-overlay-footer {
+      padding: 0;
+    }
+    .content-stateable {
+      @include extend-content-state-colors("bgd-border", true, border-bottom-color);
+    }
+    .card {
+      dropdown-menu {
+        display: none;
+      }
+      &:hover {
+        dropdown-menu {
+          display: block;
+        }
+      }
+      &.horizontal {
+        conditiona-title {
+          display: block;
+        }
+        .alternative-game {
+          display: none;
+        }
+        div.img {
+          float: left;
+          width: 170px;
+          .imageholder {
+            height: 92px;
+          }
+        }
+        div.info {
+          height: 92px;
+        }
+        .basket-content-progess-bar {
+          height: 92px;
+        }
+        action-bar.basketable-action button {
+          left: 0;
+        }
+        .basketable-dropdown button.dropdown-toggle {
+          right: 12px;
+        }
+      }
+    }
+    h3.row-header {
+      margin-bottom: 18px;
+      font-size: 1.5em;
+      font-weight: 300;
+    }
+    .card,
+    .collection {
+      .bottom-bar {
+        height: 28px;
+        /*ul, li, button {
+          width: 100%;
+      }*/
+        action-bar button {
+          padding-left: 20px;
+          padding-right: 20px;
+          text-transform: uppercase;
+        }
+        action-bar button,
+        button.dropdown-toggle {
+          color: inherit;
+          font-size: 0.7em;
+          text-decoration: inherit;
+          height: 28px;
+          position: relative;
+          left: 0;
+          font-size: $font-size-small;
+          border: none;
+          color: white;
+          background-color: transparentize($colorSixDarkGray, 0.4);
+          padding: 5px 10px;
+          right: 12px;
+        }
+        dropdown-menu {
+          padding-left: 4px;
+        }
+      }
+    }
+  }
+  .game {
+    $width: 110px + 30px; // padding
+    width: $width;
+    margin-bottom: 40px;
+    .card {
+      &:hover {
+        .title a {
+          color: $colorSixBlue;
+        }
+      }
+      .img {
+        position: relative;
+        .imageholder {
+          display: block;
+          height: 156px;
+        }
+        background-color: white;
+        background-size: contain;
+      }
+      .info {
+        height: 4px;
+        padding: 0;
+        background: white;
+        overflow: hidden;
+      }
+      .bottom-bar {
+        left: 30px;
+        right: 30px;
+        action-bar {
+          button,
+          li,
+          ul {
+            width: 100%;
+          }
+          button {
+            color: inherit;
+            background-color: inherit;
+            font-size: 0.7em;
+            text-decoration: inherit;
+          }
+        }
+      }
+    }
+  }
+}
+#my-games {
+  card-view {
+    .card {
+      margin-bottom: 16px;
+      .bottom-bar {
+        left: 30px;
+        right: 30px;
+      }
+      dropdown-menu {
+        .dropdown-toggle {
+          z-index: 10;
+        }
+      }
+    }
+    .info {
+      height: 64px;
+    }
+    span.bg-hover {
+      background-size: cover;
+      position: absolute;
+      top: 0;
+      display: block;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 3;
+      opacity: 0;
+      -webkit-transition: 0.3s;
+      -moz-transition: 0.3s;
+      -o-transition: 0.3s;
+      transition: 0.3s;
+      background-position: center;
+    }
+    .basketable-dropdown {
+      opacity: 0;
+      -webkit-transition: 0.3s;
+      -moz-transition: 0.3s;
+      -o-transition: 0.3s;
+      transition: 0.3s;
+    }
+    .logo {
+      height: 141px;
+      line-height: 141px;
+      display: block;
+      text-align: center;
+      z-index: 4;
+      position: relative;
+    }
+    .content-stateable:hover {
+      .basketable-dropdown {
+        opacity: 1;
+        -webkit-transition: 0.3s;
+        -moz-transition: 0.3s;
+        -o-transition: 0.3s;
+        transition: 0.3s;
+      }
+    }
+    .content-stateable:hover span.bg-hover {
+      opacity: 1;
+      -webkit-transition: 0.3s;
+      -moz-transition: 0.3s;
+      -o-transition: 0.3s;
+      transition: 0.3s;
+    }
+  }
+  select {
+    border: 0;
+  }
+}
+.library-menu {
+  & > .well {
+    background-color: initial;
+    border: none;
+    box-shadow: none;
+    -webkit-box-shadow: none;
+    padding: 0;
+    & > li {
+      & > a {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        border-left: 48px solid $colorSixLightGray;
+        text-decoration: none;
+        background-color: $colorSixBlue;
+        &:hover {
+          background-color: $colorSixBlue;
+        }
+        & > .icon {
+          margin-left: -51px;
+          float: left;
+          margin-top: 1px;
+          font-size: 24px;
+          color: $colorSixBlue;
+        }
+      }
+      &:not(.active) {
+        & > a {
+          background-color: white;
+          color: $colorSixMediumGray;
+          &:hover {
+            //background-color: $colorSixBlue;
+            //color: white;
+            & > .icon {
+              color: $colorSixBlue;
+            }
+          }
+          & > .icon {
+            color: $colorSixMediumGray;
+          }
+        }
+      }
+      margin-bottom: 16px;
+    }
+  }
+}
+.page-title {
+  font-size: 2.5em;
+  margin-top: 0;
+}
+.stranger-danger {
+  background-color: $colorSixBlue;
+  color: white;
+  padding: 10px 16px;
+  line-height: 28px;
+  a,
+  button {
+    //color: white;
+    //background-color: blue;
+    //font-size: 0.7em;
+    text-decoration: inherit;
+    position: relative;
+    border: none;
+    padding-left: 20px;
+    padding-right: 20px;
+    //margin-top: 24px;
+    margin-left: 10px;
+    background-color: white;
+    color: $colorSixBlue;
+  }
+  a {
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+  button {
+    height: 28px;
+    padding: 0 4px;
+  }
+}

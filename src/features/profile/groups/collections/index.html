@@ -1,0 +1,15 @@
+<template>
+  <compose view="../_header.html"></compose>
+
+  <card-view items.bind="group.collections" view-path="features/profile/groups/collections/" item-type="collection">
+    <template replace-part="prepend-items">
+      <div class.bind="cardContainerCls" if.bind="isAdmin">
+      <div class="card ${cardCls} new-item">
+        <header>ADD Collection</header>
+        <div class="add">
+          <command-button model.bind="create"></command-button>
+        </div>
+      </div>
+    </template>
+  </card-view>
+</template>

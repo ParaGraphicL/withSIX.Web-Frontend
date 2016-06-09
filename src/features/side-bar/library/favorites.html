@@ -1,0 +1,8 @@
+<template>
+  <h2>Favorites</h2>
+  <ul class="menu main">
+    <li repeat.for="f of model.favorites">
+      <compose view-model="features/profile/content/${f.type}" view="./_item.html" model.bind="f"></compose>
+    </li>
+  </ul>
+</template>

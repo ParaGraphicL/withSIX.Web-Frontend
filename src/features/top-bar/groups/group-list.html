@@ -1,0 +1,7 @@
+<template>
+  <ul class="menu main">
+    <li repeat.for="group of groups" class="group">
+      <compose view-model="./group" model.bind="group"></compose>
+    </li>
+  </ul>
+</template>

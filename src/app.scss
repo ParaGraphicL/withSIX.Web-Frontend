@@ -1,0 +1,278 @@
+@import "_base";
+@include scrollbars(0.5em, rgb(213, 213, 213), rgb(60, 60, 60));
+virtual-list {
+  height: 500px;
+  display: block;
+  // ul {
+  //   display: table;
+  //   li {
+  //     display: table-row;
+  //   }
+  // }
+}
+.virtual-table {
+  height: 500px;
+}
+.user-error-dialog {
+  max-width: 800px;
+}
+.message-dialog {
+  max-width: 800px;
+  .buttons {
+    button {
+      &.yes {
+        background-color: $colorSixBlue;
+      }
+      &.cancel,
+      &.no {
+        background-color: $colorSixSoftRed;
+      }
+    }
+  }
+}
+#changelog {
+  .entries > ul {
+    font-size: $font-size-small;
+    padding: 20px 20px 20px 40px !important;
+    background: white;
+  }
+}
+#update-page {
+  .changelog {
+    font-size: $font-size-small;
+  }
+  .updatebtn {
+    background-color: $calltoaction;
+    border: none;
+    @include center-block;
+    margin-top: -32px;
+    /*padding-right: 32px;
+    padding-left: 96px;*/
+    width: 100%;
+    height: 70px;
+    color: $color0;
+    position: relative;
+    text-align: left;
+    font-size: 22px;
+    //padding-top: 16px;
+    line-height: 26px;
+    text-decoration: none;
+    overflow: hidden;
+    &.updateavailable {
+      background-color: $colorSixOrange;
+    }
+    &.noclient {
+      background-color: $colorSixMediumGray;
+    }
+  }
+  .donations {
+    .buttons {
+      height: 240px;
+    }
+  }
+  .client-info {
+    height: 120px;
+  }
+  span.publish-buttons,
+  span.share-buttons {
+    float: right;
+    a {
+      color: $colorSixGray;
+      background-color: white;
+      border-bottom: 2px solid $colorSixGray;
+      padding: 8px;
+      text-decoration: none;
+      display: inline-block;
+      margin-left: 4px;
+      &:not(.icon) {
+        line-height: 30px;
+        padding: 0 8px;
+      }
+    }
+  }
+  span.share-buttons {
+    a {
+      display: inline-block;
+      margin-left: 4px;
+      &:not(.icon) {
+        line-height: 32px;
+        padding: 0 8px;
+        border-bottom: 0;
+      }
+      &.icon {
+        @include icon-size(24px);
+        padding: 0;
+        @include square(32px);
+      }
+      &.twitter {
+        border-color: $twitterColor;
+      }
+      &.facebook {
+        border-color: $facebookColor;
+      }
+    }
+  }
+}
+#download-page {
+  iframe {
+    margin: 0 auto;
+    display: block;
+  }
+  .tile {
+    h2 {
+      margin-top: 0;
+      font-size: 24px;
+    }
+  }
+  .sync-client-info {
+    h2 {
+      margin-top: 0;
+      margin-bottom: 8px;
+    }
+    margin-top: 32px;
+    margin-bottom: 32px;
+  }
+  .get-premium {
+    background-color: $colorSixOrange;
+    color: white;
+    a {
+      color: $colorSixOrange !important;
+      background-color: white;
+      float: none;
+      margin-right: initial;
+      display: inline-block;
+      font-size: 16px;
+      padding: 6px 12px;
+      height: inherit;
+    }
+  }
+  .changelog {
+    text-align: center;
+    font-size: $font-size-small;
+  }
+  .download-button {
+    height: 120px;
+    background-color: $colorSixBlue;
+    a.calltoaction {
+      &.maindownload {
+        width: 450px;
+        height: 100px;
+        padding-top: 32px;
+        .iconbg em.icon {
+          line-height: 80px;
+        }
+      }
+    }
+  }
+  .pitch {
+    .tile {
+      margin-bottom: 32px;
+      &.text {
+        font-size: 16px;
+        line-height: 20px;
+        margin-left: 136px;
+      }
+    }
+    .img {
+      @include squareImg(48px);
+      span {
+        color: white;
+      }
+    }
+    #smart {
+      .img {
+        background-color: $colorSixOrange;
+      }
+    }
+    #sync {
+      .img {
+        background-color: $colorSixBlue;
+      }
+    }
+    #play {
+      .img {
+        background-color: $colorSixGreen;
+      }
+    }
+    #sync-logo {
+      margin-left: auto;
+      margin-right: auto;
+      span {
+        text-align: center;
+        font-size: 64px;
+        color: $colorSixBlue;
+      }
+    }
+  }
+}
+.content-basketable {
+  .content-basketable-button,
+  action-bar.basketable-action button {
+    @include transition(background-color 0.5s ease);
+    border: none;
+    color: white;
+    background-color: transparentize($colorSixDarkGray, 0.4);
+    padding: 5px 10px;
+    .content-basketable-icon {
+      @include withSIX-icon("");
+      font-size: $font-size-tiny;
+    }
+  }
+  .basketable-dropdown button.dropdown-toggle {
+    float: right;
+    position: relative;
+    right: 12px;
+    border: none;
+    color: white;
+    background-color: transparentize($colorSixDarkGray, 0.4);
+    padding: 5px 10px;
+    .content-basketable-icon {
+      @include withSIX-icon("");
+      font-size: $font-size-tiny;
+    }
+  }
+  .content-basketable-button {
+    float: left;
+    left: 12px;
+    position: relative;
+    &:hover {
+      .content-basketable-text {
+        padding-left: 5px;
+        font-size: 13px;
+        &:before {
+          content: "ADD TO PLAYLIST";
+        }
+      }
+    }
+  }
+  action-bar.basketable-action button {
+    float: left;
+    left: 10px;
+    position: relative;
+    text-decoration: initial;
+    .content-basketable-text {
+      display: none;
+    }
+    &:hover {
+      .content-basketable-text {
+        display: initial;
+        //padding-left: 5px;
+        //font-size: 13px;
+      }
+    }
+  }
+  &.in-basket {
+    .content-basketable-button {
+      @include transition(background-color 0.5s ease);
+      background-color: transparentize($colorSixGreen, 0.4);
+      .content-basketable-icon {
+        @include withSIX-icon("");
+      }
+      &:hover {
+        .content-basketable-text:before {
+          content: "IN PLAYLIST";
+        }
+      }
+    }
+  }
+}

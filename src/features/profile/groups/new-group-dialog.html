@@ -1,0 +1,51 @@
+<template>
+  <ai-dialog class="ai-dialog">
+    <ai-dialog-header>
+      <h1>Create a group</h1>
+      Start a group to easily share and launch content with, ideal for communities and creators alike.
+    </ai-dialog-header>
+
+    <ai-dialog-body>
+      <form role="form" validate.bind="validation">
+        <field-set disabled.bind="ok.isExecuting">
+          <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" name="name" id="name" class="form-control" value.bind="model.name">
+          </div>
+
+          <div class="form-group">
+            <label for="logo">Logo: <i>(MIN. 400x400, MAX. 300 KB, PNG TRANSPARENT BACKGROUND RECOMMENDED)</i></label>
+            <input type="file" accept=".png" name="logo" id="logo" class="form-control" files.bind="model.logo">
+            <img style="max-width: 300px; max-height: 300px" if.bind="model.logo[0]" src.bind="model.logo[0] | blobToUrl">
+          </div>
+
+          <div class="form-group">
+            <label for="cover">Cover: <i>(MIN. 1920x400, MAX. 300KB PNG)</i></label>
+            <input type="file" accept=".png" name="cover" id="cover" class="form-control" files.bind="model.cover">
+            <img style="max-width: 300px; max-height: 300px" if.bind="model.cover[0]" src.bind="model.cover[0] | blobToUrl">
+          </div>
+
+          <div class="form-group">
+            <label for="homepage">Homepage: (OPTIONAL)</label>
+            <input type="text" name="homepage" id="homepage" class="form-control" value.bind="model.homepage">
+          </div>
+
+          <!-- <div class="form-group">
+            <label for="add-members">Add Members</label>
+            <button click.delegate="addMembers = true">+</button>
+            <div if.bind="addMembers">
+              <ul>
+                <li repeat.for="member of model.initialMembers"></li>
+              </ul>
+              <input type="text" class="form-control" name="add-members" id="add-members" placeholder="Enter member name..">
+            </div>
+          </div> -->
+        </field-set>
+      </form>
+    </ai-dialog-body>
+
+    <ai-dialog-footer>
+      <command-button model.bind="ok"></command-button>
+      <command-button model.bind="cancel"></command-button>
+    </ai-dialog-footer>
+  </ai-dialog>

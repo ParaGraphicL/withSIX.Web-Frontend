@@ -1,0 +1,25 @@
+<template>
+  <div show.bind="isTab" class="tab-content-container tab ${selectedTabName} ${tabStatus}" class.bind="lastActiveTab.cls">
+    <div class="tab-content-inner">
+      <div class="tab-content au-animate" id="tab-view-render-${selectedTabName}">
+        <div if.bind="isTab && lastActiveTab.viewModel">
+          <compose view-model.bind="lastActiveTab.viewModel" model.bind="lastActiveTab" compose.ref="composer" show.bind="composer.currentViewModel.model == lastActiveTab"></compose>
+          <center class="loading" if.bind="!lastActiveTab.instant && (!composer.currentController || !composer.currentController.isBound || composer.currentViewModel.model != lastActiveTab)">Loading..</center>
+        </div>
+        <div if.bind="!lastActiveTab.viewModel" class="tab-header">${lastActiveTab.header} [NO VIEW!]</div>
+      </div>
+    </div>
+  </div>
+
+  <div show.bind="isDropdown" class="tab-content-container dropdown ${selectedTabName} ${tabStatus}" class.bind="lastActiveTab.cls">
+    <div class="tab-content-inner">
+      <div class="tab-content au-animate" id="tab-view-render-${selectedTabName}">
+        <div if.bind="isDropdown && lastActiveTab.viewModel">
+          <compose view-model.bind="lastActiveTab.viewModel" model.bind="lastActiveTab" compose.ref="composer2" show.bind="composer2.currentViewModel.model == lastActiveTab"></compose>
+          <center class="loading" if.bind="!lastActiveTab.instant && (!composer2.currentController || !composer2.currentController.isBound || composer2.currentViewModel.model != lastActiveTab)">Loading..</center>
+        </div>
+        <div if.bind="!lastActiveTab.viewModel" class="tab-header">${lastActiveTab.header} [NO VIEW!]</div>
+      </div>
+    </div>
+  </div>
+</template>

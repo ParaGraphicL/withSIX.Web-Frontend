@@ -1,0 +1,31 @@
+<template>
+  <require from="./library.scss"></require>
+
+  <header class="tab-header">
+    <!-- <dropdown-menu class="pull-right" items.bind="menuItems"></dropdown-menu> -->
+    <span class="main-text">${model.header}</span>
+    <a class="active-game" href="/p/${w6.activeGame.slug}">${activeGameName}</a>
+  </header>
+
+  <hr />
+
+  <action-bar class="main header-items" orientation="vertical" items.bind="topBarItems">
+    <template replace-part="menu-item">
+      <span class="count ${item.count > 0 ? 'positive' : 'negative'} pull-right">${item.count == null ? '?' : item.count}</span>
+      <compose view="resources/dropdown-menu/dropdown-default-item.html"></compose>
+    </template>
+  </action-bar>
+
+  <hr />
+
+  <div class="the-content" scroll.trigger="closeDropdowns()">
+    <div if.bind="w6.miniClient.isConnected">
+      <loading-composer shown.bind="shown" view-model="features/side-bar/library/recent" model.bind="home"></loading-composer>
+      <hr />
+      <!-- <compose view-model="./favorites" model.bind="home"></compose> -->
+    </div>
+    <loading-composer shown.bind="shown" view-model="features/side-bar/library/collections" model.bind="home" if.bind="w6.userInfo.id"></loading-composer>
+  </div>
+
+  <button class="naked-button default bottom" click.delegate="openLibrary()">Open Full Library</button>
+</template>

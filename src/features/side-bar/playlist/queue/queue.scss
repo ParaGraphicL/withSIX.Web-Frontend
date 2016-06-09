@@ -1,0 +1,39 @@
+@import "_base";
+@import "_content";
+
+@include progress-class-creator(".item-progress-", ".item-progress-width", ".item-progress-text");
+.item-progress-width {
+  background-color: $colorSixBlue;
+  position: absolute;
+}
+
+$height: 48px;
+
+.queue {
+  .basket-body {
+    > header {
+      @include centerBox(true);
+    }
+    .body-content {
+      padding-top: 8px;
+      padding-bottom: 8px;
+      .no-items {
+        @include centerBox(true);
+      }
+    }
+  }
+  .queue-item {
+    height: $height;
+    overflow:hidden;
+    position:relative;
+
+    .item-progress-width {
+      height: $height;
+    }
+
+    .content {
+      position: relative;
+      padding: 8px;
+    }
+  }
+}

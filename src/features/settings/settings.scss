@@ -1,0 +1,26 @@
+@import "_base";
+
+#settings-dialog {
+  ul {
+    li {
+      button {
+        background-color: $colorSixGray;
+      }
+    }
+    li.active {
+      button {
+        background-color: $colorSixBlue;
+      }
+    }
+  }
+
+  .buttons {
+    background-color: $colorSixLightGray;
+    margin-left: -16px;
+    margin-right: -16px;
+    margin-bottom: -12px;
+    button {
+      margin-left: 8px;
+    }
+  }
+}

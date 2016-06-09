@@ -1,0 +1,12 @@
+*.log
+node_modules/
+.sass-cache/
+/src/**/*.css
+/src/**/*.css.map
+/src/**/*.js
+/src/**/*.js.map
+/styles/*
+bower_components/
+dist/
+dist_legacy/
+jspm_packages/

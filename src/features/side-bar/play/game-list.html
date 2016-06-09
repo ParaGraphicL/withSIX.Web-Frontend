@@ -1,0 +1,7 @@
+<template>
+  <ul class="menu main">
+    <li repeat.for="[id, game] of games" class="game ${w6.activeGame.id == game.id ? 'active' : ''}">
+      <compose view-model="./game" model.bind="game"></compose>
+    </li>
+  </ul>
+</template>

@@ -1,0 +1,26 @@
+<template>
+  <div class="entry content-basketable content-stateable content-state-${itemStateClass} ${itemBusyClass} ${isInBasket ? 'in-basket' : null} ${model.hasServers ? 'has-servers' : ''}">
+    <div class="right pull-right">
+      <!-- <dropdown-menu class="pull-left new-style share-caret" icon="caret" if.bind="bottomMenuActions && bottomMenuActions.length > 0" items.bind="bottomMenuActions"></dropdown-menu> -->
+      <dropdown-menu class="pull-left" if.bind="topMenuActions && topMenuActions.length > 0" items.bind="topMenuActions" item-cls="ignore-close" menu-cls="content-basketable content-stateable content-state-${itemStateClass} ${isInBasket ? 'in-basket' : null}"></dropdown-menu>
+    </div>
+    <div class="content-state-c-bgd-border pull-left"></div>
+    <div class="imageholder pull-left" back-img.bind="model.image">
+      <div class="actions content-state-c-bgd">
+        <action-bar items.bind="bottomActions" item-cls="ignore-close"></action-bar>
+      </div>
+    </div>
+    <div class="info pull-left">
+      <a href="/p/${model.gameSlug}/${model.type}s/${model.id.toShortId()}/${model.name.sluggifyEntityName()}">
+        <div class="title" title.bind="model.name">${model.name}</div>
+        <div class="other-info tiny">
+          <span class="update-available" if.bind="hasUpdateAvailable" title="current version: v${state.version}">Update available <span class="version">v${model.version}</span></span>
+          <span if.bind="model.type == 'collection'">${model.modsCount} MODS</span>
+          <span class="size" innerHTML.bind="model.sizePacked | size"></span>
+          <span class="author" if.bind="model.author" title.bind="model.author">by ${model.author}</span>
+        </div>
+      </a>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+</template>

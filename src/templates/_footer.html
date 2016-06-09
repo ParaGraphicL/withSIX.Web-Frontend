@@ -1,0 +1,117 @@
+<template>
+  <span class="footer-icon"></span>
+
+  <div class="container-fluid">
+    <div>
+      <ad-unit class="container-fluid" unit-class="add-leaderboard" unit-id="angular-ad-leader2" if.bind="w6.renderAds"></ad-unit>
+    </div>
+    <div class="row">
+      <div class="col-sm-3">
+        <a if.bind="!w6.chromeless && !w6.isClient && !w6.miniClient.isConnected" class="btn btn-legacy clientdownload" href="${w6.url.main}/download">
+          <span class="icon withSIX-icon-Download"></span> Download the
+          <strong>Client</strong>
+        </a>
+        <p>
+          Copyright 2013-2016
+          <a href="http://www.sixnetworks.net/">SIXNetworks</a>
+          <br/>
+          <!-- <a href="${w6.url.main}/sitemap">Sitemap</a> | -->
+          <a href="${w6.url.main}/legal">Legal</a>
+        </p>
+      </div>
+
+      <div class="col-sm-2">
+        <h5>
+          <a href="${w6.url.main}/">
+                    withSIX
+                </a>
+        </h5>
+        <ul>
+          <li>
+            <a href="${w6.url.main}/">Home</a>
+          </li>
+          <li>
+            <a href="${w6.url.main}/getting-started">Getting Started</a>
+          </li>
+          <li if.bind="!w6.userInfo.isPremium">
+            <a href="/gopremium">
+              <span class="premium">
+                <span class="icon withSIX-icon-Badge-Sponsor"></span> Go Premium</span>
+            </a>
+          </li>
+          <li if.bind="!w6.isClient && !w6.miniClient.isConnected">
+            <a href="${w6.url.main}/download" class="clientdownload">Download</a>
+          </li>
+          <li>
+            <a href="${w6.url.main}/blog">Our Blog</a>
+          </li>
+          <li>
+            <a href="${w6.url.main}/community">Community</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="col-sm-2">
+        <h5>
+          <a href="${w6.url.play}">
+                    play.withSIX
+                </a>
+        </h5>
+        <ul>
+          <li>
+            <a href="${w6.url.play}/arma-2">ARMA-II</a>
+          </li>
+
+          <li>
+            <a href="${w6.url.play}/arma-3">ARMA-III</a>
+          </li>
+
+          <li>
+            <a href="${w6.url.play}/carrier-command">Carrier Command</a>
+          </li>
+
+          <li>
+            <a href="${w6.url.play}/iron-front">Iron Front</a>
+          </li>
+
+          <li>
+            <a href="${w6.url.play}/take-on-helicopters">Take on helicopters</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="col-sm-2">
+        <h5>
+          <a href="/me">connect.withSIX</a>
+        </h5>
+        <compose view="_user-menu.html"></compose>
+      </div>
+
+      <div class="col-sm-2">
+        <h5>create.withSIX</h5>
+        <span>Coming soon</span>
+      </div>
+
+      <div class="col-sm-1">
+        <a href="#top" id="btn-scroll-to-top">
+          <span class="fa fa-chevron-up"></span>
+        </a>
+        <a href="https://twitter.com/SixNetworks" rel="external" target="_blank">
+          <span class="fa fa-twitter"></span>
+        </a>
+        <a href="https://www.facebook.com/withSIX" rel="external" target="_blank">
+          <span class="fa fa-facebook"></span>
+        </a>
+        <a href="https://plus.google.com/u/1/b/104785560298357015306/104785560298357015306" target="_blank">
+          <img src="http://icons.iconarchive.com/icons/martz90/circle/32/google-plus-icon.png" />
+        </a>
+        <a href="https://discord.gg/0bwZUsFgeVjtMgxa" rel="external" target="_blank">
+          <img src="https://lh3.googleusercontent.com/jgHA50UkErljsRAu97XzZYrRcg3eAE0qTHdpxqCWfcd2dn9x1eDkblhVoXVWfxTTJTsF=w32" />
+        </a>
+        <a href="https://github.com/SIXNetworks" rel="external" target="_blank">
+          <img src="https://github-jobs.s3.amazonaws.com/168d1ca6-dd19-11e2-8a2e-153f588b3d80.png" width="32" />
+        </a>
+      </div>
+    </div>
+  </div>
+</template>

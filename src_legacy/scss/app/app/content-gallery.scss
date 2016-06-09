@@ -1,0 +1,643 @@
+@import '_content';
+.basket-content-progess-bar {
+  float: left;
+  position: absolute;
+}
+.collections-ng,
+card-view,
+sx-content-gallery {
+  $height: 48px;
+  .move > .main-content {
+    margin-left: 220px;
+  }
+  .controls {
+    line-height: $height;
+    &.border {
+      border-bottom: 1px solid $colorSixLightGray;
+      border-top: 1px solid $colorSixLightGray;
+    }
+    .form-group {
+      //display: inline-block;
+      margin-bottom: 0;
+    }
+    .filters {
+      min-height: $height + 2px;
+      .search {
+        height: $height;
+        //width: 33%;
+      }
+      input,
+      select {
+        margin: 0 16px 0 0;
+        width: 120px;
+      }
+    }
+    button {
+      background: transparent;
+    }
+    select {
+      height: $height;
+      display: inline-block;
+      width: inherit;
+    }
+    .sort-bar {
+      select {
+        padding: 8px;
+      }
+    }
+    .page-info {
+      margin-right: 16px;
+    }
+    select {
+      border: none;
+    }
+    tags-input {
+      .host {
+        margin: 0;
+      }
+      input {
+        height: $height;
+        line-height: $height;
+      }
+      ul.tag-list {
+        li {
+          height: 32px;
+          line-height: 32px;
+          margin: 8px 0 0;
+        }
+      }
+      .tags {
+        -moz-appearance: none;
+        -webkit-appearance: none;
+        line-height: $height;
+        min-height: $height;
+        margin-bottom: -18px;
+        // wtf
+        border: 0;
+        box-shadow: none;
+        padding: 0 26px 0 0;
+        .tag-item {
+          background: $colorSixLightBlue;
+          border-radius: 0;
+          border: 0;
+          margin-left: 8px;
+          font-family: $font-family-base;
+        }
+        .input {
+          font-family: $font-family-base;
+        }
+        .suggestion-item {
+          font-family: $font-family-base;
+          em {
+            font-family: $font-family-base;
+          }
+        }
+        .remove-button {
+          color: #fff;
+          text-decoration: none;
+          font-family: $font-family-base;
+        }
+      }
+    }
+    button {
+      height: $height;
+    }
+    .filtertitle {
+      font-weight: $font-weight-medium;
+      margin-right: 8px;
+      vertical-align: top;
+    }
+    .pagination {
+      margin: 0;
+      height: $height;
+    }
+    .input-container {
+      overflow: visible;
+      height: $height;
+      margin-right: $height;
+    }
+    .input-button {
+      z-index: 20;
+      text-align: center;
+      background-color: white;
+      font-size: $height / 2;
+      font-weight: 200;
+      height: $height;
+      width: $height;
+      line-height: $height;
+    }
+    input[type=search] {
+      display: inline;
+    }
+    hr {
+      margin: 0;
+    }
+  }
+  .gridStyle {
+    border: 1px solid rgb(212, 212, 212);
+    height: 480px;
+    img {
+      height: 48px;
+    }
+    a {
+      text-decoration: none;
+    }
+  }
+  .controls {
+    margin-bottom: 24px;
+  }
+  $infoHeight: 76px;
+  $infoHeightXl: 96px;
+  $imgHeight: 144px;
+  $imgHeightXl: 204px;
+  $cardHeight: $imgHeight + $infoHeight;
+  $cardHeightXl: $imgHeightXl + $infoHeightXl;
+  .content-stateable:hover {
+    .details-overlay-footer {
+      opacity: 1;
+    }
+  }
+  .content-state-c-bgd-border {
+    border-bottom-width: 4px;
+    border-bottom-style: solid;
+  }
+  .content-basketable {
+    .basket-content-progess-bar {
+      height: $cardHeight;
+      @media (min-width: $flipWidth) {
+        height: $cardHeightXl;
+      }
+      @media (max-width: $flipWidthXs) {
+        height: $cardHeightXl;
+      }
+    }
+    .content-basketable-button {
+      z-index: 2;
+    }
+  }
+  .details-overlay-footer {
+    @include transition(opacity 0.1s ease);
+    opacity: 0;
+    left: 15px;
+    right: 15px;
+    margin-top: -28px;
+    position: absolute;
+    $height: 28px;
+    line-height: 1;
+    height: $height;
+    padding: 0 8px;
+    button.details-overlay-footer-state {
+      height: $height;
+      line-height: $height;
+      background-color: inherit;
+      border: none;
+      color: inherit;
+      text-align: inherit;
+      .content-state-icon {
+        margin-right: 4px;
+      }
+      span {
+        display: inline-block;
+      }
+    }
+    .details-overlay-footer-message {
+      line-height: $height;
+      a {
+        font-style: italic;
+      }
+    }
+    .details-overlay-footer-localstate {
+      padding-right: 25px;
+      text-align: right;
+    }
+  }
+  /*.mod-grid-add-to-basket {
+            float: right;
+            right: 30px;
+            position: relative;
+            border: none;
+            color: white;
+            background-color: $colorSixDarkGray;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            padding-left: 10px;
+            padding-right: 10px;
+            z-index: 2;
+
+
+        margin-top: -$cardHeight;
+        @media (min-width: $flipWidth) {
+          margin-top: -$cardHeightXl;
+        }
+        @media (max-width: $flipWidthXs) {
+          margin-top: -$cardHeightXl;
+        }
+
+            .icon {
+                font-size: $font-size-small;
+            }
+
+            &:hover {
+                .add-to-basket-text {
+                    padding-left: 5px;
+                    font-size: 13px;
+
+                    &:before {
+                        content: "ADD TO PLAYLIST";
+                    }
+                }
+            }
+          }*/
+  .card,
+  .collection {
+    .imageholder {
+      background-color: white;
+    }
+    .dropdown {
+      display: none;
+    }
+    &:hover {
+      .dropdown {
+        display: block;
+      }
+    }
+  }
+  .add-container-out,
+  ad-unit {
+    cursor: default;
+    background: white;
+    min-height: $cardHeight;
+    @media (min-width: $flipWidth) {
+      min-height: $cardHeightXl;
+    }
+    @media (max-width: $flipWidthXs) {
+      min-height: $cardHeightXl;
+    }
+  }
+  .add-container {
+    .add {
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+  &.row {
+    // margin-left: -20px;
+    // margin-right: -20px;
+    // .collection {
+    //   padding-left: 20px;
+    //   padding-right: 20px;
+    // }
+    .details-overlay,
+    div.img {
+      cursor: pointer;
+    }
+  }
+  .card,
+  .collection {
+    margin-bottom: 20px;
+    .alternative-game {
+      position: absolute;
+      margin-top: -12px;
+    }
+    .title {
+      a {
+        &.with-alternative-game {
+          margin-left: 28px;
+        }
+      }
+    }
+    background: white;
+    &:hover {
+      .title a {
+        color: $colorSixBlue;
+      }
+    }
+    .img {
+      position: relative;
+      .imageholder {
+        display: block;
+        height: $imgHeight;
+        @media (min-width: $flipWidth) {
+          height: $imgHeightXl;
+        }
+        @media (max-width: $flipWidthXs) {
+          height: $imgHeightXl;
+        }
+        width: 100%;
+      }
+      background: white;
+      background-size: contain;
+    }
+    .info {
+      padding: 12px;
+      height: $infoHeight;
+      @media (min-width: $flipWidth) {
+        height: $infoHeightXl;
+      }
+      @media (max-width: $flipWidthXs) {
+        height: $infoHeightXl;
+      }
+      position: relative;
+      overflow: hidden;
+      .title {
+        line-height: 1;
+        font-weight: $font-weight-bold;
+        @include limit-lines(2, 15px, 1);
+        span {
+          display: inline-block;
+          line-height: 1;
+        }
+      }
+      .subtitle {
+        line-height: 1;
+        .pull-left {
+          max-width: 45%;
+        }
+        @include limit-lines(1, $font-size-tiny, 1);
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+    }
+    .stats {
+      $height: 32px;
+      //height: $height;
+      font-size: $font-size-small;
+      line-height: $height;
+      width: $height * 2;
+      color: white;
+      text-align: right;
+      padding-right: 12px;
+      background-color: $colorSixBlue;
+      right: 0;
+      top: 50%;
+      margin-top: -28px;
+      position: absolute;
+      span {
+        top: 50%;
+      }
+    }
+    .details-overlay {
+      a {
+        color: white;
+        text-decoration: none;
+      }
+      background-color: rgba(20, 107, 255, 0.8);
+      color: white;
+      overflow: hidden;
+      margin-top: -$cardHeight;
+      height: $cardHeight - $infoHeight;
+      @media (min-width: $flipWidth) {
+        margin-top: -$cardHeightXl;
+        height: $cardHeightXl - $infoHeightXl;
+      }
+      @media (max-width: $flipWidthXs) {
+        margin-top: -$cardHeightXl;
+        height: $cardHeightXl - $infoHeightXl;
+      }
+      display: block;
+      z-index: 1;
+      position: relative;
+      float: left;
+      width: 100%;
+      $margin: 16px;
+      .microinfo {
+        text-align: right;
+        margin: $margin $margin $margin 0;
+        line-height: 1;
+        position: absolute;
+        top: 50%;
+        right: 0;
+        margin-top: -(54px / 2);
+        div {
+          margin-bottom: 4px;
+        }
+      }
+      .description {
+        height: $imgHeight - $margin * 2;
+        line-height: $imgHeight - $margin * 2;
+        @media (min-width: $flipWidth) {
+          height: $imgHeightXl - $margin * 2;
+          line-height: $imgHeightXl - $margin * 2;
+        }
+        @media (max-width: $flipWidthXs) {
+          height: $imgHeightXl - $margin * 2;
+          line-height: $imgHeightXl - $margin * 2;
+        }
+        margin: $margin 80px $margin $margin;
+        span {
+          display: inline-block;
+          vertical-align: middle;
+          line-height: 1;
+          width: 100%;
+          @include limit-lines(8, $font-size-small, 1);
+        }
+      }
+      .tags {
+        @include limit-lines(4, $font-size-tiny);
+        text-align: right;
+        margin-right: -16px;
+      }
+      a.tag {
+        text-decoration: none;
+        color: black;
+        $tagBaseColor: $colorSixSoftGray;
+        border-right: 2px solid $colorSixBlue;
+        background-color: $tagBaseColor;
+        padding-left: 4px;
+        padding-right: 4px;
+        display: block;
+        max-width: 80px;
+        @include text-overflow;
+        &:nth-child(2) {
+          background-color: lighten($tagBaseColor, 2.5);
+        }
+        &:nth-child(3) {
+          background-color: lighten($tagBaseColor, 5);
+        }
+        &:nth-child(4) {
+          background-color: lighten($tagBaseColor, 7.5);
+        }
+      }
+    }
+  }
+  .collection-basket {
+    position: fixed;
+    height: 100%;
+    left: 0;
+    top: 360px;
+    height: 100%;
+    width: 250px;
+    overflow: hidden;
+    z-index: 10;
+  }
+}
+.content-basketable {
+  .basketable-dropdown.dropdown {
+    .dropdown-toggle {
+      padding-top: 4px;
+      padding-bottom: 8px;
+      .caret {
+        @include withSIX-icon("\e68b");
+        height: initial;
+        width: initial;
+        border: none;
+      }
+    }
+  }
+}
+.dropdown-toggle.share-caret {
+  .caret {
+    @include withSIX-icon("\e68b");
+    height: initial;
+    width: initial;
+    border: none;
+  }
+}
+.show-filter {
+  .show-title {
+    float: left;
+    margin-top: 11px;
+  }
+  font-weight: bold;
+  .checkbox-container {
+    float: left;
+    width: 20%;
+    .squaredTwo {
+      background-color: white;
+    }
+  }
+  .show-boxes {
+    width: 60%;
+  }
+}
+.filter-sort {
+  padding: 12px;
+}
+.filter-order {
+  width: 53px;
+  padding: 14px;
+  background-color: white;
+  margin-right: 5px;
+  border: none;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.grid-select {
+  position: relative;
+  float: right;
+  height: 46px;
+  margin-bottom: 10px;
+}
+select.grid-type {
+  option {
+    //height: 40px;
+    width: 46px;
+    padding: 14px;
+    background-color: white;
+    margin-right: 5px;
+    &:checked {
+      padding: 11px;
+      border: 3px solid white;
+      background-color: darken(white, 5%);
+    }
+  }
+  &:last-child {
+    margin-right: 0;
+  }
+}
+.form-control.search-control {
+  width: initial;
+  display: initial;
+  border: none;
+  padding: 20.5px 19px;
+  margin-right: 7px;
+}
+dropdown-menu.new-style {
+  ul.dropdown-menu {
+    & > li {
+      border-bottom: 1px solid lightgray;
+    }
+    & > li:last-child {
+      border-bottom: none;
+    }
+    & > li > button {
+      padding-top: 7px;
+      padding-bottom: 7px;
+      color: $colorSixMediumGray !important;
+      background-color: white !important;
+      text-decoration: none;
+      padding-left: 10px;
+      width: 100%;
+      text-align: left;
+      & > text {
+        padding-left: 10px;
+      }
+    }
+  }
+}
+.card.new-item {
+  background-color: $colorSixBlue;
+  padding-top: 24px;
+  height: 224px;
+  @media (min-width: $flipWidth) {
+    padding-top: 60px;
+    height: 304px;
+  }
+  @media (max-width: $flipWidthXs) {
+    padding-top: 60px;
+    height: 304px;
+  }
+  div.button {
+    color: white;
+    text-align: center;
+  }
+  .new-icon {
+    font-size: 5em;
+  }
+  .new-title {
+    font-size: 2em;
+  }
+  a,
+  button {
+    color: $colorSixBlue;
+    background-color: white;
+    text-decoration: none;
+    font-weight: bold;
+  }
+}
+//@include config($debug, $staging){
+.content-stateable {
+  @each $selector, $primary-color, $secondary-color, $icon, $text, $altIcon in $content-states {
+    &#{$selector} {
+      @include content-state-inner($primary-color, $secondary-color, $icon, $text, $altIcon);
+    }
+  }
+  @include progress-class-creator(".content-progress-", ".content-state-progress-width", ".content-state-progress-text");
+}
+//}
+@mixin colored-section($color, $secColor: white) {
+  border-bottom-color: $color;
+  .content-state-color {
+    background-color: $color;
+    color: $secColor;
+    a {
+      color: $secColor;
+      text-decoration: underline;
+    }
+  }
+  .content-state-font-color {
+    color: $color;
+  }
+}
+.content-basketable {
+  @include extend-content-state-colors("bgd-border", true, "border-bottom-color");
+}
+div[range-slider] {
+  width: 150px;
+  display: inline-block;
+}
+.additional-filters {
+  display: inline-block;
+}

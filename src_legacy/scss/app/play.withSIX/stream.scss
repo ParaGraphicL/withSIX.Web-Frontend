@@ -1,0 +1,436 @@
+@import '_content';
+.play-stream {
+  a {
+    text-decoration: none;
+  }
+  .publish-buttons {
+    float: right;
+    margin-right: 116px; // wtf?
+  }
+  .stream-buttons {
+    display: inline;
+  }
+  span.share-buttons {
+    float: right;
+    a {
+      color: $colorSixGray;
+      background-color: white;
+      border-bottom: 2px solid $colorSixGray;
+      padding: 8px;
+      text-decoration: none;
+      display: inline-block;
+      margin-left: 4px;
+      &:not(.icon) {
+        line-height: 30px;
+        padding: 0 8px;
+      }
+    }
+  }
+  h2.stream-title {
+    display: inline;
+  }
+  div.header {
+    margin-bottom: 16px;
+    button {
+      margin-top: -4px;
+      padding: 4px;
+      position: absolute;
+    }
+  }
+  @include list;
+  .stream-card {
+    $contentHeight: 154px;
+    $contentHeightXl: 188px;
+    height: $contentHeight;
+    @media (min-width: $flipWidth) {
+      height: $contentHeightXl;
+    }
+    @media (max-width: $flipWidthXs) {
+      height: $contentHeightXl;
+    }
+    margin-bottom: 16px;
+    $updateColor: $colorSixOrange;
+    $newColor: $colorSixBlue;
+    .imageholder {
+      background-color: white;
+    }
+    .title {
+      font-weight: $font-weight-bold;
+      line-height: 1;
+    }
+    $updateSectionHeight: 18px;
+    $cardHeight: 106px;
+    $updateBorderHeight: 4px;
+    .details-overlay {
+      margin-top: -$cardHeight;
+      overflow: hidden;
+      height: $cardHeight;
+      display: block;
+      background-color: white;
+      z-index: 1;
+      position: relative;
+      float: left;
+      width: 100%;
+      .blabla {
+        height: 78px;
+      }
+      .description {
+        font-weight: 400;
+        @include limit-lines(4, $font-size-tiny);
+      }
+      .tags {
+        @include limit-lines-static(4, $font-size-tiny);
+        width: 50%;
+        margin: 0;
+      }
+      a.tag {
+        color: inherit;
+        $tagBaseColor: $colorSixSoftGray;
+        border-left: 2px solid $colorSixBlue;
+        background-color: $tagBaseColor;
+        padding-left: 4px;
+        display: block;
+        @include text-overflow;
+        &:nth-child(2) {
+          background-color: lighten($tagBaseColor, 2.5);
+        }
+        &:nth-child(3) {
+          background-color: lighten($tagBaseColor, 5);
+        }
+        &:nth-child(4) {
+          background-color: lighten($tagBaseColor, 7.5);
+        }
+      }
+      /*&.update {
+          @include colored-section($updateColor, white);
+      }
+      &.new {
+          @include colored-section($newColor, white);
+      }*/
+      .details-overlay-footer {
+        $height: 28px;
+        height: $height;
+        padding: 0 8px;
+        line-height: 1;
+        button.details-overlay-footer-state {
+          line-height: $height;
+          height: $height;
+          background-color: inherit;
+          border: none;
+          color: inherit;
+          text-align: inherit;
+          .content-state-icon {
+            padding-right: 4px;
+          }
+          span {
+            display: inline-block;
+          }
+        }
+        .details-overlay-footer-message {
+          line-height: $height;
+          a {
+            font-style: italic;
+          }
+        }
+        .details-overlay-footer-localstate {
+          text-align: right;
+        }
+      }
+    }
+    .details-overlay-shadow {
+      position: relative;
+      width: 100%;
+      margin-top: -($cardHeight + 8px);
+      height: 8px;
+      float: left;
+      @include filter-gradient(black, #330000, vertical);
+      // IE6-9
+      @include background-image(linear-gradient(top, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.2) 100%));
+    }
+    @include extend-content-state-colors("bgd-border", true, "border-bottom-color");
+    div.content {
+      height: $contentHeight;
+      @media (min-width: $flipWidth) {
+        height: $contentHeightXl;
+      }
+      @media (max-width: $flipWidthXs) {
+        height: $contentHeightXl;
+      }
+      background-color: white;
+      border-bottom: $updateBorderHeight solid $colorSixGray;
+      /*&.update {
+        @include colored-section($updateColor, white);
+
+        border-bottom-color: $updateColor;
+      }
+      &.new {
+        @include colored-section($newColor, white);
+
+        border-bottom-color: $newColor;
+      }*/
+      .icon {
+        font-size: $font-size-base;
+      }
+    }
+    span.release-state {
+      color: $colorSixGray;
+      &.update {
+        border-right-color: $updateColor;
+        color: $updateColor;
+      }
+      &.new {
+        border-right-color: $newColor;
+        color: $newColor;
+      }
+    }
+    div.img {
+      @include size(50%, $contentHeight - $updateBorderHeight);
+      @media (min-width: $flipWidth) {
+         @include size(50%, $contentHeightXl - $updateBorderHeight);
+      }
+      @media (max-width: $flipWidthXs) {
+         @include size(50%, $contentHeightXl - $updateBorderHeight);
+      }
+      float: left;
+    }
+    span.imagecontent {
+      .imageholder {
+        display: block;
+        height: $contentHeight - $updateBorderHeight;
+        @media (min-width: $flipWidth) {
+          height: $contentHeightXl - $updateBorderHeight;
+        }
+        @media (max-width: $flipWidthXs) {
+          height: $contentHeightXl - $updateBorderHeight;
+        }
+      }
+    }
+    div.info {
+      float: right;
+      position: relative;
+      @include size(50%, $contentHeight);
+      @media (min-width: $flipWidth) {
+         @include size(50%, $contentHeightXl);
+      }
+      @media (max-width: $flipWidthXs) {
+         @include size(50%, $contentHeightXl);
+      }
+      div.container {
+        padding-top: 8px;
+        padding-bottom: 8px;
+        &:after {
+          @include clearfix;
+        }
+      }
+      a {
+        text-decoration: none;
+        color: $colorSixMediumGray;
+      }
+      div.title {
+        @include limit-lines(2, $font-size-base, 1);
+      }
+      div.subtitle {
+        margin-top: 8px;
+        font-size: $font-size-tiny;
+        line-height: 1;
+        @include limit-lines(1, $font-size-tiny, 1);
+        &:after {
+          @include clearfix;
+        }
+      }
+      span.author {
+        font-style: italic;
+        @include text-overflow;
+        float: left;
+        width: 50%;
+      }
+      span.followers {
+        font-style: italic;
+        @include text-overflow;
+        float: left;
+        width: 50%;
+      }
+      time.timeago {
+        float: right;
+      }
+      div.bottom {
+        font-size: $font-size-tiny;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+      }
+    }
+    &:hover {
+      .title a {
+        color: $colorSixBlue;
+      }
+    }
+    .dropdown {
+      display: none;
+    }
+    &:hover {
+      .dropdown {
+        display: block;
+      }
+    }
+  }
+  .alternative-game {
+    margin-top: -16px;
+  }
+  .cntnr {
+    padding: 16px;
+  }
+  span.share-buttons {
+    a {
+      display: inline-block;
+      margin-left: 4px;
+      &:not(.icon) {
+        line-height: 32px;
+        padding: 0 8px;
+        border-bottom: 0;
+      }
+      &.icon {
+        @include icon-size(24px);
+        padding: 0;
+        @include square(32px);
+      }
+      &.twitter {
+        border-color: $twitterColor;
+      }
+      &.facebook {
+        border-color: $facebookColor;
+      }
+    }
+  }
+  $lovelyPadding: 12px 24px;
+  div.blog {
+    ul {
+      li {
+        &.month,
+        &.post {
+          background-color: white;
+        }
+        a {
+          color: $colorSixGray;
+          text-decoration: none;
+        }
+        &.line {
+          padding: $lovelyPadding;
+          @include text-overflow;
+          @include clearfix;
+          a {
+            display: block;
+            @include square(100%);
+          }
+        }
+      }
+    }
+  }
+  div.posts {
+    ul {
+      li {
+        hr {
+          $hrSize: 1px;
+          $hrColor: $colorSixLightGray;
+          height: $hrSize;
+          border: 0;
+          border-top: $hrSize solid $hrColor;
+          color: $hrColor;
+          margin: 8px 0;
+        }
+        .cntnr {
+          padding: 24px;
+        }
+        div.summary {
+          overflow: hidden;
+          p {
+            overflow: hidden;
+            img {
+              @include img-responsive;
+            }
+          }
+        }
+        h2.title {
+          padding: 0;
+          margin: 0;
+          $lineHeight: 1.1;
+          line-height: $lineHeight;
+          @include limit-lines(2, 1.5em, $lineHeight);
+        }
+        span.created {
+          margin-top: 8px;
+        }
+        div.bottom {
+          background-color: $colorSixLightGray;
+          a.readon {
+            float: right;
+          }
+          &.cntnr {
+            padding: $lovelyPadding;
+          }
+        }
+      }
+    }
+  }
+}
+.follow-info {
+  button {
+    text-decoration: none;
+  }
+}
+.game-stream {
+  .col-sm-4 {
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    h2 {
+      font-size: 1.2em;
+      margin: 0;
+      padding: 0;
+      a {
+        text-decoration: none;
+        color: $color3;
+        .icon {
+          margin-right: 4px;
+        }
+      }
+    }
+  }
+  .tile-list {
+    margin-top: 30px;
+    ul li {
+      background: none;
+    }
+    ul li a {
+      background-image: none;
+      padding-left: 15px;
+      background-size: cover;
+      background-position: -6000px center;
+      -webkit-transition: 0.5s;
+      -moz-transition: 0.5s;
+      transition: 0.5s;
+      &:hover {
+        background-position: 0 center;
+        -webkit-transition: 0.5s;
+        -moz-transition: 0.5s;
+        transition: 0.5s;
+        text-decoration: none;
+        color: $color3;
+        strong {
+          color: $primarycolor;
+        }
+      }
+      span {
+        display: block;
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.9);
+      }
+      em {
+        font-style: normal;
+        font-size: 0.8em;
+      }
+    }
+  }
+}

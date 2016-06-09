@@ -1,0 +1,9 @@
+<template>
+  <div show.bind="progressPercent == null || !hovering">
+    <div if.bind="tab.icon" class.bind="tab.icon"></div>
+    <span if.bind="!tab.icon">${tab.header}</span>
+  </div>
+  <div show.bind="progressPercent != null && hovering">
+    <span class="progress-title">${progressPercent | progress}</span>
+  </div>
+</template>

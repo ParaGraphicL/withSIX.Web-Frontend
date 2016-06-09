@@ -1,0 +1,9 @@
+<template>
+  <header class="title"><a class="text-link shout" href="/me/library/${w6.activeGame.slug}/collections">Collections</a></header>
+
+  <ul class="menu main">
+    <li repeat.for="c of model.collections">
+      <compose view-model="features/profile/content/${c.type}" view="./_item.html" model.bind="c"></compose>
+    </li>
+  </ul>
+</template>

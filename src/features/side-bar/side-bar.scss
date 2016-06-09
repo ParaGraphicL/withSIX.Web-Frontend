@@ -1,0 +1,74 @@
+@import "../../templates/_v2.scss";
+$bg: $barBackgroundColor;
+#sidebar {
+  position: fixed;
+  top: $headerSize;
+  left: 0;
+  bottom: 0;
+  width: $sideHeaderSize;
+  z-index: $headerZindex + 3;
+  background-color: $bg;
+  color: $barColor;
+  word-wrap: break-word;
+  // -webkit-filter: drop-shadow(0px 0px 8px rgba(28, 28, 28, 0.75));
+  // filter:drop-shadow(0px 0px 8px rgba(28, 28, 28, 0.75));
+  // &.active {
+  //   -webkit-filter: none;
+  //   filter:none;
+  // }
+  .indicator.sphere {
+    border: 2px solid $bg;
+  }
+  .indicator.arrow {
+    color: $colorSixDarkGray;
+  }
+  ul {
+    margin: 0;
+    padding: 0;
+    & > li {
+      list-style-type: none;
+    }
+  }
+  tab-view {
+    .tab-strip {
+      .tab-header[title="Play"] {
+        display: none;
+      }
+    }
+  }
+}
+#quick-actions {
+  overflow: hidden;
+}
+#client-logo {
+  background-color: $colorSixGray;
+  color: $barColor;
+  vertical-align: middle;
+}
+#bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: $sideHeaderSize;
+}
+.client-active {
+  #client-logo {
+    background-color: $colorSixBlue;
+  }
+}
+@keyframes rotation {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.client-busy {
+  #client-logo {
+    background-color: $colorSixOrange;
+    .icon {
+      animation: rotation 2s infinite linear;
+    }
+  }
+}

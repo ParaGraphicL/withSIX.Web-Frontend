@@ -1,0 +1,16 @@
+<template>
+  <require from="./downloads.scss"></require>
+  <div show.bind="!hovering || (progressPercent == null && tab.notification == null)">
+    <div if.bind="tab.icon" class.bind="tab.icon"></div>
+    <span if.bind="!tab.icon">${tab.header}</span>
+  </div>
+  <div show.bind="progressPercent != null && hovering">
+    <span class="progress-title">${progressPercent | progress}</span>
+  </div>
+  <div show.bind="progressPercent == null && tab.notification && hovering">
+    <span if.bind="tab.notification.cls == 'end-state'">READY</span>
+    <span if.bind="tab.notification.cls == 'error-state'" class="icon withSIX-icon-Alert"></span>
+    <span if.bind="tab.notification.cls == 'cancel-state'" class="icon withSIX-icon-Pause"></span>
+    <span if.bind="tab.notification.cls == 'start-state'" class="icon withSIX-icon-Cloud-Synq"></span>
+  </div>
+</template>

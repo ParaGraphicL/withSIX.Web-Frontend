@@ -1,0 +1,34 @@
+@import "../../../templates/_v2.scss";
+
+#tab-view-render-play {
+  ul {
+    li.game {
+      .logo {
+        display: block;
+        margin-right: 8px;
+        float: left;
+        @include wide-from-height(32px,'');
+        img {
+          @include wide-from-height(32px);
+          margin-left: auto;
+          margin-right: auto;
+          display: block;
+        }
+      }
+      .imageholder {
+        @include wide-from-height(32px,'');
+        display: block;
+      }
+      .is-current-game {
+        display: none;
+        color: $colorSixBlue;
+        line-height: 1;
+      }
+      &.active {
+        .is-current-game {
+          display: block;
+        }
+      }
+    }
+  }
+}
