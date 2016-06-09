@@ -41,7 +41,7 @@
           </span>
           <sx-time class="pull-right" time="item.updated" itemprop="dateModified"></sx-time>
         </div>
-        <div class="followers small">{{item.contentType == 'Collection' ? item.followers : item.statInstall}} {{item.contentType == 'Collection' ? 'subscribers' : 'installs'}}</div>
+        <div class="followers small">{{(item.contentType == 'Collection' ? item.followers : item.statInstall) | amount }} {{item.contentType == 'Collection' ? 'subscribers' : 'installs'}}</div>
         <span class="info small">{{item.additionalInfo}}</span>
       </div>
 

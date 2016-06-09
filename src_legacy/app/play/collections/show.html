@@ -66,7 +66,7 @@
           <span class="main" itemprop="version" title="v{{model.latestVersion.version}}">v{{model.latestVersion.version}}</span> <span itemprop="dateModified">{{model.latestVersion.releasedOn | date:"dd MMM 'yy"}}</span></li>
         <li title="{{model.latestVersion.size | size:'B':false}} unpacked" ng-bind-html="model.latestVersion.sizePacked | size"></li>
         <li>
-          <span class="main">{{model.subscribersCount}}</span> <span>subscribers</span>
+          <span class="main">{{model.subscribersCount | amount}}</span> <span>subscribers</span>
         </li>
       </ul>
     </div>

@@ -40,7 +40,7 @@
     </span>
 
     <div name="follow-info">
-      {{model.stat.install}} Installs.
+      {{model.stat.install | amount}} Installs.
       <span ng-if="w6.userInfo.id">
                 <button class="anchor" ng-click="toggleFollow() && $event.stopPropagation()">
                     <span class="icon withSIX-icon-Follow"></span> {{followedMods[model.id] ? 'Unfollow' : 'Follow'}}
@@ -117,7 +117,7 @@
           <span class="main" itemprop="version" title="{{formatVersion()}} {{model.latestStableVersion && model.latestStableVersion != model.modVersion ? 'newer dev version: ' + model.modVersion : ''}}">{{formatVersion()}}</span> <span itemprop="dateModified">{{model.updatedAt | date:"dd MMM 'yy"}}</span></li>
         <li title="{{model.size | size:'B':false}} unpacked" ng-bind-html="model.sizePacked | size"></li>
         <li>
-          <span class="main">{{model.stat.install}}</span> <span>Installs</span></li>
+          <span class="main">{{model.stat.install | amount}}</span> <span>Installs</span></li>
       </ul>
       <div ng-if="model.modVersion == null">
         <span class="main">Waiting on Network</span><span class="tiny">Please be patient</span>

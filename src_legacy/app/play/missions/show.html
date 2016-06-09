@@ -16,7 +16,7 @@
     </span>
 
     <div name="follow-info">
-      {{model.followersCount}} followers.
+      {{model.followersCount | amount}} followers.
       <span ng-if="w6.userInfo.id">
                 <button class="anchor" ng-click="toggleFollow()"
                         type="button">
@@ -34,7 +34,7 @@
           <span class="main" itemprop="version" title="v{{model.latestVersion.version}}">v{{model.latestVersion.version}}</span> <span itemprop="dateModified">{{model.latestVersion.releasedOn | date:"dd MMM 'yy"}}</span></li>
         <li title="{{model.latestVersion.size | size:'B':false}} unpacked" ng-bind-html="model.latestVersion.sizePacked | size"></li>
         <li>
-          <span class="main">{{model.followersCount}}</span> <span>followers</span></li>
+          <span class="main">{{model.followersCount | amount}}</span> <span>followers</span></li>
       </ul>
     </div>
 

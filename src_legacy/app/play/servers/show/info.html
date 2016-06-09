@@ -2,7 +2,7 @@
 
     <div class="tile">
         <div class="pull-right">
-            <div>{{server.followersCount}} followers</div>
+            <div>{{server.followersCount | amount}} followers</div>
             <div>Updated: <span class="time" am-time-ago="server.updatedAt"></span></div>
             <div>
                 <a class="btn" ng-href="pws://?server={{server.ipAddress}}:{{server.port}}">Join</a>

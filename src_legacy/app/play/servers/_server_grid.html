@@ -29,7 +29,7 @@
         <span class="f16" title="{{item.country}}">
           <span class="flag {{ item.country.toLowerCase() }}"></span>
         </span>
-        <i>{{item.followersCount}} followers</i>
+        <i>{{item.followersCount | amount}} followers</i>
       </div>
     </div>
   </div>
@@ -51,7 +51,7 @@
         <div>{{getDistance(item, userLocation) | number:1}}km</div>
         <br/>
         <div title="followers">
-          <span>{{item.followersCount}}</span>
+          <span>{{item.followersCount | amount}}</span>
           <span class="withSIX-icon-Follow"></span>
         </div>
       </div>

@@ -24,7 +24,7 @@
         </a>
       </div>
       <div class="pull-right">
-        <i>{{item.followersCount}} followers</i>
+        <i>{{item.followersCount | amount}} followers</i>
       </div>
     </div>
   </div>
@@ -43,7 +43,7 @@
         <div title="{{item.size | bytes:2}} unpacked">{{item.sizePacked | bytes:2}}</div>
         <br/>
         <div title="followers">
-          <span>{{item.followersCount}}</span>
+          <span>{{item.followersCount | amount}}</span>
           <span class="withSIX-icon-Follow"></span>
         </div>
       </div>
