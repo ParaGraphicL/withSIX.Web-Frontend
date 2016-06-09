@@ -53,10 +53,11 @@ export class SizeValueConverter extends NumeralValueConverter {
   static sizeFormat = NumeralValueConverter.defaultFormat + ' b';
   handleNegative = (n: number) => n < 0 ? '-' : '';
   sizeConvert = (n: number) => this.handleNegative(n) + this.convert(Math.abs(n), SizeValueConverter.sizeFormat);
-  includeMarkup = (r: string) => (r == '0' ? `0 b` : r).replace(/(.*) (.*)/, (full, count, unit) => `<span class="count">${count}</span> <span class="unit">${unit}</span>`);
+  includeMarkup = (r: string) => r.replace(/(.*) (.*)/, (full, count, unit) => `<span class="count">${count}</span> <span class="unit">${unit}</span>`);
   toView = (size: number, format = 'B', includeMarkup = true) => {
     size = this.upsize(FileSize[format], size);
     let r = this.sizeConvert(size);
+    if (r == '0 ') r = '0 B';
     return includeMarkup ? this.includeMarkup(r) : r;
   };
 
