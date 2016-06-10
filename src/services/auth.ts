@@ -9,9 +9,10 @@ import {LoginBase} from './auth-base';
 @inject(AuthService, UiContext, HttpClient, LS)
 export class Login extends LoginBase {
   constructor(public authService: AuthService, private ui: UiContext, http: HttpClient, private ls: LS) { super(http, ui.w6.url, ui.eventBus); }
-  async login(path?) {
+  async login(pathAndSearch?) {
     try {
-      var url = path ? (window.location.protocol + '//' + window.location.host + path) : window.location.href;
+      // Must remove the hash or we won't redirect back :)
+      var url = pathAndSearch ? (this.getOrigin() + pathAndSearch) : this.w6Url.getCurrentPageWithoutHash();
       Tk.Debug.log("logging in, return: ", url);
       if (await this.handleRefreshToken()) {
         this.redirect(url);
@@ -27,7 +28,7 @@ export class Login extends LoginBase {
     } catch (err) {
       if (err && err.data == "Provider Popup Blocked")
         // TODO: Reconfigure without popup but redirect?
-        if (await this.ui.toastr.error("Popup blocked, please allow the login popup in your browser", "Failed to login")) await this.login(path);
+        if (await this.ui.toastr.error("Popup blocked, please allow the login popup in your browser", "Failed to login")) await this.login(pathAndSearch);
         else
           this.ui.toastr.error("Unknown error", "Failed to login");
       throw err;
@@ -36,8 +37,11 @@ export class Login extends LoginBase {
 
   logout() {
     this.clearRefreshToken();
-    window.onbeforeunload = null;
-    this.authService.logout(this.ui.w6.url.urlSsl + "?logout=1");
+    this.resetUnload();
+    var logoutUrl = this.w6Url.urlSsl + '/logout';
+    if (!window.location.pathname.startsWith('/logout'))
+      logoutUrl = logoutUrl + '?redirect=' + encodeURI(this.getBaseUrl() + window.location.search); // must be without #loggedin and #sslredir etc
+    this.authService.logout(logoutUrl);
     // TODO: This probably doesn't fire anymore?
     this.ls.set('w6.event', { name: 'logout', data: null });
   }

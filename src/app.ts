@@ -121,7 +121,10 @@ export class App extends ViewModel {
   get showFirefoxNotice() { return this.w6.isFirefox && this.w6.settings.downloadedSync && this.firefoxTimeoutPassed && !this.w6.miniClient.isConnected && !this.basketService.basketService.settings.hasConnected; }
 
   activate() {
-    if (this.hasApi) window.onbeforeunload = () => false;
+    if (this.hasApi) window.onbeforeunload = () => {
+      Tk.Debug.warn("Tried to unload, prevented", window.location.href);
+      return false;
+    };
     // workaround for dialogs not working
     Origin.set(SettingsIndex, { moduleId: "features/settings/index", moduleMember: "Index" });
     Origin.set(CreateCollectionDialog, { moduleId: "features/games/collections/create-collection-dialog", moduleMember: "CreateCollectionDialog" });
@@ -541,7 +544,7 @@ class SslStep extends AuthorizeStep {
       }
     } else {
       let requiresSsl = matches.asEnumerable().any(x => x.ssl);
-      if ((isPremium || requiresSsl) && Tk.getEnvironment() < Tk.Environment.Local) {
+      if (isPremium || requiresSsl) {
         Tk.Debug.log("$$$ SslStep: Using non-SSL, but is premium or page requires SSL. Switching to SSL", isPremium);
         return next.cancel(this.getRedirect(LoginBase.toHttps(isLoggedIn)));
       }
@@ -627,15 +630,15 @@ class Api {
     Tk.Debug.log("$$$ err reason", JSON.stringify(reason));
     if (typeof (reason) == 'string') return [reason, 'Unknown error occurred'];
 
-    if (reason.constructor == Tk.NotFoundException || reason.constructor == Tk.InvalidShortIdException) {
+    if (reason instanceof Tk.NotFoundException || reason instanceof Tk.InvalidShortIdException) {
       return [reason.message, "404: The requested resource could not be found"];
     }
 
-    if (reason.constructor == Tk.RequireSslException) {
+    if (reason instanceof Tk.RequireSslException) {
       return [reason.message, "please wait until you are redirected", "Requires SSL"];
     }
 
-    if (reason.constructor == Tk.RequireNonSslException) {
+    if (reason instanceof Tk.RequireNonSslException) {
       return [reason.message, "please wait until you are redirected", "Requires NO-SSL"];
     }
 

@@ -4,6 +4,70 @@ interface Function {
 }
 
 module Tk {
+  // todo; with inner ex
+
+  // class Exception extends ExtendableError {
+  //     public innerException: Error;
+  //     constructor(message?: string, innerException?: Error|string) {
+  //         super(message);
+  //         // if (typeof (<any>Error).captureStackTrace === 'function') {
+  //         //     //noinspection JSUnresolvedFunction
+  //         //     (<any>Error).captureStackTrace(this, arguments.callee);
+  //         // }
+  //         this.name = "Exception";
+  //         if (innerException) {
+  //             if (innerException instanceof Error) {
+  //                 this.innerException = innerException;
+  //                 this.message = message + ", innerException: " + this.innerException.message;
+  //             }
+  //             else if (typeof innerException === "string") {
+  //                 this.innerException = new Error(innerException);
+  //                 this.message = message + ", innerException: " + this.innerException.message;
+  //             }
+  //             else {
+  //                 // this.innerException = <any>innerException;
+  //                 // this.message = message + ", innerException: " + this.innerException;
+  //             }
+  //         }
+  //         else {
+  //             this.message = message;
+  //         }
+  //     }
+  // }
+  //
+
+  export var createError = (name: string) => {
+    var f = function(message: string) {
+        Object.defineProperty(this, 'name', {
+            enumerable: false,
+            writable: false,
+            value: name
+        });
+        Object.defineProperty(this, 'message', {
+            enumerable: false,
+            writable: true,
+            value: message
+        });
+
+        if (Error.hasOwnProperty('captureStackTrace')) { // V8
+            (<any>Error).captureStackTrace(this, this.constructor);
+        } else {
+            Object.defineProperty(this, 'stack', {
+                enumerable: false,
+                writable: false,
+                value: (<any>(new Error(message))).stack
+            });
+        }
+    }
+    if (typeof Object.setPrototypeOf === 'function') {
+        Object.setPrototypeOf(f.prototype, Error.prototype);
+    } else {
+        f.prototype = Object.create(Error.prototype);
+    }
+    return f;
+  }
+
+
   export class Base {
   }
 
@@ -212,21 +276,11 @@ module Tk {
     private route;
   }
 
-  export class Exception {
-    constructor(public message: string) { }
-  }
-
-  export class NotFoundException extends Exception {
-  }
-
-  export class RequireSslException extends Exception {
-  }
-
-  export class RequireNonSslException extends Exception {
-  }
-
-  export class InvalidShortIdException extends Exception {
-  }
+  // TODO: ES6/TS valid exceptions
+  export var NotFoundException = createError('NotFoundException');
+  export var RequireSslException = createError('RequireSslException');
+  export var RequireNonSslException = createError('RequireNonSslException');
+  export var InvalidShortIdException = createError('InvalidShortIdException');
 
 
   export class BeforeInterceptor {

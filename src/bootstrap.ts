@@ -109,21 +109,11 @@ bootstrap(async (aurelia: Aurelia) => {
   }
 
   // hack for electron cant communicate with popup
-  if (window.location.href.includes("?code=")) {
+  if (window.location.search.startsWith("?code=")) {
     window.localStorage.setItem('auth-search', window.location.search);
     window.localStorage.setItem('auth-hash', window.location.hash);
+    throw new Error("Window was used for auth code handling");
   }
-
-  // TODO: localhost ports / hostnames for local development
-  // if (env == 2) {
-  //   w6Urls.main = "//" + window.location.host;
-  //   w6Urls.play = "//" + window.location.host;
-  //   w6Urls.connect = "//" + window.location.host;
-  //   w6Urls.connectSsl = "https:" + toSsl(w6Urls.connect);
-  //   w6Urls.authSsl = "https:" + toSsl();
-  //   w6Urls.kb = "//" + window.location.host;
-  //   w6Urls.admin = "//" + window.location.host;
-  // }
 
   var something = {
     PublisherId: "19223485",
@@ -181,7 +171,7 @@ export async function bs(w6Urls: W6Urls, something) {
   try {
     userInfo = await login.getUserInfo();
   } catch (err) {
-    if (err.constructor == AbortError) throw err;
+    if (err instanceof AbortError) throw err;
     Tk.Debug.log("Error logging in", err);
     userInfo = new UserInfo();
     userInfo.failedLogin = true;

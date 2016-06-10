@@ -258,9 +258,9 @@
       $scope.reason = (errorMsg[1] != null ? (errorMsg[1] + ": ") : "") + errorMsg[0];
       $scope.title = errorMsg.length >= 3 ? errorMsg[2] : "Oops! Loading failed :(";
 
-      if (error.constructor == Tk.RequireSslException) {
+      if (error instanceof Tk.RequireSslException) {
         forwardService.switchToSsl();
-      } else if (error.constructor == Tk.RequireNonSslException) {
+      } else if (error instanceof Tk.RequireNonSslException) {
         forwardService.switchToNonSsl();
       }
     }

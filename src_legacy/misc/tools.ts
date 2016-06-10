@@ -181,6 +181,15 @@ module Tools {
 
   declare var escape;
 
+  var cleanup = (str: string, sign: string) => {
+    if (str.endsWith("&")) str.substring(0, str.length - 1);
+    if (str == sign) str = "";
+    return str;
+  }
+
+  export var cleanupHash = (hash: string) => cleanup(hash, '#');
+  export var cleanupSearch = (search: string) => cleanup(search, '?');
+
   // we still use arrays over the wire, so that we dont waste bw..
   export function aryToMap<K, V>(ary: V[], keyFunc: (x: V) => K) {
     let map = new Map<K, V>();

@@ -39,6 +39,8 @@ class W6Urls {
     this.docsCdn = "//cdn2.withsix.com";
   }
 
+  getCurrentPageWithoutHash() { return window.location.protocol + '//' + window.location.host + window.location.pathname + window.location.search; }
+
   get selectedSite() {
     // todo: Use routing table instead??!
     var path = window.location.pathname;

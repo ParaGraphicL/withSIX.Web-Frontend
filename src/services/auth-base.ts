@@ -4,11 +4,7 @@ import {inject} from 'aurelia-dependency-injection';
 
 import {IUserInfo, UserInfo} from './legacy';
 
-export class AbortError extends Error {
-  constructor(message: string) {
-    super(message);
-  }
-}
+export var AbortError = Tk.createError('AbortError');
 
 @inject(HttpClient, W6Urls, EventAggregator)
 export class LoginBase {
@@ -16,8 +12,9 @@ export class LoginBase {
   static idToken = 'aurelia_id_token';
   static token = 'aurelia_token';
   static localClientId = 'withsix-spa';
-  constructor(private http: HttpClient, private w6Url: W6Urls, private eventBus: EventAggregator) { }
+  constructor(private http: HttpClient, protected w6Url: W6Urls, private eventBus: EventAggregator) { }
   static resetUnload() { window.onbeforeunload = null; }
+  resetUnload() { LoginBase.resetUnload(); }
   async handleRefreshToken() {
     var refreshToken = window.localStorage[LoginBase.refreshToken];
     if (!refreshToken) return false;
@@ -51,7 +48,7 @@ export class LoginBase {
     throw new AbortError("Redirecting to " + url);
   }
 
-  redirect(url) { LoginBase.redirect(url); }
+  redirect = (url) => LoginBase.redirect(url);
 
   static handleRedir(url, isLoggedIn) {
     url = url.includes('#') ? url + "&sslredir=1" : url + "#sslredir=1";
@@ -70,6 +67,8 @@ export class LoginBase {
   }
 
   async getUserInfo(): Promise<IUserInfo> {
+    this.handleLogout();
+
     let userInfo = await this.getUserInfoInternal();
     if (!userInfo) userInfo = new UserInfo();
     let hasSslRedir = window.location.hash.includes('sslredir=1');
@@ -77,23 +76,23 @@ export class LoginBase {
     let isLoggedIn = userInfo.id ? true : false;
     if (userInfo.isPremium) {
       let isSsl = window.location.protocol === 'https:';
-      if (userInfo.isPremium && !isSsl && !hasSslRedir && Tk.getEnvironment() < Tk.Environment.Local) {
+      if (userInfo.isPremium && !isSsl && !hasSslRedir) {
         this.redirect(LoginBase.toHttps(isLoggedIn));
-        throw new Error("need ssl redir");
+        throw new AbortError("need ssl redir");
       }
     }
 
     let hash = window.location.hash;
 
     if (hasSslRedir) {
-      hash = hash.replace("&sslredir=1", "").replace("#sslredir=1", "");
       window.w6Cheat.redirected = true;
+      hash = Tools.cleanupHash(hash.replace(/\&?sslredir=1/g, ""));
     }
     if (hasLoggedIn) {
-      hash = hash.replace("&loggedin=1", "").replace("#loggedin=1", "");
+      hash = Tools.cleanupHash(hash.replace(/\&?loggedin=1/g, ""))
       window.w6Cheat.redirectedWasLoggedIn = true;
     }
-    if (hasSslRedir || hasLoggedIn) history.replaceState("", document.title, window.location.pathname + window.location.search + hash);
+    if (hasSslRedir || hasLoggedIn)  this.updateHistory(window.location.pathname + window.location.search + hash);
 
     return userInfo;
   }
@@ -107,21 +106,33 @@ export class LoginBase {
     this.clearToken();
   }
 
-  buildLogoutParameters() { return window.localStorage[LoginBase.idToken] ? ("?id_token_hint=" + window.localStorage[LoginBase.idToken] + "&post_logout_redirect_uri=" + encodeURI(window.location.href)) : ""; }
+  updateHistory = (desired) => history.replaceState("", document.title, desired)
+
+  buildLogoutParameters(url: string) { return window.localStorage[LoginBase.idToken] ? ("?id_token_hint=" + window.localStorage[LoginBase.idToken] + (url ? "&post_logout_redirect_uri=" + url : '')) : ""; }
+
+  handleLogout() {
+    let hasLogout = window.location.pathname.startsWith('/logout');
+    if (!hasLogout) return;
+    this.clearLoginInfo();
+    this.resetUnload();
+    if (window.location.protocol == 'https:')
+      this.redirect(LoginBase.toHttp(false));
+    else {
+      var redirectUri = window.location.search.startsWith('?redirect=') ? window.location.search.replace('?redirect=', '') : null;
+      if (redirectUri) {
+         // must be without #loggedin and #sslredir etc
+        var idx = redirectUri.indexOf('#');
+        if (idx > -1) redirectUri = redirectUri.substring(0, idx);
+      }
+      this.redirect(this.w6Url.authSsl + "/identity/connect/endsession" + this.buildLogoutParameters(redirectUri || encodeURI(this.w6Url.urlNonSsl)));
+    }
+    throw new AbortError("have to logout");
+  }
+
+  getBaseUrl() { return this.getOrigin() + window.location.pathname }
+  getOrigin() { return window.location.protocol + '//' + window.location.host }
 
   async getUserInfoInternal(): Promise<IUserInfo> {
-    let hasLogout = window.location.search.includes('?logout=1');
-    if (hasLogout) {
-      this.clearLoginInfo();
-      if (window.location.protocol == 'https:') {
-        this.redirect(LoginBase.toHttp(false));
-      } else {
-        history.replaceState("", document.title, window.location.pathname + window.location.search.replace("&logout=1", "").replace("?logout=1", "") + window.location.hash);
-        this.redirect(this.w6Url.authSsl + "/identity/connect/endsession" + this.buildLogoutParameters());
-      }
-      throw new Error("have to logout");
-    }
-
     let userInfo = null;
 
     let token = window.localStorage[LoginBase.token];
