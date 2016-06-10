@@ -14,7 +14,7 @@ virtual-list {
   height: 500px;
 }
 .virtual-container {
-  overflow-y: scroll;
+  overflow-y: auto;
   height: 55vh;
 }
 .user-error-dialog {
