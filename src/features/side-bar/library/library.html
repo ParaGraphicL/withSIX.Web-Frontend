@@ -24,7 +24,7 @@
       <hr />
       <!-- <compose view-model="./favorites" model.bind="home"></compose> -->
     </div>
-    <loading-composer shown.bind="shown" view-model="features/side-bar/library/collections" model.bind="home" if.bind="w6.userInfo.id"></loading-composer>
+    <loading-composer shown.bind="shown" view-model="features/side-bar/library/collections" model.bind="home" if.bind="isLoggedIn"></loading-composer>
   </div>
 
   <button class="naked-button default bottom" click.delegate="openLibrary()">Open Full Library</button>

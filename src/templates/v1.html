@@ -51,7 +51,7 @@
                   </ul>
                 </nav>
 
-                <div if.bind="w6.userInfo.id">
+                <div if.bind="isLoggedIn">
                   <!-- SignedIn -->
                   <div class="signedin pull-right">
 
@@ -73,7 +73,7 @@
                 <!--
                     User is not logedin, Show User Menu
                     -->
-                <div class="usermenu" if.bind="!w6.userInfo.id">
+                <div class="usermenu" if.bind="!isLoggedIn">
                   <compose view="_user-menu.html"></compose>
                 </div>
 

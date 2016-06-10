@@ -1,5 +1,5 @@
 <template>
-  <ul if.bind="w6.userInfo.id">
+  <ul if.bind="isLoggedIn">
     <li> <a href="/me">Home</a> </li>
     <li> <a href="/u/${w6.userInfo.slug}">Profile</a> </li>
     <li>
@@ -9,7 +9,7 @@
     </li>
   </ul>
 
-  <ul if.bind="!w6.userInfo.id">
+  <ul if.bind="!isLoggedIn">
     <li>
       <a class="login" click.delegate="login.login() && $event.preventDefault()" title="or register">Login</a>
     </li>
