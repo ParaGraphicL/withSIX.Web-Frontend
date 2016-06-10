@@ -1,6 +1,7 @@
 @import "../../../templates/_v2.scss";
 #tab-view-render-library {
-  $item-height: 36px;
+  $itemH: 32px;
+  $item-height: $itemH + 4px;
   .virtual-row {
     height: $item-height;
   }
@@ -41,7 +42,7 @@
       margin-right: 8px;
     }
     li {
-      height: 32px;
+      height: $item-height;
       overflow: hidden;
       .entry {
         .update-available {
