@@ -19,12 +19,12 @@
   <hr />
 
   <div class="the-content" scroll.trigger="closeDropdowns()">
-    <div if.bind="w6.miniClient.isConnected">
-      <loading-composer shown.bind="shown" view-model="features/side-bar/library/recent" model.bind="home"></loading-composer>
+    <container if.bind="w6.miniClient.isConnected">
+      <loading-composer class="recent" shown.bind="shown" view-model="features/side-bar/library/recent" model.bind="home"></loading-composer>
       <hr />
       <!-- <compose view-model="./favorites" model.bind="home"></compose> -->
-    </div>
-    <loading-composer shown.bind="shown" view-model="features/side-bar/library/collections" model.bind="home" if.bind="isLoggedIn"></loading-composer>
+    </container>
+    <loading-composer class="collections" shown.bind="shown" view-model="features/side-bar/library/collections" model.bind="home" if.bind="isLoggedIn"></loading-composer>
   </div>
 
   <button class="naked-button default bottom" click.delegate="openLibrary()">Open Full Library</button>

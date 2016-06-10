@@ -7,6 +7,9 @@
   .virtual-row {
     height: 92px; display: block;
   }
+  .virtual-container {
+    height: calc(100vh - 260px);
+  }
   .col1 {
     @include make-md-column(5);
   }

@@ -6,8 +6,15 @@
     height: $item-height;
   }
   .virtual-container {
-    height: $item-height * 8; // TODO: base this on view port etc
+    height: calc(50% - 36px);
   }
+  .recent {
+    .virtual-container {
+      height: calc(50% - 56px);
+      //height: $item-height * 8; // TODO: base this on view port etc
+    }
+  }
+
   action-bar.header-items {
     li {
       margin-top: 0;
