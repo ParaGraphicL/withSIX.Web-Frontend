@@ -43,7 +43,7 @@ bootstrap(async (aurelia: Aurelia) => {
         config.settings.lock = false;
         config.settings.centerHorizontalOnly = true;
       })
-      //.plugin('aurelia-ui-virtualization')
+      .plugin('aurelia-ui-virtualization')
       .feature('resources')
       .feature('features');
 

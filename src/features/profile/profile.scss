@@ -4,6 +4,9 @@
 #my-library,
 #my-library-show-home,
 .library {
+  .virtual-row {
+    height: 92px; display: block;
+  }
   .col1 {
     @include make-md-column(5);
   }
@@ -319,5 +322,16 @@
   button {
     height: 28px;
     padding: 0 4px;
+  }
+}
+
+#my-home {
+  .recent {
+    .virtual-row {
+      height: 300px;
+    }
+    .virtual-container {
+      height: 80vh;
+    }
   }
 }

@@ -1,0 +1,17 @@
+<template>
+  <div class.bind="cardContainerCls">
+    <div class="card ${cardCls}">
+      <compose model.bind="item" view.bind="view" view-model="${viewPath}${item.type || itemType}"></compose>
+    </div>
+  </div>
+  <div class.bind="cardContainerCls" if.bind="w6.renderAds && showAds && $index == ads[0]">
+    <div class="card ${cardCls}">
+      <ad-unit unit-id="angular-ad1"></ad-unit>
+    </div>
+  </div>
+  <div class.bind="cardContainerCls" if.bind="w6.renderAds && showAds && $index == ads[1]">
+    <div class="card ${cardCls}">
+      <ad-unit unit-id="angular-ad2"></ad-unit>
+    </div>
+  </div>
+</template>

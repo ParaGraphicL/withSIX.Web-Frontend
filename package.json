@@ -104,6 +104,7 @@
     "aurelia-templating-binding": "^1.0.0-beta.1.2.4",
     "aurelia-templating-resources": "^1.0.0-beta.1.2.6",
     "aurelia-templating-router": "^1.0.0-beta.1.2.1",
+    "aurelia-ui-virtualization": "^0.4.6",
     "aurelia-validation": "git+https://github.com/sickboy/validation.git",
     "bluebird": "^3.4.0",
     "bootstrap": "^3.3.6",

@@ -13,6 +13,10 @@ virtual-list {
 .virtual-table {
   height: 500px;
 }
+.virtual-container {
+  overflow-y: scroll;
+  height: 55vh;
+}
 .user-error-dialog {
   max-width: 800px;
 }

@@ -1,5 +1,12 @@
 @import "../../../templates/_v2.scss";
 #tab-view-render-library {
+  $item-height: 36px;
+  .virtual-row {
+    height: $item-height;
+  }
+  .virtual-container {
+    height: $item-height * 8; // TODO: base this on view port etc
+  }
   action-bar.header-items {
     li {
       margin-top: 0;

@@ -55,7 +55,7 @@ export class TopBar extends ViewModel {
       this.subscriptions.subd(d => d(Base.toProperty(notLoggedInObs, x => x.disabled, notificationTab)));
     }
 
-    if (this.features.loggedIn) {
+    if (this.isLoggedin) {
       let userTab: ITab = {
         header: "Settings",
         headerViewModel: `${TopBar.root}user/user-header`,

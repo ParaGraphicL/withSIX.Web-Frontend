@@ -35,6 +35,8 @@ module.exports = {
       }, {
         moduleId: "aurelia-dialog"
       }, {
+        moduleId: "aurelia-ui-virtualization"
+      }, {
         moduleId: "aurelia-auth"
       }, {
         moduleId: "contextMenu"

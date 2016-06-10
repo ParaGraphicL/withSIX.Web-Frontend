@@ -1,14 +1,11 @@
 <template>
   <header class="title">
     <dropdown-menu class="pull-right" items.bind="menuItems" item-cls="ignore-close"></dropdown-menu>
-    <a class="text-link shout" href="/me/library/${w6.activeGame.slug}">Recent</a>
+    <a class="text-link shout" href="/me/library/${w6.activeGame.slug}">Recent (${model.recent.length})</a>
+    <div class="clearfix"></div>
   </header>
 
-  <ul class="menu main">
-    <li repeat.for="r of model.recent">
-      <compose view-model="features/profile/content/${r.type}" view="./_item.html" model.bind="r"></compose>
-    </li>
-  </ul>
+  <list-view is-virtual.one-time="features.uiVirtualization" items.bind="model.recent" view-path="features/profile/content/" view="features/side-bar/library/_item.html"></list-view>
 
   <center if.bind="model.recent.length >= 10">
     <a class="text-link shout" href="/me/library/${w6.activeGame.slug}">View all</a>
