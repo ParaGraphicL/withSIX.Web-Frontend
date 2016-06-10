@@ -173,7 +173,7 @@ export class PlaylistItem extends ViewModel {
           canExecuteObservable: this.canExecuteObservable,
           icon: 'withSIX-icon-Tools'
         }));
-      if (this.w6.userInfo.id) {
+      if (this.isLoggedIn) {
         d(this.addToCollections = uiCommand2("Add to ...", async () => this.dialog.open({ viewModel: AddModsToCollections, model: { gameId: this.model.gameId, mods: [this.model] } }), { icon: 'withSIX-icon-Nav-Collection' }));
       }
       d(this.observeEx(x => x.hasUpdateAvailable)
@@ -227,7 +227,7 @@ export class PlaylistItem extends ViewModel {
       this.menuItems.push(new MenuItem(this.edit));
       this.menuItems.push(new MenuItem(this.removeFromBasket));
     }
-    if (this.w6.userInfo.id) this.menuItems.push(new MenuItem(this.addToCollections));
+    if (this.isLoggedIn) this.menuItems.push(new MenuItem(this.addToCollections));
     this.menuItems.push(this.launchMenuItem);
     this.menuItems.push(new MenuItem(this.install));
     this.menuItems.push(new MenuItem(this.update));

@@ -152,7 +152,7 @@ export class GameBaskets extends ViewModel {
     let isCollection = type == BasketType.SingleCollection;
 
     // executes in bg
-    if (isCollection && this.w6.userInfo.id) new SubscribeCollection(item.id).handle(this.mediator);
+    if (isCollection && this.isLoggedIn) new SubscribeCollection(item.id).handle(this.mediator);
     return this.handleDirectAction(clientInfo, item, isCollection);
   }
 

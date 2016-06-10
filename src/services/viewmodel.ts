@@ -56,6 +56,7 @@ export class ViewModel extends Base {
   showMessageDialog = this.ui.showMessageDialog
   confirm = this.ui.confirm;
 
+  get isLoggedIn() { return this.w6.userInfo.id != null }
   get unchanged() { return !this.changed; }
   get navigateInternal() { return this.ui.navigateInternal }
   get features() { return this.ui.features; }

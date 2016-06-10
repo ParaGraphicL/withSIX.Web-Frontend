@@ -15,7 +15,7 @@ export class SideBar extends ViewModel {
   get isPlayActive() { return this.selectedTab == this.tabs[0] };
   get hasActiveGame() { return this.w6.activeGame.id != null };
   get isClientConnected() { return this.w6.miniClient.isConnected; }
-  get quickActionsEnabled() { return this.w6.url.environment != Tk.Environment.Production && this.w6.userInfo.id && this.w6.userInfo.isAdmin; }
+  get quickActionsEnabled() { return this.w6.url.environment != Tk.Environment.Production && this.isLoggedIn && this.w6.userInfo.isAdmin; }
 
   constructor(ui, private clientMissingHandler: ClientMissingHandler) {
     super(ui);

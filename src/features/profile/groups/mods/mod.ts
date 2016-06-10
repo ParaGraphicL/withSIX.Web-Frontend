@@ -24,7 +24,7 @@ export class Mod extends ViewModelOf<IMod> {
     this.avatarUrl = this.w6.url.getUsercontentUrl2(model.avatar, model.avatarUpdatedAt);
     this.subscriptions.subd(d => {
       // TODO: This should only be here if group admin?
-      if (this.w6.userInfo.id)
+      if (this.isLoggedIn)
         d(this.addToCollections = uiCommand2("Add to ...", async () => this.dialog.open({ viewModel: AddModsToCollections, model: { gameId: this.model.gameId, mods: [{ id: this.model.id, name: this.model.name, packageName: this.model.packageName, groupId: this.model.groupId }] } }), { icon: 'withSIX-icon-Nav-Collection' }));
     });
     this.menuItems.push(new MenuItem(this.addToCollections));

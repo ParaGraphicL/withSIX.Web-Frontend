@@ -72,7 +72,7 @@ export class TopBar extends ViewModel {
 
   disabledAction = () => {
     return this.clientMissingHandler.handleClientOrGameMissing();
-    // if (!this.w6.userInfo.id) {
+    // if (!this.isLoggedIn) {
     //   return this.clientMissingHandler.requireAccount();
     // } else { return this.clientMissingHandler.handleClientOrGameMissing() }
   }

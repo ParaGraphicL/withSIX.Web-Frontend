@@ -19,7 +19,7 @@ export class Mod extends ContentViewModel<IMod> {
       this.topMenuActions.push(new MenuItem(this.addToBasket));
       d(this.observeEx(x => x.isInBasket).subscribe(x => { this.addToBasket.name = this.basketableText; this.addToBasket.icon = this.basketableIcon }));
 
-      if (this.w6.userInfo.id) {
+      if (this.isLoggedIn) {
         d(this.addToCollections = uiCommand2("Add to ...", async () => this.dialog.open({ viewModel: AddModsToCollections, model: { gameId: this.model.gameId, mods: [this.model] } }), { icon: 'withSIX-icon-Nav-Collection' }));
         this.topMenuActions.push(new MenuItem(this.addToCollections));
       }

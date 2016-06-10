@@ -20,7 +20,7 @@ export class Dependency extends ViewModel {
     this.subscriptions.subd(d => {
       d(this.changeVersion);
       d(this.remove);
-      if (this.model.id && this.w6.userInfo.id)
+      if (this.model.id && this.isLoggedIn)
         d(this.addToCollections = uiCommand2("Add to ...", async () => {
           this.dialog.open({ viewModel: AddModsToCollections, model: { gameId: this.model.gameId, mods: [{ id: this.model.id, name: this.model.name, packageName: this.model.dependency }] } })
         }, { icon: 'withSIX-icon-Nav-Collection' }));
