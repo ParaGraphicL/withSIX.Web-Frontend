@@ -150,7 +150,9 @@ export class GameBaskets extends ViewModel {
     if (this.isBusy(clientInfo)) throw new Error("Currently busy");
     // TODO: What about local collections?
     let isCollection = type == BasketType.SingleCollection;
-    if (isCollection) new SubscribeCollection(item.id).handle(this.mediator);
+
+    // executes in bg
+    if (isCollection && this.w6.userInfo.id) new SubscribeCollection(item.id).handle(this.mediator);
     return this.handleDirectAction(clientInfo, item, isCollection);
   }
 
