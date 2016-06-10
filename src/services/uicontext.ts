@@ -22,12 +22,13 @@ class FeatureToggles {
 
   private isManager = this.w6.userInfo.isManager || this.w6.userInfo.isAdmin;
   private syncFeatures = !this.w6.isClient;
-  private testEnvironment = Tk.getEnvironment() != Tk.Environment.Production;
+  private isTestEnvironment = Tk.getEnvironment() != Tk.Environment.Production;
 
   groups = this.isManager;
   loggedIn = this.w6.userInfo.id != null;
   notifications = this.isManager;
   library = this.syncFeatures;
+  quickActions = this.isTestEnvironment;
 }
 
 @inject(W6)
