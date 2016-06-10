@@ -11,10 +11,12 @@ export class Login extends LoginBase {
   constructor(public authService: AuthService, private ui: UiContext, http: HttpClient, private ls: LS) { super(http, ui.w6.url, ui.eventBus); }
   async login(pathAndSearch?) {
     try {
+      if (console && console.log) console.log("$$$$ Trying to login")
       // Must remove the hash or we won't redirect back :)
       var url = pathAndSearch ? (this.getOrigin() + pathAndSearch) : this.w6Url.getCurrentPageWithoutHash();
       Tk.Debug.log("logging in, return: ", url);
       if (await this.handleRefreshToken()) {
+        if (console && console.log) console.log("$$$$ Handled refresh token")
         this.redirect(url);
         return;
       }
@@ -23,6 +25,7 @@ export class Login extends LoginBase {
       window.localStorage[LoginBase.refreshToken] = response.content.refresh_token;
       window.localStorage[LoginBase.idToken] = response.content.id_token;
       this.ls.set('w6.event', { name: 'login', data: null }); // TODO: Include user id so we can switch logged in accts if needed?
+      if (console && console.log) console.log("$$$$ Succesfully loggedin")
       this.redirect(url);
       return;
     } catch (err) {
