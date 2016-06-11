@@ -5,6 +5,29 @@
   <link rel="stylesheet" href="/styles/lib.css">
   <link rel="stylesheet" href="/styles/fonts.css">
   <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ubuntu:500,400,300,300italic">
+  <style>
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      background-color: #f0f0f0;
+    }
+
+    #applicationHost {
+      height: 100%;
+    }
+
+    #applicationLoader {
+      background-image: url('//withsix.azureedge.net/img/logo.png');
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-position: center;
+      height: 100%;
+    }
+
+  </style>
 
   <title ng-bind="pageInfo.title">withSIX</title>
   <link rel="shortcut icon" ng-href="{{w6.versionedAsset('img/meta/favicon.ico')}}" type="image/x-icon">
@@ -126,61 +149,63 @@
 
 <body ng-controller="MainAppController as vm" data-status="{{ status }}">
   <div id="applicationHost">
-    <div class="container-fluid">
-      <center>
-        <div class="splash" id="splash" style="margin-top: 100px;">
-          <div class="message" id="splash-message">
-            <noscript>
-              <div class="container-fluid">
-                We apologize for the inconvenience, but you need to have JavaScript enabled to view this page
-                <br/>
-                <br/> Please visit our Feedback and
-                <br/>Support community over at:
-                <br/>
-                <a href="https://community.withsix.com" target="_blank">Get Satisfaction withSIX</a>
-              </div>
-            </noscript>
+    <div id="applicationLoader">
+      <div class="container-fluid">
+        <center>
+          <div class="splash" id="splash" style="margin-top: 100px;">
+            <div class="message" id="splash-message">
+              <noscript>
+                <div class="container-fluid">
+                  We apologize for the inconvenience, but you need to have JavaScript enabled to view this page
+                  <br/>
+                  <br/> Please visit our Feedback and
+                  <br/>Support community over at:
+                  <br/>
+                  <a href="https://community.withsix.com" target="_blank">Get Satisfaction withSIX</a>
+                </div>
+              </noscript>
+            </div>
           </div>
-        </div>
-      </center>
-    </div>
+        </center>
+      </div>
 
-    <!-- <script src="/jspm_packages/system-polyfills.js"></script>
+      <!-- <script src="/jspm_packages/system-polyfills.js"></script>
     <script src="/jspm_packages/system.js"></script>
     <script src="/config.js"></script> -->
 
-    <!-- <script src="/dist_legacy/bower.min.js"></script> -->
-    <script src="/dist_legacy/bower.js"></script>
-    <script src="/dist_legacy/vendor.min.js"></script>
-    <script src="/dist_legacy/misc.min.js"></script>
+      <!-- <script src="/dist_legacy/bower.min.js"></script> -->
+      <script src="/dist_legacy/bower.js"></script>
+      <script src="/dist_legacy/vendor.min.js"></script>
+      <script src="/dist_legacy/misc.min.js"></script>
 
-    <script>
-      (function() {
-        if (window.location.host.includes("withsix.com")) {
-          Tk.setEnvironment(0);
-        } else if (window.location.host.includes("staging.withsix.net")) {
-          Tk.setEnvironment(1);
-        } else if (window.location.host.includes("localhost")) {
-          Tk.setEnvironment(2);
-        } else {
-          Tk.setEnvironment(3);
-        }
-      })();
+      <script>
+        (function() {
+          if (window.location.host.includes("withsix.com")) {
+            Tk.setEnvironment(0);
+          } else if (window.location.host.includes("staging.withsix.net")) {
+            Tk.setEnvironment(1);
+          } else if (window.location.host.includes("localhost")) {
+            Tk.setEnvironment(2);
+          } else {
+            Tk.setEnvironment(3);
+          }
+        })();
 
-    </script>
+      </script>
 
-    <script src="/dist_legacy/app.min.js"></script>
+      <script src="/dist_legacy/app.min.js"></script>
 
-    <script>
-      // System.import("font-awesome/css/font-awesome.css!");
-      // // we already load browser polyfill through lib.js
-      // System.import('aurelia-bootstrapper')
-      //   .then(function(bs) { return System.import('main').then(function(main) { return bs.bootstrap(main.configure) }) })
-      //   .catch(Tk.Debug.error.bind(Tk.Debug));
+      <script>
+        // System.import("font-awesome/css/font-awesome.css!");
+        // // we already load browser polyfill through lib.js
+        // System.import('aurelia-bootstrapper')
+        //   .then(function(bs) { return System.import('main').then(function(main) { return bs.bootstrap(main.configure) }) })
+        //   .catch(Tk.Debug.error.bind(Tk.Debug));
 
-    </script>
-    <script src="bundle.js"></script>
+      </script>
+      <script src="bundle.js"></script>
 
+    </div>
   </div>
   <div app-view-segment="0" id="content"></div>
 </body>
