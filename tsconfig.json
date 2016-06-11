@@ -343,6 +343,7 @@
         "./node_modules/aurelia-templating-resources/dist/aurelia-templating-resources.d.ts",
         "./node_modules/aurelia-templating-router/dist/aurelia-templating-router.d.ts",
         "./node_modules/aurelia-templating/dist/aurelia-templating.d.ts",
+        "./node_modules/aurelia-ui-virtualization/dist/aurelia-ui-virtualization.d.ts",
         "./node_modules/aurelia-validation/dist/aurelia-validation.d.ts",
         "./node_modules/withsix-sync-api/dist/withsix-sync-api.d.ts",
         "./node_modules/rx/ts/rx.all.es6.d.ts"

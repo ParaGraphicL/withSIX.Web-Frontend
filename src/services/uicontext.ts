@@ -16,6 +16,8 @@ import {ClientWrapper, AppEventsWrapper} from './client-wrapper';
 
 import {MessageDialog} from '../features/message-dialog'
 
+export {MessageDialog, Confirmation}
+
 @inject(W6)
 class FeatureToggles {
   constructor(private w6: W6) { }
@@ -59,6 +61,18 @@ export class UiContext {
     return this.router.navigate(url);
   }
 
-  showMessageDialog = (message: string, title = 'Please confirm', buttons = MessageDialog.Ok): DialogResult => this.dialog.open({ viewModel: MessageDialog, model: { title, message, buttons } })
   confirm = async (message: string, title = 'Please confirm'): Promise<boolean> => (await this.showMessageDialog(message, title, MessageDialog.YesNo)).output == "yes";
+  showMessageDialog = <T>(message: string, title = 'Please confirm', buttons = MessageDialog.Ok, confirmations: Confirmation[] = null): DialogResultT<string> => this.showMessageDialogInternal({ title, message, buttons, confirmations })
+  showMessageDialogInternal = <T>(model: MessageModel) => this.dialog.open({ viewModel: MessageDialog, model: model })
+}
+
+interface Confirmation { text: string, hint?: string, icon?: string, isChecked?: boolean }
+
+interface MessageModel {
+  title: string, message: string, buttons: string[]; //showRemember?: boolean;
+  confirmations?: Confirmation[]
+}
+
+interface DialogResultT<T> extends DialogResult {
+  output: T;
 }

@@ -1,7 +1,9 @@
 <template>
   <div class.bind="cardContainerCls">
     <div class="card ${cardCls}">
-      <compose model.bind="item" view.bind="view" view-model="${viewPath}${item.type || itemType}"></compose>
+      <template replaceable part="item-template">
+        <compose model.bind="item" view.bind="view" view-model="${viewPath}${item.type || itemType}"></compose>
+      </template>
     </div>
   </div>
   <div class.bind="cardContainerCls" if.bind="w6.renderAds && showAds && $index == ads[0]">

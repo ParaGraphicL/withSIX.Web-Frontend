@@ -5,6 +5,19 @@
     </ai-dialog-header>
     <ai-dialog-body>
       <div innerHTML.bind="model.message | text"></div>
+      <div class="confirmations" if.bind="model.confirmations" class="pull-left">
+        <br />
+        <ul class="menu">
+          <template repeat.for="c of model.confirmations">
+            <li>
+              <label for="confirmation-${$index}" title.bind="c.hint == null ? '' : c.hint">
+                <input type="checkbox" name="confirmation-${$index}" id="confirmation-${$index}" checked.bind="c.isChecked" />
+                <span class="icon ${c.icon}" if.bind="c.icon"></span> ${c.text}
+              </label>
+            </li>
+          </template>
+        </ul>
+      </div>
     </ai-dialog-body>
     <ai-dialog-footer>
       <div class="buttons">

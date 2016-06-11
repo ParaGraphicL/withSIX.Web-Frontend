@@ -1,10 +1,9 @@
 import {ContentViewModel} from './base';
 import {ContentDeleted, Command, BasketItemType, IBasketItem, Base, IPromiseFunction, uiCommand2, MenuItem, VoidCommand, DbQuery, DbClientQuery, handlerFor, IContent, TypeScope, ICollection} from '../../../framework';
 import {ViewModel, Query, IGame, ITab, IMenuItem,
-  CollectionScope, IBreezeCollectionVersion, IBreezeCollectionVersionDependency, UiContext, CollectionHelper,
-  ReactiveList, FindModel, ActionType, BasketState, BasketType, ConnectionState, Debouncer, GameChanged, uiCommandWithLogin2, GameClientInfo,
-  IBreezeCollection, IRequireUser, IUserInfo, W6Context, Client, UploadService, BasketService, CollectionDataService, Utils, requireUser,
-  SelectTab} from '../../../framework';
+  CollectionScope, IBreezeCollectionVersion, IBreezeCollectionVersionDependency, UiContext, CollectionHelper, UninstallContent,
+  ReactiveList, FindModel, ActionType, BasketState, BasketType, ConnectionState, Debouncer, GameChanged, uiCommandWithLogin2, GameClientInfo, MessageDialog, Confirmation,
+  IBreezeCollection, IRequireUser, IUserInfo, W6Context, Client, UploadService, BasketService, CollectionDataService, Utils, requireUser, SelectTab} from '../../../framework';
 import {Basket, GameBaskets} from '../../game-baskets';
 import {inject} from 'aurelia-framework';
 
@@ -71,16 +70,19 @@ export class Collection extends ContentViewModel<ICollection> {
     };
   }
 
-  createDeleteCommand() {
-    return this.model.typeScope == TypeScope.Subscribed
-      ? uiCommand2("Unsubscribe", async () => {
-        if (!(await this.confirm("Are you sure you want to unsubscribe this collection?"))) return;
-        await new DeleteCollection(this.model.id, this.model.gameId, this.model.typeScope).handle(this.mediator);
-      }, { icon: "icon withSIX-icon-Square-X" })
-      : uiCommand2("Delete", async () => {
-        if (!(await this.confirm("Are you sure you want to permanently delete this collection?"))) return;
-        await new DeleteCollection(this.model.id, this.model.gameId, this.model.typeScope).handle(this.mediator);
-      }, { icon: "icon withSIX-icon-Square-X" })
+  createDeleteCommand = () => this.model.typeScope == TypeScope.Subscribed
+    ? uiCommand2("Unsubscribe", () => this.deleteInternal("This will unsubscribe from the collection, do you want to continue?", "Unsubscribe collection?"),
+      { icon: "icon withSIX-icon-Square-X" })
+    : uiCommand2("Delete", () => this.deleteInternal("This will delete your collection, do you want to continue?", "Delete collection?"), { icon: "icon withSIX-icon-Square-X" })
+
+  deleteInternal = async (title: string, message: string) => {
+    let confirmations: Confirmation[] = [{ text: 'Uninstall all mods from this collection', icon: 'withSIX-icon-Alert', hint: "This will physically delete all the content of this collection, even if its being used elsewhere" }]; // todo; have the checked ones come back over the result instead?
+    let r = await this.showMessageDialog(title, message, MessageDialog.YesNo, confirmations);
+    if (r.output != "yes") return;
+    await new DeleteCollection(this.model.id, this.model.gameId, this.model.typeScope).handle(this.mediator);
+    // TODO: Extend delete?
+    if (confirmations[0].isChecked)
+      await new UninstallContent(this.model.gameId, this.model.id, { text: this.model.name }).handle(this.mediator);
   }
 
   getScopeIcon() {
@@ -162,17 +164,19 @@ class LoadCollectionIntoBasketHandler extends DbClientQuery<LoadCollectionIntoBa
     baskets.replaceBasket();
     let basket = baskets.active;
     basket.model.isTemporary = ((col.author && col.author.id) || col.authorId) != this.w6.userInfo.id;
-    basket.replaceItems(dependencies.map(x => { return {
-      name: x.dependency,
-      packageName: x.dependency,
-      constraint: x.constraint,
-      id: x.modDependencyId,
-      itemType: BasketItemType.Mod,
-      gameId: col.gameId,
-      image: null,
-      author: null,
-      sizePacked: null
-    } }));
+    basket.replaceItems(dependencies.map(x => {
+      return {
+        name: x.dependency,
+        packageName: x.dependency,
+        constraint: x.constraint,
+        id: x.modDependencyId,
+        itemType: BasketItemType.Mod,
+        gameId: col.gameId,
+        image: null,
+        author: null,
+        sizePacked: null
+      }
+    }));
     basket.model.collectionId = col.id;
     basket.model.name = col.name;
   }

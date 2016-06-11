@@ -1,6 +1,6 @@
 import {ViewModel, Query, DbQuery, handlerFor, IGame, ITab, IMenuItem, MenuItem, uiCommand2, VoidCommand,
-  CollectionScope, IBreezeCollectionVersion, IBreezeCollectionVersionDependency, BasketItemType, TypeScope, UiContext, CollectionHelper,
-  ReactiveList, IBasketItem, FindModel, ActionType, BasketState, BasketType, ConnectionState, Debouncer, GameChanged, uiCommandWithLogin2, GameClientInfo,
+  CollectionScope, IBreezeCollectionVersion, IBreezeCollectionVersionDependency, BasketItemType, TypeScope, UiContext, CollectionHelper, Confirmation, MessageDialog,
+  ReactiveList, IBasketItem, FindModel, ActionType, BasketState, BasketType, ConnectionState, Debouncer, GameChanged, uiCommandWithLogin2, GameClientInfo, UninstallContent,
   IBreezeCollection, IRequireUser, IUserInfo, W6Context, Client, UploadService, BasketService, CollectionDataService, DbClientQuery, Utils, requireUser} from '../../../framework';
 import {CreateCollectionDialog} from '../../games/collections/create-collection-dialog';
 import {Basket, GameBaskets} from '../../game-baskets';
@@ -369,33 +369,38 @@ export class Playlist extends ViewModel {
   }
 
 
-  createDeleteCommand() {
-    return this.collection.typeScope == TypeScope.Subscribed
-      ? uiCommand2("Unsubscribe", async () => {
-        if (!(await this.confirm("Are you sure you want to unsubscribe this collection?"))) return;
-        await new DeleteCollection(this.collection.id, this.collection.gameId, this.collection.typeScope).handle(this.mediator);
-        await this.unload();
-      }, { icon: "icon withSIX-icon-Square-X" })
-      : uiCommand2("Delete", async () => {
-        if (!(await this.confirm("Are you sure you want to permanently delete this collection?"))) return;
-        await new DeleteCollection(this.collection.id, this.collection.gameId, this.collection.typeScope).handle(this.mediator);
-        await this.unload();
-      }, { icon: "icon withSIX-icon-Square-X" })
+  createDeleteCommand = () => this.collection.typeScope == TypeScope.Subscribed
+    ? uiCommand2("Unsubscribe", () => this.deleteInternal("This will unsubscribe from the collection, do you want to continue?", "Unsubscribe collection?"),
+      { icon: "icon withSIX-icon-Square-X" })
+    : uiCommand2("Delete", () => this.deleteInternal("This will delete your collection, do you want to continue?", "Delete collection?"), { icon: "icon withSIX-icon-Square-X" })
+
+  deleteInternal = async (title: string, message: string) => {
+    let confirmations: Confirmation[] = [{ text: 'Uninstall all mods from this collection', icon: 'withSIX-icon-Alert', hint: "This will physically delete all the content of this collection, even if its being used elsewhere" }]; // todo; have the checked ones come back over the result instead?
+    let r = await this.showMessageDialog(title, message, MessageDialog.YesNo, confirmations);
+    if (r.output != "yes") return;
+    await new DeleteCollection(this.collection.id, this.collection.gameId, this.collection.typeScope).handle(this.mediator);
+    await this.unload();
+    // TODO: Extend delete?
+    if (confirmations[0].isChecked)
+      await new UninstallContent(this.collection.gameId, this.collection.id, { text: this.collection.name }).handle(this.mediator);
   }
+
   loadCollectionVersion = async (id, gameId) => {
     let dependencies = await new GetDependencies(id).handle(this.mediator);
     this.newBasket();
-    this.activeBasket.replaceItems(dependencies.map(x => { return {
-      name: x.dependency,
-      packageName: x.dependency,
-      constraint: x.constraint,
-      id: x.modDependencyId,
-      itemType: BasketItemType.Mod,
-      gameId: gameId,
-      image: null,
-      author: null,
-      sizePacked: null
-    } }));
+    this.activeBasket.replaceItems(dependencies.map(x => {
+      return {
+        name: x.dependency,
+        packageName: x.dependency,
+        constraint: x.constraint,
+        id: x.modDependencyId,
+        itemType: BasketItemType.Mod,
+        gameId: gameId,
+        image: null,
+        author: null,
+        sizePacked: null
+      }
+    }));
   }
 
   attached() { setTimeout(() => this.shown = true, 0.6 * 1000); } // animation delay. // TODO: have actual animation end trigger..

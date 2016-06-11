@@ -53,7 +53,7 @@ export class ViewModel extends Base {
 
   closeDropdowns() { return this.api.closeDropdowns(); }
 
-  showMessageDialog = this.ui.showMessageDialog
+  showMessageDialog = this.ui.showMessageDialog;
   confirm = this.ui.confirm;
 
   get isLoggedIn() { return this.w6.userInfo.id != null }
