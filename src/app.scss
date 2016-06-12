@@ -17,6 +17,9 @@ virtual-list {
   overflow-y: auto;
   height: 55vh;
 }
+.virtual-row {
+  display: block;
+}
 .user-error-dialog {
   max-width: 800px;
 }
