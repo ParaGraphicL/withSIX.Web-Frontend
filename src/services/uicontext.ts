@@ -27,13 +27,16 @@ class FeatureToggles {
   private isTestEnvironment = Tk.getEnvironment() != Tk.Environment.Production;
   private testingFlag = window.location.search.includes('testmode=1') || (!window.location.search.includes('testmode=0') && this.isManager);
   private groupTestingFlag = window.location.search.includes('testgroupmode=1') || (!window.location.search.includes('testgroupmode=0') && this.isManager);
+  private get clientInfo() { return this.w6.miniClient.clientInfo }
+  private get isPrereleaseClient() { return this.clientInfo && this.clientInfo.version.includes('-') }
   loggedIn = this.w6.userInfo.id != null;
 
-  groups = this.groupTestingFlag;
-  notifications = this.isManager;
-  library = this.syncFeatures;
-  quickActions = this.isTestEnvironment;
-  uiVirtualization = this.testingFlag;
+  get groups() { return this.groupTestingFlag }
+  get notifications() { return this.isManager }
+  get library() { return this.syncFeatures }
+  get quickActions() { return this.isTestEnvironment }
+  get uiVirtualization() { return this.testingFlag }
+  get advancedStartupParameters() { return this.isPrereleaseClient };
 }
 
 @inject(W6)
