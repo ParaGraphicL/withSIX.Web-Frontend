@@ -237,7 +237,7 @@
       if (this.$scope.model.enableBasket) this.$scope.w6.updateSettings(x => x.downloadedSync = true)
       else this.$scope.w6.updateSettings(x => x.downloadedPWS = true);
 
-      window.location.href = this.$scope.url.api + '/downloads' + mini + '/latest?type=' + final_type;
+      window.location.href = this.$scope.url.api + '/downloads' + mini + '/latest2?type=' + final_type;
 
       var redir: string = this.$location.search().redirect;
       if (redir && (redir.includes("withsix.com/") || redir.includes(".withsix.net/"))) // TODO: Proper protect
