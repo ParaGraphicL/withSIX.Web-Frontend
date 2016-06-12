@@ -216,16 +216,19 @@
       this.initiateDownload();
     }
 
+    downloaded = false;
+
     private initiateDownload() {
       if (this.$scope.w6.userInfo.isPremium) {
         this.startDownload();
         return;
       }
       this.$interval(() => this.$scope.model.counter--, 1000, this.$scope.model.counter, true)
-        .then(x => this.startDownload());
+        .then(x => { if (!this.downloaded) this.startDownload() });
     }
 
     private startDownload() {
+      this.downloaded = true;
       var mini = this.$scope.model.enableBasket ? '/mini' : '';
       var url = document.URL;
       var id_check = /[?&]type=([^&]+)/i;
