@@ -15,7 +15,7 @@ virtual-list {
 }
 .virtual-container {
   overflow-y: auto;
-  height: 55vh;
+  max-height: 55vh;
 }
 .virtual-row {
   display: block;

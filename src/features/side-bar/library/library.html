@@ -18,7 +18,7 @@
 
   <hr />
 
-  <div class="the-content" scroll.trigger="closeDropdowns()">
+  <div class="the-content ${w6.miniClient.isConnected ? 'has-recent' : ''}" scroll.trigger="closeDropdowns()">
     <container if.bind="w6.miniClient.isConnected">
       <loading-composer class="recent" shown.bind="shown" view-model="features/side-bar/library/recent" model.bind="home"></loading-composer>
       <hr />

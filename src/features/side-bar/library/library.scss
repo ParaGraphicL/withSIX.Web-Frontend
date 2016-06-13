@@ -6,11 +6,16 @@
     height: $item-height;
   }
   .virtual-container {
-    height: calc(50% - 36px);
+    max-height: calc(100% - 16px);
+  }
+  .has-recent {
+    .virtual-container {
+      max-height: calc(50% - 16px);
+    }
   }
   .recent {
     .virtual-container {
-      height: calc(50% - 56px);
+      max-height: calc(50% - 52px);
       //height: $item-height * 8; // TODO: base this on view port etc
     }
   }

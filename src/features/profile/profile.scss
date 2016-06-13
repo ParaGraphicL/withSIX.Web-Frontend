@@ -8,7 +8,7 @@
     height: 92px;
   }
   .virtual-container {
-    height: calc(100vh - 260px);
+    max-height: calc(100vh - 260px);
   }
   .col1 {
     @include make-md-column(5);
@@ -333,7 +333,7 @@
       height: 300px;
     }
     .virtual-container {
-      height: 80vh;
+      max-height: 80vh;
     }
   }
 }
