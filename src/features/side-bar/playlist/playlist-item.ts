@@ -188,10 +188,9 @@ export class PlaylistItem extends ViewModel {
         isVisibleObservable: this.isInstalledObservable,
         icon: 'withSIX-icon-Folder'
       }));
-      //if (this.basket.model.gameSlug.startsWith('Arma')) {
-      d(this.openConfigFolder = uiCommand2("Open config folder", () => new OpenFolder(this.model.gameId, this.model.id, FolderType.Config).handle(this.mediator), { icon: 'icon withSIX-icon-Folder', isVisibleObservable: this.isInstalledObservable }));
-      //}
-
+      if (this.w6.activeGame.slug.startsWith('Arma')) {
+        d(this.openConfigFolder = uiCommand2("Open config folder", () => new OpenFolder(this.model.gameId, this.model.id, FolderType.Config).handle(this.mediator), { icon: 'icon withSIX-icon-Folder', isVisibleObservable: this.isInstalledObservable }));
+      }
 
       d(this.edit = uiCommand2("Select Version", async () => {
         await this.dialogService.open({ viewModel: EditPlaylistItem, model: this.model });
