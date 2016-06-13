@@ -1,6 +1,6 @@
 import {inject} from 'aurelia-framework';
 import {IContentGuidSpec, BasketItemType, IBasketItem, BasketService, Base, GameClientInfo, uiCommand, uiCommand2, UiContext, MenuItem, ViewModel, Mediator, Query, DbQuery, DbClientQuery, handlerFor, VoidCommand, IContent, ItemState, IContentState,
-  RemoveRecent, Abort, UninstallContent, LaunchContent, OpenFolder, InstallContent, UnFavoriteContent, FavoriteContent, GameChanged} from '../../../framework';
+  RemoveRecent, Abort, UninstallContent, LaunchContent, OpenFolder, InstallContent, UnFavoriteContent, FavoriteContent, GameChanged, IMenuItem, FolderType} from '../../../framework';
 import {Router} from 'aurelia-router';
 import {GameBaskets, Basket} from '../../game-baskets';
 
@@ -27,6 +27,7 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
   abort: ICommand<void>;
   removeRecent: ICommand<void>;
   addToBasket: ICommand<void>;
+  openConfigFolder: ICommand<any>;
   state: IContentState;
   bottomMenuActions = [];
   url: string;
@@ -169,6 +170,9 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
         isVisibleObservable: this.isInstalledObservable,
         icon: 'withSIX-icon-Folder'
       }))
+      if (this.model.gameSlug.startsWith('Arma')) {
+        d(this.openConfigFolder = uiCommand2("Open config folder", () => new OpenFolder(this.model.gameId, this.model.type == 'mod' ? this.model.id : Tools.emptyGuid, FolderType.Config).handle(this.mediator), { icon: 'icon withSIX-icon-Folder', isVisibleObservable: this.isInstalledObservable }));
+      }
     });
 
     this.setupMenuItems();
@@ -216,6 +220,7 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
     this.topMenuActions.push(new MenuItem(this.uninstall));
     this.topMenuActions.push(new MenuItem(this.removeRecent))
     this.topMenuActions.push(new MenuItem(this.openFolder));
+    this.topMenuActions.push(new MenuItem(this.openConfigFolder));
     this.bottomActions.push(new MenuItem(this.omni));
     this.bottomMenuActions.push(new MenuItem(this.abort));
   }
@@ -227,11 +232,11 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
   }
   getImage() { return this.model.image || this.defaultAssetUrl; }
 
-  topActions = []
-  topMenuActions = [
+  topActions: IMenuItem[] = []
+  topMenuActions: IMenuItem[] = [
     // new MenuItem("Toggle Favorite", this.toggleFavorite, {
     // icon: "icon withSIX-icon-Square-X" // TODO
     // })
   ]
-  bottomActions = []
+  bottomActions: IMenuItem[] = []
 }

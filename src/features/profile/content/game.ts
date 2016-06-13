@@ -1,19 +1,25 @@
 import {MenuItem, ViewModel, uiCommand2, OpenFolder} from '../../../framework';
-import {Query, DbClientQuery, handlerFor, VoidCommand, IGame} from '../../../framework';
+import {Query, DbClientQuery, handlerFor, VoidCommand, IGame, FolderType} from '../../../framework';
 import {Index as SettingsIndex} from '../../settings/index';
 
 export class Game extends ViewModel {
   image: string;
   bgUrl: string;
-  public model: any
+  public model: IGame;
   icon = "withSIX-icon-Joystick";
   itemStateClass = 'uptodate';
+  openConfigFolder: ICommand<void>;
 
   activate(model: IGame) {
     this.model = model;
     this.subscriptions.subd(d => {
       d(this.launch);
       d(this.openFolder);
+      if (this.model.slug.startsWith('Arma')) {
+        d(this.openConfigFolder = uiCommand2("Open config folder", () => new OpenFolder(this.model.id, Tools.emptyGuid, FolderType.Config).handle(this.mediator), { icon: 'icon withSIX-icon-Folder' }));
+        this.topMenuActions.push(new MenuItem(this.openConfigFolder));
+      }
+
     })
     let base = 'img/play.withSIX/games/' + model.slug;
     this.image = this.w6.url.getAssetUrl(`${base}/logo-overview.png`);

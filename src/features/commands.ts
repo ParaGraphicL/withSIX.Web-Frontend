@@ -91,7 +91,12 @@ class RemoveRecentHandler extends DbClientQuery<RemoveRecent, void> {
   }
 }
 
-export class OpenFolder extends VoidCommand { constructor(public gameId: string, public id?: string) { super() } }
+export enum FolderType {
+  Default,
+  Config
+}
+
+export class OpenFolder extends VoidCommand { constructor(public gameId: string, public id?: string, public folderType?: FolderType) { super() } }
 @handlerFor(OpenFolder)
 class OpenFolderHandler extends ClientQuery<OpenFolder, void> {
   handle(request: OpenFolder) { return this.client.openFolder(request); }

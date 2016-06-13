@@ -1,5 +1,5 @@
 import {inject} from 'aurelia-framework';
-import {IBasketItem, BasketItemType, IBreezeMod, ModsHelper, Helper,
+import {IBasketItem, BasketItemType, IBreezeMod, ModsHelper, Helper, FolderType,
   BasketService, UiContext, uiCommand2, ViewModel, Base, MenuItem, IMenuItem, GameClientInfo, uiCommand, Mediator, Query, DbQuery, DbClientQuery, handlerFor, VoidCommand, IContentState, ItemState,
   RemoveRecent, Abort, UninstallContent, OpenFolder, LaunchContent, InstallContent, UnFavoriteContent, FavoriteContent, IBreezeUser, ContentHelper} from '../../../framework';
 import {GameBaskets, Basket} from '../../game-baskets';
@@ -57,6 +57,7 @@ export class PlaylistItem extends ViewModel {
   launch: ICommand<void>;
   abort: ICommand<void>;
   openFolder: ICommand<void>;
+  openConfigFolder: ICommand<void>;
 
   get isInstalled() { return this.itemState != ItemState.Incomplete };
   get hasUpdateAvailable() { return this.isInstalled && this.itemState == ItemState.UpdateAvailable }
@@ -187,6 +188,10 @@ export class PlaylistItem extends ViewModel {
         isVisibleObservable: this.isInstalledObservable,
         icon: 'withSIX-icon-Folder'
       }));
+      //if (this.basket.model.gameSlug.startsWith('Arma')) {
+      d(this.openConfigFolder = uiCommand2("Open config folder", () => new OpenFolder(this.model.gameId, this.model.id, FolderType.Config).handle(this.mediator), { icon: 'icon withSIX-icon-Folder', isVisibleObservable: this.isInstalledObservable }));
+      //}
+
 
       d(this.edit = uiCommand2("Select Version", async () => {
         await this.dialogService.open({ viewModel: EditPlaylistItem, model: this.model });
@@ -234,6 +239,8 @@ export class PlaylistItem extends ViewModel {
     this.menuItems.push(new MenuItem(this.diagnose));
     this.menuItems.push(new MenuItem(this.uninstall));
     this.menuItems.push(new MenuItem(this.openFolder));
+    if (this.openConfigFolder) this.menuItems.push(new MenuItem(this.openConfigFolder));
+
 
     this.bottomActions.push(new MenuItem(this.omni));
     //this.bottomMenuActions.push(new MenuItem(this.launch));
