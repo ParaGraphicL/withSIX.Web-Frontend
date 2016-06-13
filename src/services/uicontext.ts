@@ -36,7 +36,7 @@ class FeatureToggles {
   get library() { return this.syncFeatures }
   get quickActions() { return this.isTestEnvironment }
   get uiVirtualization() { return this.testingFlag }
-  get advancedStartupParameters() { return this.isPrereleaseClient };
+  get beta1_2() { return this.isPrereleaseClient }
 }
 
 @inject(W6)
