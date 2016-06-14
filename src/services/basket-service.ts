@@ -213,6 +213,19 @@ export class GameClientInfo extends Base {
         this.informAngular();
       }));
 
+      d(this.eventBus.subscribe("content.recentItemUsed", (gameId: string, id: string, info: Date) => {
+        if (gameId != this.game.id) return;
+        let c = this.clientInfo.content[id];
+        if (c) c.lastUsed = info;
+      }));
+
+      d(this.eventBus.subscribe("content.recentItemRemoved", (id: string) => {
+        //if (gameId != this.game.id) return;
+        let c = this.clientInfo.content[id];
+        if (c) c.lastUsed = null;
+      }));
+
+
       // TODO: Move to higher scope, because it is not just per game
       d(this.clientWrapper.actionNotification.subscribe(this.handleActionNotification));
       d(this.clientWrapper.actionUpdateNotification.subscribe(this.handleActionUpdate));
