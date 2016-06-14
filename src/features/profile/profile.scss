@@ -1,5 +1,4 @@
 @import "_base";
-@import '_content';
 #my-games,
 #my-library,
 #my-library-show-home,
@@ -50,88 +49,6 @@
       button {
         background-color: $colorSixOrange;
         color: white;
-      }
-    }
-  }
-  card-view {
-    .details-overlay-footer {
-      padding: 0;
-    }
-    .content-stateable {
-      @include extend-content-state-colors("bgd-border", true, border-bottom-color);
-    }
-    .card {
-      dropdown-menu {
-        display: none;
-      }
-      &:hover {
-        dropdown-menu {
-          display: block;
-        }
-      }
-      &.horizontal {
-        conditiona-title {
-          display: block;
-        }
-        .alternative-game {
-          display: none;
-        }
-        div.img {
-          float: left;
-          width: 170px;
-          .imageholder {
-            height: 92px;
-          }
-        }
-        div.info {
-          height: 92px;
-        }
-        .basket-content-progess-bar {
-          height: 92px;
-        }
-        action-bar.basketable-action button {
-          left: 0;
-        }
-        .basketable-dropdown button.dropdown-toggle {
-          right: 12px;
-        }
-      }
-    }
-    h3.row-header {
-      margin-bottom: 18px;
-      font-size: 1.5em;
-      font-weight: 300;
-    }
-    .card,
-    .collection {
-      .bottom-bar {
-        height: 28px;
-        /*ul, li, button {
-          width: 100%;
-      }*/
-        action-bar button {
-          padding-left: 20px;
-          padding-right: 20px;
-          text-transform: uppercase;
-        }
-        action-bar button,
-        button.dropdown-toggle {
-          color: inherit;
-          font-size: 0.7em;
-          text-decoration: inherit;
-          height: 28px;
-          position: relative;
-          left: 0;
-          font-size: $font-size-small;
-          border: none;
-          color: white;
-          background-color: transparentize($colorSixDarkGray, 0.4);
-          padding: 5px 10px;
-          right: 12px;
-        }
-        dropdown-menu {
-          padding-left: 4px;
-        }
       }
     }
   }

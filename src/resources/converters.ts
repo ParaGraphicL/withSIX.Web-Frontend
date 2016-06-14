@@ -11,6 +11,17 @@ export class ActiveValueConverter {
   }
 }
 
+@valueConverter('monthName')
+export class MonthNameValueConverter {
+  toView = monthNumber => { //1 = January
+    var monthNames = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    return monthNames[monthNumber - 1];
+  }
+}
+
 @valueConverter('highlight')
 export class HighlightValueConverter {
   toView(text: string, searchString: string) {

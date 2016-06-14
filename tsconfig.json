@@ -35,6 +35,7 @@
         "src/features/games/collections/create-collection-dialog.ts",
         "src/features/games/collections/edit-content.ts",
         "src/features/games/index.ts",
+        "src/features/games/mods/index.ts",
         "src/features/games/servers/index.ts",
         "src/features/games/servers/server-item.ts",
         "src/features/games/servers/show.ts",
