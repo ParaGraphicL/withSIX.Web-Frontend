@@ -12,7 +12,7 @@ export class Index extends FilteredBase<IMission> {
     this.handleAngularHeader();
   }
 
-  getMore(page = 1) { return new GetMissions(ModsHelper.getGameIds(this.w6.activeGame.id), page, this.filterInfo).handle(this.mediator); }
+  getMore(page = 1) { return new GetMissions(this.w6.activeGame.id, page, this.filterInfo).handle(this.mediator); }
 
   deactivate() {
     super.deactivate();
@@ -21,7 +21,7 @@ export class Index extends FilteredBase<IMission> {
 }
 
 class GetMissions extends Query<IPaginated<IMission>> {
-  constructor(public gameIds: string[], public page = 1, public filterInfo: IFilterInfo<IMission>) { super() }
+  constructor(public gameId: string, public page = 1, public filterInfo: IFilterInfo<IMission>) { super() }
 }
 
 @handlerFor(GetMissions)
@@ -30,7 +30,7 @@ class GetMissionsHandler extends DbQuery<GetMissions, IPaginated<IMission>> {
     var jsonQuery = {
       from: 'Missions',
       where: {
-        'gameId': { in: request.gameIds }
+        'gameId': { in: ModsHelper.getGameIds(request.gameId) }
       }
     }
     var query = new breeze.EntityQuery(jsonQuery).expand(["stat"]);
@@ -48,8 +48,10 @@ class GetMissionsHandler extends DbQuery<GetMissions, IPaginated<IMission>> {
           authorSlug: x.author ? x.author.slug : null,
           slug: x.slug,
           name: x.name,
-          gameId: x.game.id,
-          gameSlug: x.game.slug,
+          gameId: request.gameId,
+          gameSlug: this.w6.activeGame.slug,
+          originalGameId: x.game.id,
+          originalGameSlug: x.game.slug,
           size: x.size,
           sizePacked: x.sizePacked,
           stat: x.stat,
