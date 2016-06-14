@@ -2,7 +2,8 @@ import {IPaginated, PaginatedViewModel, SortDirection, IFilterInfo, Query, DbQue
 import {FilteredBase} from '../shared';
 
 export class Index extends FilteredBase<ICollection> {
-  sort = [{ title: "Subscribers", name: "subscribersCount", direction: SortDirection.Desc }, { name: "name" }]
+  sort = [{ title: "Subscribers", name: "subscribersCount", direction: SortDirection.Desc }, { name: "updatedAt", title: "Updated", direction: SortDirection.Desc }, { name: "createdAt", title: "Created", direction: SortDirection.Desc }, { name: "name" }, { name: "packageName" }]
+
   searchFields = ["name"];
 
   async activate() {

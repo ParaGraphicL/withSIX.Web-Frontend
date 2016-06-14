@@ -49,8 +49,8 @@
           <div class="tiny">
             <div>
               <div class="pull-right">
-                <a if.bind="model.authorSlug" href="${w6.url.connectSsl}/u/${model.authorSlug}">${model.author}</a>
-                <span if.bind="!model.authorSlug">${model.author}</span>
+                <a if.bind="hasRealAuthor" href="${w6.url.connectSsl}/u/${model.authorSlug}">${model.author}</a>
+                <span if.bind="!hasRealAuthor">${model.author}</span>
               </div>
               <div>
                 <span class="small">v${versionInfo}</span>

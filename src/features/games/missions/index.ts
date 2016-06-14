@@ -3,7 +3,8 @@ import {FilteredBase} from '../shared';
 
 export class Index extends FilteredBase<IMission> {
   // { name: "stat.install", title: "installs", direction: SortDirection.Desc },
-  sort = [{ name: "name" }, { name: "packageName" }]
+  sort = [{ name: "updatedAt", title: "Updated", direction: SortDirection.Desc }, { name: "createdAt", title: "Created", direction: SortDirection.Desc }, { name: "name" }, { name: "packageName" }]
+
   searchFields = ["name", "packageName"];
 
   async activate() {
