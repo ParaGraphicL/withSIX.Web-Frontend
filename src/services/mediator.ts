@@ -11,11 +11,6 @@ import {UiContext} from './uicontext';
 import {Container} from 'aurelia-dependency-injection';
 export * from 'aurelia-mediator';
 
-export class SwitchSideBarTab {
-  constructor(public name: string) { }
-}
-
-
 @inject(W6, Toastr, Router, EventAggregator)
 export class ClientMissingHandler {
   constructor(private w6: W6, private toastr: Toastr, private router: Router, private eventBus: EventAggregator) { }
@@ -123,6 +118,8 @@ let ls = <{ on: (key: string, fn) => void; set: (key: string, value) => void }><
 @inject(W6Context, UploadService)
 export class DbQuery<TRequest, TResponse> implements IRequestHandler<TRequest, TResponse> {
   protected ui: UiContext;
+  static pageSize = 12;
+
   constructor(protected context: W6Context, protected upload: UploadService) {
     this.ui = Container.instance.get(UiContext);
   }
@@ -175,7 +172,55 @@ export class DbQuery<TRequest, TResponse> implements IRequestHandler<TRequest, T
     return breeze.EntityQuery
       .fromEntityKey(this.context.getEntityKey(type, id));
   }
+
+
+  public handleFilterQuery = <T>(query: breeze.EntityQuery, f: IFilterInfo<T>) => {
+    let si = f.search.input && f.search.input.trim();
+    if (si) {
+      var p = null;
+      f.search.fields.forEach(x => {
+        let l = new breeze.Predicate(`toLower(${x})`, breeze.FilterQueryOp.Contains, si);
+        if (p == null) p = l;
+        else p = p.or(l)
+      })
+      query = query.where(p);
+    };
+    // f.enabledFilters // TODO
+    if (f.sortOrder) query = f.sortOrder.direction == SortDirection.Desc ? query.orderByDesc(f.sortOrder.name) : query.orderBy(f.sortOrder.name);
+    return query;
+  }
+  public handlePaginationQuery(query: breeze.EntityQuery, page: number) {
+    return query.skip(((page - 1) * DbQuery.pageSize))
+      .take(DbQuery.pageSize)
+      .inlineCount(true);
+  }
 }
+
+export class SwitchSideBarTab {
+  constructor(public name: string) { }
+}
+
+export interface ISort<T> {
+  name: string;
+  title?: string;
+  direction?: SortDirection;
+  isEnabled?: boolean;
+  //sort: (a, b) => number;
+}
+
+export enum SortDirection {
+  Asc,
+  Desc
+}
+
+export interface IFilter<T> {
+  name: string;
+  isEnabled?: boolean;
+  filter: (item: T) => boolean;
+}
+
+export interface IFilterInfo<T> { search: { input: string, fields: string[] }, sortOrder: ISort<T>, enabledFilters: IFilter<T>[] }
+
 
 @inject(W6Context, Client, UploadService, BasketService)
 export class DbClientQuery<TRequest, TResponse> extends DbQuery<TRequest, TResponse> {

@@ -31,9 +31,9 @@ class GetModsHandler extends DbQuery<GetMods, IPaginated<IMod>> {
       }
     }
     var query = new breeze.EntityQuery(jsonQuery).expand(["categories", "stat"]);
-    query = FilteredBase.handleQuery(query, request.filterInfo);
+    query = this.handleFilterQuery(query, request.filterInfo);
     if (!request.filterInfo.sortOrder || request.filterInfo.sortOrder.name != 'name') query = query.orderBy("name")
-    query = PaginatedViewModel.handleQuery(query, request.page)
+    query = this.handlePaginationQuery(query, request.page)
       .select(this.desiredFields);
     let r = await this.context.executeQuery<IBreezeMod>(query);
     return {

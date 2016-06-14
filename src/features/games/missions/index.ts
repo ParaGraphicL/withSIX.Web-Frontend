@@ -33,9 +33,9 @@ class GetMissionsHandler extends DbQuery<GetMissions, IPaginated<IMission>> {
       }
     }
     var query = new breeze.EntityQuery(jsonQuery).expand(["stat"]);
-    query = FilteredBase.handleQuery(query, request.filterInfo);
+    query = this.handleFilterQuery(query, request.filterInfo);
     if (!request.filterInfo.sortOrder || request.filterInfo.sortOrder.name != 'name') query = query.orderBy("name")
-    query = PaginatedViewModel.handleQuery(query, request.page);
+    query = this.handlePaginationQuery(query, request.page);
     //.select(this.desiredFields); // cant be used, virtual props
     let r = await this.context.executeQuery<IBreezeMission>(query);
     return {

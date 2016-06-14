@@ -1,7 +1,5 @@
 import {bindable, inject} from 'aurelia-framework';
-import {ViewModel, bindingEngine, ReactiveList, ListFactory} from '../services/lib';
-
-export interface IFilterInfo<T> { search: { input: string, fields: string[] }, sortOrder: ISort<T>, enabledFilters: IFilter<T>[] }
+import {ViewModel, bindingEngine, ReactiveList, ListFactory, IFilterInfo, SortDirection, IFilter, ISort} from '../services/lib';
 
 export class Filters<T> extends ViewModel {
   @bindable items: T[] = [];
@@ -137,25 +135,6 @@ export interface ITypeahead<T> {
 export enum ViewType {
   Card,
   List
-}
-
-export enum SortDirection {
-  Asc,
-  Desc
-}
-
-export interface ISort<T> {
-  name: string;
-  title?: string;
-  direction?: SortDirection;
-  isEnabled?: boolean;
-  //sort: (a, b) => number;
-}
-
-export interface IFilter<T> {
-  name: string;
-  isEnabled?: boolean;
-  filter: (item: T) => boolean;
 }
 
 export class Debouncer {

@@ -21,20 +21,4 @@ export class FilteredBase<T> extends PaginatedViewModel<T> {
     this.model = await this.getMore()
     return this.model;
   }
-
-  public static handleQuery = <T>(query: breeze.EntityQuery, f: IFilterInfo<T>) => {
-    let si = f.search.input && f.search.input.trim();
-    if (si) {
-      var p = null;
-      f.search.fields.forEach(x => {
-        let l = new breeze.Predicate(`toLower(${x})`, breeze.FilterQueryOp.Contains, si);
-        if (p == null) p = l;
-        else p = p.or(l)
-      })
-      query = query.where(p);
-    };
-    // f.enabledFilters // TODO
-    if (f.sortOrder) query = f.sortOrder.direction == SortDirection.Desc ? query.orderByDesc(f.sortOrder.name) : query.orderBy(f.sortOrder.name);
-    return query;
-  }
 }

@@ -1,5 +1,5 @@
 import {Base} from './base';
-import {Mediator, LegacyMediator} from './mediator';
+import {Mediator, LegacyMediator, DbQuery} from './mediator';
 import {Toastr} from './toastr';
 import {ListFactory, ObservableEventAggregator, EventWrapper, uiCommand2} from './reactive';
 import {ITabNotification} from '../resources/tab-view/tab-view';
@@ -169,8 +169,6 @@ export interface IPaginated<T> {
 export class PaginatedViewModel<T> extends ViewModel {
   model: IPaginated<T>;
   loadMore;
-  static pageSize = 12;
-
   async activate() {
     this.model = await this.getMore();
     this.loadMore = uiCommand2("Load more", this.addPage, {
@@ -179,7 +177,7 @@ export class PaginatedViewModel<T> extends ViewModel {
     });
   }
 
-  get totalPages() { return this.inlineCount / PaginatedViewModel.pageSize }
+  get totalPages() { return this.inlineCount / DbQuery.pageSize }
   get inlineCount() { return this.model.inlineCount }
   get page() { return this.model.page }
   morePagesAvailable = this.observeEx(x => x.inlineCount).combineLatest(this.observeEx(x => x.page), (c, p) => p < this.totalPages);
@@ -193,9 +191,4 @@ export class PaginatedViewModel<T> extends ViewModel {
   }
 
   async getMore(page = 1): Promise<IPaginated<T>> { return null }
-  static handleQuery(query: breeze.EntityQuery, page: number) {
-    return query.skip(((page - 1) * PaginatedViewModel.pageSize))
-      .take(PaginatedViewModel.pageSize)
-      .inlineCount(true);
-  }
 }
