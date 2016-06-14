@@ -1,5 +1,5 @@
 import {ViewModelWithModel, IContentState, UiContext, BasketService, GameClientInfo, FindModel} from '../../../framework';
-import {ICollection} from '../playlist/playlist';
+import {IPlaylistCollection} from '../playlist/playlist';
 import {inject} from 'aurelia-framework';
 
 export interface IResultModel<T> {
@@ -8,11 +8,11 @@ export interface IResultModel<T> {
 }
 
 @inject(UiContext, BasketService)
-export class CollectionFinderResult extends ViewModelWithModel<ICollection> {
+export class CollectionFinderResult extends ViewModelWithModel<IPlaylistCollection> {
   scopeIcon: string;
   state: IContentState;
   gameInfo: GameClientInfo;
-  findModel: FindModel<ICollection>;
+  findModel: FindModel<IPlaylistCollection>;
 
   constructor(ui, private basketService: BasketService) { super(ui) }
 

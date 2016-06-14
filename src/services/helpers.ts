@@ -1,4 +1,5 @@
-import {CollectionScope, ItemState} from 'withsix-sync-api';
+import {CollectionScope, ItemState, ICollection, TypeScope} from 'withsix-sync-api';
+import {IBreezeCollection} from './legacy';
 
 export class CollectionHelper {
   public static scopeHints = [
@@ -12,6 +13,24 @@ export class CollectionHelper {
     'withSIX-icon-Hidden',
     'withSIX-icon-Lock'
   ]
+
+  public static convertOnlineCollection(collection: IBreezeCollection, type: TypeScope, w6: W6): ICollection {
+    return {
+      id: collection.id,
+      image: w6.url.getContentAvatarUrl(collection.avatar, collection.avatarUpdatedAt),
+      typeScope: type || (collection.authorId == w6.userInfo.id ? TypeScope.Published : null), // todo; figure out if we're subscribed
+      author: collection.author.displayName,
+      authorSlug: collection.author.slug,
+      slug: collection.slug,
+      name: collection.name,
+      gameId: collection.game.id,
+      gameSlug: collection.game.slug,
+      sizePacked: collection.sizePacked,
+      type: "collection",
+      version: collection.latestVersion.version,
+      hasServers: collection.latestVersion.hasServers
+    }
+  }
 
   public static scopes = [CollectionScope.Public, CollectionScope.Unlisted, CollectionScope.Private]
 }

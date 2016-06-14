@@ -13,6 +13,7 @@ import BasketState = MyApp.Components.Basket.BasketState;
 import IBreezeUser = MyApp.IBreezeUser;
 import IBasketCollection = MyApp.Components.Basket.IBasketCollection;
 import IBreezeCollection = MyApp.IBreezeCollection;
+import IBreezeMission = MyApp.IBreezeMission;
 import IBreezeCollectionVersionDependency = MyApp.IBreezeCollectionVersionDependency;
 import IBreezePost = MyApp.IBreezePost;
 import IBreezeModUpdate = MyApp.IBreezeModUpdate;
@@ -34,7 +35,7 @@ import GetBlogsQuery = MyApp.Main.Blog.GetBlogsQuery;
 import UserInfo = MyApp.EntityExtends.UserInfo;
 import IBreezeGame = MyApp.IBreezeGame;
 
-export {IBreezeMod, IBreezeAWSUploadPolicy, IBreezeCollection, IBreezeCollectionVersion, IBreezePost, IBreezeModUpdate, IBreezeCollectionVersionDependency, IBreezeUser, IBreezeGame, IBreezeErrorReason}
+export {IBreezeMod, IBreezeMission, IBreezeAWSUploadPolicy, IBreezeCollection, IBreezeCollectionVersion, IBreezePost, IBreezeModUpdate, IBreezeCollectionVersionDependency, IBreezeUser, IBreezeGame, IBreezeErrorReason}
 export {IBasketItem, IBasketModel, BasketItemType, BasketType, BasketState, IBasketCollection, ModsHelper, Helper}
 export {IUserInfo, UserInfo, CollectionDataService, ModDataService, UploadService, MissionDataService}
 export {ToastLogger, W6Context, FileSize}

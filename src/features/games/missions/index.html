@@ -1,10 +1,11 @@
 <template>
   <div class="container-fluid" infinite-scroll.bind="loadMore">
-    <h1 class="pagetitle">${w6.activeGame.slug.replace("-", "").toUpperCaseFirst()} Mods</h1>
+    <h1 class="pagetitle">${w6.activeGame.slug.replace("-", "").toUpperCaseFirst()} Missions</h1>
     <filters custom-handler.bind="handleFilter" filters.ref="filteredComponent" search-input-placeholder.bind="searchInputPlaceholder" typeahead-options.bind="typeahead" items.bind="model.items" filters.bind="filters" search-fields.bind="searchFields" sort.bind="sort"
         view-types.bind="availableViewTypes"></filters>
 
-    <card-view items.bind="model.items" view-path="features/profile/content/" item-type="mod"></card-view>
+    <card-view items.bind="model.items" view-path="features/profile/content/" item-type="mission">
+    </card-view>
 
     <command-button model.bind="loadMore"></command-button>
   </div>

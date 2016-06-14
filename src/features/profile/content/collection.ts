@@ -43,8 +43,10 @@ export class Collection extends ContentViewModel<ICollection> {
       }, { icon: "fa fa-code-fork" }));
       this.topMenuActions.push(new MenuItem(this.fork));
 
-      d(this.delete = this.createDeleteCommand());
-      this.topMenuActions.push(new MenuItem(this.delete));
+      if (this.model.typeScope != null) {
+        d(this.delete = this.createDeleteCommand());
+        this.topMenuActions.push(new MenuItem(this.delete));
+      }
     })
 
     super.setupMenuItems();

@@ -1,6 +1,8 @@
 import {bindable, inject} from 'aurelia-framework';
 import {ViewModel, bindingEngine, ReactiveList, ListFactory} from '../services/lib';
 
+export interface IFilterInfo<T> { search: { input: string, fields: string[] }, sortOrder: ISort<T>, enabledFilters: IFilter<T>[] }
+
 export class Filters<T> extends ViewModel {
   @bindable items: T[] = [];
   @bindable filters: IFilter<T>[] = [];
@@ -11,6 +13,7 @@ export class Filters<T> extends ViewModel {
   @bindable selectedViewType: ViewType;
   @bindable typeaheadOptions: ITypeahead<T>;
   @bindable searchInputPlaceholder: string;
+  @bindable customHandler: (info: IFilterInfo<T>) => Promise<{ items: T[]; inlineCount: number }>;
   sortOrder: ISort<T>;
   searchInput: string;
   enabledFilters: IFilter<T>[] = [];
@@ -19,6 +22,7 @@ export class Filters<T> extends ViewModel {
   _searchInput: string;
   _debouncer = new Debouncer(v => this.updateFilteredItems(), 250);
   viewTypeEnum = ViewType;
+
   typeaheadSelect: (e: T) => void;
 
   bind(bindingContext) {
@@ -33,6 +37,7 @@ export class Filters<T> extends ViewModel {
     this.selectedViewType = this.viewTypes.asEnumerable().firstOrDefault();
     if (this.sort) this.sortOrder = this.sort.asEnumerable().firstOrDefault();
     if (this.filters) this.enabledFilters = this.filters.asEnumerable().toArray();
+
     this.updateFilteredItems();
 
     this.subscriptions.subd(d => {
@@ -58,8 +63,18 @@ export class Filters<T> extends ViewModel {
     }
   }
 
-  public updateFilteredItems(): void {
-    this.filteredItems = this.orderItems(this.filterItems()).toArray();
+  customCount: number;
+  get totalCount() { return this.customCount == null ? this.items.length : this.customCount }
+
+
+  public async updateFilteredItems() {
+    if (this.customHandler) {
+      let r = await this.customHandler({ search: { input: this.searchInput, fields: this.searchFields }, sortOrder: this.sortOrder, enabledFilters: this.enabledFilters })
+      this.filteredItems = r.items;
+      this.customCount = r.inlineCount
+    } else {
+      this.filteredItems = this.orderItems(this.filterItems()).toArray();
+    }
     Tk.Debug.log("updatedFilteredItems", this.filteredItems.length);
   }
 
@@ -131,6 +146,7 @@ export enum SortDirection {
 
 export interface ISort<T> {
   name: string;
+  title?: string;
   direction?: SortDirection;
   isEnabled?: boolean;
   //sort: (a, b) => number;

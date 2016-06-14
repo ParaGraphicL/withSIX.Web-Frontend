@@ -9,7 +9,9 @@ export class GamesModule {
     config.map([
       { route: `${gameRouteMount}collections/:id/:slug?/content/edit`, name: 'edit-collection', moduleId: `${mount}collections/edit-content`, nav: false, title: 'Edit collection', auth: true },
       { route: `${gameRouteMount}stream-test`, name: 'stream', moduleId: `${mount}stream`, nav: false, title: 'Stream' },
-      { route: `${gameRouteMount}mods-test`, name: 'mods', moduleId: `${mount}mods/index`, nav: false, title: 'Mods' }
+      { route: `${gameRouteMount}mods-test`, name: 'mods', moduleId: `${mount}mods/index`, nav: false, title: 'Mods' },
+      { route: `${gameRouteMount}collections-test`, name: 'collections', moduleId: `${mount}collections/index`, nav: false, title: 'Collections' },
+      { route: `${gameRouteMount}missions-test`, name: 'missions', moduleId: `${mount}missions/index`, nav: false, title: 'Missions' }
     ]);
   }
 }

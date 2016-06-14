@@ -1,7 +1,7 @@
 import {Base} from './base';
 import {Mediator, LegacyMediator} from './mediator';
 import {Toastr} from './toastr';
-import {ListFactory, ObservableEventAggregator, EventWrapper} from './reactive';
+import {ListFactory, ObservableEventAggregator, EventWrapper, uiCommand2} from './reactive';
 import {ITabNotification} from '../resources/tab-view/tab-view';
 
 import {Client} from 'withsix-sync-api';
@@ -159,4 +159,39 @@ export class Dialog<T> extends ViewModelOf<T> {
   clicked = ($evt: JQueryEventObject) => { if (!(<any>$evt.originalEvent).stopBubbleUp) this.eventBus.publish(new CloseDialogs()); }
 
   //cancel = UiCommand2('Cancel', async () => this.controller.cancel(), { cls: "cancel" });
+}
+
+export interface IPaginated<T> {
+  items: T[], inlineCount: number, page: number
+}
+
+
+export class PaginatedViewModel<T> extends ViewModel {
+  model: IPaginated<T>;
+  loadMore;
+  pageSize = 12;
+
+  async activate() {
+    this.model = await this.getMore();
+    this.loadMore = uiCommand2("Load more", this.addPage, {
+      isVisibleObservable: this.morePagesAvailable,
+      canExecuteObservable: this.morePagesAvailable
+    });
+  }
+
+  get totalPages() { return this.inlineCount / this.pageSize }
+  get inlineCount() { return this.model.inlineCount }
+  get page() { return this.model.page }
+  morePagesAvailable = this.observeEx(x => x.inlineCount).combineLatest(this.observeEx(x => x.page), (c, p) => p < this.totalPages);
+
+
+  addPage = async () => {
+    let r = await this.getMore(this.model.page + 1);
+    this.model.inlineCount = r.inlineCount;
+    this.model.page = r.page;
+    this.model.items.push(...r.items);
+  }
+
+  async getMore(page = 1): Promise<IPaginated<T>> { return null }
+
 }

@@ -15,6 +15,8 @@ export function configure(config: FrameworkConfiguration) {
 
   config.globalResources('./loading-composer');
 
+  config.globalResources('./infinite-scroll');
+
   config.globalResources('./finder/finder');
   config.globalResources('./finder/finder-results');
 
@@ -46,6 +48,7 @@ export * from './command-button';
 export * from './router';
 export * from './labs';
 export * from './router-menu';
+export * from './infinite-scroll';
 export * from './dropdown-menu/dropdown-menu';
 export * from './dropdown-menu/action-bar';
 export * from './loading-composer';

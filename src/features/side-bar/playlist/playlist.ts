@@ -1,14 +1,14 @@
 import {ViewModel, Query, DbQuery, handlerFor, IGame, ITab, IMenuItem, MenuItem, uiCommand2, VoidCommand,
   CollectionScope, IBreezeCollectionVersion, IBreezeCollectionVersionDependency, BasketItemType, TypeScope, UiContext, CollectionHelper, Confirmation, MessageDialog,
   ReactiveList, IBasketItem, FindModel, ActionType, BasketState, BasketType, ConnectionState, Debouncer, GameChanged, uiCommandWithLogin2, GameClientInfo, UninstallContent,
-  IBreezeCollection, IRequireUser, IUserInfo, W6Context, Client, UploadService, BasketService, CollectionDataService, DbClientQuery, Utils, requireUser} from '../../../framework';
+  IBreezeCollection, IRequireUser, IUserInfo, W6Context, Client, UploadService, BasketService, CollectionDataService, DbClientQuery, Utils, requireUser, ICollection} from '../../../framework';
 import {CreateCollectionDialog} from '../../games/collections/create-collection-dialog';
 import {Basket, GameBaskets} from '../../game-baskets';
 import {inject} from 'aurelia-framework';
 import {DeleteCollection, ForkCollection, LoadCollectionIntoBasket, GetDependencies} from '../../profile/content/collection';
 
 interface ICollectionsData {
-  collections: ICollection[];
+  collections: IPlaylistCollection[];
 }
 
 @inject(UiContext, BasketService, Client)
@@ -22,9 +22,9 @@ export class Playlist extends ViewModel {
   CollectionScope = CollectionScope;
   scopes = CollectionHelper.scopes;
   scopeHints = CollectionHelper.scopeHints;
-  collection: ICollection;
+  collection: IPlaylistCollection;
   findModel: FindModel<ICollection>;
-  collections: ICollection[] = [];
+  collections: IPlaylistCollection[] = [];
   collectionMenu = [];
 
   constructor(ui: UiContext, protected basketService: BasketService, protected client: Client) {
@@ -74,7 +74,7 @@ export class Playlist extends ViewModel {
 
     this.subscriptions.subd(d => {
       d(this.action);
-      d(this.findModel = new FindModel(this.findCollections, (col: ICollection) => this.selectCollection(col), e => e.name));
+      d(this.findModel = new FindModel(this.findCollections, (col: IPlaylistCollection) => this.selectCollection(col), e => e.name));
       d(ViewModel.toProperty(this.observeEx(x => x.isCollection).select(x => x ? "Save as new collection" : "Save as collection"), x => x.name, this.saveBasket));
       d(this.saveBasket);
       d(this.saveBasket2);
@@ -234,7 +234,7 @@ export class Playlist extends ViewModel {
     if (this.rxProperties) this.rxProperties.dispose();
   }
 
-  updateCollection(c: ICollection, startVal = false) {
+  updateCollection(c: IPlaylistCollection, startVal = false) {
     this.disposeOld();
     this.collection = c;
     if (c != null) {
@@ -330,7 +330,7 @@ export class Playlist extends ViewModel {
 
   get isNotLocked() { return !this.locked; }
 
-  selectCollection = async (col: ICollection) => {
+  selectCollection = async (col: IPlaylistCollection) => {
     if (this.basket.items.length == 0 || (this.collection != null && !this.collectionChanged) || await this.confirm("Do you want to overwrite your current Playlist?")) {
       await this.loadCollection(col);
       this.findModel.searchItem = '';
@@ -338,7 +338,7 @@ export class Playlist extends ViewModel {
     }
   }
   visitCollection = (col: ICollection) => this.navigateInternal(`/p/${col.gameSlug}/collections/${col.id.toShortId()}/${col.name.sluggifyEntityName()}`)
-  loadCollection = async (col: ICollection) => {
+  loadCollection = async (col: IPlaylistCollection) => {
     this.disposeOld();
     await new LoadCollectionIntoBasket(col.id).handle(this.mediator);
     this.updateCollection(col);
@@ -482,7 +482,7 @@ class GetMyCollectionsHandler extends DbClientQuery<GetMyCollections, ICollectio
       p.push(this.getMyCollections(request, optionsTodo));
       if (request.includeSubscribed) p.push(this.getSubscribedCollections(request, optionsTodo));
     }
-    var results = await Promise.all<Enumerable<ICollection>>(p)
+    var results = await Promise.all<Enumerable<IPlaylistCollection>>(p)
     return { collections: Utils.concatPromiseResults(results).toArray() };
     // return GetCollectionsHandler.designTimeData(request);
   }
@@ -506,31 +506,18 @@ class GetMyCollectionsHandler extends DbClientQuery<GetMyCollections, ICollectio
     return r.asEnumerable().select(x => this.convertOnlineCollection(x, TypeScope.Subscribed));
   }
 
-  convertOnlineCollection(collection: IBreezeCollection, type: TypeScope): ICollection {
-    return {
-      id: collection.id,
-      image: this.context.w6.url.getContentAvatarUrl(collection.avatar, collection.avatarUpdatedAt),
-      typeScope: type,
-      author: collection.author.displayName,
-      authorSlug: collection.author.slug,
-      slug: collection.slug,
-      name: collection.name,
-      gameId: collection.game.id,
-      gameSlug: collection.game.slug,
+  convertOnlineCollection(collection: IBreezeCollection, type: TypeScope): IPlaylistCollection {
+    return Object.assign({}, CollectionHelper.convertOnlineCollection(collection, type, this.w6), {
       modsCount: collection.modsCount,
       subscribersCount: collection.subscribersCount,
-      size: collection.size,
-      sizePacked: collection.sizePacked,
       scope: CollectionScope[collection.scope],
-      type: "collection",
-      version: collection.latestVersion.version,
-      hasServers: collection.latestVersion.hasServers,
+      size: collection.size,
       latestVersionId: collection.latestVersion.id
-    }
+    });
   }
 }
 
-export interface ICollection {
+export interface IPlaylistCollection extends ICollection {
   id: string, name: string; typeScope: TypeScope,
   image: string, slug: string; gameId: string; gameSlug: string; version: string;
   author: string; modsCount: number; size: number; sizePacked: number; type: string;

@@ -58,6 +58,8 @@
               when('/:gameSlug/stream/personal/:streamType?', 'game.stream_personal').
               when('/:gameSlug/stream-test', 'game.stream_test').
               when('/:gameSlug/mods-test', 'game.mods_test').
+              when('/:gameSlug/missions-test', 'game.missions_test').
+              when('/:gameSlug/collections-test', 'game.collections_test').
               when('/:gameSlug/stream/:streamType?', 'game.stream').
               when('/:gameSlug/mods', 'game.mods').
               when('/:gameSlug/mods/category/:category', 'game.mod_category').
@@ -227,8 +229,10 @@
               });
 
             game.
-              segment('mods_test', {}).
               segment('stream_test', {}).
+              segment('mods_test', {}).
+              segment('missions_test', {}).
+              segment('collections_test', {}).
               segment('collections', {
                 controller: 'CollectionsController',
                 templateUrl: '/src_legacy/app/components/default_index.html',
