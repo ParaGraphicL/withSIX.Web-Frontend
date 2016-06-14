@@ -65,27 +65,18 @@ card-view {
         float: left;
         width: 362.66px;
       }
+      .basket-content-progess-bar,
       .imageholder,
       div.info {
         height: 204px;
       }
-      action-bar.basketable-action button {
-        left: 0;
-      }
-      .basketable-dropdown button.dropdown-toggle {
-        right: 12px;
-      }
       &.small-card {
         div.img {
           width: 170px;
-          .imageholder {
-            height: 92px;
-          }
         }
+        .basket-content-progess-bar,
+        .imageholder,
         div.info {
-          height: 92px;
-        }
-        .basket-content-progess-bar {
           height: 92px;
         }
       }
