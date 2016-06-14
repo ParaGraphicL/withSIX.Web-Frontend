@@ -193,7 +193,7 @@ export class PaginatedViewModel<T> extends ViewModel {
   }
 
   async getMore(page = 1): Promise<IPaginated<T>> { return null }
-  static handleQuery(query, page = 1) {
+  static handleQuery(query: breeze.EntityQuery, page: number) {
     return query.skip(((page - 1) * PaginatedViewModel.pageSize))
       .take(PaginatedViewModel.pageSize)
       .inlineCount(true);

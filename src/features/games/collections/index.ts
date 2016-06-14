@@ -34,7 +34,7 @@ class GetCollectionsHandler extends DbQuery<GetCollections, IPaginated<ICollecti
     var query = new breeze.EntityQuery(jsonQuery).expand(["stat", "latestVersion"]);
     query = FilteredBase.handleQuery(query, request.filterInfo);
     if (!request.filterInfo.sortOrder || request.filterInfo.sortOrder.name != 'name') query = query.orderBy("name")
-    query = PaginatedViewModel.handleQuery(query);
+    query = PaginatedViewModel.handleQuery(query, request.page);
     //.select(this.desiredFields); // cant be used, virtual props
     let r = await this.context.executeQuery<IBreezeCollection>(query);
     return { items: r.results.map(x => CollectionHelper.convertOnlineCollection(x, null, this.w6)), page: request.page, inlineCount: r.inlineCount };
