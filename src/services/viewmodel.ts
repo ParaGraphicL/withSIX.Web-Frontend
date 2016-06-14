@@ -169,7 +169,7 @@ export interface IPaginated<T> {
 export class PaginatedViewModel<T> extends ViewModel {
   model: IPaginated<T>;
   loadMore;
-  pageSize = 12;
+  static pageSize = 12;
 
   async activate() {
     this.model = await this.getMore();
@@ -179,7 +179,7 @@ export class PaginatedViewModel<T> extends ViewModel {
     });
   }
 
-  get totalPages() { return this.inlineCount / this.pageSize }
+  get totalPages() { return this.inlineCount / PaginatedViewModel.pageSize }
   get inlineCount() { return this.model.inlineCount }
   get page() { return this.model.page }
   morePagesAvailable = this.observeEx(x => x.inlineCount).combineLatest(this.observeEx(x => x.page), (c, p) => p < this.totalPages);
@@ -193,5 +193,9 @@ export class PaginatedViewModel<T> extends ViewModel {
   }
 
   async getMore(page = 1): Promise<IPaginated<T>> { return null }
-
+  static handleQuery(query, page = 1) {
+    return query.skip(((page - 1) * PaginatedViewModel.pageSize))
+      .take(PaginatedViewModel.pageSize)
+      .inlineCount(true);
+  }
 }

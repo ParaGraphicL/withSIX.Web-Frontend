@@ -1,4 +1,4 @@
-import {IPaginated, Query, SortDirection, IFilterInfo, DbQuery, handlerFor, uiCommandWithLogin2, IMenuItem, MenuItem, IBreezeMission, ModsHelper, IMission} from '../../../framework';
+import {IPaginated, PaginatedViewModel, Query, SortDirection, IFilterInfo, DbQuery, handlerFor, uiCommandWithLogin2, IMenuItem, MenuItem, IBreezeMission, ModsHelper, IMission} from '../../../framework';
 import {FilteredBase} from '../shared';
 
 export class Index extends FilteredBase<IMission> {
@@ -32,15 +32,10 @@ class GetMissionsHandler extends DbQuery<GetMissions, IPaginated<IMission>> {
         'gameId': { in: request.gameIds }
       }
     }
-    var pageSize = 24;
-    var page = 1;
     var query = new breeze.EntityQuery(jsonQuery).expand(["stat"]);
     query = FilteredBase.handleQuery(query, request.filterInfo);
     if (!request.filterInfo.sortOrder || request.filterInfo.sortOrder.name != 'name') query = query.orderBy("name")
-    query = query
-      .skip(((page - 1) * pageSize))
-      .take(pageSize)
-      .inlineCount(true);
+    query = PaginatedViewModel.handleQuery(query, request.page);
     //.select(this.desiredFields); // cant be used, virtual props
     let r = await this.context.executeQuery<IBreezeMission>(query);
     return {

@@ -1,4 +1,4 @@
-import {IPaginated, SortDirection, IFilterInfo, Query, DbQuery, handlerFor, uiCommandWithLogin2, IMenuItem, MenuItem, IBreezeCollection, ModsHelper, ICollection, CollectionHelper, TypeScope} from '../../../framework';
+import {IPaginated, PaginatedViewModel, SortDirection, IFilterInfo, Query, DbQuery, handlerFor, uiCommandWithLogin2, IMenuItem, MenuItem, IBreezeCollection, ModsHelper, ICollection, CollectionHelper, TypeScope} from '../../../framework';
 import {FilteredBase} from '../shared';
 
 export class Index extends FilteredBase<ICollection> {
@@ -31,15 +31,10 @@ class GetCollectionsHandler extends DbQuery<GetCollections, IPaginated<ICollecti
         'gameId': { in: request.gameIds }
       }
     }
-    var pageSize = 24;
-    var page = 1;
     var query = new breeze.EntityQuery(jsonQuery).expand(["stat", "latestVersion"]);
     query = FilteredBase.handleQuery(query, request.filterInfo);
     if (!request.filterInfo.sortOrder || request.filterInfo.sortOrder.name != 'name') query = query.orderBy("name")
-    query = query
-      .skip(((page - 1) * pageSize))
-      .take(pageSize)
-      .inlineCount(true);
+    query = PaginatedViewModel.handleQuery(query);
     //.select(this.desiredFields); // cant be used, virtual props
     let r = await this.context.executeQuery<IBreezeCollection>(query);
     return { items: r.results.map(x => CollectionHelper.convertOnlineCollection(x, null, this.w6)), page: request.page, inlineCount: r.inlineCount };

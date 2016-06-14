@@ -1,4 +1,4 @@
-import {IPaginated, IFilterInfo, SortDirection, Query, DbQuery, handlerFor, uiCommandWithLogin2, IMenuItem, MenuItem, IBreezeMod, ModsHelper, IMod, uiCommand2} from '../../../framework';
+import {IPaginated, PaginatedViewModel, IFilterInfo, SortDirection, Query, DbQuery, handlerFor, uiCommandWithLogin2, IMenuItem, MenuItem, IBreezeMod, ModsHelper, IMod, uiCommand2} from '../../../framework';
 import {FilteredBase} from '../shared';
 
 export class Index extends FilteredBase<IMod> {
@@ -30,14 +30,10 @@ class GetModsHandler extends DbQuery<GetMods, IPaginated<IMod>> {
         'gameId': { in: request.gameIds }
       }
     }
-    var pageSize = 12;
     var query = new breeze.EntityQuery(jsonQuery).expand(["categories", "stat"]);
     query = FilteredBase.handleQuery(query, request.filterInfo);
     if (!request.filterInfo.sortOrder || request.filterInfo.sortOrder.name != 'name') query = query.orderBy("name")
-    query = query
-      .skip(((request.page - 1) * pageSize))
-      .take(pageSize)
-      .inlineCount(true)
+    query = PaginatedViewModel.handleQuery(query, request.page)
       .select(this.desiredFields);
     let r = await this.context.executeQuery<IBreezeMod>(query);
     return {
