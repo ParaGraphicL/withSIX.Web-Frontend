@@ -129,7 +129,8 @@ class CreateCollectionHandler extends DbQuery<CreateCollection, string> {
       name: request.model.name,
       groupId: request.model.groupId,
       initialVersion: initialVersion,
-      forkedCollectionId: request.model.forkedCollectionId
+      forkedCollectionId: request.model.forkedCollectionId,
+      scope: request.model.scope
     });
     return result.data;
   }
