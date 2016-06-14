@@ -26,13 +26,14 @@
 
         <div class="info">
           <div class="tiny">
-            <div class="pull-right" if.bind="time">
-              <time-ago time.bind="time"></time-ago>
+            <div class="pull-right" if.bind="updatedAt">
+              <time-ago time.bind="updatedAt" itemprop="dateModified"></time-ago>
             </div>
             <div>
               <span title="This content was made for ${gameName}">${gameName}
               <span class="${icon} icon"></span> ${model.type}</span>
             </div>
+            <div class="clearfix"></div>
           </div>
 
           <div class="title">
@@ -46,14 +47,18 @@
           </div>
 
           <div class="tiny">
-            <div class="pull-left">
-              <span class="small">v${versionInfo}</span>
+            <div>
+              <div class="pull-right">
+                <a if.bind="model.authorSlug" href="${w6.url.connectSsl}/u/${model.authorSlug}">${model.author}</a>
+                <span if.bind="!model.authorSlug">${model.author}</span>
+              </div>
+              <div>
+                <span class="small">v${versionInfo}</span>
+              </div>
+              <div class="clearfix"></div>
             </div>
-            <div class="pull-right">
-              <a if.bind="model.authorSlug" href="${w6.url.connectSsl}/u/${model.authorSlug}">${model.author}</a>
-              <span if.bind="!model.authorSlug">${model.author}</span>
-            </div>
-            <!-- <div class="pull-right"><i>{{item.stat.install}} installs | amount</i></div> -->
+            <div class="followers small" if.bind="installs != null">${installs | amount } ${model.type == 'collection' ? 'subscribers' : 'installs'}</div>
+            <div class="additional-info small">${model.additionalInfo}</div>
           </div>
         </div>
         <div class="clearfix"></div>

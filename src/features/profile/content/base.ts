@@ -177,7 +177,14 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
 
     this.setupMenuItems();
     this.handleUpdateAvailable(this.hasUpdateAvailable);
+    let m = <any>this.model;
+    this.installs = this.model.type == 'collection' ? m.followers : m.statInstall;
+    this.updatedAt = m.updated || m.updatedAt || m.updatedVersion
   }
+
+  updatedAt: Date;
+
+  installs: number;
 
   getInstallSpec() { return { id: this.model.id } }
 
