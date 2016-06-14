@@ -230,7 +230,7 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
     var path = `${this.model.gameSlug}/${this.model.type}s/${this.model.id.toShortId()}`;
     return slug ? path + "/" + slug : path;
   }
-  getImage() { return this.model.image || this.defaultAssetUrl; }
+  getImage() { return this.model.image ? this.w6.url.getContentAvatarUrl(this.model.image, (<any>this.model).imageUpdatedAt) : this.defaultAssetUrl; }
 
   topActions: IMenuItem[] = []
   topMenuActions: IMenuItem[] = [
