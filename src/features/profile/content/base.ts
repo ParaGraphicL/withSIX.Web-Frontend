@@ -179,8 +179,11 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
     this.handleUpdateAvailable(this.hasUpdateAvailable);
     let m = <any>this.model;
     this.installs = this.model.type == 'collection' ? m.followers : m.statInstall;
-    this.updatedAt = m.updated || m.updatedAt || m.updatedVersion
+    this.updatedAt = m.updated || m.updatedAt || m.updatedVersion;
+
+    this.hasRealAuthor = model.authorSlug != 'withSIX-o-bot';
   }
+  hasRealAuthor: boolean;
 
   updatedAt: Date;
 
