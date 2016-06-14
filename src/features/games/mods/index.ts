@@ -9,7 +9,7 @@ export class Index extends FilteredBase<IMod> {
     this.handleAngularHeader();
   }
 
-  getMore(page = 1) { return new GetMods(ModsHelper.getGameIds(this.w6.activeGame.id), page, this.filterInfo).handle(this.mediator); }
+  getMore(page = 1) { return new GetMods(this.w6.activeGame.id, page, this.filterInfo).handle(this.mediator); }
 
   deactivate() {
     super.deactivate();
@@ -18,7 +18,7 @@ export class Index extends FilteredBase<IMod> {
 }
 
 class GetMods extends Query<IPaginated<IMod>> {
-  constructor(public gameIds: string[], public page = 1, public filterInfo: IFilterInfo<IMod>) { super() }
+  constructor(public gameId: string, public page = 1, public filterInfo: IFilterInfo<IMod>) { super() }
 }
 
 @handlerFor(GetMods)
@@ -27,7 +27,7 @@ class GetModsHandler extends DbQuery<GetMods, IPaginated<IMod>> {
     var jsonQuery = {
       from: 'Mods',
       where: {
-        'gameId': { in: request.gameIds }
+        'gameId': { in: ModsHelper.getGameIds(request.gameId) }
       }
     }
     var query = new breeze.EntityQuery(jsonQuery).expand(["categories", "stat"]);
@@ -45,8 +45,10 @@ class GetModsHandler extends DbQuery<GetMods, IPaginated<IMod>> {
           authorSlug: x.author ? x.author.slug : null,
           slug: x.slug,
           name: x.name,
-          gameId: x.game.id,
-          gameSlug: x.game.slug,
+          gameId: request.gameId,
+          gameSlug: this.w6.activeGame.slug,
+          originalGameId: x.game.id,
+          originalGameSlug: x.game.slug,
           size: x.size,
           sizePacked: x.sizePacked,
           stat: x.stat,

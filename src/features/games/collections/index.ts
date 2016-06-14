@@ -11,7 +11,7 @@ export class Index extends FilteredBase<ICollection> {
     this.handleAngularHeader();
   }
 
-  getMore(page = 1) { return new GetCollections([this.w6.activeGame.id], page, this.filterInfo).handle(this.mediator); }
+  getMore(page = 1) { return new GetCollections(this.w6.activeGame.id, page, this.filterInfo).handle(this.mediator); }
 
   deactivate() {
     super.deactivate();
@@ -20,7 +20,7 @@ export class Index extends FilteredBase<ICollection> {
 }
 
 class GetCollections extends Query<IPaginated<ICollection>> {
-  constructor(public gameIds: string[], public page = 1, public filterInfo: IFilterInfo<ICollection>) { super() }
+  constructor(public gameId: string, public page = 1, public filterInfo: IFilterInfo<ICollection>) { super() }
 }
 
 @handlerFor(GetCollections)
@@ -29,7 +29,7 @@ class GetCollectionsHandler extends DbQuery<GetCollections, IPaginated<ICollecti
     var jsonQuery = {
       from: 'Collections',
       where: {
-        'gameId': { in: request.gameIds }
+        'gameId': { in: [request.gameId] }
       }
     }
     var query = new breeze.EntityQuery(jsonQuery).expand(["stat", "latestVersion"]);
