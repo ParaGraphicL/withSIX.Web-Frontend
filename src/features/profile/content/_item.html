@@ -15,7 +15,13 @@
             </span>
             </span>
           </a>
-          <span if.bind="!path" class="imageholder" back-img.bind="image"></span>
+          <span if.bind="!path">
+            <span class="imagecontent imageholder" back-img.bind="defaultBackUrl">
+            <span class="imageholder" back-img.bind="defaultAssetUrl">
+              <span class="imageholder" back-img.bind="image"></span>
+          </span>
+          </span>
+          </span>
         </div>
 
         <div class="info">
