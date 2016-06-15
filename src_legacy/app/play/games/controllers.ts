@@ -142,9 +142,6 @@
       if (model.supportsServers && $scope.environment != Tk.Environment.Production)
         items.push({ header: "Servers", segment: "servers", icon: "icon withSIX-icon-Nav-Server" });
 
-      if ($scope.environment != Environment.Production)
-        items.push({ header: "Apps", segment: "apps", icon: "icon withSIX-icon-Apps" });
-
       if ($scope.w6.enableBasket)
         items.push({ header: "My Library", segment: "library", icon: "icon withSIX-icon-Folder", url: "/me/library/" + model.slug, isRight: true });
 

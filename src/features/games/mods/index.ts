@@ -4,17 +4,8 @@ import {FilteredBase} from '../shared';
 export class Index extends FilteredBase<IMod> {
   sort = [{ name: "stat.install", title: "Installs", direction: SortDirection.Desc }, { name: "updatedAt", title: "Updated", direction: SortDirection.Desc }, { name: "createdAt", title: "Created", direction: SortDirection.Desc }, { name: "name" }, { name: "packageName" }]
   searchFields = ["name", "packageName"];
-  async activate() {
-    await super.activate();
-    this.handleAngularHeader();
-  }
 
   getMore(page = 1) { return new GetMods(this.w6.activeGame.id, page, this.filterInfo).handle(this.mediator); }
-
-  deactivate() {
-    super.deactivate();
-    this.reverseAngularHeader();
-  }
 }
 
 class GetMods extends Query<IPaginated<IMod>> {

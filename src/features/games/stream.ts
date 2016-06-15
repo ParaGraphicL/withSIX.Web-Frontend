@@ -7,12 +7,6 @@ export class Stream extends ViewModel {
   async activate() {
     this.model = await new GetStream(this.w6.activeGame.slug).handle(this.mediator);
     this.gameUrl = `/p/${this.w6.activeGame.slug}`;
-    this.handleAngularHeader();
-  }
-
-  deactivate() {
-    super.deactivate();
-    this.reverseAngularHeader();
   }
 
   get item() { return this.model.postItems[0]; }

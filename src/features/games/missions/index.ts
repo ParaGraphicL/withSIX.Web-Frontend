@@ -7,17 +7,7 @@ export class Index extends FilteredBase<IMission> {
 
   searchFields = ["name", "packageName"];
 
-  async activate() {
-    await super.activate();
-    this.handleAngularHeader();
-  }
-
   getMore(page = 1) { return new GetMissions(this.w6.activeGame.id, page, this.filterInfo).handle(this.mediator); }
-
-  deactivate() {
-    super.deactivate();
-    this.reverseAngularHeader();
-  }
 }
 
 class GetMissions extends Query<IPaginated<IMission>> {

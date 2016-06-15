@@ -6,17 +6,7 @@ export class Index extends FilteredBase<ICollection> {
 
   searchFields = ["name"];
 
-  async activate() {
-    await super.activate();
-    this.handleAngularHeader();
-  }
-
   getMore(page = 1) { return new GetCollections(this.w6.activeGame.id, page, this.filterInfo).handle(this.mediator); }
-
-  deactivate() {
-    super.deactivate();
-    this.reverseAngularHeader();
-  }
 }
 
 class GetCollections extends Query<IPaginated<ICollection>> {
