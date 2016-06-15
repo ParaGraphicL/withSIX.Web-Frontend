@@ -87,7 +87,7 @@ export class PlaylistItem extends ViewModel {
     this.isDependency = model.isDependency;
     if (this.level === 0 || !this.chain.has(this.model.id))
       this.chain.set(this.model.id, this.model);
-    this.basket = this.basketService.basketService.getGameBaskets(model.currentGameId);
+    this.basket = this.basketService.getGameBaskets(model.currentGameId);
     this.url = this.getBasketItemUrl();
 
     this.gameInfo = await this.basketService.getGameInfo(model.currentGameId); // hack

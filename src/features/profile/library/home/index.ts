@@ -38,7 +38,7 @@ export class Index extends BaseGame {
       this.clientEnabled = false;
     }
 
-    this.basket = this.basketService.basketService.getGameBaskets(this.game.id); // hack
+    this.basket = this.basketService.getGameBaskets(this.game.id); // hack
     this.gameInfo = await this.basketService.getGameInfo(this.game.id); // hack
 
     this.subscriptions.subd(d => {

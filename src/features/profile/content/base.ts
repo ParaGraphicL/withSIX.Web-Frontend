@@ -91,7 +91,7 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
   async activate(model: TContent) {
     this.model = model;
     this.gameInfo = await this.basketService.getGameInfo(this.model.gameId); // hack
-    this.baskets = this.basketService.basketService.getGameBaskets(model.gameId); // hack
+    this.baskets = this.basketService.getGameBaskets(model.gameId); // hack
     this.path = this.getPath();
     this.image = this.getImage();
     this.gameName = (this.model.originalGameSlug || this.model.gameSlug).replace("-", " ");
