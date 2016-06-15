@@ -7,10 +7,10 @@
           <select class="filter-sort" id="select-sort" name="select-sort" value.bind="sortOrder">
             <option repeat.for="item of sort" model.bind="item">Sort by ${item.title || item.name.toUpperCaseFirst()}</option>
           </select>
-          <button class="filter-order" click.delegate="toggleDirection()">${sortOrder.direction == 1 ? 'Desc' : 'Asc'}</button>
-        </span>
+          <button class="filter-order" click.delegate="toggleDirection()"><span class="icon withSIX-icon-Arrow-${sortOrder.direction == 1 ? 'Down' : 'Up'}-Dir"></span></button>
+      </span>
 
-      <div class="views grid-select" if.bind="viewTypes.length > 0">
+      <div class="views grid-select" if.bind="viewTypes.length > 1">
         <select size="2" class="my-select horizontal grid-type" value.bind="selectedViewType">
           <option model.bind="item" repeat.for="item of viewTypes" class="${$parent.getIconForViewType(item)} icon"></option>
         </select>

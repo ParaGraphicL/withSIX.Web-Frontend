@@ -32,7 +32,7 @@ export class Show extends ViewModel {
   typeahead: ITypeahead<IShowDependency>;
   filteredComponent: Filters<IShowDependency>;
   searchInputPlaceholder = "type name...";
-  availableViewTypes: ViewType[];
+  availableViewTypes: ViewType[] = [];
   current: Subscriptions;
   shortId: string;
   get items() { return this.model.items; }
