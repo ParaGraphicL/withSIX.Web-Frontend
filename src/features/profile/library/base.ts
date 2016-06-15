@@ -17,7 +17,7 @@ export class BaseGame extends ViewModel {
   typeahead: ITypeahead<IContent>;
   filteredComponent: Filters<IContent>;
   searchInputPlaceholder = "type name...";
-  availableViewTypes: ViewType[];
+  availableViewTypes: ViewType[] = [];
 
   constructor(ui: UiContext) {
     super(ui);
