@@ -176,7 +176,7 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
     this.setupMenuItems();
     this.handleUpdateAvailable(this.hasUpdateAvailable);
     let m = <any>this.model;
-    this.installs = this.model.type == 'collection' ? m.followers : m.statInstall;
+    this.installs = this.model.type == 'collection' ? m.subscribers : m.statInstall;
     this.updatedAt = m.updated || m.updatedAt || this.model.updatedVersion || this.model.lastUpdated || this.model.lastInstalled;
 
     this.hasRealAuthor = model.authorSlug != 'withSIX-o-bot';
