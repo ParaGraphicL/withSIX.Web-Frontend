@@ -78,11 +78,11 @@
               when('/:gameSlug/missions/:missionId/:missionSlug?/download', 'game.missionsShow.download').
               when('/:gameSlug/missions/:missionId/:missionSlug?', 'game.missionsShow').
               when('/:gameSlug/collections', 'game.collections').
-              when('/:gameSlug/collections/:collectionId/:collectionSlug?/content', 'game.collectionsShow.content').
-              when('/:gameSlug/collections/:collectionId/:collectionSlug?/content/edit', 'game.collectionsShow.content-edit').
+              when('/:gameSlug/collections/:collectionId/:collectionSlug?', 'game.collectionsShow').
               when('/:gameSlug/collections/:collectionId/:collectionSlug?/comments', 'game.collectionsShow.comments').
               when('/:gameSlug/collections/:collectionId/:collectionSlug?/related', 'game.collectionsShow.related').
-              when('/:gameSlug/collections/:collectionId/:collectionSlug?', 'game.collectionsShow').
+              when('/:gameSlug/collections/:collectionId/:collectionSlug?/content', 'game.collectionsShow.content').
+              when('/:gameSlug/collections/:collectionId/:collectionSlug?/content/edit', 'game.collectionsShow.content-edit').
               /*                            when('/:gameSlug/test', 'game.test').*/
               segment('game', {
                 controller: 'GameController',
@@ -249,12 +249,8 @@
                 templateUrl: '/src_legacy/app/play/collections/show/info.html',
               })
               .segment('content-edit', {
-                //controller: 'CollectionContentEditController',
-                //templateUrl: '/src_legacy/app/play/collections/show/content-edit.html'
               })
               .segment('content', {
-                controller: 'CollectionContentController',
-                templateUrl: '/src_legacy/app/play/collections/show/content.html'
               })
               .segment('related', {
                 controller: 'CollectionRelatedController',

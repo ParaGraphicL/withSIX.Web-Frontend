@@ -43,6 +43,8 @@ export class Show extends ViewModel {
   get changed() { return this._changed || (window.w6Cheat.collection && window.w6Cheat.collection.hasChangesFromAurelia()); }
   set changed(value: boolean) { this._changed = value; }
 
+  get editModeEnabled() { return window.w6Cheat.collection && window.w6Cheat.collection.$scope.editConfig.editMode }
+
   constructor(ui: UiContext) {
     super(ui);
     this.availableViewTypes = [ViewType.Card];
@@ -115,11 +117,15 @@ export class Show extends ViewModel {
     else {
       window.w6Cheat.collection.disableEditModeFromAurelia();
     }
-  })
+  }, {
+      isVisibleObservable: this.observeEx(x => x.editModeEnabled)
+    })
 
   enableEditMode = uiCommand2("Open Editor", async () => {
     window.w6Cheat.collection.enableEditModeFromAurelia();
-  });
+  }, {
+      isVisibleObservable: this.observeEx(x => x.editModeEnabled).select(x => !x)
+    });
 
   async resetup() {
     var current = this.current;

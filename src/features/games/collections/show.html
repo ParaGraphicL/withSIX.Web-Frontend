@@ -1,0 +1,60 @@
+<template>
+  <require from="./collections.scss"></require>
+  <div class="au-animate container-fluid" id="collection-edit">
+    <div class="row">
+      <section class="main col-sm-9">
+        <router-view></router-view>
+      </section>
+
+      <section class="right col-sm-3">
+        <div class="tile">
+          ${model.author.displayName}
+        </div>
+
+        <compose view="./_edit_panel.html"></compose>
+
+        <div class="tile sx-border-gray" if.bind="editModeEnabled">
+          <div class="advanced">
+            <h2>Advanced</h2>
+            <section class="form-group">
+              <label for="preferred-client">Preferred Client</label>
+              <select name="preferred-client" id="preferred-client" class="form-control" value.bind="model.preferredClient">
+                <option repeat.for="client of clients" model.bind="client">${$parent.PreferredClient[client]}</option>
+              </select>
+            </section>
+            <section class="repositories form-group">
+              <label for="repository">
+                <h3>Repository (optional)</h3>
+              </label>
+              <div>
+                <div class="pull-right" show.bind="model.repositories && !changed">
+                  <button class="warn" command.bind="refreshRepo">
+                    <span class="icon withSIX-icon-Reload"></span>
+                  </button>
+                </div>
+                <div class="input-container">
+                  <input name="repository" id="repository" class="form-control" type="text" placeholder="http://url/to/server.yml" value.bind="model.repositories"></input>
+                </div>
+              </div>
+              <div class="clearfix"></div>
+            </section>
+            <section class="servers">
+              <h3>Server (optional)</h3>
+              <template repeat.for="server of servers">
+                <div class="form-group">
+                  <label for="address">Address</label>
+                  <input class="form-control" id="address" placeholder="ip:port" name="address" type="text" value.bind="server.address"></input>
+                </div>
+
+                <div class="form-group">
+                  <label for="password">Password (optional)</label>
+                  <input class="form-control" id="password" name="password" type="text" value.bind="server.password"></input>
+                </div>
+              </template>
+            </section>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</template>

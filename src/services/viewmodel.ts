@@ -213,7 +213,9 @@ export interface IPaginated<T> {
 export class PaginatedViewModel<T> extends ViewModel {
   model: IPaginated<T>;
   loadMore;
-  async activate() {
+  params;
+  async activate(params) {
+    this.params = params;
     this.model = await this.getMore();
     this.loadMore = uiCommand2("Load more", this.addPage, {
       isVisibleObservable: this.morePagesAvailable,
