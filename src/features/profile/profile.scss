@@ -18,6 +18,11 @@
   .col3 {
     @include make-md-column(3.5);
   }
+  filters {
+    input {
+      width: initial;
+    }
+  }
   button.row-header-button,
   command-button.row-header-button button,
   dropdown-menu.row-header-button button {
