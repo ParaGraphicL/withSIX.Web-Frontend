@@ -18,9 +18,9 @@
     </div>
 
     <div>
-      <input if.bind="typeaheadOptions" style="position: relative;" typeahead="substring-matcher.bind: typeaheadOptions.substringMatcher; display.bind: typeaheadOptions.display; selected.bind: typeaheadSelect" class="form-control search-control" type="text"
-          value.bind="searchInput" placeholder.bind="searchInputPlaceholder"></input>
-      <input if.bind="!typeaheadOptions" style="position: relative;" class="form-control search-control" type="text" value.bind="searchInput" placeholder.bind="searchInputPlaceholder"></input>
+      <input if.bind="typeaheadOptions" style="position: relative;" typeahead="substring-matcher.bind: typeaheadOptions.substringMatcher; display.bind: typeaheadOptions.display; selected.bind: typeaheadSelect" class="form-control" type="text" value.bind="searchInput"
+          placeholder.bind="searchInputPlaceholder"></input>
+      <input if.bind="!typeaheadOptions" style="position: relative;" class="form-control" type="text" value.bind="searchInput" placeholder.bind="searchInputPlaceholder"></input>
     </div>
     <!-- <div class="clearfix"></div> -->
 

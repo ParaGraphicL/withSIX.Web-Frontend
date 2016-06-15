@@ -120,13 +120,11 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
           canExecuteObservable: this.canExecuteObservable
         }))
 
-      d(this.abort = uiCommand2("Pause", async () => {
-        await new Abort(this.model.gameId, this.model.id).handle(this.mediator);
-      }, {
-          isVisibleObservable: this.observeEx(x => x.isActive),
-          canExecuteObservable: this.observeEx(x => x.canAbort),
-          icon: "icon withSIX-icon-Hexagon-Pause"
-        }));
+      d(this.abort = uiCommand2("", () => new Abort(this.model.gameId, this.model.id).handle(this.mediator), {
+        isVisibleObservable: this.observeEx(x => x.isActive),
+        canExecuteObservable: this.observeEx(x => x.canAbort),
+        icon: "icon withSIX-icon-Hexagon-Pause", tooltip: "Pause"
+      }));
       d(this.uninstall = uiCommand2("Uninstall", this.uninstallInternal, {
         isVisibleObservable: this.observeEx(x => x.canBeUninstalled),
         canExecuteObservable: this.canExecuteObservable,
@@ -232,7 +230,7 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
     this.topMenuActions.push(new MenuItem(this.openFolder));
     this.topMenuActions.push(new MenuItem(this.openConfigFolder));
     this.bottomActions.push(new MenuItem(this.omni));
-    this.bottomMenuActions.push(new MenuItem(this.abort));
+    this.bottomActions.push(new MenuItem(this.abort));
   }
 
   getPath() {

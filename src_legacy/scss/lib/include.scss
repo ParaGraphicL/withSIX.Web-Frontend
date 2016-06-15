@@ -23,7 +23,7 @@
   padding: 8px 12px;
   font-size: 24px;
   line-height: 30px;
-  border: 2px solid #ccc;
+  border: 2px solid $colorSixSomeGray;
   border-radius: 8px;
   outline: none;
 }
@@ -40,7 +40,7 @@
   margin-top: 12px;
   padding: 8px 0;
   background-color: #fff;
-  border: 1px solid #ccc;
+  border: 1px solid $colorSixSomeGray;
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 8px;
   box-shadow: 0 5px 10px rgba(0,0,0,.2);
