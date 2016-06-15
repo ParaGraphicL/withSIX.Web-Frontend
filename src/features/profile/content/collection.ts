@@ -79,10 +79,10 @@ export class Collection extends ContentViewModel<ICollection> {
     let confirmations: Confirmation[] = isInstalled ? [{ text: 'Uninstall all mods from this collection', icon: 'withSIX-icon-Alert', hint: "This will physically delete all the content of this collection, even if its being used elsewhere" }] : undefined; // todo; have the checked ones come back over the result instead?
     let r = await this.showMessageDialog(title, message, MessageDialog.YesNo, confirmations);
     if (r.output != "yes") return;
-    await new DeleteCollection(this.model.id, this.model.gameId, this.model.typeScope).handle(this.mediator);
-    // TODO: Extend delete?
     if (isInstalled && confirmations[0].isChecked)
       await new UninstallContent(this.model.gameId, this.model.id, { text: this.model.name }).handle(this.mediator);
+
+    await new DeleteCollection(this.model.id, this.model.gameId, this.model.typeScope).handle(this.mediator);
   }
 
   getScopeIcon() {
