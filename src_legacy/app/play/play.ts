@@ -55,12 +55,8 @@
             var game = $routeProvider.
               when('/:gameSlug', 'game').
               when('/:gameSlug/order', 'game.order').
-              when('/:gameSlug/stream/personal/:streamType?', 'game.stream_personal').
-              when('/:gameSlug/stream-test', 'game.stream_test').
-              when('/:gameSlug/mods-test', 'game.mods_test').
-              when('/:gameSlug/missions-test', 'game.missions_test').
-              when('/:gameSlug/collections-test', 'game.collections_test').
-              when('/:gameSlug/stream/:streamType?', 'game.stream').
+              when('/:gameSlug/stream', 'game.stream').
+              //when('/:gameSlug/stream/:streamType?', 'game.stream').
               when('/:gameSlug/mods', 'game.mods').
               when('/:gameSlug/mods/category/:category', 'game.mod_category').
               when('/:gameSlug/mods/category/:category/page/:page', 'game.category_page').
@@ -86,10 +82,6 @@
               when('/:gameSlug/collections/:collectionId/:collectionSlug?/comments', 'game.collectionsShow.comments').
               when('/:gameSlug/collections/:collectionId/:collectionSlug?/related', 'game.collectionsShow.related').
               when('/:gameSlug/collections/:collectionId/:collectionSlug?', 'game.collectionsShow').
-              when('/:gameSlug/servers', 'game.servers').
-              when('/:gameSlug/servers/:serverId/:serverSlug?', 'game.serversShow').
-              when('/:gameSlug/apps', 'game.apps').
-              when('/:gameSlug/apps/:appId/:appSlug?', 'game.appsShow').
               /*                            when('/:gameSlug/test', 'game.test').*/
               segment('game', {
                 controller: 'GameController',
@@ -110,28 +102,28 @@
                 templateUrl: '/src_legacy/app/play/games/order.html',
               });
 
-            game
-              .segment('stream', {
-                controller: 'StreamController',
-                templateUrl: '/src_legacy/app/play/games/stream/index.html',
-                dependencies: ['gameSlug', 'streamType'],
-                resolve: setupQuery(Games.GetStreamQuery, { streamType: 'Content' }),
-                default: true // TODO: Generally we have some games that have Stream as default, others have Order as default...
-              }).
-              segment('stream_personal', {
-                controller: 'PersonalStreamController',
-                templateUrl: '/src_legacy/app/play/games/stream/index.html',
-                dependencies: ['gameSlug', 'streamType'],
-                resolve: setupQuery(Games.GetPersonalStreamQuery, { streamType: 'Content' })
-              });
+            // game
+            //   .segment('stream', {
+            //     controller: 'StreamController',
+            //     templateUrl: '/src_legacy/app/play/games/stream/index.html',
+            //     dependencies: ['gameSlug', 'streamType'],
+            //     resolve: setupQuery(Games.GetStreamQuery, { streamType: 'Content' }),
+            //     default: true // TODO: Generally we have some games that have Stream as default, others have Order as default...
+            //   }).
+            //   segment('stream_personal', {
+            //     controller: 'PersonalStreamController',
+            //     templateUrl: '/src_legacy/app/play/games/stream/index.html',
+            //     dependencies: ['gameSlug', 'streamType'],
+            //     resolve: setupQuery(Games.GetPersonalStreamQuery, { streamType: 'Content' })
+            //   });
 
             game.
-              segment('mods', {
-                controller: 'ModsController',
-                templateUrl: '/src_legacy/app/components/default_index.html',
-                dependencies: ['gameSlug']
-                //, resolve: resolve: setupQuery(Mods.GetModsQuery)
-              }).
+              // segment('mods', {
+              //   controller: 'ModsController',
+              //   templateUrl: '/src_legacy/app/components/default_index.html',
+              //   dependencies: ['gameSlug']
+              //   //, resolve: resolve: setupQuery(Mods.GetModsQuery)
+              // }).
               segment('mod_category', {
                 controller: 'ModsController',
                 templateUrl: '/src_legacy/app/components/default_index.html',
@@ -184,11 +176,11 @@
               });
 
             game.
-              segment('missions', {
-                controller: 'MissionsController',
-                templateUrl: '/src_legacy/app/components/default_index.html',
-                dependencies: ['gameSlug']
-              }).
+              // segment('missions', {
+              //   controller: 'MissionsController',
+              //   templateUrl: '/src_legacy/app/components/default_index.html',
+              //   dependencies: ['gameSlug']
+              // }).
               segment('new_mission', {
                 controller: 'UploadNewmissionController',
                 templateUrl: '/src_legacy/app/play/missions/upload-newmission.html',
@@ -229,15 +221,15 @@
               });
 
             game.
-              segment('stream_test', {}).
-              segment('mods_test', {}).
-              segment('missions_test', {}).
-              segment('collections_test', {}).
-              segment('collections', {
-                controller: 'CollectionsController',
-                templateUrl: '/src_legacy/app/components/default_index.html',
-                dependencies: ['gameSlug']
-              }).
+              segment('stream', {}).
+              segment('mods', {}).
+              segment('missions', {}).
+              segment('collections', {}).
+              // segment('collections', {
+              //   controller: 'CollectionsController',
+              //   templateUrl: '/src_legacy/app/components/default_index.html',
+              //   dependencies: ['gameSlug']
+              // }).
               segment('collectionsShow', {
                 controller: 'CollectionController',
                 templateUrl: '/src_legacy/app/play/collections/show.html',
@@ -262,32 +254,6 @@
                 controller: 'CollectionRelatedController',
                 templateUrl: '/src_legacy/app/play/collections/show/related.html',
                 resolve: setupQuery(Collections.GetForkedCollectionsQuery)
-              });
-
-            game.
-              segment('servers', {
-                controller: 'AureliaPageController',
-              }).
-              segment('serversShow', {
-                controller: 'AureliaPageController',
-              });
-
-            game.
-              segment('apps', {
-                controller: 'AppsController',
-                templateUrl: '/src_legacy/app/components/default_index.html',
-                dependencies: ['gameSlug']
-              }).
-              segment('appsShow', {
-                controller: 'AppController',
-                templateUrl: '/src_legacy/app/play/apps/show.html',
-                dependencies: ['gameSlug', 'appId', 'appSlug'],
-                resolve: setupQuery(Apps.GetAppQuery),
-              })
-              .within()
-              .segment('info', {
-                default: true,
-                templateUrl: '/src_legacy/app/play/apps/show/info.html',
               });
 
             $routeProvider.
