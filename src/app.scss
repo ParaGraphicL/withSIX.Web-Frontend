@@ -102,6 +102,16 @@ card-view {
       div.info {
         height: 180px;
       }
+      @media (max-width: 1280px) and (min-width: 768px) {
+        div.img {
+          width: 170px;
+        }
+        .basket-content-progess-bar,
+        .imageholder,
+        div.info {
+          height: 92px;
+        }
+      }
       &.small-card {
         div.img {
           width: 170px;
