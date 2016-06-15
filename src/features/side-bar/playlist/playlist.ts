@@ -376,7 +376,7 @@ export class Playlist extends ViewModel {
     : uiCommand2("Delete", () => this.deleteInternal("This will delete your collection, do you want to continue?", "Delete collection?"), { icon: "icon withSIX-icon-Square-X" })
 
   deleteInternal = async (title: string, message: string) => {
-    let isInstalled = this.basket.getState(this.gameInfo.clientInfo) >= 3;
+    let isInstalled = this.activeBasket.getState(this.gameInfo.clientInfo) >= 3;
     let confirmations: Confirmation[] = isInstalled ? [{ text: 'Uninstall all mods from this collection', icon: 'withSIX-icon-Alert', hint: "This will physically delete all the content of this collection, even if its being used elsewhere" }] : undefined; // todo; have the checked ones come back over the result instead?
     let r = await this.showMessageDialog(title, message, MessageDialog.YesNo, confirmations);
     if (r.output != "yes") return;
