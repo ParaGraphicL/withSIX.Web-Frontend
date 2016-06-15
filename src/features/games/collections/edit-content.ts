@@ -5,8 +5,6 @@ export class EditContent extends Show {
   async activate(params, routeConfig) {
     await super.activate(params, routeConfig);
 
-    this.handleAngularHeader();
-
     // pff
     this.timeout = setInterval(() => {
       if (window.w6Cheat.collection) {
@@ -19,7 +17,6 @@ export class EditContent extends Show {
 
   deactivate() {
     super.deactivate();
-    this.reverseAngularHeader();
     if (this.timeout) { clearInterval(this.timeout); this.timeout = null; }
   }
 }

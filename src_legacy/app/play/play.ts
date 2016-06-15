@@ -57,6 +57,7 @@
               when('/:gameSlug/order', 'game.order').
               when('/:gameSlug/stream', 'game.stream').
               //when('/:gameSlug/stream/:streamType?', 'game.stream').
+              when('/:gameSlug/servers', 'game.servers').
               when('/:gameSlug/mods', 'game.mods').
               when('/:gameSlug/mods/category/:category', 'game.mod_category').
               when('/:gameSlug/mods/category/:category/page/:page', 'game.category_page').
@@ -95,6 +96,15 @@
                                             templateUrl: '/src_legacy/app/play/shared/_content-header-new.html'
                                         });
             */
+            game.
+              segment('stream', {
+                default: true
+              }).
+              segment('servers', {}).
+              segment('mods', {}).
+              segment('missions', {}).
+              segment('collections', {});
+
 
             game.
               segment('order', {
@@ -221,10 +231,6 @@
               });
 
             game.
-              segment('stream', {}).
-              segment('mods', {}).
-              segment('missions', {}).
-              segment('collections', {}).
               // segment('collections', {
               //   controller: 'CollectionsController',
               //   templateUrl: '/src_legacy/app/components/default_index.html',
@@ -254,25 +260,6 @@
                 controller: 'CollectionRelatedController',
                 templateUrl: '/src_legacy/app/play/collections/show/related.html',
                 resolve: setupQuery(Collections.GetForkedCollectionsQuery)
-              });
-
-            $routeProvider.
-              when('/apps', 'apps2').
-              segment('apps2', {
-                controller: 'AppsController',
-                templateUrl: '/src_legacy/app/components/default_index.html'
-              }).
-              when('/apps/:appId/:appSlug?', 'apps2Show').
-              segment('apps2Show', {
-                controller: 'AppController',
-                templateUrl: '/src_legacy/app/play/apps/show.html',
-                dependencies: ['appId', 'appSlug'],
-                resolve: setupQuery(Apps.GetAppQuery),
-              })
-              .within()
-              .segment('info', {
-                default: true,
-                templateUrl: '/src_legacy/app/play/apps/show/info.html',
               });
           }
         ])
