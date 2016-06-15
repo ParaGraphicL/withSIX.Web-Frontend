@@ -24,6 +24,41 @@ virtual-list {
 .user-error-dialog {
   max-width: 800px;
 }
+filters {
+  .filters-area {
+    height: 92px;
+    button,
+    input,
+    select {
+      border: 1px solid $colorSixSomeGray;
+    }
+    select.grid-type {
+      height: 46px;
+      option {
+        margin: 0;
+      }
+    }
+    button.filter-order {
+      padding: 10px 0;
+    }
+    button {
+      margin-top: -4px;
+    }
+    input {
+      width: 25%;
+      display: initial;
+      padding: 20.5px 19px;
+      margin-right: 7px;
+    }
+    // .form-control.search-control {
+    //   width: initial;
+    //   display: initial;
+    //   border: none;
+    //   padding: 20.5px 19px;
+    //   margin-right: 7px;
+    // }
+  }
+}
 .message-dialog {
   max-width: 800px;
   .buttons {
