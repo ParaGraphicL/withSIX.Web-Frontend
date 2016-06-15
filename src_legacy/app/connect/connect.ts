@@ -97,12 +97,6 @@
               when('/me/blog', 'me.blog').
               when('/me/blog/create', 'me.blog.create').
               when('/me/blog/:slug', 'me.blog.edit').
-              when('/me/content', 'me.content').
-              when('/me/content/mods', 'me.content.mods').
-              when('/me/content/missions', 'me.content.missions').
-              when('/me/content/collections', 'me.content.collections').
-              //when('/me/content/servers', 'me.content.servers').
-              when('/me/content/apps', 'me.content.apps').
               when('/me/friends', 'me.friends').
               when('/me/offers', 'me.offers').
               when('/me/messages', 'me.messages').
@@ -163,32 +157,6 @@
                 resolve: setupQuery(Me.GetMeBlogPostQuery),
               });
 
-            me.segment('content', {
-              templateUrl: '/src_legacy/app/connect/me/content.html',
-              controller: 'MeContentController',
-              resolve: setupQuery(Me.GetMeContentQuery),
-            }).within().
-              segment('collections', {
-                default: true,
-                controller: 'CollectionsController',
-                templateUrl: '/src_legacy/app/components/default_index.html'
-              }).
-              segment('mods', {
-                controller: 'ModsController',
-                templateUrl: '/src_legacy/app/components/default_index.html'
-              }).
-              segment('missions', {
-                controller: 'MissionsController',
-                templateUrl: '/src_legacy/app/components/default_index.html'
-              }).
-              segment('servers', {
-                controller: 'ServersController',
-                templateUrl: '/src_legacy/app/play/servers/index.html'
-              }).
-              segment('apps', {
-                controller: 'AppsController',
-                templateUrl: '/src_legacy/app/components/default_index.html'
-              });
             me.segment('friends', {
               templateUrl: '/src_legacy/app/connect/me/friends.html',
               controller: 'MeFriendsController',

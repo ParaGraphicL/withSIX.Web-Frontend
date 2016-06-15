@@ -113,6 +113,50 @@ export class ViewModel extends Base {
       else throw err;
     }
   }
+
+  protected getMenuItems(items: Array<ILegacyMenuItem>, mainSegment: string, parentIsDefault?: boolean): ILegacyMenuItem[] {
+    var menuItems = [];
+    items.forEach(item => {
+      var main = item.mainSegment || item.mainSegment == "" ? item.mainSegment : mainSegment;
+      var fullSegment = main && main != "" ? main + "." + item.segment : item.segment;
+      var segment = item.isDefault ? main : fullSegment; // This will make menu links link to the parent where this page is default
+      var menuItem = this.copyObject(item);
+      menuItem.segment = segment;
+      menuItem.fullSegment = fullSegment;
+      menuItem.cls = item.cls;
+      menuItem.target = item.target || "_self";
+      if (item.isRight) menuItem.cls = item.cls ? item.cls + ' right' : 'right';
+      menuItems.push(menuItem);
+    });
+    return menuItems;
+  }
+
+
+  private copyObject<T>(object: T): T {
+    var objectCopy = <T>{};
+
+    for (var key in object) {
+      if (object.hasOwnProperty(key)) {
+        objectCopy[key] = object[key];
+      }
+    }
+
+    return objectCopy;
+  }
+}
+
+
+export interface ILegacyMenuItem {
+  header: string;
+  segment: string;
+  target?: string;
+  mainSegment?: string;
+  fullSegment?: string;
+  url?: string;
+  cls?: string;
+  icon?: string;
+  isRight?: boolean;
+  isDefault?: boolean;
 }
 
 

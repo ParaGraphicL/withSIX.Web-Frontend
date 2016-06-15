@@ -1,15 +1,15 @@
-import {IPaginated, ModHelper, PaginatedViewModel, IFilterInfo, SortDirection, Query, DbQuery, handlerFor, uiCommandWithLogin2, IMenuItem, MenuItem, IBreezeMod, ModsHelper, IMod, uiCommand2} from '../../../framework';
-import {FilteredBase} from '../../filtered-base';
+import {IPaginated, ModHelper, PaginatedViewModel, IFilterInfo, SortDirection, Query, DbQuery, handlerFor, uiCommandWithLogin2, IMenuItem, MenuItem, IBreezeMod, ModsHelper, IMod, uiCommand2} from '../../../../framework';
+import {FilteredBase} from '../../../filtered-base';
 
 export class Index extends FilteredBase<IMod> {
   sort = [{ name: "stat.install", title: "Installs", direction: SortDirection.Desc }, { name: "updatedAt", title: "Updated", direction: SortDirection.Desc }, { name: "createdAt", title: "Created", direction: SortDirection.Desc }, { name: "name" }, { name: "packageName" }]
   searchFields = ["name", "packageName"];
 
-  getMore(page = 1) { return new GetMods(this.w6.activeGame.id, page, this.filterInfo).handle(this.mediator); }
+  getMore(page = 1) { return new GetMods(this.w6.userInfo.id, page, this.filterInfo).handle(this.mediator); }
 }
 
 class GetMods extends Query<IPaginated<IMod>> {
-  constructor(public gameId: string, public page = 1, public filterInfo: IFilterInfo<IMod>) { super() }
+  constructor(public authorId: string, public page = 1, public filterInfo: IFilterInfo<IMod>) { super() }
 }
 
 @handlerFor(GetMods)
@@ -18,7 +18,7 @@ class GetModsHandler extends DbQuery<GetMods, IPaginated<IMod>> {
     var jsonQuery = {
       from: 'Mods',
       where: {
-        'gameId': { in: ModsHelper.getGameIds(request.gameId) }
+        'authorId': { in: [request.authorId] }
       }
     }
     var query = new breeze.EntityQuery(jsonQuery).expand(["categories", "stat"]);
@@ -28,7 +28,7 @@ class GetModsHandler extends DbQuery<GetMods, IPaginated<IMod>> {
       .select(this.desiredFields);
     let r = await this.context.executeQuery<IBreezeMod>(query);
     return {
-      items: r.results.map(x => ModHelper.convertOnlineMod(x, this.w6.activeGame, this.w6)),
+      items: r.results.map(x => ModHelper.convertOnlineMod(x, null, this.w6)),
       inlineCount: r.inlineCount, page: request.page
     };
   }

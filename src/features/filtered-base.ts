@@ -1,4 +1,4 @@
-import {ISort, IFilter, IFilterInfo, SortDirection, ITypeahead, ViewType, Filters, PaginatedViewModel} from '../../framework';
+import {ISort, IFilter, IFilterInfo, SortDirection, ITypeahead, ViewType, Filters, PaginatedViewModel} from '../framework';
 export class FilteredBase<T> extends PaginatedViewModel<T> {
   sort: ISort<T>[] = []
   searchFields = [];

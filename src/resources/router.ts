@@ -6,7 +6,7 @@ import {Subscriptions} from '../services/lib';
 export class RouteSegmentActiveValueConverter {
   constructor(private router: Router) { }
 
-  toView(fullSegment) { return this.router.currentInstruction.fragment.startsWith('/' + fullSegment) ? 'active' : ''; }
+  toView(fullSegment) { return this.router.currentInstruction.fragment.startsWith('/' + fullSegment.replace(/\./g, "/")) ? 'active' : ''; }
 }
 
 @inject(Router)
@@ -14,6 +14,6 @@ export class RouteSegmentUrlValueConverter {
   constructor(private router: Router) {
   }
   toView(fullSegment) {
-    return "/" + fullSegment;
+    return "/" + fullSegment.replace(/\./g, "/");
   }
 }

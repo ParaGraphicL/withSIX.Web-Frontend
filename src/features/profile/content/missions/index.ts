@@ -1,5 +1,5 @@
-import {IPaginated, MissionHelper, PaginatedViewModel, Query, SortDirection, IFilterInfo, DbQuery, handlerFor, uiCommandWithLogin2, IMenuItem, MenuItem, IBreezeMission, ModsHelper, IMission} from '../../../framework';
-import {FilteredBase} from '../../filtered-base';
+import {IPaginated, MissionHelper, PaginatedViewModel, Query, SortDirection, IFilterInfo, DbQuery, handlerFor, uiCommandWithLogin2, IMenuItem, MenuItem, IBreezeMission, ModsHelper, IMission} from '../../../../framework';
+import {FilteredBase} from '../../../filtered-base';
 
 export class Index extends FilteredBase<IMission> {
   // { name: "stat.install", title: "installs", direction: SortDirection.Desc },
@@ -7,11 +7,11 @@ export class Index extends FilteredBase<IMission> {
 
   searchFields = ["name", "packageName"];
 
-  getMore(page = 1) { return new GetMissions(this.w6.activeGame.id, page, this.filterInfo).handle(this.mediator); }
+  getMore(page = 1) { return new GetMissions(this.w6.userInfo.id, page, this.filterInfo).handle(this.mediator); }
 }
 
 class GetMissions extends Query<IPaginated<IMission>> {
-  constructor(public gameId: string, public page = 1, public filterInfo: IFilterInfo<IMission>) { super() }
+  constructor(public authorId: string, public page = 1, public filterInfo: IFilterInfo<IMission>) { super() }
 }
 
 @handlerFor(GetMissions)
@@ -20,7 +20,7 @@ class GetMissionsHandler extends DbQuery<GetMissions, IPaginated<IMission>> {
     var jsonQuery = {
       from: 'Missions',
       where: {
-        'gameId': { in: ModsHelper.getGameIds(request.gameId) }
+        'author.id': { in: [request.authorId] }
       }
     }
     var query = new breeze.EntityQuery(jsonQuery).expand(["stat"]);
@@ -30,7 +30,7 @@ class GetMissionsHandler extends DbQuery<GetMissions, IPaginated<IMission>> {
     //.select(this.desiredFields); // cant be used, virtual props
     let r = await this.context.executeQuery<IBreezeMission>(query);
     return {
-      items: r.results.map(x => MissionHelper.convertOnlineMission(x, this.w6.activeGame, this.w6)),
+      items: r.results.map(x => MissionHelper.convertOnlineMission(x, null, this.w6)),
       page: request.page, inlineCount: r.inlineCount
     };
   }
