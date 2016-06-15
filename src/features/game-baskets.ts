@@ -6,7 +6,7 @@
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject, Container} from 'aurelia-framework';
 import {
-  Base, LS, Notifier, BasketService, Toastr, uiCommand2, ViewModel, ViewModelWithModel, SelectTab,
+  Base, LS, Notifier, Toastr, uiCommand2, ViewModel, ViewModelWithModel, SelectTab,
   UploadService, BasketType, IBasketModel, IBasketItem, BasketState, IBasketCollection, W6Context,
   SubscribeCollection, InstallContent, InstallContents, LaunchContents, LaunchContent, ContentHelper, Action
 } from '../framework';
@@ -152,10 +152,11 @@ export class GameBaskets extends ViewModel {
     let isCollection = type == BasketType.SingleCollection;
 
     // executes in bg
-    if (isCollection && this.isLoggedIn) new SubscribeCollection(item.id).handle(this.mediator);
+    if (isCollection) this.subscribeCollection(item.id);
     return this.handleDirectAction(clientInfo, item, isCollection);
   }
 
+  async subscribeCollection(id: string) { if (this.isLoggedIn) await new SubscribeCollection(id).handle(this.mediator); }
 
   private handleDirectAction(clientInfo: IClientInfo, item: IBasketItem, isCollection: boolean) {
     switch (ContentHelper.itemStateToAction(ContentHelper.getConstentStateInitial(clientInfo.content[item.id], item.constraint))) {
@@ -300,7 +301,7 @@ export class Basket extends ViewModelWithModel<IBasketCollection> {
       forkedCollectionId: this.model.collectionId,
       dependencies: this.model.items.asEnumerable().where(x => x.packageName ? true : false).select(x => { return { dependency: x.packageName, constraint: x.constraint } }).toArray()
     };
-    var result = await this.dialog.open({ viewModel: CreateCollectionDialog, model: { game: {id: this.model.gameId }, model: model } });
+    var result = await this.dialog.open({ viewModel: CreateCollectionDialog, model: { game: { id: this.model.gameId }, model: model } });
     if (result.wasCancelled) return;
     var id = result.output;
     await new LoadCollectionIntoBasket(id).handle(this.mediator);

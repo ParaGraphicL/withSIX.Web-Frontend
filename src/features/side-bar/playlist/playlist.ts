@@ -273,7 +273,7 @@ export class Playlist extends ViewModel {
       this.gameInfo = await this.basketService.getGameInfo(this.game.id);
       await this.updateCollections();
     }
-    this.baskets = this.game.id ? this.basketService.basketService.getGameBaskets(this.game.id) : null;
+    this.baskets = this.game.id ? this.basketService.getGameBaskets(this.game.id) : null;
   }
 
   async executeBasket(basket: Basket) {
@@ -287,7 +287,7 @@ export class Playlist extends ViewModel {
       return;
     }
     if (basket.model.basketType == BasketType.SingleCollection) {
-      var gb = this.basketService.basketService.getGameBaskets(basket.model.gameId);
+      var gb = this.basketService.getGameBaskets(basket.model.gameId);
       gb.subscribeCollection(basket.model.id);
     }
 
@@ -362,12 +362,13 @@ export class Playlist extends ViewModel {
       }, { icon: "fa fa-code-fork" }));
       this.collectionMenu.push(new MenuItem(fork));
 
-      let del;
-      d(del = this.createDeleteCommand());
-      this.collectionMenu.push(new MenuItem(del));
+      if (this.collection.typeScope != null) {
+        let del;
+        d(del = this.createDeleteCommand());
+        this.collectionMenu.push(new MenuItem(del));
+      }
     });
   }
-
 
   createDeleteCommand = () => this.collection.typeScope == TypeScope.Subscribed
     ? uiCommand2("Unsubscribe", () => this.deleteInternal("This will unsubscribe from the collection, do you want to continue?", "Unsubscribe collection?"),
@@ -375,13 +376,14 @@ export class Playlist extends ViewModel {
     : uiCommand2("Delete", () => this.deleteInternal("This will delete your collection, do you want to continue?", "Delete collection?"), { icon: "icon withSIX-icon-Square-X" })
 
   deleteInternal = async (title: string, message: string) => {
-    let confirmations: Confirmation[] = [{ text: 'Uninstall all mods from this collection', icon: 'withSIX-icon-Alert', hint: "This will physically delete all the content of this collection, even if its being used elsewhere" }]; // todo; have the checked ones come back over the result instead?
+    let isInstalled = this.basket.getState(this.gameInfo.clientInfo) >= 3;
+    let confirmations: Confirmation[] = isInstalled ? [{ text: 'Uninstall all mods from this collection', icon: 'withSIX-icon-Alert', hint: "This will physically delete all the content of this collection, even if its being used elsewhere" }] : undefined; // todo; have the checked ones come back over the result instead?
     let r = await this.showMessageDialog(title, message, MessageDialog.YesNo, confirmations);
     if (r.output != "yes") return;
     await new DeleteCollection(this.collection.id, this.collection.gameId, this.collection.typeScope).handle(this.mediator);
     await this.unload();
     // TODO: Extend delete?
-    if (confirmations[0].isChecked)
+    if (isInstalled && confirmations[0].isChecked)
       await new UninstallContent(this.collection.gameId, this.collection.id, { text: this.collection.name }).handle(this.mediator);
   }
 

@@ -8,6 +8,7 @@ import {ContentHelper} from './helpers';
 import {ActionType, IActionNotification, Client, ConnectionState, IContentState, ItemState, IContentStateChange, IContentStatusChange, IClientInfo, IActionTabStateUpdate, StateChanged, IContentGuidSpec, IContentsBase, IContentBase,
   IUserErrorAdded, IUserErrorResolved} from 'withsix-sync-api';
 import {ClientWrapper, AppEventsWrapper} from './client-wrapper';
+import {GameBaskets} from '../features/game-baskets';
 
 @inject(LegacyBasketService, EventAggregator, W6, Client, Toastr, ClientWrapper, AppEventsWrapper)
 export class BasketService extends Base {
@@ -38,6 +39,8 @@ export class BasketService extends Base {
       }));
     });
   }
+
+  getGameBaskets = (gameId: string) => <GameBaskets>this.basketService.getGameBaskets(gameId)
 
   refresh() { this.basketService.refresh(); }
 

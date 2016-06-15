@@ -32,7 +32,7 @@ export class Collection extends ContentViewModel<ICollection> {
         this.topMenuActions.push(new MenuItem(this.edit))
       }
 
-      if ((published || this.model.typeScope == TypeScope.Subscribed)) {
+      if (this.model.typeScope != TypeScope.Local) {
         d(this.loadIntoPlaylist = uiCommand2("Load into playlist", this.loadIntoPlaylistInternal, { icon: "icon withSIX-icon-Edit-Pencil" }))
         this.topMenuActions.push(new MenuItem(this.loadIntoPlaylist))
       }
@@ -43,10 +43,7 @@ export class Collection extends ContentViewModel<ICollection> {
       }, { icon: "fa fa-code-fork" }));
       this.topMenuActions.push(new MenuItem(this.fork));
 
-      if (this.model.typeScope != null) {
-        d(this.delete = this.createDeleteCommand());
-        this.topMenuActions.push(new MenuItem(this.delete));
-      }
+      if (this.model.typeScope != null) d(this.uninstall = this.createDeleteCommand());
     })
 
     super.setupMenuItems();
@@ -78,12 +75,13 @@ export class Collection extends ContentViewModel<ICollection> {
     : uiCommand2("Delete", () => this.deleteInternal("This will delete your collection, do you want to continue?", "Delete collection?"), { icon: "icon withSIX-icon-Square-X" })
 
   deleteInternal = async (title: string, message: string) => {
-    let confirmations: Confirmation[] = [{ text: 'Uninstall all mods from this collection', icon: 'withSIX-icon-Alert', hint: "This will physically delete all the content of this collection, even if its being used elsewhere" }]; // todo; have the checked ones come back over the result instead?
+    let isInstalled = this.isInstalled;
+    let confirmations: Confirmation[] = isInstalled ? [{ text: 'Uninstall all mods from this collection', icon: 'withSIX-icon-Alert', hint: "This will physically delete all the content of this collection, even if its being used elsewhere" }] : undefined; // todo; have the checked ones come back over the result instead?
     let r = await this.showMessageDialog(title, message, MessageDialog.YesNo, confirmations);
     if (r.output != "yes") return;
     await new DeleteCollection(this.model.id, this.model.gameId, this.model.typeScope).handle(this.mediator);
     // TODO: Extend delete?
-    if (confirmations[0].isChecked)
+    if (isInstalled && confirmations[0].isChecked)
       await new UninstallContent(this.model.gameId, this.model.id, { text: this.model.name }).handle(this.mediator);
   }
 
@@ -105,7 +103,12 @@ class DeleteCollectionHandler extends DbClientQuery<DeleteCollection, void> {
   async handle(request: DeleteCollection) {
     if (request.typeScope == TypeScope.Subscribed) await this.context.postCustom("collections/" + request.id + "/unsubscribe");
     if (request.typeScope == TypeScope.Published) await this.context.deleteCustom("collections/" + request.id);
-    await this.client.deleteCollection({ gameId: request.gameId, id: request.id });
+    try {
+      await this.client.deleteCollection({ gameId: request.gameId, id: request.id });
+    } catch (err) {
+      Tk.Debug.warn("Err while trying to delete collection from client", err);
+      // TODO: Only catch NotFoundException
+    }
     this.publishCrossEvent('content-deleted', new ContentDeleted(request.gameId, request.id));
   }
 }
@@ -162,7 +165,7 @@ class LoadCollectionIntoBasketHandler extends DbClientQuery<LoadCollectionIntoBa
     let r = await this.collectionDataService.getCollectionsByIds([request.id], {});
     let col = r.results[0];
     let dependencies = await this.getDependencies(new GetDependencies(col.latestVersionId));
-    let baskets: GameBaskets = this.basketService.basketService.getGameBaskets(col.gameId);
+    let baskets: GameBaskets = this.basketService.getGameBaskets(col.gameId);
     baskets.replaceBasket();
     let basket = baskets.active;
     basket.model.isTemporary = ((col.author && col.author.id) || col.authorId) != this.w6.userInfo.id;
