@@ -1,4 +1,27 @@
 ﻿module MyApp.Play.ContentIndexes.Mods {
+  export class ModsHelper {
+    static arma2Id = "1947DE55-44ED-4D92-A62F-26CFBE48258B";
+    static arma3Id = "9DE199E3-7342-4495-AD18-195CF264BA5B";
+    static a3MpCategories = ["Island", "Objects (Buildings, Foliage, Trees etc)"];
+    static objectCategories = ["Objects (Buildings, Foliage, Trees etc)"];
+    static getGameIds(id: string) {
+      if (id.toUpperCase() == this.arma3Id)
+        return [id, this.arma2Id];
+      return [id];
+    }
+
+    static getCompatibilityModsFor(id: string, otherId: string, tags: string[] = []) {
+      if (id.toUpperCase() == this.arma3Id) {
+        if (tags.asEnumerable().any(x => this.objectCategories.asEnumerable().contains(x))) return [];
+        if (tags.asEnumerable().any(x => this.a3MpCategories.asEnumerable().contains(x))) return ["@cup_terrains_core"];
+        return ["@AllInArmaStandaloneLite"];
+      }
+      return [];
+    }
+    static getFullVersion = (x: IBreezeModUpdate, cutStable = true) => x.version + (cutStable && x.branch == 'stable' ? '' : ('-' + x.branch));
+    static versionCompare = (x: IBreezeModUpdate, y: IBreezeModUpdate) => Tools.versionCompare(ModsHelper.getFullVersion(x, false), ModsHelper.getFullVersion(y, false))
+  }
+
   // DEPRECATED: Convert to Queries/Commands
   export class ModDataService extends W6ContextWrapper {
     static $name = 'modDataService';

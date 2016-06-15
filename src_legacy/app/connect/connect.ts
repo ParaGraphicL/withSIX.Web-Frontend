@@ -222,11 +222,6 @@
               controller: 'ProfileMessagesController',
               resolve: setupQuery(Profile.GetProfileMessagesQuery),
             });
-            profile.segment('comments', {
-              templateUrl: '/src_legacy/app/connect/profile/comments.html',
-              controller: 'ProfileCommentsController',
-              resolve: setupQuery(Profile.GetProfileCommentsQuery),
-            });
 
             // $routeProvider.
             //     when('/wall', 'wall').

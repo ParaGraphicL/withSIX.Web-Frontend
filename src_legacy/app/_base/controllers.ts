@@ -940,7 +940,7 @@
 
     public getSorts() {
       // TODO: Get elsewhere?
-      return Play.ContentIndexes.Missions.MissionsController.sorts;
+      return ContentsController.sorts;
     }
 
     static sorts = [

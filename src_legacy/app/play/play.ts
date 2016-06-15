@@ -37,14 +37,6 @@
             var setupQueryPart = $routeProvider.setupQueryPart;
 
             $routeProvider.
-              /*
-                                          when('/dashboard', 'dashboard').
-                                          segment('dashboard', {
-                                              controller: 'DashboardController',
-                                              templateUrl: '/src_legacy/app/play/dashboard/index.html',
-                                              resolve: setupQuery(Games.GetDashboardQuery),
-                                          }).
-              */
               when('/', 'games').
               segment('games', {
                 controller: 'GamesController',
