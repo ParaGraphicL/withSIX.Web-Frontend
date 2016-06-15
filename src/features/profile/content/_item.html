@@ -53,11 +53,11 @@
                 <span if.bind="!hasRealAuthor">${model.author}</span>
               </div>
               <div>
-                <span class="small">v${versionInfo}</span>
+                <span class="small">v${versionInfo}</span> &nbsp;
+                <span class="followers small" if.bind="installs != null"><i>${installs | amount } ${installs | pluralizeWord:(model.type == 'collection' ? 'subscriber' : 'install')}</i></span>
               </div>
               <div class="clearfix"></div>
             </div>
-            <div class="followers small" if.bind="installs != null">${installs | amount } ${model.type == 'collection' ? 'subscribers' : 'installs'}</div>
             <div class="additional-info small">${model.additionalInfo}</div>
           </div>
         </div>

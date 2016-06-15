@@ -8,7 +8,12 @@ export class FilteredBase<T> extends PaginatedViewModel<T> {
   searchInputPlaceholder = "type name...";
   availableViewTypes: ViewType[] = [ViewType.Card];
   viewType = ViewType.Card;
-  filterInfo: IFilterInfo<T> = { search: { input: null, fields: this.searchFields }, enabledFilters: [], sortOrder: this.sort.asEnumerable().firstOrDefault() }
+  filterInfo: IFilterInfo<T>;
+
+  async activate() {
+    this.filterInfo = { search: { input: null, fields: this.searchFields }, enabledFilters: [], sortOrder: this.sort.asEnumerable().firstOrDefault() }
+    await super.activate();
+  }
 
   first = true;
 
