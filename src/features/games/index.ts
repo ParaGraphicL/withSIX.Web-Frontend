@@ -25,6 +25,8 @@ export class Index extends ViewModel {
           `${gameRouteMount}/collections/:id/:slug`,
           `${gameRouteMount}/collections/:id/:slug/:something`,
           `${gameRouteMount}/collections/:id/:slug/:something/:somethingelse`,
+
+          ''
         ], name: 'angular', moduleId: 'features/pages/angular', nav: false
       },
       { route: [gameRouteMount, `${gameRouteMount}/stream`], name: 'stream', moduleId: `${mount}stream`, nav: false, title: 'Stream' },
