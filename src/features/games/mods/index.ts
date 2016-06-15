@@ -45,6 +45,7 @@ class GetModsHandler extends DbQuery<GetMods, IPaginated<IMod>> {
           stat: x.stat,
           type: "mod",
           version: x.latestStableVersion,
+          statInstall: x.stat.install
         }
       }), inlineCount: r.inlineCount, page: request.page
     };

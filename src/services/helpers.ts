@@ -1,6 +1,10 @@
 import {CollectionScope, ItemState, ICollection, TypeScope} from 'withsix-sync-api';
 import {IBreezeCollection} from './legacy';
 
+interface ICollectionExtend extends ICollection {
+  subscribers: number;
+}
+
 export class CollectionHelper {
   public static scopeHints = [
     'Your collection will be listed and can be searched for',
@@ -14,7 +18,7 @@ export class CollectionHelper {
     'withSIX-icon-Lock'
   ]
 
-  public static convertOnlineCollection(collection: IBreezeCollection, type: TypeScope, w6: W6): ICollection {
+  public static convertOnlineCollection(collection: IBreezeCollection, type: TypeScope, w6: W6): ICollectionExtend {
     return {
       id: collection.id,
       image: w6.url.getContentAvatarUrl(collection.avatar, collection.avatarUpdatedAt),
@@ -28,7 +32,8 @@ export class CollectionHelper {
       sizePacked: collection.sizePacked,
       type: "collection",
       version: collection.latestVersion.version,
-      hasServers: collection.latestVersion.hasServers
+      hasServers: collection.latestVersion.hasServers,
+      subscribers: collection.subscribersCount
     }
   }
 
