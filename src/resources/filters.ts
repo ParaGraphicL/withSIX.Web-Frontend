@@ -46,7 +46,8 @@ export class Filters<T> extends ViewModel {
         .skip(1)
         .subscribe(x => this.initiateUpdate()));
       d(bindingEngine.collectionObserver(this.items)
-        .subscribe(x => this.initiateUpdate()));
+        //.where(x => this.customHandler == null)
+        .subscribe(x => { if (!this.customHandler) this.initiateUpdate() }));
       d(bindingEngine.collectionObserver(this.enabledFilters)
         .subscribe(x => this.initiateUpdate()));
     });
