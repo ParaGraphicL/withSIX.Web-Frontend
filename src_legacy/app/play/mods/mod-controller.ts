@@ -1069,7 +1069,7 @@
           return this.$scope.request(SaveModCommentCommand, { model: comment }).catch(x => { this.breezeQueryFailed(x); });
         };
       this.$scope.reportComment = (comment) => { throw "NotImplemented"; };
-      if (this.$scope.environment != Tk.Environment.Production) {
+      if (this.$scope.environment != Tools.Environment.Production) {
         this.$scope.commentLikeStates = {};
         if (this.$scope.w6.userInfo.id) {
           this.$timeout(() => this.$scope.request(GetModCommentLikeStateQuery, { modId: this.$scope.model.id })
@@ -1445,7 +1445,7 @@
       if (this.$scope.w6.miniClient.isConnected) {
         this.modInfoService.getUploadFolder(model.id)
           .then(x => $scope.model.info.folder = x)
-          .catch(x => Tk.Debug.log("failed to retrieve existing folder", x));
+          .catch(x => Tools.Debug.log("failed to retrieve existing folder", x));
       }
 
       let downloadUri = this.$scope.model.mod.download;

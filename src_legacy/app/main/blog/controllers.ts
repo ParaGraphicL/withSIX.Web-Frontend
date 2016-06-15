@@ -72,7 +72,7 @@
                 $(window).data("scope", $scope);
             }
 
-            if ($scope.environment != Tk.Environment.Production)
+            if ($scope.environment != Tools.Environment.Production)
                 this.setupLikes();
 
             this.setupTitle("model.title", "{0} - Blog");
@@ -99,7 +99,7 @@
             this.$scope.deleteComment = (comment) => this.processCommand(this.$scope.request(DeletePostCommentCommand, { model: comment }), 'Delete comment');
             this.$scope.saveComment = (comment) => this.processCommand(this.$scope.request(SavePostCommentCommand, { model: comment }), 'Save comment');
 
-            if (this.$scope.environment != Tk.Environment.Production) {
+            if (this.$scope.environment != Tools.Environment.Production) {
                 this.$scope.commentLikeStates = {};
                 if (this.$scope.w6.userInfo.id) {
                     this.$timeout(() => this.$scope.request(GetPostCommentLikeStateQuery, { postId: this.$scope.model.id })

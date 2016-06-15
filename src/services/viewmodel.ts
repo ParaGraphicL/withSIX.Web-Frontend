@@ -25,7 +25,7 @@ export class ViewModel extends Base {
   _changed = false;
   get changed() { return this._changed; }
   set changed(value: boolean) {
-    Tk.Debug.log("set changed: ", value);
+    Tools.Debug.log("set changed: ", value);
     this._changed = value;
   }
   constructor(private ui: UiContext) { super(); }
@@ -54,7 +54,7 @@ export class ViewModel extends Base {
       if (row.length == 0) return;
       clearInterval(iv);
       window.w6Cheat.aureliaReady = true;
-      Tk.Debug.log("AURELIA: angular vm loaded");
+      Tools.Debug.log("AURELIA: angular vm loaded");
       angular.element(document).scope().$apply();
       $("#root-content-row").prepend($("#content"));
     }, 500);

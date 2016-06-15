@@ -696,7 +696,7 @@
           return this.$scope.request(SaveCollectionCommentCommand, { model: comment }).catch(x => { this.breezeQueryFailed(x); });
         };
       this.$scope.reportComment = (comment) => { throw "NotImplemented"; };
-      if (this.$scope.environment != Tk.Environment.Production) {
+      if (this.$scope.environment != Tools.Environment.Production) {
         this.$scope.commentLikeStates = {};
         if (this.$scope.w6.userInfo.id) {
           this.$timeout(() => this.$scope.request(GetCollectionCommentLikeStateQuery, { collectionId: this.$scope.model.id })

@@ -29,9 +29,9 @@ globalRedactorOptions.plugins = ['bufferbuttons', 'image', 'video', 'table', 'fu
 */
 
 module MyApp {
-  export var debug = Tk.debug;
-  export var Debug = Tk.Debug;
-  export var Environment = Tk.Environment;
+  export var debug = Tools.debug;
+  export var Debug = Tools.Debug;
+  export var Environment = Tools.Environment;
   export var initialCompleted = false;
 
   export interface Subscription {
@@ -159,7 +159,7 @@ module MyApp {
     dispatch(evt: string, pars?: Object);
     request(evt, pars?: Object);
     request<T>(evt, pars?: IModel<T>);
-    environment: Tk.Environment;
+    environment: Tools.Environment;
     loading: boolean;
     w6: W6;
     url: W6Urls;
@@ -247,7 +247,7 @@ module MyApp {
     ];
 
     static getModules() {
-      if (Tk.getEnvironment() != Tk.Environment.Production)
+      if (Tools.getEnvironment() != Tools.Environment.Production)
         return AppModule.$modules;
 
       return AppModule.$modules.concat(['angulartics', 'angulartics.google.analytics']);
@@ -324,7 +324,7 @@ module MyApp {
                   return token;
                 else {
                   if (refreshingToken === null) {
-                    refreshingToken = refreshToken(config, login).catch(x => Tk.Debug.error("catched refresh token error", x));
+                    refreshingToken = refreshToken(config, login).catch(x => Tools.Debug.error("catched refresh token error", x));
                     return refreshingToken;
                   }
                 }
@@ -354,7 +354,7 @@ module MyApp {
           }
         ])
         .run([
-          'environment', '$rootScope', 'w6', '$timeout', (environment: Tk.Environment, $rootScope: IRootScope, w6: W6, $timeout) => {
+          'environment', '$rootScope', 'w6', '$timeout', (environment: Tools.Environment, $rootScope: IRootScope, w6: W6, $timeout) => {
 
 
             // TODO: No Dom manipulation in controllers..
@@ -458,7 +458,7 @@ module MyApp {
           }
         ]);
 
-      if (Tk.getEnvironment() == Tk.Environment.Production) {
+      if (Tools.getEnvironment() == Tools.Environment.Production) {
         this.app.config([
           '$analyticsProvider', $analyticsProvider => {
             $analyticsProvider.firstPageview(true); /* Records pages that don't use $state or $route */

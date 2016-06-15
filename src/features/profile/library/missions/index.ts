@@ -39,7 +39,7 @@ class GetMissionsHandler extends DbClientQuery<GetMissions, IMissionsData> {
     try {
       return await this.client.getGameMissions(request.id);
     } catch (err) {
-      Tk.Debug.warn("Error while trying to get collections from client", err);
+      Tools.Debug.warn("Error while trying to get collections from client", err);
       return { missions: [] };
     }
     // return GetMissionsHandler.designTimeData(request);

@@ -26,7 +26,7 @@ export class BasketService extends Base {
             try {
               await this.handleConnected();
             } catch (err) {
-              Tk.Debug.log("$$$ err", err);
+              Tools.Debug.log("$$$ err", err);
               throw err;
             }
             break;
@@ -52,7 +52,7 @@ export class BasketService extends Base {
     this.basketService.settings.hasConnected = true;
 
     let promises = [];
-    Tk.Debug.log("$$$ handling connected", this.clientInfos);
+    Tools.Debug.log("$$$ handling connected", this.clientInfos);
     for (let i in this.clientInfos) {
       if (this.clientInfos.hasOwnProperty(i)) {
         promises.push(this.updateClientInfo(this.clientInfos[i]));
@@ -69,7 +69,7 @@ export class BasketService extends Base {
     try {
       await this.updateClientInfo(clientInfo);
     } catch (err) {
-      Tk.Debug.log("$$$ err", err);
+      Tools.Debug.log("$$$ err", err);
       this.clientPromises[clientInfo.game.id] = null;
     }
     return clientInfo;
@@ -82,7 +82,7 @@ export class BasketService extends Base {
     try {
       var cInfo = await this.client.getGameInfo(clientInfo.game.id);
       Object.assign(clientInfo.clientInfo, { actionInfo: null }, cInfo);
-      Tk.Debug.log("$$$ ClientInfo Update", clientInfo.clientInfo);
+      Tools.Debug.log("$$$ ClientInfo Update", clientInfo.clientInfo);
       this.eventBus.publish('refreshContentInfo-' + clientInfo.game.id);
       this.informAngular();
     } finally {
@@ -98,7 +98,7 @@ export class BasketService extends Base {
     let ci = this.clientInfos[gameId];
     //if (this.client.state != ConnectionState.connected) return Promise.resolve(ci);
     //return this.clientPromises[gameId] = this.Int(ci);
-    Tk.Debug.log("$$$ Getting game info", gameId);
+    Tools.Debug.log("$$$ Getting game info", gameId);
     return this.clientPromises[gameId] = this.client.state == ConnectionState.connected ? this.Int(ci) : Promise.resolve(ci);
     // we update the info later on
   }

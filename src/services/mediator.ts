@@ -64,7 +64,7 @@ export class ErrorLoggingMediatorDecorator implements IMediator {
     return this.mediator.request<T>(request)
       .then(x => {
         if (action) {
-          Tk.Debug.info(action + ": Success");
+          Tools.Debug.info(action + ": Success");
           this.toastr.success(action, "Success");
         }
         return x;
@@ -87,7 +87,7 @@ export class ErrorLoggingMediatorDecorator implements IMediator {
   handleGeneralError(err, action) {
     // TODO: Perhaps only show toast if we specified action?
     var msg = window.w6Cheat.api.errorMsg(err);
-    Tk.Debug.error(msg);
+    Tools.Debug.error(msg);
     this.toastr.error(msg[0], (action || "Action") + ": " + msg[1]);
   }
 }
@@ -147,14 +147,14 @@ export class DbQuery<TRequest, TResponse> implements IRequestHandler<TRequest, T
     then(result => {
       if (result.results.length == 0) {
         var d = this.context.$q.defer();
-        d.reject(new Tk.NotFoundException("There were no results returned from the server"));
+        d.reject(new Tools.NotFoundException("There were no results returned from the server"));
         return d.promise;
       }
       return result.results[0];
     }).catch(failure => {
       var d = this.context.$q.defer();
       if (failure.status == 404) {
-        d.reject(new Tk.NotFoundException("The server responded with 404"));
+        d.reject(new Tools.NotFoundException("The server responded with 404"));
       } else {
         d.reject(failure);
       }
@@ -162,13 +162,13 @@ export class DbQuery<TRequest, TResponse> implements IRequestHandler<TRequest, T
     });
 
   public getEntityQueryFromShortId(type: string, id: string): breeze.EntityQuery {
-    Tk.Debug.log("getting " + type + " by shortId: " + id);
+    Tools.Debug.log("getting " + type + " by shortId: " + id);
     return breeze.EntityQuery
       .fromEntityKey(this.context.getEntityKeyFromShortId(type, id));
   }
 
   public getEntityQuery(type: string, id: string): breeze.EntityQuery {
-    Tk.Debug.log("getting " + type + " by id: " + id);
+    Tools.Debug.log("getting " + type + " by id: " + id);
     return breeze.EntityQuery
       .fromEntityKey(this.context.getEntityKey(type, id));
   }

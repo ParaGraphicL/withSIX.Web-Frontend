@@ -115,7 +115,7 @@
       };
       this.$scope.reportComment = (comment) => { };
 
-      if (this.$scope.environment != Tk.Environment.Production) {
+      if (this.$scope.environment != Tools.Environment.Production) {
         this.$scope.commentLikeStates = {};
         if (this.$scope.w6.userInfo.id) {
           this.$timeout(() => this.$scope.request(GetMissionCommentLikeStateQuery, { missionId: this.$scope.model.id })

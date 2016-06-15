@@ -177,13 +177,13 @@
       <script>
         (function() {
           if (window.location.host.includes("withsix.com")) {
-            Tk.setEnvironment(0);
+            Tools.setEnvironment(0);
           } else if (window.location.host.includes("staging.withsix.net")) {
-            Tk.setEnvironment(1);
+            Tools.setEnvironment(1);
           } else if (window.location.host.includes("localhost")) {
-            Tk.setEnvironment(2);
+            Tools.setEnvironment(2);
           } else {
-            Tk.setEnvironment(3);
+            Tools.setEnvironment(3);
           }
         })();
 

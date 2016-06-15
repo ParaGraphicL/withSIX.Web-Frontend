@@ -146,7 +146,7 @@ export class GameBaskets extends ViewModel {
 
   // Legacy for Angular
   handleAction(item: IBasketItem, clientInfo: IClientInfo, type: BasketType) {
-    Tk.Debug.log("$$$ handle action!!");
+    Tools.Debug.log("$$$ handle action!!");
     if (this.isBusy(clientInfo)) throw new Error("Currently busy");
     // TODO: What about local collections?
     let isCollection = type == BasketType.SingleCollection;
@@ -335,12 +335,12 @@ export class Basket extends ViewModelWithModel<IBasketCollection> {
     ? this.installAsSingle(hide)
     : this.installAsMulti(hide)
   installAsMulti = (hide = false) => {
-    Tk.Debug.log("$$$ install as multi!!");
+    Tools.Debug.log("$$$ install as multi!!");
     var cmdData = this.basketToCommandData(hide);
     return new InstallContents(cmdData.gameId, cmdData.contents, { text: cmdData.name }).handle(this.mediator);
   }
   installAsSingle = (hide = false) => {
-    Tk.Debug.log("$$$ install as single!!");
+    Tools.Debug.log("$$$ install as single!!");
     var cmdData2 = this.basketToCommandDataForSingleItem(hide);
     return new InstallContent(cmdData2.gameId, cmdData2.content, { text: cmdData2.name }).handle(this.mediator)
   }

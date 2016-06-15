@@ -38,14 +38,14 @@
       then(result => {
         if (result.results.length == 0) {
           var d = this.context.$q.defer();
-          d.reject(new Tk.NotFoundException("There were no results returned from the server"));
+          d.reject(new Tools.NotFoundException("There were no results returned from the server"));
           return d.promise;
         }
         return result.results[0];
       }).catch(failure => {
         var d = this.context.$q.defer();
         if (failure.status == 404) {
-          d.reject(new Tk.NotFoundException("The server responded with 404"));
+          d.reject(new Tools.NotFoundException("The server responded with 404"));
         } else {
           d.reject(failure);
         }

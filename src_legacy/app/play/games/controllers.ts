@@ -139,7 +139,7 @@
       if (model.supportsCollections)
         items.push({ header: "Collections", segment: "collections", icon: "icon withSIX-icon-Nav-Collection" });
 
-      if (model.supportsServers && $scope.environment != Tk.Environment.Production)
+      if (model.supportsServers && $scope.environment != Tools.Environment.Production)
         items.push({ header: "Servers", segment: "servers", icon: "icon withSIX-icon-Nav-Server" });
 
       if ($scope.w6.enableBasket)

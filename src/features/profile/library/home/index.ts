@@ -34,7 +34,7 @@ export class Index extends BaseGame {
       this.recent = x.recent.asEnumerable().orderByDescending(x => x.lastUsed || '').toArray();
       this.clientEnabled = true;
     } catch (err) {
-      Tk.Debug.warn("Error trying to fetch game home", err);
+      Tools.Debug.warn("Error trying to fetch game home", err);
       this.clientEnabled = false;
     }
 

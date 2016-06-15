@@ -5,7 +5,7 @@ export class Join extends ViewModel {
     try {
       await new JoinGroupByToken(Tools.fromShortId(params.id), params.token).handle(this.mediator);
     } catch (err) {
-      Tk.Debug.warn("Err while processing join token: ", err);
+      Tools.Debug.warn("Err while processing join token: ", err);
     }
     this.navigateInternal("/me/groups/" + params.id + "/" + params.slug);
   }

@@ -48,7 +48,7 @@ export class Show extends ViewModel {
   constructor(ui: UiContext) {
     super(ui);
     this.availableViewTypes = [ViewType.Card];
-    if (ui.w6.url.environment != Tk.Environment.Production)
+    if (ui.w6.url.environment != Tools.Environment.Production)
       this.availableViewTypes.push(ViewType.List);
 
     this.subscriptions.subd(d => {
@@ -256,7 +256,7 @@ class SearchQuery extends Query<IFindDependency[]> {
 @handlerFor(SearchQuery)
 class SearchQueryHandler extends DbQuery<SearchQuery, IFindDependency[]> {
   async handle(request: SearchQuery): Promise<IFindDependency[]> {
-    Tk.Debug.log("getting mods by game: " + request.gameIds.join(", ") + ", " + request.query);
+    Tools.Debug.log("getting mods by game: " + request.gameIds.join(", ") + ", " + request.query);
 
     var op = this.context.getOpByKeyLength(request.query);
     var key = request.query.toLowerCase();

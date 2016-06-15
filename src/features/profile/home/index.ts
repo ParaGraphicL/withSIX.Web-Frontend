@@ -16,13 +16,13 @@ export class Index extends ViewModel {
       this.model = await new GetHome().handle(this.mediator)
       this.clientEnabled = true;
     } catch (err) {
-      Tk.Debug.warn("Error trying to fetch overall home", err);
+      Tools.Debug.warn("Error trying to fetch overall home", err);
       this.clientEnabled = false;
       try {
         let x = await new GetGames().handle(this.mediator);
         this.model = <IHomeData>x;
       } catch (err) {
-        Tk.Debug.warn("Error trying to fetch games", err);
+        Tools.Debug.warn("Error trying to fetch games", err);
       }
     }
     this.subscriptions.subd(d => {

@@ -25,7 +25,7 @@ export class Show extends ViewModel {
   configureRouter(config: RouterConfiguration, router: Router) {
     this.router = router;
     let canSee = this.w6.userInfo.isAdmin || this.w6.userInfo.isManager;
-    let stagingEnv = this.w6.url.environment >= Tk.Environment.Staging;
+    let stagingEnv = this.w6.url.environment >= Tools.Environment.Staging;
     config.map([
       { route: '', name: 'home', moduleId: 'features/profile/groups/home/index', nav: true, title: 'Home' },
       { route: 'join/:token', name: 'join', moduleId: 'features/profile/groups/join', nav: false, title: 'Join' },

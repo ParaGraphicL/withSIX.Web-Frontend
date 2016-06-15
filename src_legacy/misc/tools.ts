@@ -1,106 +1,3 @@
-﻿// TODO: For array enumerable functions etc use defineProperty from https://github.com/paulmillr/es6-shim/blob/master/es6-shim.js
-
-interface String {
-  endsWithIgnoreCase: (suffix) => boolean;
-  startsWithIgnoreCase: (prefix) => boolean;
-  containsIgnoreCase: (needle) => boolean;
-  equalsIgnoreCase: (needle) => boolean;
-  indexOfIgnoreCase: (needle) => number;
-  toUpperCaseFirst: () => string;
-  toLowerCaseFirst: () => string;
-  sluggify: () => string;
-  toShortId: () => string;
-  sluggifyEntityName: () => string;
-  format: (args: any[]) => string;
-  truncate: (count: number) => string;
-}
-
-interface IContainerObjects {
-  openAddModsToCollectionsDialog;
-  mediator;
-  eventBus: MyApp.IEventBus;
-  uiContext;
-  toastr: MyApp.Toastr;
-  forkCollection;
-  login;
-  restoreBasket;
-  navigate;
-  openCreateCollectionDialog;
-  openAddModDialog;
-  basketService;
-  client;
-}
-
-interface IAureliaConverter {
-  toView: (...args) => string;
-}
-
-interface IW6Cheat {
-  converters: { amount: IAureliaConverter; size: IAureliaConverter; speed: IAureliaConverter; text: IAureliaConverter };
-  w6: W6;
-  w6Urls: W6Urls;
-  isClient: boolean;
-  aureliaReady: boolean;
-  container;
-  containerObjects: IContainerObjects;
-  navigate: (url: string) => void;
-  libraryParent;
-  collection;
-  redirected: boolean;
-  redirectedWasLoggedIn: boolean;
-  api: IApi;
-  numeral: Numbro;
-}
-
-interface IPromiseFunction<T> {
-  (...args): Promise<T>
-}
-
-interface ICommandInfo {
-  canExecuteObservable?: Rx.Observable<boolean>;
-  isVisibleObservable?: Rx.Observable<boolean>;
-  icon?: string;
-  textCls?: string;
-  cls?: string;
-  tooltip?: string;
-}
-
-interface IDisposable {
-  dispose();
-}
-
-interface ICommand<T> extends IDisposable, IPromiseFunction<T> {
-  isExecuting: boolean;
-  isExecutingObservable: Rx.Observable<boolean>;
-  isVisible: boolean;
-  isVisibleObservable: Rx.Observable<boolean>;
-  name: string;
-  cls: string;
-  icon: string;
-  textCls: string;
-  tooltip: string;
-  canExecute: boolean;
-  canExecuteObservable: Rx.Observable<boolean>;
-  execute(...args): Promise<T>;
-}
-
-interface IApi {
-  errorMsg(error): string[];
-  openSettings(model?): void;
-  createCommand<T>(name: string, action: IPromiseFunction<T>, options?: ICommandInfo): ICommand<T>;
-  createGameBasket(gameId, basketModel): any;
-  gameChanged(info: { id: string; slug: string }): void;
-  getContentStateInitial(state: { state: MyApp.Components.ModInfo.ItemState; version: string }, constraint?: string): MyApp.Components.ModInfo.ItemState;
-}
-
-interface Window {
-  w6Cheat: IW6Cheat;
-  prerenderReady: boolean;
-  VersionCompare: {
-    compare: (x, y, options?: {}) => number
-  }
-}
-
 window.w6Cheat = <IW6Cheat>{
   converters: {},
   containerObjects: <IContainerObjects>{},
@@ -175,6 +72,77 @@ String.prototype.format = function() {
 
 
 module Tools {
+  // todo; with inner ex
+
+  // class Exception extends ExtendableError {
+  //     public innerException: Error;
+  //     constructor(message?: string, innerException?: Error|string) {
+  //         super(message);
+  //         // if (typeof (<any>Error).captureStackTrace === 'function') {
+  //         //     //noinspection JSUnresolvedFunction
+  //         //     (<any>Error).captureStackTrace(this, arguments.callee);
+  //         // }
+  //         this.name = "Exception";
+  //         if (innerException) {
+  //             if (innerException instanceof Error) {
+  //                 this.innerException = innerException;
+  //                 this.message = message + ", innerException: " + this.innerException.message;
+  //             }
+  //             else if (typeof innerException === "string") {
+  //                 this.innerException = new Error(innerException);
+  //                 this.message = message + ", innerException: " + this.innerException.message;
+  //             }
+  //             else {
+  //                 // this.innerException = <any>innerException;
+  //                 // this.message = message + ", innerException: " + this.innerException;
+  //             }
+  //         }
+  //         else {
+  //             this.message = message;
+  //         }
+  //     }
+  // }
+  //
+
+
+  export var createError = (name: string) => {
+    var f = function(message: string) {
+      Object.defineProperty(this, 'name', {
+        enumerable: false,
+        writable: false,
+        value: name
+      });
+      Object.defineProperty(this, 'message', {
+        enumerable: false,
+        writable: true,
+        value: message
+      });
+
+      if (Error.hasOwnProperty('captureStackTrace')) { // V8
+        (<any>Error).captureStackTrace(this, this.constructor);
+      } else {
+        Object.defineProperty(this, 'stack', {
+          enumerable: false,
+          writable: false,
+          value: (<any>(new Error(message))).stack
+        });
+      }
+    }
+    if (typeof Object.setPrototypeOf === 'function') {
+      Object.setPrototypeOf(f.prototype, Error.prototype);
+    } else {
+      f.prototype = Object.create(Error.prototype);
+    }
+    return f;
+  }
+
+  // TODO: ES6/TS valid exceptions
+  export var NotFoundException = createError('NotFoundException');
+  export var RequireSslException = createError('RequireSslException');
+  export var RequireNonSslException = createError('RequireNonSslException');
+  export var InvalidShortIdException = createError('InvalidShortIdException');
+
+
   var hexList = '0123456789abcdef';
   var b64List = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
   export var emptyGuid = '00000000-0000-0000-0000-000000000000';
@@ -319,7 +287,7 @@ module Tools {
     try {
       return jwtHelper.isTokenExpired(token);
     } catch (err) {
-      Tk.Debug.error("Error validating token " + err);
+      Tools.Debug.error("Error validating token " + err);
       return true;
     }
   }
@@ -370,7 +338,7 @@ module Tools {
     try {
       return base64ToGuid(shortToBase64(shortId), true);
     } catch (err) {
-      throw new Tk.InvalidShortIdException(shortId + " is not a valid ShortID");
+      throw new InvalidShortIdException(shortId + " is not a valid ShortID");
     }
   }
 

@@ -22,13 +22,13 @@ import numeral from 'numbro';
 
 bootstrap(async (aurelia: Aurelia) => {
 
-  Tk.Debug.log("AURELIA: configuring aurelia");
+  Tools.Debug.log("AURELIA: configuring aurelia");
 
   Linq.setExtensions();
   //["123"].asEnumerable().select(x => true).toArray();
 
   function configureApp(site: string, useRouter: boolean, authConfig) {
-    Tk.Debug.log("AURELIA: configuring app");
+    Tools.Debug.log("AURELIA: configuring app");
     aurelia.use
       .standardConfiguration()
       .plugin('aurelia-auth', baseConfig => baseConfig.configure(authConfig))
@@ -36,7 +36,7 @@ bootstrap(async (aurelia: Aurelia) => {
       //.plugin('aurelia-animator-velocity')
       .plugin('aurelia-validation')
       .plugin('aurelia-computed', { // install the plugin
-        //enableLogging: Tk.getEnvironment() != Tk.Environment.Production // enable debug logging to see aurelia-computed's observability messages.
+        //enableLogging: Tools.getEnvironment() != Tools.Environment.Production // enable debug logging to see aurelia-computed's observability messages.
       })
       .plugin('aurelia-dialog', config => {
         config.useDefaults();
@@ -47,9 +47,9 @@ bootstrap(async (aurelia: Aurelia) => {
       .feature('resources')
       .feature('features');
 
-    if (Tk.getEnvironment() != Tk.Environment.Production) {
+    if (Tools.getEnvironment() != Tools.Environment.Production) {
       aurelia.use.developmentLogging();
-      //LogManager.setLevel(Tk.getEnvironment() != Tk.Environment.Production ? LogManager.logLevel.debug : LogManager.logLevel.warn);
+      //LogManager.setLevel(Tools.getEnvironment() != Tools.Environment.Production ? LogManager.logLevel.debug : LogManager.logLevel.warn);
     }
 
     if (useRouter)
@@ -58,20 +58,20 @@ bootstrap(async (aurelia: Aurelia) => {
 
   async function startApp() {
     new ContainerSetup(Container.instance, angular.element("body").injector());
-    Tk.Debug.log("AURELIA: starting app");
+    Tools.Debug.log("AURELIA: starting app");
     var app = await aurelia.start();
-    Tk.Debug.log("AURELIA: app started");
+    Tools.Debug.log("AURELIA: app started");
     await app.setRoot();
   }
 
   //@{ var scheme = w6.Urls.CurrentPage.Scheme; }
-  var env = Tk.getEnvironment();
+  var env = Tools.getEnvironment();
 
   var domain = window.location.host;
   var envPiece = "";
-  if (env == Tk.Environment.Production)
+  if (env == Tools.Environment.Production)
     domain = "withsix.com";
-  else if (env == Tk.Environment.Staging) {
+  else if (env == Tools.Environment.Staging) {
     domain = "staging.withsix.net";
     envPiece = "-staging";
   } else {
@@ -91,7 +91,7 @@ bootstrap(async (aurelia: Aurelia) => {
   var uc = "withsix-usercontent";
 
   var w6Urls = new W6Urls({
-    environment: Tk.getEnvironment(),
+    environment: Tools.getEnvironment(),
     domain: domain,
     site: site,
     cdn: "",
@@ -160,7 +160,7 @@ bootstrap(async (aurelia: Aurelia) => {
     await bs(w6Urls, something);
     await startApp();
   } catch (err) {
-    Tk.Debug.error(err);
+    Tools.Debug.error(err);
     throw err;
   }
 });
@@ -172,7 +172,7 @@ export async function bs(w6Urls: W6Urls, something) {
     userInfo = await login.getUserInfo();
   } catch (err) {
     if (err instanceof AbortError) throw err;
-    Tk.Debug.log("Error logging in", err);
+    Tools.Debug.log("Error logging in", err);
     userInfo = new UserInfo();
     userInfo.failedLogin = true;
   }
@@ -188,7 +188,7 @@ export async function bs(w6Urls: W6Urls, something) {
   legacySetup({
     dfp: { publisherId: something.PublisherId },
     adsense: { client: something.AdsenseId },
-    environment: Tk.getEnvironment(),
+    environment: Tools.getEnvironment(),
     w6: window.w6Cheat.w6
   });
 

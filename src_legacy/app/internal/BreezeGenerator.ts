@@ -200,7 +200,7 @@
             generateFakeCtors: true
         };
 
-        log = Tk.Debug.generateDebugForName("TSGen");
+        log = Tools.Debug.generateDebugForName("TSGen");
 
         constructor(private metadataUri: string, private options?: TypeScriptGeneratorOptions) {
             super();
@@ -880,7 +880,7 @@
             };
         }
 
-        log = Tk.Debug.generateDebugForName("BundleGen");
+        log = Tools.Debug.generateDebugForName("BundleGen");
         entityManager: breeze.EntityManager;
 
         public getBundleProcessorFromMetadata(metadata: string): string {

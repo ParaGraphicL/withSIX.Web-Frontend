@@ -84,7 +84,7 @@ class GetCollectionsHandler extends DbClientQuery<GetCollections, ICollectionsDa
       var r = await this.client.getGameCollections(request.id);
       return r.collections.asEnumerable().select(x => { x.typeScope = TypeScope.Local; return x; });
     } catch (err) {
-      Tk.Debug.warn("Error while trying to get collections from client", err);
+      Tools.Debug.warn("Error while trying to get collections from client", err);
       return [].asEnumerable();
     }
 		}

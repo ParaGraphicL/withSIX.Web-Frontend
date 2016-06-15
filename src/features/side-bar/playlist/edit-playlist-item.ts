@@ -51,7 +51,7 @@ class GetAvailableVersionsHandler extends DbQuery<GetAvailableVersions, IAvailab
         .select(x => ModsHelper.getFullVersion(x)))
         .toArray();
     } catch (err) {
-      Tk.Debug.warn("failure to retrieve versions for mod ", request.id, err);
+      Tools.Debug.warn("failure to retrieve versions for mod ", request.id, err);
     }
     return { versions: versions }
   }

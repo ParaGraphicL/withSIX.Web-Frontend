@@ -78,7 +78,7 @@ export class PlaylistItem extends ViewModel {
     if (model.level == null) throw Error("model.chain cannot be null!");
     if (model.stat == null) throw Error("model.stat cannot be null!");
     this.model = model.item;
-    if (this.model.id == null) Tk.Debug.log("$$$ null id!", this.model);
+    if (this.model.id == null) Tools.Debug.log("$$$ null id!", this.model);
     this.chain = model.chain;
     this.stat = model.stat;
     this.currentGameId = model.currentGameId;
@@ -104,7 +104,7 @@ export class PlaylistItem extends ViewModel {
       this.model.image = data.avatar ? this.w6.url.getUsercontentUrl2(data.avatar, data.avatarUpdatedAt) : null;
       (<any>this.model).version = data.version;
     } catch (err) {
-      Tk.Debug.error("Error while trying to retrieve dependencies for " + this.model.id, err);
+      Tools.Debug.error("Error while trying to retrieve dependencies for " + this.model.id, err);
     }
 
     this.stat.sizePacked = this.stat.sizePacked + this.model.sizePacked;
@@ -212,7 +212,7 @@ export class PlaylistItem extends ViewModel {
 
   revert() {
     this.stat.sizePacked = this.stat.sizePacked - this.model.sizePacked;
-    //Tk.Debug.log("$$$ deactivating", this.model);
+    //Tools.Debug.log("$$$ deactivating", this.model);
     //this.dependencies.forEach(x => this.chain.delete(x.id));
     if (this.chain.get(this.model.id) === this.model)
       this.chain.delete(this.model.id);

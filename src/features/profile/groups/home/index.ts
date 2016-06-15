@@ -81,7 +81,7 @@ export class Index extends ViewModel {
   }
 
   logoSelected = ($event) => {
-    Tk.Debug.log("logoSelected: ", $event);
+    Tools.Debug.log("logoSelected: ", $event);
     let file = $event.target.files[0];
     if (file == null) this.group.avatarUrl = this.originalGroup.avatarUrl;
     else this.group.avatarUrl = URL.createObjectURL(file);
@@ -89,7 +89,7 @@ export class Index extends ViewModel {
   }
 
   coverSelected = ($event) => {
-    Tk.Debug.log("coverSelected: ", $event);
+    Tools.Debug.log("coverSelected: ", $event);
     let file = $event.target.files[0];
     if (file == null) this.group.backgroundUrl = this.originalGroup.backgroundUrl;
     else this.group.backgroundUrl = URL.createObjectURL(file);

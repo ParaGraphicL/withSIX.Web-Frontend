@@ -122,7 +122,7 @@ export class App extends ViewModel {
 
   activate() {
     if (this.hasApi) window.onbeforeunload = () => {
-      Tk.Debug.warn("Tried to unload, prevented", window.location.href);
+      Tools.Debug.warn("Tried to unload, prevented", window.location.href);
       return false;
     };
     // workaround for dialogs not working
@@ -139,7 +139,7 @@ export class App extends ViewModel {
     if (isSync) { this.w6.updateSettings(x => x.hasSync = true); }
 
     this.activateNg();
-    this.template = this.w6.enableBasket ? 'v2' : 'v1'; // this.w6.settings.template || (this.w6.url.environment > Tk.Environment.Production || this.w6.userInfo.isAdmin || this.w6.settings.hasSync ? 'v2' : 'v1');
+    this.template = this.w6.enableBasket ? 'v2' : 'v1'; // this.w6.settings.template || (this.w6.url.environment > Tools.Environment.Production || this.w6.userInfo.isAdmin || this.w6.settings.hasSync ? 'v2' : 'v1');
     //if (window.location.search.includes("template=v2")) this.setTemplate('v2');
     //else if (window.location.search.includes("template=v1")) this.setTemplate('v1');
 
@@ -270,7 +270,7 @@ export class App extends ViewModel {
         let row = angular.element("#root-content-row");
         if (row.length == 0) return;
         clearInterval(iv);
-        Tk.Debug.log("activating ng from app..");
+        Tools.Debug.log("activating ng from app..");
         let el = angular.element("#content");
         row.append(el)
         window.w6Cheat.aureliaReady = true;
@@ -386,7 +386,7 @@ export class App extends ViewModel {
         try {
           window.six_client.login(info.accessToken);
         } catch (err) {
-          Tk.Debug.error("error while logging in client", err);
+          Tools.Debug.error("error while logging in client", err);
         }
       }
     }
@@ -439,28 +439,28 @@ export class App extends ViewModel {
     var site = this.w6.url.site || "main";
     await this.routeHandler.configure(site);
     let map = (instruction: NavigationInstruction): any => {
-      Tk.Debug.log("$$ AURELIA: Mapping unknown route for site: " + site, instruction);
+      Tools.Debug.log("$$ AURELIA: Mapping unknown route for site: " + site, instruction);
       let match = this.routeHandler.getRouteMatch(instruction.fragment);
       if (!match) {
-        Tk.Debug.warn("$$ AURELIA: did not found match in routing map! 404", instruction, this.routeHandler.routingData[site]);
+        Tools.Debug.warn("$$ AURELIA: did not found match in routing map! 404", instruction, this.routeHandler.routingData[site]);
         return 'errors/404';
       }
 
       if (match.type == "aurelia") {
-        Tk.Debug.error("$$$ AURELIA: Found aurelia unmatched route, must be error?!", match, instruction);
+        Tools.Debug.error("$$$ AURELIA: Found aurelia unmatched route, must be error?!", match, instruction);
         return 'errors/404';
       }
 
       if (!match.type || match.type == "angular") {
-        Tk.Debug.log("$$ AURELIA: found angular match!", instruction);
+        Tools.Debug.log("$$ AURELIA: found angular match!", instruction);
         return "features/pages/angular";
       }
       if (match.type == "static") {
         if (match.redirectTo) {
-          Tk.Debug.log("$$ AURELIA: found static redirect!", instruction);
+          Tools.Debug.log("$$ AURELIA: found static redirect!", instruction);
           return { redirect: match.redirectTo }
         }
-        Tk.Debug.log("$$ AURELIA: found static page!", instruction);
+        Tools.Debug.log("$$ AURELIA: found static page!", instruction);
         return "features/pages/static";
       }
       throw new Error("Unsupported routing state");
@@ -539,13 +539,13 @@ class SslStep extends AuthorizeStep {
           //var loginRoute = this.auth.getLoginRoute();
           //return next.cancel(new Redirect(loginRoute));
         }
-        Tk.Debug.log("$$$ SslStep: Using SSL, but is not premium, nor page requires SSL. Switching to non-SSL");
+        Tools.Debug.log("$$$ SslStep: Using SSL, but is not premium, nor page requires SSL. Switching to non-SSL");
         return next.cancel(this.getRedirect(LoginBase.toHttp(isLoggedIn)));
       }
     } else {
       let requiresSsl = matches.asEnumerable().any(x => x.ssl);
       if (isPremium || requiresSsl) {
-        Tk.Debug.log("$$$ SslStep: Using non-SSL, but is premium or page requires SSL. Switching to SSL", isPremium);
+        Tools.Debug.log("$$$ SslStep: Using non-SSL, but is premium or page requires SSL. Switching to SSL", isPremium);
         return next.cancel(this.getRedirect(LoginBase.toHttps(isLoggedIn)));
       }
     }
@@ -560,7 +560,7 @@ class SslStep extends AuthorizeStep {
   }
 
   getRedirect(url) {
-    Tk.Debug.log("$$$ router redirect", url);
+    Tools.Debug.log("$$$ router redirect", url);
     if (console && console.log) console.log("$$$$ router redirect!");
     this.login.resetUnload();
     return new Redirect(url);
@@ -591,9 +591,9 @@ class IpcHandler {
   send<T>(hub, message, data?) {
     var msg = new Ipc<T>();
     this.messages[msg.id] = msg;
-    Tk.Debug.log("Sending message", msg);
+    Tools.Debug.log("Sending message", msg);
     this.api.sendSignalrMessage(msg.id, hub, message, data);
-    Tk.Debug.log("Sent message", msg);
+    Tools.Debug.log("Sent message", msg);
     return msg.promise;
   }
 
@@ -617,7 +617,7 @@ export class Test {
 }
 
 var w = <any>window;
-if (Tk.getEnvironment() >= Tk.Environment.Staging && w.api) {
+if (Tools.getEnvironment() >= Tools.Environment.Staging && w.api) {
   var test = Container.instance.get(Test);
   w.test = test;
 }
@@ -630,19 +630,19 @@ class Api {
   getContentStateInitial = ContentHelper.getConstentStateInitial;
   errorMsg = (reason) => {
     try {
-      Tk.Debug.log("$$$ err reason", JSON.stringify(reason));
-    } catch (err) { Tk.Debug.warn("Err while converting error reason", err) }
+      Tools.Debug.log("$$$ err reason", JSON.stringify(reason));
+    } catch (err) { Tools.Debug.warn("Err while converting error reason", err) }
     if (typeof (reason) == 'string') return [reason, 'Unknown error occurred'];
 
-    if (reason instanceof Tk.NotFoundException || reason instanceof Tk.InvalidShortIdException) {
+    if (reason instanceof Tools.NotFoundException || reason instanceof Tools.InvalidShortIdException) {
       return [reason.message, "404: The requested resource could not be found"];
     }
 
-    if (reason instanceof Tk.RequireSslException) {
+    if (reason instanceof Tools.RequireSslException) {
       return [reason.message, "please wait until you are redirected", "Requires SSL"];
     }
 
-    if (reason instanceof Tk.RequireNonSslException) {
+    if (reason instanceof Tools.RequireNonSslException) {
       return [reason.message, "please wait until you are redirected", "Requires NO-SSL"];
     }
 

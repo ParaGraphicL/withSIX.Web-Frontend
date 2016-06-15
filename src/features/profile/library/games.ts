@@ -16,7 +16,7 @@ export class Games extends ViewModel {
       this.model = await new GetGames().handle(this.mediator)
       this.clientEnabled = true;
     } catch (err) {
-      Tk.Debug.warn("Error trying to fetch games library", err);
+      Tools.Debug.warn("Error trying to fetch games library", err);
       this.clientEnabled = false;
     }
   }
@@ -36,7 +36,7 @@ class GetGamesHandler extends DbClientQuery<GetGames, IGamesData> {
       let d: { games: IGame[] } = await this.client.getGames();
       return { games: Tools.aryToMap(d.games, x => x.id) }
     } catch (err) {
-      Tk.Debug.warn(err);
+      Tools.Debug.warn(err);
       let ary: IGame[];
       if (this.context.w6.userInfo.id) {
         let r = await this.context.getCustom<{ games: IGame[] }>("games");

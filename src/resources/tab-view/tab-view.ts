@@ -60,7 +60,7 @@ export class TabView<T extends ITab> extends ViewModel {
     if (tab == null) return;
     this.removeTabNotification(tab);
     if (this.selectedTab == tab) return;
-    Tk.Debug.log("$$$ Set tab notification", evt);
+    Tools.Debug.log("$$$ Set tab notification", evt);
     tab.notification = evt.notification;
     if (evt.notification == null) return;
     tab.notificationCount = 1;

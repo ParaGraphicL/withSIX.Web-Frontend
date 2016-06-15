@@ -4,70 +4,6 @@ interface Function {
 }
 
 module Tk {
-  // todo; with inner ex
-
-  // class Exception extends ExtendableError {
-  //     public innerException: Error;
-  //     constructor(message?: string, innerException?: Error|string) {
-  //         super(message);
-  //         // if (typeof (<any>Error).captureStackTrace === 'function') {
-  //         //     //noinspection JSUnresolvedFunction
-  //         //     (<any>Error).captureStackTrace(this, arguments.callee);
-  //         // }
-  //         this.name = "Exception";
-  //         if (innerException) {
-  //             if (innerException instanceof Error) {
-  //                 this.innerException = innerException;
-  //                 this.message = message + ", innerException: " + this.innerException.message;
-  //             }
-  //             else if (typeof innerException === "string") {
-  //                 this.innerException = new Error(innerException);
-  //                 this.message = message + ", innerException: " + this.innerException.message;
-  //             }
-  //             else {
-  //                 // this.innerException = <any>innerException;
-  //                 // this.message = message + ", innerException: " + this.innerException;
-  //             }
-  //         }
-  //         else {
-  //             this.message = message;
-  //         }
-  //     }
-  // }
-  //
-
-  export var createError = (name: string) => {
-    var f = function(message: string) {
-        Object.defineProperty(this, 'name', {
-            enumerable: false,
-            writable: false,
-            value: name
-        });
-        Object.defineProperty(this, 'message', {
-            enumerable: false,
-            writable: true,
-            value: message
-        });
-
-        if (Error.hasOwnProperty('captureStackTrace')) { // V8
-            (<any>Error).captureStackTrace(this, this.constructor);
-        } else {
-            Object.defineProperty(this, 'stack', {
-                enumerable: false,
-                writable: false,
-                value: (<any>(new Error(message))).stack
-            });
-        }
-    }
-    if (typeof Object.setPrototypeOf === 'function') {
-        Object.setPrototypeOf(f.prototype, Error.prototype);
-    } else {
-        f.prototype = Object.create(Error.prototype);
-    }
-    return f;
-  }
-
-
   export class Base {
   }
 
@@ -77,7 +13,7 @@ module Tk {
 
     constructor(name: string, modules: Array<string>) {
       super();
-      Debug.log('module init: ' + this.constructor.$name);
+      Tools.Debug.log('module init: ' + this.constructor.$name);
       this.app = angular.module(name, modules);
     }
 
@@ -132,7 +68,7 @@ module Tk {
 
     constructor() {
       super();
-      Debug.log('service init: ' + this.constructor.$name);
+      Tools.Debug.log('service init: ' + this.constructor.$name);
     }
   }
 
@@ -147,7 +83,7 @@ module Tk {
     constructor(scope: IScope) {
       super();
       scope.vm = this;
-      Debug.log('controller init: ' + this.constructor.$name);
+      Tools.Debug.log('controller init: ' + this.constructor.$name);
     }
   }
 
@@ -156,13 +92,13 @@ module Tk {
 
     constructor() {
       super();
-      Debug.log('directive init: ' + this.constructor.$name);
+      Tools.Debug.log('directive init: ' + this.constructor.$name);
     }
   }
 
   export class CommangularBase {
     public onError = (error) => {
-      Debug.log("CommandError", error);
+      Tools.Debug.log("CommandError", error);
     }
   }
 
@@ -196,7 +132,7 @@ module Tk {
         this.segmentRoute = this.$routeSegmentProvider.when(path, segmentName);
         this.route = this.$routeProvider.when(path, this.whenOpts({ segment: segmentName }));
       } else {
-        Debug.log('WARN: legacy, deprecated syntax used for: ' + path, segmentName);
+        Tools.Debug.log('WARN: legacy, deprecated syntax used for: ' + path, segmentName);
         this.route = this.$routeProvider.when(path, this.whenOpts(segmentName));
         //this.segmentRoute = undefined;
         this.legacy = true;
@@ -276,19 +212,12 @@ module Tk {
     private route;
   }
 
-  // TODO: ES6/TS valid exceptions
-  export var NotFoundException = createError('NotFoundException');
-  export var RequireSslException = createError('RequireSslException');
-  export var RequireNonSslException = createError('RequireNonSslException');
-  export var InvalidShortIdException = createError('InvalidShortIdException');
-
-
   export class BeforeInterceptor {
     static $inject = ['processor'];
 
     constructor(private processor) { }
 
-    public execute() { Debug.log("Dispatching command", this.processor); }
+    public execute() { Tools.Debug.log("Dispatching command", this.processor); }
   }
 
   export class AfterInterceptor {
@@ -296,7 +225,7 @@ module Tk {
 
     constructor(private processor) { }
 
-    public execute() { Debug.log("Dispatched command finished", this.processor); }
+    public execute() { Tools.Debug.log("Dispatched command finished", this.processor); }
   }
 
   export class AfterThrowingInterceptor {
@@ -304,6 +233,6 @@ module Tk {
 
     constructor(private processor, private lastError) { }
 
-    public execute() { Debug.log("Dispatched command threw error", this.lastError); }
+    public execute() { Tools.Debug.log("Dispatched command threw error", this.lastError); }
   }
 }

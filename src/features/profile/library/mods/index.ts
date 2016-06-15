@@ -78,7 +78,7 @@ class GetModsHandler extends DbClientQuery<GetMods, IModsData> {
       let x = await this.client.getGameMods(request.id);
       return x.mods.asEnumerable();
     } catch (err) {
-      Tk.Debug.warn("Error while trying to get mods from client", err);
+      Tools.Debug.warn("Error while trying to get mods from client", err);
       return [].asEnumerable();
     }
   }

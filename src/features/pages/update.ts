@@ -62,7 +62,7 @@ class UpdateClientHandler extends DbClientQuery<UpdateClient, void> {
     try {
       await this.client.updateMiniClient();
     } catch (err) {
-      Tk.Debug.error(err);
+      Tools.Debug.error(err);
     }
   }
 }

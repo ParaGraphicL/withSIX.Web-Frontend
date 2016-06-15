@@ -74,7 +74,7 @@ export class Filters<T> extends ViewModel {
     } else {
       this.filteredItems = this.orderItems(this.filterItems()).toArray();
     }
-    Tk.Debug.log("updatedFilteredItems", this.filteredItems.length);
+    Tools.Debug.log("updatedFilteredItems", this.filteredItems.length);
   }
 
   public toggleDirection(): void {
@@ -161,12 +161,12 @@ export class Debouncer {
   };
 
   update() {
-    Tk.Debug.log("debounce: Update");
+    Tools.Debug.log("debounce: Update");
     if (this.timeoutId !== null) {
       clearTimeout(this.timeoutId);
     }
     this.timeoutId = setTimeout(() => {
-      Tk.Debug.log("debounce: Execute");
+      Tools.Debug.log("debounce: Execute");
       this.updateFn();
     }, this.debounceTime);
   }

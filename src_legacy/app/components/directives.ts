@@ -1795,12 +1795,12 @@ Depends on: editableController, editableFormFactory
         // or different?
         public forceSsl() {
             if (!this.isSsl())
-                throw new Tk.RequireSslException("This page requires SSL");
+                throw new Tools.RequireSslException("This page requires SSL");
         }
 
         public forceNonSsl() {
             if (this.isSsl())
-                throw new Tk.RequireNonSslException("This page requires non-SSL");
+                throw new Tools.RequireNonSslException("This page requires non-SSL");
         }
 
         public forceSslIfPremium() {
@@ -2372,7 +2372,7 @@ Depends on: editableController, editableFormFactory
                                         }
                                     } catch (e) {
                                         processing--;
-                                        Tk.Debug.error(e);
+                                        Tools.Debug.error(e);
                                     }
                                 }, function() {
                                     processing--;
@@ -2388,7 +2388,7 @@ Depends on: editableController, editableFormFactory
                                     addFile(file);
                                 } catch (e) {
                                     processing--;
-                                    Tk.Debug.error(e);
+                                    Tools.Debug.error(e);
                                 }
                             }, function() {
                                 processing--;

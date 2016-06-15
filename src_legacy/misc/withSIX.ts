@@ -1,12 +1,4 @@
-﻿interface JQuery {
-  redactor(options): any;
-}
-
-interface JQueryStatic {
-  validator: any;
-}
-
-interface IAvatarInfo {
+﻿interface IAvatarInfo {
   avatarURL?: string;
   avatarUrl?: string;
   avatarUpdatedAt?: string;
@@ -59,7 +51,7 @@ class W6Urls {
 
   get isRoot() { return window.location.pathname == "/"; }
 
-  environment: Tk.Environment;
+  environment: Tools.Environment;
 
   private toSsl(host) { return host.replace(":9000", ":9001"); }
   private fromSsl(host) { return host.replace(":9001", ":9000"); }
@@ -91,7 +83,7 @@ class W6Urls {
     var api = "//" + apiPrefix + this.domain;
     this.api = "https:" + this.toSsl(api) + "/api";
 
-    var wsPrefix = this.environment == Tk.Environment.Staging ? "api." : "api2.";
+    var wsPrefix = this.environment == Tools.Environment.Staging ? "api." : "api2.";
     var ws = "//" + wsPrefix + this.domain;
     this.ws = "https:" + this.toSsl(ws) + "/signalr";
 

@@ -99,7 +99,7 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
 
     this.url = '/p/' + this.getPath();
 
-    //Tk.Debug.log("Mod State: " + this.model.packageName, this.model.version, this.model.id, this.state);
+    //Tools.Debug.log("Mod State: " + this.model.packageName, this.model.version, this.model.id, this.state);
 
     this.subscriptions.subd(d => {
       this.updateState();

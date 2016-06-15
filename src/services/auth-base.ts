@@ -4,7 +4,7 @@ import {inject} from 'aurelia-dependency-injection';
 
 import {IUserInfo, UserInfo} from './legacy';
 
-export var AbortError = Tk.createError('AbortError');
+export var AbortError = Tools.createError('AbortError');
 
 @inject(HttpClient, W6Urls, EventAggregator)
 export class LoginBase {
@@ -23,7 +23,7 @@ export class LoginBase {
       this.updateAuthInfo(r.content.refresh_token, r.content.token, r.content.id_token);
       return true;
     } catch (err) {
-      Tk.Debug.error("Error trying to use refresh token", err);
+      Tools.Debug.error("Error trying to use refresh token", err);
       if (err.statusCode == 401) {
         window.localStorage.removeItem(LoginBase.refreshToken);
         return false;
@@ -42,7 +42,7 @@ export class LoginBase {
   }
 
   static redirect(url) {
-    Tk.Debug.log("$$$ redirecting", url);
+    Tools.Debug.log("$$$ redirecting", url);
     this.resetUnload();
     window.location.href = url;
     throw new AbortError("Redirecting to " + url);
@@ -93,7 +93,7 @@ export class LoginBase {
       hash = Tools.cleanupHash(hash.replace(/\&?loggedin=1/g, ""))
       window.w6Cheat.redirectedWasLoggedIn = true;
     }
-    if (hasSslRedir || hasLoggedIn)  this.updateHistory(window.location.pathname + window.location.search + hash);
+    if (hasSslRedir || hasLoggedIn) this.updateHistory(window.location.pathname + window.location.search + hash);
 
     return userInfo;
   }
@@ -122,7 +122,7 @@ export class LoginBase {
     } else {
       var redirectUri = window.location.search.startsWith('?redirect=') ? window.location.search.replace('?redirect=', '') : null;
       if (redirectUri) {
-         // must be without #loggedin and #sslredir etc
+        // must be without #loggedin and #sslredir etc
         var idx = redirectUri.indexOf('#');
         if (idx > -1) redirectUri = redirectUri.substring(0, idx);
       }
@@ -146,7 +146,7 @@ export class LoginBase {
     var isValid = false;
     isValid = !Tools.isTokenExpired(token);
     if (!isValid) {
-      Tk.Debug.log("token is not valid")
+      Tools.Debug.log("token is not valid")
       try {
         await this.handleRefreshToken();
       } catch (err) {
