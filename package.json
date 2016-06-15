@@ -120,6 +120,6 @@
     "rx": "^4.1.0",
     "typeahead.js": "git+https://github.com/twitter/typeahead.js.git",
     "version_compare": "0.0.3",
-    "withsix-sync-api": "git+https://github.com/SIXNetworks/withsix-sync-api-js.git#v0.3.32"
+    "withsix-sync-api": "git+https://github.com/SIXNetworks/withsix-sync-api-js.git#v0.3.33"
   }
 }
