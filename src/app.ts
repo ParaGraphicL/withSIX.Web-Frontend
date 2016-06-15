@@ -629,7 +629,9 @@ class Api {
   createCommand = uiCommand2;
   getContentStateInitial = ContentHelper.getConstentStateInitial;
   errorMsg = (reason) => {
-    Tk.Debug.log("$$$ err reason", JSON.stringify(reason));
+    try {
+      Tk.Debug.log("$$$ err reason", JSON.stringify(reason));
+    } catch (err) { Tk.Debug.warn("Err while converting error reason", err) }
     if (typeof (reason) == 'string') return [reason, 'Unknown error occurred'];
 
     if (reason instanceof Tk.NotFoundException || reason instanceof Tk.InvalidShortIdException) {
