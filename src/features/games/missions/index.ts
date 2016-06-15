@@ -1,4 +1,4 @@
-import {IPaginated, PaginatedViewModel, Query, SortDirection, IFilterInfo, DbQuery, handlerFor, uiCommandWithLogin2, IMenuItem, MenuItem, IBreezeMission, ModsHelper, IMission} from '../../../framework';
+import {IPaginated, MissionHelper, PaginatedViewModel, Query, SortDirection, IFilterInfo, DbQuery, handlerFor, uiCommandWithLogin2, IMenuItem, MenuItem, IBreezeMission, ModsHelper, IMission} from '../../../framework';
 import {FilteredBase} from '../shared';
 
 export class Index extends FilteredBase<IMission> {
@@ -30,25 +30,8 @@ class GetMissionsHandler extends DbQuery<GetMissions, IPaginated<IMission>> {
     //.select(this.desiredFields); // cant be used, virtual props
     let r = await this.context.executeQuery<IBreezeMission>(query);
     return {
-      items: r.results.map(x => {
-        return {
-          id: x.id,
-          image: this.context.w6.url.getContentAvatarUrl(x.avatar, x.avatarUpdatedAt),
-          author: x.author.displayName,
-          authorSlug: x.author ? x.author.slug : null,
-          slug: x.slug,
-          name: x.name,
-          gameId: request.gameId,
-          gameSlug: this.w6.activeGame.slug,
-          originalGameId: x.game.id,
-          originalGameSlug: x.game.slug,
-          size: x.size,
-          sizePacked: x.sizePacked,
-          stat: x.stat,
-          type: "mission",
-          //version: x.version, // todo
-        }
-      }), page: request.page, inlineCount: r.inlineCount
+      items: r.results.map(x => MissionHelper.convertOnlineMission(x, this.w6.activeGame, this.w6)),
+      page: request.page, inlineCount: r.inlineCount
     };
   }
   //private desiredFields = ["id", "name", "slug", "avatar", "avatarUpdatedAt", "tags", "description", "authorId", "author", "gameId", "game", "size", "sizePacked", "followersCount", "modsCount"]

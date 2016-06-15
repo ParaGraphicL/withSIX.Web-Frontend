@@ -1,8 +1,53 @@
 import {CollectionScope, ItemState, ICollection, TypeScope} from 'withsix-sync-api';
-import {IBreezeCollection} from './legacy';
+import {IBreezeCollection, IBreezeMod, IBreezeMission} from './legacy';
 
 interface ICollectionExtend extends ICollection {
   subscribers: number;
+}
+
+export class MissionHelper {
+  public static convertOnlineMission(x: IBreezeMission, game: { id: string; slug: string }, w6: W6) {
+    return {
+      id: x.id,
+      image: w6.url.getContentAvatarUrl(x.avatar, x.avatarUpdatedAt),
+      author: x.author.displayName,
+      authorSlug: x.author ? x.author.slug : null,
+      slug: x.slug,
+      name: x.name,
+      gameId: game ? game.id : x.game.id,
+      gameSlug: game ? game.slug : x.game.slug,
+      originalGameId: x.game.id,
+      originalGameSlug: x.game.slug,
+      size: x.size,
+      sizePacked: x.sizePacked,
+      stat: x.stat,
+      type: "mission",
+      //version: x.version, // todo
+    }
+  }
+}
+
+export class ModHelper {
+  public static convertOnlineMod(x: IBreezeMod, game: { id: string; slug: string }, w6: W6) {
+    return {
+      id: x.id,
+      image: w6.url.getContentAvatarUrl(x.avatar, x.avatarUpdatedAt),
+      author: x.authorText || x.author.displayName,
+      authorSlug: x.author ? x.author.slug : null,
+      slug: x.slug,
+      name: x.name,
+      gameId: game ? game.id : x.game.id,
+      gameSlug: game ? game.slug : x.game.slug,
+      originalGameId: x.game.id,
+      originalGameSlug: x.game.slug,
+      size: x.size,
+      sizePacked: x.sizePacked,
+      stat: x.stat,
+      type: "mod",
+      version: x.latestStableVersion,
+      statInstall: x.stat.install
+    }
+  }
 }
 
 export class CollectionHelper {
