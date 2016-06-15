@@ -59,8 +59,6 @@
               //when('/:gameSlug/stream/:streamType?', 'game.stream').
               when('/:gameSlug/servers', 'game.servers').
               when('/:gameSlug/mods', 'game.mods').
-              when('/:gameSlug/mods/category/:category', 'game.mod_category').
-              when('/:gameSlug/mods/category/:category/page/:page', 'game.category_page').
               when('/:gameSlug/mods/:modId/:modSlug?/download', 'game.modsShow.download').
               when('/:gameSlug/mods/:modId/:modSlug?/related', 'game.modsShow.related').
               when('/:gameSlug/mods/:modId/:modSlug?/credits', 'game.modsShow.credits').
@@ -128,23 +126,6 @@
             //   });
 
             game.
-              // segment('mods', {
-              //   controller: 'ModsController',
-              //   templateUrl: '/src_legacy/app/components/default_index.html',
-              //   dependencies: ['gameSlug']
-              //   //, resolve: resolve: setupQuery(Mods.GetModsQuery)
-              // }).
-              segment('mod_category', {
-                controller: 'ModsController',
-                templateUrl: '/src_legacy/app/components/default_index.html',
-                dependencies: ['gameSlug', 'category']
-              }).
-              // BWC
-              segment('category_page', {
-                controller: 'ModsController',
-                templateUrl: '/src_legacy/app/components/default_index.html',
-                dependencies: ['gameSlug', 'category', 'page'],
-              }).
               segment('modsShow', {
                 controller: 'ModController',
                 templateUrl: '/src_legacy/app/play/mods/show.html',

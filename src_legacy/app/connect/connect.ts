@@ -181,14 +181,12 @@
             var profile = $routeProvider.
               when('/u/:userSlug', 'profile').
               when('/u/:userSlug/blogposts', 'profile.blog').
-              when('/u/:userSlug/content', 'profile.content').
-              when('/u/:userSlug/content/mods', 'profile.content.mods').
-              when('/u/:userSlug/content/missions', 'profile.content.missions').
-              when('/u/:userSlug/content/collections', 'profile.content.collections').
-              //when('/u/:userSlug/content/servers', 'profile.content.servers').
-              when('/u/:userSlug/content/apps', 'profile.content.apps').
               when('/u/:userSlug/friends', 'profile.friends').
               when('/u/:userSlug/messages', 'profile.messages').
+              when('/u/:userSlug/content', 'profile.content').
+              when('/u/:userSlug/content/collections', 'profile.content.collections').
+              when('/u/:userSlug/content/missions', 'profile.content.missions').
+              when('/u/:userSlug/content/mods', 'profile.content.mods').
               //when('/profile/:userSlug/comments', 'profile.comments').
               segment('profile', {
                 controller: 'ProfileController',
@@ -205,31 +203,13 @@
             });
 
             profile.segment('content', {
-              default: true,
-              templateUrl: '/src_legacy/app/connect/profile/content.html',
-              controller: 'ProfileContentController',
             }).
               within().
               segment('collections', {
-                default: true,
-                controller: 'CollectionsController',
-                templateUrl: '/src_legacy/app/components/default_index.html',
               }).
               segment('mods', {
-                controller: 'ModsController',
-                templateUrl: '/src_legacy/app/components/default_index.html'
               }).
               segment('missions', {
-                controller: 'MissionsController',
-                templateUrl: '/src_legacy/app/components/default_index.html'
-              }).
-              segment('servers', {
-                controller: 'ServersController',
-                templateUrl: '/src_legacy/app/play/servers/index.html',
-              }).
-              segment('apps', {
-                controller: 'AppsController',
-                templateUrl: '/src_legacy/app/components/default_index.html',
               });
 
             profile.segment('friends', {
