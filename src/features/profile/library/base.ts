@@ -23,12 +23,12 @@ export class BaseGame extends ViewModel {
     super(ui);
     this.availableViewTypes = [ViewType.Card];
     if (this.w6.url.environment != Tk.Environment.Production) this.availableViewTypes.push(ViewType.List);
-    this.typeahead = {
-      display: x => x.packageName ? x.name + ' (' + x.packageName + ')' : x.name,
-      substringMatcher: async (q) => this.items.asEnumerable()
-        .where(x => this.searchFields.asEnumerable().any(f => x[f] && x[f].containsIgnoreCase(q))).toArray(),
-      selector: x => x.name // uses display by default
-    }
+    // this.typeahead = {
+    //   display: x => x.packageName ? x.name + ' (' + x.packageName + ')' : x.name,
+    //   substringMatcher: async (q) => this.items.asEnumerable()
+    //     .where(x => this.searchFields.asEnumerable().any(f => x[f] && x[f].containsIgnoreCase(q))).toArray(),
+    //   selector: x => x.name // uses display by default
+    // }
   }
 
   activate(params, routeConfig) {
