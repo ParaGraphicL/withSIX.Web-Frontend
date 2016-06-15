@@ -14,7 +14,7 @@ export class FeaturesModule {
     config.map([
       { route: 'me', name: 'profile', moduleId: mount + 'profile/index', nav: false, title: 'Profile' },
       { route: 'login/verify/:activationCode', moduleId: mount + 'login/verify-code', nav: false, title: 'Verify activation code' },
-      { route: 'p', name: 'play', moduleId: mount + 'games/index', nav: false, title: 'Play withSIX' }
+      { route: 'p', name: 'play', moduleId: mount + 'games/index', nav: false, title: 'Play' }
     ]);
   }
 }
