@@ -136,9 +136,22 @@ export class PluralizeValueConverter {
   toView(count: number, word: string) {
     if (count !== 1) {
       // TODO: more cases
-      word = word.replace(/y$/, "ies");
+      word = word.replace(/y$/, "ie");
+      word = word + 's';
     }
     return count + ' ' + word;
+  }
+}
+
+@valueConverter('pluralizeWord')
+export class PluralizeWordValueConverter {
+  toView(count: number, word: string) {
+    if (count !== 1) {
+      // TODO: more cases
+      word = word.replace(/y$/, "ie");
+      word = word + 's';
+    }
+    return word;
   }
 }
 
