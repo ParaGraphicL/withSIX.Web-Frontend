@@ -17,10 +17,10 @@ interface IServers {
 
 export class ServersModule {
   configureRouter(config: RouterConfiguration, router: Router, mount: string, routeMount: string) {
-    mount = mount + 'servers/';
+    mount = mount + 'servers';
     config.map([
-      { route: `${routeMount}`, name: 'servers', moduleId: `${mount}index` },
-      { route: `${routeMount}:serverId/:serverSlug?`, name: 'servers-show', moduleId: `${mount}show` }
+      { route: `${routeMount}`, name: 'servers', moduleId: `${mount}/index` },
+      { route: `${routeMount}/:serverId/:serverSlug?`, name: 'servers-show', moduleId: `${mount}/show` }
     ])
   }
 }
