@@ -245,6 +245,7 @@
         "./node_modules/aurelia-animator-css/dist/aurelia-animator-css.d.ts",
         "./node_modules/aurelia-binding/dist/aurelia-binding.d.ts",
         "./node_modules/aurelia-bootstrapper-webpack/dist/aurelia-bootstrapper-webpack.d.ts",
+        "./node_modules/aurelia-breeze/dist/aurelia-breeze.d.ts",
         "./node_modules/aurelia-dependency-injection/dist/aurelia-dependency-injection.d.ts",
         "./node_modules/aurelia-dialog/dist/aurelia-dialog.d.ts",
         "./node_modules/aurelia-event-aggregator/dist/aurelia-event-aggregator.d.ts",

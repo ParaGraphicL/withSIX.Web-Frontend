@@ -1,4 +1,6 @@
 import {W6} from './services/withSIX';
+import breeze from 'breeze-client';
+
 
 export interface IUserInfo {
   // TODO: Instead use dynamic getters that use isInRole internally and cache the result?
