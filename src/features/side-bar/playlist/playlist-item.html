@@ -4,14 +4,6 @@
       <conditional-title desired-title="${state.progress | progress} @ ${state.speed | speed:'B':false}" condition.bind="state && (state.progress || state.speed)" class="basket-content-level-${level}">
         <div class="basket-content">
           <div class="basket-content-progess-bar content-state-progress-width content-state-progress-c-bgd">&nbsp;</div>
-          <!-- <div class="basket-content-progess-background">&nbsp;</div> -->
-          <!--<div class="pull-left basket-content-icon">
-            <div>
-            <span class="icon withSIX-icon-Synq"></span>
-            <br />
-            <p class="tiny content-state-progress-text"></p>
-            </div>
-          </div>-->
 
           <div class="basket-content-omnibutton pull-right">
             <dropdown-menu class="hide-until-open" items.bind="menuItems" menu-cls="content-stateable content-state-${itemStateClass}" item-cls="ignore-close">
@@ -37,7 +29,7 @@
 
           <div class="pull-left basket-content-title">
             <div>
-              <div class="alternative-game" if.bind="!isForActiveGame" title="This content was made for ARMA 2">
+              <div class="alternative-game" if.bind="!isForActiveGame" title="This content was made for ${gameName}">
                 <img src="${w6.url.cdn}/img/play.withSIX/games/Arma-2/arma2-blck.png" />
               </div>
               <div class="basket-content-name" title.bind="model.name">
@@ -48,9 +40,7 @@
                 <span class="size" innerHTML.bind="model.sizePacked | size"></span>
                 <span class="basket-content-author" if.bind="model.author" title.bind="model.author">by: ${model.author}</span>
                 <span if.bind="model.constraint">
-                    <span class="icon withSIX-icon-Lock"></span>
-                <!--  title.bind="model.constraint" -->
-                v${model.constraint}
+                    <span class="icon withSIX-icon-Lock"></span> v${model.constraint}
                 </span>
               </div>
             </div>

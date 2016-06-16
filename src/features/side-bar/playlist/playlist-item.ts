@@ -58,6 +58,7 @@ export class PlaylistItem extends ViewModel {
   abort: ICommand<void>;
   openFolder: ICommand<void>;
   openConfigFolder: ICommand<void>;
+  gameName: string;
 
   get isInstalled() { return this.itemState != ItemState.Incomplete };
   get hasUpdateAvailable() { return this.isInstalled && this.itemState == ItemState.UpdateAvailable }
@@ -109,6 +110,8 @@ export class PlaylistItem extends ViewModel {
 
     this.stat.sizePacked = this.stat.sizePacked + this.model.sizePacked;
     this.image = this.model.image || this.w6.url.getAssetUrl('img/noimage.png');
+
+    this.gameName = (this.isForActiveGame ? this.w6.activeGame.slug : 'Arma-2').replace("-", " "); //(this.model.originalGameSlug || this.model.gameSlug).replace("-", " ");
 
     this.subscriptions.subd(d => {
       this.updateState();
