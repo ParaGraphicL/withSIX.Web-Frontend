@@ -1,5 +1,5 @@
 import {Tools} from './tools';
-import {IUserInfo, globalRedactorOptions} from './legacy';
+import {IUserInfo, globalRedactorOptions, breeze} from './legacy';
 import {Client, IMiniClientInfo} from 'withsix-sync-api';
 
 export interface IAvatarInfo {

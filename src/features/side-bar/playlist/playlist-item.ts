@@ -1,7 +1,8 @@
 import {inject} from 'aurelia-framework';
 import {IBasketItem, BasketItemType, IBreezeMod, ModsHelper, Helper, FolderType,
   BasketService, UiContext, uiCommand2, ViewModel, Base, MenuItem, IMenuItem, GameClientInfo, uiCommand, Mediator, Query, DbQuery, DbClientQuery, handlerFor, VoidCommand, IContentState, ItemState,
-  RemoveRecent, Abort, UninstallContent, OpenFolder, LaunchContent, InstallContent, UnFavoriteContent, FavoriteContent, IBreezeUser, ContentHelper} from '../../../framework';
+  RemoveRecent, Abort, UninstallContent, OpenFolder, LaunchContent, InstallContent, UnFavoriteContent, FavoriteContent, IBreezeUser, ContentHelper,
+  breeze} from '../../../framework';
 import {GameBaskets, Basket} from '../../game-baskets';
 import {DialogService} from 'aurelia-dialog';
 import {EditPlaylistItem} from './edit-playlist-item';

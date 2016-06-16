@@ -1,5 +1,5 @@
 import {inject} from 'aurelia-framework';
-import {IBreezePost, Mediator, DbQuery, Query, handlerFor} from '../../framework';
+import {breeze, IBreezePost, Mediator, DbQuery, Query, handlerFor} from '../../framework';
 
 class GetBlogs extends Query<IBreezePost[]> {
   constructor(public team = false) { super(); }

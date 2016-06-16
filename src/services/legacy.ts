@@ -1,4 +1,5 @@
 import {MyApp, globalRedactorOptions} from '../legacy_app';
+import breeze from 'breeze-client';
 
 import IBasketItem = MyApp.Components.Basket.IBasketItem;
 import BasketItemType = MyApp.Components.Basket.BasketItemType;
@@ -31,7 +32,7 @@ import GetMiniChangelogQuery = MyApp.Main.Changelog.GetMiniChangelogQuery;
 import GetBlogsQuery = MyApp.Main.Blog.GetBlogsQuery;
 import UserInfo = EntityExtends.UserInfo;
 
-export {IBreezeErrorReason, IBasketItem, IBasketModel, BasketItemType, BasketType, BasketState, IBasketCollection, ModsHelper, Helper}
+export {breeze, IBreezeErrorReason, IBasketItem, IBasketModel, BasketItemType, BasketType, BasketState, IBasketCollection, ModsHelper, Helper}
 export {UserInfo, CollectionDataService, ModDataService, UploadService, MissionDataService}
 export {ToastLogger, W6Context, FileSize}
 export {GetMiniChangelogQuery, GetBlogsQuery, OpenAddModDialogQuery, OpenAddCollectionDialogQuery, LegacyBasketService}

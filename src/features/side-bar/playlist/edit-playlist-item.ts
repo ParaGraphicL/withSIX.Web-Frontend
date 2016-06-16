@@ -1,6 +1,6 @@
 import {inject} from 'aurelia-framework';
 import {DialogController} from 'aurelia-dialog';
-import {IBasketItem, ModsHelper, IBreezeMod, Base, uiCommand2, Dialog, Query, DbQuery, handlerFor, Mediator, ProcessingState} from '../../../framework';
+import {breeze, IBasketItem, ModsHelper, IBreezeMod, Base, uiCommand2, Dialog, Query, DbQuery, handlerFor, Mediator, ProcessingState} from '../../../framework';
 import VersionCompare from 'version_compare';
 
 export class EditPlaylistItem extends Dialog<IBasketItem> {

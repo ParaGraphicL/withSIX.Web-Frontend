@@ -1,4 +1,4 @@
-import {UploadService, W6Context, IUserInfo, OpenAddModDialogQuery, OpenAddCollectionDialogQuery} from './legacy';
+import {UploadService, W6Context, IUserInfo, OpenAddModDialogQuery, OpenAddCollectionDialogQuery, breeze} from './legacy';
 import { BasketService } from './basket-service';
 import { Toastr } from './toastr';
 import { Client } from 'withsix-sync-api';

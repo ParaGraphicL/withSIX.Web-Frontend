@@ -3,7 +3,8 @@ import {ContentDeleted, Command, BasketItemType, IBasketItem, Base, IPromiseFunc
 import {ViewModel, Query, IGame, ITab, IMenuItem,
   CollectionScope, IBreezeCollectionVersion, IBreezeCollectionVersionDependency, UiContext, CollectionHelper, UninstallContent,
   ReactiveList, FindModel, ActionType, BasketState, BasketType, ConnectionState, Debouncer, GameChanged, uiCommandWithLogin2, GameClientInfo, MessageDialog, Confirmation,
-  IBreezeCollection, IRequireUser, IUserInfo, W6Context, Client, UploadService, BasketService, CollectionDataService, Utils, requireUser, SelectTab} from '../../../framework';
+  IBreezeCollection, IRequireUser, IUserInfo, W6Context, Client, UploadService, BasketService, CollectionDataService, Utils, requireUser, SelectTab,
+  breeze} from '../../../framework';
 import {Basket, GameBaskets} from '../../game-baskets';
 import {inject} from 'aurelia-framework';
 
