@@ -16,7 +16,7 @@ export class Games extends ViewModel {
       this.model = await new GetGames().handle(this.mediator)
       this.clientEnabled = true;
     } catch (err) {
-      Tools.Debug.warn("Error trying to fetch games library", err);
+      this.tools.Debug.warn("Error trying to fetch games library", err);
       this.clientEnabled = false;
     }
   }
@@ -32,17 +32,17 @@ export class GetGames extends Query<IGamesData> { }
 class GetGamesHandler extends DbClientQuery<GetGames, IGamesData> {
   public async handle(request: GetGames): Promise<IGamesData> {
     try {
-      if (!this.context.w6.miniClient.isConnected) throw new Error("client not running");
+      if (!this.w6.miniClient.isConnected) throw new Error("client not running");
       let d: { games: IGame[] } = await this.client.getGames();
-      return { games: Tools.aryToMap(d.games, x => x.id) }
+      return { games: this.tools.aryToMap(d.games, x => x.id) }
     } catch (err) {
-      Tools.Debug.warn(err);
+      this.tools.Debug.warn(err);
       let ary: IGame[];
-      if (this.context.w6.userInfo.id) {
+      if (this.w6.userInfo.id) {
         let r = await this.context.getCustom<{ games: IGame[] }>("games");
         ary = r.data.games;
       } else ary = [];
-      return { games: Tools.aryToMap(ary, x => x.id) }
+      return { games: this.tools.aryToMap(ary, x => x.id) }
     }
     // return GetGamesHandler.designTimeData(request);
   }

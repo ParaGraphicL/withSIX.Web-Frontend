@@ -5,7 +5,7 @@ export class Index extends FilteredBase<IMod> {
   sort = [{ name: "stat.install", title: "Installs", direction: SortDirection.Desc }, { name: "updatedAt", title: "Updated", direction: SortDirection.Desc }, { name: "createdAt", title: "Created", direction: SortDirection.Desc }, { name: "name" }, { name: "packageName" }]
   searchFields = ["name", "packageName"];
 
-  getMore(page = 1) { return new GetMods(Tools.fromShortId(this.params.id), page, this.filterInfo).handle(this.mediator); }
+  getMore(page = 1) { return new GetMods(this.tools.fromShortId(this.params.id), page, this.filterInfo).handle(this.mediator); }
 }
 
 class GetMods extends Query<IPaginated<IMod>> {

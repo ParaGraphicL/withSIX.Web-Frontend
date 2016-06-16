@@ -164,12 +164,12 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
         .skip(1) // we need to first 'setupMenuItems'
         .subscribe(x => this.handleUpdateAvailable(x)));
 
-      d(this.openFolder = uiCommand2("Open folder", () => new OpenFolder(this.model.gameId, this.model.type == 'mod' ? this.model.id : Tools.emptyGuid).handle(this.mediator), {
+      d(this.openFolder = uiCommand2("Open folder", () => new OpenFolder(this.model.gameId, this.model.type == 'mod' ? this.model.id : this.tools.emptyGuid).handle(this.mediator), {
         isVisibleObservable: this.isInstalledObservable,
         icon: 'withSIX-icon-Folder'
       }))
       if (this.model.gameSlug.startsWith('Arma')) {
-        d(this.openConfigFolder = uiCommand2("Open config folder", () => new OpenFolder(this.model.gameId, this.model.type == 'mod' ? this.model.id : Tools.emptyGuid, FolderType.Config).handle(this.mediator), { icon: 'icon withSIX-icon-Folder', isVisibleObservable: this.isInstalledObservable }));
+        d(this.openConfigFolder = uiCommand2("Open config folder", () => new OpenFolder(this.model.gameId, this.model.type == 'mod' ? this.model.id : this.tools.emptyGuid, FolderType.Config).handle(this.mediator), { icon: 'icon withSIX-icon-Folder', isVisibleObservable: this.isInstalledObservable }));
       }
     });
 
@@ -200,10 +200,10 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
 
   handleUpdateAvailable(updateAvailable: boolean) {
     if (updateAvailable) {
-      Tools.removeEl(this.bottomMenuActions, this.launchMenuItem);
+      this.tools.removeEl(this.bottomMenuActions, this.launchMenuItem);
       this.bottomMenuActions.push(this.launchMenuItem);
     } else
-      Tools.removeEl(this.bottomMenuActions, this.launchMenuItem);
+      this.tools.removeEl(this.bottomMenuActions, this.launchMenuItem);
   }
 
   toBasketInfo(): IBasketItem {

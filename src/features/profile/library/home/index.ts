@@ -34,7 +34,7 @@ export class Index extends BaseGame {
       this.recent = x.recent.asEnumerable().orderByDescending(x => x.lastUsed || '').toArray();
       this.clientEnabled = true;
     } catch (err) {
-      Tools.Debug.warn("Error trying to fetch game home", err);
+      this.tools.Debug.warn("Error trying to fetch game home", err);
       this.clientEnabled = false;
     }
 
@@ -46,7 +46,7 @@ export class Index extends BaseGame {
       d(this.eventBus.subscribe("content.contentInstalled", this.handleContentInstalled));
       d(this.eventBus.subscribe("content.recentItemRemoved", (args: string) => {
         let item = this.recent.asEnumerable().firstOrDefault(x => x.id == args);
-        if (item) Tools.removeEl(this.recent, item);
+        if (item) this.tools.removeEl(this.recent, item);
         [this.newContent.asEnumerable().firstOrDefault(x => x.id == args), this.updates.asEnumerable().firstOrDefault(x => x.id == args)]
           .forEach(x => {
             if (x != null) x.lastUsed = null;
@@ -105,7 +105,7 @@ export class Index extends BaseGame {
   contentDeleted = (evt: ContentDeleted) => {
     let deleteIfHas = (list: any[], id: string) => {
       var item = list.asEnumerable().firstOrDefault(x => x.id == id);
-      if (item) Tools.removeEl(list, item);
+      if (item) this.tools.removeEl(list, item);
 
     }
     deleteIfHas(this.newContent, evt.id);
@@ -130,12 +130,12 @@ export class Index extends BaseGame {
   handleStateChange = (state: IContentState) => {
     if (state.state == ItemState.NotInstalled) {
       var item = this.newContent.asEnumerable().firstOrDefault(x => x.id == state.id);
-      if (item) Tools.removeEl(this.newContent, item);
+      if (item) this.tools.removeEl(this.newContent, item);
       item = this.updates.asEnumerable().firstOrDefault(x => x.id == state.id);
-      if (item) Tools.removeEl(this.updates, item);
+      if (item) this.tools.removeEl(this.updates, item);
     } else if (state.state == ItemState.Uptodate) {
       var item = this.updates.asEnumerable().firstOrDefault(x => x.id == state.id);
-      if (item) Tools.removeEl(this.updates, item);
+      if (item) this.tools.removeEl(this.updates, item);
     }
   }
 

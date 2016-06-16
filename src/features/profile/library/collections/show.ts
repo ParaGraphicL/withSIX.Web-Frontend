@@ -48,7 +48,7 @@ export class Show extends ViewModel {
   constructor(ui: UiContext) {
     super(ui);
     this.availableViewTypes = [ViewType.Card];
-    if (ui.w6.url.environment != Tools.Environment.Production)
+    if (ui.w6.url.environment != this.tools.Environment.Production)
       this.availableViewTypes.push(ViewType.List);
 
     this.subscriptions.subd(d => {
@@ -178,7 +178,7 @@ export class Show extends ViewModel {
     this.items.unshift(item);
   }
 
-  removeDependency(model: IShowDependency) { Tools.removeEl(this.items, model); }
+  removeDependency(model: IShowDependency) { this.tools.removeEl(this.items, model); }
 }
 
 interface IServer {
@@ -208,7 +208,7 @@ class GetCollectionHandler extends DbQuery<GetCollection, ICollectionData> {
 
     var col = await this.executeKeyQuery<IBreezeCollection>(
       () => this.getEntityQueryFromShortId("Collection", request.collectionId)
-        .withParameters({ id: Tools.fromShortId(request.collectionId) }));
+        .withParameters({ id: this.tools.fromShortId(request.collectionId) }));
     var ver = await this.context.getCustom<IBreezeCollectionVersion>("collectionversions/" + col.latestVersionId);
     var items = ver.data.dependencies.asEnumerable()
       .select(x => {
@@ -216,7 +216,7 @@ class GetCollectionHandler extends DbQuery<GetCollection, ICollectionData> {
         var dep = <IShowDependency>{ dependency: x.dependency, type: "dependency", id: x.id, gameId: col.gameId, constraint: x.constraint, isRequired: x.isRequired, availableVersions: availableVersions, name: (<any>x).name };
         var dx = (<any>x);
         if (dx.avatar)
-          dep.image = this.context.w6.url.getContentAvatarUrl(dx.avatar, dx.avatarUpdatedAt);
+          dep.image = this.w6.url.getContentAvatarUrl(dx.avatar, dx.avatarUpdatedAt);
         return dep;
       }).toArray();
     var server = ver.data.servers ? ver.data.servers.asEnumerable().firstOrDefault() : null;
@@ -256,7 +256,7 @@ class SearchQuery extends Query<IFindDependency[]> {
 @handlerFor(SearchQuery)
 class SearchQueryHandler extends DbQuery<SearchQuery, IFindDependency[]> {
   async handle(request: SearchQuery): Promise<IFindDependency[]> {
-    Tools.Debug.log("getting mods by game: " + request.gameIds.join(", ") + ", " + request.query);
+    this.tools.Debug.log("getting mods by game: " + request.gameIds.join(", ") + ", " + request.query);
 
     var op = this.context.getOpByKeyLength(request.query);
     var key = request.query.toLowerCase();

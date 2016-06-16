@@ -1,4 +1,4 @@
-import {UiContext,ViewModel, Mediator, DbQuery, Query, VoidCommand, handlerFor, IFindModel, FindModel, Debouncer} from '../../../../framework'
+import {UiContext, ViewModel, Mediator, DbQuery, Query, VoidCommand, handlerFor, IFindModel, FindModel, Debouncer, IAvatarInfo} from '../../../../framework'
 import {GroupMemberRemoved} from './member';
 
 interface IGroup {
@@ -25,7 +25,7 @@ export class Index extends ViewModel {
   headerName = "Members";
 
   async activate(params, routeConfig) {
-    await this.refreshGroup(Tools.fromShortId(params.id));
+    await this.refreshGroup(this.tools.fromShortId(params.id));
 
     var debouncer = Debouncer.debouncePromise<IUser[]>(async (q: string) => {
       if (!q || q.length < 2) return [];
@@ -34,20 +34,20 @@ export class Index extends ViewModel {
     }, 250);
     this.subscriptions.subd(d => {
       d(this.addUserModel = new FindModel(q => debouncer(q), this.addMember, i => i.userName));
-      d(this.eventBus.subscribe(GroupMemberRemoved, (evt: GroupMemberRemoved) => Tools.removeEl(this.group.members, this.group.members.asEnumerable().firstOrDefault(x => x.id == evt.id))))
+      d(this.eventBus.subscribe(GroupMemberRemoved, (evt: GroupMemberRemoved) => this.tools.removeEl(this.group.members, this.group.members.asEnumerable().firstOrDefault(x => x.id == evt.id))))
     });
   }
 
   addMember = async (selUser: IUser) => {
-   let user = selUser || this.addUserModel.selectedItem; // hmm?
-   await new AddMember(this.group.id, user.id).handle(this.mediator);
-   await this.refreshGroup(this.group.id);
- }
+    let user = selUser || this.addUserModel.selectedItem; // hmm?
+    await new AddMember(this.group.id, user.id).handle(this.mediator);
+    await this.refreshGroup(this.group.id);
+  }
 
- async refreshGroup(id: string) {
-   this.group = await new GetGroupMembers(id).handle(this.mediator);
-   this.group.id = id;
- }
+  async refreshGroup(id: string) {
+    this.group = await new GetGroupMembers(id).handle(this.mediator);
+    this.group.id = id;
+  }
 }
 
 export class UserSearchQuery extends Query<IUser[]> { constructor(public q: string) { super() } }
@@ -55,7 +55,7 @@ export class UserSearchQuery extends Query<IUser[]> { constructor(public q: stri
 @handlerFor(UserSearchQuery)
 export class UserSearchQueryHandler extends DbQuery<UserSearchQuery, IUser[]> {
   async handle(request: UserSearchQuery): Promise<IUser[]> {
-    var r = await this.context.getCustom<{items: IUser[]}>("user/search?userName=" + request.q);
+    var r = await this.context.getCustom<{ items: IUser[] }>("user/search?userName=" + request.q);
     return r.data.items;
   }
 }
@@ -67,7 +67,7 @@ export class GetGroupMembersHandler extends DbQuery<GetGroupMembers, IGroup> {
   async handle(request: GetGroupMembers): Promise<IGroup> {
     let r = await this.context.getCustom<IGroup>("groups/" + request.id + '/members');
     let group = r.data;
-    let groupInfo = {id: request.id, ownerId: group.ownerId};
+    let groupInfo = { id: request.id, ownerId: group.ownerId };
     group.members.forEach(x => {
       x.group = groupInfo;
     });

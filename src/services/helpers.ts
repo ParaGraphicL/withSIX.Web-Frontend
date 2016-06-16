@@ -1,5 +1,6 @@
 import {CollectionScope, ItemState, ICollection, TypeScope} from 'withsix-sync-api';
 import {IBreezeCollection, IBreezeMod, IBreezeMission} from './legacy';
+import {W6} from './withSIX';
 
 interface ICollectionExtend extends ICollection {
   subscribers: number;

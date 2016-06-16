@@ -3,6 +3,7 @@ import {Mediator, LegacyMediator, DbQuery} from './mediator';
 import {Toastr} from './toastr';
 import {ListFactory, ObservableEventAggregator, EventWrapper, uiCommand2} from './reactive';
 import {ITabNotification} from '../resources/tab-view/tab-view';
+import {Tools} from './tools';
 
 import {Client} from 'withsix-sync-api';
 import {EventAggregator} from 'aurelia-event-aggregator';
@@ -25,10 +26,12 @@ export class ViewModel extends Base {
   _changed = false;
   get changed() { return this._changed; }
   set changed(value: boolean) {
-    Tools.Debug.log("set changed: ", value);
+    this.tools.Debug.log("set changed: ", value);
     this._changed = value;
   }
   constructor(private ui: UiContext) { super(); }
+
+  get tools() { return Tools; }
 
   static observableFromEvent = ObservableEventAggregator.observableFromEvent;
   observableFromEvent = <T>(evt: Function | string) => ObservableEventAggregator.observableFromEvent<T>(evt, this.eventBus);
@@ -54,7 +57,7 @@ export class ViewModel extends Base {
       if (row.length == 0) return;
       clearInterval(iv);
       window.w6Cheat.aureliaReady = true;
-      Tools.Debug.log("AURELIA: angular vm loaded");
+      this.tools.Debug.log("AURELIA: angular vm loaded");
       angular.element(document).scope().$apply();
       $("#root-content-row").prepend($("#content"));
     }, 500);

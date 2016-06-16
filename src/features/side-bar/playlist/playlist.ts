@@ -243,9 +243,9 @@ export class Playlist extends ViewModel {
       let listObs = Rx.Observable.merge(this.rxList.itemsAdded.select(x => true), this.rxList.itemsRemoved.select(x => true), this.rxList.itemChanged.where(x => x.propertyName == "constraint").take(1).select(x => true));
       let objObs = ViewModel.observeEx(c, x => x.scope).skip(1).take(1).select(x => true);
       let obs = Rx.Observable.merge(listObs, objObs).startWith(startVal).take(2);
-      listObs.subscribe(x => { Tools.Debug.log("$$$ list val", x); });
-      objObs.subscribe(x => { Tools.Debug.log("$$$ obj val", x); });
-      obs.subscribe(x => { Tools.Debug.log("$$$ merged val", x); });
+      listObs.subscribe(x => { this.tools.Debug.log("$$$ list val", x); });
+      objObs.subscribe(x => { this.tools.Debug.log("$$$ obj val", x); });
+      obs.subscribe(x => { this.tools.Debug.log("$$$ merged val", x); });
       this.rxProperties = this.toProperty(obs, x => x.collectionChanged)
     } else {
       this.collectionChanged = false;
@@ -261,7 +261,7 @@ export class Playlist extends ViewModel {
 
   gameChanged = async (info: GameChanged) => {
     let equal = this.game.id == info.id;
-    Tools.Debug.log("$$$ ClientBar Game Changed: ", info, equal);
+    this.tools.Debug.log("$$$ ClientBar Game Changed: ", info, equal);
     if (equal) return;
     // TODO: All this data should actually change at once!
     this.baskets = null;

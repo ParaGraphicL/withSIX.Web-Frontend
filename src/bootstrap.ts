@@ -4,13 +4,15 @@ import {bootstrap} from 'aurelia-bootstrapper-webpack';
 import '../node_modules/font-awesome/css/font-awesome.css';
 //import '../styles/styles.css';
 
+import {MyApp} from './legacy_app';
 import {Container, inject, transient, singleton, Lazy, All, Optional, Parent} from 'aurelia-dependency-injection';
 import {Aurelia, LogManager} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {Toastr, UiContext, Mediator, ErrorLoggingMediatorDecorator, InjectingMediatorDecorator, BasketService, Client,
   CollectionDataService, ModDataService, MissionDataService, UploadService, ToastLogger, PromiseCache,
-  UserInfo, IUserInfo, LegacyBasketService, W6Context, ClientMissingHandler} from './services/lib';
+  UserInfo, IUserInfo, LegacyBasketService, W6Context, ClientMissingHandler,
+  W6Urls, W6, Tools} from './services/lib';
 import {HttpClient} from 'aurelia-http-client';
 import {AbortError, LoginBase} from './services/auth-base';
 

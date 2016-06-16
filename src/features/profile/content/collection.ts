@@ -106,7 +106,7 @@ class DeleteCollectionHandler extends DbClientQuery<DeleteCollection, void> {
     try {
       await this.client.deleteCollection({ gameId: request.gameId, id: request.id });
     } catch (err) {
-      Tools.Debug.warn("Err while trying to delete collection from client", err);
+      this.tools.Debug.warn("Err while trying to delete collection from client", err);
       // TODO: Only catch NotFoundException
     }
     this.publishCrossEvent('content-deleted', new ContentDeleted(request.gameId, request.id));

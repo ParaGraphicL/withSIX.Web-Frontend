@@ -1,4 +1,8 @@
-﻿interface IAvatarInfo {
+import {Tools} from './tools';
+import {IUserInfo, globalRedactorOptions} from './legacy';
+import {Client, IMiniClientInfo} from 'withsix-sync-api';
+
+export interface IAvatarInfo {
   avatarURL?: string;
   avatarUrl?: string;
   avatarUpdatedAt?: string;
@@ -6,16 +10,13 @@
   emailMd5: string;
 }
 
-declare var googletag: any;
-declare var Markdown: any;
-
 enum Sites {
   Main,
   Play,
   Connect
 }
 
-class W6Urls {
+export class W6Urls {
   imageCdn = "https://img-cdn.withsix.com";
   urlNonSsl: string;
   constructor(urls) {
@@ -51,6 +52,8 @@ class W6Urls {
 
   get isRoot() { return window.location.pathname == "/"; }
 
+  get tools() { return Tools }
+
   environment: Tools.Environment;
 
   private toSsl(host) { return host.replace(":9000", ":9001"); }
@@ -83,7 +86,7 @@ class W6Urls {
     var api = "//" + apiPrefix + this.domain;
     this.api = "https:" + this.toSsl(api) + "/api";
 
-    var wsPrefix = this.environment == Tools.Environment.Staging ? "api." : "api2.";
+    var wsPrefix = this.environment == this.tools.Environment.Staging ? "api." : "api2.";
     var ws = "//" + wsPrefix + this.domain;
     this.ws = "https:" + this.toSsl(ws) + "/signalr";
 
@@ -117,7 +120,7 @@ class W6Urls {
   public getUsercontentUrl2(asset: string, updatedAt?: Date) {
     asset = this.processAssetVersion(asset, updatedAt);
     if (asset == null) return asset;
-    return Tools.uriHasProtocol(asset) ? asset : this.contentCdn + '/' + asset;
+    return this.tools.uriHasProtocol(asset) ? asset : this.contentCdn + '/' + asset;
   }
 
   public getContentAvatarUrl(avatar: string, updatedAt?: Date): string {
@@ -175,7 +178,7 @@ class W6Urls {
   currentSite: string;
 }
 
-class W6Ads {
+export class W6Ads {
   constructor(private url: W6Urls) {
     this.adsenseId = "ca-pub-8060864068276104";
 
@@ -388,7 +391,7 @@ interface IClient {
   login(accessToken: string): void;
 }
 
-class W6Client {
+export class W6Client {
   constructor(private client: IClient) {
     this.clientFound = client != null;
   }
@@ -413,32 +416,17 @@ enum UpdateState {
 }
 
 
-interface IMiniClientInfo {
-  newVersionAvailable: string;
-  version: string;
-  apiVersion?: string;
-  extensionInstalled: boolean;
-  updateState: UpdateState;
-}
-
-interface IMiniClient {
-  clientInfo: IMiniClientInfo;
-  isConnected: boolean;
-  state: MyApp.Components.Signalr.ConnectionState;
-  endpoint: string;
-}
-
 interface ISettings {
   template?: string; hasSync?: boolean; downloadedSync?: boolean; downloadedPWS?: boolean;
 }
 
-class W6 {
+export class W6 {
   public subSlogan: string;
   public slogan: string;
   public chromeless: any;
   public enableBasket: boolean;
   public isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
-  public static w6OBot = "60f61960-23a3-11e4-8c21-0800200c9a66";
+  public w6OBot = "60f61960-23a3-11e4-8c21-0800200c9a66";
 
   get isLoggedIn() { return this.userInfo && this.userInfo.id != null; }
 
@@ -447,7 +435,7 @@ class W6 {
 
   get renderAds() { return this.enableAds && !this.ads.isPageExcluded; }
 
-  constructor(public url: W6Urls, public enableAds: boolean, public isClient: boolean, public clientVersion: string, public userInfo: MyApp.IUserInfo, public miniClient: IMiniClient) {
+  constructor(public url: W6Urls, public enableAds: boolean, public isClient: boolean, public clientVersion: string, public userInfo: IUserInfo, public miniClient: Client) {
     this.chromeless = window.location.search.includes("chromeless") || isClient;
 
     this.slogan = "Because the game is just the beginning";
@@ -481,7 +469,7 @@ class W6 {
   // TODO: Only when changed?
   saveSettings() { window.localStorage.setItem('w6.settings', JSON.stringify(this.settings)); }
 
-  updateUserInfo = (newUserInfo: MyApp.IUserInfo, userInfo: MyApp.IUserInfo) => {
+  updateUserInfo = (newUserInfo: IUserInfo, userInfo: IUserInfo) => {
     var copy = angular.copy(newUserInfo);
     copy.id = newUserInfo.id; // wth?
     Object.assign(userInfo, copy);

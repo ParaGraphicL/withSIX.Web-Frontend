@@ -3,11 +3,14 @@ import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-dependency-injection';
 
 import {IUserInfo, UserInfo} from './legacy';
+import {W6Urls} from './withSIX';
+import {Tools} from './tools';
 
 export var AbortError = Tools.createError('AbortError');
 
 @inject(HttpClient, W6Urls, EventAggregator)
 export class LoginBase {
+  get tools() { return Tools; }
   static refreshToken = 'aurelia_refreshToken';
   static idToken = 'aurelia_id_token';
   static token = 'aurelia_token';
@@ -23,7 +26,7 @@ export class LoginBase {
       this.updateAuthInfo(r.content.refresh_token, r.content.token, r.content.id_token);
       return true;
     } catch (err) {
-      Tools.Debug.error("Error trying to use refresh token", err);
+      this.tools.Debug.error("Error trying to use refresh token", err);
       if (err.statusCode == 401) {
         window.localStorage.removeItem(LoginBase.refreshToken);
         return false;
@@ -87,10 +90,10 @@ export class LoginBase {
 
     if (hasSslRedir) {
       window.w6Cheat.redirected = true;
-      hash = Tools.cleanupHash(hash.replace(/\&?sslredir=1/g, ""));
+      hash = this.tools.cleanupHash(hash.replace(/\&?sslredir=1/g, ""));
     }
     if (hasLoggedIn) {
-      hash = Tools.cleanupHash(hash.replace(/\&?loggedin=1/g, ""))
+      hash = this.tools.cleanupHash(hash.replace(/\&?loggedin=1/g, ""))
       window.w6Cheat.redirectedWasLoggedIn = true;
     }
     if (hasSslRedir || hasLoggedIn) this.updateHistory(window.location.pathname + window.location.search + hash);
@@ -146,7 +149,7 @@ export class LoginBase {
     var isValid = false;
     isValid = !Tools.isTokenExpired(token);
     if (!isValid) {
-      Tools.Debug.log("token is not valid")
+      this.tools.Debug.log("token is not valid")
       try {
         await this.handleRefreshToken();
       } catch (err) {

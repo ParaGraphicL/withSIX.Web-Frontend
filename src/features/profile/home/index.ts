@@ -16,13 +16,13 @@ export class Index extends ViewModel {
       this.model = await new GetHome().handle(this.mediator)
       this.clientEnabled = true;
     } catch (err) {
-      Tools.Debug.warn("Error trying to fetch overall home", err);
+      this.tools.Debug.warn("Error trying to fetch overall home", err);
       this.clientEnabled = false;
       try {
         let x = await new GetGames().handle(this.mediator);
         this.model = <IHomeData>x;
       } catch (err) {
-        Tools.Debug.warn("Error trying to fetch games", err);
+        this.tools.Debug.warn("Error trying to fetch games", err);
       }
     }
     this.subscriptions.subd(d => {
@@ -95,10 +95,10 @@ class GetHomeHandler extends DbClientQuery<GetHome, IHomeData> {
       games: IGame[];
     } = await this.client.getHome();
     return {
-      updates: Tools.enumToMap(home.updates.asEnumerable().orderByDescending(x => x.updatedVersion || ''), x => x.id),
-      games: Tools.aryToMap(home.games, x => x.id),
-      newContent: Tools.enumToMap(home.newContent.asEnumerable().orderByDescending(x => x.lastInstalled || ''), x => x.id),
-      recent: Tools.enumToMap(home.recent.asEnumerable().orderByDescending(x => x.lastUsed || ''), x => x.id)
+      updates: this.tools.enumToMap(home.updates.asEnumerable().orderByDescending(x => x.updatedVersion || ''), x => x.id),
+      games: this.tools.aryToMap(home.games, x => x.id),
+      newContent: this.tools.enumToMap(home.newContent.asEnumerable().orderByDescending(x => x.lastInstalled || ''), x => x.id),
+      recent: this.tools.enumToMap(home.recent.asEnumerable().orderByDescending(x => x.lastUsed || ''), x => x.id)
     }
   }
 

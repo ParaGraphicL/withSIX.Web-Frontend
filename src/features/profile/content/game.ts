@@ -16,7 +16,7 @@ export class Game extends ViewModel {
       d(this.launch);
       d(this.openFolder);
       if (this.model.slug.startsWith('Arma')) {
-        d(this.openConfigFolder = uiCommand2("Open config folder", () => new OpenFolder(this.model.id, Tools.emptyGuid, FolderType.Config).handle(this.mediator), { icon: 'icon withSIX-icon-Folder' }));
+        d(this.openConfigFolder = uiCommand2("Open config folder", () => new OpenFolder(this.model.id, this.tools.emptyGuid, FolderType.Config).handle(this.mediator), { icon: 'icon withSIX-icon-Folder' }));
         this.topMenuActions.push(new MenuItem(this.openConfigFolder));
       }
 

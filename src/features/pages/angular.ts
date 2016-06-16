@@ -1,21 +1,22 @@
 import {activationStrategy} from 'aurelia-router';
+import {ViewModel} from '../../framework';
 
-export class Angular {
+export class Angular extends ViewModel {
   activate() {
-    Tools.Debug.log("AURELIA: angular vm loaded");
+    this.tools.Debug.log("AURELIA: angular vm loaded");
     // This works around the issue of routing for Angular while Aurelia is involved..angular
     // TODO: Better workaround than the rootscope apply?
     angular.element(document).scope().$apply();
   }
 
   deactivate() {
-    Tools.Debug.log("AURELIA: angular vm unloaded");
+    this.tools.Debug.log("AURELIA: angular vm unloaded");
     // This works around the issue of routing for Angular while Aurelia is involved..angular
     // TODO: Better workaround than the rootscope apply?
     angular.element(document).scope().$apply();
   }
 
-  determineActivationStrategy(){
+  determineActivationStrategy() {
     return activationStrategy.replace;
   }
 }

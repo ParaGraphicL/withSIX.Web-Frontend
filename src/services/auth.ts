@@ -14,7 +14,7 @@ export class Login extends LoginBase {
       if (console && console.log) console.log("$$$$ Trying to login")
       // Must remove the hash or we won't redirect back :)
       var url = pathAndSearch ? (this.getOrigin() + pathAndSearch) : this.w6Url.getCurrentPageWithoutHash();
-      Tools.Debug.log("logging in, return: ", url);
+      this.tools.Debug.log("logging in, return: ", url);
       if (await this.handleRefreshToken()) {
         if (console && console.log) console.log("$$$$ Handled refresh token")
         this.redirect(url);

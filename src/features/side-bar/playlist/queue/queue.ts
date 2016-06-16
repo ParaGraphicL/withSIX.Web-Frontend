@@ -17,7 +17,7 @@ export class Queue extends ViewModel {
           if (!this.hovered) this.isExpanded = false;
         }, 5 * 1000);
       });
-      this.eventBus.subscribe("queue.removed", id => Tools.removeEl(this.items, this.findById(id)));
+      this.eventBus.subscribe("queue.removed", id => this.tools.removeEl(this.items, this.findById(id)));
       this.eventBus.subscribe("queue.updated", (evt: { id: string, item }) => Object.assign(this.findById(evt.id), evt.item));
     })
     // TODO: on client reconnect, get the queue again etc.
@@ -38,7 +38,7 @@ export class GetQueueHandler extends DbClientQuery<GetQueue, QueueData> {
   async handle(request: GetQueue): Promise<QueueData> {
     return await this.client.getQueueInfo();
     //return GetQueueHandler.dtd();
-    //return Tools.aryToMap(items, x => x.id);
+    //return this.tools.aryToMap(items, x => x.id);
   }
 
   static dtd() {

@@ -33,7 +33,7 @@ export class Show extends ViewModel {
       let x = await new GetGames().handle(this.mediator);
       this.model.games = x.games;
     } catch (err) {
-      Tools.Debug.warn("Error trying to fetch games", err);
+      this.tools.Debug.warn("Error trying to fetch games", err);
       this.model.games = new Map<string, any>();
     }
     // always add the requested game..

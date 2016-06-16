@@ -29,7 +29,7 @@ export class DownloaderHeader extends ViewModel {
   replaceNotification = (note: ITabNotification) => this.eventBus.publish(new ShowTabNotification('downloads', note))
 
   handleActionInfo = (actionInfo: IActionTabState) => {
-    Tools.Debug.log("$$$ received actionTabState", actionInfo);
+    this.tools.Debug.log("$$$ received actionTabState", actionInfo);
     if (actionInfo == null) {
       this.tab.progressInfo = null;
       this.replaceNotification(null);
@@ -54,7 +54,7 @@ export class DownloaderHeader extends ViewModel {
   }
 
   // handleActionNotification = (evt: IActionNotification) => {
-  //   Tools.Debug.log("$$$ received actionNote", evt);
+  //   this.tools.Debug.log("$$$ received actionNote", evt);
   //   this.tab.progressInfo = {
   //     text: evt.title + ' ' + evt.text,
   //     progress: evt.type == ActionType.Start ? 0 : null
@@ -67,7 +67,7 @@ export class DownloaderHeader extends ViewModel {
   // }
 
   handleActionUpdate = (x: IActionTabStateUpdate) => {
-    Tools.Debug.log("$$$ received updated actionTabState", x);
+    this.tools.Debug.log("$$$ received updated actionTabState", x);
     let pInfo = this.tab.progressInfo;
     if (pInfo == null) return;
     pInfo.progress = x.progress;
@@ -134,7 +134,7 @@ export class DownloaderHeader extends ViewModel {
   }
 
   gameChanged = async (info: GameChanged) => {
-    Tools.Debug.log("$$$ DownloadHeader Game Changed: ", info);
+    this.tools.Debug.log("$$$ DownloadHeader Game Changed: ", info);
     if (this.game.id == info.id) return;
     // TODO: All this data should actually change at once!
     this.game.id = info.id;
@@ -143,7 +143,7 @@ export class DownloaderHeader extends ViewModel {
     if (this.game.id) {
       this.gameInfo = await this.basketService.getGameInfo(this.game.id);
     }
-    Tools.Debug.log("$$$ Download header Game Info", this.gameInfo);
+    this.tools.Debug.log("$$$ Download header Game Info", this.gameInfo);
   }
 }
 

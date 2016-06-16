@@ -35,7 +35,7 @@ export class NewGroupDialog extends Dialog<IGroup> {
     let id = await new CreateGroup(this.model).handle(this.mediator);
     if (this.model.logo && this.model.logo.length > 0) await new UploadLogo(id, this.model.logo[0]).handle(this.mediator);
     if (this.model.cover && this.model.cover.length > 0) await new UploadCover(id, this.model.cover[0]).handle(this.mediator);
-    this.navigateInternal(`/me/groups/${Tools.toShortId(id)}/${Tools.sluggifyEntityName(this.model.name)}`);
+    this.navigateInternal(`/me/groups/${this.tools.toShortId(id)}/${this.tools.sluggifyEntityName(this.model.name)}`);
     this.controller.ok(null);
   }, { cls: "ok" });
   cancel = uiCommand2('Cancel', async () => this.controller.cancel(null), { cls: "cancel" });

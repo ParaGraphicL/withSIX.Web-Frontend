@@ -14,7 +14,7 @@ export class Recent extends ViewModelWithModel<IHomeD> {
     try {
       home = await new GetGameHome(this.w6.activeGame.id).handle(this.mediator);
     } catch (err) {
-      Tools.Debug.warn("Can't connect to client", err);
+      this.tools.Debug.warn("Can't connect to client", err);
     }
     this.model.recent.length = 0;
     this.model.updates.length = 0;

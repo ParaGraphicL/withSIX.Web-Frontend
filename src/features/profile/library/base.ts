@@ -22,7 +22,7 @@ export class BaseGame extends ViewModel {
   constructor(ui: UiContext) {
     super(ui);
     this.availableViewTypes = [ViewType.Card];
-    if (this.w6.url.environment != Tools.Environment.Production) this.availableViewTypes.push(ViewType.List);
+    if (this.w6.url.environment != this.tools.Environment.Production) this.availableViewTypes.push(ViewType.List);
     // this.typeahead = {
     //   display: x => x.packageName ? x.name + ' (' + x.packageName + ')' : x.name,
     //   substringMatcher: async (q) => this.items.asEnumerable()

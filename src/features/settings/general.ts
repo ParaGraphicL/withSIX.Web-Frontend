@@ -32,7 +32,7 @@ export class General extends ViewModel {
   }
 
   async deactivate() {
-    Tools.Debug.log("DEACTIVATE GENERAL");
+    this.tools.Debug.log("DEACTIVATE GENERAL");
     await super.deactivate();
   }
 

@@ -35,7 +35,7 @@ export class Index extends BaseGame {
   contentDeleted = (evt: ContentDeleted) => {
     let deleteIfHas = (list: any[], id: string) => {
       var item = list.asEnumerable().firstOrDefault(x => x.id == id);
-      if (item) Tools.removeEl(list, item);
+      if (item) this.tools.removeEl(list, item);
     }
     deleteIfHas(this.items, evt.id);
   }
@@ -84,7 +84,7 @@ class GetCollectionsHandler extends DbClientQuery<GetCollections, ICollectionsDa
       var r = await this.client.getGameCollections(request.id);
       return r.collections.asEnumerable().select(x => { x.typeScope = TypeScope.Local; return x; });
     } catch (err) {
-      Tools.Debug.warn("Error while trying to get collections from client", err);
+      this.tools.Debug.warn("Error while trying to get collections from client", err);
       return [].asEnumerable();
     }
 		}
@@ -104,7 +104,7 @@ class GetCollectionsHandler extends DbClientQuery<GetCollections, ICollectionsDa
       id: collection.id,
       author: collection.author.displayName,
       authorSlug: collection.author.slug,
-      image: this.context.w6.url.getContentAvatarUrl(collection.avatar, collection.avatarUpdatedAt),
+      image: this.w6.url.getContentAvatarUrl(collection.avatar, collection.avatarUpdatedAt),
       typeScope: type,
       slug: collection.slug,
       name: collection.name,

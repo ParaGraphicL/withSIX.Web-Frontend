@@ -79,7 +79,7 @@ export class PlaylistItem extends ViewModel {
     if (model.level == null) throw Error("model.chain cannot be null!");
     if (model.stat == null) throw Error("model.stat cannot be null!");
     this.model = model.item;
-    if (this.model.id == null) Tools.Debug.log("$$$ null id!", this.model);
+    if (this.model.id == null) this.tools.Debug.log("$$$ null id!", this.model);
     this.chain = model.chain;
     this.stat = model.stat;
     this.currentGameId = model.currentGameId;
@@ -105,7 +105,7 @@ export class PlaylistItem extends ViewModel {
       this.model.image = data.avatar ? this.w6.url.getUsercontentUrl2(data.avatar, data.avatarUpdatedAt) : null;
       (<any>this.model).version = data.version;
     } catch (err) {
-      Tools.Debug.error("Error while trying to retrieve dependencies for " + this.model.id, err);
+      this.tools.Debug.error("Error while trying to retrieve dependencies for " + this.model.id, err);
     }
 
     this.stat.sizePacked = this.stat.sizePacked + this.model.sizePacked;
@@ -250,10 +250,10 @@ export class PlaylistItem extends ViewModel {
 
   handleUpdateAvailable(updateAvailable: boolean) {
     // if (updateAvailable) {
-    //   Tools.removeEl(this.bottomMenuActions, this.launchMenuItem);
+    //   this.tools.removeEl(this.bottomMenuActions, this.launchMenuItem);
     //   this.bottomMenuActions.push(this.launchMenuItem);
     // } else
-    //   Tools.removeEl(this.bottomMenuActions, this.launchMenuItem);
+    //   this.tools.removeEl(this.bottomMenuActions, this.launchMenuItem);
   }
 
   updateState() { this.state = this.gameInfo.clientInfo.content[this.model.id]; }

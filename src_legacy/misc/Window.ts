@@ -1,5 +1,12 @@
 // TODO: For array enumerable functions etc use defineProperty from https://github.com/paulmillr/es6-shim/blob/master/es6-shim.js
 
+declare var googletag: any;
+declare var Markdown: any;
+
+interface Function {
+  $name?: string;
+}
+
 interface JQuery {
   redactor(options): any;
 }
@@ -26,9 +33,9 @@ interface String {
 interface IContainerObjects {
   openAddModsToCollectionsDialog;
   mediator;
-  eventBus: MyApp.IEventBus;
+  eventBus; //: MyApp.IEventBus;
   uiContext;
-  toastr: MyApp.Toastr;
+  toastr; //: MyApp.Toastr;
   forkCollection;
   login;
   restoreBasket;
@@ -45,8 +52,8 @@ interface IAureliaConverter {
 
 interface IW6Cheat {
   converters: { amount: IAureliaConverter; size: IAureliaConverter; speed: IAureliaConverter; text: IAureliaConverter };
-  w6: W6;
-  w6Urls: W6Urls;
+  w6;//: W6;
+  w6Urls;//: MyApp.W6Urls;
   isClient: boolean;
   aureliaReady: boolean;
   container;
@@ -58,6 +65,7 @@ interface IW6Cheat {
   redirectedWasLoggedIn: boolean;
   api: IApi;
   numeral: Numbro;
+  tools;
 }
 
 interface IPromiseFunction<T> {
@@ -98,7 +106,7 @@ interface IApi {
   createCommand<T>(name: string, action: IPromiseFunction<T>, options?: ICommandInfo): ICommand<T>;
   createGameBasket(gameId, basketModel): any;
   gameChanged(info: { id: string; slug: string }): void;
-  getContentStateInitial(state: { state: MyApp.Components.ModInfo.ItemState; version: string }, constraint?: string): MyApp.Components.ModInfo.ItemState;
+  getContentStateInitial(state: { state /*: MyApp.Components.ModInfo.ItemState */; version: string }, constraint?: string);//: MyApp.Components.ModInfo.ItemState;
 }
 
 interface Window {

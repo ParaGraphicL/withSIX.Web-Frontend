@@ -1,5 +1,5 @@
 import {bindable, inject} from 'aurelia-framework';
-import {ViewModel, bindingEngine, ReactiveList, ListFactory, IFilterInfo, SortDirection, IFilter, ISort} from '../services/lib';
+import {ViewModel, bindingEngine, ReactiveList, ListFactory, IFilterInfo, SortDirection, IFilter, ISort, Tools} from '../services/lib';
 
 export class Filters<T> extends ViewModel {
   @bindable items: T[] = [];
@@ -74,7 +74,7 @@ export class Filters<T> extends ViewModel {
     } else {
       this.filteredItems = this.orderItems(this.filterItems()).toArray();
     }
-    Tools.Debug.log("updatedFilteredItems", this.filteredItems.length);
+    this.tools.Debug.log("updatedFilteredItems", this.filteredItems.length);
   }
 
   public toggleDirection(): void {
@@ -142,6 +142,8 @@ export class Debouncer {
   timeoutId;
   constructor(private updateFn, private debounceTime: number) { }
 
+  get tools() { return Tools; }
+
   static debouncePromise<T>(fn: (...args) => Promise<T>, wait, immediate?): (...args) => Promise<T> {
     var timer = null;
     return function() {
@@ -161,12 +163,12 @@ export class Debouncer {
   };
 
   update() {
-    Tools.Debug.log("debounce: Update");
+    this.tools.Debug.log("debounce: Update");
     if (this.timeoutId !== null) {
       clearTimeout(this.timeoutId);
     }
     this.timeoutId = setTimeout(() => {
-      Tools.Debug.log("debounce: Execute");
+      this.tools.Debug.log("debounce: Execute");
       this.updateFn();
     }, this.debounceTime);
   }

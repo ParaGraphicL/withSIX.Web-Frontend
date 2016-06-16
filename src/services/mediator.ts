@@ -1,4 +1,4 @@
-import {UploadService, W6Context, LoadingFailedController, IUserInfo, OpenAddModDialogQuery, OpenAddCollectionDialogQuery} from './legacy';
+import {UploadService, W6Context, IUserInfo, OpenAddModDialogQuery, OpenAddCollectionDialogQuery} from './legacy';
 import { BasketService } from './basket-service';
 import { Toastr } from './toastr';
 import { Client } from 'withsix-sync-api';
@@ -8,6 +8,8 @@ import {EventAggregator} from 'aurelia-event-aggregator';
 import {Validation, ValidationResult} from 'aurelia-validation';
 import {Mediator, IMediator, IRequest, IRequestHandler} from 'aurelia-mediator';
 import {UiContext} from './uicontext';
+import {Tools} from './tools';
+import {W6} from './withSIX';
 import {Container} from 'aurelia-dependency-injection';
 export * from 'aurelia-mediator';
 
@@ -120,12 +122,15 @@ export class DbQuery<TRequest, TResponse> implements IRequestHandler<TRequest, T
   protected ui: UiContext;
   static pageSize = 12;
 
+  get tools() { return Tools; }
+
+  // TODO: Move the w6context!!
   constructor(protected context: W6Context, protected upload: UploadService) {
     this.ui = Container.instance.get(UiContext);
   }
   handle(request: TRequest): Promise<TResponse> { throw "must implement handle method"; }
 
-  protected get w6() { return this.context.w6; }
+  protected get w6(): W6 { return <any>this.context.w6; }
 
   public publishCrossEvent(eventName: string, data: any) {
     this.context.eventBus.publish(data);
@@ -147,14 +152,14 @@ export class DbQuery<TRequest, TResponse> implements IRequestHandler<TRequest, T
     then(result => {
       if (result.results.length == 0) {
         var d = this.context.$q.defer();
-        d.reject(new Tools.NotFoundException("There were no results returned from the server"));
+        d.reject(new this.tools.NotFoundException("There were no results returned from the server"));
         return d.promise;
       }
       return result.results[0];
     }).catch(failure => {
       var d = this.context.$q.defer();
       if (failure.status == 404) {
-        d.reject(new Tools.NotFoundException("The server responded with 404"));
+        d.reject(new this.tools.NotFoundException("The server responded with 404"));
       } else {
         d.reject(failure);
       }
@@ -162,13 +167,13 @@ export class DbQuery<TRequest, TResponse> implements IRequestHandler<TRequest, T
     });
 
   public getEntityQueryFromShortId(type: string, id: string): breeze.EntityQuery {
-    Tools.Debug.log("getting " + type + " by shortId: " + id);
+    this.tools.Debug.log("getting " + type + " by shortId: " + id);
     return breeze.EntityQuery
       .fromEntityKey(this.context.getEntityKeyFromShortId(type, id));
   }
 
   public getEntityQuery(type: string, id: string): breeze.EntityQuery {
-    Tools.Debug.log("getting " + type + " by id: " + id);
+    this.tools.Debug.log("getting " + type + " by id: " + id);
     return breeze.EntityQuery
       .fromEntityKey(this.context.getEntityKey(type, id));
   }

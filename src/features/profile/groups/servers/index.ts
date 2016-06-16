@@ -8,7 +8,7 @@ interface IGroup {
 export class Index extends ViewModel {
   group: IGroup;
   async activate(params, routeConfig) {
-    this.group = await new GetGroupMods(Tools.fromShortId(params.id)).handle(this.mediator);
+    this.group = await new GetGroupMods(this.tools.fromShortId(params.id)).handle(this.mediator);
   }
 }
 
