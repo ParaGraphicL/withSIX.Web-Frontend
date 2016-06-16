@@ -1,14 +1,15 @@
 import {LS} from './base';
 import {UiContext} from './uicontext';
 import {HttpClient} from 'aurelia-http-client';
+import {HttpClient as FetchClient} from 'aurelia-fetch-client';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
 import {AuthService} from 'aurelia-auth';
 import {LoginBase} from './auth-base';
 
-@inject(AuthService, UiContext, HttpClient, LS)
+@inject(AuthService, UiContext, HttpClient, FetchClient, LS)
 export class Login extends LoginBase {
-  constructor(public authService: AuthService, private ui: UiContext, http: HttpClient, private ls: LS) { super(http, ui.w6.url, ui.eventBus); }
+  constructor(public authService: AuthService, private ui: UiContext, http: HttpClient, fetch: FetchClient, private ls: LS) { super(http, fetch, ui.w6.url, ui.eventBus); }
   async login(pathAndSearch?) {
     try {
       if (console && console.log) console.log("$$$$ Trying to login")

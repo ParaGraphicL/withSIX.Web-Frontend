@@ -15,6 +15,7 @@ import {Toastr, UiContext, Mediator, ErrorLoggingMediatorDecorator, InjectingMed
   UserInfo, IUserInfo, LegacyBasketService, W6Context, ClientMissingHandler,
   W6Urls, W6, Tools} from './services/lib';
 import {HttpClient} from 'aurelia-http-client';
+import {HttpClient as FetchClient} from 'aurelia-fetch-client';
 import {AbortError, LoginBase} from './services/auth-base';
 
 import legacySetup = MyApp.setup;
@@ -22,6 +23,14 @@ import legacyBootAngular = MyApp.bootAngular;
 
 import Linq from 'linq4es2015';
 import numeral from 'numbro';
+import breeze from 'breeze-client';
+
+
+breeze.NamingConvention.camelCase.setAsDefault();
+breeze.DataType.parseDateFromServer = function(source) {
+  var date = moment(source);
+  return date.toDate();
+};
 
 bootstrap(async (aurelia: Aurelia) => {
 
@@ -47,6 +56,7 @@ bootstrap(async (aurelia: Aurelia) => {
         config.settings.centerHorizontalOnly = true;
       })
       .plugin('aurelia-ui-virtualization')
+      .plugin('aurelia-breeze')
       .feature('resources')
       .feature('features');
 
@@ -169,7 +179,7 @@ bootstrap(async (aurelia: Aurelia) => {
 });
 
 export async function bs(w6Urls: W6Urls, something) {
-  let login = new LoginBase(new HttpClient(), w6Urls, Container.instance.get(EventAggregator));
+  let login = new LoginBase(Container.instance.get(HttpClient), Container.instance.get(FetchClient), w6Urls, Container.instance.get(EventAggregator));
   let userInfo: IUserInfo = null;
   try {
     userInfo = await login.getUserInfo();

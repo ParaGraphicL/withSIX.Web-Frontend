@@ -150,20 +150,14 @@ export class DbQuery<TRequest, TResponse> implements IRequestHandler<TRequest, T
 
   processSingleResult = promise => promise.
     then(result => {
-      if (result.results.length == 0) {
-        var d = this.context.$q.defer();
-        d.reject(new this.tools.NotFoundException("There were no results returned from the server"));
-        return d.promise;
-      }
+      if (result.results.length == 0)
+        return Promise.reject(new this.tools.NotFoundException("There were no results returned from the server"));
       return result.results[0];
     }).catch(failure => {
-      var d = this.context.$q.defer();
-      if (failure.status == 404) {
-        d.reject(new this.tools.NotFoundException("The server responded with 404"));
-      } else {
-        d.reject(failure);
-      }
-      return d.promise;
+      if (failure.status == 404)
+        return Promise.reject(new this.tools.NotFoundException("The server responded with 404"));
+      else
+        return Promise.reject(failure);
     });
 
   public getEntityQueryFromShortId(type: string, id: string): breeze.EntityQuery {

@@ -1,4 +1,5 @@
 import {HttpClient} from 'aurelia-http-client';
+import {HttpClient as FetchClient} from 'aurelia-fetch-client';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-dependency-injection';
 
@@ -8,14 +9,14 @@ import {Tools} from './tools';
 
 export var AbortError = Tools.createError('AbortError');
 
-@inject(HttpClient, W6Urls, EventAggregator)
+@inject(HttpClient, FetchClient, W6Urls, EventAggregator)
 export class LoginBase {
   get tools() { return Tools; }
   static refreshToken = 'aurelia_refreshToken';
   static idToken = 'aurelia_id_token';
   static token = 'aurelia_token';
   static localClientId = 'withsix-spa';
-  constructor(private http: HttpClient, protected w6Url: W6Urls, private eventBus: EventAggregator) { }
+  constructor(private http: HttpClient, private httpFetch: FetchClient, protected w6Url: W6Urls, private eventBus: EventAggregator) { }
   static resetUnload() { window.onbeforeunload = null; }
   resetUnload() { LoginBase.resetUnload(); }
   async handleRefreshToken() {
@@ -41,7 +42,27 @@ export class LoginBase {
     window.localStorage[LoginBase.token] = accessToken;
     window.localStorage[LoginBase.idToken] = idToken;
 
+    this.setHeaders(accessToken);
+
     this.eventBus.publish(new LoginUpdated(accessToken));
+  }
+
+  setHeaders(accessToken: string) {
+    // TODO: only on our own domains, not cdn etc!
+    this.http.configure(config => {
+      if (accessToken) config.withHeader('Authorization', `Bearer ${accessToken}`);
+    })
+
+    this.httpFetch.configure(config => {
+      let headers = {
+        'Accept': 'application/json',
+        'X-Requested-With': 'Fetch'
+      }
+
+      if (accessToken) (<any>headers).Authorization = `Bearer ${accessToken}`;
+      config.withDefaults({ headers })
+    })
+
   }
 
   static redirect(url) {
@@ -71,6 +92,8 @@ export class LoginBase {
 
   async getUserInfo(): Promise<IUserInfo> {
     this.handleLogout();
+
+    this.setHeaders(window.localStorage[LoginBase.token]);
 
     let userInfo = await this.getUserInfoInternal();
     if (!userInfo) userInfo = new UserInfo();
@@ -158,10 +181,8 @@ export class LoginBase {
     }
     // TODO: add #login=1 etc, to prevent endless loops?
 
-    //var http = new HttpClient();
-    //http.configure(x => x.withHeader("Authorization", 'Bearer ' + window.localStorage[LoginBase.token]));
     var req = <any>this.http.createRequest(this.w6Url.authSsl + '/identity/connect/userinfo');
-    var response = await req.withHeader("Authorization", 'Bearer ' + window.localStorage[LoginBase.token]).asGet().send();
+    var response = await req.asGet().send();
     var roles = typeof (response.content["role"]) == "string" ? [response.content["role"]] : response.content["role"];
 
     let uInfo = {

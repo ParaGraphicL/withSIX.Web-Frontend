@@ -198,6 +198,8 @@
         "src/services/client-wrapper.ts",
         "src/services/helpers.ts",
         "src/services/legacy.ts",
+        "src/services/legacy/tk.ts",
+        "src/services/legacy/w6context.ts",
         "src/services/lib.ts",
         "src/services/mediator.ts",
         "src/services/reactive.ts",

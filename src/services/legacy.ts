@@ -18,13 +18,13 @@ import IBreezeErrorReason = MyApp.IBreezeErrorReason;
 export {globalRedactorOptions};
 import {EntityExtends} from '../dtos';
 export * from '../dtos';
+export * from './legacy/w6context';
 
 import CollectionDataService = MyApp.Play.ContentIndexes.Collections.CollectionDataService
 import ModDataService = MyApp.Play.ContentIndexes.Mods.ModDataService;
 import MissionDataService = MyApp.Play.ContentIndexes.Missions.MissionDataService;
 import UploadService = MyApp.Components.Upload.UploadService;
 import ToastLogger = MyApp.Components.Logger.ToastLogger;
-import W6Context = MyApp.W6Context;
 import OpenAddModDialogQuery = MyApp.Play.Games.OpenAddModDialogQuery;
 import OpenAddCollectionDialogQuery = MyApp.Play.Games.OpenAddCollectionDialogQuery;
 import LegacyBasketService = MyApp.Components.Basket.BasketService;
@@ -34,5 +34,5 @@ import UserInfo = EntityExtends.UserInfo;
 
 export {breeze, IBreezeErrorReason, IBasketItem, IBasketModel, BasketItemType, BasketType, BasketState, IBasketCollection, ModsHelper, Helper}
 export {UserInfo, CollectionDataService, ModDataService, UploadService, MissionDataService}
-export {ToastLogger, W6Context, FileSize}
+export {ToastLogger, FileSize}
 export {GetMiniChangelogQuery, GetBlogsQuery, OpenAddModDialogQuery, OpenAddCollectionDialogQuery, LegacyBasketService}
