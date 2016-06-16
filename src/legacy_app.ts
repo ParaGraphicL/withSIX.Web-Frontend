@@ -6353,9 +6353,6 @@ export module MyApp.Components.LoadingStatusInterceptor {
         if (response.data) response.data = LoadingStatusInterceptor.convertToClient(response.data);
         Debug.log("w6Response", response);
       } else if (response.config.breezeRequest) {
-        // TODO: Breeze does not parse the date objects when performing a select, because it returns an anonymous object of which it doesnt know the fields
-        // a better solution might be to fix this at the root (as we specify the object type when we execute the query??)
-        if (response.data) response.data = LoadingStatusInterceptor.convertToClient(response.data, false);
         Debug.log("breezeResponse", response);
       }
       this.ended();

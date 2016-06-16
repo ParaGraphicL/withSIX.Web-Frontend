@@ -493,28 +493,45 @@ export class W6 {
 
   iso8601RegEx = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z?$/;
 
-  public convertToClient(obj) {
+  public convertToClient(obj, convertPropertyNames = true) {
     var converter = breeze.NamingConvention.defaultInstance;
     if (obj instanceof Array) {
       var newAr = [];
-      angular.forEach(obj, (v, i) => newAr[i] = this.convertToClient(v));
+      angular.forEach(obj, (v, i) => newAr[i] = this.convertToClient(v, convertPropertyNames));
       return newAr;
     } else if (obj instanceof Date) {
       return obj;
     } else if (obj instanceof Object) {
       var newObj = {};
-      angular.forEach(obj, (v, p) => newObj[converter.serverPropertyNameToClient(p)] = this.convertToClient(v));
+      if (convertPropertyNames) angular.forEach(obj, (v, p) => newObj[converter.serverPropertyNameToClient(p)] = this.convertToClient(v, convertPropertyNames));
+      else angular.forEach(obj, (v, p) => newObj[p] = this.convertToClient(v, convertPropertyNames));
       return newObj;
     } else if (typeof obj == "string") {
       if (this.iso8601RegEx.test(obj)) {
-        if (!obj.endsWith("Z")) obj = obj + "Z";
-        return new Date(obj);
+        return breeze.DataType.parseDateFromServer(obj);
+        // if (!obj.endsWith("Z")) obj = obj + "Z";
+        // return new Date(obj);
       }
     }
 
     return obj;
   }
 
+  private convertToServer(obj) {
+    var converter = breeze.NamingConvention.defaultInstance;
+    if (obj instanceof Array) {
+      var newAr = [];
+      angular.forEach(obj, (v, i) => newAr[i] = this.convertToServer(v));
+      return newAr;
+    } else if (obj instanceof Date) {
+      return obj;
+    } else if (obj instanceof Object) {
+      var newObj = {};
+      angular.forEach(obj, (v, p) => newObj[converter.clientPropertyNameToServer(p)] = v instanceof Object ? this.convertToServer(v) : v);
+      return newObj;
+    }
+    return obj;
+  }
   // Divisable by 8! Keep in sync with C#: ImageConstants
   public imageSizes = {
     smallSquare: {

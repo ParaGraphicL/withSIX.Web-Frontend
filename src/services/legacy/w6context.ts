@@ -57,6 +57,14 @@ export class W6Context extends Tk.Service {
         this.nextBreezeRequestName = undefined;
       }
 
+      var oldFnc = requestInfo.success;
+      requestInfo.success = (response) => {
+        // TODO: Breeze does not parse the date objects when performing a select, because it returns an anonymous object of which it doesnt know the fields
+        // a better solution might be to fix this at the root (as we specify the object type when we execute the query??)
+        if (response.data) response.data = this.w6.convertToClient(response.data, false);
+        oldFnc(response);
+      }
+
       loadingInterceptor.startedBreeze(requestInfo);
 
       // using angular global intercepter again atm...

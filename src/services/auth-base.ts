@@ -60,7 +60,17 @@ export class LoginBase {
       }
 
       if (accessToken) (<any>headers).Authorization = `Bearer ${accessToken}`;
-      config.withDefaults({ headers })
+      // config.withDefaults({ headers })
+      //   .withInterceptor({
+      //     request(request) {
+      //       Tools.Debug.log(`Requesting ${request.method} ${request.url}`);
+      //       return request; // you can return a modified Request, or you can short-circuit the request by returning a Response
+      //     },
+      //     response(response) {
+      //       Tools.Debug.log(`Received ${response.status} ${response.url}`, response);
+      //       return response; // you can return a modified Response
+      //     }
+      //   });
     })
 
   }
