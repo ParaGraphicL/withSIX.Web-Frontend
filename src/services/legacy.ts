@@ -3,7 +3,7 @@ import breeze from 'breeze-client';
 
 import IBasketItem = MyApp.Components.Basket.IBasketItem;
 import BasketItemType = MyApp.Components.Basket.BasketItemType;
-import ModsHelper = MyApp.Play.ContentIndexes.Mods.ModsHelper;
+import ModsHelper = MyApp.Play.Mods.ModsHelper;
 import Helper = MyApp.Play.Helper;
 import FileSize = MyApp.Components.FileSize;
 
@@ -20,9 +20,9 @@ import {EntityExtends} from '../dtos';
 export * from '../dtos';
 export * from './legacy/w6context';
 
-import CollectionDataService = MyApp.Play.ContentIndexes.Collections.CollectionDataService
-import ModDataService = MyApp.Play.ContentIndexes.Mods.ModDataService;
-import MissionDataService = MyApp.Play.ContentIndexes.Missions.MissionDataService;
+import CollectionDataService = MyApp.Play.Collections.CollectionDataService
+import ModDataService = MyApp.Play.Mods.ModDataService;
+import MissionDataService = MyApp.Play.Missions.MissionDataService;
 import UploadService = MyApp.Components.Upload.UploadService;
 import ToastLogger = MyApp.Components.Logger.ToastLogger;
 import OpenAddModDialogQuery = MyApp.Play.Games.OpenAddModDialogQuery;

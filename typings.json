@@ -1,6 +1,6 @@
 {
   "globalDependencies": {
-    "rx": "registry:dt/rx#0.0.0+20160317120654",
-    "whatwg-fetch": "registry:dt/whatwg-fetch#0.0.0+20160524142046"
+    "rx": "github:Reactive-Extensions/RxJS/ts/rx.all.es6.d.ts",
+    "withsix-sync-api": "github:SIXNetworks/withsix-sync-api-js/dist/withsix-sync-api.d.ts"
   }
 }

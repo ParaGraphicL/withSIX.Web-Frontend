@@ -11,6 +11,7 @@ import {W6, W6Urls} from './services/withSIX';
 import {Tools} from './services/tools';
 import {W6Context, W6ContextWrapper, IQueryResult} from './services/legacy/w6context';
 import {Tk} from './services/legacy/tk'
+import {EventAggregator} from 'aurelia-event-aggregator';
 
 
 // This file is only intended to setup the environment and root Application configuration
@@ -19,6 +20,8 @@ import {Tk} from './services/legacy/tk'
 declare var commangular;
 declare var accounting;
 declare var Modernizr: ModernizrStatic;
+declare var Fingerprint;
+
 if (!RedactorPlugins) var RedactorPlugins = <any>{};
 
 RedactorPlugins.bufferbuttons = () => {
@@ -48,15 +51,6 @@ export module MyApp {
   export var Debug = Tools.Debug;
   export var initialCompleted = false;
   export var Environment = Tools.Environment;
-
-  export interface Subscription {
-    dispose(): void;
-  }
-  export interface IEventBus {
-    publish(event: string | any, data?: any): void;
-    subscribe(event: string | Function, callback: Function): Subscription;
-    subscribeOnce(event: string | Function, callback: Function): Subscription;
-  }
 
   export interface Toastr {
     info: IDisplayMethod;
@@ -527,10 +521,7 @@ export module MyApp {
   var app = new AppModule();
 
   registerService(W6Context);
-}
 
-
-export module MyApp {
 
 
   export interface ICQWM<T> {
@@ -674,9 +665,7 @@ export module MyApp {
       };
     }
   }
-}
 
-export module MyApp {
   export interface ITagKey {
     text: string;
     key: string;
@@ -1602,7 +1591,7 @@ export module MyApp {
     }
 
     public getUserTags(name: string): Promise<any[]> {
-      return this.$scope.dispatch(MyApp.Play.ContentIndexes.GetUserTagsQuery.$name, { query: name }).then(r => r.lastResult);
+      return this.$scope.dispatch(MyApp.Play.GetUserTagsQuery.$name, { query: name }).then(r => r.lastResult);
     }
 
     public cookiePrefix: string;
@@ -1993,14 +1982,12 @@ export module MyApp {
       $scope.model = model;
     }
   }
-}
 
-export module MyApp {
   export class MainAppController extends BaseController {
     static $name = "MainAppController";
     static $inject = ['$scope', 'usSpinnerService', 'logger', 'w6', '$location', '$q', '$timeout', '$rootScope', '$anchorScroll', 'aur.eventBus'];
 
-    constructor($scope, private $spinner, logger, private w6: W6, private $location: ng.ILocationService, $q: ng.IQService, private $timeout: ng.ITimeoutService, private $rootScope: IRootScope, $anchorScroll, private eventBus: IEventBus) {
+    constructor($scope, private $spinner, logger, private w6: W6, private $location: ng.ILocationService, $q: ng.IQService, private $timeout: ng.ITimeoutService, private $rootScope: IRootScope, $anchorScroll, private eventBus: EventAggregator) {
       super($scope, logger, $q);
 
       $rootScope.logout = () => w6.logout();
@@ -2063,7 +2050,7 @@ export module MyApp {
       if (!searchModel) searchModel = {};
       if (!searchModel.gameIDs) {
         if (this.w6.activeGame.id) {
-          searchModel.gameIDs = Play.ContentIndexes.Mods.ModsHelper.getGameIds(this.w6.activeGame.id);
+          searchModel.gameIDs = Play.Mods.ModsHelper.getGameIds(this.w6.activeGame.id);
         }
       }
       this.$scope.request(Components.Dialogs.OpenSearchDialogQuery, { model: searchModel });
@@ -2540,9 +2527,7 @@ export module MyApp.Components {
   export function registerController(controller) { app.app.controller(controller.$name, controller); }
 
   var app = new ComponentsModule();
-}
 
-export module MyApp.Components {
 
   export enum FileSize {
     B,
@@ -5051,9 +5036,6 @@ Depends on: editableController, editableFormFactory
 
   })();
 
-}
-
-export module MyApp.Components {
   class FiltersComponent extends Tk.Module {
     static $name = "FiltersComponentModule";
 
@@ -5126,6 +5108,25 @@ export module MyApp.Components {
   }
 
   var app = new FiltersComponent();
+
+  class Debounce {
+    static $name = 'debounce';
+    static $inject = ['$timeout'];
+    static factory = getFactory(Debounce.$inject, ($timeout) => new Debounce($timeout).create);
+
+    constructor(private $timeout) { }
+
+    public create = (callback, interval) => {
+      var timeout = null;
+      return () => {
+        this.$timeout.cancel(timeout);
+        timeout = this.$timeout(callback, interval);
+      };
+    };
+  }
+
+  angular.module('Components.Debounce', [])
+    .factory(Debounce.$name, Debounce.factory);
 }
 
 export module MyApp.Components.AccountCard {
@@ -5555,26 +5556,6 @@ export module MyApp.Components.ContentHeader {
 
   }
 
-}
-export module MyApp.Components {
-  class Debounce {
-    static $name = 'debounce';
-    static $inject = ['$timeout'];
-    static factory = getFactory(Debounce.$inject, ($timeout) => new Debounce($timeout).create);
-
-    constructor(private $timeout) { }
-
-    public create = (callback, interval) => {
-      var timeout = null;
-      return () => {
-        this.$timeout.cancel(timeout);
-        timeout = this.$timeout(callback, interval);
-      };
-    };
-  }
-
-  angular.module('Components.Debounce', [])
-    .factory(Debounce.$name, Debounce.factory);
 }
 export module MyApp.Components.Dfp {
   angular.module('Components.Dfp', []);
@@ -7289,9 +7270,6 @@ export module MyApp.Connect.Me {
   registerCQ(CancelPremiumRecurringCommand);
   registerCQ(SavePremiumCommand);
 
-
-}
-export module MyApp.Connect.Me {
   interface IMeScope extends IBaseScope {
     getFullName: () => string
   }
@@ -7643,10 +7621,7 @@ export module MyApp.Connect.Pages {
   registerCQ(ResetPasswordCommand);
   registerCQ(VerifyCommand);
   //registerCQ(FinalizeCommand);
-}
-declare var Fingerprint;
 
-export module MyApp.Connect.Pages {
   class ResendActivationController extends BaseController {
     static $name = "ResendActivationController";
     static $inject = ['$scope', 'logger', '$q', '$routeParams'];
@@ -7804,9 +7779,7 @@ export module MyApp.Connect.Profile {
   registerCQ(GetProfileBlogQuery);
   registerCQ(AddAsFriendCommand);
   registerCQ(RemoveAsFriendCommand);
-}
 
-export module MyApp.Connect.Profile {
   export interface IProfileScope extends IBaseScopeT<any> {
     addFriend;
     removeFriend;
@@ -8551,9 +8524,7 @@ export module MyApp.Main.Blog {
   }
 
   registerCQ(UnlikePostCommand);
-}
 
-export module MyApp.Main.Blog {
   interface IBlogsScope extends IBaseScopeT<IBreezePost[]> {
     blogUrl: string;
     postArchive;
@@ -8797,8 +8768,8 @@ export module MyApp.Main.Premium {
   registerCQ(GetPremiumQuery);
   registerCQ(CreatePremiumOrderCommand);
   registerCQ(OpenPremiumTermsDialogQuery);
-}
-export module MyApp.Main.Premium {
+
+
   import Moment = moment.Moment;
 
   export interface IPremiumScope extends IBaseScope {
@@ -9288,15 +9259,6 @@ export module MyApp.Play {
       };
     }
   ]);
-}
-
-// Sub module to deal with awesome content indexes, and share this mini portion to Connect for profiles/me, without sharing routes or other play stuff that is not needed!
-export module MyApp.Play.ContentIndexes {
-  export function registerCQ(command) { app.registerCommand(command); }
-
-  export function registerService(service) { app.app.service(service.$name, service); }
-
-  export function registerController(controller) { app.app.controller(controller.$name, controller); }
 
   class PlayContentIndexesModule extends Tk.Module {
     static $name = "PlayContentIndexesModule";
@@ -9307,7 +9269,7 @@ export module MyApp.Play.ContentIndexes {
     }
   }
 
-  var app = new PlayContentIndexesModule();
+  var app2 = new PlayContentIndexesModule();
 
   export class GetUsersQuery extends DbQueryBase {
     static $name = "GetUsers";
@@ -9396,7 +9358,7 @@ export module MyApp.Play.Collections {
     ];
     static $inject = ['$scope', 'logger', '$routeParams', '$q', '$sce', 'localStorageService', 'w6', 'ForwardService', '$timeout', 'UploadService', '$popover', '$rootScope', 'basketService', 'aur.eventBus', 'aur.mediator', 'model'];
 
-    constructor(public $scope: ICollectionScope, public logger, public $routeParams, $q, $sce: ng.ISCEService, private localStorageService, private w6: W6, private forwardService: Components.ForwardService, private $timeout: ng.ITimeoutService, private uploadService: Components.Upload.UploadService, private $popover, $rootScope: IRootScope, basketService: MyApp.Components.Basket.BasketService, eventBus: IEventBus, private mediator, model: IBreezeCollection) {
+    constructor(public $scope: ICollectionScope, public logger, public $routeParams, $q, $sce: ng.ISCEService, private localStorageService, private w6: W6, private forwardService: Components.ForwardService, private $timeout: ng.ITimeoutService, private uploadService: Components.Upload.UploadService, private $popover, $rootScope: IRootScope, basketService: MyApp.Components.Basket.BasketService, eventBus: EventAggregator, private mediator, model: IBreezeCollection) {
       super($scope, logger, $routeParams, $q, $sce, model);
 
       window.w6Cheat.collection = this;
@@ -9588,7 +9550,7 @@ export module MyApp.Play.Collections {
         }
         $scope.header.tags = $scope.model.tags;
       };
-      //$scope.getCategories = (query) => this.$scope.request(ContentIndexes.Mods.GetCategoriesQuery, { query: query })
+      //$scope.getCategories = (query) => this.$scope.request(Mods.GetCategoriesQuery, { query: query })
       //    .then((d) => this.processNames(d.lastResult))
       //    .catch(this.breezeQueryFailed);
     }
@@ -9671,7 +9633,7 @@ export module MyApp.Play.Collections {
       return header;
     }
     private setupDependencyAutoComplete() {
-      this.$scope.getDependencies = (query) => this.$scope.request(ContentIndexes.Mods.GetModTagsQuery, { gameId: this.$scope.game.id, query: query })
+      this.$scope.getDependencies = (query) => this.$scope.request(Mods.GetModTagsQuery, { gameId: this.$scope.game.id, query: query })
         .then((d) => this.processModNames(d.lastResult))
         .catch(this.breezeQueryFailed);
       this.$scope.addModDependency = (data, hide) => {
@@ -10116,7 +10078,7 @@ export module MyApp.Play.Collections {
 
     constructor(public $q: ng.IQService, public $scope: ICollectionContentScope, public $timeout: ng.ITimeoutService,
       public $cookieStore, public $location: ng.ILocationService, public $routeParams: ng.route.IRouteParamsService, w6,
-      public dataService: ContentIndexes.Mods.ModDataService, public logger: Components.Logger.ToastLogger, public dfp) {
+      public dataService: Mods.ModDataService, public logger: Components.Logger.ToastLogger, public dfp) {
 
       super(dataService, $q, $scope, w6, $routeParams, logger, $cookieStore, $location, $timeout, dfp);
 
@@ -10208,7 +10170,7 @@ export module MyApp.Play.Collections {
     }
 
     private getTagTags(name: string) {
-      return this.$scope.request(ContentIndexes.Mods.GetCategoriesQuery, { query: name })
+      return this.$scope.request(Mods.GetCategoriesQuery, { query: name })
         .then((d) => this.processNamesWithPrefix(d.lastResult, "tag:"))
         .catch((reason) => this.breezeQueryFailed(reason));
     }
@@ -10242,9 +10204,7 @@ export module MyApp.Play.Collections {
   }
 
   registerController(CollectionCommentsController);
-}
 
-export module MyApp.Play.ContentIndexes.Collections {
   // DEPRECATED: Convert to Queries/Commands
   export class CollectionDataService extends W6ContextWrapper {
     static $name = 'collectionDataService';
@@ -10398,9 +10358,7 @@ export module MyApp.Play.ContentIndexes.Collections {
   }
 
   registerService(CollectionDataService);
-}
 
-export module MyApp.Play.Collections {
   export class GetCollectionQuery extends DbQueryBase {
     static $name = "GetCollection";
 
@@ -10745,9 +10703,7 @@ export module MyApp.Play.Games {
   }
 
   registerController(AddCollectionDialogController);
-}
 
-export module MyApp.Play.Games {
   export interface IMultiPageDialogScope extends IBaseScope {
     page: string;
   }
@@ -11050,7 +11006,7 @@ export module MyApp.Play.Games {
     };
 
     private setupDependencyAutoComplete() {
-      this.$scope.getDependencies = (query) => this.$scope.request(ContentIndexes.Mods.GetModTagsQuery, { gameId: this.model.id, query: query })
+      this.$scope.getDependencies = (query) => this.$scope.request(Mods.GetModTagsQuery, { gameId: this.model.id, query: query })
         .then((d) => this.processModNames(d.lastResult))
         .catch(this.breezeQueryFailed);
     }
@@ -11109,9 +11065,7 @@ export module MyApp.Play.Games {
   }
 
   registerController(AddModDialogController);
-}
 
-export module MyApp.Play.Games {
 
   export class OpenAddModDialogQuery extends DbQueryBase {
     static $inject = ['dbContext', '$modal', 'logger'];
@@ -11216,9 +11170,7 @@ export module MyApp.Play.Games {
   }
 
   registerCQ(GetCheckLinkQuery);
-}
 
-export module MyApp.Play.Games {
   import ClientInfo = MyApp.Components.ModInfo.IClientInfo;
   import ItemState = MyApp.Components.ModInfo.ItemState;
   import ConnectionState = MyApp.Components.Signalr.ConnectionState;
@@ -11252,7 +11204,7 @@ export module MyApp.Play.Games {
     ];
 
     constructor(public $scope: IGameScope, public logger, $q, dbContext, query: { game: IBreezeGame, gameInfo }, private modInfo,
-      $rootScope: IRootScope, basketService: Components.Basket.BasketService, private eventBus: IEventBus) {
+      $rootScope: IRootScope, basketService: Components.Basket.BasketService, private eventBus: EventAggregator) {
       super($scope, logger, $q, query.game);
 
       let model = query.game;
@@ -11750,8 +11702,7 @@ export module MyApp.Play.Missions {
   }
 
   registerCQ(SaveMissionCommentCommand);
-}
-export module MyApp.Play.Missions {
+
   export interface IEditMissionScope extends IBaseScope {
     model;
     submit: (form) => void;
@@ -11806,8 +11757,7 @@ export module MyApp.Play.Missions {
   }
 
   registerController(EditMissionController);
-}
-export module MyApp.Play.Missions {
+
   interface IMissionScope extends IContentScopeT<IBreezeMission>, IHandleCommentsScope<IBreezeMissionComment> {
     download: () => any;
     toggleFollow: () => void;
@@ -11981,9 +11931,7 @@ export module MyApp.Play.Missions {
   }
 
   registerController(MissionInfoController);
-}
 
-export module MyApp.Play.ContentIndexes.Missions {
   // DEPRECATED: Convert to Queries/Commands
   export class MissionDataService extends W6ContextWrapper {
     static $name = 'missionDataService';
@@ -12085,9 +12033,7 @@ export module MyApp.Play.ContentIndexes.Missions {
   }
 
   registerService(MissionDataService);
-}
 
-export module MyApp.Play.Missions {
   export interface IPublishVersionScope extends IBaseScope {
     mission;
     submit: (form) => void;
@@ -12109,8 +12055,7 @@ export module MyApp.Play.Missions {
   }
 
   registerController(PublishVersionController);
-}
-export module MyApp.Play.Missions {
+
   export interface IUploadNewmissionScope extends IBaseScope {
     existingMissions: Object[];
     routeParams;
@@ -12170,8 +12115,7 @@ export module MyApp.Play.Missions {
   }
 
   registerController(UploadNewmissionController);
-}
-export module MyApp.Play.Missions {
+
   export interface IUploadNewversionScope extends IBaseScope {
     routeParams;
     submit: (form) => void;
@@ -12276,8 +12220,7 @@ export module MyApp.Play.Mods {
   }
 
   registerController(ClaimDialogController);
-}
-export module MyApp.Play.Mods {
+
   export class OpenClaimDialogQuery extends DbQueryBase {
     static $inject = ['dbContext', '$modal', 'logger'];
     static $name = 'OpenClaimDialog';
@@ -12718,9 +12661,6 @@ export module MyApp.Play.Mods {
   }
 
   registerCQ(ModExistsQuery);
-}
-
-export module MyApp.Play.ContentIndexes.Mods {
 
   export class GetModTagsQuery extends DbQueryBase {
     static $name = "GetModTags";
@@ -12847,9 +12787,6 @@ export module MyApp.Play.ContentIndexes.Mods {
   }
 
   registerCQ(GetModUserTagsQuery);
-}
-
-export module MyApp.Play.Mods {
 
   export interface IModScope extends IContentScopeT<IBreezeMod> {
     addTag: (data) => boolean;
@@ -12966,7 +12903,7 @@ export module MyApp.Play.Mods {
       private $sce: ng.ISCEService, private $timeout: ng.ITimeoutService,
       private uploadService: Components.Upload.UploadService, $location: ng.ILocationService,
       localStorageService, w6, private $popover, $rootScope,
-      basketService: Components.Basket.BasketService, model: IBreezeMod, private eventBus: IEventBus) {
+      basketService: Components.Basket.BasketService, model: IBreezeMod, private eventBus: EventAggregator) {
       super($scope, logger, $routeParams, $q, $sce, model);
       let routeGameSlug = $routeParams.gameSlug.toLowerCase();
       let modGameSlug = model.game.slug.toLowerCase();
@@ -13058,7 +12995,7 @@ export module MyApp.Play.Mods {
           return [];
         }
 
-        var newQuery = this.$scope.request(ContentIndexes.GetUsersQuery, { query: (typeof query == 'string' || <any>query instanceof String) ? query : query.displayName })
+        var newQuery = this.$scope.request(GetUsersQuery, { query: (typeof query == 'string' || <any>query instanceof String) ? query : query.displayName })
           .catch(this.breezeQueryFailed).then(r => {
             // breeze objects cause deep reference stackoverflow because of circular references, so we shape the objects
             // into just the vm properties we need fr the view. Which is a good practice in general..
@@ -13481,7 +13418,7 @@ export module MyApp.Play.Mods {
         }
         $scope.header.tags = $scope.model.tags;
       };
-      $scope.getCategories = (query) => this.$scope.request(ContentIndexes.Mods.GetCategoriesQuery, { query: query })
+      $scope.getCategories = (query) => this.$scope.request(Mods.GetCategoriesQuery, { query: query })
         .then((d) => this.processNames(d.lastResult))
         .catch(this.breezeQueryFailed);
     }
@@ -14002,7 +13939,7 @@ export module MyApp.Play.Mods {
 
         return list;
       };
-      this.$scope.getDependencies = (query) => this.$scope.request(ContentIndexes.Mods.GetModTagsQuery, { gameId: this.$scope.game.id, query: query })
+      this.$scope.getDependencies = (query) => this.$scope.request(Mods.GetModTagsQuery, { gameId: this.$scope.game.id, query: query })
         .then((d) => this.processModNames(d.lastResult))
         .catch(this.breezeQueryFailed);
     }
@@ -14440,7 +14377,7 @@ export module MyApp.Play.Mods {
       $scope.cancel = this.cancel;
       $scope.ok = this.ok;
       $scope.model = model;
-      $scope.updates = model.updates.asEnumerable().orderByDescending(x => x, ContentIndexes.Mods.ModsHelper.versionCompare).toArray();
+      $scope.updates = model.updates.asEnumerable().orderByDescending(x => x, Mods.ModsHelper.versionCompare).toArray();
     }
 
     private cancel = () => this.$modalInstance.close();
@@ -14448,9 +14385,7 @@ export module MyApp.Play.Mods {
   }
 
   registerController(ModVersionHistoryDialogController);
-}
 
-export module MyApp.Play.ContentIndexes.Mods {
   export class ModsHelper {
     static arma2Id = "1947DE55-44ED-4D92-A62F-26CFBE48258B";
     static arma3Id = "9DE199E3-7342-4495-AD18-195CF264BA5B";
