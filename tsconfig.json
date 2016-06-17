@@ -43,6 +43,7 @@
         "src/features/games/servers/index.ts",
         "src/features/games/servers/server-item.ts",
         "src/features/games/servers/show.ts",
+        "src/features/games/show.ts",
         "src/features/games/stream.ts",
         "src/features/index.ts",
         "src/features/login/verify-code.ts",
