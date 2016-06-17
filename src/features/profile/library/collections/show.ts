@@ -195,6 +195,7 @@ interface ICollectionData {
   repositories: string;
   scope: CollectionScope;
   updatedAt: Date;
+  author: { id?: string; displayName?: string; userName?: string; }
   preferredClient: PreferredClient;
 }
 
@@ -222,7 +223,7 @@ class GetCollectionHandler extends DbQuery<GetCollection, ICollectionData> {
     var server = ver.data.servers ? ver.data.servers.asEnumerable().firstOrDefault() : null;
     var s = server ? { address: server.address, password: server.password } : { address: "", password: "" };
 
-    return { id: col.id, name: col.name, gameId: col.gameId, items: items, servers: [s], repositories: ver.data.repositories || "", scope: CollectionScope[col.scope], updatedAt: col.updatedAt, preferredClient: PreferredClient[col.preferredClient] };
+    return { id: col.id, name: col.name, author: col.author, gameId: col.gameId, items: items, servers: [s], repositories: ver.data.repositories || "", scope: CollectionScope[col.scope], updatedAt: col.updatedAt, preferredClient: PreferredClient[col.preferredClient] };
   }
 }
 

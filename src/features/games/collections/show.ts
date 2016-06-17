@@ -6,6 +6,8 @@ export class Content extends Show {
     await super.activate(params, routeConfig);
   }
 
+  get canEdit() { return this.w6.userInfo.isManager || this.w6.userInfo.id == this.model.author.id }
+
   configureRouter(config: RouterConfiguration, router: Router) {
     var mount = 'features/games/collections';
     config.map([

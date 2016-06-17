@@ -152,6 +152,7 @@
         "src/features/user-profile/content/index.ts",
         "src/features/user-profile/content/missions/index.ts",
         "src/features/user-profile/content/mods/index.ts",
+        "src/features/user-profile/index.ts",
         "src/framework.ts",
         "src/legacy_app.ts",
         "src/main.ts",

@@ -28,9 +28,5 @@ export class Index extends ViewModel {
     ];
 
     this.menuItems = this.getMenuItems(menuItems, `u.${this.params.slug}.content`);
-
-    this.handleAngularHeader();
   }
-
-  deactivate() { super.deactivate(); this.reverseAngularHeader() }
 }

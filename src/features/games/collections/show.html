@@ -8,10 +8,10 @@
 
       <section class="right col-sm-3">
         <div class="tile">
-          ${model.author.displayName}
+          by <a href="/u/${model.author.userName.sluggifyEntityName()}">${model.author.displayName}</a>
         </div>
 
-        <compose view="./_edit_panel.html"></compose>
+        <compose view="./_edit_panel.html" if.bind="canEdit"></compose>
 
         <div class="tile sx-border-gray" if.bind="editModeEnabled">
           <div class="advanced">
