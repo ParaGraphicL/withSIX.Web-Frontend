@@ -48,7 +48,6 @@ export class LoginBase {
   }
 
   setHeaders(accessToken: string) {
-    Tools.Debug.log("$$$ set headers", accessToken);
     let urls = this.w6Url;
     let shouldLog = (Tools.getEnvironment() > Tools.Environment.Production);
 
