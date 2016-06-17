@@ -1,0 +1,6 @@
+{
+  "globalDependencies": {
+    "rx": "github:Reactive-Extensions/RxJS/ts/rx.all.es6.d.ts",
+    "withsix-sync-api": "github:SIXNetworks/withsix-sync-api-js/dist/withsix-sync-api.d.ts"
+  }
+}

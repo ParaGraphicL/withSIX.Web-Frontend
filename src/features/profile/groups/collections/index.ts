@@ -10,7 +10,7 @@ interface IGroup {
 export class Index extends ViewModel {
   group: IGroup;
   async activate(params, routeConfig) {
-    this.group = await new GetGroupCollections(Tools.fromShortId(params.id)).handle(this.mediator);
+    this.group = await new GetGroupCollections(this.tools.fromShortId(params.id)).handle(this.mediator);
   }
 
   headerName = "Collections";

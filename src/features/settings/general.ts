@@ -32,7 +32,7 @@ export class General extends ViewModel {
   }
 
   async deactivate() {
-    Tk.Debug.log("DEACTIVATE GENERAL");
+    this.tools.Debug.log("DEACTIVATE GENERAL");
     await super.deactivate();
   }
 

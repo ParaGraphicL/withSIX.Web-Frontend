@@ -11,7 +11,7 @@ export class Notifications extends ViewModelWithModel<ITab> {
   }
 
   clearNotification(notification: INotification) {
-    Tools.removeEl(this.notifications, notification);
+    this.tools.removeEl(this.notifications, notification);
     this.updateNotificationCount();
   }
   clearNotifications = uiCommand2("Clear notifications", async () => {

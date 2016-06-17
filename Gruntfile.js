@@ -351,6 +351,6 @@ module.exports = function(grunt) {
     // General
     grunt.registerTask('buildall', ['buildBase', 'shell:build_metadata']);
     grunt.registerTask('buildBase', ['shell:bower', 'bower_concat', 'buildAurelia', 'uglify:libs'])
-    grunt.registerTask('buildApp', ['uglify:app', 'uglify:misc', 'uglify:admin']);
+    grunt.registerTask('buildApp', []); // 'uglify:app', 'uglify:misc', 'uglify:admin'
     grunt.registerTask('buildAurelia', ['shell:prepare_release', 'shell:prod']);
 }

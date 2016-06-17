@@ -11,7 +11,10 @@ var webpack = require('webpack');
 
 module.exports = {
   resolve: {
-    extensions: ['', '.ts', '.js']
+    extensions: ['', '.ts', '.js'],
+    alias: {
+      "breeze": "breeze-client"
+    }
   },
   entry: {
     main: [

@@ -1,5 +1,6 @@
 import {Base, Subscriptions, IDisposable, ISubscription, IPromiseFunction, bindingEngine} from './base';
 import {LegacyMediator, Mediator} from './mediator';
+import {W6} from './withSIX';
 import {Toastr} from './toastr';
 import * as Rx from 'rx';
 import {Container, inject, PropertyObserver} from 'aurelia-framework';
@@ -94,7 +95,7 @@ export class ReactiveList<T> extends Base implements Rx.Disposable {
 
     this.allObservable = new ObserveAll<T>(properties);
     this.items = items;
-    //if (this.items.asEnumerable().any(x => x == null)) Tk.Debug.warn("Has null items", this.items);
+    //if (this.items.asEnumerable().any(x => x == null)) this.tools.Debug.warn("Has null items", this.items);
     items.filter(x => x != null).forEach(this.observeItem);
     this.subscriptions.subd(d => {
       var sub = bindingEngine.collectionObserver(this.items)
@@ -119,7 +120,7 @@ export class ReactiveList<T> extends Base implements Rx.Disposable {
   }
 
   observeItem = (x: T) => this.changedSubs.set(x, this.observeItemInternal(x));
-  observeItemInternal = (x: T) => this.allObservable.generateObservable(x).subscribe(evt => { try { this.itemChanged.onNext(evt) } catch (err) { Tk.Debug.warn("uncaught err handling observable", err) } });
+  observeItemInternal = (x: T) => this.allObservable.generateObservable(x).subscribe(evt => { try { this.itemChanged.onNext(evt) } catch (err) { this.tools.Debug.warn("uncaught err handling observable", err) } });
 
   dispose() {
     this.subscriptions.dispose();
@@ -143,7 +144,7 @@ export class ObserveAll<T> {
 
     /*
     .subscribe(evt => {
-      Tk.Debug.log("$$$ propertyObserver: ", x, p, evt);
+      this.tools.Debug.log("$$$ propertyObserver: ", x, p, evt);
       callback(x);
     });
     */
@@ -166,7 +167,7 @@ export class ObserveAll<T> {
   // observeItemInternal(x: T, callback): IDisposable {
   //   if (x == null) throw new Error("x is null");
   //   return this.generateObservable(x).subscribe(evt => {
-  //     Tk.Debug.log("$$$ propertyObserver: ", evt.item, evt.propertyName, evt.change);
+  //     this.tools.Debug.log("$$$ propertyObserver: ", evt.item, evt.propertyName, evt.change);
   //     callback(evt);
   //   });
   // }

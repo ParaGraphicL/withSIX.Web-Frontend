@@ -1,6 +1,6 @@
 import {FrameworkConfiguration} from 'aurelia-framework';
 import {Router, RouterConfiguration, RouteConfig} from 'aurelia-router';
-import {ViewModel} from '../../framework';
+import {ViewModel, ILegacyMenuItem} from '../../framework';
 
 export class PagesModule {
   configureRouter(config: RouterConfiguration, router: Router, mount: string, routeMount: string) {
@@ -22,24 +22,11 @@ export class PagesModule {
   }
 }
 
-export interface IMenuItem {
-  header: string;
-  segment: string;
-  target?: string;
-  mainSegment?: string;
-  fullSegment?: string;
-  url?: string;
-  cls?: string;
-  icon?: string;
-  isRight?: boolean;
-  isDefault?: boolean;
-}
-
 export class MainBase extends ViewModel {
   menuItems: any[];
   constructor(ui, currentItem?) {
     super(ui);
-    var items: IMenuItem[] = [
+    var items: ILegacyMenuItem[] = [
       { header: "Get started", segment: "getting-started", mainSegment: "", target: "_blank" },
       { header: "Download", segment: "download" },
       { header: "Our Blog", segment: "blog" },
@@ -49,34 +36,5 @@ export class MainBase extends ViewModel {
     if (!this.w6.userInfo.isPremium)
       items.push({ header: "Go Premium", segment: "gopremium", isRight: true, icon: "icon withSIX-icon-Badge-Sponsor", cls: 'gopremium' });
     this.menuItems = this.getMenuItems(items, "");
-  }
-
-  getMenuItems(items: Array<IMenuItem>, mainSegment: string, parentIsDefault?: boolean): IMenuItem[] {
-    var menuItems = [];
-    items.forEach(item => {
-      var main = item.mainSegment || item.mainSegment == "" ? item.mainSegment : mainSegment;
-      var fullSegment = main && main != "" ? main + "." + item.segment : item.segment;
-      var segment = item.isDefault ? main : fullSegment; // This will make menu links link to the parent where this page is default
-      var menuItem = this.copyObject(item);
-      menuItem.segment = segment;
-      menuItem.fullSegment = fullSegment;
-      menuItem.cls = item.cls;
-      menuItem.target = item.target || "_self";
-      if (item.isRight) menuItem.cls = item.cls ? item.cls + ' right' : 'right';
-      menuItems.push(menuItem);
-    });
-    return menuItems;
-  }
-
-  copyObject<T>(object: T): T {
-    var objectCopy = <T>{};
-
-    for (var key in object) {
-      if (object.hasOwnProperty(key)) {
-        objectCopy[key] = object[key];
-      }
-    }
-
-    return objectCopy;
   }
 }

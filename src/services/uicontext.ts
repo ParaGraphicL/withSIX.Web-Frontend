@@ -1,5 +1,6 @@
 import {Base} from './base';
 import {Mediator, LegacyMediator} from './mediator';
+import {W6} from './withSIX';
 import {Toastr} from './toastr';
 import {ListFactory, ObservableEventAggregator, EventWrapper} from './reactive';
 import {ITabNotification} from '../resources/tab-view/tab-view';
@@ -19,12 +20,12 @@ import {MessageDialog} from '../features/message-dialog'
 export {MessageDialog, Confirmation}
 
 @inject(W6)
-class FeatureToggles {
-  constructor(private w6: W6) { }
+class FeatureToggles extends Base {
+  constructor(private w6: W6) { super() }
 
   private isManager = this.w6.userInfo.isManager || this.w6.userInfo.isAdmin;
   private syncFeatures = !this.w6.isClient;
-  private isTestEnvironment = Tk.getEnvironment() != Tk.Environment.Production;
+  private isTestEnvironment = this.tools.getEnvironment() != this.tools.Environment.Production;
   private testingFlag = window.location.search.includes('testmode=1') || (!window.location.search.includes('testmode=0') && this.isManager);
   private groupTestingFlag = window.location.search.includes('testgroupmode=1') || (!window.location.search.includes('testgroupmode=0') && this.isManager);
   private get clientInfo() { return this.w6.miniClient.clientInfo }

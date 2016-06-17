@@ -50,7 +50,7 @@ export class Library extends ViewModelWithModel<ITab> {
       d(this.eventBus.subscribe("content.contentInstalled", this.handleContentInstalled));
       d(this.eventBus.subscribe("content.recentItemRemoved", (args: string) => {
         let item = this.home.recent.asEnumerable().firstOrDefault(x => x.id == args);
-        if (item) Tools.removeEl(this.home.recent, item);
+        if (item) this.tools.removeEl(this.home.recent, item);
         [this.home.newContent.asEnumerable().firstOrDefault(x => x.id == args), this.home.updates.asEnumerable().firstOrDefault(x => x.id == args)]
           .forEach(x => {
             if (x != null) x.lastUsed = null;
@@ -90,7 +90,7 @@ export class Library extends ViewModelWithModel<ITab> {
   contentDeleted = (evt: ContentDeleted) => {
     let deleteIfHas = (list: any[], id: string) => {
       var item = list.asEnumerable().firstOrDefault(x => x.id == id);
-      if (item) Tools.removeEl(list, item);
+      if (item) this.tools.removeEl(list, item);
 
     }
     deleteIfHas(this.home.newContent, evt.id);
@@ -116,14 +116,14 @@ export class Library extends ViewModelWithModel<ITab> {
   handleStateChange = (state: IContentState) => {
     if (state.state == ItemState.NotInstalled) {
       var item = this.home.newContent.asEnumerable().firstOrDefault(x => x.id == state.id);
-      if (item) Tools.removeEl(this.home.newContent, item);
+      if (item) this.tools.removeEl(this.home.newContent, item);
       item = this.home.updates.asEnumerable().firstOrDefault(x => x.id == state.id);
-      if (item) Tools.removeEl(this.home.updates, item);
+      if (item) this.tools.removeEl(this.home.updates, item);
       item = this.home.collections.asEnumerable().firstOrDefault(x => x.id == state.id);
-      if (item) Tools.removeEl(this.home.collections, item);
+      if (item) this.tools.removeEl(this.home.collections, item);
     } else if (state.state == ItemState.Uptodate) {
       var item = this.home.updates.asEnumerable().firstOrDefault(x => x.id == state.id);
-      if (item) Tools.removeEl(this.home.updates, item);
+      if (item) this.tools.removeEl(this.home.updates, item);
     }
   }
 }

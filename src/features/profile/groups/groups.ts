@@ -15,7 +15,7 @@ export class Groups extends ViewModel {
   async activate() {
     this.groups = await new GetGroups().handle(this.mediator);
     this.subscriptions.subd(d => {
-      d(this.eventBus.subscribe(GroupDeleted, (evt: GroupDeleted) => Tools.removeEl(this.groups, this.groups.asEnumerable().firstOrDefault(x => x.id == evt.id))))
+      d(this.eventBus.subscribe(GroupDeleted, (evt: GroupDeleted) => this.tools.removeEl(this.groups, this.groups.asEnumerable().firstOrDefault(x => x.id == evt.id))))
     });
   }
 

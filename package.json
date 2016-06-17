@@ -89,6 +89,7 @@
     "aurelia-animator-css": "^1.0.0-beta.1.2.1",
     "aurelia-auth": "git+https://github.com/sickboy/aurelia-auth.git",
     "aurelia-bootstrapper-webpack": "^1.0.0-beta.1.0.2",
+    "aurelia-breeze": "^2.0.1",
     "aurelia-computed": "^0.9.1",
     "aurelia-dialog": "^0.6.2",
     "aurelia-event-aggregator": "^1.0.0-beta.1.2.1",
@@ -108,6 +109,8 @@
     "aurelia-validation": "git+https://github.com/sickboy/validation.git",
     "bluebird": "^3.4.0",
     "bootstrap": "^3.3.6",
+    "breeze-client": "^1.5.7",
+    "breeze-client-labs": "^1.5.8",
     "clipboard-js": "^0.2.0",
     "contextMenu": "git+https://github.com/sickboy/contextMenu.js.git",
     "font-awesome": "^4.6.3",
@@ -119,7 +122,9 @@
     "numbro": "^1.7.1",
     "rx": "^4.1.0",
     "typeahead.js": "git+https://github.com/twitter/typeahead.js.git",
+    "uuid-js": "^0.7.5",
     "version_compare": "0.0.3",
+    "whatwg-fetch": "^1.0.0",
     "withsix-sync-api": "git+https://github.com/SIXNetworks/withsix-sync-api-js.git#v0.3.33"
   }
 }

@@ -1,18 +1,22 @@
 import {HttpClient} from 'aurelia-http-client';
+import {HttpClient as FetchClient} from 'aurelia-fetch-client';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-dependency-injection';
 
 import {IUserInfo, UserInfo} from './legacy';
+import {W6Urls} from './withSIX';
+import {Tools} from './tools';
 
-export var AbortError = Tk.createError('AbortError');
+export var AbortError = Tools.createError('AbortError');
 
-@inject(HttpClient, W6Urls, EventAggregator)
+@inject(HttpClient, FetchClient, W6Urls, EventAggregator)
 export class LoginBase {
+  get tools() { return Tools; }
   static refreshToken = 'aurelia_refreshToken';
   static idToken = 'aurelia_id_token';
   static token = 'aurelia_token';
   static localClientId = 'withsix-spa';
-  constructor(private http: HttpClient, protected w6Url: W6Urls, private eventBus: EventAggregator) { }
+  constructor(private http: HttpClient, private httpFetch: FetchClient, protected w6Url: W6Urls, private eventBus: EventAggregator) { }
   static resetUnload() { window.onbeforeunload = null; }
   resetUnload() { LoginBase.resetUnload(); }
   async handleRefreshToken() {
@@ -23,7 +27,7 @@ export class LoginBase {
       this.updateAuthInfo(r.content.refresh_token, r.content.token, r.content.id_token);
       return true;
     } catch (err) {
-      Tk.Debug.error("Error trying to use refresh token", err);
+      this.tools.Debug.error("Error trying to use refresh token", err);
       if (err.statusCode == 401) {
         window.localStorage.removeItem(LoginBase.refreshToken);
         return false;
@@ -38,11 +42,41 @@ export class LoginBase {
     window.localStorage[LoginBase.token] = accessToken;
     window.localStorage[LoginBase.idToken] = idToken;
 
+    this.setHeaders(accessToken);
+
     this.eventBus.publish(new LoginUpdated(accessToken));
   }
 
+  setHeaders(accessToken: string) {
+    // TODO: only on our own domains, not cdn etc!
+    this.http.configure(config => {
+      if (accessToken) config.withHeader('Authorization', `Bearer ${accessToken}`);
+    })
+
+    this.httpFetch.configure(config => {
+      let headers = {
+        'Accept': 'application/json',
+        'X-Requested-With': 'Fetch'
+      }
+
+      if (accessToken) (<any>headers).Authorization = `Bearer ${accessToken}`;
+      // config.withDefaults({ headers })
+      //   .withInterceptor({
+      //     request(request) {
+      //       Tools.Debug.log(`Requesting ${request.method} ${request.url}`);
+      //       return request; // you can return a modified Request, or you can short-circuit the request by returning a Response
+      //     },
+      //     response(response) {
+      //       Tools.Debug.log(`Received ${response.status} ${response.url}`, response);
+      //       return response; // you can return a modified Response
+      //     }
+      //   });
+    })
+
+  }
+
   static redirect(url) {
-    Tk.Debug.log("$$$ redirecting", url);
+    Tools.Debug.log("$$$ redirecting", url);
     this.resetUnload();
     window.location.href = url;
     throw new AbortError("Redirecting to " + url);
@@ -69,6 +103,8 @@ export class LoginBase {
   async getUserInfo(): Promise<IUserInfo> {
     this.handleLogout();
 
+    this.setHeaders(window.localStorage[LoginBase.token]);
+
     let userInfo = await this.getUserInfoInternal();
     if (!userInfo) userInfo = new UserInfo();
     let hasSslRedir = window.location.hash.includes('sslredir=1');
@@ -87,13 +123,13 @@ export class LoginBase {
 
     if (hasSslRedir) {
       window.w6Cheat.redirected = true;
-      hash = Tools.cleanupHash(hash.replace(/\&?sslredir=1/g, ""));
+      hash = this.tools.cleanupHash(hash.replace(/\&?sslredir=1/g, ""));
     }
     if (hasLoggedIn) {
-      hash = Tools.cleanupHash(hash.replace(/\&?loggedin=1/g, ""))
+      hash = this.tools.cleanupHash(hash.replace(/\&?loggedin=1/g, ""))
       window.w6Cheat.redirectedWasLoggedIn = true;
     }
-    if (hasSslRedir || hasLoggedIn)  this.updateHistory(window.location.pathname + window.location.search + hash);
+    if (hasSslRedir || hasLoggedIn) this.updateHistory(window.location.pathname + window.location.search + hash);
 
     return userInfo;
   }
@@ -122,7 +158,7 @@ export class LoginBase {
     } else {
       var redirectUri = window.location.search.startsWith('?redirect=') ? window.location.search.replace('?redirect=', '') : null;
       if (redirectUri) {
-         // must be without #loggedin and #sslredir etc
+        // must be without #loggedin and #sslredir etc
         var idx = redirectUri.indexOf('#');
         if (idx > -1) redirectUri = redirectUri.substring(0, idx);
       }
@@ -146,7 +182,7 @@ export class LoginBase {
     var isValid = false;
     isValid = !Tools.isTokenExpired(token);
     if (!isValid) {
-      Tk.Debug.log("token is not valid")
+      this.tools.Debug.log("token is not valid")
       try {
         await this.handleRefreshToken();
       } catch (err) {
@@ -155,10 +191,8 @@ export class LoginBase {
     }
     // TODO: add #login=1 etc, to prevent endless loops?
 
-    //var http = new HttpClient();
-    //http.configure(x => x.withHeader("Authorization", 'Bearer ' + window.localStorage[LoginBase.token]));
     var req = <any>this.http.createRequest(this.w6Url.authSsl + '/identity/connect/userinfo');
-    var response = await req.withHeader("Authorization", 'Bearer ' + window.localStorage[LoginBase.token]).asGet().send();
+    var response = await req.asGet().send();
     var roles = typeof (response.content["role"]) == "string" ? [response.content["role"]] : response.content["role"];
 
     let uInfo = {

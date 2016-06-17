@@ -3,6 +3,7 @@ import {inject} from 'aurelia-framework';
 import {Base} from './base';
 import {Toastr} from './toastr';
 import {ObservableEventAggregator} from './reactive';
+import {W6} from './withSIX';
 import {LegacyBasketService, BasketType, IBasketModel, IBasketItem, BasketState, IBasketCollection, W6Context} from './legacy';
 import {ContentHelper} from './helpers';
 import {ActionType, IActionNotification, Client, ConnectionState, IContentState, ItemState, IContentStateChange, IContentStatusChange, IClientInfo, IActionTabStateUpdate, StateChanged, IContentGuidSpec, IContentsBase, IContentBase,
@@ -26,7 +27,7 @@ export class BasketService extends Base {
             try {
               await this.handleConnected();
             } catch (err) {
-              Tk.Debug.log("$$$ err", err);
+              this.tools.Debug.log("$$$ err", err);
               throw err;
             }
             break;
@@ -52,7 +53,7 @@ export class BasketService extends Base {
     this.basketService.settings.hasConnected = true;
 
     let promises = [];
-    Tk.Debug.log("$$$ handling connected", this.clientInfos);
+    this.tools.Debug.log("$$$ handling connected", this.clientInfos);
     for (let i in this.clientInfos) {
       if (this.clientInfos.hasOwnProperty(i)) {
         promises.push(this.updateClientInfo(this.clientInfos[i]));
@@ -69,7 +70,7 @@ export class BasketService extends Base {
     try {
       await this.updateClientInfo(clientInfo);
     } catch (err) {
-      Tk.Debug.log("$$$ err", err);
+      this.tools.Debug.log("$$$ err", err);
       this.clientPromises[clientInfo.game.id] = null;
     }
     return clientInfo;
@@ -82,7 +83,7 @@ export class BasketService extends Base {
     try {
       var cInfo = await this.client.getGameInfo(clientInfo.game.id);
       Object.assign(clientInfo.clientInfo, { actionInfo: null }, cInfo);
-      Tk.Debug.log("$$$ ClientInfo Update", clientInfo.clientInfo);
+      this.tools.Debug.log("$$$ ClientInfo Update", clientInfo.clientInfo);
       this.eventBus.publish('refreshContentInfo-' + clientInfo.game.id);
       this.informAngular();
     } finally {
@@ -98,7 +99,7 @@ export class BasketService extends Base {
     let ci = this.clientInfos[gameId];
     //if (this.client.state != ConnectionState.connected) return Promise.resolve(ci);
     //return this.clientPromises[gameId] = this.Int(ci);
-    Tk.Debug.log("$$$ Getting game info", gameId);
+    this.tools.Debug.log("$$$ Getting game info", gameId);
     return this.clientPromises[gameId] = this.client.state == ConnectionState.connected ? this.Int(ci) : Promise.resolve(ci);
     // we update the info later on
   }
@@ -233,7 +234,7 @@ export class GameClientInfo extends Base {
       d(this.clientWrapper.actionNotification.subscribe(this.handleActionNotification));
       d(this.clientWrapper.actionUpdateNotification.subscribe(this.handleActionUpdate));
       d(this.clientWrapper.userErrorAdded.subscribe(x => this.clientInfo.userErrors.push(x.userError)));
-      d(this.clientWrapper.userErrorResolved.subscribe(x => Tools.removeEl(this.clientInfo.userErrors, this.clientInfo.userErrors.asEnumerable().firstOrDefault(e => e.id == x.id))));
+      d(this.clientWrapper.userErrorResolved.subscribe(x => this.tools.removeEl(this.clientInfo.userErrors, this.clientInfo.userErrors.asEnumerable().firstOrDefault(e => e.id == x.id))));
     });
   }
 

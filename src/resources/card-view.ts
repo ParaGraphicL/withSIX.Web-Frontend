@@ -1,4 +1,4 @@
-import {bindable,inject} from 'aurelia-framework';
+import {bindable, inject} from 'aurelia-framework';
 import {ViewModel} from '../services/viewmodel';
 
 export class CardView<T> extends ViewModel {
@@ -11,14 +11,14 @@ export class CardView<T> extends ViewModel {
   @bindable itemsMap: Map<string, T>;
   @bindable isVirtual: boolean;
   @bindable showAds = false;
-  @bindable ads = [Tools.getRandomIntInclusive(0, 3), Tools.getRandomIntInclusive(4, 7)]
+  @bindable ads = [this.tools.getRandomIntInclusive(0, 3), this.tools.getRandomIntInclusive(4, 7)]
   @bindable adUnitId1 = "angular-ad1";
   @bindable adUnitId2 = "angular-ad2";
 
   $parent;
 
-  bind(context){
-   this.$parent = context;
+  bind(context) {
+    this.$parent = context;
   }
 
   get itemsMapToArrayWorkaround() { return this.itemsMap == null ? null : Array.from(this.itemsMap, (x, i) => x[1]); }

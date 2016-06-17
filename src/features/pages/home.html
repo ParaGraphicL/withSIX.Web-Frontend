@@ -1,79 +1,79 @@
 <template>
   <div class="container-fluid">
-    <div class="tabbar">
+    <div id="subheader-row">
+      <div class="tabbar">
         <menu items.bind="menuItems"></menu>
+      </div>
     </div>
   </div>
 
   <div class="container-fluid">
-      <div class="row">
-          <div class="col-sm-8">
-              <!-- Home Article -->
-              <article class="tile home-box clearfix">
-                  <div class="icon icon-browse"></div>
-                  <div class="clearfix">
-                      <h2>Discover</h2>
-                      <p>Get the most out of your gaming experience by expanding your game with great fan made content for you to discover on our website - from missions to maps to full conversion modifications and more!</p>
-                      <a href="${w6.url.main}/getting-started" class="btn">
-                          <span class="fa fa-arrow-right"></span>
-                          Learn More
-                      </a>
-                  </div>
-              </article>
+    <div class="row">
+      <div class="col-sm-8">
+        <!-- Home Article -->
+        <article class="tile home-box clearfix">
+          <div class="icon icon-browse"></div>
+          <div class="clearfix">
+            <h2>Discover</h2>
+            <p>Get the most out of your gaming experience by expanding your game with great fan made content for you to discover on our website - from missions to maps to full conversion modifications and more!</p>
+            <a href="${w6.url.main}/getting-started" class="btn">
+              <span class="fa fa-arrow-right"></span> Learn More
+            </a>
+          </div>
+        </article>
 
-              <div class="tile" if.bind="w6.renderAds">
-                <ad-unit unit-id="angular-ad1"></ad-unit>
-              </div>
+        <div class="tile" if.bind="w6.renderAds">
+          <ad-unit unit-id="angular-ad1"></ad-unit>
+        </div>
 
-              <!-- Home Article -->
-              <article class="tile home-box clearfix">
-                  <div class="icon icon-manage icon-alignright"></div>
-                  <div class="clearfix">
-                      <h2>Play</h2>
-                      <p>Use custom game content of your choice online with your friends or in single player faster and easier than ever. withSIX takes care of everything, so you can just have fun.</p>
+        <!-- Home Article -->
+        <article class="tile home-box clearfix">
+          <div class="icon icon-manage icon-alignright"></div>
+          <div class="clearfix">
+            <h2>Play</h2>
+            <p>Use custom game content of your choice online with your friends or in single player faster and easier than ever. withSIX takes care of everything, so you can just have fun.</p>
 
-                      <a href="${w6.url.play}" class="btn">
-                          <span class="fa fa-arrow-right"></span>
-                          Learn More
-                      </a>
+            <a href="${w6.url.play}" class="btn">
+              <span class="fa fa-arrow-right"></span> Learn More
+            </a>
 
-                  </div>
-              </article>
+          </div>
+        </article>
 
-              <!-- Home Article -->
-              <article class="tile home-box clearfix">
-                  <div class="icon icon-connect"></div>
-                  <div class="clearfix">
-                      <h2>
+        <!-- Home Article -->
+        <article class="tile home-box clearfix">
+          <div class="icon icon-connect"></div>
+          <div class="clearfix">
+            <h2>
                           Promote
                       </h2>
-                      <p>Present your self-made content to the world by using our wide variety of options to promote, publish and share your creation in no time.</p>
-                      <!--<a href="#" class="btn">
+            <p>Present your self-made content to the world by using our wide variety of options to promote, publish and share your creation in no time.</p>
+            <!--<a href="#" class="btn">
                           <span class="fa fa-arrow-right">
 
                               </span>
                           Learn More
                       </a> -->
-                  </div>
-                  <div if.bind="w6.renderAds">
-                    <ad-links height="15" width="528" slot="${w6.ads.slots.main.hz_medium}"></ad-links>
-                  </div>
-              </article>
-
-              <!-- Latest Blog -->
-              <div class="latest-blog">
-                  <em>Most recent update from <a href="${w6.url.main}/blog">our blog</a>:</em>
-                  <div if.bind="post">
-                    <compose view="./_post_preview.html"></compose>
-                  </div>
-              </div>
           </div>
+          <div if.bind="w6.renderAds">
+            <ad-links height="15" width="528" slot="${w6.ads.slots.main.hz_medium}"></ad-links>
+          </div>
+        </article>
 
-          <aside class="col-sm-4">
-              <ad-unit unit-id="angular-ad-sky"></ad-unit>
+        <!-- Latest Blog -->
+        <div class="latest-blog">
+          <em>Most recent update from <a href="${w6.url.main}/blog">our blog</a>:</em>
+          <div if.bind="post">
+            <compose view="./_post_preview.html"></compose>
+          </div>
+        </div>
+      </div>
 
-              <div class="stats">
-                  <h3>
+      <aside class="col-sm-4">
+        <ad-unit unit-id="angular-ad-sky"></ad-unit>
+
+        <div class="stats">
+          <h3>
                       Already
                       <strong>${totalDownloads | amount}</strong>
                       downloads and
@@ -81,16 +81,15 @@
                       registered users.
                   </h3>
 
-                  <p>Supporting:</p>
-                  <a href="${w6.url.play}/more-games">
-                      <img src.bind="w6.versionedAsset('img/withSIX/home/gameicons.png')" width="372" height="121"
-                           class="img-responsive"
-                           alt="Supported games withSIX"/>
-                  </a>
+          <p>Supporting:</p>
+          <a href="${w6.url.play}/more-games">
+            <img src.bind="w6.versionedAsset('img/withSIX/home/gameicons.png')" width="372" height="121" class="img-responsive" alt="Supported games withSIX" />
+          </a>
 
-                  <br/><br/>
+          <br/>
+          <br/>
 
-                  <h4>
+          <h4>
                       with
                       <strong>${totalCollections | amount}</strong>
                       collections,
@@ -112,10 +111,10 @@
                           likes
                       -->
                   </h4>
-              </div>
+        </div>
 
-              <ad-unit unit-id="angular-ad2"></ad-unit>
-          </aside>
-      </div>
+        <ad-unit unit-id="angular-ad2"></ad-unit>
+      </aside>
+    </div>
   </div>
 </template>

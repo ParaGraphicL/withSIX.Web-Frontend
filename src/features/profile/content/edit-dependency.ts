@@ -15,7 +15,7 @@ export class EditDependency extends Dialog<IDependency> {
     this.constraint = model.constraint;
     this.versions = [EditDependency.autoUpdateStr];
 
-    if (this.model.availableVersions) this.versions = this.versions.asEnumerable().concat(this.model.availableVersions.asEnumerable().orderByDescending(x => x, Tools.versionCompare)).toArray();
+    if (this.model.availableVersions) this.versions = this.versions.asEnumerable().concat(this.model.availableVersions.asEnumerable().orderByDescending(x => x, this.tools.versionCompare)).toArray();
   }
 
   get versionSelected() { return this.constraint != EditDependency.autoUpdateStr; }

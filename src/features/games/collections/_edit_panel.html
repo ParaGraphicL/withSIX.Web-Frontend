@@ -1,6 +1,6 @@
 <template>
   <div class="edit-pane">
-    <div class="tile sx-border-gray">
+    <div class="tile sx-border-gray" if.bind="editModeEnabled">
       <dropdown-menu class="pull-right" items.bind="menuItems"></dropdown-menu>
       <button class="pull-right naked-button" title="Help" click.delegate="openHelp()">?</button>
 
@@ -15,6 +15,7 @@
         </select>
       </section>
       <div>Last edited ${model.updatedAt}</div>
+
       <div show.bind="changed">unsaved changes</div>
 
       <footer>
@@ -25,8 +26,10 @@
         <div class="clearfix"></div>
       </footer>
     </div>
+
     <div class="button-bar">
       <command-button model.bind="disableEditMode"></command-button>
+      <command-button model.bind="enableEditMode"></command-button>
     </div>
   </div>
 </template>

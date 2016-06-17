@@ -23,7 +23,7 @@ export class Index extends BaseGame {
   contentDeleted = (evt: ContentDeleted) => {
     let deleteIfHas = (list: any[], id: string) => {
       var item = list.asEnumerable().firstOrDefault(x => x.id == id);
-      if (item) Tools.removeEl(list, item);
+      if (item) this.tools.removeEl(list, item);
     }
     deleteIfHas(this.items, evt.id);
   }
@@ -78,7 +78,7 @@ class GetModsHandler extends DbClientQuery<GetMods, IModsData> {
       let x = await this.client.getGameMods(request.id);
       return x.mods.asEnumerable();
     } catch (err) {
-      Tk.Debug.warn("Error while trying to get mods from client", err);
+      this.tools.Debug.warn("Error while trying to get mods from client", err);
       return [].asEnumerable();
     }
   }
@@ -88,7 +88,7 @@ class GetModsHandler extends DbClientQuery<GetMods, IModsData> {
       id: mod.id,
       author: mod.author ? mod.author.displayName : mod.authorText,
       authorSlug: mod.author ? mod.author.slug : null,
-      image: this.context.w6.url.getContentAvatarUrl(mod.avatar, mod.avatarUpdatedAt),
+      image: this.w6.url.getContentAvatarUrl(mod.avatar, mod.avatarUpdatedAt),
       slug: mod.slug,
       name: mod.name,
       packageName: mod.packageName,

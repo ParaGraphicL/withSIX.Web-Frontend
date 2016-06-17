@@ -12,6 +12,9 @@ export * from './viewmodel';
 import Utils from './utils';
 export {Utils};
 
+export * from './tools';
+export * from './withSIX';
+
 export * from './mediator'
 export * from './basket-service';
 export * from './toastr';

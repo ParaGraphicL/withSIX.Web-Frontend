@@ -1,6 +1,7 @@
 import {inject, Container, BindingEngine} from 'aurelia-framework';
 import * as Rx from 'rx';
 import {EventAggregator} from 'aurelia-event-aggregator';
+import {Tools} from './tools';
 
 interface IBindingEngine {
   propertyObserver<T>(obj, propertyName: string): { subscribe: (callback: (newValue: T) => any) => IDisposable }
@@ -61,6 +62,8 @@ export class Base implements IDisposable {
   public subscriptions = new Subscriptions();
 
   static rx = /=>\s*\w+\.(\w+)|return\s+\w+\.(\w+)/;
+
+  get tools() { return Tools; }
 
   observeEx = <T extends this, TProp>(propertyEx: (v: T) => TProp) => Base.observeEx(this, propertyEx);
   static observeEx<T, TProp>(obj: T, propertyEx: (v: T) => TProp) { return Base.observe<TProp>(obj, this.getPropertyName(propertyEx)); }

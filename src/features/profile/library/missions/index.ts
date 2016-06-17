@@ -21,7 +21,7 @@ export class Index extends BaseGame {
   contentDeleted = (evt: ContentDeleted) => {
     let deleteIfHas = (list: any[], id: string) => {
       var item = list.asEnumerable().firstOrDefault(x => x.id == id);
-      if (item) Tools.removeEl(list, item);
+      if (item) this.tools.removeEl(list, item);
     }
     deleteIfHas(this.items, evt.id);
   }
@@ -39,7 +39,7 @@ class GetMissionsHandler extends DbClientQuery<GetMissions, IMissionsData> {
     try {
       return await this.client.getGameMissions(request.id);
     } catch (err) {
-      Tk.Debug.warn("Error while trying to get collections from client", err);
+      this.tools.Debug.warn("Error while trying to get collections from client", err);
       return { missions: [] };
     }
     // return GetMissionsHandler.designTimeData(request);

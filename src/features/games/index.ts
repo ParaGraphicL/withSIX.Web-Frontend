@@ -8,7 +8,7 @@ export class Index extends ViewModel {
     let gameRouteMount = ':gameSlug';
     new ServersModule().configureRouter(config, router, mount, gameRouteMount + '/servers');
     config.map([
-      { route: `${gameRouteMount}/collections/:id/:slug/content/edit`, name: 'edit-collection', moduleId: `${mount}collections/edit-content`, nav: false, title: 'Edit collection', auth: true },
+      { route: `${gameRouteMount}/collections/:id/:slug/content`, name: 'show-collection', moduleId: `${mount}collections/show`, nav: false, title: 'collection' },
       {
         route: [
           `${gameRouteMount}/mods/:id`,
@@ -23,8 +23,9 @@ export class Index extends ViewModel {
 
           `${gameRouteMount}/collections/:id`,
           `${gameRouteMount}/collections/:id/:slug`,
-          `${gameRouteMount}/collections/:id/:slug/:something`,
-          `${gameRouteMount}/collections/:id/:slug/:something/:somethingelse`,
+          `${gameRouteMount}/collections/:id/:slug/related`,
+          //`${gameRouteMount}/collections/:id/:slug/:something`,
+          //`${gameRouteMount}/collections/:id/:slug/:something/:somethingelse`,
 
           ''
         ], name: 'angular', moduleId: 'features/pages/angular', nav: false

@@ -3,9 +3,9 @@ import {UiContext, ViewModel, Mediator, DbQuery, Query, VoidCommand, handlerFor}
 export class Join extends ViewModel {
   async activate(params, routeConfig) {
     try {
-      await new JoinGroupByToken(Tools.fromShortId(params.id), params.token).handle(this.mediator);
+      await new JoinGroupByToken(this.tools.fromShortId(params.id), params.token).handle(this.mediator);
     } catch (err) {
-      Tk.Debug.warn("Err while processing join token: ", err);
+      this.tools.Debug.warn("Err while processing join token: ", err);
     }
     this.navigateInternal("/me/groups/" + params.id + "/" + params.slug);
   }

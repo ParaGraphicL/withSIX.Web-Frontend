@@ -660,6 +660,13 @@ button.calltoaction {
     }
   }
 }
+.tabbar {
+  router-menu {
+    ul {
+      margin-top: -32px;
+    }
+  }
+}
 #subheader-row {
   h1.pagetitle {
     font-size: 2em;
@@ -678,7 +685,6 @@ button.calltoaction {
 }
 .tabbar {
   @include tabbar;
-  margin-top: -32px;
   margin-bottom: 32px;
 }
 .chromeless {

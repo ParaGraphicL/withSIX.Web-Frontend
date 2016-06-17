@@ -57,7 +57,7 @@ export class Index extends ViewModel {
     this.slug = params.slug;
     this.shortId = params.id;
 
-    let id = Tools.fromShortId(params.id);
+    let id = this.tools.fromShortId(params.id);
     await this.refreshGroup(id);
     if (this.isAdmin) this.setupWatch();
     this.subscriptions.subd(d => {
@@ -81,7 +81,7 @@ export class Index extends ViewModel {
   }
 
   logoSelected = ($event) => {
-    Tk.Debug.log("logoSelected: ", $event);
+    this.tools.Debug.log("logoSelected: ", $event);
     let file = $event.target.files[0];
     if (file == null) this.group.avatarUrl = this.originalGroup.avatarUrl;
     else this.group.avatarUrl = URL.createObjectURL(file);
@@ -89,7 +89,7 @@ export class Index extends ViewModel {
   }
 
   coverSelected = ($event) => {
-    Tk.Debug.log("coverSelected: ", $event);
+    this.tools.Debug.log("coverSelected: ", $event);
     let file = $event.target.files[0];
     if (file == null) this.group.backgroundUrl = this.originalGroup.backgroundUrl;
     else this.group.backgroundUrl = URL.createObjectURL(file);
@@ -172,7 +172,7 @@ export class LeaveGroup extends VoidCommand { constructor(public id: string) { s
 @handlerFor(LeaveGroup)
 export class LeaveGroupHandler extends DbQuery<LeaveGroup, void> {
   async handle(request: LeaveGroup): Promise<void> {
-    await this.context.deleteCustom<void>("groups/" + request.id + "/members/" + this.context.w6.userInfo.id);
+    await this.context.deleteCustom<void>("groups/" + request.id + "/members/" + this.w6.userInfo.id);
   }
 }
 

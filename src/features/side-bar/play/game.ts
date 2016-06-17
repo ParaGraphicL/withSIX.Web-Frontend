@@ -22,7 +22,7 @@ export class Game extends ViewModel {
       d(this.openLibrary);
       d(this.openSettings);
       if (this.model.slug.startsWith('Arma')) {
-        d(this.openConfigFolder = uiCommand2("Open config folder", () => new OpenFolder(this.model.id, Tools.emptyGuid, FolderType.Config).handle(this.mediator), { icon: 'icon withSIX-icon-Folder' }));
+        d(this.openConfigFolder = uiCommand2("Open config folder", () => new OpenFolder(this.model.id, this.tools.emptyGuid, FolderType.Config).handle(this.mediator), { icon: 'icon withSIX-icon-Folder' }));
       }
     })
     this.menuItems.push(new MenuItem(this.launch));

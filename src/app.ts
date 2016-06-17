@@ -10,7 +10,8 @@ import {HttpClient} from 'aurelia-http-client';
 //import HttpClientConfig from 'aurelia-auth/app.httpClient.config';
 import {UiContext, ViewModel, Dialog, Mediator, Command, DbQuery, handlerFor, MenuItem, uiCommand2, CloseDialogs,
   ContentDeleted, Client, BasketService, StateChanged, ConnectionState, GameClientInfo, LS, ClientMissingHandler,
-  IUserErrorAdded, IUserErrorResolved, IUserError, GameChanged, CloseTabs, IBreezeErrorReason, ContentHelper} from './framework';
+  IUserErrorAdded, IUserErrorResolved, IUserError, GameChanged, CloseTabs, IBreezeErrorReason, ContentHelper, W6,
+  IMiniClientInfo, Tools} from './framework';
 
 import {GameBaskets} from './features/game-baskets';
 
@@ -122,7 +123,7 @@ export class App extends ViewModel {
 
   activate() {
     if (this.hasApi) window.onbeforeunload = () => {
-      Tk.Debug.warn("Tried to unload, prevented", window.location.href);
+      this.tools.Debug.warn("Tried to unload, prevented", window.location.href);
       return false;
     };
     // workaround for dialogs not working
@@ -139,7 +140,7 @@ export class App extends ViewModel {
     if (isSync) { this.w6.updateSettings(x => x.hasSync = true); }
 
     this.activateNg();
-    this.template = this.w6.enableBasket ? 'v2' : 'v1'; // this.w6.settings.template || (this.w6.url.environment > Tk.Environment.Production || this.w6.userInfo.isAdmin || this.w6.settings.hasSync ? 'v2' : 'v1');
+    this.template = this.w6.enableBasket ? 'v2' : 'v1'; // this.w6.settings.template || (this.w6.url.environment > this.tools.Environment.Production || this.w6.userInfo.isAdmin || this.w6.settings.hasSync ? 'v2' : 'v1');
     //if (window.location.search.includes("template=v2")) this.setTemplate('v2');
     //else if (window.location.search.includes("template=v1")) this.setTemplate('v1');
 
@@ -184,7 +185,7 @@ export class App extends ViewModel {
       let userErrors = this.observeEx(x => x.userErrors).where(x => x != null);
       d(userErrors.subscribe(x => {
         // close all open dialogs
-        this.dialogMap.forEach(x => { this.eventBus.publish("client.userErrorResolved", { id: x }); Tools.removeEl(this.dialogMap, x); })
+        this.dialogMap.forEach(x => { this.eventBus.publish("client.userErrorResolved", { id: x }); this.tools.removeEl(this.dialogMap, x); })
       }));
       d(userErrors.selectMany(x => x)
         .merge(this.clientWrapper.userErrorAdded.select(x => x.userError))
@@ -213,7 +214,7 @@ export class App extends ViewModel {
     this.dialogMap.push(userError.id);
     await this.dialog.open({ model: userError, viewModel: UserErrorDialog, lock: true });
     // TODO: What about reshowing when closed prematurely??
-    Tools.removeEl(this.dialogMap, userError.id);
+    this.tools.removeEl(this.dialogMap, userError.id);
   }
 
   setActiveGame(info: GameChanged) {
@@ -270,7 +271,7 @@ export class App extends ViewModel {
         let row = angular.element("#root-content-row");
         if (row.length == 0) return;
         clearInterval(iv);
-        Tk.Debug.log("activating ng from app..");
+        this.tools.Debug.log("activating ng from app..");
         let el = angular.element("#content");
         row.append(el)
         window.w6Cheat.aureliaReady = true;
@@ -346,7 +347,7 @@ export class App extends ViewModel {
 
   get obsoleteClientVersion() {
     let mc = this.w6.miniClient;
-    return mc.isConnected && mc.clientInfo.updateState <= 1 && mc.clientInfo.version && (Tools.versionCompare(mc.clientInfo.version, '1.0.15') == -1);
+    return mc.isConnected && mc.clientInfo.updateState <= 1 && mc.clientInfo.version && (this.tools.versionCompare(mc.clientInfo.version, '1.0.15') == -1);
   }
 
   newVersionAvailable = newVersion => {
@@ -386,7 +387,7 @@ export class App extends ViewModel {
         try {
           window.six_client.login(info.accessToken);
         } catch (err) {
-          Tk.Debug.error("error while logging in client", err);
+          this.tools.Debug.error("error while logging in client", err);
         }
       }
     }
@@ -439,28 +440,28 @@ export class App extends ViewModel {
     var site = this.w6.url.site || "main";
     await this.routeHandler.configure(site);
     let map = (instruction: NavigationInstruction): any => {
-      Tk.Debug.log("$$ AURELIA: Mapping unknown route for site: " + site, instruction);
+      this.tools.Debug.log("$$ AURELIA: Mapping unknown route for site: " + site, instruction);
       let match = this.routeHandler.getRouteMatch(instruction.fragment);
       if (!match) {
-        Tk.Debug.warn("$$ AURELIA: did not found match in routing map! 404", instruction, this.routeHandler.routingData[site]);
+        this.tools.Debug.warn("$$ AURELIA: did not found match in routing map! 404", instruction, this.routeHandler.routingData[site]);
         return 'errors/404';
       }
 
       if (match.type == "aurelia") {
-        Tk.Debug.error("$$$ AURELIA: Found aurelia unmatched route, must be error?!", match, instruction);
+        this.tools.Debug.error("$$$ AURELIA: Found aurelia unmatched route, must be error?!", match, instruction);
         return 'errors/404';
       }
 
       if (!match.type || match.type == "angular") {
-        Tk.Debug.log("$$ AURELIA: found angular match!", instruction);
+        this.tools.Debug.log("$$ AURELIA: found angular match!", instruction);
         return "features/pages/angular";
       }
       if (match.type == "static") {
         if (match.redirectTo) {
-          Tk.Debug.log("$$ AURELIA: found static redirect!", instruction);
+          this.tools.Debug.log("$$ AURELIA: found static redirect!", instruction);
           return { redirect: match.redirectTo }
         }
-        Tk.Debug.log("$$ AURELIA: found static page!", instruction);
+        this.tools.Debug.log("$$ AURELIA: found static page!", instruction);
         return "features/pages/static";
       }
       throw new Error("Unsupported routing state");
@@ -479,6 +480,7 @@ export class Navigate { constructor(public url: string) { } }
 
 @inject(Login, TaskQueue)
 class AuthorizeStep {
+  get tools() { return Tools }
   constructor(public login: Login, private taskQueue: TaskQueue) { }
   run(routingContext: NavigationInstruction, next) {
     if (routingContext.getAllInstructions().some((i: any) => {
@@ -539,13 +541,13 @@ class SslStep extends AuthorizeStep {
           //var loginRoute = this.auth.getLoginRoute();
           //return next.cancel(new Redirect(loginRoute));
         }
-        Tk.Debug.log("$$$ SslStep: Using SSL, but is not premium, nor page requires SSL. Switching to non-SSL");
+        this.tools.Debug.log("$$$ SslStep: Using SSL, but is not premium, nor page requires SSL. Switching to non-SSL");
         return next.cancel(this.getRedirect(LoginBase.toHttp(isLoggedIn)));
       }
     } else {
       let requiresSsl = matches.asEnumerable().any(x => x.ssl);
       if (isPremium || requiresSsl) {
-        Tk.Debug.log("$$$ SslStep: Using non-SSL, but is premium or page requires SSL. Switching to SSL", isPremium);
+        this.tools.Debug.log("$$$ SslStep: Using non-SSL, but is premium or page requires SSL. Switching to SSL", isPremium);
         return next.cancel(this.getRedirect(LoginBase.toHttps(isLoggedIn)));
       }
     }
@@ -560,7 +562,7 @@ class SslStep extends AuthorizeStep {
   }
 
   getRedirect(url) {
-    Tk.Debug.log("$$$ router redirect", url);
+    this.tools.Debug.log("$$$ router redirect", url);
     if (console && console.log) console.log("$$$$ router redirect!");
     this.login.resetUnload();
     return new Redirect(url);
@@ -581,6 +583,7 @@ class Ipc<T> {
   }
 }
 class IpcHandler {
+  get tools() { return Tools }
   messages = new Map<number, Ipc<any>[]>();
   api;
   constructor() {
@@ -591,9 +594,9 @@ class IpcHandler {
   send<T>(hub, message, data?) {
     var msg = new Ipc<T>();
     this.messages[msg.id] = msg;
-    Tk.Debug.log("Sending message", msg);
+    this.tools.Debug.log("Sending message", msg);
     this.api.sendSignalrMessage(msg.id, hub, message, data);
-    Tk.Debug.log("Sent message", msg);
+    this.tools.Debug.log("Sent message", msg);
     return msg.promise;
   }
 
@@ -617,32 +620,33 @@ export class Test {
 }
 
 var w = <any>window;
-if (Tk.getEnvironment() >= Tk.Environment.Staging && w.api) {
+if (Tools.getEnvironment() >= Tools.Environment.Staging && w.api) {
   var test = Container.instance.get(Test);
   w.test = test;
 }
 
 @inject(UiContext)
 class Api {
+  get tools() { return Tools }
   constructor(private ui: UiContext) { }
   openSettings = (model?) => this.ui.eventBus.publish(new OpenSettings());
   createCommand = uiCommand2;
   getContentStateInitial = ContentHelper.getConstentStateInitial;
   errorMsg = (reason) => {
     try {
-      Tk.Debug.log("$$$ err reason", JSON.stringify(reason));
-    } catch (err) { Tk.Debug.warn("Err while converting error reason", err) }
+      this.tools.Debug.log("$$$ err reason", JSON.stringify(reason));
+    } catch (err) { this.tools.Debug.warn("Err while converting error reason", err) }
     if (typeof (reason) == 'string') return [reason, 'Unknown error occurred'];
 
-    if (reason instanceof Tk.NotFoundException || reason instanceof Tk.InvalidShortIdException) {
+    if (reason instanceof this.tools.NotFoundException || reason instanceof this.tools.InvalidShortIdException) {
       return [reason.message, "404: The requested resource could not be found"];
     }
 
-    if (reason instanceof Tk.RequireSslException) {
+    if (reason instanceof this.tools.RequireSslException) {
       return [reason.message, "please wait until you are redirected", "Requires SSL"];
     }
 
-    if (reason instanceof Tk.RequireNonSslException) {
+    if (reason instanceof this.tools.RequireNonSslException) {
       return [reason.message, "please wait until you are redirected", "Requires NO-SSL"];
     }
 

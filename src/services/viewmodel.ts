@@ -3,6 +3,7 @@ import {Mediator, LegacyMediator, DbQuery} from './mediator';
 import {Toastr} from './toastr';
 import {ListFactory, ObservableEventAggregator, EventWrapper, uiCommand2} from './reactive';
 import {ITabNotification} from '../resources/tab-view/tab-view';
+import {Tools} from './tools';
 
 import {Client} from 'withsix-sync-api';
 import {EventAggregator} from 'aurelia-event-aggregator';
@@ -25,10 +26,12 @@ export class ViewModel extends Base {
   _changed = false;
   get changed() { return this._changed; }
   set changed(value: boolean) {
-    Tk.Debug.log("set changed: ", value);
+    this.tools.Debug.log("set changed: ", value);
     this._changed = value;
   }
   constructor(private ui: UiContext) { super(); }
+
+  get tools() { return Tools; }
 
   static observableFromEvent = ObservableEventAggregator.observableFromEvent;
   observableFromEvent = <T>(evt: Function | string) => ObservableEventAggregator.observableFromEvent<T>(evt, this.eventBus);
@@ -54,7 +57,7 @@ export class ViewModel extends Base {
       if (row.length == 0) return;
       clearInterval(iv);
       window.w6Cheat.aureliaReady = true;
-      Tk.Debug.log("AURELIA: angular vm loaded");
+      this.tools.Debug.log("AURELIA: angular vm loaded");
       angular.element(document).scope().$apply();
       $("#root-content-row").prepend($("#content"));
     }, 500);
@@ -113,6 +116,50 @@ export class ViewModel extends Base {
       else throw err;
     }
   }
+
+  protected getMenuItems(items: Array<ILegacyMenuItem>, mainSegment: string, parentIsDefault?: boolean): ILegacyMenuItem[] {
+    var menuItems = [];
+    items.forEach(item => {
+      var main = item.mainSegment || item.mainSegment == "" ? item.mainSegment : mainSegment;
+      var fullSegment = main && main != "" ? main + "." + item.segment : item.segment;
+      var segment = item.isDefault ? main : fullSegment; // This will make menu links link to the parent where this page is default
+      var menuItem = this.copyObject(item);
+      menuItem.segment = segment;
+      menuItem.fullSegment = fullSegment;
+      menuItem.cls = item.cls;
+      menuItem.target = item.target || "_self";
+      if (item.isRight) menuItem.cls = item.cls ? item.cls + ' right' : 'right';
+      menuItems.push(menuItem);
+    });
+    return menuItems;
+  }
+
+
+  private copyObject<T>(object: T): T {
+    var objectCopy = <T>{};
+
+    for (var key in object) {
+      if (object.hasOwnProperty(key)) {
+        objectCopy[key] = object[key];
+      }
+    }
+
+    return objectCopy;
+  }
+}
+
+
+export interface ILegacyMenuItem {
+  header: string;
+  segment: string;
+  target?: string;
+  mainSegment?: string;
+  fullSegment?: string;
+  url?: string;
+  cls?: string;
+  icon?: string;
+  isRight?: boolean;
+  isDefault?: boolean;
 }
 
 
@@ -169,7 +216,9 @@ export interface IPaginated<T> {
 export class PaginatedViewModel<T> extends ViewModel {
   model: IPaginated<T>;
   loadMore;
-  async activate() {
+  params;
+  async activate(params) {
+    this.params = params;
     this.model = await this.getMore();
     this.loadMore = uiCommand2("Load more", this.addPage, {
       isVisibleObservable: this.morePagesAvailable,

@@ -1,7 +1,8 @@
 import {inject} from 'aurelia-framework';
 import {IBasketItem, BasketItemType, IBreezeMod, ModsHelper, Helper, FolderType,
   BasketService, UiContext, uiCommand2, ViewModel, Base, MenuItem, IMenuItem, GameClientInfo, uiCommand, Mediator, Query, DbQuery, DbClientQuery, handlerFor, VoidCommand, IContentState, ItemState,
-  RemoveRecent, Abort, UninstallContent, OpenFolder, LaunchContent, InstallContent, UnFavoriteContent, FavoriteContent, IBreezeUser, ContentHelper} from '../../../framework';
+  RemoveRecent, Abort, UninstallContent, OpenFolder, LaunchContent, InstallContent, UnFavoriteContent, FavoriteContent, IBreezeUser, ContentHelper,
+  breeze} from '../../../framework';
 import {GameBaskets, Basket} from '../../game-baskets';
 import {DialogService} from 'aurelia-dialog';
 import {EditPlaylistItem} from './edit-playlist-item';
@@ -58,6 +59,7 @@ export class PlaylistItem extends ViewModel {
   abort: ICommand<void>;
   openFolder: ICommand<void>;
   openConfigFolder: ICommand<void>;
+  gameName: string;
 
   get isInstalled() { return this.itemState != ItemState.Incomplete };
   get hasUpdateAvailable() { return this.isInstalled && this.itemState == ItemState.UpdateAvailable }
@@ -78,7 +80,7 @@ export class PlaylistItem extends ViewModel {
     if (model.level == null) throw Error("model.chain cannot be null!");
     if (model.stat == null) throw Error("model.stat cannot be null!");
     this.model = model.item;
-    if (this.model.id == null) Tk.Debug.log("$$$ null id!", this.model);
+    if (this.model.id == null) this.tools.Debug.log("$$$ null id!", this.model);
     this.chain = model.chain;
     this.stat = model.stat;
     this.currentGameId = model.currentGameId;
@@ -104,11 +106,13 @@ export class PlaylistItem extends ViewModel {
       this.model.image = data.avatar ? this.w6.url.getUsercontentUrl2(data.avatar, data.avatarUpdatedAt) : null;
       (<any>this.model).version = data.version;
     } catch (err) {
-      Tk.Debug.error("Error while trying to retrieve dependencies for " + this.model.id, err);
+      this.tools.Debug.error("Error while trying to retrieve dependencies for " + this.model.id, err);
     }
 
     this.stat.sizePacked = this.stat.sizePacked + this.model.sizePacked;
     this.image = this.model.image || this.w6.url.getAssetUrl('img/noimage.png');
+
+    this.gameName = (this.isForActiveGame ? this.w6.activeGame.slug : 'Arma-2').replace("-", " "); //(this.model.originalGameSlug || this.model.gameSlug).replace("-", " ");
 
     this.subscriptions.subd(d => {
       this.updateState();
@@ -212,7 +216,7 @@ export class PlaylistItem extends ViewModel {
 
   revert() {
     this.stat.sizePacked = this.stat.sizePacked - this.model.sizePacked;
-    //Tk.Debug.log("$$$ deactivating", this.model);
+    //Tools.Debug.log("$$$ deactivating", this.model);
     //this.dependencies.forEach(x => this.chain.delete(x.id));
     if (this.chain.get(this.model.id) === this.model)
       this.chain.delete(this.model.id);
@@ -247,10 +251,10 @@ export class PlaylistItem extends ViewModel {
 
   handleUpdateAvailable(updateAvailable: boolean) {
     // if (updateAvailable) {
-    //   Tools.removeEl(this.bottomMenuActions, this.launchMenuItem);
+    //   this.tools.removeEl(this.bottomMenuActions, this.launchMenuItem);
     //   this.bottomMenuActions.push(this.launchMenuItem);
     // } else
-    //   Tools.removeEl(this.bottomMenuActions, this.launchMenuItem);
+    //   this.tools.removeEl(this.bottomMenuActions, this.launchMenuItem);
   }
 
   updateState() { this.state = this.gameInfo.clientInfo.content[this.model.id]; }

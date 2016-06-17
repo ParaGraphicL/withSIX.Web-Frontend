@@ -1,5 +1,6 @@
-import {bindable,inject} from 'aurelia-framework';
-export class ListView<T> {
+import {bindable, inject} from 'aurelia-framework';
+import {Base} from '../services/base';
+export class ListView<T> extends Base {
   @bindable view: string;
   @bindable viewPath: string;
   @bindable itemType: string;
@@ -7,7 +8,7 @@ export class ListView<T> {
   @bindable itemsMap: Map<string, T>;
   @bindable isVirtual: boolean;
   @bindable listCls = 'menu main';
-  @bindable ads = [Tools.getRandomIntInclusive(0, 3), Tools.getRandomIntInclusive(4, 7)]
+  @bindable ads = [this.tools.getRandomIntInclusive(0, 3), this.tools.getRandomIntInclusive(4, 7)]
   @bindable adUnitId1 = "angular-ad1";
   @bindable adUnitId2 = "angular-ad2";
 

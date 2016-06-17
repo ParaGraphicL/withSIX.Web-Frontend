@@ -114,10 +114,10 @@ export class MenuItem<T> implements IMenuItem {
   constructor(action: IPromiseFunction<T>, options?: IMenuItemOptions) {
     if (action == null) throw new Error("action can't be null");
     if (action.hasOwnProperty("canExecute")) {
-      //Tk.Debug.log("Found UiCommand for", name);
+      //Tools.Debug.log("Found UiCommand for", name);
       this.action = action;
     } else {
-      //Tk.Debug.log("Creating UiCommand for", name);
+      //Tools.Debug.log("Creating UiCommand for", name);
       this.action = uiCommand<T>(action);
     }
     if (options) {
