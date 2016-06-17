@@ -1,9 +1,11 @@
 import {ViewModel, Query, DbQuery, handlerFor, uiCommandWithLogin2, IMenuItem, MenuItem} from '../../framework';
 import {CreateCollectionDialog} from './collections/create-collection-dialog';
 
+interface IStream { contentItems: any[]; postItems: any[] }
+
 export class Stream extends ViewModel {
   gameUrl: string;
-  model;
+  model: IStream;
   async activate(params) {
     this.model = await new GetStream(params.gameSlug).handle(this.mediator);
     this.gameUrl = `/p/${params.gameSlug}`;
@@ -29,12 +31,12 @@ export class Stream extends ViewModel {
   ]
 }
 
-export class GetStream extends Query<{}> {
+export class GetStream extends Query<IStream> {
   constructor(public gameSlug: string, public streamType = 0) { super() }
 }
 
 @handlerFor(GetStream)
-export class GetStreamHandler extends DbQuery<GetStream, {}> {
+export class GetStreamHandler extends DbQuery<GetStream, IStream> {
   async handle(request: GetStream) {
     let r = await this.context.getCustom<{ contentItems: any }>("games/" + request.gameSlug + "/stream?streamType=" + request.streamType);
     r.data.contentItems.forEach(x => x.type = 'mod');
