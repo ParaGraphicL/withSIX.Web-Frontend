@@ -168,9 +168,9 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
         isVisibleObservable: this.isInstalledObservable,
         icon: 'withSIX-icon-Folder'
       }))
-      if (this.model.gameSlug.startsWith('Arma')) {
+      if (this.shouldAddConfigAction)
         d(this.openConfigFolder = uiCommand2("Open config folder", () => new OpenFolder(this.model.gameId, this.model.type == 'mod' ? this.model.id : this.tools.emptyGuid, FolderType.Config).handle(this.mediator), { icon: 'icon withSIX-icon-Folder', isVisibleObservable: this.isInstalledObservable }));
-      }
+
     });
 
     this.setupMenuItems();
@@ -181,6 +181,8 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
 
     this.hasRealAuthor = model.authorSlug != 'withSIX-o-bot';
   }
+
+  get shouldAddConfigAction() { return this.model.gameSlug.startsWith('Arma'); }
   hasRealAuthor: boolean;
 
   updatedAt: Date;
@@ -228,7 +230,7 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
     this.topMenuActions.push(new MenuItem(this.uninstall));
     this.topMenuActions.push(new MenuItem(this.removeRecent))
     this.topMenuActions.push(new MenuItem(this.openFolder));
-    this.topMenuActions.push(new MenuItem(this.openConfigFolder));
+    if (this.shouldAddConfigAction) this.topMenuActions.push(new MenuItem(this.openConfigFolder));
     this.bottomActions.push(new MenuItem(this.omni));
     this.bottomActions.push(new MenuItem(this.abort));
   }

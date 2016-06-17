@@ -3,7 +3,7 @@ import {HttpClient as FetchClient} from 'aurelia-fetch-client';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-dependency-injection';
 
-import {EntityExtends, IUserInfo} from '../dtos';
+import {EntityExtends, IUserInfo} from './dtos';
 import {W6Urls} from './withSIX';
 import {Tools} from './tools';
 

@@ -1,4 +1,4 @@
-import {W6} from './services/withSIX';
+import {W6} from './withSIX';
 import breeze from 'breeze-client';
 
 
