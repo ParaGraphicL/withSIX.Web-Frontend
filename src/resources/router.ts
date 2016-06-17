@@ -9,11 +9,16 @@ export class RouteSegmentActiveValueConverter {
   toView(fullSegment, isDefault?) {
     let fullPath = '/' + fullSegment.replace(/\./g, "/");
     let fragment = this.router.currentInstruction.fragment;
-    return fragment.startsWith(fullPath) || (isDefault && fragment == this.getDefault(fullPath)) ? 'active' : '';
+    return fragment.startsWith(fullPath) || (isDefault && this.getDefault(fullPath, fragment)) ? 'active' : '';
   }
-  getDefault(fullPath: string) {
-    let split = fullPath.split("/");
-    return split.slice(0, split.length - 1).join("/");
+  getDefault(fullPath: string, fragment: string) {
+    var split;
+    while (split = fullPath.split("/")) {
+      if (split.length == 1) return fragment == split[0];
+      fullPath = split.slice(0, split.length - 1).join("/");
+      if (fragment == fullPath) return true;
+    }
+    return false;
   }
 }
 

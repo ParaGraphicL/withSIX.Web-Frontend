@@ -6977,10 +6977,10 @@ export module MyApp.Connect {
               when('/u/:userSlug/blogposts', 'profile.blog').
               when('/u/:userSlug/friends', 'profile.friends').
               when('/u/:userSlug/messages', 'profile.messages').
-              when('/u/:userSlug/content', 'aurelia').
-              when('/u/:userSlug/content/collections', 'aurelia').
-              when('/u/:userSlug/content/missions', 'aurelia').
-              when('/u/:userSlug/content/mods', 'aurelia').
+              when('/u/:userSlug/content', 'profile.content').
+              when('/u/:userSlug/content/collections', 'profile.content.aurelia').
+              when('/u/:userSlug/content/missions', 'profile.content.aurelia').
+              when('/u/:userSlug/content/mods', 'profile.content.aurelia').
               segment('profile', {
                 controller: 'ProfileController',
                 templateUrl: '/src_legacy/app/connect/profile/index.html',
@@ -6988,6 +6988,10 @@ export module MyApp.Connect {
                 resolve: setupQuery(Profile.GetProfileQuery),
               })
               .within();
+
+            profile.segment('content', { default: true })
+              .within()
+              .segment('aurelia', {});
 
             profile.segment('blog', {
               templateUrl: '/src_legacy/app/connect/profile/blogposts.html',
