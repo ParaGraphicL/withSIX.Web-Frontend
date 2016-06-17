@@ -1,6 +1,6 @@
 import {ServersModule} from './servers/index';
 import {Router, RouterConfiguration} from 'aurelia-router';
-import {ViewModel} from '../../framework';
+import {ViewModel, Query, DbClientQuery, handlerFor, IBreezeGame, GameChanged} from '../../framework';
 
 export class Show extends ViewModel {
   configureRouter(config: RouterConfiguration, router: Router) {
@@ -34,6 +34,20 @@ export class Show extends ViewModel {
     ])
   }
 
-  activate() { this.handleAngularHeader(); }
-  deactivate() { super.deactivate(); this.reverseAngularHeader(); }
+  async activate(params) {
+    let game = await new GetGame(params.gameSlug).handle(this.mediator);
+    this.eventBus.publish(new GameChanged(game.id, game.slug));
+  }
+}
+
+class GetGame extends Query<IBreezeGame> { constructor(public slug: string) { super() } }
+
+@handlerFor(GetGame)
+class GetGameHandler extends DbClientQuery<GetGame, IBreezeGame> {
+  async handle(request: GetGame) {
+    let game = await this.findBySlug("Games", request.slug, "getGame");
+
+    //return { game: game, gameInfo: await this.basketService.getGameInfo(game.id) };
+    return game;
+  }
 }

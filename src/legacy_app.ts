@@ -11363,13 +11363,11 @@ export module MyApp.Play.Games {
           throw err;
         }
       };
-      window.w6Cheat.api.gameChanged({ id: model.id, slug: model.slug });
       var s = this.eventBus.subscribe("basketChanged", () => this.applyIfNeeded());
 
       // TODO: Move to Directive..
       $scope.$on('$destroy', () => {
         s.dispose();
-        //window.w6Cheat.api.gameChanged({ id: null });
         $('#wrapper').removeClass('play-game');
       });
       $('#header-row').attr('style', 'background-image:url("' + $scope.url.getAssetUrl('img/play.withSIX/games/' + model.slug + '/headers/header.png') + '");');
