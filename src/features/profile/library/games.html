@@ -1,6 +1,6 @@
 <template>
 	<section class="au-animate" id="my-games">
-		<h2>${heading | usertitle}</h2>
+		<h2 class="page-title">${heading | usertitle}</h2>
 		<button click.delegate="openGameSettings()" class="default row-header-button">Settings</button>
 
 		<div class="tile" if.bind="!clientEnabled">
