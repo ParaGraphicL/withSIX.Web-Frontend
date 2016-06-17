@@ -11,7 +11,8 @@ export class Index extends ViewModel {
     this.router = router;
     let modulePath = 'features/user-profile/';
     config.map([
-      { route: ['', 'content'], name: 'content', moduleId: `${modulePath}content/index`, nav: false, title: 'Content' }
+      { route: ['', 'content'], name: 'content', moduleId: `${modulePath}content/index`, nav: false, title: 'Content' },
+      { route: ['blogposts', 'friends', 'messages'], name: 'angular', moduleId: 'features/pages/angular', nav: false }
     ])
   }
 
