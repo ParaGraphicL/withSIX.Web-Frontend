@@ -1,6 +1,7 @@
 <template>
   <div class="content-stateable content-state-uptodate">
     <div class="img">
+      <dropdown-menu class="basketable-dropdown new-style hide-until-open" menu-cls="content-stateable content-state-${itemStateClass}" if.bind="topMenuActions && topMenuActions.length > 0" items.bind="topMenuActions"></dropdown-menu>
       <a href="/me/library/${model.slug}">
         <span class="imageholder" back-img.bind="image"></span>
       </a>
