@@ -12,7 +12,7 @@ import {Router} from 'aurelia-router';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {Toastr, UiContext, Mediator, ErrorLoggingMediatorDecorator, InjectingMediatorDecorator, BasketService, Client,
   CollectionDataService, ModDataService, MissionDataService, UploadService, ToastLogger, PromiseCache,
-  UserInfo, IUserInfo, LegacyBasketService, W6Context, ClientMissingHandler,
+  EntityExtends, IUserInfo, LegacyBasketService, W6Context, ClientMissingHandler,
   W6Urls, W6, Tools} from './services/lib';
 import {HttpClient} from 'aurelia-http-client';
 import {HttpClient as FetchClient} from 'aurelia-fetch-client';
@@ -188,7 +188,7 @@ export async function bs(w6Urls: W6Urls, something) {
   } catch (err) {
     if (err instanceof AbortError) throw err;
     Tools.Debug.log("Error logging in", err);
-    userInfo = new UserInfo();
+    userInfo = new EntityExtends.UserInfo();
     userInfo.failedLogin = true;
   }
 

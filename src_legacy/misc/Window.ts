@@ -125,5 +125,6 @@ interface Window {
   prerenderReady: boolean;
   VersionCompare: {
     compare: (x, y, options?: {}) => number
-  }
+  },
+  RedactorPlugins;
 }
