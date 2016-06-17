@@ -1,6 +1,5 @@
-declare var UUIDjs;
-// var UUIDjs = import * as UUIDjs from ('uuid-js');
-// var UUIdjs = require('uuid-js');
+
+var UUIDjs: any = require('uuid-js');
 
 String.prototype.indexOfIgnoreCase = function(prefix) {
   return this.toLowerCase().indexOf(prefix.toLowerCase());

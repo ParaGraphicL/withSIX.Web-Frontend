@@ -1,6 +1,7 @@
 import {Tools} from './tools';
-import {IUserInfo, globalRedactorOptions, breeze} from './legacy';
 import {Client, IMiniClientInfo} from 'withsix-sync-api';
+import breeze from 'breeze-client';
+import {IUserInfo} from '../dtos';
 
 export interface IAvatarInfo {
   avatarURL?: string;
@@ -15,6 +16,31 @@ enum Sites {
   Play,
   Connect
 }
+
+
+if (!window.RedactorPlugins) window.RedactorPlugins = <any>{};
+
+window.RedactorPlugins.bufferbuttons = () => {
+  return {
+    init: function() {
+      var undo = this.button.addFirst('undo', 'Undo');
+      var redo = this.button.addAfter('undo', 'redo', 'Redo');
+
+      this.button.addCallback(undo, this.buffer.undo);
+      this.button.addCallback(redo, this.buffer.redo);
+    }
+  };
+};
+export var globalRedactorOptions = { plugins: [], linebreaks: true }; // 'p', 'h1', 'h2', 'pre' // allowedTags: ['spoiler', 'code', 'p', 'h1', 'h2', 'pre']
+globalRedactorOptions.plugins = ['bufferbuttons', 'image', 'video', 'table', 'fullscreen'];
+
+/*
+                    globalRedactorOptions.buttons = [
+                        'html', 'formatting', 'bold', 'italic', 'deleted',
+                        'unorderedlist', 'orderedlist', 'outdent', 'indent',
+                        'image', 'file', 'link', 'alignment', 'horizontalrule'
+                    ];
+*/
 
 export class W6Urls {
   imageCdn = "https://img-cdn.withsix.com";

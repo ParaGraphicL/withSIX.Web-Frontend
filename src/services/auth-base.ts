@@ -3,7 +3,7 @@ import {HttpClient as FetchClient} from 'aurelia-fetch-client';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-dependency-injection';
 
-import {IUserInfo, UserInfo} from './legacy';
+import {EntityExtends, IUserInfo} from '../dtos';
 import {W6Urls} from './withSIX';
 import {Tools} from './tools';
 
@@ -116,7 +116,7 @@ export class LoginBase {
     this.setHeaders(window.localStorage[LoginBase.token]);
 
     let userInfo = await this.getUserInfoInternal();
-    if (!userInfo) userInfo = new UserInfo();
+    if (!userInfo) userInfo = new EntityExtends.UserInfo();
     let hasSslRedir = window.location.hash.includes('sslredir=1');
     let hasLoggedIn = window.location.hash.includes('loggedin=1');
     let isLoggedIn = userInfo.id ? true : false;
@@ -222,7 +222,7 @@ export class LoginBase {
       isPremium: roles.indexOf("premium") > -1
     };
 
-    userInfo = new UserInfo();
+    userInfo = new EntityExtends.UserInfo();
     Object.assign(userInfo, uInfo);
     return userInfo;
   }

@@ -1,5 +1,11 @@
 export * from 'withsix-sync-api';
 
+import breeze from 'breeze-client';
+export {breeze};
+
+export * from '../dtos';
+export * from './legacy/w6context';
+
 export * from './legacy';
 export * from './base';
 export * from './reactive';

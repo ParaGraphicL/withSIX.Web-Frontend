@@ -7,7 +7,7 @@ import {IBreezeMod, IBreezeUser, IBreezeCollection, IBreezeMission, IBreezeColle
   IBreezeCollectionComment, IBreezePostComment, AbstractDefs, BreezeInitialzation, IBreezeModUserGroup, IBreezeModComment, IBreezeModImageFileTransferPolicy,
   IBreezeModMediaItem, IUserInfo, Resource, Permission, Role,
   EntityExtends, BreezeEntityGraph, _IntDefs} from './dtos';
-import {W6, W6Urls} from './services/withSIX';
+import {W6, W6Urls, globalRedactorOptions} from './services/withSIX';
 import {Tools} from './services/tools';
 import {W6Context, W6ContextWrapper, IQueryResult} from './services/legacy/w6context';
 import {Tk} from './services/legacy/tk'
@@ -21,30 +21,6 @@ declare var commangular;
 declare var accounting;
 declare var Modernizr: ModernizrStatic;
 declare var Fingerprint;
-
-if (!RedactorPlugins) var RedactorPlugins = <any>{};
-
-RedactorPlugins.bufferbuttons = () => {
-  return {
-    init: function() {
-      var undo = this.button.addFirst('undo', 'Undo');
-      var redo = this.button.addAfter('undo', 'redo', 'Redo');
-
-      this.button.addCallback(undo, this.buffer.undo);
-      this.button.addCallback(redo, this.buffer.redo);
-    }
-  };
-};
-export var globalRedactorOptions = { plugins: [], linebreaks: true }; // 'p', 'h1', 'h2', 'pre' // allowedTags: ['spoiler', 'code', 'p', 'h1', 'h2', 'pre']
-globalRedactorOptions.plugins = ['bufferbuttons', 'image', 'video', 'table', 'fullscreen'];
-
-/*
-                    globalRedactorOptions.buttons = [
-                        'html', 'formatting', 'bold', 'italic', 'deleted',
-                        'unorderedlist', 'orderedlist', 'outdent', 'indent',
-                        'image', 'file', 'link', 'alignment', 'horizontalrule'
-                    ];
-*/
 
 export module MyApp {
   export var debug = Tools.debug;

@@ -1,5 +1,4 @@
-import {MyApp, globalRedactorOptions} from '../legacy_app';
-import breeze from 'breeze-client';
+import {MyApp} from '../legacy_app';
 
 import IBasketItem = MyApp.Components.Basket.IBasketItem;
 import BasketItemType = MyApp.Components.Basket.BasketItemType;
@@ -14,12 +13,6 @@ import IBasketCollection = MyApp.Components.Basket.IBasketCollection;
 
 import IBreezeErrorReason = MyApp.IBreezeErrorReason;
 
-//export {MyApp};
-export {globalRedactorOptions};
-import {EntityExtends} from '../dtos';
-export * from '../dtos';
-export * from './legacy/w6context';
-
 import CollectionDataService = MyApp.Play.Collections.CollectionDataService
 import ModDataService = MyApp.Play.Mods.ModDataService;
 import MissionDataService = MyApp.Play.Missions.MissionDataService;
@@ -30,9 +23,8 @@ import OpenAddCollectionDialogQuery = MyApp.Play.Games.OpenAddCollectionDialogQu
 import LegacyBasketService = MyApp.Components.Basket.BasketService;
 import GetMiniChangelogQuery = MyApp.Main.Changelog.GetMiniChangelogQuery;
 import GetBlogsQuery = MyApp.Main.Blog.GetBlogsQuery;
-import UserInfo = EntityExtends.UserInfo;
 
-export {breeze, IBreezeErrorReason, IBasketItem, IBasketModel, BasketItemType, BasketType, BasketState, IBasketCollection, ModsHelper, Helper}
-export {UserInfo, CollectionDataService, ModDataService, UploadService, MissionDataService}
+export {IBreezeErrorReason, IBasketItem, IBasketModel, BasketItemType, BasketType, BasketState, IBasketCollection, ModsHelper, Helper}
+export {CollectionDataService, ModDataService, UploadService, MissionDataService}
 export {ToastLogger, FileSize}
 export {GetMiniChangelogQuery, GetBlogsQuery, OpenAddModDialogQuery, OpenAddCollectionDialogQuery, LegacyBasketService}
