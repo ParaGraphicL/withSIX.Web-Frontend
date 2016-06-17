@@ -40,6 +40,7 @@
         "src/features/games/index.ts",
         "src/features/games/missions/index.ts",
         "src/features/games/mods/index.ts",
+        "src/features/games/post.ts",
         "src/features/games/servers/index.ts",
         "src/features/games/servers/server-item.ts",
         "src/features/games/servers/show.ts",

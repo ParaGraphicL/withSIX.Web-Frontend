@@ -32,8 +32,6 @@ interface String {
 
 interface IContainerObjects {
   openAddModsToCollectionsDialog;
-  mediator;
-  eventBus; //: MyApp.IEventBus;
   uiContext;
   toastr; //: MyApp.Toastr;
   forkCollection;
@@ -43,7 +41,6 @@ interface IContainerObjects {
   openCreateCollectionDialog;
   openAddModDialog;
   basketService;
-  client;
 }
 
 interface IAureliaConverter {

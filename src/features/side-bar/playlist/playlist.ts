@@ -278,7 +278,6 @@ export class Playlist extends ViewModel {
 
   async executeBasket(basket: Basket) {
     if (this.client.state == ConnectionState.disconnected) {
-      this.basketService.basketService.settings.forceBasketInstallMessageHidden = false;
       //await this.client.getInfo(); // TODO: this shouyld not be needed! // instead of connection.promise();
       return;
     }

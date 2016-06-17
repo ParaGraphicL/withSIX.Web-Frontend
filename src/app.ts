@@ -306,11 +306,6 @@ export class App extends ViewModel {
   openMessages = uiCommand2("Messages", async () => this.navigateInternal("/me/messages"));
   openLogout = uiCommand2("Logout", async () => this.login.logout());
 
-  openSearch(event) {
-    this.w6.openSearch();
-    event.preventDefault();
-  }
-
   sideBar: SideBar;
   topBar: TopBar;
   closeTabs() {

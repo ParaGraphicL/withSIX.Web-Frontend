@@ -7,7 +7,10 @@ export class Stream extends ViewModel {
   async activate(params) {
     this.model = await new GetStream(params.gameSlug).handle(this.mediator);
     this.gameUrl = `/p/${params.gameSlug}`;
+    this.handleFooterIf(false);
   }
+
+  deactivate() { super.deactivate(); this.handleFooterIf(true); }
 
   get item() { return this.model.postItems[0]; }
   adItem = 3;
@@ -16,6 +19,8 @@ export class Stream extends ViewModel {
   addMod = uiCommandWithLogin2("Mod", async () => this.legacyMediator.openAddModDialog(this.w6.activeGame.slug), { icon: "icon withSIX-icon-Nav-Mod" })
   addMission = uiCommandWithLogin2("Mission", async () => this.navigateInternal(this.w6.url.play + '/' + this.w6.activeGame.slug + '/missions/new'), { icon: "icon withSIX-icon-Nav-Mission" });
   addCollection = uiCommandWithLogin2("Collection", async () => this.dialog.open({ viewModel: CreateCollectionDialog, model: { game: this.w6.activeGame } }), { icon: "icon withSIX-icon-Nav-Collection" })
+
+  get firstPost() { return this.model.postItems[0] }
 
   addContentMenu: IMenuItem[] = [
     new MenuItem(this.addCollection),

@@ -1,0 +1,12 @@
+<template>
+  <div class="post line" itemscope itemtype="http://schema.org/BlogPosting">
+    <div>
+      <span class="title pull-left" itemprop="name headline">
+      <a title="${model.title}" href="${w6.url.main}/blog/${model.slug}">${model.title}</a>
+    </span>
+      <span class="pull-right">
+      <sx-time-ago class="created small" time="model.created"></sx-time-ago>
+    </span>
+    </div>
+  </div>
+</template>
