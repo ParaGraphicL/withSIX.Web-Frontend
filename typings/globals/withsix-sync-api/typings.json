@@ -1,8 +1,0 @@
-{
-  "resolution": "main",
-  "tree": {
-    "src": "https://raw.githubusercontent.com/SIXNetworks/withsix-sync-api-js/master/dist/withsix-sync-api.d.ts",
-    "raw": "github:SIXNetworks/withsix-sync-api-js/dist/withsix-sync-api.d.ts",
-    "typings": "https://raw.githubusercontent.com/SIXNetworks/withsix-sync-api-js/master/dist/withsix-sync-api.d.ts"
-  }
-}

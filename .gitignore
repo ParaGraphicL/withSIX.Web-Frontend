@@ -10,3 +10,5 @@ bower_components/
 dist/
 dist_legacy/
 jspm_packages/
+typings/globals/
+typings/modules/
