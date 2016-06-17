@@ -268,7 +268,7 @@ export class App extends ViewModel {
     if (!this.first) {
       let ready = false;
       let scriptElement = document.createElement('script');
-      scriptElement.src = `${this.w6.url.cdn}/dist_legacy/app.min.js`;
+      scriptElement.src = this.w6.url.getAssetUrl('dist_legacy/app.min.js');
       scriptElement.onload = () => ready = true;
       document.querySelector('head').appendChild(scriptElement);
 
