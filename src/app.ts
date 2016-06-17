@@ -125,6 +125,9 @@ export class App extends ViewModel {
       this.tools.Debug.warn("Tried to unload, prevented", window.location.href);
       return false;
     };
+
+    this.activateNg();
+
     // workaround for dialogs not working
     Origin.set(SettingsIndex, { moduleId: "features/settings/index", moduleMember: "Index" });
     Origin.set(CreateCollectionDialog, { moduleId: "features/games/collections/create-collection-dialog", moduleMember: "CreateCollectionDialog" });
@@ -137,8 +140,6 @@ export class App extends ViewModel {
 
     let isSync = window.location.search.includes('sync=1') ? true : false;
     if (isSync) { this.w6.updateSettings(x => x.hasSync = true); }
-
-    this.activateNg();
     this.template = this.w6.enableBasket ? 'v2' : 'v1'; // this.w6.settings.template || (this.w6.url.environment > this.tools.Environment.Production || this.w6.userInfo.isAdmin || this.w6.settings.hasSync ? 'v2' : 'v1');
     //if (window.location.search.includes("template=v2")) this.setTemplate('v2');
     //else if (window.location.search.includes("template=v1")) this.setTemplate('v1');
@@ -265,8 +266,15 @@ export class App extends ViewModel {
 
   activateNg() {
     if (!this.first) {
+      let ready = false;
+      let scriptElement = document.createElement('script');
+      scriptElement.src = `${this.w6.url.cdn}/dist_legacy/app.min.js`;
+      scriptElement.onload = () => ready = true;
+      document.querySelector('head').appendChild(scriptElement);
+
       let iv = setInterval(() => {
         if (window.w6Cheat.aureliaReady) return;
+        if (!ready) return;
         let row = angular.element("#root-content-row");
         if (row.length == 0) return;
         clearInterval(iv);
