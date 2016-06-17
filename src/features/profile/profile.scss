@@ -1,5 +1,6 @@
 @import "_base";
 #my-games,
+#my-home,
 #my-library,
 #my-library-show-home,
 #user-profile .library {
@@ -60,7 +61,6 @@
   .game {
     $width: 110px + 30px; // padding
     width: $width;
-    margin-bottom: 40px;
     .card {
       &:hover {
         .title a {
@@ -205,11 +205,11 @@
     height: 96px;
   }
   .virtual-container {
-    max-height: calc(100vh - 652px); // TODO: The header might change because of no-ads..
+    max-height: calc(100vh - 596px); // TODO: The header might change because of no-ads..
   }
   .recent {
     .virtual-container {
-      max-height: calc(100vh - 380px); // TODO: The header might change because of no-ads..
+      max-height: calc(100vh - 382px); // TODO: The header might change because of no-ads..
     }
     .virtual-row {
       height: 304px;
