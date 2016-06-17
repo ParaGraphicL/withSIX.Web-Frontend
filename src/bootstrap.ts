@@ -24,7 +24,9 @@ import legacyBootAngular = MyApp.bootAngular;
 import Linq from 'linq4es2015';
 import numeral from 'numbro';
 import breeze from 'breeze-client';
-
+require('breeze-client-labs/breeze.getEntityGraph');
+// workaround
+(<any>breeze.EntityManager.prototype).getEntityGraph = (<any>window).breeze.EntityManager.prototype.getEntityGraph
 
 breeze.NamingConvention.camelCase.setAsDefault();
 breeze.DataType.parseDateFromServer = function(source) {
