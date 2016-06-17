@@ -105,7 +105,6 @@ interface IApi {
   openSettings(model?): void;
   createCommand<T>(name: string, action: IPromiseFunction<T>, options?: ICommandInfo): ICommand<T>;
   createGameBasket(gameId, basketModel): any;
-  gameChanged(info: { id: string; slug: string }): void;
   getContentStateInitial(state: { state /*: MyApp.Components.ModInfo.ItemState */; version: string }, constraint?: string);//: MyApp.Components.ModInfo.ItemState;
 }
 

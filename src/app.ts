@@ -693,7 +693,6 @@ class Api {
     gm.activate(gameId, basketModel);
     return gm;
   }
-  gameChanged = (info: { id: string; slug: string }) => this.ui.eventBus.publish(new GameChanged(info.id, info.slug));
 }
 window.w6Cheat.api = Container.instance.get(Api);
 window.w6Cheat.containerObjects.restoreBasket = RestoreBasket;
