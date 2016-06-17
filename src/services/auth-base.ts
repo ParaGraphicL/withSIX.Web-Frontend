@@ -52,6 +52,7 @@ export class LoginBase {
     let shouldLog = (Tools.getEnvironment() > Tools.Environment.Production);
 
     this.http.configure(config => {
+      config.withHeader('Accept', 'application/json');
       config.withInterceptor({
         request(request) {
           if (shouldLog) Tools.Debug.log(`Requesting ${request.method} ${request.url}`, request);
