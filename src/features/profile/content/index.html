@@ -46,10 +46,11 @@
 
     </div>
 
-    <div class="tabbar">
-      <menu items.bind="menuItems"></menu>
+    <div class="library-menu" style="float: left; width: 160px">
+      <menu items.bind="menuItems" menu-cls="well nav nav-pills nav-stacked"></menu>
+    </div>
+    <div style="margin-left: 192px">
+      <router-view></router-view>
     </div>
   </div>
-
-  <router-view></router-view>
 </template>

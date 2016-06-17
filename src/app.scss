@@ -414,3 +414,56 @@ card-view {
     }
   }
 }
+menu {
+  margin: 0;
+  padding: 0;
+}
+.page-title {
+  font-size: 2.5em;
+  margin-top: 0;
+}
+.library-menu {
+  .well {
+    background-color: initial;
+    border: none;
+    box-shadow: none;
+    -webkit-box-shadow: none;
+    padding: 0;
+    li {
+      a {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        border-left: 48px solid $colorSixLightGray;
+        text-decoration: none;
+        background-color: $colorSixBlue;
+        &:hover {
+          background-color: $colorSixBlue;
+        }
+        .icon {
+          margin-left: -51px;
+          float: left;
+          margin-top: 1px;
+          font-size: 24px;
+          color: $colorSixBlue;
+        }
+      }
+      &:not(.active) {
+        a {
+          background-color: white;
+          color: $colorSixMediumGray;
+          &:hover {
+            //background-color: $colorSixBlue;
+            //color: white;
+            .icon {
+              color: $colorSixBlue;
+            }
+          }
+          .icon {
+            color: $colorSixMediumGray;
+          }
+        }
+      }
+      margin-bottom: 16px;
+    }
+  }
+}

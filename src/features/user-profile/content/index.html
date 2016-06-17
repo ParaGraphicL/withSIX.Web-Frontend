@@ -1,9 +1,10 @@
 <template>
-  <div class="container-fluid">
-    <div class="tabbar">
-      <menu items.bind="menuItems"></menu>
+  <section class="container-fluid" id="user-profile">
+    <div class="library-menu" style="float: left; width: 160px">
+      <menu items.bind="menuItems" menu-cls="well nav nav-pills nav-stacked"></menu>
     </div>
-  </div>
-
-  <router-view></router-view>
+    <div style="margin-left: 192px">
+      <router-view></router-view>
+    </div>
+  </section>
 </template>
