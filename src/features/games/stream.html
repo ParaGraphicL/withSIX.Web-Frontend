@@ -1,19 +1,18 @@
 <template>
-  <div class="play-stream">
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-sm-12 col-md-6">
-          <div class="header">
-            <div class="dropdown publish-buttons tiny">
-              <!-- <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+  <div class="play-stream container-fluid">
+    <div class="row">
+      <div class="col-sm-12 col-md-6">
+        <div class="header">
+          <div class="dropdown publish-buttons tiny">
+            <!-- <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                 <span class="icon withSIX-icon-Add"></span> Add content
               </button> -->
-              <dropdown-menu items.bind="addContentMenu" header="add content" icon="withSIX-icon-Add"></dropdown-menu>
-            </div>
+            <dropdown-menu items.bind="addContentMenu" header="add content" icon="withSIX-icon-Add"></dropdown-menu>
+          </div>
 
-            <div class="dropdown stream-buttons">
-              <h2 class="stream-title">Stream</h2> &nbsp;
-              <!-- <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
+          <div class="dropdown stream-buttons">
+            <h2 class="stream-title">Stream</h2> &nbsp;
+            <!-- <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
                 ${model.current}
                 <span class="caret"></span>
               </button>
@@ -34,22 +33,22 @@
                   <a role="menuitem" tabindex="-1" href="${gameUrl}/${streamPath}/collections">Collections</a>
                 </li>
               </ul> -->
-            </div>
           </div>
-
-          <div class="content tile-list">
-            <card-view items.bind="model.contentItems" view-path="features/profile/content/" item-type="mod" card-container-cls="col-sm-12" card-cls="horizontal content-basketable">
-            </card-view>
-
-            <a href="${gameUrl}/mods">All mods</a> |
-            <a href="${gameUrl}/missions">All missions</a> |
-            <a href="${gameUrl}/collections">All collections</a>
-          </div>
-
         </div>
 
-        <div class="col-sm-12 col-md-6">
-          <!--
+        <div class="content tile-list">
+          <card-view is-virtual.one-time="features.uiVirtualization" items.bind="model.contentItems" view-path="features/profile/content/" item-type="mod" card-container-cls="col-sm-12" card-cls="horizontal content-basketable">
+          </card-view>
+
+          <a href="${gameUrl}/mods">All mods</a> |
+          <a href="${gameUrl}/missions">All missions</a> |
+          <a href="${gameUrl}/collections">All collections</a>
+        </div>
+
+      </div>
+
+      <div class="col-sm-12 col-md-6">
+        <!--
     <div class="did-you-know">
         <h3>Did you know?</h3>
 
@@ -59,51 +58,52 @@
 
     -->
 
-          <div class="blog">
-            <div class="header">
-              <span class="share-buttons">
+        <div class="blog">
+          <div class="header">
+            <span class="share-buttons">
               <!--  disabled because it pushes the last button out of view. <a class="tiny">FOLLOW <b>US</b></a> -->
               <a class="tiny">FOLLOW <b>US</b></a>
               <a href="https://twitter.com/SixNetworks" rel="external" class="icon twitter" target="_blank">
                 <span class="icon withSIX-icon-Social-Twitter"></span>
-              </a>
-              <a href="https://www.facebook.com/withSIX" rel="external" class="icon facebook" target="_blank">
-                <span class="icon withSIX-icon-Social-Facebook"></span>
-              </a>
-              </span>
-              <h2 class="stream-title">withSIX blog</h2>
-            </div>
+            </a>
+            <a href="https://www.facebook.com/withSIX" rel="external" class="icon facebook" target="_blank">
+              <span class="icon withSIX-icon-Social-Facebook"></span>
+            </a>
+            </span>
+            <h2 class="stream-title">withSIX blog</h2>
+          </div>
 
-            <div class="posts tile-list" itemscope itemtype="http://schema.org/Blog">
+          <div class="posts tile-list" itemscope itemtype="http://schema.org/Blog">
+            <div class="${features.uiVirtualization ? 'virtual-container' : ''}">
               <ul>
-                <li class="post full" itemscope itemtype="http://schema.org/BlogPosting" if.bind="model.postItems.length > 0">
+                <li class="post full" itemscope itemtype="http://schema.org/BlogPosting" if.bind="model.postItems.length  > 0">
                   <div class="top cntnr">
-                    <h2 class="title" title="${item.title}" itemprop="name headline">
-                    <a href="${w6.url.main}/blog/${item.slug}">${item.title}</a>
-                  </h2>
+                    <h2 class="title" title="${firstPost.title}" itemprop="name headline">
+                  <a href="${w6.url.main}/blog/${firstPost.slug}">${firstPost.title}</a>
+                </h2>
                     <div>
                       <span class="author-info" itemprop="author" itemscope itemtype="http://schema.org/Person">
-                      <a href="${w6.url.getUserUrl(item.author)}" rel="author">
-                        <img src="${w6.url.calculateAvatarUrl(item.author, 48)}" /> ${item.author.displayName}
-                      </a>
-                    </span>
+                    <a href="${w6.url.getUserUrl(firstPost.author)}" rel="author">
+                      <img src="${w6.url.calculateAvatarUrl(firstPost.author, 48)}" /> ${firstPost.author.displayName}
+                    </a>
+                  </span>
                       <span class="pull-right">
-                      <!-- <span if.bind="w6.environment > 0">${item.likesCount} likes</span> -->
-                      <sx-time-ago class="created" time="item.created"></sx-time-ago>
+                    <!-- <span if.bind="w6.environment > 0">${firstPost.likesCount} likes</span> -->
+                      <sx-time-ago class="created" time="firstPost.created"></sx-time-ago>
                       </span>
                     </div>
                     <hr/>
-                    <div class="summary contentrender" innerHTML.bind="item.summary" itemprop="articleBody"></div>
+                    <div class="summary contentrender" innerHTML.bind="firstPost.summary" itemprop="articleBody"></div>
                   </div>
                   <div class="bottom cntnr">
-                    <a class="comments small" href="${w6.url.main}/blog/${item.slug}#comments">${item.commentsCount} comments</a>
-                    <a class="readon" href="${w6.url.main}/blog/${item.slug}">
+                    <a class="comments small" href="${w6.url.main}/blog/${firstPost.slug}#comments">${firstPost.commentsCount} comments</a>
+                    <a class="readon" href="${w6.url.main}/blog/${firstPost.slug}">
                       <span class="icon withSIX-icon-Arrow-Right-Big"></span>&nbsp;Read on</a>
                   </div>
                 </li>
 
 
-                <li if.bind="w6.renderAds">
+                <li if.bind="w6.renderAds" if.bind="$index == 0">
                   <div class="tile">
                     <div class="add-container">
                       <div class="add" ng-dfp-ad="angular-ad2"></div>
@@ -112,32 +112,23 @@
                     <div ng-include="'/src_legacy/app/components/ads/play-vt-large.html'"></div>
                   </div>
                 </li>
-
-                <li class="post line" repeat.for="item of model.postItems.slice(1)" itemscope itemtype="http://schema.org/BlogPosting">
-                  <div>
-                    <span class="title pull-left" itemprop="name headline">
-                    <a title="${item.title}" href="${w6.url.main}/blog/${item.slug}">${item.title}</a>
-                  </span>
-                    <span class="pull-right">
-                    <sx-time-ago class="created small" time="item.created"></sx-time-ago>
-                  </span>
-                  </div>
-                </li>
               </ul>
-            </div>
 
+              <list-view items.bind="model.postItems" if.bind="model.postItems.length > 0" item-type="post" view-path="features/games/">
+              </list-view>
+
+
+              <div class="archive">
+                <h3>Archive</h3>
+
+                <ul>
+                  <li class="month line" repeat.for="pm of model.postMonths">
+                    <a href="${w6.url.main}/blog/archive/${pm.year}/${pm.month}">${pm.month | monthName} - ${pm.year}</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
             <a href="${w6.url.main}/blog">All posts</a>
-
-            <div class="archive">
-              <h3>Archive</h3>
-
-              <ul>
-                <li class="month line" repeat.for="pm of model.postMonths">
-                  <a href="${w6.url.main}/blog/archive/${pm.year}/${pm.month}">${pm.month | monthName} - ${pm.year}</a>
-                </li>
-              </ul>
-            </div>
-
           </div>
         </div>
       </div>

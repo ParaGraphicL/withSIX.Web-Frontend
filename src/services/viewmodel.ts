@@ -33,6 +33,11 @@ export class ViewModel extends Base {
 
   get tools() { return Tools; }
 
+  handleFooterIf(sw: boolean) {
+    if (this.features.uiVirtualization)
+      this.w6.showFooter = sw;
+  }
+
   static observableFromEvent = ObservableEventAggregator.observableFromEvent;
   observableFromEvent = <T>(evt: Function | string) => ObservableEventAggregator.observableFromEvent<T>(evt, this.eventBus);
 

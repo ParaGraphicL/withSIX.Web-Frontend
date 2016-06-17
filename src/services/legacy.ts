@@ -1,15 +1,15 @@
 import {MyApp} from '../legacy_app';
 
-import IBasketItem = MyApp.Components.Basket.IBasketItem;
-import BasketItemType = MyApp.Components.Basket.BasketItemType;
-import ModsHelper = MyApp.Play.Mods.ModsHelper;
-import Helper = MyApp.Play.Helper;
-import FileSize = MyApp.Components.FileSize;
-
 import IBasketModel = MyApp.Components.Basket.IBasketModel;
 import BasketType = MyApp.Components.Basket.BasketType;
 import BasketState = MyApp.Components.Basket.BasketState;
 import IBasketCollection = MyApp.Components.Basket.IBasketCollection;
+import IBasketItem = MyApp.Components.Basket.IBasketItem;
+import BasketItemType = MyApp.Components.Basket.BasketItemType;
+
+import ModsHelper = MyApp.Play.Mods.ModsHelper;
+import Helper = MyApp.Play.Helper;
+import FileSize = MyApp.Components.FileSize;
 
 import IBreezeErrorReason = MyApp.IBreezeErrorReason;
 

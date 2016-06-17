@@ -13,6 +13,9 @@ import {W6Context, W6ContextWrapper, IQueryResult} from './services/w6context';
 import {Tk} from './services/legacy/tk'
 import {EventAggregator} from 'aurelia-event-aggregator';
 
+import {Mediator} from 'aurelia-mediator';
+import {Client} from 'withsix-sync-api';
+
 
 // This file is only intended to setup the environment and root Application configuration
 // Add Directives / Filters / Controllers / etc elsewhere
@@ -201,7 +204,7 @@ export module MyApp {
       'ui-rangeSlider', 'ngFileUpload2', 'checklist-model', 'AngularProgress', 'angular-loading-bar',
       'route-segment', 'view-segment', 'mgcrea.ngStrap.datepicker', 'angular-redactor',
       'Components.BytesFilter', 'Components.Debounce', 'Components.Pagedown', 'Components.Fields',
-      'Components.ContentGallery', 'Components.ReallyClick', 'Components.BackImg', 'Components.Comments', 'Components.AccountCard', 'nvd3ChartDirectives',
+      'Components.ReallyClick', 'Components.BackImg', 'Components.Comments', 'Components.AccountCard', 'nvd3ChartDirectives',
       'Components.Filters', 'Components.Directives', 'mgcrea.ngStrap.typeahead', 'mgcrea.ngStrap.tooltip', 'angularFileUpload', 'mgcrea.ngStrap.dropdown', 'mgcrea.ngStrap.popover', 'ui.bootstrap.collapse', 'mgcrea.ngStrap.affix',
       'ngPasswordStrength', 'mgcrea.ngStrap.helpers.debounce', 'truncate'
     ];
@@ -217,12 +220,12 @@ export module MyApp {
       super('app', AppModule.getModules());
 
       this.app
-        .factory('aur.mediator', () => window.w6Cheat.container.get(window.w6Cheat.containerObjects.mediator))
-        .factory('aur.eventBus', () => window.w6Cheat.container.get(window.w6Cheat.containerObjects.eventBus))
+        .factory('aur.mediator', () => window.w6Cheat.container.get(Mediator))
+        .factory('aur.eventBus', () => window.w6Cheat.container.get(EventAggregator))
+        .factory('aur.client', () => window.w6Cheat.container.get(Client))
+        .factory('modInfoService', () => window.w6Cheat.container.get(Client))
         .factory('aur.uiContext', () => window.w6Cheat.container.get(window.w6Cheat.containerObjects.uiContext))
         .factory('aur.login', () => window.w6Cheat.container.get(window.w6Cheat.containerObjects.login))
-        .factory('aur.client', () => window.w6Cheat.container.get(window.w6Cheat.containerObjects.client))
-        .factory('modInfoService', () => window.w6Cheat.container.get(window.w6Cheat.containerObjects.client))
         .factory('aur.toastr', () => window.w6Cheat.container.get(window.w6Cheat.containerObjects.toastr))
         .factory('aur.basketService', () => window.w6Cheat.container.get(window.w6Cheat.containerObjects.basketService))
         .config(['redactorOptions', redactorOptions => angular.copy(globalRedactorOptions, redactorOptions)])
@@ -973,732 +976,6 @@ export module MyApp {
     shareUrl: string;
   }
 
-  // TODO: Convert to the content-gallery-directive...
-  export class ContentBaseController extends BaseController {
-    defPageSize = 12;
-    static sanitize = {
-      filter: ["text", "size", "timespan"], // , "subscribers"
-      paging: ["currentPage", "pageSize"],
-      sort: ["fields", "directions"],
-      other: ["view"]
-    };
-
-    static sanitize_cookie = {
-      filter: <string[]>[],
-      paging: <string[]>[],
-      sort: ["fields", "directions"],
-      other: ["view"]
-    };
-
-    ads = [
-      [3, 5],
-      [5, 8],
-      [2, 4],
-      [4, 6]
-    ];
-
-    constructor(public dataService: W6ContextWrapper, public $q, public $scope: IContentIndexScope, public w6: W6,
-      public $routeParams, public logger, public $cookieStore: ng.cookies.ICookiesService, public $location: ng.ILocationService, public $timeout: ng.ITimeoutService, public dfp) {
-      super($scope, logger, $q);
-
-      $scope.first = false;
-
-      $scope.getImage = this.getImage;
-      $scope.getDescription = this.getDescription;
-      $scope.getTagLink = this.getTagLink;
-      $scope.getItemUrl = (item) => this.getItemUrl(item);
-
-      $scope.ads = [];
-      this.setRandomAds();
-
-      this.defaultFilterOptions = {
-        text: "",
-        size: null,
-        timespan: null,
-        useExternalFilter: true
-      };
-      $scope.views = {
-        totalPages: 1,
-        infiniteScroll: false,
-        filterFocused: false,
-        customSort: '',
-        filterTextPlaceholder: $routeParams['userSlug'] == null ? 'name, tag, author or mod' : 'name, tag or mod',
-        additionalFilterTemplate: this.getViewInternal('components', '_default_additional_filters'),
-        filterTemplate: this.getViewInternal('components', '_default_filters'),
-
-        grid: {
-          overlays: [],
-          itemTemplate: this.getViewInternal('components', '_default_grid'),
-          curPage: 1,
-          itemClass: "col-sm-6 col-md-4 col-lg-3"
-        },
-        list: {},
-
-        otherOptions: { view: 'grid' },
-        gridOptions: {},
-        filterOptions: { useExternalFilter: true },
-        filterPrefixes: dataService.filterPrefixes,
-        tags: [],
-        items: [],
-        filter: Object.assign({}, ContentBaseController.filters),
-        sort: this.getSorts(),
-
-        pagingOptions: {
-          pageSizes: [this.defPageSize, 24, 48], // [25, 50, 100],
-          pageSize: this.defPageSize,
-          currentPage: 1
-        },
-        paging: {
-          hasNext: false,
-          hasPrevious: false,
-          pages: [1],
-          startItem: 0,
-          endItem: 0,
-          totalServerItems: 0,
-        },
-
-        sortOptions: this.getDefaultSortOptions(),
-
-        clearFilters: this.clearFilters,
-        toIsoDate: this.toIsoDate,
-        getView: this.getView,
-        switchView: this.switchView,
-        addMoreItems: this.addMoreItems,
-        reverseSort: this.reverseSort,
-        getPrefixes: (query) => this.getPrefixes(query) // workaround for lambda functions not overriding like methods, in sub classes.
-      };
-
-      this.handleVariants();
-      $scope.views.filterOptions = Object.assign({}, this.defaultFilterOptions);
-      this.restoreOptions();
-
-      $scope.views.gridOptions = this.getGridOptions();
-
-      $scope.$watch('views.pagingOptions', this.pagingOptionsChanged, true);
-      $scope.$watch('views.filterOptions', this.filterOptionsChanged, true);
-      // sortOptions also contains columns, and columns change based on width etc, so we don't want to watch those...
-      $scope.$watch('views.sortOptions.fields', this.sortOptionsChanged, true);
-      $scope.$watch('views.sortOptions.directions', this.sortOptionsChanged, true);
-      $scope.$watch('views.otherOptions', this.otherOptionsChanged, true);
-
-      $scope.$watch('views.tags', (newVal, oldVal) => {
-        if (newVal === oldVal)
-          return;
-        var values = [];
-        for (var t in $scope.views.tags) {
-          var v = $scope.views.tags[t];
-          var val: string = v.key ? v.key : v.text;
-          if (val.includes(" ") && (!val.startsWith("\"") && !val.endsWith("\"")))
-            values.push("\"" + val + "\"");
-          else
-            values.push(val);
-        }
-        $scope.views.filterOptions.text = values.join(" ");
-      }, true);
-
-      // TODO: Move to Directive..
-      $('body').removeClass('game-profile');
-    }
-
-    public getUserSlug() {
-      return this.$routeParams['userSlug'] || this.$scope.w6.userInfo.slug;
-    }
-
-    public processMods(results) {
-      return this.processModsWithPrefix(results, "");
-    }
-
-    public processModsWithPrefix(results, prefix) {
-      var obj = [];
-      angular.forEach(results, mod => {
-        if (mod.name && mod.name != mod.packageName && mod.name.startsWithIgnoreCase(name))
-          obj.push({
-            text: prefix + mod.name + " (" + mod.packageName + ")",
-            key: prefix + mod.packageName /*prefix + mod.name*/
-          });
-        else if (mod.packageName.startsWithIgnoreCase(name))
-          obj.push({ text: prefix + mod.packageName + (mod.name ? " (" + mod.name + ")" : null), key: prefix + mod.packageName });
-        else if (mod.name && mod.name != mod.packageName && mod.name.containsIgnoreCase(name))
-          obj.push({
-            text: prefix + mod.name + " (" + mod.packageName + ")",
-            key: prefix + mod.packageName /*prefix + mod.name*/
-          });
-        else if (mod.packageName.containsIgnoreCase(name))
-          obj.push({ text: prefix + mod.packageName + (mod.name ? " (" + mod.name + ")" : null), key: prefix + mod.packageName });
-      });
-      return obj;
-    }
-
-    public handleVariants() { throw new Error("NotImplemented: handleVariants"); }
-
-    public getItemUrl(item): string { throw new Error("NotImplemented: getItemUrl"); }
-
-    public defaultGridOptions() {
-      var options = {
-        data: "views.items",
-        columnDefs: [],
-        enablePaging: true,
-        enablePinning: true,
-        enableColumnReordering: true,
-        enableColumnResize: true,
-        pagingOptions: this.$scope.views.pagingOptions,
-        filterOptions: this.$scope.views.filterOptions,
-        keepLastSelected: true,
-        multiSelect: false,
-        showColumnMenu: true,
-        showFilter: true,
-        showGroupPanel: true,
-        showFooter: true,
-        rowHeight: 48,
-        rowTemplate: '<div ng-dblclick="doubleClicked(row.entity)" ng-style="{\'cursor\': row.cursor, \'z-index\': col.zIndex() }" ng-repeat="col in renderedColumns" ng-class="col.colIndex()" class="ngCell {{col.cellClass}}" ng-cell></div>',
-        sortInfo: this.$scope.views.sortOptions,
-        totalServerItems: "views.paging.totalServerItems",
-        useExternalSorting: true,
-        i18n: "en"
-      };
-      return Object.assign({}, options);
-    }
-
-    public timeAgoTemplate = "<sx-time time='toIsoDate(row.getProperty(col.field))'></sx-time>";
-
-    public getGridOptions() {
-      return this.defaultGridOptions();
-    }
-
-    // TODO: How about making the name sort rather default added to the query, instead of configurable?
-    public getDefaultSortOptions() {
-      return { fields: ["stat.install", "name"], directions: ["desc", "asc"] };
-    }
-
-    public escapeIfNeeded(str) {
-      if (str.indexOf(" ") != -1)
-        return "\"" + str + "\"";
-      return str;
-    }
-
-    public clearFilters = () => {
-      this.$scope.views.tags.length = 0;
-      this.$scope.views.filterOptions = Object.assign({}, this.defaultFilterOptions);
-    };
-    private pagingOptionsChanged = (newVal, oldVal) => {
-      if (newVal === oldVal)
-        return;
-      Debug.log("pagingOptionsChanged");
-
-      this.updatePagingClone();
-      this.$cookieStore.put(this.getCookieKey(ContentBaseController.cookieKeys.pagingOptions), this.pagingClone);
-      this.refresh();
-    };
-
-    public refresh() {
-      this.$scope.cancelOutstandingRequests();
-      var filterText = this.$scope.views.filterOptions.text;
-      if (this.isValidFilterText(filterText)) {
-        this.$scope.loadingStatus.increment();
-        this.$scope.views.infiniteScroll = false;
-        this.setPaging();
-        return this.getItems()
-          .then(() => this.$timeout(() => this.$scope.loadingStatus.decrement(), 500));
-      }
-      return null;
-    }
-
-    setPaging(page = 1) {
-      this.$scope.views.pagingOptions.currentPage = page;
-      this.$scope.views.grid.curPage = this.$scope.views.pagingOptions.currentPage;
-    }
-
-    private filterOptionsChanged = (newVal, oldVal) => {
-      if (newVal === oldVal)
-        return;
-      Debug.log("filterOptionsChanged");
-
-      this.updateFilteringClone();
-      this.$cookieStore.put(this.getCookieKey(ContentBaseController.cookieKeys.filterOptions), this.filteringClone);
-      this.refresh();
-    };
-
-    public isValidFilterText(text): boolean {
-      if (text.length == 0)
-        return true;
-
-      var info = W6Context.searchInfo(text, true, this.$scope.views.filterPrefixes);
-
-      // what would this be for?
-      //if (info.author.length > 0 && info.dependency.length > 0 && info.name.length > 0 && info.tag.length > 0)
-      //return false;
-
-      return info.all.every(key => key.length >= W6Context.minFilterLength);
-    }
-
-    private sortOptionsChanged = (newVal, oldVal) => {
-      if (newVal === oldVal)
-        return;
-      Debug.log("sortOptionsChanged");
-      this.updateSortingClone();
-      this.$cookieStore.put(this.getCookieKey(ContentBaseController.cookieKeys.sortOptions), this.sortingClone);
-      this.refresh();
-    };
-    private pagingClone: string;
-
-    private updatePagingClone() {
-      var clone = Object.assign({}, this.$scope.views.pagingOptions);
-      delete clone.pageSizes;
-
-      this.pagingClone = clone;
-    }
-
-    private sortingClone: string;
-
-    private updateSortingClone() {
-      var clone = Object.assign({}, this.$scope.views.sortOptions);
-      delete clone.columns;
-      /*
-              clone.hiddenColumns = [];
-              for (var v in newVal.columns) {
-                  if (!v.visible)
-                      clone.hiddenColumns.push(v.field);
-              }
-              */
-      this.sortingClone = clone;
-    }
-
-    private otherClone;
-
-    private updateOtherClone() {
-      var clone = Object.assign({}, this.$scope.views.otherOptions);
-      this.otherClone = clone;
-    }
-
-    private otherOptionsChanged = (newVal, oldVal) => {
-      if (newVal === oldVal)
-        return;
-      Debug.log("otherOptionsChanged");
-      this.updateOtherClone();
-      this.$cookieStore.put(this.getCookieKey(ContentBaseController.cookieKeys.otherOptions), this.otherClone);
-      this.refreshQueryString();
-    };
-    private filteringClone: string;
-
-    private updateFilteringClone() {
-      var clone = Object.assign({}, this.$scope.views.filterOptions);
-      delete clone.useExternalFilter;
-      this.filteringClone = clone;
-    }
-
-    private toIsoDate = (date: string): string => {
-      return new Date(date).toISOString();
-    };
-    public querySucceeded = (data) => {
-      var page = this.$scope.views.grid.curPage;
-      if (page == 1) this.$scope.views.items = data.results;
-      else this.$scope.views.items.push.apply(this.$scope.views.items, data.results);
-      this.$scope.views.paging.totalServerItems = data.inlineCount;
-      this.updatePaginationInfo();
-      this.refreshQueryString();
-      this.logger.info("Fetched " + this.$scope.views.items.length + " out of " + this.$scope.views.paging.totalServerItems + " items" + ". Page " + page + " out of " + this.$scope.views.totalPages);
-      if (this.$scope.first && page == 1) this.dealWithAds();
-      this.$scope.first = true;
-    };
-
-    public getOptions() {
-      var filterOptions = Object.assign({}, this.$scope.views.filterOptions);
-      var category = this.$routeParams['category'];
-      if (category)
-        filterOptions.text += " tag:\"" + category + "\"";
-
-      var data = { filter: filterOptions, sort: this.$scope.views.sortOptions, pagination: Object.assign({}, this.$scope.views.pagingOptions) };
-      if (this.$scope.views.infiniteScroll)
-        data.pagination.currentPage = this.$scope.views.grid.curPage;
-      return data;
-    }
-
-
-    public getTotalPages() {
-      return this.totalPages(parseInt(this.$scope.views.paging.totalServerItems.toString()), parseInt(this.$scope.views.pagingOptions.pageSize.toString()));
-    }
-
-    private updatePaginationInfo() {
-      var currentPage = <number>this.$scope.views.pagingOptions.currentPage;
-      var totalPages = this.getTotalPages();
-
-      this.$scope.views.totalPages = totalPages;
-
-      var i = (currentPage - 1) * this.$scope.views.pagingOptions.pageSize;
-      this.$scope.views.paging.startItem = this.$scope.views.items.length == 0 ? 0 : i + 1;
-      this.$scope.views.paging.endItem = i + this.$scope.views.items.length;
-
-      this.$scope.views.paging.hasNext = currentPage < totalPages;
-      this.$scope.views.paging.hasPrevious = currentPage > 1;
-
-      var pages = [];
-      if (this.$scope.views.paging.hasPrevious) {
-        var end = currentPage - 1;
-        var start = end - 3;
-        if (start < 1)
-          start = 1;
-        var start = Math.min(start, 1);
-        for (var i = start; i <= end; i++) {
-          pages.push(i);
-        }
-      }
-
-      pages.push(currentPage);
-      if (this.$scope.views.paging.hasNext) {
-        var start = currentPage + 1;
-        var end = Math.min(start + 3, start + totalPages - currentPage);
-        for (var i = start; i < end; i++) {
-          pages.push(i);
-        }
-      }
-
-      this.$scope.views.paging.pages = pages;
-    }
-
-    private totalPages(total, pageSize) {
-      return Math.max(Math.ceil(total / pageSize.toFixed()), 1);
-    }
-
-    refreshQueryString() {
-      var current = this.$location.search();
-
-      var obj = <any>{};
-      if (current.google_console)
-        obj.google_console = current.google_console;
-      if (current.google_force_console)
-        obj.google_force_console = current.google_force_console;
-
-      if (ContentBaseController.sanitize.filter.length != 0)
-        Tools.mergeIntoWithFix(this.filteringClone, obj, "filter_", undefined, ContentBaseController.sanitize.filter);
-
-      if (ContentBaseController.sanitize.sort.length != 0)
-        Tools.mergeIntoWithFix(this.sortingClone, obj, "sort_", undefined, ContentBaseController.sanitize.sort);
-
-      if (ContentBaseController.sanitize.paging.length != 0)
-        Tools.mergeIntoWithFix(this.pagingClone, obj, "page_", undefined, ContentBaseController.sanitize.paging);
-
-      if (ContentBaseController.sanitize.other.length != 0)
-        Tools.mergeIntoWithFix(this.otherClone, obj, "other_", undefined, ContentBaseController.sanitize.other);
-      //this.$location.search(obj);
-      // TODO: Make shareUrl available instead to copy paste..
-      this.$scope.shareUrl = this.$location.absUrl() + "?" + jQuery.param(obj);
-    }
-
-    restoreOptions() {
-      this.restoreFromCookies();
-      this.restoreFromQS();
-
-      if (this.$scope.views.otherOptions.view != 'list') {
-        this.$scope.views.pagingOptions.pageSize = this.defPageSize;
-        this.setPaging();
-      }
-
-      this.restoreTagsField();
-      this.sanitizeSortOptions();
-      this.updateClones();
-    }
-
-    private restoreFromCookies() {
-      if (ContentBaseController.sanitize_cookie.paging.length != 0) {
-        var data = this.$cookieStore.get(this.getCookieKey(ContentBaseController.cookieKeys.pagingOptions));
-        if (data != undefined)
-          Tools.mergeInto(data, this.$scope.views.pagingOptions, ContentBaseController.sanitize_cookie.paging);
-      }
-
-      if (ContentBaseController.sanitize_cookie.filter.length != 0) {
-        data = this.$cookieStore.get(this.getCookieKey(ContentBaseController.cookieKeys.filterOptions));
-        if (data != undefined)
-          Tools.mergeInto(data, this.$scope.views.filterOptions, ContentBaseController.sanitize_cookie.filter);
-      }
-
-      if (ContentBaseController.sanitize_cookie.sort.length != 0) {
-        data = this.$cookieStore.get(this.getCookieKey(ContentBaseController.cookieKeys.sortOptions));
-        if (data != undefined) {
-          Tools.mergeInto(data, this.$scope.views.sortOptions, ContentBaseController.sanitize_cookie.sort);
-          //if (data.hiddenColumns != undefined)
-          //for (var hc in data.hiddenColumns) {
-          //  $scope.views.sortOptions.columns
-          //}
-        }
-      }
-
-      if (ContentBaseController.sanitize_cookie.other.length != 0) {
-        data = this.$cookieStore.get(this.getCookieKey(ContentBaseController.cookieKeys.otherOptions));
-        if (data != undefined)
-          Tools.mergeInto(data, this.$scope.views.otherOptions, ContentBaseController.sanitize.other);
-
-      }
-    }
-
-    private parseInt(n) {
-      var val = parseInt(n);
-      return isNaN(val) ? null : val;
-    }
-
-    private restoreFromQS() {
-      // TODO: Make robust data models which are strict and enforce the appropriate data types etc
-      var qs = this.$location.search();
-      var filter = {};
-      var sort = {};
-      var paging = {};
-      var other = {};
-
-      for (var a in qs) {
-        if (a.match("^filter_")) {
-          var val = qs[a];
-          if (a == "filter_timespan" || a == "filter_size")
-            val = this.parseInt(val);
-          filter[a] = val;
-        }
-
-        if (a.match("^sort_"))
-          sort[a] = qs[a];
-
-        if (a.match("^other_"))
-          other[a] = qs[a];
-
-        if (a.match("^page_")) {
-          var val = qs[a];
-          if (a == "page_currentPage" || a == "page_pageSize")
-            val = this.parseInt(val);
-          paging[a] = val;
-        }
-      }
-
-      if (ContentBaseController.sanitize.filter.length != 0)
-        Tools.mergeIntoRemovePrefix(filter, this.$scope.views.filterOptions, "filter_", ContentBaseController.sanitize.filter);
-
-      if (ContentBaseController.sanitize.sort.length != 0)
-        Tools.mergeIntoRemovePrefix(sort, this.$scope.views.sortOptions, "sort_", ContentBaseController.sanitize.sort);
-
-      if (ContentBaseController.sanitize.paging.length != 0)
-        Tools.mergeIntoRemovePrefix(paging, this.$scope.views.pagingOptions, "page_", ContentBaseController.sanitize.paging);
-
-      if (ContentBaseController.sanitize.other.length != 0)
-        Tools.mergeIntoRemovePrefix(other, this.$scope.views.otherOptions, "other_", ContentBaseController.sanitize.other);
-
-      this.$location.search({});
-    }
-
-    private sanitizeSortOptions() {
-      var sortOptions = {
-        fields: [],
-        directions: []
-      }; // sanitize sort :/ workaround for cookie hassle?
-      var original = this.$scope.views.sortOptions;
-      var sorts = this.sortAr();
-      angular.forEach(original.fields, (field, i) => {
-        var dir = original.directions[i];
-        if (!sorts.asEnumerable().contains(field))
-          field = "name";
-
-        sortOptions.fields.push(field);
-        sortOptions.directions.push(dir);
-      });
-
-      original.fields = sortOptions.fields;
-      original.directions = sortOptions.directions;
-    }
-
-    private restoreTagsField() {
-      var split = this.$scope.views.filterOptions.text.match(W6Context.splitRx);
-      for (var v in split) {
-        var vall = split[v];
-        if (vall.startsWith("\"") && vall.endsWith("\""))
-          vall = vall.substring(1, vall.length - 1);
-        this.$scope.views.tags.push({ text: vall, key: vall });
-      }
-    }
-
-    private updateClones() {
-      this.updatePagingClone();
-      this.updateFilteringClone();
-      this.updateSortingClone();
-      this.updateOtherClone();
-    }
-
-    private sortAr() {
-      var ar = [];
-      var sorts = this.getSorts();
-      angular.forEach(sorts, item => ar.push(item.field));
-
-      return ar;
-    }
-
-    private reverseSort = () => {
-      this.$scope.views.sortOptions.directions[0] = this.$scope.views.sortOptions.directions[0] == 'desc' ? 'asc' : 'desc';
-    };
-
-    private addMoreItems = () => {
-      if (this.$scope.destroyed) throw new Error("Tried to addMoreItems while scope is already destroyed!");
-      if (this.$scope.views.grid.curPage >= this.$scope.views.totalPages) return;
-      Debug.p.log(() => "addMoreItems: " + this.$scope.views.grid.curPage + ", " + this.$scope.views.totalPages + ", " + (this.$scope.canceler == null));
-
-      if (this.$scope.canceler == null) {
-        this.$scope.views.infiniteScroll = true;
-        this.$scope.views.grid.curPage++;
-        this.getItems();
-      }
-    };
-
-    public getItems(): Promise<any> { return null; }
-
-    private switchView = () => {
-      this.$scope.views.otherOptions.view = this.$scope.views.otherOptions.view == 'grid' ? 'list' : 'grid';
-    };
-    private getView = () => this.getViewInternal("components", (<any>this.$scope).views.otherOptions.view);
-    public getViewInternal = (path: string, view: string) => '/src_legacy/app/' + path + '/' + view + '.html';
-    public getDescription = (item: any): string => item.description || item.descriptionFull || 'no description yet';
-    private getTagLink = (item, tag: string): string => this.$scope.url.play + "/" + item.game.slug + "/mods/category/" + Tools.sluggifyEntityName(tag);
-
-    public getPrefixes(query) {
-      if (query.startsWith("user:")) {
-        var name = query.substring(5);
-        if (name.length > 0)
-          return this.getUserTags(name);
-        return this.defaultPrefixes();
-      }
-
-      return this.defaultPrefixes();
-    }
-
-    public defaultPrefixes() {
-      var prefixes = [];
-      angular.forEach(this.dataService.filterPrefixes, p => prefixes.push({ text: p, key: p }));
-
-      var deferred = this.$q.defer();
-      this.$timeout(() => deferred.resolve(prefixes));
-      return deferred.promise;
-    }
-
-    public getUserTags(name: string): Promise<any[]> {
-      return this.$scope.dispatch(MyApp.Play.GetUserTagsQuery.$name, { query: name }).then(r => r.lastResult);
-    }
-
-    public cookiePrefix: string;
-
-    private getCookieKey(key: string) { return this.cookiePrefix + "_" + key; }
-
-    static cookieKeys = {
-      pagingOptions: 'viewsPagingOptions',
-      filterOptions: 'viewsFilterOptions',
-      sortOptions: 'viewsSortOptions',
-      otherOptions: 'viewsOtherOptions'
-    };
-
-    public getSorts() {
-      // TODO: Get elsewhere?
-      return ContentsController.sorts;
-    }
-
-    static sorts = [
-      {
-        name: "Name",
-        field: "name"
-      },
-      {
-        name: "Author",
-        field: "author"
-      },
-      {
-        name: "Followers",
-        field: "followersCount"
-      },
-      {
-        name: "Installs",
-        field: "stat.install"
-      },
-      {
-        name: "Size",
-        field: "size"
-      },
-      {
-        name: "UpdatedAt",
-        field: "updatedAt"
-      },
-      {
-        name: "CreatedAt",
-        field: "createdAt"
-      }
-    ];
-    static filters = {
-      sizes: [
-        {
-          name: "< 500 MB",
-          eq: "<",
-          amount: 500
-        }, {
-          name: "< 1 GB",
-          eq: "<",
-          amount: 1024
-        }, {
-          name: "< 10 GB",
-          eq: "<",
-          amount: 10 * 1024
-        }, {
-          name: "< 50 GB",
-          eq: "<",
-          amount: 50 * 1024
-        }
-      ],
-
-      timespans: [
-        {
-          name: "today",
-          hours: 24
-        },
-        {
-          name: "this week",
-          hours: 24 * 7
-        },
-        {
-          name: "this month",
-          hours: 24 * 31
-        },
-        {
-          name: "this year",
-          hours: 24 * 365
-        }
-      ],
-
-      subscriptions: [
-        {
-          name: "None",
-          amount: 0
-        },
-        {
-          name: "1 or more",
-          amount: 1
-        },
-        {
-          name: "5 or more",
-          amount: 5
-        },
-        {
-          name: "10 or more",
-          amount: 10
-        },
-        {
-          name: "100 or more",
-          amount: 100
-        },
-        {
-          name: "1000 or more",
-          amount: 1000
-        }
-      ]
-    };
-    defaultFilterOptions: { text: string; size?: string; timespan?; useExternalFilter: boolean };
-
-    setRandomAds() {
-      this.$scope.ads = this.ads[Math.floor(Math.random() * this.ads.length)];
-    }
-
-    dealWithAds() {
-      this.setRandomAds();
-    }
-  }
-
   export class ContentController extends BaseController {
     static $inject = ['$scope', 'logger', '$routeParams', '$q'];
 
@@ -1933,16 +1210,6 @@ export module MyApp {
     viewport?: string;
   }
 
-  export class ContentsController extends ContentBaseController {
-    public getSubtitle() {
-      var title = this.$routeParams['gameSlug'];
-      if (title) title = title.toUpperCase();
-      if (!title) title = this.$routeParams['userSlug'];
-      if (title) title = title.replace("-", " ");
-      return (title || 'Your');
-    }
-  }
-
   export class DialogControllerBase extends BaseController {
     static $inject = ['$scope', 'logger', '$modalInstance', '$q'];
 
@@ -1977,7 +1244,6 @@ export module MyApp {
         w6.openLoginDialog(evt);
       };
       w6.openRegisterDialog = (event) => this.openRegisterDialog(event);
-      w6.openSearch = (searchModel?) => this.openSearch(searchModel);
 
       $rootScope.ready = () => {
         Debug.log('ready');
@@ -2026,15 +1292,6 @@ export module MyApp {
     openRegisterDialog(evt) {
       if (evt) evt.preventDefault();
       this.$scope.request(Components.Dialogs.OpenRegisterDialogQuery);
-    }
-    openSearch(searchModel) {
-      if (!searchModel) searchModel = {};
-      if (!searchModel.gameIDs) {
-        if (this.w6.activeGame.id) {
-          searchModel.gameIDs = Play.Mods.ModsHelper.getGameIds(this.w6.activeGame.id);
-        }
-      }
-      this.$scope.request(Components.Dialogs.OpenSearchDialogQuery, { model: searchModel });
     }
 
     private routeStart = (scope, next, current) => {
@@ -5222,7 +4479,6 @@ export module MyApp.Components.Basket {
   }
 
   export interface IBasketSettings {
-    forceBasketInstallMessageHidden: boolean;
     hasConnected: boolean;
   }
   export interface IBasketScope extends ng.IScope {
@@ -5314,13 +4570,8 @@ export module MyApp.Components.Basket {
         return true;
       });
       this.setupBinding(localStorage, "settings", () => <IBasketSettings>{
-        forceBasketInstallMessageHidden: true,
         hasConnected: false
       }, (model) => {
-        // ReSharper disable once RedundantComparisonWithBoolean
-        // Being Explicit
-        if ((model.forceBasketInstallMessageHidden !== true && model.forceBasketInstallMessageHidden !== false) && model.forceBasketInstallMessageHidden != null)
-          return false;
         return true;
       });
 
@@ -5477,67 +4728,6 @@ export module MyApp.Components.Comments {
     .directive(CommentSectionDirective.$name, CommentSectionDirective.factory);
 }
 
-export module MyApp.Components.ContentGallery {
-  angular.module('Components.ContentGallery', []);
-}
-export module MyApp.Components.ContentGallery {
-  // WIP
-  class ContentGalleryDirectiveController {
-    static $inject = ['$scope', '$element', '$attrs', '$transclude'];
-    static viewBase = '/src_legacy/app/components/content-gallery';
-
-    constructor($scope, $element, $attrs, $transclude) {
-      $attrs.$observe('gridItemClass', val => {
-        if (!angular.isDefined(val)) {
-          $scope.gridItemClass = 'col-sm-6 col-md-4 col-xl-3';
-        }
-      });
-
-      $attrs.$observe('filterTemplate', val => {
-        if (!angular.isDefined(val)) {
-          $scope.filterTemplate = ContentGalleryDirectiveController.viewBase + '/_filters.html';
-        }
-      });
-      $attrs.$observe('gridItemTemplate', val => {
-        if (!angular.isDefined(val)) {
-          $scope.gridItemTemplate = ContentGalleryDirectiveController.viewBase + '/_grid_item.html';
-        }
-      });
-
-      $scope.otherOptions = { view: 'grid' };
-      $scope.grid = { overlays: [] };
-      $scope.getView = () => {
-        return ContentGalleryDirectiveController.viewBase + '/' + $scope.otherOptions.view + '.html';
-      };
-    }
-  }
-
-  class ContentGalleryDirective extends Tk.Directive {
-    static $name = 'sxContentGallery';
-    static $inject = [];
-    static factory = getFactory(ContentGalleryDirective.$inject, () => new ContentGalleryDirective());
-
-    controller = ContentGalleryDirectiveController;
-    templateUrl = ContentGalleryDirectiveController.viewBase + '/index.html';
-    restrict = 'E';
-    scope = {
-      items: '=',
-      filterTemplate: '@', // = seems to not work if not set at all in the directive inside the html?
-      gridItemTemplate: '@',
-      gridItemClass: '@',
-    };
-  }
-
-  angular.module('Components.ContentGallery')
-    .directive(ContentGalleryDirective.$name, ContentGalleryDirective.factory);
-}
-export module MyApp.Components.ContentHeader {
-
-  export class ContentHeaderBase {
-
-  }
-
-}
 export module MyApp.Components.Dfp {
   angular.module('Components.Dfp', []);
 }
@@ -5582,11 +4772,6 @@ export module MyApp.Components.Dialogs {
   }
 
   registerCQ(ResendActivationCommand);
-
-  export class OpenSearchDialogQuery extends DialogQueryBase {
-    static $name = 'OpenSearchDialog';
-    public execute = ['model', (model) => this.openDialog(SearchDialogController, { windowClass: 'dialogs-withSix search-modal', resolve: { model: () => model } })];
-  }
 
   export class OpenReportDialogQuery extends DialogQueryBase {
     static $name = 'OpenReportDialog';
@@ -5744,7 +4929,6 @@ export module MyApp.Components.Dialogs {
     public execute = ['data', (data) => this.context.postCustom("user/forgot-username", data, { requestName: 'forgotUsername' })];
   }
 
-  registerCQ(OpenSearchDialogQuery);
   registerCQ(OpenReportDialogQuery);
   registerCQ(OpenForgotPasswordDialogQuery);
   registerCQ(OpenResendActivationDialogQuery);
@@ -5845,57 +5029,6 @@ export module MyApp.Components.Dialogs {
       super($scope, logger, $modalInstance, $q);
       $scope.model = model;
       $scope.model.fingerPrint = new Fingerprint().get();
-    }
-  }
-
-  enum SearchContentType {
-    User,
-    Author,
-
-    Mod = 1001,
-    Mission,
-    Collection,
-    Group
-  }
-
-  export class SearchDialogController extends DialogControllerBase {
-    static $name = "SearchDialogController";
-    static $view = '/src_legacy/app/components/dialogs/search.html';
-
-    static $inject = ['$scope', 'logger', '$modalInstance', '$q', 'model'];
-
-    constructor($scope, logger, public $modalInstance, $q, model) {
-      super($scope, logger, $modalInstance, $q);
-
-      $scope.contentType = SearchContentType;
-      $scope.contentTypes = ['Mod', 'Mission', 'Collection'];
-      if ($scope.w6.userInfo.isManager) $scope.contentTypes.push('Group');
-      if ($scope.w6.userInfo.isAdmin) $scope.contentTypes.push('Author');
-      $scope.close = ($event) => {
-        if ($event.ctrlKey || $event.altKey || $event.shiftKey) return;
-        $scope.$close();
-      }
-      $scope.model = {
-        q: "",
-        types: angular.copy($scope.contentTypes)
-      };
-      if (model) {
-        if (model.q) $scope.model.q = model.q;
-        if (model.gameIDs) $scope.model.gameIDs = model.gameIDs;
-      }
-      $scope.results = [];
-      $scope.search = () => {
-        $scope.resultQ = $scope.model.q;
-        this.processCommand($scope.request(SearchQuery, { model: $scope.model })
-          .then((result) => $scope.results = result.lastResult.contentResults), "Search complete");
-      };
-
-      $scope.searchOneType = type => {
-        $scope.model.types = [SearchContentType[type]];
-        $scope.search();
-      };
-
-      if ($scope.model.q) $scope.search();
     }
   }
 
@@ -6620,15 +5753,6 @@ export module MyApp.Components.ReallyClick {
   angular.module('Components.ReallyClick', [])
     .directive(ReallyClickDirective.$name, ReallyClickDirective.factory);
 }
-export module MyApp.Components.Signalr {
-  export enum ConnectionState {
-    connecting = 0,
-    connected = 1,
-    reconnecting = 2,
-    disconnected = 4
-  }
-}
-
 export module MyApp.Components.Upload {
 
   // ReSharper disable InconsistentNaming
@@ -6720,7 +5844,7 @@ export module MyApp.Auth {
     static $name = "AuthModule";
 
     constructor() {
-      super('MyAppAuth', ['app', 'ngRoute', 'ngDfp', 'commangular', 'MyAppPlayContentIndexes', 'MyAppPlayTemplates', 'route-segment', 'view-segment', 'Components', 'MyAppAuthTemplates', 'MyAppConnect']);
+      super('MyAppAuth', ['app', 'ngRoute', 'ngDfp', 'commangular', 'MyAppPlayTemplates', 'route-segment', 'view-segment', 'Components', 'MyAppAuthTemplates', 'MyAppConnect']);
       this.app
         .config([
           '$routeProvider', '$routeSegmentProvider', ($r1, $r2) => {
@@ -6795,7 +5919,7 @@ export module MyApp.Connect {
     static $name = "ConnectModule";
 
     constructor() {
-      super('MyAppConnect', ['app', 'ngRoute', 'ngDfp', 'commangular', 'MyAppPlayContentIndexes', 'MyAppPlayTemplates', 'route-segment', 'view-segment', 'Components', 'MyAppConnectTemplates']);
+      super('MyAppConnect', ['app', 'ngRoute', 'ngDfp', 'commangular', 'MyAppPlayTemplates', 'route-segment', 'view-segment', 'Components', 'MyAppConnectTemplates']);
 
       this.app
         .config(['$commangularProvider', $commangularProvider => registerCommands(this.commands, $commangularProvider)])
@@ -8925,7 +8049,7 @@ export module MyApp.Play {
     static $name = "PlayModule";
 
     constructor() {
-      super('MyAppPlay', ['app', 'ngRoute', 'ngDfp', 'commangular', 'route-segment', 'view-segment', 'MyAppPlayContentIndexes', 'Components', 'MyAppPlayTemplates']);
+      super('MyAppPlay', ['app', 'ngRoute', 'ngDfp', 'commangular', 'route-segment', 'view-segment', 'Components', 'MyAppPlayTemplates']);
 
       function getModFileResolve(fileType) {
         return {
@@ -9237,17 +8361,6 @@ export module MyApp.Play {
       };
     }
   ]);
-
-  class PlayContentIndexesModule extends Tk.Module {
-    static $name = "PlayContentIndexesModule";
-
-    constructor() {
-      super('MyAppPlayContentIndexes', ['ngRoute', 'ngDfp', 'commangular']);
-      this.app.config(['$commangularProvider', $commangularProvider => registerCommands(this.commands, $commangularProvider)]);
-    }
-  }
-
-  var app2 = new PlayContentIndexesModule();
 
   export class GetUsersQuery extends DbQueryBase {
     static $name = "GetUsers";
@@ -10044,117 +9157,6 @@ export module MyApp.Play.Collections {
     contentTags;
     addTag(tag);
   }
-
-  export class CollectionContentController extends ContentsController {
-    static $name = 'CollectionContentController';
-
-    static $inject = [
-      '$q', '$scope', '$timeout',
-      '$cookieStore', '$location', '$routeParams', 'w6',
-      'modDataService', 'logger', 'DoubleClick'
-    ];
-
-    constructor(public $q: ng.IQService, public $scope: ICollectionContentScope, public $timeout: ng.ITimeoutService,
-      public $cookieStore, public $location: ng.ILocationService, public $routeParams: ng.route.IRouteParamsService, w6,
-      public dataService: Mods.ModDataService, public logger: Components.Logger.ToastLogger, public dfp) {
-
-      super(dataService, $q, $scope, w6, $routeParams, logger, $cookieStore, $location, $timeout, dfp);
-
-      $scope.addTag = this.addTag;
-
-      // It seems we need to slightly delay to make the spinner appear (is that since angular 1.3?)
-      $timeout(() => { this.refresh(); });
-
-      // TODO: Move to Directive..
-      $('body').removeClass('game-profile');
-      $('body').addClass('game-profile');
-
-      this.setupTitle("model.name", "Content - {0} - " + $scope.model.game.name);
-
-      // TODO: when going to edit mode, navigate to:
-      //this.eventBus.publish(new window.w6Cheat.containerObjects.navigate(window.location.pathname + "/edit"))
-      //this.$scope.editConfig.
-    }
-
-    private addTag = (tag) => {
-      this.$scope.views.tags.length = 0;
-      this.$scope.views.tags.push({ key: "tag:" + tag, text: "tag:" + tag });
-      return true;
-    };
-
-    public handleVariants() {
-      this.cookiePrefix = 'collection';
-
-      //$scope.title = "Mods in collection";
-
-      this.$scope.views.grid.itemTemplate = this.getViewInternal('play/mods', '_mod_grid');
-    }
-
-    public getItems() {
-      this.$scope.cancelOutstandingRequests();
-      this.$scope.request(GetCollectionContentTagsQuery, { id: this.$scope.model.latestVersionId })
-        .then(r => this.$scope.contentTags = r.lastResult);
-      return this.getData()
-        .then(this.querySucceeded)
-        .catch(this.breezeQueryFailed);
-    }
-
-    private getData() {
-      // var query = breeze.EntityQuery.from("CollectionVersions").expand(["dependencies"])
-      //   .where("id", breeze.FilterQueryOp.Equals, this.$scope.model.latestVersionId)
-      //   .select(["dependencies"])
-      //   .withParameters({ myPage: true });
-      // let r = await this.dataService.context.executeQuery<IBreezeCollectionVersion>(query);
-      // let deps = Tools.aryToMap(r.results[0].dependencies, x => x.id);
-      return this.dataService.getModsInCollection(Tools.fromShortId(this.$routeParams['collectionId']), this.getOptions()).then(data => {
-        data.results.forEach(x => {
-          let constraint = this.$scope.versionConstraints[x.id]
-          if (constraint != null)
-            x.constraint = constraint;
-        })
-        return data;
-      });
-    }
-
-    public getItemUrl(item): string {
-      return this.w6.url.play + "/" + item.game.slug + "/mods/" + Tools.toShortId(item.id) + "/" + Tools.sluggify(item.name); // TODO: slug once converted..
-    }
-
-    public getPrefixes(query) {
-      if (query.startsWith("tag:")) {
-        var name = query.substring(4);
-        if (name.length > 0)
-          return this.getTagTags(name);
-        return this.defaultPrefixes();
-      }
-
-      if (query.startsWith("user:")) {
-        var name = query.substring(5);
-        if (name.length > 0)
-          return this.getUserTags(name);
-        return this.defaultPrefixes();
-      }
-
-      if (query.length > 2)
-        return this.getSelfTags(query);
-
-      return this.defaultPrefixes();
-    }
-
-    private getSelfTags(name: string) {
-      return this.dataService.getModsInCollectionByName(Tools.fromShortId(this.$routeParams['collectionId']), name)
-        .then((d) => this.processModsWithPrefix(d.results, "mod:"))
-        .catch((reason) => this.breezeQueryFailed(reason));
-    }
-
-    private getTagTags(name: string) {
-      return this.$scope.request(Mods.GetCategoriesQuery, { query: name })
-        .then((d) => this.processNamesWithPrefix(d.lastResult, "tag:"))
-        .catch((reason) => this.breezeQueryFailed(reason));
-    }
-  }
-
-  registerController(CollectionContentController);
 
   export class CollectionRelatedController extends ContentController {
     static $name = 'CollectionRelatedController';
@@ -11151,7 +10153,6 @@ export module MyApp.Play.Games {
 
   import ClientInfo = MyApp.Components.ModInfo.IClientInfo;
   import ItemState = MyApp.Components.ModInfo.ItemState;
-  import ConnectionState = MyApp.Components.Signalr.ConnectionState;
   import BasketService = MyApp.Components.Basket.BasketService;
 
   interface IGamesScope extends IBaseScopeT<IBreezeGame[]> {
@@ -11333,13 +10334,7 @@ export module MyApp.Play.Games {
           return;
         }
         basketService.lastActiveItem = item.id;
-        try {
-          await basketService.getGameBaskets($scope.game.id).handleAction(Helper.modToBasket(item, $scope.game.id), $scope.clientInfo, 1);
-        } catch (err) {
-          if (modInfo.state != ConnectionState.connected)
-            basketService.settings.forceBasketInstallMessageHidden = false;
-          throw err;
-        }
+        await basketService.getGameBaskets($scope.game.id).handleAction(Helper.modToBasket(item, $scope.game.id), $scope.clientInfo, 1);
       };
       $scope.canAddToBasket = (): boolean => true;
       // {
@@ -11352,13 +10347,7 @@ export module MyApp.Play.Games {
           return null;
         }
         basketService.lastActiveItem = item.id;
-        try {
-          await basketService.getGameBaskets($scope.game.id).handleAction(Helper.collectionToBasket(item, $scope.game.id), $scope.clientInfo, 2)
-        } catch (err) {
-          if (modInfo.state != ConnectionState.connected)
-            basketService.settings.forceBasketInstallMessageHidden = false;
-          throw err;
-        }
+        await basketService.getGameBaskets($scope.game.id).handleAction(Helper.collectionToBasket(item, $scope.game.id), $scope.clientInfo, 2)
       };
       var s = this.eventBus.subscribe("basketChanged", () => this.applyIfNeeded());
 

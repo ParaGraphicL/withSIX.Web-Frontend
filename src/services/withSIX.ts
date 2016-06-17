@@ -683,5 +683,4 @@ export class W6 {
   openLoginDialog: (evt: any) => void;
   logout: () => any;
   openRegisterDialog: (event: any) => void;
-  openSearch: (searchModel?) => void;
 };

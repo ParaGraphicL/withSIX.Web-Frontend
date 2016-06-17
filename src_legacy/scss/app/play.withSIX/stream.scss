@@ -26,6 +26,12 @@
       }
     }
   }
+  .virtual-container {
+    max-height: calc(100vh - 404px); // TODO: The header might change because of no-ads..
+    .virtual-row {
+      height: 180px;
+    }
+  }
   h2.stream-title {
     display: inline;
   }
@@ -306,15 +312,13 @@
   div.blog {
     ul {
       li {
-        &.month,
-        &.post {
-          background-color: white;
-        }
+        background-color: white;
         a {
           color: $colorSixGray;
           text-decoration: none;
         }
-        &.line {
+        &.line,
+        .line {
           padding: $lovelyPadding;
           @include text-overflow;
           @include clearfix;
