@@ -374,6 +374,7 @@ export class W6Context extends Tk.Service {
   emailExistsCache: {};
 
   fetchMetadata() {
+    // may not use authorization header..
     return this.promiseCache({
       promise: () => this.$http.get(this.w6.url.getSerialUrl('data/metadata.json'))
         // TODO: Replace...

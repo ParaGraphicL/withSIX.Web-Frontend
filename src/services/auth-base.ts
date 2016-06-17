@@ -48,9 +48,17 @@ export class LoginBase {
   }
 
   setHeaders(accessToken: string) {
-    // TODO: only on our own domains, not cdn etc!
+    let urls = this.w6Url;
+    let shouldLog = (Tools.getEnvironment() > Tools.Environment.Production);
+
     this.http.configure(config => {
-      if (accessToken) config.withHeader('Authorization', `Bearer ${accessToken}`);
+      config.withInterceptor({
+        request(request) {
+          if (shouldLog) Tools.Debug.log(`Requesting ${request.method} ${request.url}`, request);
+          if (accessToken && request.url.startsWith(urls.authSsl))
+            request.headers.headers['Authorization'] = `Bearer ${accessToken}`;
+        }
+      })
     })
 
     this.httpFetch.configure(config => {
@@ -59,18 +67,19 @@ export class LoginBase {
         'X-Requested-With': 'Fetch'
       }
 
-      if (accessToken) (<any>headers).Authorization = `Bearer ${accessToken}`;
-      // config.withDefaults({ headers })
-      //   .withInterceptor({
-      //     request(request) {
-      //       Tools.Debug.log(`Requesting ${request.method} ${request.url}`);
-      //       return request; // you can return a modified Request, or you can short-circuit the request by returning a Response
-      //     },
-      //     response(response) {
-      //       Tools.Debug.log(`Received ${response.status} ${response.url}`, response);
-      //       return response; // you can return a modified Response
-      //     }
-      //   });
+      config.withDefaults({ headers })
+        .withInterceptor({
+          request(request) {
+            if (shouldLog) Tools.Debug.log(`[FETCH] Requesting ${request.method} ${request.url}`, request);
+            if (accessToken && request.url.startsWith(urls.authSsl))
+              request.headers['Authorization'] = `Bearer ${accessToken}`;
+            return request; // you can return a modified Request, or you can short-circuit the request by returning a Response
+          },
+          response(response) {
+            if (shouldLog) Tools.Debug.log(`[FETCH] Received ${response.status} ${response.url}`, response);
+            return response; // you can return a modified Response
+          }
+        });
     })
 
   }

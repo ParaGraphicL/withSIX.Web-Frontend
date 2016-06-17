@@ -42,12 +42,11 @@ window.VersionCompare = <any>VersionCompare;
 class RouteHandler {
   routingData;
   site: string;
-  constructor(private http: HttpClient, private w6: W6) {
-    http.configure(x => (<any>x).withHeader('Accept', 'application/json')); // firefox fix for login json not turning into an object
-  }
+  constructor(private http: HttpClient, private w6: W6) { }
 
   async configure(site: string) {
     this.site = site;
+    // may not use Authorization header
     var r = await this.http.get(this.w6.url.getSerialUrl("data/routing.json"));
     let main = r.content["main"]
     let routes = r.content["play"];
