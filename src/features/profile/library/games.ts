@@ -2,7 +2,7 @@ import {ViewModel, Query, DbClientQuery, handlerFor, IGame} from '../../../frame
 import {Index as SettingsIndex} from '../../settings/index';
 
 export class Games extends ViewModel {
-  heading = "Library"
+  heading = "library"
   model: IGamesData;
   clientEnabled: boolean;
 
