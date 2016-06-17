@@ -266,15 +266,8 @@ export class App extends ViewModel {
 
   activateNg() {
     if (!this.first) {
-      let ready = false;
-      let scriptElement = document.createElement('script');
-      scriptElement.src = `${this.w6.url.cdn}/dist_legacy/app.min.js`;
-      scriptElement.onload = () => ready = true;
-      document.querySelector('head').appendChild(scriptElement);
-
       let iv = setInterval(() => {
         if (window.w6Cheat.aureliaReady) return;
-        if (!ready) return;
         let row = angular.element("#root-content-row");
         if (row.length == 0) return;
         clearInterval(iv);
