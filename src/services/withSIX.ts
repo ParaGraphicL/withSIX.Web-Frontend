@@ -1,7 +1,7 @@
 import {Tools} from './tools';
 import {Client, IMiniClientInfo} from 'withsix-sync-api';
 import breeze from 'breeze-client';
-import {IUserInfo} from '../dtos';
+import {IUserInfo} from './dtos';
 
 export interface IAvatarInfo {
   avatarURL?: string;

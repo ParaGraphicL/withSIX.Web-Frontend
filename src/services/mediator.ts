@@ -1,7 +1,7 @@
 import {UploadService, OpenAddModDialogQuery, OpenAddCollectionDialogQuery} from './legacy';
 import breeze from 'breeze-client';
-import { IUserInfo } from '../dtos';
-import { W6Context } from './legacy/w6context'
+import { IUserInfo } from './dtos';
+import { W6Context } from './w6context'
 import { BasketService } from './basket-service';
 import { Toastr } from './toastr';
 import { Client } from 'withsix-sync-api';

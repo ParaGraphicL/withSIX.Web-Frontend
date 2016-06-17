@@ -4,9 +4,9 @@ import {CreateCollectionDialog} from './collections/create-collection-dialog';
 export class Stream extends ViewModel {
   gameUrl: string;
   model;
-  async activate() {
-    this.model = await new GetStream(this.w6.activeGame.slug).handle(this.mediator);
-    this.gameUrl = `/p/${this.w6.activeGame.slug}`;
+  async activate(params) {
+    this.model = await new GetStream(params.gameSlug).handle(this.mediator);
+    this.gameUrl = `/p/${params.gameSlug}`;
   }
 
   get item() { return this.model.postItems[0]; }

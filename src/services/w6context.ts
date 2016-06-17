@@ -1,9 +1,8 @@
 import breeze from 'breeze-client';
-import {EntityExtends, BreezeEntityGraph, _IntDefs, BreezeInitialzation, IBreezeUser} from '../../dtos';
+import {EntityExtends, BreezeEntityGraph, _IntDefs, BreezeInitialzation, IBreezeUser} from './dtos';
 import {EventAggregator} from 'aurelia-event-aggregator';
-import {Tools} from '../tools';
-import {W6} from '../withSIX';
-import {Tk} from './tk';
+import {Tools} from './tools';
+import {W6} from './withSIX';
 
 export interface IQueryResult<T extends breeze.Entity> extends breeze.QueryResult {
   results: T[];
@@ -21,7 +20,7 @@ export interface IRequestShortcutConfig extends ng.IRequestShortcutConfig {
 }
 
 // TODO: No longer inherit from this, but use the executeQuery etc methods directly as exampled in GetModQuery
-export class W6Context extends Tk.Service {
+export class W6Context {
   static $name = 'dbContext';
   static $inject = [
     '$http', '$q', '$timeout', 'logger', 'options', 'userInfo', 'loadingStatusInterceptor', 'promiseCache', 'w6', 'aur.eventBus'
@@ -35,9 +34,10 @@ export class W6Context extends Tk.Service {
 
   public nextBreezeRequestName: string;
 
+  get tools() { return Tools }
+
   constructor(public $http: ng.IHttpService, public $q: ng.IQService, public $timeout,
     public logger /*: Components.Logger.ToastLogger */, public options, public userInfo, loadingInterceptor /*: Components.LoadingStatusInterceptor.LoadingStatusInterceptor */, private promiseCache, public w6: W6, public eventBus: EventAggregator) {
-    super();
 
     breeze.DataType.parseDateFromServer = function(source) {
       var date = moment(source);
@@ -499,14 +499,13 @@ export class W6Context extends Tk.Service {
   private registerEntityTypeCtor(store, ctor) { store.registerEntityTypeCtor(ctor.$name, ctor); }
 }
 
-export class W6ContextWrapper extends Tk.Service {
+export class W6ContextWrapper {
   static $inject = [
     '$http', '$q', '$timeout', 'logger', 'options', 'userInfo', 'dbContext'
   ];
 
   constructor(public $http: ng.IHttpService, public $q: ng.IQService, public $timeout,
     public logger /*: Components.Logger.ToastLogger */, public options, public userInfo, public context: W6Context) {
-    super();
   }
 
   public filterPrefixes = this.context.filterPrefixes;

@@ -5,7 +5,7 @@ import {Toastr} from './toastr';
 import {ObservableEventAggregator} from './reactive';
 import {W6} from './withSIX';
 import {LegacyBasketService, BasketType, IBasketModel, IBasketItem, BasketState, IBasketCollection} from './legacy';
-import {W6Context} from './legacy/w6context';
+import {W6Context} from './w6context';
 import {ContentHelper} from './helpers';
 import {ActionType, IActionNotification, Client, ConnectionState, IContentState, ItemState, IContentStateChange, IContentStatusChange, IClientInfo, IActionTabStateUpdate, StateChanged, IContentGuidSpec, IContentsBase, IContentBase,
   IUserErrorAdded, IUserErrorResolved} from 'withsix-sync-api';
