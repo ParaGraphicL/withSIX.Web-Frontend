@@ -6877,6 +6877,9 @@ export module MyApp.Connect {
               when('/me/library/:gameSlug/collections', 'newprofile').
               when('/me/library/:gameSlug/collections/:collectionId/:collectionSlug?', 'newprofile').
               //when('/me/library/:gameSlug/servers', 'newprofile').
+              when('/me/content/collections', 'newprofile').
+              when('/me/content/missions', 'newprofile').
+              when('/me/content/mods', 'newprofile').
               when('/me/library/:gameSlug/apps', 'newprofile').
               when('/me', 'me').
               when('/me/settings', 'me.settings').
@@ -6977,7 +6980,6 @@ export module MyApp.Connect {
               when('/u/:userSlug/content/collections', 'profile.content.collections').
               when('/u/:userSlug/content/missions', 'profile.content.missions').
               when('/u/:userSlug/content/mods', 'profile.content.mods').
-              //when('/profile/:userSlug/comments', 'profile.comments').
               segment('profile', {
                 controller: 'ProfileController',
                 templateUrl: '/src_legacy/app/connect/profile/index.html',
