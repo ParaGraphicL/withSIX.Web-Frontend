@@ -72,7 +72,7 @@ export class LoginBase {
 
       if (accessToken) headers['Authorization'] = `Bearer ${accessToken}`
 
-      config.withDefaults({ headers, credentials: 'include' })
+      config.withDefaults({ headers })
         .withInterceptor({
           request(request) {
             if (shouldLog) Tools.Debug.log(`[FETCH] Requesting ${request.method} ${request.url}`, request.url.startsWith(urls.authSsl), request);
