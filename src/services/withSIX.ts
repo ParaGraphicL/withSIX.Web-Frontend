@@ -456,6 +456,8 @@ export class W6 {
 
   get isLoggedIn() { return this.userInfo && this.userInfo.id != null; }
 
+  showFooter = true;
+
   activeGame: { id: string; slug: string }
   settings: ISettings = {}
 

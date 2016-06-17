@@ -1,5 +1,6 @@
 @import "_base";
 #my-games,
+#my-home,
 #my-library,
 #my-library-show-home,
 #user-profile .library {
@@ -7,7 +8,7 @@
     height: 92px;
   }
   .virtual-container {
-    max-height: calc(100vh - 260px);
+    max-height: calc(100vh - 416px); // TODO: The header might change because of no-ads..
   }
   .col1 {
     @include make-md-column(5);
@@ -60,7 +61,6 @@
   .game {
     $width: 110px + 30px; // padding
     width: $width;
-    margin-bottom: 40px;
     .card {
       &:hover {
         .title a {
@@ -83,8 +83,6 @@
         overflow: hidden;
       }
       .bottom-bar {
-        left: 30px;
-        right: 30px;
         action-bar {
           button,
           li,
@@ -201,12 +199,18 @@
   }
 }
 #my-home {
+  .virtual-row {
+    height: 96px;
+  }
+  .virtual-container {
+    max-height: calc(100vh - 596px); // TODO: The header might change because of no-ads..
+  }
   .recent {
-    .virtual-row {
-      height: 300px;
-    }
     .virtual-container {
-      max-height: 80vh;
+      max-height: calc(100vh - 382px); // TODO: The header might change because of no-ads..
+    }
+    .virtual-row {
+      height: 304px;
     }
   }
 }

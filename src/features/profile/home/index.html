@@ -14,12 +14,12 @@
 
 			<div class="col-md-8">
 				<h3 class="row-header">Your games</h3>
-				<card-view items-map.bind="model.games" show-ads.bind="false" card-container-cls="col-sm-2 game" card-cls="content-basketable" view-path="features/profile/content/" item-type="game-box" class="games">
+				<card-view items-map.bind="model.games" show-ads.bind="false" card-container-cls="col-sm-6 game" card-cls="content-basketable" view-path="features/profile/content/" item-type="game-box" class="games">
 					<template replace-part="additional-items">
-						<div class="col-sm-6 col-md-2 game">
+						<div class="col-sm-6 game">
 							<div class="card img">
 								<a href="/me/library">
-									<span class="imageholder au-target" back-img.bind="image" au-target-id="186" style="background-image: url(http://i.imgur.com/JkMOiIw.png);"></span>
+									<div class="imageholder au-target" back-img.bind="image" au-target-id="186" style="background-image: url(http://i.imgur.com/JkMOiIw.png);"></div>
 								</a>
 							</div>
 						</div>
