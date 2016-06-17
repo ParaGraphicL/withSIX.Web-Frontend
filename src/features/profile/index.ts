@@ -28,5 +28,10 @@ export class Index extends ViewModel {
   }
   activate() {
     if (!this.w6.enableBasket) this.navigateInternal("/me/settings")
+    this.w6.showFooter = false;
+  }
+  deactivate() {
+    super.deactivate();
+    this.w6.showFooter = true;
   }
 }

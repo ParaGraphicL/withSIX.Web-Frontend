@@ -7,7 +7,7 @@
     height: 92px;
   }
   .virtual-container {
-    max-height: calc(100vh - 260px);
+    max-height: calc(100vh - 416px); // TODO: The header might change because of no-ads..
   }
   .col1 {
     @include make-md-column(5);
@@ -201,12 +201,18 @@
   }
 }
 #my-home {
+  .virtual-row {
+    height: 96px;
+  }
+  .virtual-container {
+    max-height: calc(100vh - 652px); // TODO: The header might change because of no-ads..
+  }
   .recent {
-    .virtual-row {
-      height: 300px;
-    }
     .virtual-container {
-      max-height: 80vh;
+      max-height: calc(100vh - 380px); // TODO: The header might change because of no-ads..
+    }
+    .virtual-row {
+      height: 304px;
     }
   }
 }
