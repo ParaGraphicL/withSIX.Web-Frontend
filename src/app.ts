@@ -104,7 +104,7 @@ export class App extends ViewModel {
   breadcrumbs: { title: string, path: string }[];
   gameInfo: GameClientInfo = new GameClientInfo(null, null, null);
 
-  constructor(ui: UiContext, public http: HttpClient, private login: Login, private routeHandler: RouteHandler, doubleClick, private taskQueue: TaskQueue, private client: Client, private basketService: BasketService, private ls: LS, private clientMissingHandler: ClientMissingHandler, signaler: BindingSignaler) {
+  constructor(ui: UiContext, public http: HttpClient, private login: Login, private routeHandler: RouteHandler, doubleClick, private taskQueue: TaskQueue, private client: Client, private basketService: BasketService, private ls: LS, private clientMissingHandler: ClientMissingHandler, private signaler: BindingSignaler) {
     super(ui);
     var site = this.w6.url.site || "main";
     this.modules = [new FeaturesModule()];
@@ -122,6 +122,8 @@ export class App extends ViewModel {
 
   // this.w6.settings.hasSync
   get showFirefoxNotice() { return this.w6.isFirefox && this.w6.settings.downloadedSync && this.firefoxTimeoutPassed && !this.w6.miniClient.isConnected && !this.basketService.basketService.settings.hasConnected; }
+
+  get currentRoute() { return this.router.currentInstruction }
 
   activate() {
     if (this.hasApi) window.onbeforeunload = () => {
@@ -169,6 +171,7 @@ export class App extends ViewModel {
       d(this.eventBus.subscribe(Navigate, this.navigate));
       d(this.eventBus.subscribe(LoginUpdated, this.loginUpdated));
       d(this.eventBus.subscribe(OpenSettings, this.openClientSettings));
+      d(this.observeEx(x => x.currentRoute).subscribe(_ => this.signaler.signal('router-signal')))
 
       d(this.observeEx(x => x.overlayShown)
         .subscribe(x => {
