@@ -1359,6 +1359,9 @@ button {
 .addMoreWidth {
   width: 40px;
 }
+.nav-pills > li.active > a {
+  background-color: $colorSixBlue;
+}
 #delayedElement.au-enter-active {
   -webkit-animation: 0.2s show-animation;
   animation: 0.2s show-animation;

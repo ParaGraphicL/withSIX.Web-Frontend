@@ -1,5 +1,5 @@
 <template>
-  <ul>
+  <ul class.bind="menuCls">
     <li repeat.for="item of items" class="${item.cls} ${item.fullSegment | routeSegmentActive:item.isDefault & signal:'router-signal'}">
       <a href.bind="item.url" if.bind="item.url" target.bind="item.target">
         <span class="${item.cls}">

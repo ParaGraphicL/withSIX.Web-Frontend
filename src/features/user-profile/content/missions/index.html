@@ -1,6 +1,6 @@
 <template>
-  <div class="container-fluid" infinite-scroll.bind="loadMore">
-    <h1 class="pagetitle">${params.slug.replace("-", "").toUpperCaseFirst()} Missions</h1>
+  <div infinite-scroll.bind="loadMore">
+    <h2 class="page-title">${params.slug.replace("-", "").toUpperCaseFirst()}'s Missions</h1>
     <filters custom-handler.bind="handleFilter" filters.ref="filteredComponent" search-input-placeholder.bind="searchInputPlaceholder" typeahead-options.bind="typeahead" items.bind="model.items" filters.bind="filters" search-fields.bind="searchFields" sort.bind="sort"
         view-types.bind="availableViewTypes"></filters>
 
