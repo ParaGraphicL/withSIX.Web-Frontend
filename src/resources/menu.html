@@ -1,6 +1,6 @@
 <template>
   <ul>
-    <li repeat.for="item of items" class="${item.cls} ${item.fullSegment | routeSegmentActive}">
+    <li repeat.for="item of items" class="${item.cls} ${item.fullSegment | routeSegmentActive:item.isDefault & signal:'router-signal'}">
       <a href.bind="item.url" if.bind="item.url" target.bind="item.target">
         <span class="${item.cls}">
                 <span if.bind="item.icon" class="icon ${item.icon}"></span>

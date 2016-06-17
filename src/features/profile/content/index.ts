@@ -19,7 +19,7 @@ export class Index extends ViewModel {
 
   async activate() {
     var menuItems = [
-      { header: "Collections", segment: "collections", icon: "icon withSIX-icon-Nav-Collection" }, // , isDefault: true
+      { header: "Collections", segment: "collections", icon: "icon withSIX-icon-Nav-Collection", isDefault: true },
       { header: "Mods", segment: "mods", icon: "icon withSIX-icon-Nav-Mod" },
       { header: "Missions", segment: "missions", icon: "icon withSIX-icon-Nav-Mission" }
     ];

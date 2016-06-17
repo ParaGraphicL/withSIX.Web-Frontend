@@ -16,12 +16,12 @@ export class Index extends ViewModel {
     config.map([
       { route: ['', 'home'], name: 'home', moduleId: 'features/profile/home/index', nav: this.w6.enableBasket, title: 'Home' },
       { route: 'library', name: 'library', moduleId: 'features/profile/library/index', nav: this.w6.enableBasket, title: 'Library' },
-      { route: 'friends', name: 'friends', moduleId: 'features/pages/angular', nav: this.w6.userInfo.id ? true : false, title: 'Friends', auth: true },
+      { route: 'content', name: 'content', moduleId: `${modulePath}content/index`, nav: this.isLoggedIn, title: 'Content', auth: true },
+      { route: 'friends', name: 'friends', moduleId: 'features/pages/angular', nav: this.isLoggedIn, title: 'Friends', auth: true },
       { route: 'groups', name: 'groups', moduleId: 'features/profile/groups/index', nav: canSee || this.w6.userInfo.isManager, title: 'Groups', auth: true },
-      { route: 'messages', name: 'messages', moduleId: 'features/pages/angular', nav: this.w6.userInfo.id ? true : false, title: 'Messages', auth: true },
-      { route: 'content', name: 'content', moduleId: `${modulePath}content/index`, nav: false, title: 'Content', auth: true },
+      { route: 'messages', name: 'messages', moduleId: 'features/pages/angular', nav: this.isLoggedIn, title: 'Messages', auth: true },
       { route: 'blog', name: 'blog', moduleId: 'features/pages/angular', nav: this.w6.userInfo.id && canSee ? true : false, auth: true, title: 'Blog' },
-      { route: 'settings', name: 'settings', moduleId: 'features/pages/angular', nav: this.w6.userInfo.id ? true : false, title: 'Settings', auth: true, settings: { cls: 'pull-right' } }
+      { route: 'settings', name: 'settings', moduleId: 'features/pages/angular', nav: this.isLoggedIn, title: 'Settings', auth: true, settings: { cls: 'pull-right' } }
     ]);
 
     this.router = router;

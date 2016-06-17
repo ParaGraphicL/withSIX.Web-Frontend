@@ -1,54 +1,5 @@
 <template>
   <div class="container-fluid">
-    <div id="subheader-row">
-
-      <h1 class="pagetitle">Published content</h1>
-
-
-      <div if.bind="model.queuedMissions.length > 0">
-        <h3>Queued content</h3>
-
-        <p>The following files are being processed:</p>
-        <div class="grid-roster row que-tiles clearfix">
-          <div class="col-sm-6 col-md-4 col-lg-3" repeat.for="mission of model.queuedMissions">
-            <a>
-              <span class="icon">
-                      <span class="icon-spinner"></span>
-              </span>
-              <strong class="content-name">
-                      ${mission.parentMission.game.name}:
-                      ${mission.parentMission.name}
-                  </strong>
-              <span class="filename">filename: ${mission.fileName} <br /></span>
-              <span class="status">We're processing your mission, check back in about 10 seconds..</span>
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <div if.bind="model.unpublishedMissions.length > 0">
-        <h3>Ready for publishing</h3>
-        <p>The following files are ready to be published:</p>
-
-        <div class="grid-roster row que-tiles clearfix">
-          <div class="col-sm-6" repeat.for="missionVersion of model.unpublishedMissions">
-            <a href="${w6.url.play}/${missionVersion.mission.game.slug}/missions/${toShortId(missionVersion.mission.id)}/${missionVersion.mission.slug}/versions/${missionVersion.versionSlug}/publish">
-              <span class="icon">
-                      <span class="icon-fighter-jet"></span>
-              </span>
-              <strong>
-                      ${missionVersion.mission.game.name}:
-                      ${missionVersion.mission.name}
-                      (suggested v${missionVersion.version})
-                  </strong>
-              <span class="status">Start publishing!</span>
-            </a>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
     <div class="tabbar">
       <menu items.bind="menuItems"></menu>
     </div>

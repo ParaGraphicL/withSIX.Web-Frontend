@@ -48,7 +48,6 @@ export class LoginBase {
   }
 
   setHeaders(accessToken: string) {
-    Tools.Debug.log("$$$ set headers", accessToken);
     let urls = this.w6Url;
     let shouldLog = (Tools.getEnvironment() > Tools.Environment.Production);
 
@@ -56,6 +55,7 @@ export class LoginBase {
       config.withHeader('Accept', 'application/json');
       config.withInterceptor({
         request(request) {
+          if (!request) return;
           if (shouldLog) Tools.Debug.log(`Requesting ${request.method} ${request.url}`, request.url.startsWith(urls.authSsl), request);
           if (accessToken && request.url.startsWith(urls.authSsl))
             request.headers.headers['Authorization'] = `Bearer ${accessToken}`;
@@ -75,12 +75,14 @@ export class LoginBase {
       config.withDefaults({ headers })
         .withInterceptor({
           request(request) {
+            if (!request) return request;
             if (shouldLog) Tools.Debug.log(`[FETCH] Requesting ${request.method} ${request.url}`, request.url.startsWith(urls.authSsl), request);
             if (accessToken && request.url.startsWith(urls.authSsl))
               request.headers['authorization'] = `Bearer ${accessToken}`; // TODO: Doesnt work somehow
             return request; // you can return a modified Request, or you can short-circuit the request by returning a Response
           },
           response(response) {
+            if (!response) return response;
             if (shouldLog) Tools.Debug.log(`[FETCH] Received ${response.status} ${response.url}`, response);
             return response; // you can return a modified Response
           }

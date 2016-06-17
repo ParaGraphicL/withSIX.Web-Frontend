@@ -1,8 +1,9 @@
 <template>
-   <require from="./profile.scss"></require>
-  <section class="au-animate container-fluid" id="my">
-    <div class="tabbar">
-      <span class="pull-left profile-img">
+  <require from="./profile.scss"></require>
+  <section class="au-animate" id="my">
+    <div class="container-fluid">
+      <div class="tabbar">
+        <span class="pull-left profile-img">
         <a href="${w6.url.connectSsl}/register" if.bind="!isLoggedIn">
           <img src="http://i.ytimg.com/vi/yaqe1qesQ8c/maxresdefault.jpg"></img>
         </a>
@@ -10,11 +11,12 @@
           <img src.bind="w6.url.calculateAvatarUrl(w6.userInfo)"></img>
         </a>
       </span>
-      <router-menu menu-cls="" router.bind="router"></menu>
-    </div>
-    <div>
-      <div if.bind="!isLoggedIn && !strangerBarHidden" class="tile stranger-danger">
-        <small>
+        <router-menu menu-cls="" router.bind="router">
+          </menu>
+      </div>
+      <div>
+        <div if.bind="!isLoggedIn && !strangerBarHidden" class="tile stranger-danger">
+          <small>
           Hi stranger! With an account you can save &amp; access your home from anywhere.
           <span class="pull-right">
             We recomment that you
@@ -23,8 +25,9 @@
           </span>
           <div class="clearfix"></div>
         </small>
+        </div>
       </div>
-      <router-view></router-view>
     </div>
+    <router-view></router-view>
   </section>
 </template>

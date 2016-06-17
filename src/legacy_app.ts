@@ -6863,25 +6863,26 @@ export module MyApp.Connect {
 
 
             var me = $routeProvider.
-              when('/me/groups', 'newprofile').
-              when('/me/groups/:id/:slug', 'newprofile').
-              when('/me/groups/:id/:slug/join/:token', 'newprofile').
-              when('/me/groups/:id/:slug/members', 'newprofile').
-              when('/me/groups/:id/:slug/collections', 'newprofile').
-              when('/me/groups/:id/:slug/mods', 'newprofile').
-              when('/me/groups/:id/:slug/servers', 'newprofile').
-              when('/me/library', 'newprofile').
-              when('/me/library/:gameSlug', 'newprofile').
-              when('/me/library/:gameSlug/mods', 'newprofile').
-              when('/me/library/:gameSlug/missions', 'newprofile').
-              when('/me/library/:gameSlug/collections', 'newprofile').
-              when('/me/library/:gameSlug/collections/:collectionId/:collectionSlug?', 'newprofile').
-              //when('/me/library/:gameSlug/servers', 'newprofile').
-              when('/me/content/collections', 'newprofile').
-              when('/me/content/missions', 'newprofile').
-              when('/me/content/mods', 'newprofile').
-              when('/me/library/:gameSlug/apps', 'newprofile').
               when('/me', 'me').
+              when('/me/groups', 'aurelia').
+              when('/me/groups/:id/:slug', 'aurelia').
+              when('/me/groups/:id/:slug/join/:token', 'aurelia').
+              when('/me/groups/:id/:slug/members', 'aurelia').
+              when('/me/groups/:id/:slug/collections', 'aurelia').
+              when('/me/groups/:id/:slug/mods', 'aurelia').
+              when('/me/groups/:id/:slug/servers', 'aurelia').
+              when('/me/library', 'aurelia').
+              when('/me/library/:gameSlug', 'aurelia').
+              when('/me/library/:gameSlug/mods', 'aurelia').
+              when('/me/library/:gameSlug/missions', 'aurelia').
+              when('/me/library/:gameSlug/collections', 'aurelia').
+              when('/me/library/:gameSlug/collections/:collectionId/:collectionSlug?', 'aurelia').
+              when('/me/library/:gameSlug/servers', 'aurelia').
+              when('/me/content', 'aurelia').
+              when('/me/content/collections', 'aurelia').
+              when('/me/content/missions', 'aurelia').
+              when('/me/content/mods', 'aurelia').
+              when('/me/library/:gameSlug/apps', 'aurelia').
               when('/me/settings', 'me.settings').
               when('/me/settings/personal', 'me.settings.personal').
               when('/me/settings/avatar', 'me.settings.avatar').
@@ -6894,7 +6895,7 @@ export module MyApp.Connect {
               when('/me/offers', 'me.offers').
               when('/me/messages', 'me.messages').
               when('/me/messages/:slug', 'me.messages.user').
-              segment('newprofile', {
+              segment('aurelia', {
                 controller: 'AureliaPageController'
               }).
               segment('me', {
@@ -6977,9 +6978,9 @@ export module MyApp.Connect {
               when('/u/:userSlug/friends', 'profile.friends').
               when('/u/:userSlug/messages', 'profile.messages').
               when('/u/:userSlug/content', 'profile.content').
-              when('/u/:userSlug/content/collections', 'profile.content.collections').
-              when('/u/:userSlug/content/missions', 'profile.content.missions').
-              when('/u/:userSlug/content/mods', 'profile.content.mods').
+              when('/u/:userSlug/content/collections', 'profile.content.aurelia').
+              when('/u/:userSlug/content/missions', 'profile.content.aurelia').
+              when('/u/:userSlug/content/mods', 'profile.content.aurelia').
               segment('profile', {
                 controller: 'ProfileController',
                 templateUrl: '/src_legacy/app/connect/profile/index.html',
@@ -6988,21 +6989,15 @@ export module MyApp.Connect {
               })
               .within();
 
+            profile.segment('content', { default: true })
+              .within()
+              .segment('aurelia', {});
+
             profile.segment('blog', {
               templateUrl: '/src_legacy/app/connect/profile/blogposts.html',
               controller: 'ProfileBlogController',
               resolve: setupQuery(Profile.GetProfileBlogQuery),
             });
-
-            profile.segment('content', {
-            }).
-              within().
-              segment('collections', {
-              }).
-              segment('mods', {
-              }).
-              segment('missions', {
-              });
 
             profile.segment('friends', {
               templateUrl: '/src_legacy/app/connect/profile/friends.html',
