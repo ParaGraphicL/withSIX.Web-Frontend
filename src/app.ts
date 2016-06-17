@@ -34,6 +34,8 @@ import {TopBar} from './features/top-bar/top-bar';
 import {UserErrorDialog} from './features/user-error-dialog';
 import {MessageDialog} from './features/message-dialog';
 
+import {BindingSignaler} from 'aurelia-templating-resources';
+
 declare var RegExp;
 // For legacy code purposes..
 window.VersionCompare = <any>VersionCompare;
@@ -91,7 +93,7 @@ class RouteHandler {
   }
 }
 
-@inject(UiContext, HttpClient, Login, RouteHandler, 'DoubleClick', TaskQueue, Client, BasketService, LS, ClientMissingHandler)
+@inject(UiContext, HttpClient, Login, RouteHandler, 'DoubleClick', TaskQueue, Client, BasketService, LS, ClientMissingHandler, BindingSignaler)
 export class App extends ViewModel {
   newVersionInterval: number;
   modules: any[];
@@ -102,7 +104,7 @@ export class App extends ViewModel {
   breadcrumbs: { title: string, path: string }[];
   gameInfo: GameClientInfo = new GameClientInfo(null, null, null);
 
-  constructor(ui: UiContext, public http: HttpClient, private login: Login, private routeHandler: RouteHandler, doubleClick, private taskQueue: TaskQueue, private client: Client, private basketService: BasketService, private ls: LS, private clientMissingHandler: ClientMissingHandler) {
+  constructor(ui: UiContext, public http: HttpClient, private login: Login, private routeHandler: RouteHandler, doubleClick, private taskQueue: TaskQueue, private client: Client, private basketService: BasketService, private ls: LS, private clientMissingHandler: ClientMissingHandler, signaler: BindingSignaler) {
     super(ui);
     var site = this.w6.url.site || "main";
     this.modules = [new FeaturesModule()];
@@ -110,6 +112,7 @@ export class App extends ViewModel {
     this.breadcrumbs = this.setupBreadcrumbs();
     this.w6.openLoginDialog = evt => this.login.login();
     this.w6.logout = () => this.logout();
+    setInterval(() => signaler.signal('timeago'), 60 * 1000);
     //this.eventBus.subscribe('router:navigation:processing', () => console.log("$$$ processing route"));
     //this.eventBus.subscribe('router:navigation:complete', () => console.log("$$$ complete route"));
   }
