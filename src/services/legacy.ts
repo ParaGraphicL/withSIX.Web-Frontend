@@ -1,28 +1,25 @@
-import {MyApp} from '../legacy_app';
+import {MyApp, Play, Main} from '../legacy/app';
+import {Components} from '../legacy/components';
+import {IBreezeErrorReason} from './legacy/base';
+import {CollectionDataService, ModDataService, MissionDataService} from './legacy/data-services';
 
-import IBasketModel = MyApp.Components.Basket.IBasketModel;
-import BasketType = MyApp.Components.Basket.BasketType;
-import BasketState = MyApp.Components.Basket.BasketState;
-import IBasketCollection = MyApp.Components.Basket.IBasketCollection;
-import IBasketItem = MyApp.Components.Basket.IBasketItem;
-import BasketItemType = MyApp.Components.Basket.BasketItemType;
+import IBasketModel = Components.Basket.IBasketModel;
+import BasketType = Components.Basket.BasketType;
+import BasketState = Components.Basket.BasketState;
+import IBasketCollection = Components.Basket.IBasketCollection;
+import IBasketItem = Components.Basket.IBasketItem;
+import BasketItemType = Components.Basket.BasketItemType;
+import FileSize = Components.FileSize;
+import UploadService = Components.Upload.UploadService;
+import ToastLogger = Components.Logger.ToastLogger;
+import LegacyBasketService = Components.Basket.BasketService;
 
-import ModsHelper = MyApp.Play.Mods.ModsHelper;
-import Helper = MyApp.Play.Helper;
-import FileSize = MyApp.Components.FileSize;
-
-import IBreezeErrorReason = MyApp.IBreezeErrorReason;
-
-import CollectionDataService = MyApp.Play.Collections.CollectionDataService
-import ModDataService = MyApp.Play.Mods.ModDataService;
-import MissionDataService = MyApp.Play.Missions.MissionDataService;
-import UploadService = MyApp.Components.Upload.UploadService;
-import ToastLogger = MyApp.Components.Logger.ToastLogger;
-import OpenAddModDialogQuery = MyApp.Play.Games.OpenAddModDialogQuery;
-import OpenAddCollectionDialogQuery = MyApp.Play.Games.OpenAddCollectionDialogQuery;
-import LegacyBasketService = MyApp.Components.Basket.BasketService;
-import GetMiniChangelogQuery = MyApp.Main.Changelog.GetMiniChangelogQuery;
-import GetBlogsQuery = MyApp.Main.Blog.GetBlogsQuery;
+import ModsHelper = Play.Mods.ModsHelper;
+import Helper = Play.Helper;
+import OpenAddModDialogQuery = Play.Games.OpenAddModDialogQuery;
+import OpenAddCollectionDialogQuery = Play.Games.OpenAddCollectionDialogQuery;
+import GetMiniChangelogQuery = Main.Changelog.GetMiniChangelogQuery;
+import GetBlogsQuery = Main.Blog.GetBlogsQuery;
 
 export {IBreezeErrorReason, IBasketItem, IBasketModel, BasketItemType, BasketType, BasketState, IBasketCollection, ModsHelper, Helper}
 export {CollectionDataService, ModDataService, UploadService, MissionDataService}

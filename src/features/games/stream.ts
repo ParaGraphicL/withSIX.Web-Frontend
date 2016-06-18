@@ -10,6 +10,10 @@ export class Stream extends ViewModel {
     this.model = await new GetStream(params.gameSlug).handle(this.mediator);
     this.gameUrl = `/p/${params.gameSlug}`;
     this.handleFooterIf(false);
+    // setInterval(() => {
+    //   this.model.contentItems.push(...this.model.contentItems.map(x => Object.assign({}, x)));
+    //   this.model.contentItems.unshift(...this.model.contentItems.map(x => Object.assign({}, x)));
+    // }, 5000);
   }
 
   deactivate() { super.deactivate(); this.handleFooterIf(true); }
