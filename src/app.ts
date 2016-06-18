@@ -117,7 +117,7 @@ export class App extends ViewModel {
     //this.eventBus.subscribe('router:navigation:complete', () => console.log("$$$ complete route"));
   }
 
-  template = 'v1'
+  template = 'v2'
   userMenuItems = [];
 
   // this.w6.settings.hasSync
@@ -145,9 +145,7 @@ export class App extends ViewModel {
 
     let isSync = window.location.search.includes('sync=1') ? true : false;
     if (isSync) { this.w6.updateSettings(x => x.hasSync = true); }
-    this.template = this.w6.enableBasket ? 'v2' : 'v1'; // this.w6.settings.template || (this.w6.url.environment > this.tools.Environment.Production || this.w6.userInfo.isAdmin || this.w6.settings.hasSync ? 'v2' : 'v1');
-    //if (window.location.search.includes("template=v2")) this.setTemplate('v2');
-    //else if (window.location.search.includes("template=v1")) this.setTemplate('v1');
+    this.template = 'v2';
 
     this.userMenuItems.push(new MenuItem(this.openSettings));
     if (!this.features.library) this.userMenuItems.push(new MenuItem(this.openLibrary));
