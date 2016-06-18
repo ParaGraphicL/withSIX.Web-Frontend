@@ -153,7 +153,14 @@ export class W6Context {
     let url = this.getUrl(path);
     if (configOverride && configOverride.params) {
       var params = Object.keys(configOverride.params)
-        .map((key) => encodeURIComponent(key) + "=" + encodeURIComponent(configOverride.params[key]))
+        .map((key) => {
+          var val = configOverride.params[key];
+          if (val instanceof Array) {
+            return val.map(x => encodeURIComponent(key) + "=" + encodeURIComponent(x)).join("&")
+          } else {
+            return encodeURIComponent(key) + "=" + encodeURIComponent(val)
+          }
+        })
         .join("&")
         .replace(/%20/g, "+");
       url = url + "?" + params;
