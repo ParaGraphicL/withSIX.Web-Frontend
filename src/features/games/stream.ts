@@ -42,8 +42,9 @@ export class GetStream extends Query<IStream> {
 @handlerFor(GetStream)
 export class GetStreamHandler extends DbQuery<GetStream, IStream> {
   async handle(request: GetStream) {
-    let r = await this.context.getCustom<{ contentItems: any }>("games/" + request.gameSlug + "/stream?streamType=" + request.streamType);
-    r.data.contentItems.forEach(x => x.type = 'mod');
-    return r.data;
+    let r = await this.context.getCustom<{ contentItems: any[] }>("games/" + request.gameSlug + "/stream?streamType=" + request.streamType);
+    console.log("$$$", r)
+    r.contentItems.forEach(x => x.type = 'mod');
+    return r;
   }
 }

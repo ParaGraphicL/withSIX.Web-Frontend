@@ -5,6 +5,7 @@ import {Tk} from '../services/legacy/tk'
 import {IRootScope, ITagKey, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHaveModel, DialogQueryBase, ICreateComment, ICQWM, IModel, DbCommandBase, DbQueryBase, BaseController, BaseQueryController,
   IMenuItem} from '../services/legacy/base'
 import {EventAggregator} from 'aurelia-event-aggregator';
+import {HttpClient} from 'aurelia-fetch-client';
 
 import {Mediator} from 'aurelia-mediator';
 import {Client} from 'withsix-sync-api';
@@ -41,8 +42,7 @@ class AppModule extends Tk.Module {
     /* 'breeze.angular',  */
     'angularMoment', 'angularSpinner', 'ngTagsInput', 'infinite-scroll', 'ngMap', 'ngDfp',
     'ui.bootstrap.tpls', 'ui.bootstrap.tabs', 'dialogs.main', 'ui', 'angular-promise-cache', 'xeditable', 'commangular', //'ngClipboard',
-    'ui-rangeSlider', 'ngFileUpload2', 'checklist-model', 'AngularProgress', 'angular-loading-bar',
-    'route-segment', 'view-segment', 'mgcrea.ngStrap.datepicker', 'angular-redactor',
+    'ui-rangeSlider', 'ngFileUpload2', 'checklist-model', 'route-segment', 'view-segment', 'mgcrea.ngStrap.datepicker', 'angular-redactor',
     'Components.BytesFilter', 'Components.Debounce', 'Components.Pagedown', 'Components.Fields',
     'Components.ReallyClick', 'Components.BackImg', 'Components.Comments', 'Components.AccountCard', 'nvd3ChartDirectives',
     'Components.Filters', 'Components.Directives', 'mgcrea.ngStrap.typeahead', 'mgcrea.ngStrap.tooltip', 'angularFileUpload', 'mgcrea.ngStrap.dropdown', 'mgcrea.ngStrap.popover', 'ui.bootstrap.collapse', 'mgcrea.ngStrap.affix',
@@ -63,6 +63,7 @@ class AppModule extends Tk.Module {
       .factory('aur.mediator', () => window.w6Cheat.container.get(Mediator))
       .factory('aur.eventBus', () => window.w6Cheat.container.get(EventAggregator))
       .factory('aur.client', () => window.w6Cheat.container.get(Client))
+      .factory('aur.fetchClient', () => window.w6Cheat.container.get(HttpClient))
       .factory('modInfoService', () => window.w6Cheat.container.get(Client))
       .factory('aur.uiContext', () => window.w6Cheat.container.get(window.w6Cheat.containerObjects.uiContext))
       .factory('aur.login', () => window.w6Cheat.container.get(window.w6Cheat.containerObjects.login))

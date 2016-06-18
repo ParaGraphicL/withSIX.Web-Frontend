@@ -162,8 +162,7 @@ export class GetGroup extends Query<IGroup> { constructor(public id: string) { s
 @handlerFor(GetGroup)
 export class GetGroupHandler extends DbQuery<GetGroup, IGroup> {
   async handle(request: GetGroup): Promise<IGroup> {
-    var r = await this.context.getCustom<IGroup>("groups/" + request.id);
-    return r.data;
+    return await this.context.getCustom<IGroup>("groups/" + request.id);
   }
 }
 
@@ -205,7 +204,7 @@ export class UploadCoverHandler extends DbQuery<UploadCover, void> {
   async handle(request: UploadCover) {
     let groupPath = "groups/" + request.id;
     let policy = await this.context.postCustom<IBreezeAWSUploadPolicy>(groupPath + "/banner-policy");
-    await this.upload.uploadToAmazonWithPolicy(request.file, policy.data);
+    await this.upload.uploadToAmazonWithPolicy(request.file, policy);
     await this.context.postCustom(groupPath + "/banner-upload");
   }
 }
@@ -217,7 +216,7 @@ export class UploadLogoHandler extends DbQuery<UploadLogo, void> {
   async handle(request: UploadLogo) {
     let groupPath = "groups/" + request.id;
     let policy = await this.context.postCustom<IBreezeAWSUploadPolicy>(groupPath + "/logo-policy");
-    await this.upload.uploadToAmazonWithPolicy(request.file, policy.data);
+    await this.upload.uploadToAmazonWithPolicy(request.file, policy);
     await this.context.postCustom(groupPath + "/logo-upload");
   }
 }
@@ -228,7 +227,6 @@ class GenerateNewJoinToken extends Command<string> { constructor(public id: stri
 export class GenerateNewJoinTokenHandler extends DbQuery<GenerateNewJoinToken, string> {
   async handle(request: GenerateNewJoinToken): Promise<string> {
     let groupPath = "groups/" + request.id;
-    let r = await this.context.postCustom<string>(groupPath + "/join-token");
-    return r.data;
+    return await this.context.postCustom<string>(groupPath + "/join-token");
   }
 }

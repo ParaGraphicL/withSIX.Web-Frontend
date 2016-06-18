@@ -188,7 +188,6 @@ export module Admin {
     static $name = 'GetOrderOverview';
     public execute = [
       () => this.context.getCustom('admin/orders')
-        .then(r => r.data)
     ];
   }
 
@@ -206,7 +205,6 @@ export module Admin {
     static $name = 'GetGlobalIntegersOverview';
     public execute = [
       () => this.context.getCustom('admin/globalintegers')
-        .then(r => r.data)
     ];
   }
 
@@ -217,7 +215,6 @@ export module Admin {
     static $name = 'GetGameOverview';
     public execute = [
       () => this.context.getCustom('admin/games')
-        .then(r => r.data)
     ];
   }
 
@@ -225,7 +222,7 @@ export module Admin {
 
   class GetGameContentOverviewQuery extends DbQueryBase {
     static $name = 'GetGameContentOverview';
-    public execute = [() => this.context.getCustom('admin/games/content').then(r => r.data)];
+    public execute = [() => this.context.getCustom('admin/games/content')];
   }
 
   registerCQ(GetGameContentOverviewQuery);
@@ -234,7 +231,6 @@ export module Admin {
     static $name = 'GetAccountOverview';
     public execute = [
       () => this.context.getCustom('admin/accounts')
-        .then(r => r.data)
     ];
   }
 

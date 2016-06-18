@@ -1,4 +1,4 @@
-import {UiContext,ViewModel, Mediator, DbQuery, Query, VoidCommand, handlerFor, uiCommand2} from '../../../../framework'
+import {UiContext, ViewModel, Mediator, DbQuery, Query, VoidCommand, handlerFor, uiCommand2} from '../../../../framework'
 import {ICollection} from './collection';
 import {CreateCollectionDialog} from '../../../games/collections/create-collection-dialog';
 
@@ -18,12 +18,12 @@ export class Index extends ViewModel {
   create = uiCommand2("Create", async () => {
     // TODO: Game selection
     let result = await this.dialog.open({
-        viewModel: CreateCollectionDialog,
-        model: {
-          game: {id: "9DE199E3-7342-4495-AD18-195CF264BA5B", slug: "arma-3"},
-          model: { groupId: this.group.id}
-        }
-      });
+      viewModel: CreateCollectionDialog,
+      model: {
+        game: { id: "9DE199E3-7342-4495-AD18-195CF264BA5B", slug: "arma-3" },
+        model: { groupId: this.group.id }
+      }
+    });
   })
 }
 
@@ -34,7 +34,7 @@ export class GetGroupCollectionsHandler extends DbQuery<GetGroupCollections, IGr
     var r = await this.context.getCustom<ICollection[]>("groups/" + request.id + '/collections');
     return {
       id: request.id,
-      collections: r.data
+      collections: r
     };
   }
 }

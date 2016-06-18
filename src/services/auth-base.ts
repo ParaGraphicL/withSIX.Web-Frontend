@@ -1,13 +1,15 @@
 import {HttpClient} from 'aurelia-http-client';
 import {HttpClient as FetchClient} from 'aurelia-fetch-client';
 import {EventAggregator} from 'aurelia-event-aggregator';
-import {inject} from 'aurelia-dependency-injection';
+import {inject, Container} from 'aurelia-dependency-injection';
 
 import {EntityExtends, IUserInfo} from './dtos';
 import {W6Urls} from './withSIX';
 import {Tools} from './tools';
 
 export var AbortError = Tools.createError('AbortError');
+
+export class OutstandingRequestChange { constructor(public outstanding: number) { } }
 
 @inject(HttpClient, FetchClient, W6Urls, EventAggregator)
 export class LoginBase {
@@ -47,18 +49,30 @@ export class LoginBase {
     this.eventBus.publish(new LoginUpdated(accessToken));
   }
 
+  outstanding = 0;
+
   setHeaders(accessToken: string) {
     let urls = this.w6Url;
     let shouldLog = (Tools.getEnvironment() > Tools.Environment.Production);
+    let ag = Container.instance.get(EventAggregator);
+    //http://stackoverflow.com/questions/9314730/display-browser-loading-indicator-like-when-a-postback-occurs-on-ajax-calls
 
     this.http.configure(config => {
       config.withHeader('Accept', 'application/json');
       config.withInterceptor({
-        request(request) {
+        request: (request) => {
+          this.outstanding++;
+          ag.publish(new OutstandingRequestChange(this.outstanding));
           if (!request) return;
           if (shouldLog) Tools.Debug.log(`Requesting ${request.method} ${request.url}`, request.url.startsWith(urls.authSsl), request);
           if (accessToken && request.url.startsWith(urls.authSsl))
             request.headers.headers['Authorization'] = `Bearer ${accessToken}`;
+          return request;
+        },
+        response: (response) => {
+          this.outstanding--;
+          ag.publish(new OutstandingRequestChange(this.outstanding));
+          return response;
         }
       })
     })
@@ -71,17 +85,20 @@ export class LoginBase {
       }
 
       if (accessToken) headers['Authorization'] = `Bearer ${accessToken}`
-
       config.withDefaults({ headers })
         .withInterceptor({
-          request(request) {
+          request: (request) => {
+            this.outstanding++;
+            ag.publish(new OutstandingRequestChange(this.outstanding));
             if (!request) return request;
             if (shouldLog) Tools.Debug.log(`[FETCH] Requesting ${request.method} ${request.url}`, request.url.startsWith(urls.authSsl), request);
             if (accessToken && request.url.startsWith(urls.authSsl))
               request.headers['authorization'] = `Bearer ${accessToken}`; // TODO: Doesnt work somehow
             return request; // you can return a modified Request, or you can short-circuit the request by returning a Response
           },
-          response(response) {
+          response: (response) => {
+            this.outstanding--;
+            ag.publish(new OutstandingRequestChange(this.outstanding));
             if (!response) return response;
             if (shouldLog) Tools.Debug.log(`[FETCH] Received ${response.status} ${response.url}`, response);
             return response; // you can return a modified Response

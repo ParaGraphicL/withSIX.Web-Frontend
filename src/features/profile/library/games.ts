@@ -40,7 +40,7 @@ class GetGamesHandler extends DbClientQuery<GetGames, IGamesData> {
       let ary: IGame[];
       if (this.w6.userInfo.id) {
         let r = await this.context.getCustom<{ games: IGame[] }>("games");
-        ary = r.data.games;
+        ary = r.games;
       } else ary = [];
       return { games: this.tools.aryToMap(ary, x => x.id) }
     }

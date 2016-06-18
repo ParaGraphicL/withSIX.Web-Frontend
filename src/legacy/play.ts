@@ -1699,7 +1699,6 @@ export module Play.Collections {
     static $name = 'GetCollectionContentTags';
     public execute = [
       'id', id => this.context.getCustom('collectionversions/' + id + '/contenttags')
-        .then(r => r.data)
     ];
   }
 
@@ -1821,14 +1820,14 @@ export module Play.Games {
       if ((<string>data.uri).endsWithIgnoreCase("config.yml")) {
         this.$scope.request(NewImportedCollectionCommand, { data: data })
           .then(result => {
-            if (result.lastResult.data.length == 1) {
+            if (result.lastResult.length == 1) {
               var modId = Tools.toShortId(result.lastResult.data[0]);
               this.$modalInstance.close();
               //var slug = <string>data.name.sluggifyEntityName();
               this.$location.path(Tools.joinUri([this.$scope.url.play, this.model.slug, "collections", modId, "slug"])).search('landingrepo', 1);
             } else {
               this.$scope.importResult = [];
-              for (var i = 0; i < result.lastResult.data.length; i++) {
+              for (var i = 0; i < result.lastResult.length; i++) {
                 this.$scope.importResult[i] = Tools.joinUri([this.$scope.url.play, this.model.slug, "collections", Tools.toShortId(result.lastResult.data[i]), "slug"]);
               }
               this.$scope.page = this.$newViewBaseFolder + 'add-collection-3.html';
@@ -2314,27 +2313,27 @@ export module Play.Games {
 
   export class NewModCommand extends DbCommandBase {
     static $name = 'NewMod';
-    public execute = ['data', data => this.context.postCustom<{ result: string }>("mods", data, { requestName: 'postNewMod' }).then(r => r.data.result)];
+    public execute = ['data', data => this.context.postCustom<{ result: string }>("mods", data, { requestName: 'postNewMod' })];
   }
 
   registerCQ(NewModCommand);
   export class NewImportedCollectionCommand extends DbCommandBase {
     static $name = 'NewImportedCollection';
-    public execute = ['data', data => this.context.postCustom("collections/import-repo", data, { requestName: 'postNewCollection' })/*.then(r => r.data['result'])*/];
+    public execute = ['data', data => this.context.postCustom("collections/import-repo", data, { requestName: 'postNewCollection' })];
   }
 
   registerCQ(NewImportedCollectionCommand);
 
   export class NewMultiImportedCollectionCommand extends DbCommandBase {
     static $name = 'NewMultiImportedCollection';
-    public execute = ['data', data => this.context.postCustom("collections/import-server", data, { requestName: 'postNewCollection' })/*.then(r => r.data['result'])*/];
+    public execute = ['data', data => this.context.postCustom("collections/import-server", data, { requestName: 'postNewCollection' })];
   }
 
   registerCQ(NewMultiImportedCollectionCommand);
 
   export class GetCheckLinkQuery extends DbCommandBase {
     static $name = 'GetCheckLink';
-    public execute = ['linkToCheck', linkToCheck => this.context.getCustom<BooleanResult>("cool/checkLink", { requestName: 'checkLink', params: { linkToCheck: linkToCheck } }).then(result => result.data.result)];
+    public execute = ['linkToCheck', linkToCheck => this.context.getCustom<BooleanResult>("cool/checkLink", { requestName: 'checkLink', params: { linkToCheck: linkToCheck } }).then(result => result.result)];
   }
 
   registerCQ(GetCheckLinkQuery);
@@ -2364,7 +2363,7 @@ export module Play.Games {
       '$rootScope', 'basketService', 'aur.eventBus'
     ];
 
-    constructor(public $scope: IGameScope, public logger, $q, dbContext, query: { game: IBreezeGame, gameInfo }, private modInfo,
+    constructor(public $scope: IGameScope, public logger, $q, dbContext: W6Context, query: { game: IBreezeGame, gameInfo }, private modInfo,
       $rootScope: IRootScope, basketService: BasketService, private eventBus: EventAggregator) {
       super($scope, logger, $q, query.game);
 
@@ -2674,8 +2673,7 @@ export module Play.Missions {
       'missionId',
       (missionid) => {
         Tools.Debug.log("getting edit mission by id: " + missionid.toString());
-        return this.context.getCustom("missions/" + Tools.fromShortId(missionid) + "/edit", {})
-          .then((result) => result.data);
+        return this.context.getCustom("missions/" + Tools.fromShortId(missionid) + "/edit", {});
       }
     ];
   }
@@ -2687,8 +2685,7 @@ export module Play.Missions {
       'missionId', 'versionSlug',
       (missionId, versionSlug) => {
         Tools.Debug.log("getting publish mission version by id: " + missionId + ", and versionSlug: " + versionSlug);
-        return this.context.getCustom("missions/" + Tools.fromShortId(missionId) + "/versions/" + versionSlug, {})
-          .then((result) => result.data);
+        return this.context.getCustom("missions/" + Tools.fromShortId(missionId) + "/versions/" + versionSlug, {});
       }
     ];
   }
@@ -3242,8 +3239,8 @@ export module Play.Mods {
     private ok = () => {
       this.$scope.request(GetClaimQuery, { modId: this.$scope.model.id })
         .then((result) => {
-          this.$scope.claimToken = result.lastResult.data.token;
-          this.$scope.formatProvider = result.lastResult.data.formatProvider;
+          this.$scope.claimToken = result.lastResult.token;
+          this.$scope.formatProvider = result.lastResult.formatProvider;
           this.$scope.ctModel = result.lastResult.data;
           this.$scope.page = '/src_legacy/app/play/mods/dialogs/_claim-page2.html';
         })
@@ -3286,7 +3283,7 @@ export module Play.Mods {
           resolve: {
             mod: () => this.context.executeQuery(query, "loadClaimDialog").then(result => result.results[0]),
             supportsClaiming: () => this.context.getCustom<BooleanResult>("mods/" + id + "/supportsClaiming", { requestName: 'loadClaimDialog' })
-              .then(result => result.data.result)
+              .then(result => result.result)
           }
         });
       }
@@ -3295,14 +3292,13 @@ export module Play.Mods {
 
   export class GetForumPostQuery extends DbQueryBase {
     static $name = 'GetForumPost';
-    public execute = ['forumUrl', forumUrl => this.context.getCustom('cool/forumPost', { params: { forumUrl: forumUrl }, requestName: 'getForumPost' }).then(r => r.data)];
+    public execute = ['forumUrl', forumUrl => this.context.getCustom('cool/forumPost', { params: { forumUrl: forumUrl }, requestName: 'getForumPost' })];
   }
 
   registerCQ(GetForumPostQuery);
 
   export class GetModQuery extends DbQueryBase {
     static $name = 'GetMod';
-    //this.$q.reject(rejection)
     public execute = [
       'modId', modId => this.executeKeyQuery<IBreezeMod>(
         () => this.getEntityQueryFromShortId("Mod", modId)
@@ -3487,7 +3483,7 @@ export module Play.Mods {
         if (editData.galleryToUpload)
           promises.push(this.uploadGallery(modId, editData.galleryToUpload));
 
-        return this.context.$q.all(promises)
+        return Promise.all(promises)
           .then((result) => this.context.saveChanges('saveMod'));
       }
     ];
@@ -3504,7 +3500,7 @@ export module Play.Mods {
         promises.push(this.uploadService.uploadToAmazon(file, "mods/" + modId + "/galleryupload", "ModMediaItem"));
       }
 
-      return this.context.$q.all(promises);
+      return Promise.all(promises);
     }
   }
 
@@ -3597,21 +3593,21 @@ export module Play.Mods {
 
   export class CancelUploadRequestQuery extends DbCommandBase {
     static $name = 'CancelUploadRequest';
-    public execute = ['requestId', 'force', (requestId, force) => this.context.getCustom<BooleanResult>("cool/cancelUploadRequest", { requestName: 'cancelUploadRequest', params: { requestId: requestId, force: force } }).then(result => result.data.result)];
+    public execute = ['requestId', 'force', (requestId, force) => this.context.getCustom<BooleanResult>("cool/cancelUploadRequest", { requestName: 'cancelUploadRequest', params: { requestId: requestId, force: force } }).then(result => result.result)];
   }
 
   registerCQ(CancelUploadRequestQuery);
 
   export class ApproveUploadRequestQuery extends DbCommandBase {
     static $name = 'ApproveUploadRequest';
-    public execute = ['requestId', (requestId) => this.context.getCustom<BooleanResult>("cool/approveUpload", { requestName: 'approveUpload', params: { requestId: requestId } }).then(result => result.data.result)];
+    public execute = ['requestId', (requestId) => this.context.getCustom<BooleanResult>("cool/approveUpload", { requestName: 'approveUpload', params: { requestId: requestId } }).then(result => result.result)];
   }
 
   registerCQ(ApproveUploadRequestQuery);
 
   export class DenyUploadRequestQuery extends DbCommandBase {
     static $name = 'DenyUploadRequest';
-    public execute = ['requestId', (requestId) => this.context.getCustom<BooleanResult>("cool/denyUpload", { requestName: 'denyUpload', params: { requestId: requestId } }).then(result => result.data.result)];
+    public execute = ['requestId', (requestId) => this.context.getCustom<BooleanResult>("cool/denyUpload", { requestName: 'denyUpload', params: { requestId: requestId } }).then(result => result.result)];
   }
 
   registerCQ(DenyUploadRequestQuery);
@@ -3667,7 +3663,7 @@ export module Play.Mods {
 
   export class GetLatestInfo extends DbQueryBase {
     static $name = 'GetLatestInfo';
-    public execute = ['data', data => this.context.getCustom<{}>("mods/get-mod-info?downloadUri=" + data.downloadUri).then(x => x.data)]
+    public execute = ['data', data => this.context.getCustom<{}>("mods/get-mod-info?downloadUri=" + data.downloadUri)]
   }
 
   registerCQ(GetLatestInfo);
@@ -3699,8 +3695,8 @@ export module Play.Mods {
         //var cache = this.context.getModExistsCache(mod);
         //if (cache === false || cache === true) return cache;
 
-        return <any>this.context.getCustom("mods/package-name-exists", { params: { packageName: packageName } })
-          .then(result => (<any>result.data).result);
+        return <any>this.context.getCustom<BooleanResult>("mods/package-name-exists", { params: { packageName: packageName } })
+          .then(result => result.result);
       }
     ];
   }
@@ -3801,7 +3797,7 @@ export module Play.Mods {
       'query', 'gameSlug', (name: string, gameSlug: string) => {
         if (gameSlug == null) return this.$commangular.dispatch(GetUserTagsQuery.$name, { query: name }).then(r => r.lastResult);
 
-        return this.context.$q.all([
+        return Promise.all([
           this.$commangular.dispatch(GetUsersQuery.$name, { query: name }).then(r => r.lastResult), this.context.executeQuery(breeze.EntityQuery.from("ModsByGame")
             .withParameters({ gameSlug: gameSlug })
             .where(new breeze.Predicate("toLower(authorText)", this.context.getOpByKeyLength(name), name.toLowerCase()))

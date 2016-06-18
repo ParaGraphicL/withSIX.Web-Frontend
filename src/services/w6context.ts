@@ -4,6 +4,8 @@ import {EventAggregator} from 'aurelia-event-aggregator';
 import {Tools} from './tools';
 import {W6} from './withSIX';
 
+import {HttpClient} from 'aurelia-fetch-client';
+
 export interface IQueryResult<T extends breeze.Entity> extends breeze.QueryResult {
   results: T[];
 }
@@ -23,7 +25,7 @@ export interface IRequestShortcutConfig extends ng.IRequestShortcutConfig {
 export class W6Context {
   static $name = 'dbContext';
   static $inject = [
-    '$http', '$q', '$timeout', 'logger', 'options', 'userInfo', 'loadingStatusInterceptor', 'promiseCache', 'w6', 'aur.eventBus'
+    'aur.fetchClient', '$timeout', 'logger', 'options', 'userInfo', 'loadingStatusInterceptor', 'promiseCache', 'w6', 'aur.eventBus'
   ];
   public static minFilterLength = 2;
   public loggedIn: boolean;
@@ -36,7 +38,7 @@ export class W6Context {
 
   get tools() { return Tools }
 
-  constructor(public $http: ng.IHttpService, public $q: ng.IQService, public $timeout,
+  constructor(private http: HttpClient, public $timeout,
     public logger /*: Components.Logger.ToastLogger */, public options, public userInfo, loadingInterceptor /*: Components.LoadingStatusInterceptor.LoadingStatusInterceptor */, private promiseCache, public w6: W6, public eventBus: EventAggregator) {
 
     breeze.DataType.parseDateFromServer = function(source) {
@@ -102,28 +104,21 @@ export class W6Context {
     return Tools.uriHasProtocol(path) || path.startsWith("/") ? path : this.w6.url.api + "/" + path;
   }
 
-  public getMd(subPath) {
-    return this.getCustom<string>(this.w6.url.getSerialUrl("docs/" + subPath))
-      .then(result => result.data);
-  }
+  public getMd(subPath) { return this.getCustom<string>(this.w6.url.getSerialUrl("docs/" + subPath)); }
 
-  public getCdnMd(subPath: string) {
-    return this.getCustom<string>(this.w6.url.docsCdn + "/software/withSIX/drop/docs/" + subPath) //  + (subPath.includes('?') ? '&' : '?') + "site=" + this.w6.url.site
-      .then(result => result.data);
-  }
+  public getCdnMd(subPath: string) { return this.getCustom<string>(this.w6.url.docsCdn + "/software/withSIX/drop/docs/" + subPath) } //  + (subPath.includes('?') ? '&' : '?') + "site=" + this.w6.url.site
 
   // TODO: We should check for the latest commit or tag on github, every minute or so, and then use that commit SHA
   public async getDocMd(subPath, addTag = false) {
     var path = 'docs/' + subPath;
     var latestCommit = await this.getLatestCommit(path);
     return await this.getCustom<string>('https://cdn.rawgit.com/SIXNetworks/withsix-docs/' + latestCommit + '/' + path)
-      .then(result => result.data);
   }
 
   async getLatestCommit(path, repo = 'SIXNetworks/withsix-docs') {
     // TODO: cache per repo for on minute? (promisecache)
-    var commits = await this.getCustom('https://api.github.com/repos/' + repo + '/commits?path=' + path);
-    return commits.data[0].sha;
+    var commits = await this.getCustom<{ sha: string }[]>('https://api.github.com/repos/' + repo + '/commits?path=' + path);
+    return commits[0].sha;
   }
 
   getTimeTag(minuteGranulary = 5) {
@@ -131,34 +126,40 @@ export class W6Context {
     return `${d.getUTCFullYear()}${d.getUTCMonth()}${d.getUTCDay()}${d.getUTCHours()}${Math.round(d.getUTCMinutes() / minuteGranulary)}`
   }
 
-  public getCustom<T>(path, configOverrides?: IRequestShortcutConfig): IHttpPromise<T> {
-    return <any>this.$http.get(this.getUrl(path), this.handleOverrides(configOverrides));
-  }
-
-  public postCustom<T>(path, data?, configOverrides?: IRequestShortcutConfig) {
-    return this.$http.post<T>(this.getUrl(path), data, this.handleOverrides(configOverrides));
-  }
-
-  public putCustom<T>(path, data, configOverrides?: IRequestShortcutConfig) {
-    return this.$http.put<T>(this.getUrl(path), data, this.handleOverrides(configOverrides));
-  }
-
-  public patchCustom<T>(path, data, configOverrides?: IRequestShortcutConfig) {
-    return this.$http<T>(Object.assign({ url: this.getUrl(path), method: 'PATCH', data: data, w6Request: true }, configOverrides));
-  }
-
-  public deleteCustom<T>(path, configOverrides?: IRequestShortcutConfig) {
-    return this.$http.delete<T>(this.getUrl(path), this.handleOverrides(configOverrides));
-  }
+  public getCustom = <T>(path, configOverrides?: IRequestShortcutConfig) => this.handle<T>(path, configOverrides)
+  public postCustom = <T>(path, data?, configOverrides?: IRequestShortcutConfig) => this.handleJson<T>(path, data, Object.assign({ method: 'POST' }, configOverrides));
+  public putCustom = <T>(path, data, configOverrides?: IRequestShortcutConfig) => this.handleJson<T>(path, data, Object.assign({ method: 'PUT' }, configOverrides));
+  public patchCustom = <T>(path, data, configOverrides?: IRequestShortcutConfig) => this.handleJson<T>(path, data, Object.assign({ method: 'PATCH' }, configOverrides));
 
   public postCustomFormData(path, fd, configOverrides?: IRequestShortcutConfig) {
     Tools.Debug.log("postCustomFormData", path, fd, configOverrides);
-    return this.$http.post(this.getUrl(path), fd, this.handleOverrides(Object.assign({
-      transformRequest: angular.identity,
-      headers: {
-        'Content-Type': undefined
-      }
-    }, configOverrides)));
+    // return this.postCustom(path, fd, this.handleOverrides(Object.assign({
+    //   transformRequest: angular.identity,
+    //   headers: {
+    //     'Content-Type': undefined
+    //   }
+    // }, configOverrides)));
+    return this.handle(path, Object.assign({
+      body: fd
+    }, configOverrides));
+  }
+  public deleteCustom = <T>(path, configOverrides?: IRequestShortcutConfig) => this.handle(path, { method: 'DELETE' })
+
+  handleJson = <T>(path, data, configOverride?) => this.handle<T>(path, Object.assign({
+    body: data ? JSON.stringify(data) : null
+  }, configOverride));
+
+  handle = async <T>(path, configOverride?) => {
+    let url = this.getUrl(path);
+    if (configOverride && configOverride.params) {
+      var params = Object.keys(configOverride.params)
+        .map((key) => encodeURIComponent(key) + "=" + encodeURIComponent(configOverride.params[key]))
+        .join("&")
+        .replace(/%20/g, "+");
+      url = url + "?" + params;
+    }
+
+    return <T>(await this.http.fetch(url, configOverride).then(x => x.json()).then(x => this.w6.convertToClient(x)));
   }
 
   private handleOverrides(configOverrides) {
@@ -172,9 +173,7 @@ export class W6Context {
     return fd;
   }
 
-  public get<T>(path, params?): IHttpPromise<T> {
-    return <any>this.$http.get(this.options.serviceName + '/' + path, <IRequestShortcutConfig>{ params: params, w6Request: true });
-  }
+  public get = <T>(path, query?) => this.handle<T>(this.options.serviceName + '/' + path, { params: query });
 
   public getOpByKeyLength(key: string): breeze.FilterQueryOpSymbol {
     return key.length > W6Context.minFilterLength ? breeze.FilterQueryOp.Contains : breeze.FilterQueryOp.StartsWith;
@@ -344,14 +343,12 @@ export class W6Context {
     this.manager.rejectChanges();
   }
 
-  public saveChanges(requestName?, entities?: breeze.Entity[]) {
+  public async saveChanges(requestName?, entities?: breeze.Entity[]) {
     if (this.manager.hasChanges()) {
       this.nextBreezeRequestName = requestName;
-      return this.manager.saveChanges(entities);
+      return await this.manager.saveChanges(entities);
     } else {
-      var deferred = this.$q.defer();
-      deferred.reject("nothing to save");
-      return deferred.promise;
+      throw new Error("nothing to save")
     }
   }
 
@@ -376,9 +373,9 @@ export class W6Context {
   fetchMetadata() {
     // may not use authorization header..
     return this.promiseCache({
-      promise: () => this.$http.get(this.w6.url.getSerialUrl('data/metadata.json'))
+      promise: () => this.getCustom(this.w6.url.getSerialUrl('data/metadata.json'))
         // TODO: Replace...
-        .then(result => this.createMetadataStore(this.serviceName, result.data))
+        .then(result => this.createMetadataStore(this.serviceName, result))
         .then(() => this.createDefaultManager()),
       key: 'fetchMetadata',
       ttl: -1 // Be sure to set to something more sane if we use caching in Local storage! ;-)
@@ -501,10 +498,10 @@ export class W6Context {
 
 export class W6ContextWrapper {
   static $inject = [
-    '$http', '$q', '$timeout', 'logger', 'options', 'userInfo', 'dbContext'
+    '$timeout', 'logger', 'options', 'userInfo', 'dbContext'
   ];
 
-  constructor(public $http: ng.IHttpService, public $q: ng.IQService, public $timeout,
+  constructor(public $timeout,
     public logger /*: Components.Logger.ToastLogger */, public options, public userInfo, public context: W6Context) {
   }
 

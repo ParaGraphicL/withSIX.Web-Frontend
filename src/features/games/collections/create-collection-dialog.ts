@@ -97,7 +97,7 @@ class CollectionExists extends Query<boolean> {
 @handlerFor(CollectionExists)
 class CollectionExistsHandler extends DbQuery<CollectionExists, boolean> {
   handle(request: CollectionExists) {
-    return this.context.getCustom<{ result: boolean }>("collections/exists?name=" + request.name + "&gameId=" + request.gameId + "&groupId=" + request.groupId).then(x => x.data.result);
+    return this.context.getCustom<{ result: boolean }>("collections/exists?name=" + request.name + "&gameId=" + request.gameId + "&groupId=" + request.groupId).then(x => x.result);
   }
 }
 
@@ -132,6 +132,6 @@ class CreateCollectionHandler extends DbQuery<CreateCollection, string> {
       forkedCollectionId: request.model.forkedCollectionId,
       scope: request.model.scope
     });
-    return result.data;
+    return result;
   }
 }

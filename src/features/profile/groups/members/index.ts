@@ -56,7 +56,7 @@ export class UserSearchQuery extends Query<IUser[]> { constructor(public q: stri
 export class UserSearchQueryHandler extends DbQuery<UserSearchQuery, IUser[]> {
   async handle(request: UserSearchQuery): Promise<IUser[]> {
     var r = await this.context.getCustom<{ items: IUser[] }>("user/search?userName=" + request.q);
-    return r.data.items;
+    return r.items;
   }
 }
 
@@ -65,8 +65,7 @@ export class GetGroupMembers extends Query<IGroup> { constructor(public id: stri
 @handlerFor(GetGroupMembers)
 export class GetGroupMembersHandler extends DbQuery<GetGroupMembers, IGroup> {
   async handle(request: GetGroupMembers): Promise<IGroup> {
-    let r = await this.context.getCustom<IGroup>("groups/" + request.id + '/members');
-    let group = r.data;
+    let group = await this.context.getCustom<IGroup>("groups/" + request.id + '/members');
     let groupInfo = { id: request.id, ownerId: group.ownerId };
     group.members.forEach(x => {
       x.group = groupInfo;

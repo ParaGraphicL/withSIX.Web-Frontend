@@ -325,7 +325,6 @@ export module Main.Blog {
         },
         requestName: 'getPostArchive'
       })
-        .then(result => result.data)
     ];
   }
 
@@ -372,15 +371,16 @@ export module Main.Blog {
     static $name = 'CreatePostComment';
 
     public execute = [
-      'model', model => {
+      'model', async (model) => {
         var entity = BreezeEntityGraph.PostComment.createEntity(this.context.manager, { postId: model.postId, authorId: this.context.userInfo.id, message: model.message, created: new Date(Date.now()), replyToId: model.replyToId });
         if (model.replyTo) model.replyTo.replies.push(entity); // weird, why is this not automatic since we set replyToId?
-        return this.context.saveChanges(undefined, [entity])
-          .catch(x => {
-            if (model.replyTo) Tools.removeEl(model.replyTo.replies, entity);
-            this.context.manager.detachEntity(entity);
-            return Promise.reject(x);
-          });
+        try {
+          await this.context.saveChanges(undefined, [entity]);
+        } catch (err) {
+          if (model.replyTo) Tools.removeEl(model.replyTo.replies, entity);
+          this.context.manager.detachEntity(entity);
+          throw err;
+        }
       }
     ];
   }
@@ -666,7 +666,7 @@ export module Main.Premium {
         templateUrl: '/src_legacy/app/main/premium/premium-terms-dialog.html',
         size: 'lg',
         resolve: {
-          data: () => this.context.getCustom(this.w6.url.cdn + "/docs/global/TermsOfServicesPremium.md").then(result => result.data)
+          data: () => this.context.getCustom(this.w6.url.cdn + "/docs/global/TermsOfServicesPremium.md")
         }
       })
     ];
@@ -678,12 +678,12 @@ export module Main.Premium {
     constructor(dbContext: W6Context, private w6: W6) {
       super(dbContext);
     }
-    public execute = [() => this.context.getCustom(this.w6.url.cdn + "/docs/global/TermsOfServicesPremium.md").then(result => result.data)];
+    public execute = [() => this.context.getCustom(this.w6.url.cdn + "/docs/global/TermsOfServicesPremium.md")];
   }
 
   export class GetPremiumQuery extends DbQueryBase {
     static $name = 'GetPremium';
-    public execute = [() => this.context.getCustom("premium").then(result => result.data)];
+    public execute = [() => this.context.getCustom("premium")];
   }
 
   export class CreatePremiumOrderCommand extends DbCommandBase {

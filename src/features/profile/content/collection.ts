@@ -122,8 +122,7 @@ export class ForkCollection extends Command<string> {
 @handlerFor(ForkCollection)
 export class ForkCollectionHandler extends DbQuery<ForkCollection, string> {
   async handle(request: ForkCollection) {
-    let r = await this.context.postCustom<string>("collections/" + request.id + "/fork");
-    return r.data;
+    return await this.context.postCustom<string>("collections/" + request.id + "/fork");
   }
 }
 

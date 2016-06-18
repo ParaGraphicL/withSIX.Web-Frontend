@@ -1,4 +1,4 @@
-import {UiContext,ViewModel, Mediator, DbQuery, Query, VoidCommand, handlerFor} from '../../../framework'
+import {UiContext, ViewModel, Mediator, DbQuery, Query, VoidCommand, handlerFor} from '../../../framework'
 import {GroupDeleted} from './group';
 import {NewGroupDialog} from './new-group-dialog';
 
@@ -20,7 +20,7 @@ export class Groups extends ViewModel {
   }
 
   createNewGroup() {
-    this.dialog.open({viewModel: NewGroupDialog});
+    this.dialog.open({ viewModel: NewGroupDialog });
   }
 }
 
@@ -31,7 +31,6 @@ export class GetGroups extends Query<IGroup[]> {
 @handlerFor(GetGroups)
 export class GetGroupsHandler extends DbQuery<GetGroups, IGroup[]> {
   async handle(request: GetGroups): Promise<IGroup[]> {
-    var r = await this.context.getCustom<IGroup[]>("groups");
-    return r.data;
+    return await this.context.getCustom<IGroup[]>("groups");
   }
 }

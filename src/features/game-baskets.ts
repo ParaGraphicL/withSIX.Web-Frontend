@@ -7,7 +7,7 @@ import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject, Container} from 'aurelia-framework';
 import {
   Base, LS, Notifier, Toastr, uiCommand2, ViewModel, ViewModelWithModel, SelectTab,
-  UploadService, BasketType, IBasketModel, IBasketItem, BasketState, IBasketCollection, W6Context,
+  BasketType, IBasketModel, IBasketItem, BasketState, IBasketCollection, W6Context,
   SubscribeCollection, InstallContent, InstallContents, LaunchContents, LaunchContent, ContentHelper, Action
 } from '../framework';
 import {Client, ConnectionState, IContentState, ItemState, IContentStateChange, IContentStatusChange, IClientInfo, StateChanged, IContentGuidSpec, IContentsBase, IContentBase} from 'withsix-sync-api';

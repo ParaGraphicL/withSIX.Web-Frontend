@@ -65,19 +65,15 @@ export class DbQueryBase extends Tk.QueryBase {
   processSingleResult = promise => promise.
     then(result => {
       if (result.results.length == 0) {
-        var d = this.context.$q.defer();
-        d.reject(new Tools.NotFoundException("There were no results returned from the server"));
-        return d.promise;
+        throw new Tools.NotFoundException("There were no results returned from the server");
       }
       return result.results[0];
     }).catch(failure => {
-      var d = this.context.$q.defer();
       if (failure.status == 404) {
-        d.reject(new Tools.NotFoundException("The server responded with 404"));
+        throw new Tools.NotFoundException("The server responded with 404");
       } else {
-        d.reject(failure);
+        return Promise.reject(failure);
       }
-      return d.promise;
     });
 
   public getEntityQueryFromShortId(type: string, id: string): breeze.EntityQuery {
@@ -117,7 +113,7 @@ export class DbCommandBase extends Tk.CommandBase {
   public respondSuccess = message => {
     return { success: true, message: message };
   };
-  public respondError = reason => {
+  public respondError = <T>(reason) => {
     var response = this.buildErrorResponse(reason);
     /*
     if (reason.data && reason.data.modelState) {
@@ -126,7 +122,7 @@ export class DbCommandBase extends Tk.CommandBase {
         }
     }
     */
-    return this.context.$q.reject(response);
+    return Promise.reject<T>(response);
   };
 }
 

@@ -16,7 +16,7 @@ import {UiContext, ViewModel, Dialog, Mediator, Command, DbQuery, handlerFor, Me
 import {GameBaskets} from './features/game-baskets';
 
 import {Login} from './services/auth';
-import {LoginBase, LoginUpdated} from './services/auth-base';
+import {LoginBase, LoginUpdated, OutstandingRequestChange} from './services/auth-base';
 import VersionCompare from 'version_compare';
 
 // workaround for dialogs not working
@@ -171,6 +171,7 @@ export class App extends ViewModel {
       d(this.eventBus.subscribe(Navigate, this.navigate));
       d(this.eventBus.subscribe(LoginUpdated, this.loginUpdated));
       d(this.eventBus.subscribe(OpenSettings, this.openClientSettings));
+      d(this.eventBus.subscribe(OutstandingRequestChange, evt => this.isApiWorking = evt.outstanding > 0))
       d(this.observeEx(x => x.currentRoute).subscribe(_ => this.signaler.signal('router-signal')))
 
       d(this.observeEx(x => x.overlayShown)
@@ -289,7 +290,11 @@ export class App extends ViewModel {
 
   version: string;
 
-  get classes() { return `${this.w6.renderAds ? null : 'no-adds'} ${this.w6.miniClient.isConnected ? 'client-active' : null} ${this.w6.miniClient.isConnected && this.gameInfo.isLocked ? 'client-busy' : null} ${this.w6.userInfo.id ? 'logged-in' : null}` }
+  get classes() { return `${this.w6.renderAds ? null : 'no-adds'} ${this.w6.miniClient.isConnected ? 'client-active' : null} ${this.w6.miniClient.isConnected && this.gameInfo.isLocked ? 'client-busy' : null} ${this.isApiBusy ? 'api-busy' : ''} ${this.w6.userInfo.id ? 'logged-in' : null}` }
+
+  get isApiBusy() { return this.router.isNavigating || this.isApiWorking }
+
+  isApiWorking = false;
 
   get showSidebar() { return this.w6.enableBasket; }
 

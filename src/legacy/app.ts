@@ -153,8 +153,6 @@ export module MyApp {
       // TODO: Somehow fix loading indication of the initial page load...
       var destroyList = [];
       destroyList.push($rootScope.$on('$routeChangeStart', this.routeStart));
-      destroyList.push($rootScope.$on('loadingStatusActive', this.showSpinner));
-      destroyList.push($rootScope.$on('loadingStatusInactive', this.hideSpinner));
       destroyList.push($rootScope.$on('$routeChangeError', this.routeError));
       destroyList.push($rootScope.$on('$routeChangeSuccess', this.routeSuccess));
       destroyList.push($rootScope.$on('$locationChangeSuccess', () => {
@@ -199,14 +197,6 @@ export module MyApp {
           initialCompleted = true;
         });
       }
-    };
-    private showSpinner = () => {
-      this.$scope.loading = true;
-      this.$spinner.spin('fetch-spinner');
-    };
-    private hideSpinner = () => {
-      this.$scope.loading = false;
-      this.$spinner.stop('fetch-spinner');
     };
     private routeError = (evt, current, previous, rejection) => {
       Tools.Debug.log("Error loading page", evt, current, previous, rejection);

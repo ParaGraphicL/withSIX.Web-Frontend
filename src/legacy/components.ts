@@ -13,7 +13,7 @@ import {IBreezeMod, IBreezeUser, IBreezeCollection, IBreezeMission, IBreezeColle
   IBreezeModMediaItem, IUserInfo, Resource, Permission, Role,
   EntityExtends, BreezeEntityGraph, _IntDefs} from '../services/dtos';
 
-import {DialogControllerBase, IRootScope, DbCommandBase, DbQueryBase, DialogQueryBase, _Indexer} from '../services/legacy/base';
+import {DialogControllerBase, IRootScope, DbCommandBase, DbQueryBase, DialogQueryBase, _Indexer, BooleanResult} from '../services/legacy/base';
 import {IBasketSettings, IBaskets, IBasketItem} from '../services/legacy/baskets';
 import {FileSize} from '../services/legacy/misc';
 
@@ -1911,7 +1911,7 @@ Depends on: editableController, editableFormFactory
 
     (<any>ngFileUpload).version = '4.2.4';
     ngFileUpload.service('Upload', [
-      '$http', '$q', '$timeout', function($http, $q, $timeout) {
+      '$http', '$q', '$timeout', function($http: ng.IHttpService, $q: ng.IQService, $timeout) {
         function sendHttp(config) {
           config.method = config.method || 'POST';
           config.headers = config.headers || {};
@@ -1921,8 +1921,10 @@ Depends on: editableController, editableFormFactory
             }
             return $http.defaults.transformRequest[0](data, headersGetter);
           };
-          var deferred = $q.defer();
+          var deferred = $q.defer<any>();
           var promise = deferred.promise;
+
+          var anyPromise = <any>promise;
 
           config.headers['__setXHR_'] = function() {
             return function(xhr) {
@@ -1931,16 +1933,16 @@ Depends on: editableController, editableFormFactory
               config.xhrFn && config.xhrFn(xhr);
               xhr.upload.addEventListener('progress', function(e) {
                 e.config = config;
-                deferred.notify ? deferred.notify(e) : promise.progress_fn && $timeout(function() {
-                  promise.progress_fn(e);
+                deferred.notify ? deferred.notify(e) : anyPromise.progress_fn && $timeout(function() {
+                  anyPromise.progress_fn(e);
                 });
               }, false);
               //fix for firefox not firing upload progress end, also IE8-9
               xhr.upload.addEventListener('load', function(e) {
                 if (e.lengthComputable) {
                   e.config = config;
-                  deferred.notify ? deferred.notify(e) : promise.progress_fn && $timeout(function() {
-                    promise.progress_fn(e);
+                  deferred.notify ? deferred.notify(e) : anyPromise.progress_fn && $timeout(function() {
+                    anyPromise.progress_fn(e);
                   });
                 }
               }, false);
@@ -1955,28 +1957,28 @@ Depends on: editableController, editableFormFactory
             deferred.notify(n);
           });
 
-          promise.success = function(fn) {
+          anyPromise.success = function(fn) {
             promise.then(function(response) {
               fn(response.data, response.status, response.headers, config);
             });
             return promise;
           };
 
-          promise.error = function(fn) {
+          anyPromise.error = function(fn) {
             promise.then(null, function(response) {
               fn(response.data, response.status, response.headers, config);
             });
             return promise;
           };
 
-          promise.progress = function(fn) {
-            promise.progress_fn = fn;
+          anyPromise.progress = function(fn) {
+            anyPromise.progress_fn = fn;
             promise.then(null, null, function(update) {
               fn(update);
             });
             return promise;
           };
-          promise.abort = function() {
+          anyPromise.abort = function() {
             if (config.__XHR) {
               $timeout(function() {
                 config.__XHR.abort();
@@ -1984,7 +1986,7 @@ Depends on: editableController, editableFormFactory
             }
             return promise;
           };
-          promise.xhr = function(fn) {
+          anyPromise.xhr = function(fn) {
             config.xhrFn = (function(origXhrFn) {
               return function() {
                 origXhrFn && origXhrFn.apply(promise, arguments);
@@ -2916,7 +2918,6 @@ export module Components.Dialogs {
     static $name = 'Search';
     public execute = [
       'model', model => this.context.getCustom("search", { params: model, requestName: 'search' })
-        .then(result => result.data)
     ];
   }
 
@@ -2958,7 +2959,7 @@ export module Components.Dialogs {
     processReturn = (result, config) => {
       // Or should we get these things from the server, hmm?
       var returnUrl = this.$location.search().ReturnUrl;
-      this.w6.updateUserInfo(result.data.account, this.w6.userInfo);
+      this.w6.updateUserInfo(result.account, this.w6.userInfo);
 
       if (config.overrideInPage) {
         if (config.fallbackUrl) throw new Error("Cannot have both overrideInPage and fallbackUrl specified");
@@ -2996,8 +2997,8 @@ export module Components.Dialogs {
         var cache = this.context.getUsernameExistsCache(userName);
         if (cache === false || cache === true) return cache;
 
-        return <any>this.context.getCustom("accounts/username-exists", { params: { userName: userName } })
-          .then(result => this.context.addUsernameExistsCache(userName, (<any>result.data).result));
+        return <any>this.context.getCustom<BooleanResult>("accounts/username-exists", { params: { userName: userName } })
+          .then(result => this.context.addUsernameExistsCache(userName, result.result));
       }
     ];
   }
@@ -3012,8 +3013,8 @@ export module Components.Dialogs {
         var cache = this.context.getEmailExistsCache(email);
         if (cache === false || cache === true) return cache;
 
-        return <any>this.context.getCustom("accounts/email-exists", { params: { email: email } })
-          .then(result => this.context.addEmailExistsCache(email, (<any>result.data).result));
+        return <any>this.context.getCustom<BooleanResult>("accounts/email-exists", { params: { email: email } })
+          .then(result => this.context.addEmailExistsCache(email, result.result));
       }
     ];
   }
@@ -3473,44 +3474,6 @@ export module Components.Fields {
 
 }
 
-export module Components.Geo {
-  export class GeoService extends Tk.Service {
-    static $name = 'geoService';
-    static $inject = ['$http', 'promiseCache', '$q'];
-
-    constructor(private $http: ng.IHttpService, private promiseCache, private $q) {
-      super();
-    }
-
-    public getMyInfo(): ng.IHttpPromise<{ longitude; latitude }> {
-      return this.promiseCache({
-        promise: () => this.$http.get("//freegeoip.net/json/"),
-        key: "geoService-"
-      });
-    }
-
-    public getMyInfo2(): Promise<{ longitude; latitude }> {
-      var q = this.$q.defer();
-      if (window.navigator.geolocation) {
-        window.navigator.geolocation.getCurrentPosition((location) => q.resolve(location.coords));
-      } else {
-        this.getMyInfo()
-          .then((result) => q.resolve(result.data))
-          .catch((reason) => q.reject(reason));
-      }
-      return q.promise;
-    }
-
-    public getInfo(ip: string): ng.IHttpPromise<{ longitude; latitude }> {
-      return this.promiseCache({
-        promise: () => this.$http.get("http://freegeoip.net/json/" + ip),
-        key: "geoService-" + ip
-      });
-    }
-  }
-
-  registerService(GeoService);
-}
 export module Components.LoadingStatusInterceptor {
 
   export interface IW6Request extends ng.IRequestConfig {

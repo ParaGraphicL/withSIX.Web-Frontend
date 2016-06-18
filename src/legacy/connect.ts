@@ -288,7 +288,7 @@ export module Connect.Me {
   export class MeQueryBase extends DbQueryBase {
     private getMeUrl(resource?) { return "me" + (resource ? "/" + resource : ""); }
 
-    public getMeData(resource?) { return this.context.getCustom(this.getMeUrl(resource)).then((result) => result.data); }
+    public getMeData(resource?) { return this.context.getCustom(this.getMeUrl(resource)); }
   }
 
   export class GetMeSettingsPersonalQuery extends MeQueryBase {
@@ -345,9 +345,9 @@ export module Connect.Me {
   export class MeCommandbase extends DbCommandBase {
     private getMeUrl(resource?) { return "me" + (resource ? "/" + resource : ""); }
 
-    public postMeData(resource?, data?, requestName?) { return this.context.postCustom(this.getMeUrl(resource), data, { requestName: requestName }).then((result) => result.data); }
+    public postMeData(resource?, data?, requestName?) { return this.context.postCustom(this.getMeUrl(resource), data, { requestName: requestName }); }
 
-    public deleteMeData(resource?, requestName?, params?) { return this.context.deleteCustom(this.getMeUrl(resource), { requestName: requestName, params: params }).then((result) => result.data); }
+    public deleteMeData(resource?, requestName?, params?) { return this.context.deleteCustom(this.getMeUrl(resource), { requestName: requestName, params: params }); }
   }
 
   export class SaveMeSettingsPersonalCommand extends MeCommandbase {
@@ -938,15 +938,15 @@ export module Connect.Profile {
   export class ProfileQueryBase extends DbQueryBase {
     private getUserUrl(userSlug, resource?) { return "profile/" + this.context.getUserSlugCache(userSlug) + (resource ? "/" + resource : ""); }
 
-    public getUserProfileData(userSlug, resource?) { return this.context.getCustom(this.getUserUrl(userSlug, resource)).then((result) => result.data); }
+    public getUserProfileData(userSlug, resource?) { return this.context.getCustom(this.getUserUrl(userSlug, resource)); }
   }
 
   export class GetProfileQuery extends ProfileQueryBase {
     static $name = "GetProfile";
     public execute = [
-      'userSlug', (userSlug) => this.context.getCustom("profile/" + userSlug)
+      'userSlug', (userSlug) => this.context.getCustom<{ id: string }>("profile/" + userSlug)
         .then((result) => {
-          var userProfile = <any>result.data;
+          var userProfile = result;
           this.context.addUserSlugCache(userSlug, userProfile.id);
           return userProfile;
         })
@@ -971,9 +971,9 @@ export module Connect.Profile {
   export class ProfileCommandbase extends DbCommandBase {
     private getUserUrl(userSlug, resource?) { return "profile/" + this.context.getUserSlugCache(userSlug) + (resource ? "/" + resource : ""); }
 
-    public postProfileData(userSlug, resource?, data?, requestName?) { return this.context.postCustom(this.getUserUrl(userSlug, resource), data, { requestName: requestName }).then((result) => result.data); }
+    public postProfileData(userSlug, resource?, data?, requestName?) { return this.context.postCustom(this.getUserUrl(userSlug, resource), data, { requestName: requestName }); }
 
-    public deleteProfileData(userSlug, resource?, requestName?) { return this.context.deleteCustom(this.getUserUrl(userSlug, resource), { requestName: requestName }).then((result) => result.data); }
+    public deleteProfileData(userSlug, resource?, requestName?) { return this.context.deleteCustom(this.getUserUrl(userSlug, resource), { requestName: requestName }); }
   }
 
   export class AddAsFriendCommand extends ProfileCommandbase {

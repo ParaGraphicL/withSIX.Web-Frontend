@@ -37,6 +37,6 @@ class GetContentnInfoHandler extends DbQuery<GetContentInfo, {}> {
   handle(request: GetContentInfo) {
     return this.getMeData("content");
   }
-  getMeData(resource?) { return this.context.getCustom(this.getMeUrl(resource)).then((result) => result.data); }
+  getMeData(resource?) { return this.context.getCustom(this.getMeUrl(resource)); }
   getMeUrl(resource?) { return "me" + (resource ? "/" + resource : ""); }
 }

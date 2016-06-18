@@ -57,8 +57,8 @@ export class CollectionDataService extends W6ContextWrapper {
 
   public async getMySubscribedCollections(gameId, options?) {
     let r = await this.getSubscribedCollectionIdsByGameId(gameId);
-    if (r.data.length == 0) return [];
-    let r2 = await this.getCollectionsByIds(r.data, options);
+    if (r.length == 0) return [];
+    let r2 = await this.getCollectionsByIds(r, options);
     return r2.results;
   }
 
@@ -71,9 +71,7 @@ export class CollectionDataService extends W6ContextWrapper {
       if (requiresDependencies) {
         if (options.sort && options.sort.fields && options.sort.fields.indexOf("author") > -1) {
           // This is currently unsupported either by Breeze, EF, OData, or AutoMapper
-          var defer = this.$q.defer();
-          defer.reject(new Error("Cannot search for mods while sorted by author, please choose a different sorting option, or don't search for a mod"));
-          return <any>defer.promise;
+          throw new Error("Cannot search for mods while sorted by author, please choose a different sorting option, or don't search for a mod");
         }
         query = query.expand(["dependencies"]);
       }
@@ -217,7 +215,7 @@ export class MissionDataService extends W6ContextWrapper {
     query = this.applyFiltering(query, options.filter, true);
 
     if (query == null)
-      return <any>this.$q.reject("invalid query");
+      throw new Error("invalid query");
 
     query = query.orderBy(this.context.generateOrderable(options.sort));
 
@@ -235,7 +233,7 @@ export class MissionDataService extends W6ContextWrapper {
     query = this.applyFiltering(query, options.filter, true);
 
     if (query == null)
-      return <any>this.$q.reject("invalid query");
+      throw new Error("invalid query");
 
     query = query.orderBy(this.context.generateOrderable(options.sort));
 
@@ -269,7 +267,7 @@ export class ModDataService extends W6ContextWrapper {
       query = this.applyFiltering(query, options.filter, true);
 
     if (query == null)
-      return <any>this.$q.reject("invalid query");
+      throw new Error("invalid query");
 
     query = query.orderBy(this.context.generateOrderable(options.sort));
 
@@ -308,7 +306,7 @@ export class ModDataService extends W6ContextWrapper {
       query = this.applyFiltering(query, options.filter, true);
 
     if (query == null)
-      return <any>this.$q.reject("invalid query");
+      throw new Error("invalid query");
 
     if (options.sort && options.sort.fields.length > 0)
       query = query.orderBy(this.context.generateOrderable(options.sort));
@@ -330,7 +328,7 @@ export class ModDataService extends W6ContextWrapper {
       query = this.applyFiltering(query, options.filter, true);
 
     if (query == null)
-      return <any>this.$q.reject("invalid query");
+      throw new Error("invalid query");
 
     if (options.sort && options.sort.fields.length > 0)
       query = query.orderBy(this.context.generateOrderable(options.sort));

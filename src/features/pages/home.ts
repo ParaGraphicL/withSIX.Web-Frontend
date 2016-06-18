@@ -4,24 +4,24 @@ import {Mediator, Query, DbQuery, handlerFor} from '../../framework';
 import {MainBase} from './index';
 
 interface IHomeData {
-    totalDownloads: number;
-    totalDownloadsMini: number;
-    totalAccounts: number;
-    totalCollections: number;
-    totalMods: number;
-    totalMissions: number;
-    totalServers: number;
-    totalSubscribers: number;
-    totalFollowers: number;
-    totalLikes: number;
-    latestPost?: {};
+  totalDownloads: number;
+  totalDownloadsMini: number;
+  totalAccounts: number;
+  totalCollections: number;
+  totalMods: number;
+  totalMissions: number;
+  totalServers: number;
+  totalSubscribers: number;
+  totalFollowers: number;
+  totalLikes: number;
+  latestPost?: {};
 }
 
 export class Home extends MainBase {
   post = {};
   data: IHomeData;
 
-  constructor (ui) {
+  constructor(ui) {
     super(ui);
   }
 
@@ -40,10 +40,10 @@ export class Home extends MainBase {
   }
 
   async activate(params, routeConfig) {
-  /*      this.userService.getUser(params.id)
-    .then(user => {
-        routeConfig.navModel.setTitle(user.name);
-    });*/
+    /*      this.userService.getUser(params.id)
+      .then(user => {
+          routeConfig.navModel.setTitle(user.name);
+      });*/
     this.data = {
       totalDownloads: 1,
       totalDownloadsMini: 1,
@@ -62,12 +62,11 @@ export class Home extends MainBase {
   }
 }
 
-class GetHome extends Query<IHomeData> {}
+class GetHome extends Query<IHomeData> { }
 
 @handlerFor(GetHome)
 class GetHomeHandler extends DbQuery<GetHome, IHomeData> {
-    public handle(request: GetHome): Promise<IHomeData> {
-      return this.context.getCustom("pages/home")
-        .then(result => result.data);
-    }
+  public handle(request: GetHome): Promise<IHomeData> {
+    return this.context.getCustom("pages/home");
+  }
 }

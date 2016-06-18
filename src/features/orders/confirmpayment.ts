@@ -1,12 +1,12 @@
 import {inject} from 'aurelia-framework';
-import {Mediator, VoidCommand, DbQuery,handlerFor} from '../../framework';
+import {Mediator, VoidCommand, DbQuery, handlerFor} from '../../framework';
 
 @inject(Mediator)
 export class ConfirmPayment {
   payerId: string
   orderId: string;
   paymentId: string;
-  constructor(private mediator: Mediator) {}
+  constructor(private mediator: Mediator) { }
   activate(params, routeConfig) {
     this.orderId = params.orderId;
     this.payerId = params.PayerID;
@@ -22,7 +22,7 @@ class ConfirmPaymentCommand extends VoidCommand {
 
 @handlerFor(ConfirmPaymentCommand)
 class ConfirmPaymentCommandHandler extends DbQuery<ConfirmPaymentCommand, void> {
-    async handle(request: ConfirmPaymentCommand) {
-      await this.context.postCustom("orders/" + request.orderId + "/confirmpayment?payerId=" + request.payerId).then(result => result.data);
-    }
+  async handle(request: ConfirmPaymentCommand) {
+    await this.context.postCustom("orders/" + request.orderId + "/confirmpayment?payerId=" + request.payerId);
+  }
 }
