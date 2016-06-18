@@ -17,6 +17,7 @@ import {Mediator} from 'aurelia-mediator';
 import {Client} from 'withsix-sync-api';
 
 import {Components} from './components';
+import {ToastLogger} from '../services/legacy/logger';
 
 import {registerService, registerCommands, registerCQ, registerController, getFactory, skyscraperSlotSizes, rectangleSlotSizes, leaderboardSlotSizes} from './app-base';
 
@@ -1086,7 +1087,7 @@ export module Connect.Wall {
 
     constructor(public $q: ng.IQService, public $scope: IWallScope, private $timeout: ng.ITimeoutService,
       public $cookieStore, public $location: ng.ILocationService, public $routeParams: ng.route.IRouteParamsService, w6,
-      public logger: Components.Logger.ToastLogger, private signalrService) {
+      public logger: ToastLogger, private signalrService) {
 
       super($scope, logger, $q);
 

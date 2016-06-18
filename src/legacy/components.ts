@@ -13,17 +13,14 @@ import {IBreezeMod, IBreezeUser, IBreezeCollection, IBreezeMission, IBreezeColle
   IBreezeModMediaItem, IUserInfo, Resource, Permission, Role,
   EntityExtends, BreezeEntityGraph, _IntDefs} from '../services/dtos';
 
-import {DialogControllerBase, IRootScope, DbCommandBase, DbQueryBase, DialogQueryBase} from '../services/legacy/base';
+import {DialogControllerBase, IRootScope, DbCommandBase, DbQueryBase, DialogQueryBase, _Indexer} from '../services/legacy/base';
+import {IBasketSettings, IBaskets, IBasketItem} from '../services/legacy/baskets';
+import {FileSize} from '../services/legacy/misc';
 
 declare var commangular;
 declare var accounting;
 declare var Modernizr: ModernizrStatic;
 declare var Fingerprint;
-
-export interface _Indexer<TModel> {
-  [name: string]: TModel;
-}
-
 
 export module Components {
   class ComponentsModule extends Tk.Module {
@@ -52,19 +49,6 @@ export module Components {
   export function registerController(controller) { app.app.controller(controller.$name, controller); }
 
   var app = new ComponentsModule();
-
-
-  export enum FileSize {
-    B,
-    KB,
-    MB,
-    GB,
-    TB,
-    PB,
-    EB,
-    ZB,
-    YB
-  }
 
   class DirectivesComponent extends Tk.Module {
     static $name = "DirectivesComponentModule";
@@ -2698,165 +2682,7 @@ export module Components.BackImg {
   angular.module('Components.BackImg', [])
     .directive(BackImageDirective.$name, BackImageDirective.factory);
 }
-export module Components.Basket {
-  export enum BasketItemType {
-    Mod,
-    Mission,
-    Collection,
-  }
 
-  export interface IBasketItem {
-    id: string;
-    name: string;
-    packageName: string;
-    image: string;
-    author: string;
-    itemType: BasketItemType;
-    constraint?: string;
-    isOnlineCollection?: boolean;
-    gameId: string;
-    sizePacked: number;
-  }
-
-  export interface IBasketCollection {
-    id: string;
-    gameId: string;
-    name: string;
-    collectionId?: string;
-    changed?: boolean;
-    state: BasketState;
-    items: IBasketItem[];
-    isPersistent: boolean;
-    isTemporary: boolean;
-    basketType: BasketType;
-  }
-
-  export interface IBasketModel {
-    collections: IBasketCollection[];
-    activeId: string;
-  }
-
-  export interface IBaskets {
-    gameBaskets: _Indexer<IBasketModel>;
-  }
-
-  export enum BasketState {
-    Unknown = 0,
-    Install = 1,
-    Syncing = 2,
-    Update = 3,
-    Launch = 4
-  }
-  export enum BasketType {
-    Default = 0,
-    SingleItem = 1,
-    SingleCollection = 2,
-  }
-
-  export interface IBasketSettings {
-    hasConnected: boolean;
-  }
-  export interface IBasketScope extends ng.IScope {
-    settings: IBasketSettings;
-    baskets: IBaskets;
-  }
-
-  export class BasketService extends Tk.Service {
-    static $name = "basketService";
-    static $inject = ['localStorageService', 'logger', '$rootScope', 'modInfoService'];
-    private baskets: IBaskets;
-    private scope: IBasketScope;
-    public settings: IBasketSettings;
-    private constructedBaskets: _Indexer<any> = {};
-    lastActiveItem: string;
-
-    constructor(private localStorage: angular.local.storage.ILocalStorageService, public logger: Logger.ToastLogger, root: IRootScope, private modInfo) {
-      super();
-      this.scope = <any>root.$new(true);
-
-      this.refresh();
-
-      this.setDefaults();
-    }
-
-    refresh() { this.setupBindings(this.localStorage); }
-
-    abort(gameId: string) { return this.modInfo.abort(gameId); };
-
-    private setDefaults() {
-      if (this.settings.hasConnected == null) {
-        this.settings.hasConnected = false;
-      }
-    }
-
-    private createLocalBaskets(): IBaskets {
-      return {
-        gameBaskets: {},
-      };
-    }
-
-    addToBasket(gameId: string, item: IBasketItem) {
-      var baskets = this.getGameBaskets(gameId);
-      baskets.active.toggleInBasket(Object.assign({ gameId: gameId }, item));
-    }
-
-    getGameBaskets(gameId: string) {
-      if (this.constructedBaskets[gameId] != null) return this.constructedBaskets[gameId];
-
-      if (this.baskets.gameBaskets[gameId] == null) this.baskets.gameBaskets[gameId] = {
-        activeId: null,
-        collections: []
-      };
-
-      var basketModel = this.baskets.gameBaskets[gameId];
-      try {
-        var i = basketModel.collections.length;
-      } catch (e) {
-        this.logger.error("A Game Basket Group was damaged and had to be reset", "Error Loading Game Baskets");
-        delete this.baskets.gameBaskets[gameId];
-        return this.getGameBaskets(gameId);
-      }
-
-      return this.constructedBaskets[gameId] = window.w6Cheat.api.createGameBasket(gameId, basketModel);
-    }
-
-    private setupBinding<TModel>(localStorage: angular.local.storage.ILocalStorageService, key: string, setFunc: () => TModel, testFunc: (model: TModel) => boolean) {
-      if (localStorage.keys().indexOf(key) == -1) {
-        localStorage.set(key, setFunc());
-      } else {
-        try {
-          var model = localStorage.get<TModel>(key);
-          if (!testFunc(model))
-            throw new Error("Failed Model Test");
-        } catch (e) {
-          localStorage.remove(key);
-          this.logger.error("Some of your settings were damaged and have been reset to prevent errors.", "Error Loading Status Bar");
-          this.setupBinding(localStorage, key, setFunc, testFunc);
-          return;
-        }
-      }
-      localStorage.bind(this.scope, key);
-    }
-
-    private setupBindings(localStorage: angular.local.storage.ILocalStorageService) {
-      this.setupBinding(localStorage, "baskets", () => this.createLocalBaskets(), (model) => {
-        if (model.gameBaskets === null || typeof model.gameBaskets !== 'object')
-          return false;
-        return true;
-      });
-      this.setupBinding(localStorage, "settings", () => <IBasketSettings>{
-        hasConnected: false
-      }, (model) => {
-        return true;
-      });
-
-      this.baskets = this.scope.baskets;
-      this.settings = this.scope.settings;
-    }
-  }
-
-  registerService(BasketService);
-}
 
 export module Components.BytesFilter {
   // TODO: Dedup; this does pretty much the same as the size filter!
@@ -3822,99 +3648,6 @@ export module Components.LoadingStatusInterceptor {
   registerService(LoadingStatusInterceptor);
 }
 
-export module Components.Logger {
-  export class ToastLogger extends Tk.Service {
-    static $inject = ['$log'];
-    static $name = 'logger';
-
-    constructor(private $log) {
-      super();
-
-      // This logger wraps the toastr logger and also logs to console using ng $log
-      // toastr.js is library by John Papa that shows messages in pop up toast.
-      // https://github.com/CodeSeven/toastr
-
-      toastr.options.timeOut = 3 * 1000;
-      toastr.options.positionClass = 'toast-bottom-right';
-    }
-
-    public error(message: string, title: string = null, options?: ToastrOptions) {
-      var opts = { timeOut: 10 * 1000 };
-      if (options) Object.assign(opts, options);
-      toastr.error(message, title, opts);
-      this.$log.error("Error: " + message);
-    }
-
-    public errorRetry(message: string, title: string = null, options?: ToastrOptions) {
-      var opts = {
-        timeOut: 0,
-        extendedTimeOut: 0,
-        tapToDismiss: false
-      };
-      if (options) Object.assign(opts, options);
-      this.$log.error("ErrorRetry: " + title);
-      return toastr.error(message, title, opts);
-    }
-
-    public info(message: string, title: string = null, options?: ToastrOptions) {
-      this.$log.info("Info: " + message);
-      return toastr.info(message, title, options);
-    }
-
-    public success(message: string, title: string = null, options?: ToastrOptions) {
-      this.$log.info("Success: " + message);
-      return toastr.success(message, title, options);
-    }
-
-    public warning(message: string, title: string = null, options?: ToastrOptions) {
-      var opts = { timeOut: 10 * 1000 };
-      if (options) Object.assign(opts, options);
-      this.$log.warn("Warning: " + message);
-      return toastr.warning(message, title, opts);
-    }
-
-    public log(message) { this.$log.log(message); }
-  }
-
-  registerService(ToastLogger);
-}
-
-export module Components.ModInfo {
-  // Deprecated in favour of withsix-sync-api
-  export interface IContentState {
-    id: string; gameId: string; state: ItemState; version: string;
-    speed?: number; progress?: number;
-  }
-
-  export enum ItemState {
-    NotInstalled = 0,
-
-    Uptodate = 1,
-
-    UpdateAvailable = 2,
-    Incomplete = 3,
-
-    Installing = 11,
-    Updating = 12,
-    Uninstalling = 13,
-    Diagnosing = 14,
-    Launching = 15
-  }
-
-  export interface IClientInfo {
-    content: { [id: string]: IContentState };
-    globalLock: boolean;
-    gameLock: boolean;
-    isRunning: boolean;
-  }
-
-  export enum State {
-    Normal = 0,
-    Paused = 1,
-    Error = 2,
-  }
-}
-
 export module Components.Pagedown {
   class PagedownDirective {
     static $name = 'sxPagedown';
@@ -4027,86 +3760,4 @@ export module Components.ReallyClick {
 
   angular.module('Components.ReallyClick', [])
     .directive(ReallyClickDirective.$name, ReallyClickDirective.factory);
-}
-export module Components.Upload {
-
-  // ReSharper disable InconsistentNaming
-  export interface IAWSUploadPolicy {
-    AccessKey: string;
-    Signature: string;
-    SecurityToken: string;
-    ACL: string;
-    ContentType: string;
-    Key: string;
-    BucketName: string;
-    EncryptedPolicy: string;
-    CallbackUrl: string;
-  }
-
-  // ReSharper restore InconsistentNaming
-
-  export class UploadService extends Tk.Service {
-    static $name = 'UploadService';
-    static $inject = ['$http', '$upload', 'options', 'dbContext'];
-
-    constructor(private $http, private $upload, private options, private context) {
-      super();
-    }
-
-    public uploadToAmazon(file: File, authorizationPath, policyType, requestName?) {
-      throw Error("Not Implemented");
-      //this.getPolicy(file, authorizationPath, policyType, requestName)
-      //  .success(s3Params => this.uploadToBucket(file, s3Params, requestName));
-    }
-
-    public uploadToAmazonWithPolicy(file: File, uploadPolicy: IBreezeAWSUploadPolicy): ng.IHttpPromise<any> {
-      return this.uploadToBucket(file, uploadPolicy);
-
-    }
-
-    private getPolicy(file, authorizationPath, policyType, requestName?) {
-      return this.context.getCustom(this.options.serviceName + '/' + authorizationPath, { requestName: requestName, params: { policyType: policyType, filePath: file } });
-    }
-
-    private uploadToBucket = (file: File, s3Params: IBreezeAWSUploadPolicy, requestName?): ng.IHttpPromise<any> => {
-      var data = {
-        key: s3Params.key,
-        acl: s3Params.aCL, // ?? acl vs CannedACL ?
-        //success_action_redirect: s3Params.callbackUrl,
-        'Content-Type': s3Params.contentType,
-        'x-amz-security-token': s3Params.securityToken,
-        AWSAccessKeyId: s3Params.accessKey, // ?? included in policy?
-        Policy: jQuery.parseJSON(s3Params.encryptedPolicy).policy, // TODO: We actually really only need the policy property??
-        Signature: s3Params.signature,
-        //filename: file.name, // ?? included in policy?
-        //filename: file.name //Required for IE8/9 //,
-      };
-      /*
-                  if (s3Params.callbackUrl) {
-
-                      data.success_action_redirect = s3Params.callbackUrl;
-                      //data.success_action_status = '201';
-                  }
-      */
-
-      return this.$upload.upload({
-        url: 'https://' + s3Params.bucketName + '.s3.amazonaws.com/',
-        method: 'POST',
-        data: data,
-        file: file,
-      });
-      //.progress(evt => {
-      //Tools.Debug.log('percent: ' + parseInt(100.0 * evt.loaded / evt.total));
-      //}).success((data, status, headers, config) => {
-      // file is uploaded successfully
-      //Tools.Debug.log(data);
-      //});
-      //.error(...)
-      //.then(success, error, progress);
-      // access or attach event listeners to the underlying XMLHttpRequest.
-      //.xhr(function(xhr){xhr.upload.addEventListener(...)})
-    };
-  }
-
-  registerService(UploadService);
 }

@@ -13,6 +13,9 @@ import {Client} from 'withsix-sync-api';
 
 import {registerService, registerCommands, registerCQ, registerController, getFactory} from './app-base';
 import {CollectionDataService, ModDataService, MissionDataService} from '../services/legacy/data-services';
+import {BasketService} from '../services/legacy/basket-service';
+import {ToastLogger} from '../services/legacy/logger';
+import {UploadService} from '../services/legacy/upload';
 
 import {Components} from './components';
 import {Play} from './play';
@@ -33,8 +36,11 @@ export module MyApp {
   registerService(W6Context);
   registerService(CollectionDataService);
   registerService(MissionDataService);
-
   registerService(ModDataService);
+  registerService(BasketService);
+  registerService(ToastLogger);
+  registerService(UploadService);
+
   export function setup(setupInfo) {
     var rootModule = new RootModule(setupInfo);
   }

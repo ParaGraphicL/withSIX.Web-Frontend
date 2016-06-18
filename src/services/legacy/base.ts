@@ -5,48 +5,29 @@ import {Tools} from '../tools';
 import {W6, W6Urls} from '../withSIX';
 import {Mediator} from 'aurelia-mediator';
 
-export interface IBreezeErrorReason extends IBreezeHttpResponse<IHttpResponse<IHttpResponseException>> {
+export interface _Indexer<TModel> {
+  [name: string]: TModel;
 }
 
-
-  export interface IHandleCommentsScope<TCommentType> {
-    comments: TCommentType[];
-    addComment: (newComment) => void;
-    deleteComment: (comment) => void;
-    saveComment: (comment) => void;
-    reportComment: (comment) => void;
-    commentLikeStates: {};
-    likeComment: (comment) => void;
-    unlikeComment: (comment) => void;
-  }
-
-
-export interface IBreezeHttpResponse<TResponse> {
-  httpResponse: TResponse;
-  entityManager: breeze.EntityManager;
-  query: breeze.EntityQuery;
-  status: number;
-  message: string;
-}
-
-export interface IHttpResponse<TData> {
-  data: TData;
-  status: number;
-  statusText: string;
-}
-
-export interface IHttpResponseException {
-  $id: string;
-  $type: string;
-  ExceptionMessage: string;
-  ExceptionType: string;
-  Message: string;
-  StackTrace?: string;
+export interface IHandleCommentsScope<TCommentType> {
+  comments: TCommentType[];
+  addComment: (newComment) => void;
+  deleteComment: (comment) => void;
+  saveComment: (comment) => void;
+  reportComment: (comment) => void;
+  commentLikeStates: {};
+  likeComment: (comment) => void;
+  unlikeComment: (comment) => void;
 }
 
 export interface Result<T> {
   result: T;
 }
+
+export interface IModel<TModel> {
+  model: TModel;
+}
+
 
 export interface BooleanResult extends Result<boolean> {
 }
@@ -55,10 +36,6 @@ export interface BooleanResult extends Result<boolean> {
 export interface ICQWM<T> {
   //execute: any;
   $ModelType: T;
-}
-
-export interface IModel<TModel> {
-  model: TModel;
 }
 
 export interface ICreateComment<TComment> {

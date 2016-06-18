@@ -14,9 +14,14 @@ import {IRootScope, ITagKey, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHa
 import {EventAggregator} from 'aurelia-event-aggregator';
 
 import {Mediator} from 'aurelia-mediator';
-import {Client} from 'withsix-sync-api';
+import {Client, IClientInfo, ItemState} from 'withsix-sync-api';
 
 import {Components} from './components';
+import {IBasketItem, BasketItemType} from '../services/legacy/baskets';
+import {BasketService} from '../services/legacy/basket-service';
+import {ModsHelper, Helper} from '../services/legacy/misc';
+import {ToastLogger} from '../services/legacy/logger';
+import {UploadService} from '../services/legacy/upload';
 
 import {registerService, registerCommands, registerCQ, registerController, getFactory, skyscraperSlotSizes, rectangleSlotSizes, leaderboardSlotSizes} from './app-base';
 
@@ -88,10 +93,10 @@ export interface IBaseGameScope extends IBaseScope {
   followedMissions: {};
   subscribedCollections: {};
   openAddModDialog: (info?: { type?: string, folder?: string }) => void;
-  clientInfo: Components.ModInfo.IClientInfo;
+  clientInfo: IClientInfo;
   directDownload: (item: { id: string; }) => Promise<void>;
   directDownloadCollection: (item: IBreezeCollection) => Promise<void>; // { id: string; }
-  getItemClass: (item: Components.Basket.IBasketItem) => string;
+  getItemClass: (item: IBasketItem) => string;
   canAddToBasket: () => boolean;
   showBusyState: () => boolean;
   openAddCollectionDialog: () => any;
@@ -668,41 +673,6 @@ export module Play {
 
   var app = new PlayModule();
 
-
-  export class Helper {
-    static modToBasket(mod: IBreezeMod, gameId?: string): Components.Basket.IBasketItem {
-      var w6 = window.w6Cheat.w6;
-      return {
-        id: mod.id, name: mod.name, gameId: mod.gameId || gameId, itemType: Components.Basket.BasketItemType.Mod, packageName: mod.packageName,
-        image: mod.avatar ? w6.url.getUsercontentUrl2(mod.avatar, mod.avatarUpdatedAt) : ((<any>mod).image ? (<any>mod).image : null),
-        author: mod.author && mod.author.id != window.w6Cheat.w6.w6OBot ? mod.author.displayName : mod.authorText, sizePacked: mod.sizePacked
-      }
-    }
-
-    static collectionToBasket(collection: IBreezeCollection, gameId?: string): Components.Basket.IBasketItem {
-      var w6 = window.w6Cheat.w6;
-      return {
-        id: collection.id,
-        itemType: Components.Basket.BasketItemType.Collection,
-        gameId: collection.gameId || gameId,
-        packageName: collection.slug, // pff
-        author: collection.author.displayName,
-        image: collection.avatar ? w6.url.getUsercontentUrl2(collection.avatar, collection.avatarUpdatedAt) : null, // item.image ? item.image :
-        name: collection.name,
-        sizePacked: collection.sizePacked,
-        isOnlineCollection: true
-      }
-    }
-
-    static streamModToBasket(mod: any, gameId?: string): Components.Basket.IBasketItem {
-      var w6 = window.w6Cheat.w6;
-      return {
-        id: mod.id, name: mod.headerName, gameId: mod.gameId || gameId, itemType: Components.Basket.BasketItemType.Mod, packageName: mod.packageName,
-        image: mod.image ? w6.url.getUsercontentUrl2(mod.image, mod.imageUpdatedAt) : null, author: mod.author, sizePacked: mod.sizePacked
-      }
-    }
-  }
-
   app.app.directive("sxEditMenu", [
     '$popover', ($popover) => {
       return {
@@ -827,7 +797,7 @@ export module Play.Collections {
     ];
     static $inject = ['$scope', 'logger', '$routeParams', '$q', '$sce', 'localStorageService', 'w6', 'ForwardService', '$timeout', 'UploadService', '$popover', '$rootScope', 'basketService', 'aur.eventBus', 'aur.mediator', 'model'];
 
-    constructor(public $scope: ICollectionScope, public logger, public $routeParams, $q, $sce: ng.ISCEService, private localStorageService, private w6: W6, private forwardService: Components.ForwardService, private $timeout: ng.ITimeoutService, private uploadService: Components.Upload.UploadService, private $popover, $rootScope: IRootScope, basketService: Components.Basket.BasketService, eventBus: EventAggregator, private mediator, model: IBreezeCollection) {
+    constructor(public $scope: ICollectionScope, public logger, public $routeParams, $q, $sce: ng.ISCEService, private localStorageService, private w6: W6, private forwardService: Components.ForwardService, private $timeout: ng.ITimeoutService, private uploadService: UploadService, private $popover, $rootScope: IRootScope, basketService: BasketService, eventBus: EventAggregator, private mediator, model: IBreezeCollection) {
       super($scope, logger, $routeParams, $q, $sce, model);
 
       window.w6Cheat.collection = this;
@@ -2369,10 +2339,6 @@ export module Play.Games {
 
   registerCQ(GetCheckLinkQuery);
 
-  import ClientInfo = Components.ModInfo.IClientInfo;
-  import ItemState = Components.ModInfo.ItemState;
-  import BasketService = Components.Basket.BasketService;
-
   interface IGamesScope extends IBaseScopeT<IBreezeGame[]> {
 
   }
@@ -2399,7 +2365,7 @@ export module Play.Games {
     ];
 
     constructor(public $scope: IGameScope, public logger, $q, dbContext, query: { game: IBreezeGame, gameInfo }, private modInfo,
-      $rootScope: IRootScope, basketService: Components.Basket.BasketService, private eventBus: EventAggregator) {
+      $rootScope: IRootScope, basketService: BasketService, private eventBus: EventAggregator) {
       super($scope, logger, $q, query.game);
 
       let model = query.game;
@@ -2410,7 +2376,7 @@ export module Play.Games {
 
       $scope.addToCollections = (mod: IBreezeMod) => { this.eventBus.publish(new window.w6Cheat.containerObjects.openAddModsToCollectionsDialog($scope.game.id, [{ id: mod.id, name: mod.name, packageName: mod.packageName, groupId: mod.groupId }])) };
 
-      let getItemProgressClass = (item: Components.Basket.IBasketItem): string => {
+      let getItemProgressClass = (item: IBasketItem): string => {
         let state = $scope.clientInfo.content[item.id];
         if (!state || !(state.state == ItemState.Updating || state.state == ItemState.Installing))
           return null;
@@ -2423,7 +2389,7 @@ export module Play.Games {
       }
 
       let getItemBusyClass = (item): string => {
-        var clientInfo = <ClientInfo>(<any>$scope).clientInfo;
+        var clientInfo = <IClientInfo>(<any>$scope).clientInfo;
         var ciItem = clientInfo.content[item.id];
         if (ciItem == null) return "";
         var itemState = ciItem.state;
@@ -2440,8 +2406,8 @@ export module Play.Games {
       }
 
       // TODO: Duplicate in basket-service
-      let getItemStateClass = (item: Components.Basket.IBasketItem): string => {
-        var clientInfo = <ClientInfo>(<any>$scope).clientInfo;
+      let getItemStateClass = (item: IBasketItem): string => {
+        var clientInfo = <IClientInfo>(<any>$scope).clientInfo;
         var ciItem = clientInfo.content[item.id];
         var postState = "";
 
@@ -2484,7 +2450,7 @@ export module Play.Games {
         }
       }
 
-      $scope.getItemClass = (item: Components.Basket.IBasketItem): string => {
+      $scope.getItemClass = (item: IBasketItem): string => {
         let progress = getItemProgressClass(item);
         return `content-state-${getItemStateClass(item)} ${progress ? progress : ""} ${getItemBusyClass(item)}`
       }
@@ -2609,7 +2575,7 @@ export module Play.Games {
     static $name = "StreamController";
     static $inject = ['$scope', 'logger', '$q', '$rootScope', 'basketService', 'model'];
 
-    constructor(public $scope: IStreamScope, public logger, $q, $rootScope, basketService: Components.Basket.BasketService, model: any) {
+    constructor(public $scope: IStreamScope, public logger, $q, $rootScope, basketService: BasketService, model: any) {
       super($scope, logger, $q, model);
 
       var basket = basketService.getGameBaskets($scope.game.id);
@@ -2630,7 +2596,7 @@ export module Play.Games {
   class PersonalStreamController extends StreamController {
     static $name = "PersonalStreamController";
 
-    constructor(public $scope: IStreamScope, public logger, $q, $rootScope, basketService: Components.Basket.BasketService, model: any) {
+    constructor(public $scope: IStreamScope, public logger, $q, $rootScope, basketService: BasketService, model: any) {
       super($scope, logger, $q, $rootScope, basketService, model);
 
       $scope.streamPath = 'stream/personal';
@@ -3464,7 +3430,7 @@ export module Play.Mods {
     static $name = 'SaveMod';
     static $inject = ['dbContext', '$q', 'UploadService'];
 
-    constructor(context: W6Context, $q, private uploadService: Components.Upload.UploadService) {
+    constructor(context: W6Context, $q, private uploadService: UploadService) {
       super(context);
     }
 
@@ -3980,9 +3946,9 @@ export module Play.Mods {
 
     constructor(public $scope: IModScope, logger, $routeParams, $q, private $parse: ng.IParseService, forwardService: Components.ForwardService,
       private $sce: ng.ISCEService, private $timeout: ng.ITimeoutService,
-      private uploadService: Components.Upload.UploadService, $location: ng.ILocationService,
+      private uploadService: UploadService, $location: ng.ILocationService,
       localStorageService, w6, private $popover, $rootScope,
-      basketService: Components.Basket.BasketService, model: IBreezeMod, private eventBus: EventAggregator) {
+      basketService: BasketService, model: IBreezeMod, private eventBus: EventAggregator) {
       super($scope, logger, $routeParams, $q, $sce, model);
       let routeGameSlug = $routeParams.gameSlug.toLowerCase();
       let modGameSlug = model.game.slug.toLowerCase();
@@ -5271,7 +5237,7 @@ export module Play.Mods {
     static $view = '/src_legacy/app/play/mods/dialogs/upload-new-version.html';
     static $inject = ['$scope', 'logger', '$modalInstance', '$q', 'model', 'info', 'modInfoService', 'dbContext'];
 
-    constructor(public $scope: IUploadVersionDialogScope, public logger: Components.Logger.ToastLogger, $modalInstance, $q, model: IBreezeMod, info: string, private modInfoService, private dbContext: W6Context) {
+    constructor(public $scope: IUploadVersionDialogScope, public logger: ToastLogger, $modalInstance, $q, model: IBreezeMod, info: string, private modInfoService, private dbContext: W6Context) {
       super($scope, logger, $modalInstance, $q, model);
 
       $scope.cancel = this.cancel;
@@ -5450,13 +5416,13 @@ export module Play.Mods {
     static $name = 'ModVersionHistoryDialogController';
     static $view = '/src_legacy/app/play/mods/dialogs/version-history.html';
 
-    constructor(public $scope: IModVersionHistoryDialogScope, public logger: Components.Logger.ToastLogger, $modalInstance, $q, model: IBreezeMod) {
+    constructor(public $scope: IModVersionHistoryDialogScope, public logger: ToastLogger, $modalInstance, $q, model: IBreezeMod) {
       super($scope, logger, $modalInstance, $q, model);
 
       $scope.cancel = this.cancel;
       $scope.ok = this.ok;
       $scope.model = model;
-      $scope.updates = model.updates.asEnumerable().orderByDescending(x => x, Mods.ModsHelper.versionCompare).toArray();
+      $scope.updates = model.updates.asEnumerable().orderByDescending(x => x, ModsHelper.versionCompare).toArray();
     }
 
     private cancel = () => this.$modalInstance.close();
@@ -5464,27 +5430,4 @@ export module Play.Mods {
   }
 
   registerController(ModVersionHistoryDialogController);
-
-  export class ModsHelper {
-    static arma2Id = "1947DE55-44ED-4D92-A62F-26CFBE48258B";
-    static arma3Id = "9DE199E3-7342-4495-AD18-195CF264BA5B";
-    static a3MpCategories = ["Island", "Objects (Buildings, Foliage, Trees etc)"];
-    static objectCategories = ["Objects (Buildings, Foliage, Trees etc)"];
-    static getGameIds(id: string) {
-      if (id.toUpperCase() == this.arma3Id)
-        return [id, this.arma2Id];
-      return [id];
-    }
-
-    static getCompatibilityModsFor(id: string, otherId: string, tags: string[] = []) {
-      if (id.toUpperCase() == this.arma3Id) {
-        if (tags.asEnumerable().any(x => this.objectCategories.asEnumerable().contains(x))) return [];
-        if (tags.asEnumerable().any(x => this.a3MpCategories.asEnumerable().contains(x))) return ["@cup_terrains_core"];
-        return ["@AllInArmaStandaloneLite"];
-      }
-      return [];
-    }
-    static getFullVersion = (x: IBreezeModUpdate, cutStable = true) => x.version + (cutStable && x.branch == 'stable' ? '' : ('-' + x.branch));
-    static versionCompare = (x: IBreezeModUpdate, y: IBreezeModUpdate) => Tools.versionCompare(ModsHelper.getFullVersion(x, false), ModsHelper.getFullVersion(y, false))
-  }
 }
