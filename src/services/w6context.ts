@@ -4,7 +4,7 @@ import {EventAggregator} from 'aurelia-event-aggregator';
 import {Tools} from './tools';
 import {W6} from './withSIX';
 
-import {HttpClient} from 'aurelia-fetch-client';
+import {HttpClient, json} from 'aurelia-fetch-client';
 
 export interface IQueryResult<T extends breeze.Entity> extends breeze.QueryResult {
   results: T[];
@@ -146,7 +146,7 @@ export class W6Context {
   public deleteCustom = <T>(path, configOverrides?: IRequestShortcutConfig) => this.handle(path, { method: 'DELETE' })
 
   handleJson = <T>(path, data, configOverride?) => this.handle<T>(path, Object.assign({
-    body: data ? JSON.stringify(data) : null
+    body: data ? json(data) : null
   }, configOverride));
 
   handle = async <T>(path, configOverride?) => {

@@ -7,9 +7,14 @@ import {EntityExtends, IUserInfo} from './dtos';
 import {W6Urls} from './withSIX';
 import {Tools} from './tools';
 
-export var AbortError = Tools.createError('AbortError');
-
 export class OutstandingRequestChange { constructor(public outstanding: number) { } }
+
+export var AbortError = Tools.createError('AbortError');
+export var LoginNoLongerValid = Tools.createError('LoginNoLongerValid');
+export var RequiresLogin = Tools.createError('RequiresLogin');
+export var Forbidden = Tools.createError("Forbidden");
+export var ResourceNotFound = Tools.createError("ResourceNotFound");
+export var ValidationError = Tools.createError("ValidationError");
 
 @inject(HttpClient, FetchClient, W6Urls, EventAggregator)
 export class LoginBase {
@@ -49,7 +54,8 @@ export class LoginBase {
     this.eventBus.publish(new LoginUpdated(accessToken));
   }
 
-  outstanding = 0;
+  get isRequesting() { return this.httpFetch.isRequesting || this.http.isRequesting }
+
 
   setHeaders(accessToken: string) {
     let urls = this.w6Url;
@@ -61,51 +67,51 @@ export class LoginBase {
       config.withHeader('Accept', 'application/json');
       config.withInterceptor({
         request: (request) => {
-          this.outstanding++;
-          ag.publish(new OutstandingRequestChange(this.outstanding));
           if (!request) return;
           if (shouldLog) Tools.Debug.log(`Requesting ${request.method} ${request.url}`, request.url.startsWith(urls.authSsl), request);
           if (accessToken && request.url.startsWith(urls.authSsl))
             request.headers.headers['Authorization'] = `Bearer ${accessToken}`;
           return request;
-        },
-        response: (response) => {
-          this.outstanding--;
-          ag.publish(new OutstandingRequestChange(this.outstanding));
-          return response;
         }
       })
     })
 
     this.httpFetch.configure(config => {
-      config.useStandardConfiguration();
       let headers = {
         'Accept': 'application/json',
         'X-Requested-With': 'Fetch'
       }
 
       if (accessToken) headers['Authorization'] = `Bearer ${accessToken}`
-      config.withDefaults({ headers })
+      config.withDefaults({ headers, credentials: 'same-origin' })
         .withInterceptor({
-          request: (request) => {
-            this.outstanding++;
-            ag.publish(new OutstandingRequestChange(this.outstanding));
+          request: async (request) => {
             if (!request) return request;
             if (shouldLog) Tools.Debug.log(`[FETCH] Requesting ${request.method} ${request.url}`, request.url.startsWith(urls.authSsl), request);
+            if (accessToken && Tools.isTokenExpired(accessToken))
+              if (await this.handleRefreshToken()) accessToken = window.localStorage[LoginBase.token];
             if (accessToken && request.url.startsWith(urls.authSsl))
               request.headers['authorization'] = `Bearer ${accessToken}`; // TODO: Doesnt work somehow
             return request; // you can return a modified Request, or you can short-circuit the request by returning a Response
           },
-          response: (response) => {
-            this.outstanding--;
-            ag.publish(new OutstandingRequestChange(this.outstanding));
+          response: (response, request) => {
             if (!response) return response;
             if (shouldLog) Tools.Debug.log(`[FETCH] Received ${response.status} ${response.url}`, response);
+
+            if (!response.ok) {
+              if (response.status == 400) throw new ValidationError("Input not valid");
+              if (response.status == 401) {
+                // todo; retry the request after trying refresh token? but only once..
+                throw accessToken ? new LoginNoLongerValid("The login is no longer valid, please retry after logging in again") : new RequiresLogin("The requested action requires you to be logged-in");
+              }
+              if (response.status == 403) throw new Forbidden("You do not have access to this resource");
+              if (response.status == 404) throw new ResourceNotFound("The requested resource does not appear to exist");
+              throw new Error("failed request with status: " + response.status);
+            }
             return response; // you can return a modified Response
           }
         });
     })
-
   }
 
   static redirect(url) {

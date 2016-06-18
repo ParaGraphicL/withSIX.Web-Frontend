@@ -33,6 +33,8 @@ export class ViewModel extends Base {
 
   get tools() { return Tools; }
 
+  protected notifyAngular = () => angular.element(document).scope().$apply();
+
   handleFooterIf(sw: boolean) {
     if (this.features.uiVirtualization)
       this.w6.showFooter = sw;
@@ -63,7 +65,7 @@ export class ViewModel extends Base {
       clearInterval(iv);
       window.w6Cheat.aureliaReady = true;
       this.tools.Debug.log("AURELIA: angular vm loaded");
-      angular.element(document).scope().$apply();
+      this.notifyAngular();
       $("#root-content-row").prepend($("#content"));
     }, 500);
   }

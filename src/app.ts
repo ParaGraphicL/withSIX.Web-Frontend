@@ -117,7 +117,7 @@ export class App extends ViewModel {
     //this.eventBus.subscribe('router:navigation:complete', () => console.log("$$$ complete route"));
   }
 
-  template = 'v1'
+  template = 'v2'
   userMenuItems = [];
 
   // this.w6.settings.hasSync
@@ -145,9 +145,7 @@ export class App extends ViewModel {
 
     let isSync = window.location.search.includes('sync=1') ? true : false;
     if (isSync) { this.w6.updateSettings(x => x.hasSync = true); }
-    this.template = this.w6.enableBasket ? 'v2' : 'v1'; // this.w6.settings.template || (this.w6.url.environment > this.tools.Environment.Production || this.w6.userInfo.isAdmin || this.w6.settings.hasSync ? 'v2' : 'v1');
-    //if (window.location.search.includes("template=v2")) this.setTemplate('v2');
-    //else if (window.location.search.includes("template=v1")) this.setTemplate('v1');
+    this.template = 'v2';
 
     this.userMenuItems.push(new MenuItem(this.openSettings));
     if (!this.features.library) this.userMenuItems.push(new MenuItem(this.openLibrary));
@@ -171,8 +169,14 @@ export class App extends ViewModel {
       d(this.eventBus.subscribe(Navigate, this.navigate));
       d(this.eventBus.subscribe(LoginUpdated, this.loginUpdated));
       d(this.eventBus.subscribe(OpenSettings, this.openClientSettings));
-      d(this.eventBus.subscribe(OutstandingRequestChange, evt => this.isApiWorking = evt.outstanding > 0))
+      d(this.toProperty(this.observeEx(x => x.isRequesting)
+        .combineLatest(this.observeEx(x => x.isNavigating), (api, router) => api || router)
+        .debounce(250), x => x.isApiBusy))
       d(this.observeEx(x => x.currentRoute).subscribe(_ => this.signaler.signal('router-signal')))
+      d(this.observeEx(x => x.isNavigating)
+        .skip(1)
+        .where(x => !x)
+        .subscribe(this.notifyAngular));
 
       d(this.observeEx(x => x.overlayShown)
         .subscribe(x => {
@@ -292,9 +296,10 @@ export class App extends ViewModel {
 
   get classes() { return `${this.w6.renderAds ? null : 'no-adds'} ${this.w6.miniClient.isConnected ? 'client-active' : null} ${this.w6.miniClient.isConnected && this.gameInfo.isLocked ? 'client-busy' : null} ${this.isApiBusy ? 'api-busy' : ''} ${this.w6.userInfo.id ? 'logged-in' : null}` }
 
-  get isApiBusy() { return this.router.isNavigating || this.isApiWorking }
+  isApiBusy = false;
 
-  isApiWorking = false;
+  get isNavigating() { return this.router.isNavigating }
+  get isRequesting() { return this.login.isRequesting }
 
   get showSidebar() { return this.w6.enableBasket; }
 
