@@ -3,6 +3,7 @@ export * from 'withsix-sync-api';
 import breeze from 'breeze-client';
 export {breeze};
 
+//export * from './entity-extends';
 export * from './dtos';
 export * from './w6context';
 

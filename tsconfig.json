@@ -206,6 +206,7 @@
         "./src/services/basket-service.ts",
         "./src/services/client-wrapper.ts",
         "./src/services/dtos.ts",
+        "./src/services/entity-extends.ts",
         "./src/services/helpers.ts",
         "./src/services/legacy.ts",
         "./src/services/legacy/base.ts",
