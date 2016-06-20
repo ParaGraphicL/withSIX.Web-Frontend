@@ -37,6 +37,7 @@ class FeatureToggles extends Base {
   get library() { return this.syncFeatures }
   get quickActions() { return this.isTestEnvironment }
   get uiVirtualization() { return this.testingFlag }
+  get collectionsInCollections() { return this.isTestEnvironment }
   get beta1_3() { return this.isPrereleaseClient }
 }
 

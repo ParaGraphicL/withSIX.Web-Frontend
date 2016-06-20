@@ -98,7 +98,7 @@
     "aurelia-history-browser": "^1.0.0-beta.1.2.1",
     "aurelia-http-client": "^1.0.0-beta.1.2.2",
     "aurelia-logging-console": "^1.0.0-beta.1.2.2",
-    "aurelia-mediator": "git+https://github.com/sickboy/aurelia-mediator.git",
+    "aurelia-mediator": "git+https://github.com/sickboy/aurelia-mediator.git#v0.0.11",
     "aurelia-pal-browser": "^1.0.0-beta.2.0.1",
     "aurelia-polyfills": "^1.0.0-beta.1.1.6",
     "aurelia-router": "^1.0.0-beta.1.2.3",
@@ -125,6 +125,6 @@
     "uuid-js": "^0.7.5",
     "version_compare": "0.0.3",
     "whatwg-fetch": "^1.0.0",
-    "withsix-sync-api": "git+https://github.com/SIXNetworks/withsix-sync-api-js.git#v0.3.33"
+    "withsix-sync-api": "git+https://github.com/SIXNetworks/withsix-sync-api-js.git#v0.3.35"
   }
 }

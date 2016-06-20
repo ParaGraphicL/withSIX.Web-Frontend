@@ -127,7 +127,7 @@ class SearchQuery extends Query<any> {
 class SearchQueryHandler extends DbQuery<SearchQuery, any> {
   async handle(request: SearchQuery) {
     let r = await this.context.getCustom<{ contentResults: any[] }>("search", { params: request, requestName: 'search' })
-    r.data.contentResults.forEach(x => x.key.type = SearchContentType[x.key.itemType] + 's')
-    return r.data;
+    r.contentResults.forEach(x => x.key.type = SearchContentType[x.key.itemType] + 's')
+    return r;
   }
 }

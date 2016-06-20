@@ -5,7 +5,7 @@ import '../node_modules/font-awesome/css/font-awesome.css';
 
 //import '../styles/styles.css';
 
-import {MyApp} from './legacy_app';
+import {MyApp} from './legacy/app';
 import {Container, inject, transient, singleton, Lazy, All, Optional, Parent} from 'aurelia-dependency-injection';
 import {Aurelia, LogManager} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
@@ -46,6 +46,9 @@ bootstrap(async (aurelia: Aurelia) => {
     aurelia.use
       .standardConfiguration()
       .plugin('aurelia-auth', baseConfig => baseConfig.configure(authConfig))
+      .plugin('aurelia-fetch-client', config => {
+        Tools.Debug.log("$$$ fetch!!", config)
+      })
       .plugin('aurelia-animator-css')
       //.plugin('aurelia-animator-velocity')
       .plugin('aurelia-validation')

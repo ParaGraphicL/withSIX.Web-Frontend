@@ -3,6 +3,7 @@ import {IContentGuidSpec, BasketItemType, IBasketItem, BasketService, Base, Game
   RemoveRecent, Abort, UninstallContent, LaunchContent, OpenFolder, InstallContent, UnFavoriteContent, FavoriteContent, GameChanged, IMenuItem, FolderType} from '../../../framework';
 import {Router} from 'aurelia-router';
 import {GameBaskets, Basket} from '../../game-baskets';
+import {AddModsToCollections} from '../../games/add-mods-to-collections';
 
 @inject(UiContext, BasketService)
 export class ContentViewModel<TContent extends IContent> extends ViewModel {
@@ -17,6 +18,7 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
   isInstalledObservable;
   canExecuteObservable;
 
+  addToCollections: ICommand<any>;
   openFolder: ICommand<void>;
   diagnose: ICommand<void>;
   install: ICommand<void>;
@@ -87,6 +89,10 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
     // }
     return this.model.version;
   }
+
+  get basketableText() { return this.isInBasket ? "Remove from Playlist" : "Add to Playlist" }
+  get basketableIcon() { return this.isInBasket ? "withSIX-icon-X" : "withSIX-icon-Add" }
+
 
   async activate(model: TContent) {
     this.model = model;
@@ -218,6 +224,18 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
       name: this.model.name,
       sizePacked: this.model.sizePacked
     }
+  }
+
+  setupAddToBasket() {
+    this.subscriptions.subd(d => {
+      this.topActions.push(new MenuItem(this.addToBasket, { name: "", icon: "content-basketable-icon", textCls: "content-basketable-text", cls: "content-basketable-button" }))
+      this.topMenuActions.push(new MenuItem(this.addToBasket));
+      d(this.observeEx(x => x.isInBasket).subscribe(x => { this.addToBasket.name = this.basketableText; this.addToBasket.icon = this.basketableIcon }));
+      if (this.isLoggedIn) {
+        d(this.addToCollections = uiCommand2("Add to ...", async () => this.dialog.open({ viewModel: AddModsToCollections, model: { gameId: this.model.gameId, mods: [this.model] } }), { icon: 'withSIX-icon-Nav-Collection' }));
+        this.topMenuActions.push(new MenuItem(this.addToCollections));
+      }
+    });
   }
 
   setupMenuItems() {

@@ -1,6 +1,7 @@
 {
   "globalDependencies": {
     "rx": "github:Reactive-Extensions/RxJS/ts/rx.all.es6.d.ts",
+    "toastr": "registry:dt/toastr#2.1.1+20160510010435",
     "withsix-sync-api": "github:SIXNetworks/withsix-sync-api-js/dist/withsix-sync-api.d.ts"
   }
 }

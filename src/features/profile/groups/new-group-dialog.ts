@@ -51,7 +51,6 @@ export class CreateGroupHandler extends DbQuery<CreateGroup, string> {
     let postModel = Object.assign({}, request.model);
     const urlRx = /^https?:\/\//i;
     if (postModel.homepage && !urlRx.test(postModel.homepage)) postModel.homepage = "http://" + postModel.homepage;
-    let r = await this.context.postCustom<string>("groups", postModel);
-    return r.data;
+    return await this.context.postCustom<string>("groups", postModel);
   }
 }

@@ -99,6 +99,14 @@ $bg: $colorSixBlue;
     }
   }
 }
+.api-busy {
+  #logo {
+    //background-color: $colorSixOrange;
+    .icon {
+      animation: rotation 2s infinite linear;
+    }
+  }
+}
 #tab-view-render-settings {
   .go-premium {
     color: gold;

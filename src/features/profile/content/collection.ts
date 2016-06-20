@@ -25,6 +25,8 @@ export class Collection extends ContentViewModel<ICollection> {
   setupMenuItems() {
     let published = this.model.typeScope == TypeScope.Published;
 
+    if (this.features.collectionsInCollections) this.setupAddToBasket();
+
     this.subscriptions.subd(d => {
       d(Base.observeEx(this.model, x => x.hasServers)
         .subscribe(x => x ? this.launch.name = 'Join' : 'Launch'));
@@ -122,8 +124,7 @@ export class ForkCollection extends Command<string> {
 @handlerFor(ForkCollection)
 export class ForkCollectionHandler extends DbQuery<ForkCollection, string> {
   async handle(request: ForkCollection) {
-    let r = await this.context.postCustom<string>("collections/" + request.id + "/fork");
-    return r.data;
+    return await this.context.postCustom<string>("collections/" + request.id + "/fork");
   }
 }
 

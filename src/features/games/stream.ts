@@ -10,6 +10,10 @@ export class Stream extends ViewModel {
     this.model = await new GetStream(params.gameSlug).handle(this.mediator);
     this.gameUrl = `/p/${params.gameSlug}`;
     this.handleFooterIf(false);
+    // setInterval(() => {
+    //   this.model.contentItems.push(...this.model.contentItems.map(x => Object.assign({}, x)));
+    //   this.model.contentItems.unshift(...this.model.contentItems.map(x => Object.assign({}, x)));
+    // }, 5000);
   }
 
   deactivate() { super.deactivate(); this.handleFooterIf(true); }
@@ -38,8 +42,9 @@ export class GetStream extends Query<IStream> {
 @handlerFor(GetStream)
 export class GetStreamHandler extends DbQuery<GetStream, IStream> {
   async handle(request: GetStream) {
-    let r = await this.context.getCustom<{ contentItems: any }>("games/" + request.gameSlug + "/stream?streamType=" + request.streamType);
-    r.data.contentItems.forEach(x => x.type = 'mod');
-    return r.data;
+    let r = await this.context.getCustom<{ contentItems: any[] }>("games/" + request.gameSlug + "/stream?streamType=" + request.streamType);
+    console.log("$$$", r)
+    r.contentItems.forEach(x => x.type = 'mod');
+    return r;
   }
 }
