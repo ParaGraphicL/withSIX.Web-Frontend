@@ -5,9 +5,12 @@ import {IBreezeMod, IBreezeUser, IBreezeCollection, IBreezeMission, IBreezeColle
   IBreezeCollectionComment, IBreezePostComment, AbstractDefs, BreezeInitialzation, IBreezeModUserGroup, IBreezeModComment, IBreezeModImageFileTransferPolicy,
   IBreezeModMediaItem, IUserInfo, Resource, Permission, Role,
   EntityExtends, BreezeEntityGraph, _IntDefs} from '../services/dtos';
+
+import {RestoreBasket, OpenCreateCollectionDialog, OpenAddModDialog, OpenAddModsToCollectionsDialog} from '../services/api';
+import {ForkCollection} from '../features/profile/content/collection';
 import {W6, W6Urls, globalRedactorOptions} from '../services/withSIX';
 import {Tools} from '../services/tools';
-import {W6Context, W6ContextWrapper, IQueryResult} from '../services/w6context';
+import {W6Context, IQueryResult} from '../services/w6context';
 import {Tk} from '../services/legacy/tk'
 import {IRootScope, ITagKey, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHaveModel, DialogQueryBase, ICreateComment, ICQWM, IModel, DbCommandBase, DbQueryBase, BaseController, BaseQueryController,
   IMenuItem, ModelDialogControllerBase, DialogControllerBase, Result, BooleanResult, IHandleCommentsScope} from '../services/legacy/base'
@@ -869,7 +872,7 @@ export module Play.Collections {
         Tools.Debug.log("handlepreferredclient: ", newValue);
         if (newValue == "playwithsix" || this.w6.isClient) this.w6.enableBasket = false;
         else if (newValue == "sync") this.w6.enableBasket = true;
-        else eventBus.publish(new window.w6Cheat.containerObjects.restoreBasket());
+        else eventBus.publish(new RestoreBasket());
       }
 
       handleClient(model.preferredClient);
@@ -890,10 +893,10 @@ export module Play.Collections {
         menuEntry.url = newV ? $scope.gameUrl + "/collections/" + model.id.toShortId() + "/" + model.name.sluggifyEntityName() + "/content/edit" : null;
         if (newV) {
           if (window.location.pathname.endsWith("/content"))
-            eventBus.publish(new window.w6Cheat.containerObjects.navigate(window.location.pathname + "/edit"));
+            window.w6Cheat.navigate(window.location.pathname + "/edit");
         } else {
           if (window.location.pathname.endsWith("/edit"))
-            eventBus.publish(new window.w6Cheat.containerObjects.navigate(window.location.pathname.replace("/edit", "")));
+            window.w6Cheat.navigate(window.location.pathname.replace("/edit", ""));
         }
       }
 
@@ -906,7 +909,7 @@ export module Play.Collections {
 
       $scope.$on('$destroy', () => {
         window.w6Cheat.collection = null;
-        eventBus.publish(new window.w6Cheat.containerObjects.restoreBasket());
+        eventBus.publish(new RestoreBasket());
         w();
       });
       var hasLanding = $routeParams.hasOwnProperty("landing");
@@ -921,7 +924,7 @@ export module Play.Collections {
       this.forking = true;
       try {
         let model = this.$scope.model;
-        let id = await new window.w6Cheat.containerObjects.forkCollection(model.id).handle(this.mediator);
+        let id = await new ForkCollection(model.id).handle(this.mediator);
         window.w6Cheat.navigate("/p/" + model.game.slug + "/collections/" + id.toShortId() + "/" + (model.name + ' [Forked]').sluggifyEntityName());
       } finally {
         this.forking = false;
@@ -1945,7 +1948,7 @@ export module Play.Games {
 
   export class AddModDialogController extends DialogControllerBase {
     static $name = 'AddModDialogController';
-    static $inject = ['$scope', 'logger', '$routeParams', '$location', '$modalInstance', '$q', '$timeout', 'game', 'info', 'modInfoService', 'dbContext'];
+    static $inject = ['$scope', 'logger', '$routeParams', '$location', '$modalInstance', '$q', '$timeout', 'game', 'info', 'aur.client', 'dbContext'];
     static $viewBaseFolder = '/src_legacy/app/play/games/stream/dialogs/';
     private $viewBaseFolder = AddModDialogController.$viewBaseFolder;
     private $userViewBaseFolder = this.$viewBaseFolder + 'add-mod-user/';
@@ -2359,7 +2362,7 @@ export module Play.Games {
     static $name = "GameController";
 
     static $inject = [
-      '$scope', 'logger', '$q', 'dbContext', 'model', 'modInfoService',
+      '$scope', 'logger', '$q', 'dbContext', 'model', 'aur.client',
       '$rootScope', 'basketService', 'aur.eventBus'
     ];
 
@@ -2373,7 +2376,7 @@ export module Play.Games {
       $scope.gameUrl = $scope.url.play + "/" + model.slug;
       $scope.game = model;
 
-      $scope.addToCollections = (mod: IBreezeMod) => { this.eventBus.publish(new window.w6Cheat.containerObjects.openAddModsToCollectionsDialog($scope.game.id, [{ id: mod.id, name: mod.name, packageName: mod.packageName, groupId: mod.groupId }])) };
+      $scope.addToCollections = (mod: IBreezeMod) => { this.eventBus.publish(new OpenAddModsToCollectionsDialog($scope.game.id, [{ id: mod.id, name: mod.name, packageName: mod.packageName, groupId: mod.groupId }])) };
 
       let getItemProgressClass = (item: IBasketItem): string => {
         let state = $scope.clientInfo.content[item.id];
@@ -2461,8 +2464,8 @@ export module Play.Games {
 
       if (model.supportsMods) {
         items.push({ header: "Mods", segment: "mods", icon: "icon withSIX-icon-Nav-Mod" });
-        this.$scope.openAddModDialog = (info = { type: "download", folder: "" }) => this.eventBus.publish(new window.w6Cheat.containerObjects.openAddModDialog(model, info));
-        this.$scope.openAddCollectionDialog = () => this.eventBus.publish(new window.w6Cheat.containerObjects.openCreateCollectionDialog(model));
+        this.$scope.openAddModDialog = (info = { type: "download", folder: "" }) => this.eventBus.publish(new OpenAddModDialog(model, info));
+        this.$scope.openAddCollectionDialog = () => this.eventBus.publish(new OpenCreateCollectionDialog(model));
       }
 
       if (model.supportsMissions)
@@ -4122,7 +4125,7 @@ export module Play.Mods {
       this.$scope.openVersionHistoryDialog = () => {
         this.$scope.request(ModVersionHistoryDialogQuery, { model: this.$scope.model });
       };
-      this.$scope.openAddModDialog = (info = { type: "download", folder: "" }) => this.eventBus.publish(new window.w6Cheat.containerObjects.openAddModDialog(this.$scope.model.game, info));
+      this.$scope.openAddModDialog = (info = { type: "download", folder: "" }) => this.eventBus.publish(new OpenAddModDialog(this.$scope.model.game, info));
 
       this.$scope.$watch("uploadingModImage", (newValue, oldValue, scope) => {
         if (newValue == oldValue) return;
@@ -5231,7 +5234,7 @@ export module Play.Mods {
   export class UploadVersionDialogController extends ModelDialogControllerBase<IBreezeMod> {
     static $name = 'UploadVersionDialogController';
     static $view = '/src_legacy/app/play/mods/dialogs/upload-new-version.html';
-    static $inject = ['$scope', 'logger', '$modalInstance', '$q', 'model', 'info', 'modInfoService', 'dbContext'];
+    static $inject = ['$scope', 'logger', '$modalInstance', '$q', 'model', 'info', 'aur.client', 'dbContext'];
 
     constructor(public $scope: IUploadVersionDialogScope, public logger: ToastLogger, $modalInstance, $q, model: IBreezeMod, info: string, private modInfoService, private dbContext: W6Context) {
       super($scope, logger, $modalInstance, $q, model);

@@ -30,19 +30,6 @@ interface String {
   truncate: (count: number) => string;
 }
 
-interface IContainerObjects {
-  openAddModsToCollectionsDialog;
-  uiContext;
-  toastr; //: MyApp.Toastr;
-  forkCollection;
-  login;
-  restoreBasket;
-  navigate;
-  openCreateCollectionDialog;
-  openAddModDialog;
-  basketService;
-}
-
 interface IAureliaConverter {
   toView: (...args) => string;
 }
@@ -54,7 +41,6 @@ interface IW6Cheat {
   isClient: boolean;
   aureliaReady: boolean;
   container;
-  containerObjects: IContainerObjects;
   navigate: (url: string) => void;
   libraryParent;
   collection;

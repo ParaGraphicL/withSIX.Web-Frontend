@@ -91,11 +91,9 @@ export class LoginBase {
           request: async (request) => {
             if (!request) return request;
             if (shouldLog) Tools.Debug.log(`[FETCH] Requesting ${request.method} ${request.url}`, request);
-            Tools.Debug.log("$$$$ Should add ?", accessToken);
             let at: string;
             if (at = await this.getAccessToken(request.url, accessToken)) {
               accessToken = at;
-              Tools.Debug.log("$$$$ adding authorization header!", accessToken);
               request.headers.append('Authorization', `Bearer ${accessToken}`);
             }
             return request;

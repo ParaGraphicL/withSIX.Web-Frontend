@@ -1,11 +1,51 @@
-import {W6Context, W6ContextWrapper, IQueryResult} from '../w6context';
+import {W6Context, IQueryResult} from '../w6context';
 import breeze from 'breeze-client';
 import {Tools} from '../tools'
 import {IBreezeCollection, IBreezeMod, IBreezeMission} from '../dtos';
+import {inject} from 'aurelia-framework';
+
+import {Toastr} from '../toastr';
+
+@inject(Toastr, W6Context)
+abstract class W6ContextWrapper {
+  constructor(public logger: Toastr, public context: W6Context) { }
+
+  public filterPrefixes = this.context.filterPrefixes;
+
+  public queryText(query, filterText, inclAuthor) {
+    throw new Error("NotImplemented: queryText");
+  }
+
+  private queryTimespan(query, filterTimespan) {
+    var m = <any>moment().subtract(filterTimespan, 'hours');
+    return query.where("updatedAt", breeze.FilterQueryOp.GreaterThanOrEqual, new Date(m));
+  }
+
+  private querySize(query, filterSize) {
+    return query.where("size",
+      breeze.FilterQueryOp.LessThanOrEqual,
+      filterSize);
+  }
+
+  public applyFiltering(query, filterOptions, inclAuthor) {
+    if (filterOptions.timespan != null)
+      query = this.queryTimespan(query, filterOptions.timespan);
+
+    if (filterOptions.text != undefined && filterOptions.text != '') {
+      query = this.queryText(query, filterOptions.text, inclAuthor);
+      if (query == null)
+        return null;
+    }
+
+    if (filterOptions.size != null)
+      query = this.querySize(query, filterOptions.size);
+
+    return query;
+  }
+}
 
 // DEPRECATED: Convert to Queries/Commands
 export class CollectionDataService extends W6ContextWrapper {
-  static $name = 'collectionDataService';
   public filterPrefixes = ["mod:", "user:", "tag:"];
 
   public getCollectionsByGame(gameSlug, options): Promise<IQueryResult<IBreezeCollection>> {
@@ -155,8 +195,6 @@ export class CollectionDataService extends W6ContextWrapper {
 
 // DEPRECATED: Convert to Queries/Commands
 export class MissionDataService extends W6ContextWrapper {
-  static $name = 'missionDataService';
-
   public queryText(query, filterText, inclAuthor) {
     if (filterText == "")
       return query;
@@ -255,8 +293,6 @@ export class MissionDataService extends W6ContextWrapper {
 
 // DEPRECATED: Convert to Queries/Commands
 export class ModDataService extends W6ContextWrapper {
-  static $name = 'modDataService';
-
   public getModsInCollection(collectionId, options): Promise<IQueryResult<IBreezeMod>> {
     Tools.Debug.log("getting mods in collection: " + collectionId);
     var query = breeze.EntityQuery.from("ModsInCollection")

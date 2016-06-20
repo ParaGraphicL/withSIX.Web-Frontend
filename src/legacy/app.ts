@@ -2,7 +2,7 @@ import breeze from 'breeze-client';
 
 import {W6, W6Urls, globalRedactorOptions} from '../services/withSIX';
 import {Tools} from '../services/tools';
-import {W6Context, W6ContextWrapper, IQueryResult} from '../services/w6context';
+import {W6Context, IQueryResult} from '../services/w6context';
 import {Tk} from '../services/legacy/tk'
 import {IRootScope, ITagKey, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHaveModel, DialogQueryBase, ICreateComment, ICQWM, IModel, DbCommandBase, DbQueryBase, BaseController, BaseQueryController,
   IMenuItem, ModelDialogControllerBase, DialogControllerBase, Result, BooleanResult} from '../services/legacy/base'
@@ -33,10 +33,6 @@ export module MyApp {
   export var authSet = false;
   var initialCompleted = false;
 
-  registerService(W6Context);
-  registerService(CollectionDataService);
-  registerService(MissionDataService);
-  registerService(ModDataService);
   registerService(BasketService);
   registerService(ToastLogger);
   registerService(UploadService);

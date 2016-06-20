@@ -11,9 +11,10 @@ import {Aurelia, LogManager} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {Toastr, UiContext, Mediator, ErrorLoggingMediatorDecorator, InjectingMediatorDecorator, BasketService, Client,
-  CollectionDataService, ModDataService, MissionDataService, UploadService, ToastLogger, PromiseCache,
+  CollectionDataService, ModDataService, MissionDataService, UploadService, PromiseCache,
   EntityExtends, IUserInfo, LegacyBasketService, W6Context, ClientMissingHandler,
   W6Urls, W6, Tools} from './services/lib';
+import {ToastLogger} from './services/legacy/logger';
 import {HttpClient} from 'aurelia-http-client';
 import {HttpClient as FetchClient} from 'aurelia-fetch-client';
 import {AbortError, LoginBase} from './services/auth-base';
@@ -142,10 +143,6 @@ bootstrap(async (aurelia: Aurelia) => {
 
   window.w6Cheat.w6Urls = w6Urls;
   window.w6Cheat.container = Container.instance;
-  window.w6Cheat.containerObjects.toastr = <any>Toastr;
-  window.w6Cheat.containerObjects.login = LoginBase;
-  window.w6Cheat.containerObjects.uiContext = UiContext;
-  window.w6Cheat.containerObjects.basketService = BasketService;
   window.w6Cheat.numeral = numeral;
   var authConfig = {
     //our Aurelia App Address
@@ -230,7 +227,8 @@ export class ContainerSetup {
       // Legacy framework/3rdparty services
       'commandExecutor', 'DoubleClick',
       // Legacy app services
-      { name: "logger", cls: ToastLogger }, { name: "collectionDataService", cls: CollectionDataService }, { name: "modDataService", cls: ModDataService }, { name: "missionDataService", cls: MissionDataService }, { name: "basketService", cls: LegacyBasketService }, { name: 'dbContext', cls: W6Context }, { name: 'UploadService', cls: UploadService }
+      { name: "basketService", cls: LegacyBasketService },
+      { name: 'UploadService', cls: UploadService }
     ]);
     this.instance.registerSingleton(Mediator,
       () => new ErrorLoggingMediatorDecorator(new InjectingMediatorDecorator(new Mediator(), this.instance.get(W6)), this.instance.get(Toastr), this.instance.get(ClientMissingHandler)));

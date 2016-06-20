@@ -1,11 +1,8 @@
 import {Tk} from './tk';
+import {Tools} from '../tools';
 
-export class ToastLogger extends Tk.Service {
-  static $inject = ['$log'];
-  static $name = 'logger';
-
-  constructor(private $log) {
-    super();
+export class ToastLogger {
+  constructor() {
 
     // This logger wraps the toastr logger and also logs to console using ng $log
     // toastr.js is library by John Papa that shows messages in pop up toast.
@@ -19,7 +16,7 @@ export class ToastLogger extends Tk.Service {
     var opts = { timeOut: 10 * 1000 };
     if (options) Object.assign(opts, options);
     toastr.error(message, title, opts);
-    this.$log.error("Error: " + message);
+    Tools.Debug.error("Error: " + message);
   }
 
   public errorRetry(message: string, title: string = null, options?: ToastrOptions) {
@@ -29,26 +26,26 @@ export class ToastLogger extends Tk.Service {
       tapToDismiss: false
     };
     if (options) Object.assign(opts, options);
-    this.$log.error("ErrorRetry: " + title);
+    Tools.Debug.error("ErrorRetry: " + title);
     return toastr.error(message, title, opts);
   }
 
   public info(message: string, title: string = null, options?: ToastrOptions) {
-    this.$log.info("Info: " + message);
+    Tools.Debug.info("Info: " + message);
     return toastr.info(message, title, options);
   }
 
   public success(message: string, title: string = null, options?: ToastrOptions) {
-    this.$log.info("Success: " + message);
+    Tools.Debug.info("Success: " + message);
     return toastr.success(message, title, options);
   }
 
   public warning(message: string, title: string = null, options?: ToastrOptions) {
     var opts = { timeOut: 10 * 1000 };
     if (options) Object.assign(opts, options);
-    this.$log.warn("Warning: " + message);
+    Tools.Debug.warn("Warning: " + message);
     return toastr.warning(message, title, opts);
   }
 
-  public log(message) { this.$log.log(message); }
+  public log(message) { Tools.Debug.log(message); }
 }

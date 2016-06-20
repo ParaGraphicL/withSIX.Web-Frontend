@@ -13,6 +13,10 @@ import {Router} from 'aurelia-router';
 
 export class CloseDropdowns { }
 export class CloseDialogs { }
+export class OpenCreateCollectionDialog { constructor(public game) { } }
+export class OpenAddModDialog { constructor(public game, public info?) { } }
+export class OpenAddModsToCollectionsDialog { constructor(public gameId: string, public mods: any[], public collections?: any[]) { } }
+export class RestoreBasket { }
 
 @inject(Client, EventAggregator, LS)
 export class Api {

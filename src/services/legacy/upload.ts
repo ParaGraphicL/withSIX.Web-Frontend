@@ -1,5 +1,6 @@
 import {IBreezeAWSUploadPolicy} from '../dtos';
 import {Tk} from './tk';
+import {W6Context} from '../w6context';
 
 // ReSharper disable InconsistentNaming
 export interface IAWSUploadPolicy {
@@ -18,9 +19,9 @@ export interface IAWSUploadPolicy {
 
 export class UploadService extends Tk.Service {
   static $name = 'UploadService';
-  static $inject = ['$http', '$upload', 'dbContext'];
+  static $inject = ['$upload', 'dbContext'];
 
-  constructor(private $http, private $upload, private context) {
+  constructor(private $upload, private context: W6Context) {
     super();
   }
 

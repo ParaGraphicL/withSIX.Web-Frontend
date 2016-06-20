@@ -11,7 +11,7 @@ interface IBasketScope extends ng.IScope {
 
 export class BasketService extends Tk.Service {
   static $name = "basketService";
-  static $inject = ['localStorageService', 'logger', '$rootScope', 'modInfoService'];
+  static $inject = ['localStorageService', 'logger', '$rootScope', 'aur.client'];
   private baskets: IBaskets;
   private scope: IBasketScope;
   public settings: IBasketSettings;

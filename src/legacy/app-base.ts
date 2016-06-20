@@ -1,14 +1,18 @@
 import {W6, W6Urls, globalRedactorOptions} from '../services/withSIX';
 import {Tools} from '../services/tools';
-import {W6Context, W6ContextWrapper, IQueryResult} from '../services/w6context';
+import {W6Context, IQueryResult} from '../services/w6context';
 import {Tk} from '../services/legacy/tk'
 import {IRootScope, ITagKey, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHaveModel, DialogQueryBase, ICreateComment, ICQWM, IModel, DbCommandBase, DbQueryBase, BaseController, BaseQueryController,
   IMenuItem} from '../services/legacy/base'
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {HttpClient} from 'aurelia-fetch-client';
+import {ToastLogger} from '../services/legacy/logger';
 
+import {BasketService} from '../services/basket-service';
+
+import {CollectionDataService, ModDataService, MissionDataService} from '../services/legacy/data-services';
 import {Mediator} from 'aurelia-mediator';
-import {Client} from 'withsix-sync-api';
+import {Client, PromiseCache} from 'withsix-sync-api';
 
 declare var commangular;
 
@@ -37,11 +41,11 @@ class AppModule extends Tk.Module {
   static $name = "AppModule";
   static $modules = [
     'constants', 'Components',
-    'LocalStorageModule', 'angular-jwt', 'ui.bootstrap',
+    'LocalStorageModule', 'ui.bootstrap',
     'ngCookies', 'ngAnimate', 'ngRoute', 'ngSanitize', 'remoteValidation',
     /* 'breeze.angular',  */
     'angularMoment', 'angularSpinner', 'ngTagsInput', 'infinite-scroll', 'ngMap', 'ngDfp',
-    'ui.bootstrap.tpls', 'ui.bootstrap.tabs', 'dialogs.main', 'ui', 'angular-promise-cache', 'xeditable', 'commangular', //'ngClipboard',
+    'ui.bootstrap.tpls', 'ui.bootstrap.tabs', 'dialogs.main', 'ui', 'xeditable', 'commangular', //'ngClipboard',
     'ui-rangeSlider', 'ngFileUpload2', 'checklist-model', 'route-segment', 'view-segment', 'mgcrea.ngStrap.datepicker', 'angular-redactor',
     'Components.BytesFilter', 'Components.Debounce', 'Components.Pagedown', 'Components.Fields',
     'Components.ReallyClick', 'Components.BackImg', 'Components.Comments', 'Components.AccountCard', 'nvd3ChartDirectives',
@@ -60,19 +64,15 @@ class AppModule extends Tk.Module {
     super('app', AppModule.getModules());
 
     this.app
+      .factory('dbContext', () => window.w6Cheat.container.get(W6Context))
+      .factory('logger', () => window.w6Cheat.container.get(ToastLogger))
       .factory('aur.mediator', () => window.w6Cheat.container.get(Mediator))
       .factory('aur.eventBus', () => window.w6Cheat.container.get(EventAggregator))
       .factory('aur.client', () => window.w6Cheat.container.get(Client))
-      .factory('aur.fetchClient', () => window.w6Cheat.container.get(HttpClient))
-      .factory('modInfoService', () => window.w6Cheat.container.get(Client))
-      .factory('aur.uiContext', () => window.w6Cheat.container.get(window.w6Cheat.containerObjects.uiContext))
-      .factory('aur.login', () => window.w6Cheat.container.get(window.w6Cheat.containerObjects.login))
-      .factory('aur.toastr', () => window.w6Cheat.container.get(window.w6Cheat.containerObjects.toastr))
-      .factory('aur.basketService', () => window.w6Cheat.container.get(window.w6Cheat.containerObjects.basketService))
+      .factory('aur.basketService', () => window.w6Cheat.container.get(BasketService))
       .config(['redactorOptions', redactorOptions => angular.copy(globalRedactorOptions, redactorOptions)])
       .config([
         '$httpProvider', $httpProvider => {
-          $httpProvider.interceptors.push('loadingStatusInterceptor');
           $httpProvider.defaults.headers.patch = {
             'Content-Type': 'application/json;charset=utf-8'
           };
@@ -85,68 +85,6 @@ class AppModule extends Tk.Module {
             .setPrefix('withSIX'); // production vs staging etc?
         }
       ])
-      .config([
-        '$httpProvider', 'jwtInterceptorProvider', ($httpProvider, jwtInterceptorProvider) => {
-          var refreshingToken = null;
-          var subdomains = ['', 'connect.', 'play.', 'admin.', 'kb.', 'auth.', 'ws1.', 'api.', 'api2.'];
-          var theDomain = window.w6Cheat.w6.url.domain;
-
-          var isWhitelisted = (url: string) => {
-            return url.includes(theDomain) && !url.includes('/cdn/') && subdomains.some(s => {
-              var host = s + theDomain;
-              var protLess = '//' + host;
-              if (url.startsWith(protLess) && window.location.protocol === 'https:')
-                return true;
-              if (url.startsWith('https:' + protLess))
-                return true;
-              return false;
-            });
-          };
-          let refreshToken = async function(config, login) {
-            let token = null;
-            try {
-              let x = await login.handleRefreshToken();
-              //if (!x) throw new Error("no valid refresh token");
-              // TODO: Inform about lost session?
-              if (x)
-                token = window.localStorage[window.w6Cheat.containerObjects.login.token];
-            } catch (err) {
-              err.config = config;
-              throw err;
-            } finally {
-              refreshingToken = null;
-            }
-            return token;
-          }
-          jwtInterceptorProvider.tokenGetter = [
-            'config', 'localStorageService', 'aur.login',
-            async (config, store, login) => {
-              if (!isWhitelisted(config.url)) return null;
-              let token = window.localStorage[window.w6Cheat.containerObjects.login.token];
-              if (!token) return null;
-              if (!Tools.isTokenExpired(token)) return token;
-              else if (refreshingToken === null) refreshingToken = refreshToken(config, login).catch(x => Tools.Debug.error("catched refresh token error", x));
-              return await refreshingToken;
-            }];
-          $httpProvider.interceptors.push('jwtInterceptor');
-        }
-      ])
-      // .run([
-      //   'breeze', breeze => {
-      //     breeze.NamingConvention.camelCase.setAsDefault();
-      //     /*                        if (userInfo.apiToken) {
-      //                                 var ajaxImpl = breeze.config.getAdapterInstance("ajax");
-      //                                 ajaxImpl.defaultSettings = {
-      //                                     /*
-      //                                     headers: {
-      //                                         // any CORS or other headers that you want to specify.
-      //                                     },
-      //                                     #1#
-      //
-      //                                 };
-      //                             }*/
-      //   }
-      // ])
       .run([
         'editableOptions', editableOptions => {
           editableOptions.theme = 'bs3'; // bootstrap3 theme. Can be also 'bs2', 'default'
