@@ -107,7 +107,6 @@ export class LoginBase {
     })
   }
 
-
   handleResponseErrorStatus(status: number, isLoggedIn: boolean) {
     if (status == 400) throw new ValidationError("Input not valid");
     if (status == 401) {
@@ -119,14 +118,13 @@ export class LoginBase {
   }
 
   async getAccessToken(url: string, accessToken: string) {
-    if (accessToken && Tools.isTokenExpired(accessToken))
+    if (!url.includes("/api/login/") && accessToken && Tools.isTokenExpired(accessToken))
       if (await this.handleRefresh()) accessToken = window.localStorage[LoginBase.token];
     if (accessToken && url.startsWith(this.w6Url.authSsl))
       return accessToken;
     return null;
   }
   handleRefresh = () => this.refreshing || (this.refreshing = this.handleRefreshToken());
-
 
   static redirect(url) {
     Tools.Debug.log("$$$ redirecting", url);
