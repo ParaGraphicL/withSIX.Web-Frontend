@@ -108,7 +108,6 @@ export module MyApp {
           preprocess: 'utc', // optional
           //timezone: 'Europe/London' // optional
         })
-        .constant('options', { serviceName: setupInfo.w6.url.api + "/breeze/withsix" })
         .constant('w6', setupInfo.w6);
     }
   }

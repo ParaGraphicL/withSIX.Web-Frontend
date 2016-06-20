@@ -206,13 +206,6 @@ class AppModule extends Tk.Module {
           $rootScope.sluggifyEntityName = (str) => Tools.sluggifyEntityName(str);
           $rootScope.request = (cq, data?) => $rootScope.dispatch(cq.$name, data);
           $rootScope.requestWM = (cq, data?) => $rootScope.dispatch(cq.$name, data);
-          $rootScope.cancelOutstandingRequests = () => {
-            var canceler = $rootScope.canceler;
-            if (canceler != null) {
-              Tools.Debug.log("cancelling outstanding request");
-              canceler.resolve();
-            }
-          };
           $rootScope.isInvalid = (field, ctrl) => {
             if (!field.$invalid) return false;
             if (ctrl.sxValidateOnBlur && field.sxBlurred) return true;
@@ -228,9 +221,6 @@ class AppModule extends Tk.Module {
           $rootScope.$on('myAvatarChanged', (evt, avatarInfo) => {
             w6.updateUserInfo(avatarInfo, w6.userInfo)
           });
-
-          // TODO: Does not do anything??
-          /*$rootScope.$on('$routeChangeStart', (evt, data) => $rootScope.cancelOutstandingRequests());*/
         }
       ])
       .config(['$commangularProvider', $commangularProvider => registerCommands(this.commands, $commangularProvider)])

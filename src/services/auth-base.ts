@@ -69,7 +69,11 @@ export class LoginBase {
       config.withInterceptor({
         request: async (request) => {
           if (!request) return;
-          if (accessToken = await this.getAccessToken(request.url, accessToken)) request.headers.headers['Authorization'] = `Bearer ${accessToken}`;
+          let at: string;
+          if (at = await this.getAccessToken(request.url, accessToken)) {
+            accessToken = at;
+            request.headers.headers['Authorization'] = `Bearer ${accessToken}`;
+          }
           return request;
         }
       })
@@ -87,7 +91,13 @@ export class LoginBase {
           request: async (request) => {
             if (!request) return request;
             if (shouldLog) Tools.Debug.log(`[FETCH] Requesting ${request.method} ${request.url}`, request);
-            if (accessToken = await this.getAccessToken(request.url, accessToken)) request.headers['authorization'] = `Bearer ${accessToken}`;
+            Tools.Debug.log("$$$$ Should add ?", accessToken);
+            let at: string;
+            if (at = await this.getAccessToken(request.url, accessToken)) {
+              accessToken = at;
+              Tools.Debug.log("$$$$ adding authorization header!", accessToken);
+              request.headers.append('Authorization', `Bearer ${accessToken}`);
+            }
             return request;
           },
           response: (response, request) => {

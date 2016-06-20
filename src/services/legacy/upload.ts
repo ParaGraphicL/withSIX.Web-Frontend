@@ -18,9 +18,9 @@ export interface IAWSUploadPolicy {
 
 export class UploadService extends Tk.Service {
   static $name = 'UploadService';
-  static $inject = ['$http', '$upload', 'options', 'dbContext'];
+  static $inject = ['$http', '$upload', 'dbContext'];
 
-  constructor(private $http, private $upload, private options, private context) {
+  constructor(private $http, private $upload, private context) {
     super();
   }
 
@@ -36,7 +36,7 @@ export class UploadService extends Tk.Service {
   }
 
   private getPolicy(file, authorizationPath, policyType, requestName?) {
-    return this.context.getCustom(this.options.serviceName + '/' + authorizationPath, { requestName: requestName, params: { policyType: policyType, filePath: file } });
+    return this.context.getCustom(this.context.serviceName + '/' + authorizationPath, { requestName: requestName, params: { policyType: policyType, filePath: file } });
   }
 
   private uploadToBucket = (file: File, s3Params: IBreezeAWSUploadPolicy, requestName?): ng.IHttpPromise<any> => {
