@@ -40,7 +40,6 @@ interface IW6Cheat {
   redirected: boolean;
   redirectedWasLoggedIn: boolean;
   api: IApi;
-  tools;
 }
 
 interface IPromiseFunction<T> {
