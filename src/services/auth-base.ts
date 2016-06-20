@@ -7,14 +7,7 @@ import {EntityExtends, IUserInfo} from './dtos';
 import {W6Urls} from './withSIX';
 import {Tools} from './tools';
 
-export class OutstandingRequestChange { constructor(public outstanding: number) { } }
-
 export var AbortError = Tools.createError('AbortError');
-export var LoginNoLongerValid = Tools.createError('LoginNoLongerValid');
-export var RequiresLogin = Tools.createError('RequiresLogin');
-export var Forbidden = Tools.createError("Forbidden");
-export var ResourceNotFound = Tools.createError("ResourceNotFound");
-export var ValidationError = Tools.createError("ValidationError");
 
 @inject(HttpClient, FetchClient, W6Urls, EventAggregator)
 export class LoginBase {
@@ -107,22 +100,11 @@ export class LoginBase {
     })
   }
 
-  handleResponseErrorStatus(status: number, isLoggedIn: boolean) {
-    if (status == 400) throw new ValidationError("Input not valid");
-    if (status == 401) {
-      // todo; retry the request after trying refresh token? but only once..
-      throw isLoggedIn ? new LoginNoLongerValid("The login is no longer valid, please retry after logging in again") : new RequiresLogin("The requested action requires you to be logged-in");
-    }
-    if (status == 403) throw new Forbidden("You do not have access to this resource");
-    if (status == 404) throw new ResourceNotFound("The requested resource does not appear to exist");
-  }
-
   async getAccessToken(url: string, accessToken: string) {
+    if (!url.startsWith(this.w6Url.authSsl)) return null;
     if (!url.includes("/api/login/") && accessToken && Tools.isTokenExpired(accessToken))
       if (await this.handleRefresh()) accessToken = window.localStorage[LoginBase.token];
-    if (accessToken && url.startsWith(this.w6Url.authSsl))
-      return accessToken;
-    return null;
+    return accessToken;
   }
   handleRefresh = () => this.refreshing || (this.refreshing = this.handleRefreshToken());
 

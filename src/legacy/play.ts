@@ -2127,8 +2127,8 @@ export module Play.Games {
 
       if (this.authorSubmission) data.author = "";
       this.$scope.request(NewModCommand, { data: data })
-        .then(result => {
-          let modId = result.lastResult;
+        .then(r => {
+          let modId = r.lastResult;
           let shortId = Tools.toShortId(modId);
           let slug = <string>data.name.sluggifyEntityName();
           this.$modalInstance.close();
@@ -2316,20 +2316,20 @@ export module Play.Games {
 
   export class NewModCommand extends DbCommandBase {
     static $name = 'NewMod';
-    public execute = ['data', data => this.context.postCustom<{ result: string }>("mods", data, { requestName: 'postNewMod' })];
+    public execute = ['data', data => this.context.postCustom<Result<string>>("mods", data, { requestName: 'postNewMod' }).then(x => x.result)];
   }
 
   registerCQ(NewModCommand);
   export class NewImportedCollectionCommand extends DbCommandBase {
     static $name = 'NewImportedCollection';
-    public execute = ['data', data => this.context.postCustom("collections/import-repo", data, { requestName: 'postNewCollection' })];
+    public execute = ['data', data => this.context.postCustom<Result<string>>("collections/import-repo", data, { requestName: 'postNewCollection' }).then(x => x.result)];
   }
 
   registerCQ(NewImportedCollectionCommand);
 
   export class NewMultiImportedCollectionCommand extends DbCommandBase {
     static $name = 'NewMultiImportedCollection';
-    public execute = ['data', data => this.context.postCustom("collections/import-server", data, { requestName: 'postNewCollection' })];
+    public execute = ['data', data => this.context.postCustom<Result<string>>("collections/import-server", data, { requestName: 'postNewCollection' }).then(x => x.result)];
   }
 
   registerCQ(NewMultiImportedCollectionCommand);
