@@ -22,6 +22,8 @@ export class BasketService extends Base {
   constructor(private eventBus: EventAggregator, private w6: W6, private client: Client, public logger: Toastr, private clientWrapper: ClientWrapper, private appEvents: AppEventsWrapper) {
     super();
 
+    this.initialize();
+
     this.subscriptions.subd(d => {
       d(this.clientWrapper.stateChanged.subscribe(async (state) => {
         switch (state.newState) {
