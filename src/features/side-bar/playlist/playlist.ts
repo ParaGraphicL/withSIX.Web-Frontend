@@ -50,7 +50,7 @@ export class Playlist extends ViewModel {
   get isYourCollection() { return this.isCollection && this.collection.typeScope == TypeScope.Published }
   get hasItems() { return this.basket.items.length > 0 }
   get canAbort() { return this.gameInfo.clientInfo.canAbort; }
-  get activeStateClass() { return Playlist.getStateClass(this.baskets ? this.baskets.active : null, this); }
+  get activeStateClass() { return Playlist.getStateClass(this.baskets.active, this); }
 
   lockBasket = false;
   isSearchOpen = false;
@@ -62,23 +62,36 @@ export class Playlist extends ViewModel {
   get defaultBackUrl() { return this.assets.defaultBackUrl }
   get defaultPlaylistUrl() { return this.assets.defaultPlaylistUrl }
   get locked() { return this.lockBasket || this.gameInfo.isLocked; }
-  get canSaveBasket() { return this.baskets && this.baskets.active && this.baskets.active.model.items.length > 0 }
+  get canSaveBasket() { return this.baskets.active && this.baskets.active.model.items.length > 0 }
 
   async activate(model) {
     if (this.model === model) return;
     if (this.w6.activeGame.id) await this.gameChanged(this.w6.activeGame);
     this.model = model;
 
-    this.menuItems.push(new MenuItem(this.saveBasket));
-    this.menuItems.push(new MenuItem(this.clearBasket));
-
     this.subscriptions.subd(d => {
       d(this.action);
-      d(this.findModel = new FindModel(this.findCollections, (col: IPlaylistCollection) => this.selectCollection(col), e => e.name));
-      d(ViewModel.toProperty(this.observeEx(x => x.isCollection).select(x => x ? "Save as new collection" : "Save as collection"), x => x.name, this.saveBasket));
-      d(this.saveBasket);
-      d(this.saveBasket2);
+      d(this.saveBasket = uiCommandWithLogin2("Create Collection", this.saveBasketInternal, {
+        canExecuteObservable: this.observeEx(x => x.canSaveBasket),
+        isVisibleObservable: this.observeEx(x => x.canSaveBasket),
+        cls: 'save-as-collection',
+        icon: 'withSIX-icon-Hexagon-Cloud'
+      }));
+      d(this.saveBasket2 = uiCommandWithLogin2("Save as\nCollection", this.saveBasketInternal, {
+        canExecuteObservable: this.observeEx(x => x.canSaveBasket),
+        isVisibleObservable: this.observeEx(x => x.canSaveBasket),
+        cls: 'save-as-collection',
+        icon: 'withSIX-icon-Hexagon-Cloud'
+      }));
+      d(this.saveBasket3 = uiCommandWithLogin2("Save as \nCopy", this.saveAsNewCollectionInternal, {
+        canExecuteObservable: this.observeEx(x => x.canSaveBasket),
+        isVisibleObservable: this.observeEx(x => x.canSaveBasket),
+        cls: 'save-as-collection',
+        icon: 'withSIX-icon-Hexagon-Cloud',
+        tooltip: 'This will create an identical copy of this collection that you can edit'
+      }));
       d(this.disposeOld);
+      d(this.clearBasket = uiCommand2("Clear", this.unload, { icon: "icon withSIX-icon-Square-X", cls: "ignore-close", isVisibleObservable: this.observeEx(x => x.hasItems) }))
       d(this.abort = uiCommand2("Cancel", async () => {
         await this.client.abort(this.activeBasket.model.gameId);
       }, {
@@ -116,13 +129,23 @@ export class Playlist extends ViewModel {
           isVisibleObservable: this.observeEx(x => x.collectionChanged)
         }));
       d(this.appEvents.gameChanged.subscribe(this.gameChanged));
+      d(this.findModel = new FindModel(this.findCollections, (col: IPlaylistCollection) => this.selectCollection(col), e => e.name));
+      d(ViewModel.toProperty(this.observeEx(x => x.isCollection).select(x => x ? "Save as new collection" : "Save as collection"), x => x.name, this.saveBasket));
+      d(this.tools.disposableInterval(() => this.basketService.saveChanges(), 10 * 1000)); // TODO: what about unload of frame?
     });
+
+    this.menuItems.push(new MenuItem(this.saveBasket));
+    this.menuItems.push(new MenuItem(this.clearBasket));
 
     if (this.basket.collectionId) {
       let c = this.collections.asEnumerable().firstOrDefault(x => x.id == this.basket.collectionId);
       if (c) this.updateCollection(c, this.collectionChanged);
       else this.basket.collectionId = null;
     }
+  }
+  deactivate() {
+    super.deactivate();
+    this.basketService.saveChanges();
   }
   newBasket = () => this.baskets.replaceBasket()
   deleteBasket = () => this.baskets.deleteBasket(this.baskets.active);
@@ -162,26 +185,10 @@ export class Playlist extends ViewModel {
 
   saveAsNewCollectionInternal = () => this.baskets.active.saveAsNewCollection();
 
-  saveBasket = uiCommandWithLogin2("Create Collection", this.saveBasketInternal, {
-    canExecuteObservable: this.observeEx(x => x.canSaveBasket),
-    isVisibleObservable: this.observeEx(x => x.canSaveBasket),
-    cls: 'save-as-collection',
-    icon: 'withSIX-icon-Hexagon-Cloud'
-  });
-  saveBasket2 = uiCommandWithLogin2("Save as\nCollection", this.saveBasketInternal, {
-    canExecuteObservable: this.observeEx(x => x.canSaveBasket),
-    isVisibleObservable: this.observeEx(x => x.canSaveBasket),
-    cls: 'save-as-collection',
-    icon: 'withSIX-icon-Hexagon-Cloud'
-  });
-  saveBasket3 = uiCommandWithLogin2("Save as \nCopy", this.saveAsNewCollectionInternal, {
-    canExecuteObservable: this.observeEx(x => x.canSaveBasket),
-    isVisibleObservable: this.observeEx(x => x.canSaveBasket),
-    cls: 'save-as-collection',
-    icon: 'withSIX-icon-Hexagon-Cloud',
-    tooltip: 'This will create an identical copy of this collection that you can edit'
-  });
-  clearBasket = uiCommand2("Clear", this.unload, { icon: "icon withSIX-icon-Square-X", cls: "ignore-close" });
+  saveBasket: ICommand<void>;
+  saveBasket2: ICommand<void>;
+  saveBasket3: ICommand<void>;
+  clearBasket: ICommand<void>;
 
   async getMyCollections() {
     var result = await new GetMyCollections(this.game.id, true).handle(this.mediator);

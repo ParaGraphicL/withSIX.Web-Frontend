@@ -68,13 +68,13 @@ class AppModule extends Tk.Module {
     this.app
       .factory('dbContext', () => Container.instance.get(W6Context))
       .factory('logger', () => Container.instance.get(ToastLogger))
+      .factory('basketService', () => Container.instance.get(BasketService))
       .factory('aur.amountConverter', () => Container.instance.get(AmountValueConverter))
       .factory('aur.speedConverter', () => Container.instance.get(SpeedValueConverter))
       .factory('aur.sizeConverter', () => Container.instance.get(SizeValueConverter))
       .factory('aur.mediator', () => Container.instance.get(Mediator))
       .factory('aur.eventBus', () => Container.instance.get(EventAggregator))
       .factory('aur.client', () => Container.instance.get(Client))
-      .factory('aur.basketService', () => Container.instance.get(BasketService))
       .config(['redactorOptions', redactorOptions => angular.copy(globalRedactorOptions, redactorOptions)])
       .config([
         '$httpProvider', $httpProvider => {
