@@ -10,11 +10,6 @@ import {Tools} from './tools';
 export class OutstandingRequestChange { constructor(public outstanding: number) { } }
 
 export var AbortError = Tools.createError('AbortError');
-export var LoginNoLongerValid = Tools.createError('LoginNoLongerValid');
-export var RequiresLogin = Tools.createError('RequiresLogin');
-export var Forbidden = Tools.createError("Forbidden");
-export var ResourceNotFound = Tools.createError("ResourceNotFound");
-export var ValidationError = Tools.createError("ValidationError");
 
 @inject(HttpClient, FetchClient, W6Urls, EventAggregator)
 export class LoginBase {
