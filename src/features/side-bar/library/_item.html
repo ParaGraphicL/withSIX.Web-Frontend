@@ -12,7 +12,12 @@
     </div>
     <div class="info pull-left">
       <a href="/p/${model.gameSlug}/${model.type}s/${model.id.toShortId()}/${model.name.sluggifyEntityName()}">
-        <div class="title" title.bind="model.name">${model.name}</div>
+        <div class="title">
+          <span if.bind="typeScopeIcon" class="icon ${typeScopeIcon} micro"></span>
+          <span if.bind="scopeIcon" class="icon ${scopeIcon} micro"></span>
+
+          <span title.bind="model.name">${model.name}</span>
+        </div>
         <div class="other-info tiny">
           <span class="update-available" if.bind="hasUpdateAvailable" title="current version: v${state.version}">Update available <span class="version">v${model.version}</span></span>
           <span if.bind="model.type == 'collection'">${model.modsCount} MODS</span>

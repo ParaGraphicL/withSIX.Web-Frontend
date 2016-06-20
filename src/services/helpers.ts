@@ -6,6 +6,7 @@ import {W6Context} from './w6context';
 
 interface ICollectionExtend extends ICollection {
   subscribers: number;
+  groupId?: string;
 }
 
 export class MissionHelper {
@@ -80,6 +81,12 @@ export class CollectionHelper {
     'withSIX-icon-Lock'
   ]
 
+  public static typeScopeIcons = [
+    "",
+    "withSIX-icon-System-Remote",
+    "withSIX-icon-Cloud",
+  ]
+
   public static convertOnlineCollection(collection: IBreezeCollection, type: TypeScope, w6: W6): ICollectionExtend {
     return {
       id: collection.id,
@@ -88,6 +95,7 @@ export class CollectionHelper {
       typeScope: type || (collection.authorId == w6.userInfo.id ? TypeScope.Published : null), // todo; figure out if we're subscribed
       author: collection.author.displayName,
       authorSlug: collection.author.slug,
+      groupId: collection.groupId,
       slug: collection.slug,
       name: collection.name,
       gameId: collection.game.id,
