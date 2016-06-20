@@ -1,14 +1,15 @@
 import {W6, W6Urls, globalRedactorOptions} from '../services/withSIX';
 import {Tools} from '../services/tools';
-import {W6Context, W6ContextWrapper, IQueryResult} from '../services/w6context';
+import {W6Context, IQueryResult} from '../services/w6context';
 import {Tk} from '../services/legacy/tk'
 import {IRootScope, ITagKey, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHaveModel, DialogQueryBase, ICreateComment, ICQWM, IModel, DbCommandBase, DbQueryBase, BaseController, BaseQueryController,
   IMenuItem} from '../services/legacy/base'
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {HttpClient} from 'aurelia-fetch-client';
 
+import {CollectionDataService, ModDataService, MissionDataService} from '../services/legacy/data-services';
 import {Mediator} from 'aurelia-mediator';
-import {Client} from 'withsix-sync-api';
+import {Client, PromiseCache} from 'withsix-sync-api';
 
 declare var commangular;
 
@@ -41,7 +42,7 @@ class AppModule extends Tk.Module {
     'ngCookies', 'ngAnimate', 'ngRoute', 'ngSanitize', 'remoteValidation',
     /* 'breeze.angular',  */
     'angularMoment', 'angularSpinner', 'ngTagsInput', 'infinite-scroll', 'ngMap', 'ngDfp',
-    'ui.bootstrap.tpls', 'ui.bootstrap.tabs', 'dialogs.main', 'ui', 'angular-promise-cache', 'xeditable', 'commangular', //'ngClipboard',
+    'ui.bootstrap.tpls', 'ui.bootstrap.tabs', 'dialogs.main', 'ui', 'xeditable', 'commangular', //'ngClipboard',
     'ui-rangeSlider', 'ngFileUpload2', 'checklist-model', 'route-segment', 'view-segment', 'mgcrea.ngStrap.datepicker', 'angular-redactor',
     'Components.BytesFilter', 'Components.Debounce', 'Components.Pagedown', 'Components.Fields',
     'Components.ReallyClick', 'Components.BackImg', 'Components.Comments', 'Components.AccountCard', 'nvd3ChartDirectives',
@@ -60,6 +61,7 @@ class AppModule extends Tk.Module {
     super('app', AppModule.getModules());
 
     this.app
+      .factory('dbContext', () => window.w6Cheat.container.get(W6Context))
       .factory('aur.mediator', () => window.w6Cheat.container.get(Mediator))
       .factory('aur.eventBus', () => window.w6Cheat.container.get(EventAggregator))
       .factory('aur.client', () => window.w6Cheat.container.get(Client))

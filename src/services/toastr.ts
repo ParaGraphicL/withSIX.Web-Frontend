@@ -1,5 +1,5 @@
 import {inject} from 'aurelia-framework';
-import {ToastLogger} from './legacy';
+import {ToastLogger} from './legacy/logger';
 
 interface ToastOpts {
   timeOut?: number;

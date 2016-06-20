@@ -4,6 +4,8 @@ import {EventAggregator} from 'aurelia-event-aggregator';
 import {Tools} from './tools';
 import {W6} from './withSIX';
 import {Toastr} from './toastr';
+import {inject} from 'aurelia-framework';
+import {PromiseCache} from 'withsix-sync-api';
 
 import {HttpClient, json} from 'aurelia-fetch-client';
 
@@ -23,12 +25,8 @@ export interface IRequestShortcutConfig extends ng.IRequestShortcutConfig {
 }
 
 // TODO: No longer inherit from this, but use the executeQuery etc methods directly as exampled in GetModQuery
-// @inject(HttpClient, Toastr, Promisecache, W6, EventAggregator)
+@inject(HttpClient, Toastr, PromiseCache, W6, EventAggregator)
 export class W6Context {
-  static $name = 'dbContext';
-  static $inject = [
-    'aur.fetchClient', 'aur.toastr', 'loadingStatusInterceptor', 'promiseCache', 'w6', 'aur.eventBus'
-  ];
   public static minFilterLength = 2;
   public loggedIn: boolean;
   public manager: breeze.EntityManager;
@@ -40,7 +38,7 @@ export class W6Context {
 
   get tools() { return Tools }
 
-  constructor(private http: HttpClient, public logger: Toastr, loadingInterceptor /*: Components.LoadingStatusInterceptor.LoadingStatusInterceptor */, private promiseCache, public w6: W6, public eventBus: EventAggregator) {
+  constructor(private http: HttpClient, public logger: Toastr, private promiseCache: PromiseCache, public w6: W6, public eventBus: EventAggregator) {
 
     breeze.DataType.parseDateFromServer = function(source) {
       var date = moment(source);
@@ -68,7 +66,7 @@ export class W6Context {
         oldFnc(response);
       }
 
-      loadingInterceptor.startedBreeze(requestInfo);
+      //loadingInterceptor.startedBreeze(requestInfo);
     };
     this.fetchMetadata();
     this.loggedIn = this.w6.userInfo.id != null;
@@ -363,14 +361,12 @@ export class W6Context {
 
   fetchMetadata() {
     // may not use authorization header..
-    return this.promiseCache({
-      promise: () => this.getCustom(this.w6.url.getSerialUrl('data/metadata.json'))
+    return this.promiseCache.getOrAdd<void>('fetchMetadata',
+      () => this.getCustom(this.w6.url.getSerialUrl('data/metadata.json'))
         // TODO: Replace...
         .then(result => this.createMetadataStore(this.serviceName, result))
-        .then(() => this.createDefaultManager()),
-      key: 'fetchMetadata',
-      ttl: -1 // Be sure to set to something more sane if we use caching in Local storage! ;-)
-    });
+        .then(() => this.createDefaultManager()), { expireOnFailure: true }
+    );
   }
 
   addPropertyChangeHandler(entityManager: breeze.EntityManager) {
@@ -485,47 +481,4 @@ export class W6Context {
   }
 
   private registerEntityTypeCtor(store, ctor) { store.registerEntityTypeCtor(ctor.$name, ctor); }
-}
-
-// @inject(Toastr, W6Context)
-export class W6ContextWrapper {
-  static $inject = [
-    'logger', 'dbContext'
-  ];
-
-  constructor(public logger: Toastr, public context: W6Context) {
-  }
-
-  public filterPrefixes = this.context.filterPrefixes;
-
-  public queryText(query, filterText, inclAuthor) {
-    throw new Error("NotImplemented: queryText");
-  }
-
-  private queryTimespan(query, filterTimespan) {
-    var m = <any>moment().subtract(filterTimespan, 'hours');
-    return query.where("updatedAt", breeze.FilterQueryOp.GreaterThanOrEqual, new Date(m));
-  }
-
-  private querySize(query, filterSize) {
-    return query.where("size",
-      breeze.FilterQueryOp.LessThanOrEqual,
-      filterSize);
-  }
-
-  public applyFiltering(query, filterOptions, inclAuthor) {
-    if (filterOptions.timespan != null)
-      query = this.queryTimespan(query, filterOptions.timespan);
-
-    if (filterOptions.text != undefined && filterOptions.text != '') {
-      query = this.queryText(query, filterOptions.text, inclAuthor);
-      if (query == null)
-        return null;
-    }
-
-    if (filterOptions.size != null)
-      query = this.querySize(query, filterOptions.size);
-
-    return query;
-  }
 }

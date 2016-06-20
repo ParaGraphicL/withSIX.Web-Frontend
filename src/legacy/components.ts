@@ -3483,11 +3483,11 @@ export module Components.LoadingStatusInterceptor {
   // TODO: Should be careful when cancelling posting data to the server - the server would probably still process the request, so should only occur for queries?
   export class LoadingStatusInterceptor extends Tk.Service {
     static $name = 'loadingStatusInterceptor';
-    static $inject = ['$q', '$rootScope', '$cookies', 'userInfo', 'promiseCache', 'localStorageService', 'w6'];
+    static $inject = ['$q', '$rootScope', '$cookies', 'userInfo', 'localStorageService', 'w6'];
     private activeRequests: number;
 
     // Temporary repurposed as Breeze loading interceptor
-    constructor(private $q: ng.IQService, private $rootScope, private $cookies: ng.cookies.ICookiesService, private userInfo, private promiseCache, private $localStorage, private w6: W6) {
+    constructor(private $q: ng.IQService, private $rootScope, private $cookies: ng.cookies.ICookiesService, private userInfo, private $localStorage, private w6: W6) {
       super();
       this.activeRequests = 0;
     }
