@@ -81,7 +81,6 @@ export class LoginBase {
         //'X-Requested-With': 'Fetch'
       }
 
-      if (accessToken) headers['Authorization'] = `Bearer ${accessToken}`
       config.useStandardConfiguration()
         .withDefaults({ headers, credentials: 'same-origin' })
         .withInterceptor({
