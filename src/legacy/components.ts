@@ -14,7 +14,7 @@ import {IBreezeMod, IBreezeUser, IBreezeCollection, IBreezeMission, IBreezeColle
   EntityExtends, BreezeEntityGraph, _IntDefs} from '../services/dtos';
 
 import {DialogControllerBase, IRootScope, DbCommandBase, DbQueryBase, DialogQueryBase, _Indexer, BooleanResult} from '../services/legacy/base';
-import {IBasketSettings, IBaskets, IBasketItem} from '../services/legacy/baskets';
+import {IBaskets, IBasketItem} from '../services/legacy/baskets';
 import {FileSize} from '../services/legacy/misc';
 
 declare var commangular;
