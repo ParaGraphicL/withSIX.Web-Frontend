@@ -38,7 +38,7 @@ class AppModule extends Tk.Module {
   static $name = "AppModule";
   static $modules = [
     'constants', 'Components',
-    'LocalStorageModule', 'angular-jwt', 'ui.bootstrap',
+    'LocalStorageModule', 'ui.bootstrap',
     'ngCookies', 'ngAnimate', 'ngRoute', 'ngSanitize', 'remoteValidation',
     /* 'breeze.angular',  */
     'angularMoment', 'angularSpinner', 'ngTagsInput', 'infinite-scroll', 'ngMap', 'ngDfp',
@@ -67,14 +67,12 @@ class AppModule extends Tk.Module {
       .factory('aur.client', () => window.w6Cheat.container.get(Client))
       .factory('aur.fetchClient', () => window.w6Cheat.container.get(HttpClient))
       .factory('modInfoService', () => window.w6Cheat.container.get(Client))
-      .factory('aur.uiContext', () => window.w6Cheat.container.get(window.w6Cheat.containerObjects.uiContext))
       .factory('aur.login', () => window.w6Cheat.container.get(window.w6Cheat.containerObjects.login))
       .factory('aur.toastr', () => window.w6Cheat.container.get(window.w6Cheat.containerObjects.toastr))
       .factory('aur.basketService', () => window.w6Cheat.container.get(window.w6Cheat.containerObjects.basketService))
       .config(['redactorOptions', redactorOptions => angular.copy(globalRedactorOptions, redactorOptions)])
       .config([
         '$httpProvider', $httpProvider => {
-          $httpProvider.interceptors.push('loadingStatusInterceptor');
           $httpProvider.defaults.headers.patch = {
             'Content-Type': 'application/json;charset=utf-8'
           };
@@ -87,68 +85,6 @@ class AppModule extends Tk.Module {
             .setPrefix('withSIX'); // production vs staging etc?
         }
       ])
-      .config([
-        '$httpProvider', 'jwtInterceptorProvider', ($httpProvider, jwtInterceptorProvider) => {
-          var refreshingToken = null;
-          var subdomains = ['', 'connect.', 'play.', 'admin.', 'kb.', 'auth.', 'ws1.', 'api.', 'api2.'];
-          var theDomain = window.w6Cheat.w6.url.domain;
-
-          var isWhitelisted = (url: string) => {
-            return url.includes(theDomain) && !url.includes('/cdn/') && subdomains.some(s => {
-              var host = s + theDomain;
-              var protLess = '//' + host;
-              if (url.startsWith(protLess) && window.location.protocol === 'https:')
-                return true;
-              if (url.startsWith('https:' + protLess))
-                return true;
-              return false;
-            });
-          };
-          let refreshToken = async function(config, login) {
-            let token = null;
-            try {
-              let x = await login.handleRefreshToken();
-              //if (!x) throw new Error("no valid refresh token");
-              // TODO: Inform about lost session?
-              if (x)
-                token = window.localStorage[window.w6Cheat.containerObjects.login.token];
-            } catch (err) {
-              err.config = config;
-              throw err;
-            } finally {
-              refreshingToken = null;
-            }
-            return token;
-          }
-          jwtInterceptorProvider.tokenGetter = [
-            'config', 'localStorageService', 'aur.login',
-            async (config, store, login) => {
-              if (!isWhitelisted(config.url)) return null;
-              let token = window.localStorage[window.w6Cheat.containerObjects.login.token];
-              if (!token) return null;
-              if (!Tools.isTokenExpired(token)) return token;
-              else if (refreshingToken === null) refreshingToken = refreshToken(config, login).catch(x => Tools.Debug.error("catched refresh token error", x));
-              return await refreshingToken;
-            }];
-          $httpProvider.interceptors.push('jwtInterceptor');
-        }
-      ])
-      // .run([
-      //   'breeze', breeze => {
-      //     breeze.NamingConvention.camelCase.setAsDefault();
-      //     /*                        if (userInfo.apiToken) {
-      //                                 var ajaxImpl = breeze.config.getAdapterInstance("ajax");
-      //                                 ajaxImpl.defaultSettings = {
-      //                                     /*
-      //                                     headers: {
-      //                                         // any CORS or other headers that you want to specify.
-      //                                     },
-      //                                     #1#
-      //
-      //                                 };
-      //                             }*/
-      //   }
-      // ])
       .run([
         'editableOptions', editableOptions => {
           editableOptions.theme = 'bs3'; // bootstrap3 theme. Can be also 'bs2', 'default'
