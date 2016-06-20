@@ -372,7 +372,7 @@ export module Main.Blog {
 
     public execute = [
       'model', async (model) => {
-        var entity = BreezeEntityGraph.PostComment.createEntity(this.context.manager, { postId: model.postId, authorId: this.context.userInfo.id, message: model.message, created: new Date(Date.now()), replyToId: model.replyToId });
+        var entity = BreezeEntityGraph.PostComment.createEntity(this.context.manager, { postId: model.postId, authorId: this.context.w6.userInfo.id, message: model.message, created: new Date(Date.now()), replyToId: model.replyToId });
         if (model.replyTo) model.replyTo.replies.push(entity); // weird, why is this not automatic since we set replyToId?
         try {
           await this.context.saveChanges(undefined, [entity]);

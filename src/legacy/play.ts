@@ -1582,7 +1582,7 @@ export module Play.Collections {
 
     public execute = [
       'model', (model: ICreateComment<IBreezeCollectionComment>) => {
-        var entity = <IBreezeCollectionComment>this.context.createEntity("CollectionComment", { collectionId: model.contentId, authorId: this.context.userInfo.id, message: model.message, created: new Date(Date.now()), replyToId: model.replyToId });
+        var entity = <IBreezeCollectionComment>this.context.createEntity("CollectionComment", { collectionId: model.contentId, authorId: this.context.w6.userInfo.id, message: model.message, created: new Date(Date.now()), replyToId: model.replyToId });
         if (model.replyTo) model.replyTo.replies.push(entity); // weird, why is this not automatic since we set replyToId?
         return this.context.saveChanges(undefined, [entity]);
       }
@@ -2658,7 +2658,7 @@ export module Play.Missions {
     public execute = [
       'model', (model: ICreateComment<IBreezeMissionComment>) => {
         Tools.Debug.log(model);
-        var entity = <IBreezeMissionComment>this.context.createEntity("MissionComment", { missionId: model.contentId, authorId: this.context.userInfo.id, message: model.message, created: new Date(Date.now()), replyToId: model.replyToId });
+        var entity = <IBreezeMissionComment>this.context.createEntity("MissionComment", { missionId: model.contentId, authorId: this.context.w6.userInfo.id, message: model.message, created: new Date(Date.now()), replyToId: model.replyToId });
         if (model.replyTo) model.replyTo.replies.push(entity); // weird, why is this not automatic since we set replyToId?
         return this.context.saveChanges(undefined, [entity]);
       }
@@ -3522,7 +3522,7 @@ export module Play.Mods {
 
     public execute = [
       'model', (model: ICreateComment<IBreezeModComment>) => {
-        var entity = <IBreezeModComment>this.context.createEntity("ModComment", { modId: model.contentId, authorId: this.context.userInfo.id, message: model.message, created: new Date(Date.now()), replyToId: model.replyToId });
+        var entity = <IBreezeModComment>this.context.createEntity("ModComment", { modId: model.contentId, authorId: this.context.w6.userInfo.id, message: model.message, created: new Date(Date.now()), replyToId: model.replyToId });
         if (model.replyTo) model.replyTo.replies.push(entity); // weird, why is this not automatic since we set replyToId?
         return this.context.saveChanges(undefined, [entity]);
       }

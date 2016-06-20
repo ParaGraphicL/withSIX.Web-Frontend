@@ -3494,10 +3494,7 @@ export module Components.LoadingStatusInterceptor {
 
     // Need lambda syntax because of how interceptors are called
     public request = (config: IW6Request) => {
-      if (config.w6Request) {
-        this.setupConfig(config);
-        Tools.Debug.log("w6request", config);
-      }
+      if (config.w6Request) Tools.Debug.log("w6request", config);
       this.started();
       return config || this.$q.when(config);
     };
@@ -3579,16 +3576,12 @@ export module Components.LoadingStatusInterceptor {
     }
 
     startedBreeze(requestInfo) {
-      // TODO: Canceler should have a requestName, and be cancelled specifically based on requestName ...
-      requestInfo.timeout = this.handleDefer().promise;
       requestInfo.config.breezeRequest = true;
-      this.setupConfig(requestInfo.config);
       Tools.Debug.log("breezeRequest", requestInfo);
     }
 
     started() {
       if (this.activeRequests == 0) {
-        this.$rootScope.canceler = this.handleDefer();
         this.$rootScope.$broadcast('loadingStatusActive');
       }
       this.activeRequests++;
@@ -3604,8 +3597,6 @@ export module Components.LoadingStatusInterceptor {
     }
 
     defer;
-
-    setupConfig(config: IW6Request) { }
   }
 
   registerService(LoadingStatusInterceptor);

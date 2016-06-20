@@ -3,6 +3,7 @@ import {EntityExtends, BreezeEntityGraph, _IntDefs, BreezeInitialzation, IBreeze
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {Tools} from './tools';
 import {W6} from './withSIX';
+import {Toastr} from './toastr';
 
 import {HttpClient, json} from 'aurelia-fetch-client';
 
@@ -22,10 +23,11 @@ export interface IRequestShortcutConfig extends ng.IRequestShortcutConfig {
 }
 
 // TODO: No longer inherit from this, but use the executeQuery etc methods directly as exampled in GetModQuery
+// @inject(HttpClient, Toastr, Promisecache, W6, EventAggregator)
 export class W6Context {
   static $name = 'dbContext';
   static $inject = [
-    'aur.fetchClient', '$timeout', 'logger', 'options', 'userInfo', 'loadingStatusInterceptor', 'promiseCache', 'w6', 'aur.eventBus'
+    'aur.fetchClient', 'aur.toastr', 'loadingStatusInterceptor', 'promiseCache', 'w6', 'aur.eventBus'
   ];
   public static minFilterLength = 2;
   public loggedIn: boolean;
@@ -38,8 +40,7 @@ export class W6Context {
 
   get tools() { return Tools }
 
-  constructor(private http: HttpClient, public $timeout,
-    public logger /*: Components.Logger.ToastLogger */, public options, public userInfo, loadingInterceptor /*: Components.LoadingStatusInterceptor.LoadingStatusInterceptor */, private promiseCache, public w6: W6, public eventBus: EventAggregator) {
+  constructor(private http: HttpClient, public logger: Toastr, loadingInterceptor /*: Components.LoadingStatusInterceptor.LoadingStatusInterceptor */, private promiseCache, public w6: W6, public eventBus: EventAggregator) {
 
     breeze.DataType.parseDateFromServer = function(source) {
       var date = moment(source);
@@ -47,7 +48,7 @@ export class W6Context {
     };
 
     breeze.NamingConvention.camelCase.setAsDefault();
-    this.serviceName = options.serviceName;
+    this.serviceName = this.w6.url.api + '/breeze/withsix';
     var ajaxAdapter = <any>breeze.config.getAdapterInstance('ajax');
     if (!ajaxAdapter.defaultSettings) ajaxAdapter.defaultSettings = {}
     ajaxAdapter.defaultSettings.requestName = 'breezeRequest';
@@ -68,24 +69,9 @@ export class W6Context {
       }
 
       loadingInterceptor.startedBreeze(requestInfo);
-
-      // using angular global intercepter again atm...
-      /*
-      var currentSuccess = requestInfo.success;
-      requestInfo.success = (info) => {
-          currentSuccess(info);
-          this.ended();
-      };
-
-      var currentError = requestInfo.error;
-      requestInfo.error = (info) => {
-          currentError(info);
-          this.ended();
-      }
-      */
     };
     this.fetchMetadata();
-    this.loggedIn = userInfo.id != null;
+    this.loggedIn = this.w6.userInfo.id != null;
     this.userSlugCache = {};
     this.emailExistsCache = {};
     this.usernameExistsCache = {};
@@ -100,9 +86,7 @@ export class W6Context {
     return new breeze.EntityKey(t, id);
   }
 
-  public getUrl(path) {
-    return Tools.uriHasProtocol(path) || path.startsWith("/") ? path : this.w6.url.api + "/" + path;
-  }
+  public getUrl(path) { return Tools.uriHasProtocol(path) || path.startsWith("/") ? path : this.w6.url.api + "/" + path; }
 
   public getMd(subPath) { return this.getCustom<string>(this.w6.url.getSerialUrl("docs/" + subPath)); }
 
@@ -180,7 +164,7 @@ export class W6Context {
     return fd;
   }
 
-  public get = <T>(path, query?) => this.handle<T>(this.options.serviceName + '/' + path, { params: query });
+  public get = <T>(path, query?) => this.handle<T>(this.serviceName + '/' + path, { params: query });
 
   public getOpByKeyLength(key: string): breeze.FilterQueryOpSymbol {
     return key.length > W6Context.minFilterLength ? breeze.FilterQueryOp.Contains : breeze.FilterQueryOp.StartsWith;
@@ -503,13 +487,13 @@ export class W6Context {
   private registerEntityTypeCtor(store, ctor) { store.registerEntityTypeCtor(ctor.$name, ctor); }
 }
 
+// @inject(Toastr, W6Context)
 export class W6ContextWrapper {
   static $inject = [
-    '$timeout', 'logger', 'options', 'userInfo', 'dbContext'
+    'logger', 'dbContext'
   ];
 
-  constructor(public $timeout,
-    public logger /*: Components.Logger.ToastLogger */, public options, public userInfo, public context: W6Context) {
+  constructor(public logger: Toastr, public context: W6Context) {
   }
 
   public filterPrefixes = this.context.filterPrefixes;

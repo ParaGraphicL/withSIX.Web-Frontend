@@ -194,7 +194,6 @@ export interface IRootScope extends ng.IRootScopeService {
   sluggify: (str) => string;
   Modernizr;
   requestWM<T>(evt: ICQWM<T>, pars?: IModel<T>);
-  cancelOutstandingRequests: () => void;
   sluggifyEntityName: (str) => string;
   isInvalid: (field, ctrl) => any;
   blurred: (fieldName, ctrl) => boolean;
