@@ -107,16 +107,6 @@ export class LoginBase {
     })
   }
 
-  handleResponseErrorStatus(status: number, isLoggedIn: boolean) {
-    if (status == 400) throw new ValidationError("Input not valid");
-    if (status == 401) {
-      // todo; retry the request after trying refresh token? but only once..
-      throw isLoggedIn ? new LoginNoLongerValid("The login is no longer valid, please retry after logging in again") : new RequiresLogin("The requested action requires you to be logged-in");
-    }
-    if (status == 403) throw new Forbidden("You do not have access to this resource");
-    if (status == 404) throw new ResourceNotFound("The requested resource does not appear to exist");
-  }
-
   async getAccessToken(url: string, accessToken: string) {
     if (!url.includes("/api/login/") && accessToken && Tools.isTokenExpired(accessToken))
       if (await this.handleRefresh()) accessToken = window.localStorage[LoginBase.token];
