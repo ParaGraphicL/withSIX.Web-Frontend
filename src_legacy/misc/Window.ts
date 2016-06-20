@@ -30,24 +30,16 @@ interface String {
   truncate: (count: number) => string;
 }
 
-interface IAureliaConverter {
-  toView: (...args) => string;
-}
-
 interface IW6Cheat {
-  converters: { amount: IAureliaConverter; size: IAureliaConverter; speed: IAureliaConverter; text: IAureliaConverter };
   w6;//: W6;
-  w6Urls;//: MyApp.W6Urls;
   isClient: boolean;
   aureliaReady: boolean;
-  container;
   navigate: (url: string) => void;
   libraryParent;
   collection;
   redirected: boolean;
   redirectedWasLoggedIn: boolean;
   api: IApi;
-  numeral: Numbro;
   tools;
 }
 
@@ -105,8 +97,5 @@ interface Window {
   }
   w6Cheat: IW6Cheat;
   prerenderReady: boolean;
-  VersionCompare: {
-    compare: (x, y, options?: {}) => number
-  },
   RedactorPlugins;
 }

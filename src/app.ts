@@ -19,7 +19,6 @@ import {RestoreBasket, OpenCreateCollectionDialog, OpenAddModDialog, OpenAddMods
 
 import {Login} from './services/auth';
 import {LoginBase, LoginUpdated, OutstandingRequestChange} from './services/auth-base';
-import VersionCompare from 'version_compare';
 
 // workaround for dialogs not working
 import {Origin} from 'aurelia-metadata';
@@ -36,10 +35,6 @@ import {UserErrorDialog} from './features/user-error-dialog';
 import {MessageDialog} from './features/message-dialog';
 
 import {BindingSignaler} from 'aurelia-templating-resources';
-
-declare var RegExp;
-// For legacy code purposes..
-window.VersionCompare = <any>VersionCompare;
 
 @inject(HttpClient, W6)
 class RouteHandler {

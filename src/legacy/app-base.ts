@@ -7,9 +7,11 @@ import {IRootScope, ITagKey, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHa
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {HttpClient} from 'aurelia-fetch-client';
 import {ToastLogger} from '../services/legacy/logger';
+import {Container} from 'aurelia-dependency-injection';
 
 import {BasketService} from '../services/basket-service';
 
+import {SpeedValueConverter, SizeValueConverter, AmountValueConverter} from '../resources/converters';
 import {CollectionDataService, ModDataService, MissionDataService} from '../services/legacy/data-services';
 import {Mediator} from 'aurelia-mediator';
 import {Client, PromiseCache} from 'withsix-sync-api';
@@ -64,12 +66,15 @@ class AppModule extends Tk.Module {
     super('app', AppModule.getModules());
 
     this.app
-      .factory('dbContext', () => window.w6Cheat.container.get(W6Context))
-      .factory('logger', () => window.w6Cheat.container.get(ToastLogger))
-      .factory('aur.mediator', () => window.w6Cheat.container.get(Mediator))
-      .factory('aur.eventBus', () => window.w6Cheat.container.get(EventAggregator))
-      .factory('aur.client', () => window.w6Cheat.container.get(Client))
-      .factory('aur.basketService', () => window.w6Cheat.container.get(BasketService))
+      .factory('dbContext', () => Container.instance.get(W6Context))
+      .factory('logger', () => Container.instance.get(ToastLogger))
+      .factory('aur.amountConverter', () => Container.instance.get(AmountValueConverter))
+      .factory('aur.speedConverter', () => Container.instance.get(SpeedValueConverter))
+      .factory('aur.sizeConverter', () => Container.instance.get(SizeValueConverter))
+      .factory('aur.mediator', () => Container.instance.get(Mediator))
+      .factory('aur.eventBus', () => Container.instance.get(EventAggregator))
+      .factory('aur.client', () => Container.instance.get(Client))
+      .factory('aur.basketService', () => Container.instance.get(BasketService))
       .config(['redactorOptions', redactorOptions => angular.copy(globalRedactorOptions, redactorOptions)])
       .config([
         '$httpProvider', $httpProvider => {
