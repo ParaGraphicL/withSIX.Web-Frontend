@@ -4,7 +4,7 @@
     <filters custom-handler.bind="handleFilter" filters.ref="filteredComponent" search-input-placeholder.bind="searchInputPlaceholder" typeahead-options.bind="typeahead" items.bind="model.items" filters.bind="filters" search-fields.bind="searchFields" sort.bind="sort"
         view-types.bind="availableViewTypes"></filters>
 
-    <card-view items.bind="model.items" view-path="features/profile/content/" item-type="collection">
+    <card-view items.bind="model.items" show-ads.bind="true" view-path="features/profile/content/" item-type="collection">
     </card-view>
 
     <command-button model.bind="loadMore"></command-button>
