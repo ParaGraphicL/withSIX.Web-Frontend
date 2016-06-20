@@ -43,6 +43,14 @@ $bg: $colorSixBlue;
       line-height: $headerSize;
       font-size: $sideHeaderSize / 2;
     }
+    .fa-spin {
+      //font-size: 14px;
+      //line-height: 14px;
+      top: 4px;
+      left: 4px;
+      position: absolute;
+      //display: none;
+    }
   }
   .the-bar {
     position: absolute;
@@ -100,10 +108,13 @@ $bg: $colorSixBlue;
   }
 }
 .api-busy {
-  #logo {
-    //background-color: $colorSixOrange;
-    .icon {
-      animation: rotation 2s infinite linear;
+  #top-menu {
+    #logo {
+      //background-color: $colorSixOrange;
+      .fa-spin {
+        display: block;
+        color: white;
+      }
     }
   }
 }
