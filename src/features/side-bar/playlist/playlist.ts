@@ -148,11 +148,11 @@ export class Playlist extends ViewModel {
     this.basketService.saveChanges();
   }
   newBasket = () => this.baskets.replaceBasket()
-  deleteBasket = () => this.baskets.deleteBasket(this.baskets.active);
+  deleteBasket = () => this.basketService.performTransaction(() => this.baskets.deleteBasket(this.baskets.active));
   unload = async () => {
     if (!this.isCollection || !this.collectionChanged || await this.confirm("Do you wish to discard the changes?")) {
       this.updateCollection(null);
-      this.newBasket();
+      this.basketService.performTransaction(this.newBasket);
     }
   }
 
@@ -396,20 +396,22 @@ export class Playlist extends ViewModel {
 
   loadCollectionVersion = async (id, gameId) => {
     let dependencies = await new GetDependencies(id).handle(this.mediator);
-    this.newBasket();
-    this.activeBasket.replaceItems(dependencies.map(x => {
-      return {
-        name: x.dependency,
-        packageName: x.dependency,
-        constraint: x.constraint,
-        id: x.modDependencyId,
-        itemType: BasketItemType.Mod,
-        gameId: gameId,
-        image: null,
-        author: null,
-        sizePacked: null
-      }
-    }));
+    this.basketService.performTransaction(() => {
+      this.newBasket();
+      this.activeBasket.replaceItems(dependencies.map(x => {
+        return {
+          name: x.dependency,
+          packageName: x.dependency,
+          constraint: x.constraint,
+          id: x.modDependencyId,
+          itemType: BasketItemType.Mod,
+          gameId: gameId,
+          image: null,
+          author: null,
+          sizePacked: null
+        }
+      }))
+    });
   }
 
   attached() { setTimeout(() => this.shown = true, 0.6 * 1000); } // animation delay. // TODO: have actual animation end trigger..
