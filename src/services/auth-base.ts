@@ -60,7 +60,6 @@ export class LoginBase {
   get isRequesting() { return this.httpFetch.isRequesting || this.http.isRequesting }
 
   setHeaders(accessToken: string) {
-    let urls = this.w6Url;
     let shouldLog = (Tools.getEnvironment() > Tools.Environment.Production);
     let ag = Container.instance.get(EventAggregator);
     //http://stackoverflow.com/questions/9314730/display-browser-loading-indicator-like-when-a-postback-occurs-on-ajax-calls
@@ -70,7 +69,7 @@ export class LoginBase {
       config.withInterceptor({
         request: async (request) => {
           if (!request) return;
-          if (accessToken = await this.getAccessToken(accessToken, request.url)) request.headers.headers['Authorization'] = `Bearer ${accessToken}`;
+          if (accessToken = await this.getAccessToken(request.url, accessToken)) request.headers.headers['Authorization'] = `Bearer ${accessToken}`;
           return request;
         }
       })
@@ -88,8 +87,8 @@ export class LoginBase {
         .withInterceptor({
           request: async (request) => {
             if (!request) return request;
-            if (shouldLog) Tools.Debug.log(`[FETCH] Requesting ${request.method} ${request.url}`, request.url.startsWith(urls.authSsl), request);
-            if (accessToken = await this.getAccessToken(accessToken, request.url)) request.headers['authorization'] = `Bearer ${accessToken}`;
+            if (shouldLog) Tools.Debug.log(`[FETCH] Requesting ${request.method} ${request.url}`, request);
+            if (accessToken = await this.getAccessToken(request.url, accessToken)) request.headers['authorization'] = `Bearer ${accessToken}`;
             return request;
           },
           response: (response, request) => {
