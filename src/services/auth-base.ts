@@ -20,6 +20,14 @@ export class LoginBase {
   static resetUnload() { window.onbeforeunload = null; }
   resetUnload() { LoginBase.resetUnload(); }
   refreshing: Promise<boolean>;
+  async tryHandleRefreshToken() {
+    try {
+      return await (this.refreshing = this.handleRefreshToken());
+    } finally {
+      this.refreshing = null;
+    }
+  }
+
   async handleRefreshToken() {
     var refreshToken = window.localStorage[LoginBase.refreshToken];
     if (!refreshToken) return false;
@@ -35,8 +43,6 @@ export class LoginBase {
       }
       // TODO: Wait for X amount of delay, then see if we actually have a valid refresh token (other tab)
       throw err;
-    } finally {
-      this.refreshing = null;
     }
   }
 
@@ -106,7 +112,7 @@ export class LoginBase {
       if (await this.handleRefresh()) accessToken = window.localStorage[LoginBase.token];
     return accessToken;
   }
-  handleRefresh = () => this.refreshing || (this.refreshing = this.handleRefreshToken());
+  handleRefresh = () => this.refreshing || this.tryHandleRefreshToken();
 
   static redirect(url) {
     Tools.Debug.log("$$$ redirecting", url);
@@ -217,7 +223,7 @@ export class LoginBase {
     if (!isValid) {
       this.tools.Debug.log("token is not valid")
       try {
-        await this.handleRefreshToken();
+        if (!(await this.tryHandleRefreshToken())) throw new Error("Expired token");
       } catch (err) {
         throw new Error("Expired token");
       }
