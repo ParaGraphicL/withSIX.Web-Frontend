@@ -1,5 +1,5 @@
 import {BaseGame} from '../../lib';
-import {ContentDeleted, IUserInfo, IBreezeCollection, W6Context, Client, UploadService, CollectionDataService, UiContext, uiCommandWithLogin, Utils, IFilter, ISort, SortDirection, Query, DbClientQuery, handlerFor, IRequireUser, requireUser, IContent, TypeScope, ICollection, BasketService} from '../../../../framework';
+import {ContentDeleted, CollectionHelper, IUserInfo, IBreezeCollection, W6Context, Client, UploadService, CollectionDataService, UiContext, uiCommandWithLogin, Utils, IFilter, ISort, SortDirection, Query, DbClientQuery, handlerFor, IRequireUser, requireUser, IContent, TypeScope, ICollection, BasketService} from '../../../../framework';
 import {Router} from 'aurelia-router';
 import {inject} from 'aurelia-framework';
 import {DialogService} from 'aurelia-dialog';
@@ -91,29 +91,12 @@ class GetCollectionsHandler extends DbClientQuery<GetCollections, ICollectionsDa
 
 		async getMyCollections(request: GetCollections, options) {
     var r = await this.collectionDataService.getCollectionsByMeByGame(request.id, options)
-    return r.asEnumerable().select(x => this.convertOnlineCollection(x, TypeScope.Published));
+    return r.asEnumerable().select(x => CollectionHelper.convertOnlineCollection(x, TypeScope.Published, this.w6));
 		}
 
 		async getSubscribedCollections(request: GetCollections, options) {
     var r = await this.collectionDataService.getMySubscribedCollections(request.id, options);
-			 return r.asEnumerable().select(x => this.convertOnlineCollection(x, TypeScope.Subscribed));
-		}
-
-		convertOnlineCollection(collection: IBreezeCollection, type: TypeScope): ICollection {
-    return {
-      id: collection.id,
-      author: collection.author.displayName,
-      authorSlug: collection.author.slug,
-      image: this.w6.url.getContentAvatarUrl(collection.avatar, collection.avatarUpdatedAt),
-      typeScope: type,
-      slug: collection.slug,
-      name: collection.name,
-      gameId: collection.game.id,
-      gameSlug: collection.game.slug,
-      type: "collection",
-      version: collection.latestVersion.version,
-      hasServers: collection.latestVersion.hasServers
-    }
+			 return r.asEnumerable().select(x => CollectionHelper.convertOnlineCollection(x, TypeScope.Subscribed, this.w6));
 		}
 
 		static async designTimeData(request: GetCollections) {

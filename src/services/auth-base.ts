@@ -78,7 +78,7 @@ export class LoginBase {
     this.httpFetch.configure(config => {
       let headers = {
         'Accept': 'application/json',
-        'X-Requested-With': 'Fetch'
+        //'X-Requested-With': 'Fetch'
       }
 
       if (accessToken) headers['Authorization'] = `Bearer ${accessToken}`
