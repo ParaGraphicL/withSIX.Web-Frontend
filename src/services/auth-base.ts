@@ -59,17 +59,6 @@ export class LoginBase {
 
   get isRequesting() { return this.httpFetch.isRequesting || this.http.isRequesting }
 
-  handleResponseErrorStatus(status: number, isLoggedIn: boolean) {
-    if (status == 400) throw new ValidationError("Input not valid");
-    if (status == 401) {
-      // todo; retry the request after trying refresh token? but only once..
-      throw isLoggedIn ? new LoginNoLongerValid("The login is no longer valid, please retry after logging in again") : new RequiresLogin("The requested action requires you to be logged-in");
-    }
-    if (status == 403) throw new Forbidden("You do not have access to this resource");
-    if (status == 404) throw new ResourceNotFound("The requested resource does not appear to exist");
-  }
-
-
   setHeaders(accessToken: string) {
     let urls = this.w6Url;
     let shouldLog = (Tools.getEnvironment() > Tools.Environment.Production);
@@ -79,11 +68,9 @@ export class LoginBase {
     this.http.configure(config => {
       config.withHeader('Accept', 'application/json');
       config.withInterceptor({
-        request: (request) => {
+        request: async (request) => {
           if (!request) return;
-          if (shouldLog) Tools.Debug.log(`Requesting ${request.method} ${request.url}`, request.url.startsWith(urls.authSsl), request);
-          if (accessToken && request.url.startsWith(urls.authSsl))
-            request.headers.headers['Authorization'] = `Bearer ${accessToken}`;
+          if (accessToken = await this.getAccessToken(accessToken, request.url)) request.headers.headers['Authorization'] = `Bearer ${accessToken}`;
           return request;
         }
       })
@@ -102,20 +89,38 @@ export class LoginBase {
           request: async (request) => {
             if (!request) return request;
             if (shouldLog) Tools.Debug.log(`[FETCH] Requesting ${request.method} ${request.url}`, request.url.startsWith(urls.authSsl), request);
-            if (accessToken && Tools.isTokenExpired(accessToken))
-              if (await this.refreshing || (this.refreshing = this.handleRefreshToken())) accessToken = window.localStorage[LoginBase.token];
-            if (accessToken && request.url.startsWith(urls.authSsl))
-              request.headers['authorization'] = `Bearer ${accessToken}`; // TODO: Doesnt work somehow
-            return request; // you can return a modified Request, or you can short-circuit the request by returning a Response
+            if (accessToken = await this.getAccessToken(accessToken, request.url)) request.headers['authorization'] = `Bearer ${accessToken}`;
+            return request;
           },
           response: (response, request) => {
             if (!response) return response;
             if (shouldLog) Tools.Debug.log(`[FETCH] Received ${response.status} ${response.url}`, response);
-            return response; // you can return a modified Response
+            return response;
           }
         });
     })
   }
+
+
+  handleResponseErrorStatus(status: number, isLoggedIn: boolean) {
+    if (status == 400) throw new ValidationError("Input not valid");
+    if (status == 401) {
+      // todo; retry the request after trying refresh token? but only once..
+      throw isLoggedIn ? new LoginNoLongerValid("The login is no longer valid, please retry after logging in again") : new RequiresLogin("The requested action requires you to be logged-in");
+    }
+    if (status == 403) throw new Forbidden("You do not have access to this resource");
+    if (status == 404) throw new ResourceNotFound("The requested resource does not appear to exist");
+  }
+
+  async getAccessToken(url: string, accessToken: string) {
+    if (accessToken && Tools.isTokenExpired(accessToken))
+      if (await this.handleRefresh()) accessToken = window.localStorage[LoginBase.token];
+    if (accessToken && url.startsWith(this.w6Url.authSsl))
+      return accessToken;
+    return null;
+  }
+  handleRefresh = () => this.refreshing || (this.refreshing = this.handleRefreshToken());
+
 
   static redirect(url) {
     Tools.Debug.log("$$$ redirecting", url);
