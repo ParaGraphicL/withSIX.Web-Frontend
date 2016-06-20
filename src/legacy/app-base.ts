@@ -120,18 +120,13 @@ class AppModule extends Tk.Module {
           }
           jwtInterceptorProvider.tokenGetter = [
             'config', 'localStorageService', 'aur.login',
-            (config, store, login) => {
+            async (config, store, login) => {
               if (!isWhitelisted(config.url)) return null;
               let token = window.localStorage[window.w6Cheat.containerObjects.login.token];
               if (!token) return null;
-              if (!Tools.isTokenExpired(token))
-                return token;
-              else {
-                if (refreshingToken === null) {
-                  refreshingToken = refreshToken(config, login).catch(x => Tools.Debug.error("catched refresh token error", x));
-                  return refreshingToken;
-                }
-              }
+              if (!Tools.isTokenExpired(token)) return token;
+              else if (refreshingToken === null) refreshingToken = refreshToken(config, login).catch(x => Tools.Debug.error("catched refresh token error", x));
+              return await refreshingToken;
             }];
           $httpProvider.interceptors.push('jwtInterceptor');
         }

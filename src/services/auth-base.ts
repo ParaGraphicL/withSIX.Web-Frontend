@@ -26,6 +26,7 @@ export class LoginBase {
   constructor(private http: HttpClient, private httpFetch: FetchClient, protected w6Url: W6Urls, private eventBus: EventAggregator) { }
   static resetUnload() { window.onbeforeunload = null; }
   resetUnload() { LoginBase.resetUnload(); }
+  refreshing: Promise<boolean>;
   async handleRefreshToken() {
     var refreshToken = window.localStorage[LoginBase.refreshToken];
     if (!refreshToken) return false;
@@ -41,6 +42,8 @@ export class LoginBase {
       }
       // TODO: Wait for X amount of delay, then see if we actually have a valid refresh token (other tab)
       throw err;
+    } finally {
+      this.refreshing = null;
     }
   }
 
@@ -55,6 +58,16 @@ export class LoginBase {
   }
 
   get isRequesting() { return this.httpFetch.isRequesting || this.http.isRequesting }
+
+  handleResponseErrorStatus(status: number, isLoggedIn: boolean) {
+    if (status == 400) throw new ValidationError("Input not valid");
+    if (status == 401) {
+      // todo; retry the request after trying refresh token? but only once..
+      throw isLoggedIn ? new LoginNoLongerValid("The login is no longer valid, please retry after logging in again") : new RequiresLogin("The requested action requires you to be logged-in");
+    }
+    if (status == 403) throw new Forbidden("You do not have access to this resource");
+    if (status == 404) throw new ResourceNotFound("The requested resource does not appear to exist");
+  }
 
 
   setHeaders(accessToken: string) {
@@ -83,13 +96,14 @@ export class LoginBase {
       }
 
       if (accessToken) headers['Authorization'] = `Bearer ${accessToken}`
-      config.withDefaults({ headers, credentials: 'same-origin' })
+      config.useStandardConfiguration()
+        .withDefaults({ headers, credentials: 'same-origin' })
         .withInterceptor({
           request: async (request) => {
             if (!request) return request;
             if (shouldLog) Tools.Debug.log(`[FETCH] Requesting ${request.method} ${request.url}`, request.url.startsWith(urls.authSsl), request);
             if (accessToken && Tools.isTokenExpired(accessToken))
-              if (await this.handleRefreshToken()) accessToken = window.localStorage[LoginBase.token];
+              if (await this.refreshing || (this.refreshing = this.handleRefreshToken())) accessToken = window.localStorage[LoginBase.token];
             if (accessToken && request.url.startsWith(urls.authSsl))
               request.headers['authorization'] = `Bearer ${accessToken}`; // TODO: Doesnt work somehow
             return request; // you can return a modified Request, or you can short-circuit the request by returning a Response
@@ -97,17 +111,6 @@ export class LoginBase {
           response: (response, request) => {
             if (!response) return response;
             if (shouldLog) Tools.Debug.log(`[FETCH] Received ${response.status} ${response.url}`, response);
-
-            if (!response.ok) {
-              if (response.status == 400) throw new ValidationError("Input not valid");
-              if (response.status == 401) {
-                // todo; retry the request after trying refresh token? but only once..
-                throw accessToken ? new LoginNoLongerValid("The login is no longer valid, please retry after logging in again") : new RequiresLogin("The requested action requires you to be logged-in");
-              }
-              if (response.status == 403) throw new Forbidden("You do not have access to this resource");
-              if (response.status == 404) throw new ResourceNotFound("The requested resource does not appear to exist");
-              throw new Error("failed request with status: " + response.status);
-            }
             return response; // you can return a modified Response
           }
         });

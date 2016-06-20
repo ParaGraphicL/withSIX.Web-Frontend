@@ -46,6 +46,9 @@ bootstrap(async (aurelia: Aurelia) => {
     aurelia.use
       .standardConfiguration()
       .plugin('aurelia-auth', baseConfig => baseConfig.configure(authConfig))
+      .plugin('aurelia-fetch-client', config => {
+        Tools.Debug.log("$$$ fetch!!", config)
+      })
       .plugin('aurelia-animator-css')
       //.plugin('aurelia-animator-velocity')
       .plugin('aurelia-validation')
