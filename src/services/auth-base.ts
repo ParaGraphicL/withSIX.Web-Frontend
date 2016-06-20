@@ -7,8 +7,6 @@ import {EntityExtends, IUserInfo} from './dtos';
 import {W6Urls} from './withSIX';
 import {Tools} from './tools';
 
-export class OutstandingRequestChange { constructor(public outstanding: number) { } }
-
 export var AbortError = Tools.createError('AbortError');
 
 @inject(HttpClient, FetchClient, W6Urls, EventAggregator)
@@ -103,11 +101,10 @@ export class LoginBase {
   }
 
   async getAccessToken(url: string, accessToken: string) {
+    if (!url.startsWith(this.w6Url.authSsl)) return null;
     if (!url.includes("/api/login/") && accessToken && Tools.isTokenExpired(accessToken))
       if (await this.handleRefresh()) accessToken = window.localStorage[LoginBase.token];
-    if (accessToken && url.startsWith(this.w6Url.authSsl))
-      return accessToken;
-    return null;
+    return accessToken;
   }
   handleRefresh = () => this.refreshing || (this.refreshing = this.handleRefreshToken());
 
