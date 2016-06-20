@@ -182,6 +182,7 @@ class GetGameHomeHandler extends DbClientQuery<GetGameHome, IHomeData> {
   public async handle(request: GetGameHome): Promise<IHomeData> {
     //return GetHomeHandler.designTimeData(request);
     var r: IHomeData = await this.client.getGameHome(request.id);
+    r.recent.forEach(x => x.showRecent = true)
     return r;
   }
 

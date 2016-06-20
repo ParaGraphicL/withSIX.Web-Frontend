@@ -119,12 +119,14 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
         isVisibleObservable: this.observeEx(x => x.canAddToBasket)
       }));
 
-      d(this.removeRecent = uiCommand2("Remove as Recent", () => new RemoveRecent(this.model.gameId, this.model.id).handle(this.mediator),
-        {
-          icon: 'withSIX-icon-Folder-Remove',
-          isVisibleObservable: this.observeEx(x => x.hasLastUsed),
-          canExecuteObservable: this.canExecuteObservable
-        }))
+      if ((<any>this.model).showRecent) {
+        d(this.removeRecent = uiCommand2("Remove as Recent", () => new RemoveRecent(this.model.gameId, this.model.id).handle(this.mediator),
+          {
+            icon: 'withSIX-icon-Folder-Remove',
+            isVisibleObservable: this.observeEx(x => x.hasLastUsed),
+            canExecuteObservable: this.canExecuteObservable
+          }))
+      }
 
       d(this.abort = uiCommand2("", () => new Abort(this.model.gameId, this.model.id).handle(this.mediator), {
         isVisibleObservable: this.observeEx(x => x.isActive),
@@ -246,7 +248,7 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
     this.topMenuActions.push(new MenuItem(this.update));
     this.topMenuActions.push(new MenuItem(this.diagnose));
     this.topMenuActions.push(new MenuItem(this.uninstall));
-    this.topMenuActions.push(new MenuItem(this.removeRecent))
+    if (this.removeRecent) this.topMenuActions.push(new MenuItem(this.removeRecent))
     this.topMenuActions.push(new MenuItem(this.openFolder));
     if (this.shouldAddConfigAction) this.topMenuActions.push(new MenuItem(this.openConfigFolder));
     this.bottomActions.push(new MenuItem(this.omni));
