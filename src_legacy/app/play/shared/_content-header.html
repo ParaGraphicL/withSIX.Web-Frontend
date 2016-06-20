@@ -2,6 +2,7 @@
   <div sx-multi-transclude="content-header" class="content-header container-fluid">
     <div class="header-info">
       <h1 class="pagetitle" sx-multi-transclude="content-title" itemprop="name headline">
+        <span ng-if="model.group" class="icon withSIX-icon-Lock"></span>
                 <span sx-multi-transclude="content-title-name">{{header.title}}</span>
                 <span class="tiny" sx-multi-transclude="content-title-author"
                       itemprop="author" itemscope itemtype="http://schema.org/Person">
