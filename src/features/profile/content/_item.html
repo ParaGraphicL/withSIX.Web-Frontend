@@ -39,7 +39,8 @@
           </div>
 
           <div class="title">
-            <span if.bind="scopeIcon" class="icon ${scopeIcon}"></span>
+            <span if.bind="typeScopeIcon" class="icon ${typeScopeIcon} micro"></span>
+            <span if.bind="scopeIcon" class="icon ${scopeIcon} micro"></span>
             <a if.bind="path" href="${w6.url.play}/${path}">${model.name}</a>
             <span if.bind="!path">${model.name}</span>
           </div>

@@ -12,6 +12,7 @@ export class Collection extends ContentViewModel<ICollection> {
   fork: () => Promise<any>;
   icon = "withSIX-icon-Nav-Collection";
   scopeIcon: string;
+  typeScopeIcon: string;
   delete: ICommand<void>;
   edit: ICommand<boolean>;
   loadIntoPlaylist: ICommand<void>
@@ -20,6 +21,7 @@ export class Collection extends ContentViewModel<ICollection> {
   async activate(model: ICollection) {
     await super.activate(model);
     this.scopeIcon = this.getScopeIcon();
+    this.typeScopeIcon = this.getTypeScopeIcon();
   }
 
   setupMenuItems() {
@@ -88,13 +90,8 @@ export class Collection extends ContentViewModel<ICollection> {
     await new DeleteCollection(this.model.id, this.model.gameId, this.model.typeScope).handle(this.mediator);
   }
 
-  getScopeIcon() {
-    switch (this.model.typeScope) {
-      case TypeScope.Subscribed: return "withSIX-icon-System-Remote";
-      case TypeScope.Published: return "withSIX-icon-Cloud";
-    }
-    return "";
-  }
+  getScopeIcon() { return CollectionHelper.scopeIcons[this.model.scope]; }
+  getTypeScopeIcon() { return CollectionHelper.typeScopeIcons[this.model.typeScope]; }
 }
 
 export class DeleteCollection extends VoidCommand {
