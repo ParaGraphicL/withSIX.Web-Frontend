@@ -4,7 +4,8 @@ import {Base} from './base';
 import {Toastr} from './toastr';
 import {ObservableEventAggregator} from './reactive';
 import {W6} from './withSIX';
-import {LegacyBasketService, BasketType, IBasketModel, IBasketItem, BasketState, IBasketCollection} from './legacy';
+import {BasketService as LegacyBasketService} from './legacy/basket-service';
+import {BasketType, IBasketModel, IBasketItem, BasketState, IBasketCollection} from './legacy/baskets';
 import {W6Context} from './w6context';
 import {ContentHelper} from './helpers';
 import {ActionType, IActionNotification, Client, ConnectionState, IContentState, ItemState, IContentStateChange, IContentStatusChange, IClientInfo, IActionTabStateUpdate, StateChanged, IContentGuidSpec, IContentsBase, IContentBase,

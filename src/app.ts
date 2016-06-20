@@ -15,6 +15,8 @@ import {UiContext, ViewModel, Dialog, Mediator, Command, DbQuery, handlerFor, Me
 
 import {GameBaskets} from './features/game-baskets';
 
+import {RestoreBasket, OpenCreateCollectionDialog, OpenAddModDialog, OpenAddModsToCollectionsDialog} from './services/api';
+
 import {Login} from './services/auth';
 import {LoginBase, LoginUpdated, OutstandingRequestChange} from './services/auth-base';
 import VersionCompare from 'version_compare';
@@ -22,7 +24,6 @@ import VersionCompare from 'version_compare';
 // workaround for dialogs not working
 import {Origin} from 'aurelia-metadata';
 
-import {ForkCollection} from './features/profile/content/collection';
 import {CreateCollectionDialog} from './features/games/collections/create-collection-dialog';
 import {AddModsToCollections} from './features/games/add-mods-to-collections';
 import {EditPlaylistItem} from './features/side-bar/playlist/edit-playlist-item';
@@ -166,7 +167,6 @@ export class App extends ViewModel {
       d(this.eventBus.subscribe(OpenCreateCollectionDialog, this.openCreateCollectionDialog));
       d(this.eventBus.subscribe(OpenAddModDialog, this.openAddModDialog));
       d(this.eventBus.subscribe(OpenAddModsToCollectionsDialog, this.openAddModsToCollectionsDialog));
-      d(this.eventBus.subscribe(Navigate, this.navigate));
       d(this.eventBus.subscribe(LoginUpdated, this.loginUpdated));
       d(this.eventBus.subscribe(OpenSettings, this.openClientSettings));
       d(this.toProperty(this.observeEx(x => x.isRequesting)
@@ -369,7 +369,7 @@ export class App extends ViewModel {
         `Client v${newVersion} is available for download, click here to update now.`,
         "Sync Update available!", {
           timeOut: 10 * 1000
-        }).then(x => x ? this.eventBus.publish(new window.w6Cheat.containerObjects.navigate("/update")) : '');
+        }).then(x => x ? window.w6Cheat.navigate("/update") : '');
     }, 3000);
   };
 
@@ -385,7 +385,6 @@ export class App extends ViewModel {
   // TODO: https://identityserver.github.io/Documentation/docs/endpoints/endSession.html
   logout() { return this.login.logout(); }
   restoreBasket = () => this.w6.enableBasket = this.original;
-  navigate = (evt: Navigate) => this.navigateInternal(evt.url);
   loginUpdated = (evt: LoginUpdated) => {
     let info = { accessToken: evt.accessToken };
     if (this.client.isConnected && this.client.currentVersion >= "3") this.client.login(info);
@@ -482,12 +481,6 @@ export class App extends ViewModel {
     this.router = router;
   }
 }
-
-export class OpenCreateCollectionDialog { constructor(public game) { } }
-export class OpenAddModDialog { constructor(public game, public info?) { } }
-export class OpenAddModsToCollectionsDialog { constructor(public gameId, public mods, public collections) { } }
-export class RestoreBasket { }
-export class Navigate { constructor(public url: string) { } }
 
 @inject(Login, TaskQueue)
 class AuthorizeStep {
@@ -706,9 +699,3 @@ class Api {
   }
 }
 window.w6Cheat.api = Container.instance.get(Api);
-window.w6Cheat.containerObjects.restoreBasket = RestoreBasket;
-window.w6Cheat.containerObjects.navigate = Navigate;
-window.w6Cheat.containerObjects.openCreateCollectionDialog = OpenCreateCollectionDialog;
-window.w6Cheat.containerObjects.openAddModDialog = OpenAddModDialog;
-window.w6Cheat.containerObjects.openAddModsToCollectionsDialog = OpenAddModsToCollectionsDialog;
-window.w6Cheat.containerObjects.forkCollection = ForkCollection;

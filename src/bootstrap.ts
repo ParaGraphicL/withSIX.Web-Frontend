@@ -143,10 +143,6 @@ bootstrap(async (aurelia: Aurelia) => {
 
   window.w6Cheat.w6Urls = w6Urls;
   window.w6Cheat.container = Container.instance;
-  window.w6Cheat.containerObjects.toastr = <any>Toastr;
-  window.w6Cheat.containerObjects.login = LoginBase;
-  window.w6Cheat.containerObjects.uiContext = UiContext;
-  window.w6Cheat.containerObjects.basketService = BasketService;
   window.w6Cheat.numeral = numeral;
   var authConfig = {
     //our Aurelia App Address
@@ -231,7 +227,6 @@ export class ContainerSetup {
       // Legacy framework/3rdparty services
       'commandExecutor', 'DoubleClick',
       // Legacy app services
-      { name: "logger", cls: ToastLogger },
       { name: "basketService", cls: LegacyBasketService },
       { name: 'UploadService', cls: UploadService }
     ]);

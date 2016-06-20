@@ -1,4 +1,4 @@
-import {UploadService, OpenAddModDialogQuery, OpenAddCollectionDialogQuery} from './legacy';
+import {UploadService} from './legacy';
 import breeze from 'breeze-client';
 import { IUserInfo } from './dtos';
 import { W6Context } from './w6context'
@@ -241,6 +241,6 @@ export class LegacyMediator extends Mediator {
       .then(x => x.lastResult);
   }
 
-  openAddModDialog = (gameSlug: string, info: IModInfo = { type: "download", folder: "" }) => this.legacyRequest<void>(OpenAddModDialogQuery.$name, { gameSlug: gameSlug, info: info });
-  openAddCollectionDialog = (gameSlug: string) => this.legacyRequest<void>(OpenAddCollectionDialogQuery.$name, { gameSlug: gameSlug });
+  openAddModDialog = (gameSlug: string, info: IModInfo = { type: "download", folder: "" }) => this.legacyRequest<void>('OpenAddModDialog', { gameSlug: gameSlug, info: info });
+  openAddCollectionDialog = (gameSlug: string) => this.legacyRequest<void>('OpenAddCollectionDialog', { gameSlug: gameSlug });
 }

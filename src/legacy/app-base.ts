@@ -6,6 +6,9 @@ import {IRootScope, ITagKey, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHa
   IMenuItem} from '../services/legacy/base'
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {HttpClient} from 'aurelia-fetch-client';
+import {ToastLogger} from '../services/legacy/logger';
+
+import {BasketService} from '../services/basket-service';
 
 import {CollectionDataService, ModDataService, MissionDataService} from '../services/legacy/data-services';
 import {Mediator} from 'aurelia-mediator';
@@ -62,14 +65,11 @@ class AppModule extends Tk.Module {
 
     this.app
       .factory('dbContext', () => window.w6Cheat.container.get(W6Context))
+      .factory('logger', () => window.w6Cheat.container.get(ToastLogger))
       .factory('aur.mediator', () => window.w6Cheat.container.get(Mediator))
       .factory('aur.eventBus', () => window.w6Cheat.container.get(EventAggregator))
       .factory('aur.client', () => window.w6Cheat.container.get(Client))
-      .factory('aur.fetchClient', () => window.w6Cheat.container.get(HttpClient))
-      .factory('modInfoService', () => window.w6Cheat.container.get(Client))
-      .factory('aur.login', () => window.w6Cheat.container.get(window.w6Cheat.containerObjects.login))
-      .factory('aur.toastr', () => window.w6Cheat.container.get(window.w6Cheat.containerObjects.toastr))
-      .factory('aur.basketService', () => window.w6Cheat.container.get(window.w6Cheat.containerObjects.basketService))
+      .factory('aur.basketService', () => window.w6Cheat.container.get(BasketService))
       .config(['redactorOptions', redactorOptions => angular.copy(globalRedactorOptions, redactorOptions)])
       .config([
         '$httpProvider', $httpProvider => {
