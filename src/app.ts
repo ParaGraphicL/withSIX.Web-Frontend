@@ -18,7 +18,7 @@ import {GameBaskets} from './features/game-baskets';
 import {RestoreBasket, OpenCreateCollectionDialog, OpenAddModDialog, OpenAddModsToCollectionsDialog} from './services/api';
 
 import {Login} from './services/auth';
-import {LoginBase, LoginUpdated, OutstandingRequestChange} from './services/auth-base';
+import {LoginBase, LoginUpdated} from './services/auth-base';
 
 // workaround for dialogs not working
 import {Origin} from 'aurelia-metadata';
