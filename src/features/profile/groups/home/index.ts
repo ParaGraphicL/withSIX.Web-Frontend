@@ -204,7 +204,7 @@ export class UploadCoverHandler extends DbQuery<UploadCover, void> {
   async handle(request: UploadCover) {
     let groupPath = "groups/" + request.id;
     let policy = await this.context.postCustom<IBreezeAWSUploadPolicy>(groupPath + "/banner-policy");
-    await this.upload.uploadToAmazonWithPolicy(request.file, policy);
+    await this.context.uploadToAmazonWithPolicy(request.file, policy);
     await this.context.postCustom(groupPath + "/banner-upload");
   }
 }
@@ -216,7 +216,7 @@ export class UploadLogoHandler extends DbQuery<UploadLogo, void> {
   async handle(request: UploadLogo) {
     let groupPath = "groups/" + request.id;
     let policy = await this.context.postCustom<IBreezeAWSUploadPolicy>(groupPath + "/logo-policy");
-    await this.upload.uploadToAmazonWithPolicy(request.file, policy);
+    await this.context.uploadToAmazonWithPolicy(request.file, policy);
     await this.context.postCustom(groupPath + "/logo-upload");
   }
 }

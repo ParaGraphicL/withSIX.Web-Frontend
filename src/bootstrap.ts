@@ -11,7 +11,7 @@ import {Aurelia, LogManager} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {Toastr, UiContext, Mediator, ErrorLoggingMediatorDecorator, InjectingMediatorDecorator, BasketService, Client,
-  CollectionDataService, ModDataService, MissionDataService, UploadService, PromiseCache,
+  CollectionDataService, ModDataService, MissionDataService, PromiseCache,
   EntityExtends, IUserInfo, W6Context, ClientMissingHandler,
   W6Urls, W6, Tools} from './services/lib';
 import {ToastLogger} from './services/legacy/logger';
@@ -222,10 +222,8 @@ export class ContainerSetup {
     //this.instance.registerSingleton(EventAggregator, () => this.instance.get(ObservableEventAggregator));
     this.registerAngularSingletons([
       // Legacy framework/3rdparty services
-      'commandExecutor', 'DoubleClick',
-      // Legacy app services
-      { name: 'UploadService', cls: UploadService }
-    ]);
+      'commandExecutor']);
+
     this.instance.registerSingleton(Mediator,
       () => new ErrorLoggingMediatorDecorator(new InjectingMediatorDecorator(new Mediator(), this.instance.get(W6)), this.instance.get(Toastr), this.instance.get(ClientMissingHandler)));
   }

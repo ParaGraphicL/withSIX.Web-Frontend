@@ -24,7 +24,6 @@ import {IBasketItem, BasketItemType} from '../services/legacy/baskets';
 import {BasketService} from '../services/basket-service';
 import {ModsHelper, Helper} from '../services/legacy/misc';
 import {ToastLogger} from '../services/legacy/logger';
-import {UploadService} from '../services/legacy/upload';
 
 import {registerService, registerCommands, registerCQ, registerController, getFactory, skyscraperSlotSizes, rectangleSlotSizes, leaderboardSlotSizes} from './app-base';
 
@@ -798,9 +797,9 @@ export module Play.Collections {
       { header: "Content", segment: "content" }
       //{ header: "Comments", segment: "comments" }
     ];
-    static $inject = ['$scope', 'logger', '$routeParams', '$q', '$sce', 'localStorageService', 'w6', 'ForwardService', '$timeout', 'UploadService', '$popover', '$rootScope', 'basketService', 'aur.eventBus', 'aur.mediator', 'model'];
+    static $inject = ['$scope', 'logger', '$routeParams', '$q', '$sce', 'localStorageService', 'w6', 'ForwardService', '$timeout', 'dbContext', '$popover', '$rootScope', 'basketService', 'aur.eventBus', 'aur.mediator', 'model'];
 
-    constructor(public $scope: ICollectionScope, public logger, public $routeParams, $q, $sce: ng.ISCEService, private localStorageService, private w6: W6, private forwardService: Components.ForwardService, private $timeout: ng.ITimeoutService, private uploadService: UploadService, private $popover, $rootScope: IRootScope, basketService: BasketService, eventBus: EventAggregator, private mediator, model: IBreezeCollection) {
+    constructor(public $scope: ICollectionScope, public logger, public $routeParams, $q, $sce: ng.ISCEService, private localStorageService, private w6: W6, private forwardService: Components.ForwardService, private $timeout: ng.ITimeoutService, private dbContext: W6Context, private $popover, $rootScope: IRootScope, basketService: BasketService, eventBus: EventAggregator, private mediator, model: IBreezeCollection) {
       super($scope, logger, $routeParams, $q, $sce, model);
 
       window.w6Cheat.collection = this;
@@ -1235,19 +1234,21 @@ export module Play.Collections {
 
     private uploadLogo(file: File, policy: IBreezeCollectionImageFileTransferPolicy) {
       var $scope = this.$scope;
-      this.uploadService.uploadToAmazonWithPolicy(file, policy.uploadPolicy)
-        .success((data: string, status: number, headers: (headerName: string) => string, config: ng.IRequestConfig) => {
-          Tools.Debug.log(data, status, headers, config);
+      this.dbContext.uploadToAmazonWithPolicy(file, policy.uploadPolicy)
+        .then(r => {
+          Tools.Debug.log(r);
 
           this.logger.info("When you're happy click Save Changes to use the uploaded image.", "Image Uploaded");
           policy.uploaded = true;
           $scope.uploadingCollectionImage = false;
-        }).error((data: string, status: number, headers: (headerName: string) => string, config: ng.IRequestConfig) => {
-          Tools.Debug.log(data, status, headers, config);
+        }).catch(r => {
+          Tools.Debug.log(r);
           Tools.Debug.log("Failure");
 
           this.cancelImageUpload();
           $scope.uploadingCollectionImage = false;
+
+          let data = r.json();
 
           if (data.includes("EntityTooLarge")) {
             this.logger.error("Your image can not be larger than 5MB", "Image too large");
@@ -3425,88 +3426,6 @@ export module Play.Mods {
     public execute = ['modId', (modId) => { return this.context.postCustom("mods/" + modId + "/claim", undefined, { requestName: 'verifyToken' }); }];
   }
 
-  export class SaveModCommand extends DbCommandBase {
-    static $name = 'SaveMod';
-    static $inject = ['dbContext', '$q', 'UploadService'];
-
-    constructor(context: W6Context, $q, private uploadService: UploadService) {
-      super(context);
-    }
-
-    public execute = [
-      'modId', 'data', 'editData', (modId, data, editData) => {
-        if (Tools.debug) Tools.Debug.log(data, editData);
-        data.dependencies.forEach(x => {
-          var found = false;
-          for (var i in editData.editDependencies) {
-            var d = editData.editDependencies[i];
-            if (d.key == x.name) {
-              found = true;
-              break;
-            }
-          }
-          if (!found)
-            x.entityAspect.setDeleted();
-        });
-
-        editData.editDependencies.forEach(x => {
-          var found = false;
-          for (var i in data.dependencies) {
-            var d = data.dependencies[i];
-            if (d.name == x.key) {
-              found = true;
-              break;
-            }
-          }
-          if (!found) // data.dependencies.add(
-            this.context.createEntity("ModDependency", { id: x.id, modId: data.id, mod: data, name: x.key });
-        });
-
-        var tags = [];
-        for (var i in editData.editCategories) {
-          var t = editData.editCategories[i];
-          tags.push(t.key);
-        }
-
-        data.tags = tags;
-
-        var aliases = [];
-        for (var i in editData.editAliases) {
-          var a = editData.editAliases[i];
-          aliases.push(a.key);
-        }
-        data.aliases = aliases.length == 0 ? null : aliases.join(";");
-
-        // todo: Progresses for logo and gallery
-
-        var promises = [];
-        if (editData.logoToUpload)
-          promises.push(this.uploadLogo(modId, editData.logoToUpload));
-
-        if (editData.galleryToUpload)
-          promises.push(this.uploadGallery(modId, editData.galleryToUpload));
-
-        return Promise.all(promises)
-          .then((result) => this.context.saveChanges('saveMod'));
-      }
-    ];
-
-    private uploadLogo(modId, logo) {
-      return this.uploadService.uploadToAmazon(logo, "mods/" + modId + "/logoupload", "ModLogo");
-    }
-
-    private uploadGallery(modId, gallery) {
-      //this.$scope.upload = [];
-      var promises = [];
-      for (var i in gallery) {
-        var file = gallery[i];
-        promises.push(this.uploadService.uploadToAmazon(file, "mods/" + modId + "/galleryupload", "ModMediaItem"));
-      }
-
-      return Promise.all(promises);
-    }
-  }
-
   //export class OpenDependenciesDialogQuery extends DialogQueryBase {
   //    static $name = 'OpenDependenciesDialog';
   //    public execute = ['mod', mod => this.openDialog(DependenciesDialogController, { size: "md", windowTemplateUrl: "app/components/dialogs/window-center-template.html", resolve: { model: () => mod } })]
@@ -3627,7 +3546,6 @@ export module Play.Mods {
   registerCQ(GetClaimQuery);
   registerCQ(OpenClaimDialogQuery);
   registerCQ(VerifyClaimCommand);
-  registerCQ(SaveModCommand);
 
   //registerCQ(OpenDependenciesDialogQuery);
   //registerCQ(OpenSetAuthorDialogQuery);
@@ -3941,11 +3859,11 @@ export module Play.Mods {
     isForActiveGame: boolean;
     static $name = 'ModController';
     static $inject = ['$scope', 'logger', '$routeParams', '$q', '$parse', 'ForwardService', '$sce', '$timeout',
-      'UploadService', '$location', 'localStorageService', 'w6', '$popover', '$rootScope', 'basketService', 'model', 'aur.eventBus'];
+      'dbContext', '$location', 'localStorageService', 'w6', '$popover', '$rootScope', 'basketService', 'model', 'aur.eventBus'];
 
     constructor(public $scope: IModScope, logger, $routeParams, $q, private $parse: ng.IParseService, forwardService: Components.ForwardService,
       private $sce: ng.ISCEService, private $timeout: ng.ITimeoutService,
-      private uploadService: UploadService, $location: ng.ILocationService,
+      private uploadService: W6Context, $location: ng.ILocationService,
       localStorageService, w6, private $popover, $rootScope,
       basketService: BasketService, model: IBreezeMod, private eventBus: EventAggregator) {
       super($scope, logger, $routeParams, $q, $sce, model);
@@ -4560,19 +4478,19 @@ export module Play.Mods {
     private uploadLogo(file: File, policy: IBreezeModImageFileTransferPolicy) {
       var $scope = <IModScope>this.$scope;
       this.uploadService.uploadToAmazonWithPolicy(file, policy.uploadPolicy)
-        .success((data: string, status: number, headers: (headerName: string) => string, config: ng.IRequestConfig) => {
-          Tools.Debug.log(data, status, headers, config);
+        .then(r => {
+          Tools.Debug.log(r);
 
           this.logger.info("When you're happy click Save Changes to use the uploaded image.", "Image Uploaded");
           policy.uploaded = true;
           $scope.uploadingModImage = false;
-        }).error((data: string, status: number, headers: (headerName: string) => string, config: ng.IRequestConfig) => {
-          Tools.Debug.log(data, status, headers, config);
+        }).catch(r => {
+          Tools.Debug.log(r);
           Tools.Debug.log("Failure");
 
           this.cancelImageUpload();
           $scope.uploadingModImage = false;
-
+          let data = r.json();
           if (data.includes("EntityTooLarge")) {
             this.logger.error("Your image can not be larger than 5MB", "Image too large");
           }

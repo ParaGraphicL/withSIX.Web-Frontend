@@ -1,5 +1,5 @@
 import {inject} from 'aurelia-framework';
-import {W6Context, UploadService, CollectionDataService, Dialog, DbQuery, Query, VoidCommand, handlerFor, uiCommand2} from '../../framework';
+import {W6Context, CollectionDataService, Dialog, DbQuery, Query, VoidCommand, handlerFor, uiCommand2} from '../../framework';
 
 export interface IAddModsToCollections {
   gameId: string;
@@ -38,9 +38,9 @@ export class GetCollections extends Query<ICollectionsData> {
 }
 
 @handlerFor(GetCollections)
-@inject(W6Context, UploadService, CollectionDataService)
+@inject(W6Context, CollectionDataService)
 export class GetCollectionsHandler extends DbQuery<GetCollections, ICollectionsData> {
-  constructor(dbContext, uploadService, private collectionDataService: CollectionDataService) { super(dbContext, uploadService); }
+  constructor(dbContext, private collectionDataService: CollectionDataService) { super(dbContext); }
 
   async handle(request: GetCollections) {
     let r = await this.collectionDataService.getCollectionsByMeByGame(request.gameId, {});

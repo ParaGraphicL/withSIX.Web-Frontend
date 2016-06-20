@@ -1,4 +1,4 @@
-import {W6Context, UploadService, IBreezeMod, IUserInfo, Client, ModDataService, ISort, Query, DbClientQuery, handlerFor, requireUser, IRequireUser, Utils, IContent, TypeScope, BasketService,
+import {W6Context, IBreezeMod, IUserInfo, Client, ModDataService, ISort, Query, DbClientQuery, handlerFor, requireUser, IRequireUser, Utils, IContent, TypeScope, BasketService,
   ContentDeleted} from '../../../../framework';
 import {inject} from 'aurelia-framework';
 import {BaseGame, Mod} from '../../lib';
@@ -42,10 +42,10 @@ class GetMods extends Query<IModsData> implements IRequireUser {
 }
 
 @handlerFor(GetMods)
-@inject(W6Context, Client, UploadService, BasketService, ModDataService)
+@inject(W6Context, Client, BasketService, ModDataService)
 class GetModsHandler extends DbClientQuery<GetMods, IModsData> {
-  constructor(dbContext, modInfoService, uploadService: UploadService, bs: BasketService, private modDataService: ModDataService) {
-    super(dbContext, modInfoService, uploadService, bs);
+  constructor(dbContext, modInfoService, bs: BasketService, private modDataService: ModDataService) {
+    super(dbContext, modInfoService, bs);
   }
 
   public async handle(request: GetMods) {

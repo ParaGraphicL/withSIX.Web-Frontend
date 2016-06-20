@@ -1,7 +1,7 @@
 import {ViewModel, Query, DbQuery, handlerFor, IGame, ITab, IMenuItem, MenuItem, uiCommand2, VoidCommand,
   CollectionScope, IBreezeCollectionVersion, IBreezeCollectionVersionDependency, BasketItemType, TypeScope, UiContext, CollectionHelper, Confirmation, MessageDialog,
   ReactiveList, IBasketItem, FindModel, ActionType, BasketState, BasketType, ConnectionState, Debouncer, GameChanged, uiCommandWithLogin2, GameClientInfo, UninstallContent,
-  IBreezeCollection, IRequireUser, IUserInfo, W6Context, Client, UploadService, BasketService, CollectionDataService, DbClientQuery, Utils, requireUser, ICollection} from '../../../framework';
+  IBreezeCollection, IRequireUser, IUserInfo, W6Context, Client, BasketService, CollectionDataService, DbClientQuery, Utils, requireUser, ICollection} from '../../../framework';
 import {CreateCollectionDialog} from '../../games/collections/create-collection-dialog';
 import {Basket, GameBaskets} from '../../game-baskets';
 import {inject} from 'aurelia-framework';
@@ -469,10 +469,10 @@ export class GetMyCollections extends Query<ICollectionsData> implements IRequir
 }
 
 @handlerFor(GetMyCollections)
-@inject(W6Context, Client, UploadService, BasketService, CollectionDataService)
+@inject(W6Context, Client, BasketService, CollectionDataService)
 class GetMyCollectionsHandler extends DbClientQuery<GetMyCollections, ICollectionsData> {
-  constructor(dbContext, client, uploadService, bs: BasketService, private collectionDataService: CollectionDataService) {
-    super(dbContext, client, uploadService, bs);
+  constructor(dbContext, client, bs: BasketService, private collectionDataService: CollectionDataService) {
+    super(dbContext, client, bs);
   }
   public async handle(request: GetMyCollections): Promise<ICollectionsData> {
     var optionsTodo = {

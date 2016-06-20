@@ -3,7 +3,7 @@ import {ContentDeleted, Command, BasketItemType, IBasketItem, Base, IPromiseFunc
 import {ViewModel, Query, IGame, ITab, IMenuItem,
   CollectionScope, IBreezeCollectionVersion, IBreezeCollectionVersionDependency, UiContext, CollectionHelper, UninstallContent,
   ReactiveList, FindModel, ActionType, BasketState, BasketType, ConnectionState, Debouncer, GameChanged, uiCommandWithLogin2, GameClientInfo, MessageDialog, Confirmation,
-  IBreezeCollection, IRequireUser, IUserInfo, W6Context, Client, UploadService, BasketService, CollectionDataService, Utils, requireUser, SelectTab,
+  IBreezeCollection, IRequireUser, IUserInfo, W6Context, Client, BasketService, CollectionDataService, Utils, requireUser, SelectTab,
   breeze} from '../../../framework';
 import {Basket, GameBaskets} from '../../game-baskets';
 import {inject} from 'aurelia-framework';
@@ -146,10 +146,10 @@ export class LoadCollectionIntoBasket extends VoidCommand {
 }
 
 @handlerFor(LoadCollectionIntoBasket)
-@inject(W6Context, Client, UploadService, BasketService, CollectionDataService)
+@inject(W6Context, Client, BasketService, CollectionDataService)
 class LoadCollectionIntoBasketHandler extends DbClientQuery<LoadCollectionIntoBasket, void> {
-  constructor(dbContext, client, uploadService, bs: BasketService, private collectionDataService: CollectionDataService) {
-    super(dbContext, client, uploadService, bs);
+  constructor(dbContext, client, bs: BasketService, private collectionDataService: CollectionDataService) {
+    super(dbContext, client, bs);
   }
   async getDependencies(request: GetDependencies) {
     var query = breeze.EntityQuery.from("CollectionVersions").expand(["dependencies"])

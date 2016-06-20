@@ -1,4 +1,4 @@
-import {  handlerFor, VoidCommand, DbClientQuery, DbQuery, Mediator, W6Context, Client, UploadService, BasketService, Notifier, uiCommand2, IContentGuidSpec } from '../services/lib';
+import {  handlerFor, VoidCommand, DbClientQuery, DbQuery, Mediator, W6Context, Client, BasketService, Notifier, uiCommand2, IContentGuidSpec } from '../services/lib';
 import { inject } from 'aurelia-framework';
 
 // TODO: Consider to move the download notifications to the Client api
@@ -22,10 +22,10 @@ interface INoteInfo {
 
 export class SubscribeCollection extends VoidCommand { constructor(public collectionId: string) { super(); } }
 
-@inject(W6Context, Client, UploadService, BasketService, Notifier, Mediator)
+@inject(W6Context, Client, BasketService, Notifier, Mediator)
 class ClientQuery<T, T2> extends DbClientQuery<T, T2> {
-  constructor(context, client, uploadService, bs, protected notifier: Notifier, protected mediator: Mediator) {
-    super(context, client, uploadService, bs);
+  constructor(context, client, bs, protected notifier: Notifier, protected mediator: Mediator) {
+    super(context, client, bs);
   }
 }
 
