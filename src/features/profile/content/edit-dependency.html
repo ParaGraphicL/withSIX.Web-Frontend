@@ -12,10 +12,22 @@
           <option repeat.for="v of versions">${v}</option>
         </select>
       </div>
-      <div class="form-group">
+
+      <div class="form-control">
         <label for="is-optional">
           <input name="is-optional" id="is-optional" checked.bind="isOptional" type="checkbox"></input>
           Optional
+        </label>
+      </div>
+
+      <div class="form-control" if.bind="features.collectionsInCollections">
+        <label for="scope">
+          Scope
+          <select name="scope" id="scope" value.bind="scope">
+            <option>All</option>
+            <option>Client</option>
+            <option>Server</option>
+          </select>
         </label>
       </div>
     </ai-dialog-body>

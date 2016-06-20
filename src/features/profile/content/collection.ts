@@ -25,6 +25,8 @@ export class Collection extends ContentViewModel<ICollection> {
   setupMenuItems() {
     let published = this.model.typeScope == TypeScope.Published;
 
+    if (this.features.collectionsInCollections) this.setupAddToBasket();
+
     this.subscriptions.subd(d => {
       d(Base.observeEx(this.model, x => x.hasServers)
         .subscribe(x => x ? this.launch.name = 'Join' : 'Launch'));

@@ -1,6 +1,8 @@
 import {CollectionScope, ItemState, ICollection, TypeScope} from 'withsix-sync-api';
 import {IBreezeCollection, IBreezeMod, IBreezeMission} from './dtos';
 import {W6} from './withSIX';
+import breeze from 'breeze-client';
+import {W6Context} from './w6context';
 
 interface ICollectionExtend extends ICollection {
   subscribers: number;
@@ -29,6 +31,20 @@ export class MissionHelper {
 }
 
 export class ModHelper {
+  public static async getCompatibilityModIds(compatibilityMods: string[], gameId: string, context: W6Context) {
+    let jsonQuery = {
+      from: 'Mods',
+      where: {
+        'packageName': { in: compatibilityMods },
+        'gameId': gameId
+      }
+    }
+    // TODO: cache. or use id's in Helper, or cache the link between slug+game -> id??
+    let q = new breeze.EntityQuery(jsonQuery).select(["id"]);
+    let results = await context.queryLocallyOrServerWhenNoResults<IBreezeMod>(q);
+    return results.asEnumerable().select(x => x.id).toArray()
+  }
+
   public static convertOnlineMod(x: IBreezeMod, game: { id: string; slug: string }, w6: W6) {
     return {
       id: x.id,
@@ -68,6 +84,7 @@ export class CollectionHelper {
     return {
       id: collection.id,
       image: w6.url.getContentAvatarUrl(collection.avatar, collection.avatarUpdatedAt),
+      scope: CollectionScope[collection.scope],
       typeScope: type || (collection.authorId == w6.userInfo.id ? TypeScope.Published : null), // todo; figure out if we're subscribed
       author: collection.author.displayName,
       authorSlug: collection.author.slug,

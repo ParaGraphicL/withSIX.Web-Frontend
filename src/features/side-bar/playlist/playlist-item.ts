@@ -2,7 +2,7 @@ import {inject} from 'aurelia-framework';
 import {IBasketItem, BasketItemType, IBreezeMod, ModsHelper, Helper, FolderType,
   BasketService, UiContext, uiCommand2, ViewModel, Base, MenuItem, IMenuItem, GameClientInfo, uiCommand, Mediator, Query, DbQuery, DbClientQuery, handlerFor, VoidCommand, IContentState, ItemState,
   RemoveRecent, Abort, UninstallContent, OpenFolder, LaunchContent, InstallContent, UnFavoriteContent, FavoriteContent, IBreezeUser, ContentHelper,
-  breeze} from '../../../framework';
+  breeze, ModHelper, IBreezeCollection, IBreezeCollectionVersion} from '../../../framework';
 import {GameBaskets, Basket} from '../../game-baskets';
 import {DialogService} from 'aurelia-dialog';
 import {EditPlaylistItem} from './edit-playlist-item';
@@ -98,7 +98,8 @@ export class PlaylistItem extends ViewModel {
 
     try {
       // TODO: WHy use such complicated things when we have an id already??
-      let data = await new GetDependencies(this.model.packageName, this.model.gameId, this.localChain, this.chain, this.currentGameId, this.model.id).handle(this.mediator);
+      let data = this.model.itemType == BasketItemType.Mod ? await new GetModDependencies(this.model.packageName, this.model.gameId, this.localChain, this.chain, this.currentGameId, this.model.id).handle(this.mediator)
+        : await new GetCollectionDependencies(this.model.gameId, this.model.id, this.localChain, this.chain, this.currentGameId).handle(this.mediator);
       this.dependencies = data.dependencies;
       this.model.name = data.name;
       this.model.sizePacked = data.sizePacked;
@@ -109,7 +110,7 @@ export class PlaylistItem extends ViewModel {
       this.tools.Debug.error("Error while trying to retrieve dependencies for " + this.model.id, err);
     }
 
-    this.stat.sizePacked = this.stat.sizePacked + this.model.sizePacked;
+    if (this.model.itemType != BasketItemType.Collection) this.stat.sizePacked = this.stat.sizePacked + this.model.sizePacked;
     this.image = this.model.image || this.w6.url.getAssetUrl('img/noimage.png');
 
     this.gameName = (this.isForActiveGame ? this.w6.activeGame.slug : 'Arma-2').replace("-", " "); //(this.model.originalGameSlug || this.model.gameSlug).replace("-", " ");
@@ -215,7 +216,7 @@ export class PlaylistItem extends ViewModel {
   }
 
   revert() {
-    this.stat.sizePacked = this.stat.sizePacked - this.model.sizePacked;
+    if (this.model.itemType != BasketItemType.Collection) this.stat.sizePacked = this.stat.sizePacked - this.model.sizePacked;
     //Tools.Debug.log("$$$ deactivating", this.model);
     //this.dependencies.forEach(x => this.chain.delete(x.id));
     if (this.chain.get(this.model.id) === this.model)
@@ -271,6 +272,7 @@ export class PlaylistItem extends ViewModel {
   get itemState() { return this.state ? this.calculateState(this.state.state, this.state.version, this.model.constraint) : null; }
   calculateState(state: ItemState, version: string, constraint: string) { return ContentHelper.getContentState(state, version, constraint); }
 
+  // .where(x => x.itemType != BasketItemType.Collection)
   get dependencySize() { return this.localChain.asEnumerable().select(x => this.chain.get(x)).where(x => x != null).select(x => x.sizePacked).where(x => x != null).sum() }
   get itemStateClass() { return this.basketService.getItemStateClassInternal(this.itemState); }
 
@@ -299,7 +301,89 @@ interface IResult {
   version: string;
 }
 
-class GetDependencies extends Query<IResult> {
+class GetCollectionDependencies extends Query<IResult> {
+  constructor(public gameId: string, public id: string, public localChain: string[], public chain: Map<string, IBasketItem>, public currentGameId: string) {
+    super();
+    if (gameId == null) throw new Error("gameId can't be null");
+    if (id == null) throw new Error("id can't be null");
+    if (currentGameId == null) throw new Error("currentGameId can't be null");
+  }
+}
+
+@handlerFor(GetCollectionDependencies)
+class GetCollectionDependenciesHandler extends DbQuery<GetCollectionDependencies, IResult> {
+  async handle(request: GetCollectionDependencies) {
+    let query = breeze.EntityQuery.from("Collections")
+      .where(new breeze.Predicate("id", breeze.FilterQueryOp.Equals, request.id))
+      //.withParameters({collectionId: request.id})
+      .expand(["author", "latestVersion"])
+      .select(["latestVersionId", "latestVersion", "sizePacked", "author", "avatarUpdatedAt", "avatar", "name"]);
+    // TODO:
+    //.where(request.chain, NOT, breeze.FilterQueryOp.Contains, "id");
+
+    // todo; a manager per chain?
+    let meta = await this.context.fetchMetadata();
+    let manager = this.context.newManager();
+    let r = await this.context.executeQueryWithManager<IBreezeCollection>(manager, query);
+    let c = r.results[0];
+    if (!c) return {}
+    let sizePacked = Math.abs(c.sizePacked);
+    //await c.latestVersion.entityAspect.loadNavigationProperty("dependencies");
+    let q = breeze.EntityQuery.from("CollectionVersions").where(new breeze.Predicate("id", breeze.FilterQueryOp.Equals, c.latestVersionId)).expand("dependencies");
+    await this.context.executeQueryWithManager<IBreezeCollectionVersion>(manager, q);
+    // TODO: How to handle 'non network mods'
+    let modDependencies = c.latestVersion.dependencies.asEnumerable().select(x => x.modDependencyId).where(x => x != null).toArray();
+    // if (request.gameId != request.currentGameId) {
+    //   let compatibilityMods = ModsHelper.getCompatibilityModsFor(request.currentGameId, request.gameId);
+    //   if (compatibilityMods.length > 0) {
+    //     let compatibilityModIds = await ModHelper.getCompatibilityModIds(compatibilityMods, request.currentGameId, this.context);
+    //     compatibilityModIds.forEach(x => { if (!modDependencies.asEnumerable().contains(x)) modDependencies.push(x) });
+    //   }
+    // }
+
+    let dependencies = modDependencies.asEnumerable().where(x => !request.localChain.asEnumerable().contains(x)).select(x => x).toArray();
+    if (dependencies.length == 0)
+      return {
+        dependencies: [],
+        sizePacked: sizePacked,
+        avatar: c.avatar,
+        avatarUpdatedAt: c.avatarUpdatedAt,
+        author: c.author,
+        name: c.name,
+        version: c.latestVersion.version
+      };
+
+    let cachedIds = dependencies.asEnumerable().where(x => request.chain.has(x)).toArray();
+    let idsToFetch = dependencies.asEnumerable().except(cachedIds).toArray();
+    let fetchedResults: IBasketItem[] = [];
+
+    let desiredFields = ["id", "name", "packageName", "author", "authorText", "gameId", "avatar", "avatarUpdatedAt", "sizePacked"];
+    if (idsToFetch.length > 0) {
+      let op = { id: { in: idsToFetch } };
+      query = breeze.EntityQuery.from("Mods")
+        .where(<any>op)
+        .select(desiredFields);
+      let r = await this.context.executeQueryWithManager<IBreezeMod>(manager, query);
+      fetchedResults = r.results.asEnumerable().select(x => Helper.modToBasket(x)).toArray();
+      fetchedResults.forEach(x => request.chain.set(x.id, x));
+    }
+
+    let results = fetchedResults.asEnumerable().concat(cachedIds.asEnumerable().select(x => request.chain.get(x))).toArray();
+    results.forEach(x => { request.localChain.push(x.id); });
+    return {
+      dependencies: results,
+      sizePacked: sizePacked,
+      avatar: c.avatar,
+      avatarUpdatedAt: c.avatarUpdatedAt,
+      author: c.author,
+      name: c.name,
+      version: c.latestVersion.version
+    };
+
+  }
+}
+
+class GetModDependencies extends Query<IResult> {
   constructor(public packageName: string, public gameId: string, public localChain: string[], public chain: Map<string, IBasketItem>, public currentGameId: string, public id = null) {
     super();
     if (packageName == null) throw new Error("packageName can't be null");
@@ -308,9 +392,9 @@ class GetDependencies extends Query<IResult> {
   }
 }
 
-@handlerFor(GetDependencies)
-class GetDependenciesHandler extends DbQuery<GetDependencies, IResult> {
-  async handle(request: GetDependencies) {
+@handlerFor(GetModDependencies)
+class GetModDependenciesHandler extends DbQuery<GetModDependencies, IResult> {
+  async handle(request: GetModDependencies) {
     let predicate = request.id ?
       new breeze.Predicate("id", breeze.FilterQueryOp.Equals, request.id)
       : new breeze.Predicate("packageName", breeze.FilterQueryOp.Equals, request.packageName).and(new breeze.Predicate("gameId", breeze.FilterQueryOp.Equals, request.gameId))
@@ -320,6 +404,8 @@ class GetDependenciesHandler extends DbQuery<GetDependencies, IResult> {
       .select(["dependencies", "sizePacked", "tags", "authorText", "author", "avatarUpdatedAt", "avatar", "name", "latestStableVersion"]);
     // TODO:
     //.where(request.chain, NOT, breeze.FilterQueryOp.Contains, "id");
+
+    // todo; a manager per chain?
     let meta = await this.context.fetchMetadata();
     let manager = this.context.newManager();
     let r = await this.context.executeQueryWithManager<IBreezeMod>(manager, query);
@@ -327,12 +413,12 @@ class GetDependenciesHandler extends DbQuery<GetDependencies, IResult> {
     if (!mod) return {
       name: request.packageName
     }
-    let sizePacked = mod.sizePacked;
+    let sizePacked = Math.abs(mod.sizePacked);
     let modDependencies = mod.dependencies.asEnumerable().select(x => x.id).toArray();
     if (request.gameId != request.currentGameId) {
       let compatibilityMods = ModsHelper.getCompatibilityModsFor(request.currentGameId, request.gameId, mod.tags);
       if (compatibilityMods.length > 0) {
-        let compatibilityModIds = await this.getCompatibilityModIds(compatibilityMods, request);
+        let compatibilityModIds = await ModHelper.getCompatibilityModIds(compatibilityMods, request.currentGameId, this.context);
         compatibilityModIds.forEach(x => { if (!modDependencies.asEnumerable().contains(x)) modDependencies.push(x) });
       }
     }
@@ -377,19 +463,5 @@ class GetDependenciesHandler extends DbQuery<GetDependencies, IResult> {
       name: mod.name,
       version: mod.latestStableVersion
     };
-  }
-
-  async getCompatibilityModIds(compatibilityMods: string[], request: GetDependencies) {
-    let jsonQuery = {
-      from: 'Mods',
-      where: {
-        'packageName': { in: compatibilityMods },
-        'gameId': request.currentGameId
-      }
-    }
-    // TODO: cache. or use id's in Helper, or cache the link between slug+game -> id??
-    let q = new breeze.EntityQuery(jsonQuery).select(["id"]);
-    let results = await this.context.queryLocallyOrServerWhenNoResults<IBreezeMod>(q);
-    return results.asEnumerable().select(x => x.id).toArray()
   }
 }

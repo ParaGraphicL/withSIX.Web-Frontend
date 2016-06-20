@@ -5,18 +5,28 @@
     </ai-dialog-header>
 
     <ai-dialog-body>
-      <!-- <div class="form-group">
-      <label for="is-required">
-        <input name="is-required" id="is-required" checked.bind="isRequired" type="checkbox"></input>
-        Required
-      </labe>
-    </div> -->
       <div class="form-control">
         <label for="version-constraint">Version:</label>
         <span class="icon withSIX-icon-Lock" show.bind="versionSelected"></span>
         <select value.bind="constraint" disabled.bind="versions.length < 1">
           <option repeat.for="v of versions">${v}</option>
         </select>
+      </div>
+
+      <div class="form-control" if.bind="features.collectionsInCollections">
+        <label for="scope">
+          Scope
+          <select name="scope" id="scope" value.bind="scope">
+            <option>All</option>
+            <option>Client</option>
+            <option>Server</option>
+          </select>
+        </label>
+
+        <label for="is-optional">
+          <input name="is-optional" id="is-optional" checked.bind="isOptional" type="checkbox"></input>
+          Optional
+        </label>
       </div>
     </ai-dialog-body>
 
