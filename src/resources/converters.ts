@@ -191,11 +191,6 @@ export class BlobToUrlValueConverter {
   }
 }
 
-window.w6Cheat.converters.amount = Container.instance.get(AmountValueConverter);
-window.w6Cheat.converters.speed = Container.instance.get(SpeedValueConverter);
-window.w6Cheat.converters.size = Container.instance.get(SizeValueConverter);
-window.w6Cheat.converters.text = Container.instance.get(TextValueConverter);
-
 // TODO
 /*
 () => (nmb, currencyCode) => {

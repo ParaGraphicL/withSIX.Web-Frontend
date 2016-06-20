@@ -1,6 +1,8 @@
+import {Tools} from '../tools';
+
 export module Tk {
   export class Base {
-    get tools() { return window.w6Cheat.tools }
+    get tools() { return Tools }
   }
 
   export class Module extends Base {

@@ -2544,9 +2544,9 @@ Depends on: editableController, editableFormFactory
       this.app.filter('uppercaseFirst', () => (val: string) => val ? val.toUpperCaseFirst() : val)
         .filter('lowercaseFirst', () => (val: string) => val ? val.toLowerCaseFirst() : val)
         // TODO: Dedup; this does pretty much the same as the bytes filter!
-        .filter('amount', () => count => window.w6Cheat.converters.amount.toView(count))
-        .filter('speed', () => (size, format, includeMarkup = true) => window.w6Cheat.converters.speed.toView(size, format, includeMarkup))
-        .filter('size', () => (size, format, includeMarkup = true) => window.w6Cheat.converters.size.toView(size, format, includeMarkup))
+        .filter('amount', ['aur.amountConverter', c => count => c.toView(count)])
+        .filter('speed', ['aur.speedConverter', c => (size, format, includeMarkup = true) => c.toView(size, format, includeMarkup)])
+        .filter('size', ['aur.sizeConverter', c => (size, format, includeMarkup = true) => c.toView(size, format, includeMarkup)])
         .filter('accounting', () => (nmb, currencyCode) => {
           var currency = {
             USD: "$",

@@ -1,5 +1,6 @@
 
 var UUIDjs: any = require('uuid-js');
+import VersionCompare from 'version_compare';
 
 String.prototype.indexOfIgnoreCase = function(prefix) {
   return this.toLowerCase().indexOf(prefix.toLowerCase());
@@ -163,7 +164,7 @@ export module Tools {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
-  export function versionCompare(x, y) { return window.VersionCompare.compare(x, y, { zeroExtend: true }); }
+  export function versionCompare(x, y) { return (<any>VersionCompare).compare(x, y, { zeroExtend: true }); }
 
   export function generateGuid() {
     function s4() {
@@ -816,9 +817,6 @@ if (window.location.host.includes("withsix.com")) {
 }
 
 window.w6Cheat = <IW6Cheat>{
-  converters: {},
-  containerObjects: <IContainerObjects>{},
   isClient: window.six_client != null,
-  api: <IApi>{},
-  tools: Tools
+  api: <IApi>{}
 };

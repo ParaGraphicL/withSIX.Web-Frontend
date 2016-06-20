@@ -141,9 +141,6 @@ bootstrap(async (aurelia: Aurelia) => {
 
   Container.instance.registerSingleton(W6Urls, () => w6Urls);
 
-  window.w6Cheat.w6Urls = w6Urls;
-  window.w6Cheat.container = Container.instance;
-  window.w6Cheat.numeral = numeral;
   var authConfig = {
     //our Aurelia App Address
     baseUrl: window.location.protocol + w6Urls.main,
