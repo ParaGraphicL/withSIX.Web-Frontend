@@ -210,7 +210,6 @@
         "./src/services/helpers.ts",
         "./src/services/legacy.ts",
         "./src/services/legacy/base.ts",
-        "./src/services/legacy/basket-service.ts",
         "./src/services/legacy/baskets.ts",
         "./src/services/legacy/data-services.ts",
         "./src/services/legacy/logger.ts",

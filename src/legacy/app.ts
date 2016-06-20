@@ -13,7 +13,6 @@ import {Client} from 'withsix-sync-api';
 
 import {registerService, registerCommands, registerCQ, registerController, getFactory} from './app-base';
 import {CollectionDataService, ModDataService, MissionDataService} from '../services/legacy/data-services';
-import {BasketService} from '../services/legacy/basket-service';
 import {ToastLogger} from '../services/legacy/logger';
 import {UploadService} from '../services/legacy/upload';
 
@@ -33,8 +32,6 @@ export module MyApp {
   export var authSet = false;
   var initialCompleted = false;
 
-  registerService(BasketService);
-  registerService(ToastLogger);
   registerService(UploadService);
 
   export function setup(setupInfo) {

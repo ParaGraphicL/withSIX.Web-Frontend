@@ -21,7 +21,7 @@ import {Client, IClientInfo, ItemState} from 'withsix-sync-api';
 
 import {Components} from './components';
 import {IBasketItem, BasketItemType} from '../services/legacy/baskets';
-import {BasketService} from '../services/legacy/basket-service';
+import {BasketService} from '../services/basket-service';
 import {ModsHelper, Helper} from '../services/legacy/misc';
 import {ToastLogger} from '../services/legacy/logger';
 import {UploadService} from '../services/legacy/upload';
@@ -2298,7 +2298,7 @@ export module Play.Games {
 
   export class GetGameQuery extends DbQueryBase {
     static $name = "GetGame";
-    static $inject = ['dbContext', 'aur.basketService'];
+    static $inject = ['dbContext', 'basketService'];
 
     constructor(context: W6Context, private basketService) {
       super(context);
@@ -2414,7 +2414,7 @@ export module Play.Games {
         var postState = "";
 
         if (!$rootScope.w6.miniClient.isConnected) {
-          if (basketService.settings.hasConnected) {
+          if (basketService.hasConnected) {
             if ($scope.showBusyState())
               return "busy";
             return "no-client";

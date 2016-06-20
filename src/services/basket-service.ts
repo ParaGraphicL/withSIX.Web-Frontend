@@ -1,11 +1,11 @@
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
 import {Base} from './base';
+import {_Indexer} from './legacy/base';
 import {Toastr} from './toastr';
 import {ObservableEventAggregator} from './reactive';
 import {W6} from './withSIX';
-import {BasketService as LegacyBasketService} from './legacy/basket-service';
-import {BasketType, IBasketModel, IBasketItem, BasketState, IBasketCollection} from './legacy/baskets';
+import {BasketType, IBasketModel, IBasketItem, BasketState, IBasketCollection, IBaskets} from './legacy/baskets';
 import {W6Context} from './w6context';
 import {ContentHelper} from './helpers';
 import {ActionType, IActionNotification, Client, ConnectionState, IContentState, ItemState, IContentStateChange, IContentStatusChange, IClientInfo, IActionTabStateUpdate, StateChanged, IContentGuidSpec, IContentsBase, IContentBase,
@@ -13,14 +13,16 @@ import {ActionType, IActionNotification, Client, ConnectionState, IContentState,
 import {ClientWrapper, AppEventsWrapper} from './client-wrapper';
 import {GameBaskets} from '../features/game-baskets';
 
-@inject(LegacyBasketService, EventAggregator, W6, Client, Toastr, ClientWrapper, AppEventsWrapper)
+@inject(EventAggregator, W6, Client, Toastr, ClientWrapper, AppEventsWrapper)
 export class BasketService extends Base {
   private clientInfos: { [id: string]: GameClientInfo } = {};
   private clientPromises: { [id: string]: Promise<GameClientInfo> } = {};
   busyCount = 0;
 
-  constructor(public basketService: LegacyBasketService, private eventBus: EventAggregator, private w6: W6, private client: Client, public logger: Toastr, private clientWrapper: ClientWrapper, private appEvents: AppEventsWrapper) {
+  constructor(private eventBus: EventAggregator, private w6: W6, private client: Client, public logger: Toastr, private clientWrapper: ClientWrapper, private appEvents: AppEventsWrapper) {
     super();
+
+    this.initialize();
 
     this.subscriptions.subd(d => {
       d(this.clientWrapper.stateChanged.subscribe(async (state) => {
@@ -43,16 +45,65 @@ export class BasketService extends Base {
     });
   }
 
-  getGameBaskets = (gameId: string) => <GameBaskets>this.basketService.getGameBaskets(gameId)
+  private baskets: IBaskets;
+  private constructedBaskets: _Indexer<any> = {};
+  lastActiveItem: string;
+  hasConnected: boolean;
 
-  refresh() { this.basketService.refresh(); }
+  refresh() { this.initialize(); }
 
-  get lastActiveItem() { return this.basketService.lastActiveItem; }
-  set lastActiveItem(value: string) { this.basketService.lastActiveItem = value; }
-  abort(gameId: string) { return this.basketService.abort(gameId); }
+  abort(gameId: string) { return this.client.abort(gameId); };
+
+  private createLocalBaskets(): IBaskets {
+    return {
+      gameBaskets: {},
+    };
+  }
+
+  getGameBaskets(gameId: string) {
+    if (this.constructedBaskets[gameId] != null) return this.constructedBaskets[gameId];
+
+    if (this.baskets.gameBaskets[gameId] == null) this.baskets.gameBaskets[gameId] = {
+      activeId: null,
+      collections: []
+    };
+
+    var basketModel = this.baskets.gameBaskets[gameId];
+    try {
+      var i = basketModel.collections.length;
+    } catch (e) {
+      this.logger.error("A Game Basket Group was damaged and had to be reset", "Error Loading Game Baskets");
+      delete this.baskets.gameBaskets[gameId];
+      return this.getGameBaskets(gameId);
+    }
+
+    return this.constructedBaskets[gameId] = window.w6Cheat.api.createGameBasket(gameId, basketModel);
+  }
+
+  addToBasket(gameId: string, item: IBasketItem) {
+    this.performTransaction(() => {
+      var baskets = this.getGameBaskets(gameId);
+      baskets.active.toggleInBasket(Object.assign({ gameId: gameId }, item));
+    });
+  }
+
+  public async performTransaction(t: () => Promise<void> | void) {
+    await t();
+    this.saveChanges();
+  }
+
+  private initialize() {
+    if (window.localStorage.getItem("withSIX.baskets") == null) {
+      this.baskets = this.createLocalBaskets();
+      this.saveChanges();
+    } else
+      this.baskets = JSON.parse(window.localStorage.getItem("withSIX.baskets"));
+  }
+
+  public saveChanges() { window.localStorage.setItem("withSIX.baskets", JSON.stringify(this.baskets)); }
 
   async handleConnected() {
-    this.basketService.settings.hasConnected = true;
+    this.hasConnected = true;
 
     let promises = [];
     this.tools.Debug.log("$$$ handling connected", this.clientInfos);

@@ -117,7 +117,7 @@ export class App extends ViewModel {
   userMenuItems = [];
 
   // this.w6.settings.hasSync
-  get showFirefoxNotice() { return this.w6.isFirefox && this.w6.settings.downloadedSync && this.firefoxTimeoutPassed && !this.w6.miniClient.isConnected && !this.basketService.basketService.settings.hasConnected; }
+  get showFirefoxNotice() { return this.w6.isFirefox && this.w6.settings.downloadedSync && this.firefoxTimeoutPassed && !this.w6.miniClient.isConnected && !this.basketService.hasConnected; }
 
   get currentRoute() { return this.router.currentInstruction }
 
@@ -150,7 +150,7 @@ export class App extends ViewModel {
     this.userMenuItems.push(new MenuItem(this.openLogout));
 
     setTimeout(() => {
-      if (!this.w6.settings.hasSync && (this.w6.miniClient.isConnected || this.basketService.basketService.settings.hasConnected)) { this.w6.updateSettings(x => x.hasSync = true) } // TODO: put it on a connected handler?
+      if (!this.w6.settings.hasSync && (this.w6.miniClient.isConnected || this.basketService.hasConnected)) { this.w6.updateSettings(x => x.hasSync = true) } // TODO: put it on a connected handler?
       if (!this.w6.miniClient.isConnected && this.w6.settings.hasSync) this.clientMissingHandler.addClientIframe();
       this.firefoxTimeoutPassed = true;
     }, 15 * 1000);

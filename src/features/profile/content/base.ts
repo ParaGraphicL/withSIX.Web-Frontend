@@ -115,7 +115,7 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
       d(this.eventBus.subscribe('refreshContentInfo-' + this.model.gameId, x => this.updateState()))
       d(this.eventBus.subscribe('contentInfoStateChange-' + this.model.id, x => this.updateState()))
 
-      d(this.addToBasket = uiCommand2("toggle in playlist", async () => this.basketService.basketService.addToBasket(this.model.gameId, this.toBasketInfo()), {
+      d(this.addToBasket = uiCommand2("toggle in playlist", async () => this.basketService.addToBasket(this.model.gameId, this.toBasketInfo()), {
         isVisibleObservable: this.observeEx(x => x.canAddToBasket)
       }));
 

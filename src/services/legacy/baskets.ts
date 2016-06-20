@@ -53,7 +53,3 @@ export enum BasketType {
   SingleItem = 1,
   SingleCollection = 2,
 }
-
-export interface IBasketSettings {
-  hasConnected: boolean;
-}

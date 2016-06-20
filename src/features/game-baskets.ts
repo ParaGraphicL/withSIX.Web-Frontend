@@ -109,7 +109,7 @@ export class GameBaskets extends ViewModel {
     };
   }
 
-  replaceBasket() { this.setActiveBasket(this.createNewBasket()); }
+  replaceBasket = () => this.setActiveBasket(this.createNewBasket());
   cloneBasket(basket: Basket) { this.setActiveBasket(basket.clone()); }
   private createNewBasket(): Basket { return this.createNewBasketInner(this.getNewBasketModel()); }
 

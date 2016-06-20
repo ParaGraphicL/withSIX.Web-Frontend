@@ -12,7 +12,7 @@ import {Router} from 'aurelia-router';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {Toastr, UiContext, Mediator, ErrorLoggingMediatorDecorator, InjectingMediatorDecorator, BasketService, Client,
   CollectionDataService, ModDataService, MissionDataService, UploadService, PromiseCache,
-  EntityExtends, IUserInfo, LegacyBasketService, W6Context, ClientMissingHandler,
+  EntityExtends, IUserInfo, W6Context, ClientMissingHandler,
   W6Urls, W6, Tools} from './services/lib';
 import {ToastLogger} from './services/legacy/logger';
 import {HttpClient} from 'aurelia-http-client';
@@ -224,7 +224,6 @@ export class ContainerSetup {
       // Legacy framework/3rdparty services
       'commandExecutor', 'DoubleClick',
       // Legacy app services
-      { name: "basketService", cls: LegacyBasketService },
       { name: 'UploadService', cls: UploadService }
     ]);
     this.instance.registerSingleton(Mediator,

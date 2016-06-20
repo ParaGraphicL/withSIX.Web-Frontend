@@ -137,6 +137,15 @@ export module Tools {
   export var RequireNonSslException = createError('RequireNonSslException');
   export var InvalidShortIdException = createError('InvalidShortIdException');
 
+  export function disposableTimeout(f: () => void, timeout): IDisposable {
+    let id = setTimeout(f, timeout);
+    return { dispose: () => clearTimeout(id) }
+  }
+
+  export function disposableInterval(f: () => void, timeout): IDisposable {
+    let id = setInterval(f, timeout);
+    return { dispose: () => clearInterval(id) }
+  }
 
   var hexList = '0123456789abcdef';
   var b64List = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
