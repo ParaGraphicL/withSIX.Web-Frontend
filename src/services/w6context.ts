@@ -370,10 +370,10 @@ export class W6Context {
     };
 
     var fd = new FormData()
-    fd.append('file', file, file.name);
     Object.keys(data).forEach(k => {
       fd.append(k, data[k]);
     });
+    fd.append('file', file, file.name);
 
     let r = await window.fetch('https://' + s3Params.bucketName + '.s3.amazonaws.com/', {
       method: 'POST',
