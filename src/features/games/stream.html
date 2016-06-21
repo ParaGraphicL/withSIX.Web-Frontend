@@ -37,7 +37,8 @@
         </div>
 
         <div class="content tile-list">
-          <card-view is-virtual.one-time="features.uiVirtualization" items.bind="model.contentItems" view-path="features/profile/content/" item-type="mod" card-container-cls="col-sm-12" card-cls="horizontal content-basketable">
+          <card-view is-virtual.one-time="features.uiVirtualization" items.bind="model.contentItems" view-path="features/profile/content/" item-type="mod" card-columns.one-time="[1,1,1,1]"
+ card-cls="horizontal content-basketable">
           </card-view>
 
           <a href="${gameUrl}/mods">All mods</a> |

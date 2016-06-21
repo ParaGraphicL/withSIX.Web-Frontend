@@ -169,6 +169,7 @@
         "./src/resources/attributes.ts",
         "./src/resources/back-img.ts",
         "./src/resources/bar.ts",
+        "./src/resources/card-clearfix.ts",
         "./src/resources/card-view.ts",
         "./src/resources/command-button.ts",
         "./src/resources/command.ts",
