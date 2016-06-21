@@ -13,7 +13,7 @@ import {EventAggregator} from 'aurelia-event-aggregator';
 import {Toastr, UiContext, Mediator, ErrorLoggingMediatorDecorator, InjectingMediatorDecorator, BasketService, Client,
   CollectionDataService, ModDataService, MissionDataService, PromiseCache,
   EntityExtends, IUserInfo, W6Context, ClientMissingHandler,
-  W6Urls, W6, Tools, setupEnv} from './services/lib';
+  W6Urls, W6, Tools} from './services/lib';
 import {ToastLogger} from './services/legacy/logger';
 import {HttpClient} from 'aurelia-http-client';
 import {HttpClient as FetchClient} from 'aurelia-fetch-client';
