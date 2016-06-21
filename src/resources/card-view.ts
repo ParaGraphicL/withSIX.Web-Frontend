@@ -2,7 +2,8 @@ import {bindable, inject} from 'aurelia-framework';
 import {ViewModel} from '../services/viewmodel';
 
 export class CardView<T> extends ViewModel {
-  @bindable cardContainerCls: string = "col-sm-6 col-md-4 col-xl-3";
+  @bindable cardColumns = [2, 3, 3, 4]   // sm, md, lg, xl
+  cardContainerCls = "";
   @bindable cardCls: string = "";
   @bindable view: string;
   @bindable viewPath: string;
@@ -19,6 +20,7 @@ export class CardView<T> extends ViewModel {
 
   bind(context) {
     this.$parent = context;
+    this.cardContainerCls = `col-sm-${12 / this.cardColumns[0]} col-md-${12 / this.cardColumns[1]} col-lg-${12 / this.cardColumns[2]} col-xl-${12 / this.cardColumns[3]}`;
   }
 
   calculateIndex(i: number) {

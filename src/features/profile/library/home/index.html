@@ -11,7 +11,7 @@
 			<div class="row">
 				<div class="col1">
 					<h3 class="row-header">Recently played</h3>
-					<card-view is-virtual.one-time="features.uiVirtualization" items.bind="recent" card-container-cls="col-md-12" card-cls="content-basketable" ad-unit-id1="angular-ad-sky" view-path="features/profile/content/"></card-view>
+					<card-view is-virtual.one-time="features.uiVirtualization" items.bind="recent" card-columns.one-time="[1,1,1,1]" card-cls="content-basketable" ad-unit-id1="angular-ad-sky" view-path="features/profile/content/"></card-view>
 				</div>
 
 				<div class="col2">
@@ -23,7 +23,7 @@
 						</dropdown-menu>
 						<h3 class="row-header">New</h3>
 					</div>
-					<card-view is-virtual.one-time="features.uiVirtualization" items.bind="newContent" card-container-cls="col-md-12" card-cls="content-basketable" ad-unit-id1="angular-ad-sky2" view-path="features/profile/content/"></card-view>
+					<card-view is-virtual.one-time="features.uiVirtualization" items.bind="newContent" card-columns.one-time="[1,1,1,1]" card-cls="content-basketable" ad-unit-id1="angular-ad-sky2" view-path="features/profile/content/"></card-view>
 				</div>
 
 				<div class="col3">
@@ -31,7 +31,7 @@
 						<command-button class="row-header-button pull-right" model.bind="updateAll">Update all</command-button>
 						<h3 class="row-header">Updates ${updates.length}</h3>
 					</div>
-					<card-view is-virtual.one-time="features.uiVirtualization" items.bind="updates" card-container-cls="col-md-12" card-cls="content-basketable" ad-unit-id1="angular-ad-sky2" view-path="features/profile/content/"></card-view>
+					<card-view is-virtual.one-time="features.uiVirtualization" items.bind="updates" card-columns.one-time="[1,1,1,1]" card-cls="content-basketable" ad-unit-id1="angular-ad-sky2" view-path="features/profile/content/"></card-view>
 				</div>
 			</div>
 		</div>

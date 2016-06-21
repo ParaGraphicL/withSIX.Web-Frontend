@@ -58,42 +58,44 @@
       }
     }
   }
-  .game {
-    $width: 110px + 30px; // padding
-    width: $width;
-    .card {
-      &:hover {
-        .title a {
-          color: $colorSixBlue;
-        }
-      }
-      .img {
-        position: relative;
-        .imageholder {
-          display: block;
-          height: 156px;
-        }
-        background-color: white;
-        background-size: contain;
-      }
-      .info {
-        height: 4px;
-        padding: 0;
-        background: white;
-        overflow: hidden;
-      }
-      .bottom-bar {
-        action-bar {
-          button,
-          li,
-          ul {
-            width: 100%;
+  .your-games {
+    .card-container {
+      $width: 110px + 30px; // padding
+      width: $width;
+      .card {
+        &:hover {
+          .title a {
+            color: $colorSixBlue;
           }
-          button {
-            color: inherit;
-            background-color: inherit;
-            font-size: 0.7em;
-            text-decoration: inherit;
+        }
+        .img {
+          position: relative;
+          .imageholder {
+            display: block;
+            height: 156px;
+          }
+          background-color: white;
+          background-size: contain;
+        }
+        .info {
+          height: 4px;
+          padding: 0;
+          background: white;
+          overflow: hidden;
+        }
+        .bottom-bar {
+          action-bar {
+            button,
+            li,
+            ul {
+              width: 100%;
+            }
+            button {
+              color: inherit;
+              background-color: inherit;
+              font-size: 0.7em;
+              text-decoration: inherit;
+            }
           }
         }
       }
