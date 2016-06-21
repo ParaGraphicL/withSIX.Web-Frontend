@@ -26,12 +26,12 @@ export class CardView<T> extends ViewModel {
     this.handleClearFix = this.cardColumns.asEnumerable().any(x => x > 1);
   }
 
-  calculateIndex(i: number, add = 0) {
+  calculateIndex(i: number) {
     let originalIndex = i;
     i++;
-    if (!this.showAds || !this.ads || this.ads.length == 0) return i + add;
+    if (!this.showAds || !this.ads || this.ads.length == 0) return i;
     this.ads.forEach(x => { if (originalIndex > x) i++; });
-    return i + add;
+    return i;
   }
 
   get itemsMapToArrayWorkaround() { return this.itemsMap == null ? null : Array.from(this.itemsMap, (x, i) => x[1]); }
