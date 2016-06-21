@@ -6,26 +6,17 @@
       </template>
     </div>
   </div>
-  <div if.bind="calculateIndex($index) % 2 == 0" class="clearfix visible-sm-block"></div>
-  <div if.bind="calculateIndex($index) % 3 == 0" class="clearfix visible-md-block"></div>
-  <div if.bind="calculateIndex($index) % 4 == 0" class="clearfix visible-lg-block"></div>
-  <div if.bind="calculateIndex($index) % 4 == 0" class="clearfix visible-xl-block"></div>
+  <card-clearfix index.one-time="calculateIndex($index)"></card-clearfix>
   <div class.bind="cardContainerCls" class="item-index-${$index}" if.bind="w6.renderAds && showAds && $index == ads[0]">
     <div class="card ${cardCls}">
       <ad-unit unit-id="angular-ad1"></ad-unit>
     </div>
-    <div if.bind="calculateIndex($index + 1) % 2 == 0" class="clearfix visible-sm-block"></div>
-    <div if.bind="calculateIndex($index + 1) % 3 == 0" class="clearfix visible-md-block"></div>
-    <div if.bind="calculateIndex($index + 1) % 4 == 0" class="clearfix visible-lg-block"></div>
-    <div if.bind="calculateIndex($index + 1) % 4 == 0" class="clearfix visible-xl-block"></div>
+    <card-clearfix index.one-time="calculateIndex($index + 1)"></card-clearfix>
   </div>
   <div class.bind="cardContainerCls" class="item-index-${$index}" if.bind="w6.renderAds && showAds && $index == ads[1]">
     <div class="card ${cardCls}">
       <ad-unit unit-id="angular-ad2"></ad-unit>
     </div>
-    <div if.bind="calculateIndex($index + 1) % 2 == 0" class="clearfix visible-sm-block"></div>
-    <div if.bind="calculateIndex($index + 1) % 3 == 0" class="clearfix visible-md-block"></div>
-    <div if.bind="calculateIndex($index + 1) % 4 == 0" class="clearfix visible-lg-block"></div>
-    <div if.bind="calculateIndex($index + 1) % 4 == 0" class="clearfix visible-xl-block"></div>
+    <card-clearfix index.one-time="calculateIndex($index + 1 + ($index == ads[0] ? 1 : 0))"></card-clearfix>
   </div>
 </template>
