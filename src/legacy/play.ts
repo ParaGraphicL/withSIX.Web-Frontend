@@ -577,11 +577,6 @@ export module Play {
               });
 
             game.
-              // segment('missions', {
-              //   controller: 'MissionsController',
-              //   templateUrl: '/src_legacy/app/components/default_index.html',
-              //   dependencies: ['gameSlug']
-              // }).
               segment('new_mission', {
                 controller: 'UploadNewmissionController',
                 templateUrl: '/src_legacy/app/play/missions/upload-newmission.html',
@@ -622,11 +617,6 @@ export module Play {
               });
 
             game.
-              // segment('collections', {
-              //   controller: 'CollectionsController',
-              //   templateUrl: '/src_legacy/app/components/default_index.html',
-              //   dependencies: ['gameSlug']
-              // }).
               segment('collectionsShow', {
                 controller: 'CollectionController',
                 templateUrl: '/src_legacy/app/play/collections/show.html',

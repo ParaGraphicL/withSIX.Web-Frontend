@@ -5,6 +5,8 @@ import {ViewModel, ILegacyMenuItem} from '../../framework';
 export class PagesModule {
   configureRouter(config: RouterConfiguration, router: Router, mount: string, routeMount: string) {
     mount = mount + 'pages/';
+
+    // using 'blank' atm instead of a child-router, because we don't want to capture all the routes that are under '/' ..
     config.map([
       { route: [`${routeMount}`, `${routeMount}home`], name: 'home', moduleId: `${mount}home`, nav: false, title: 'Home' },
       { route: `${routeMount}client-landing`, name: 'client-landing', moduleId: `${mount}client-landing`, nav: false, title: 'Landing' },
@@ -12,8 +14,10 @@ export class PagesModule {
       { route: `${routeMount}get-started`, name: 'get-started', redirect: "http://withsix.readthedocs.org/en/latest/general/get_started", nav: true, title: 'Get Started' },
       { route: `${routeMount}external-link/:url`, name: 'external-link', moduleId: `${mount}external-link`, nav: false, title: 'External Link' },
       { route: `${routeMount}download`, name: 'download', moduleId: `${mount}download`, nav: true, title: 'Download' },
-      { route: `${routeMount}download/start`, name: 'download-start', moduleId: `features/pages/angular`, nav: false, title: 'Download Start' },
-      //{ route: `${routeMount}blog`,  name: 'blog',      moduleId: `${mount}blog`,      nav: true, title:'Our Blog' },
+      { route: `${routeMount}download/start`, name: 'download-start', moduleId: `${mount}blank`, nav: false, title: 'Download Start' },
+      { route: `${routeMount}changelog`, name: 'changelog', moduleId: `${mount}blank`, nav: false, title: 'Changelog' },
+      { route: `${routeMount}gopremium`, name: 'gopremium', moduleId: `${mount}blank`, nav: false, title: 'Go Premium' },
+      { route: `${routeMount}blog`, name: 'blog', moduleId: `${mount}blank`, nav: true, title: 'Our Blog' },
       { route: `${routeMount}community`, name: 'community', redirect: "https://community.withsix.com", nav: true, title: 'Community' },
       { route: `${routeMount}update`, name: 'update', moduleId: `${mount}update`, nav: false, title: 'Update' }
       //{ route: `${routeMount}go-premium`,         name: 'premium',        moduleId: `${mount}premium`,        nav: true, title:'Go Premium' },
