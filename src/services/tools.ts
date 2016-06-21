@@ -1,5 +1,4 @@
 
-var UUIDjs: any = require('uuid-js');
 import VersionCompare from 'version_compare';
 
 String.prototype.indexOfIgnoreCase = function(prefix) {
@@ -449,6 +448,7 @@ export module Tools {
   } // guid_to_base64()
 
   function base64ToGuid(g, le) {
+    var UUIDjs: any = require('uuid-js');
     var s = UUIDjs.fromBinary(atob(g)).toString();
     if (le) {
       s = s.replace(/[^0-9a-f]/ig, '').toLowerCase();

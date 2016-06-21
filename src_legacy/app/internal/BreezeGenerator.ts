@@ -1,4 +1,4 @@
-﻿module TypeScriptTools {
+export module TypeScriptTools {
 
   // ReSharper disable InconsistentNaming
   declare var CodeMirror;

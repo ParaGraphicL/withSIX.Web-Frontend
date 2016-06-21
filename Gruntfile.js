@@ -46,7 +46,7 @@ module.exports = function(grunt) {
     shell: {
       prepare: {
         command: function() {
-          return 'gulp scripts && gulp build-system'
+          return 'gulp scripts build-system build-other'
         }
       },
       build_metadata: {
