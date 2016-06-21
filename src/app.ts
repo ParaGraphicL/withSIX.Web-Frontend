@@ -428,10 +428,8 @@ export class App extends ViewModel {
 
 
   get showSlogan() { return this.w6.url.site == 'main' && this.w6.url.isRoot; }
-  router: Router;
 
   async configureRouter(config: RouterConfiguration, router: Router) {
-    this.router = router;
     config.title = 'withSIX';
     config.options.pushState = true;
     config

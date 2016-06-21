@@ -1,13 +1,10 @@
 <template>
   <section class="au-animate row" id="my-group-show">
     <div class="col-md-2">
-      <router-menu router.bind="router" class="library-menu">
-        </menu>
+      <router-menu router.bind="router" class="library-menu"></menu>
     </div>
     <div class="col-md-10">
-      <loading-router router.bind="router">
-        <router-view></router-view>
-      </loading-router>
+      <router-view></router-view>
     </div>
   </section>
 </template>
