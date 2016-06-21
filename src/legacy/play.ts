@@ -1177,17 +1177,15 @@ export module Play.Collections {
         });
       };
 
-      var saveChanges = this.entityManager.saveChanges([uploadRequest])
+      return this.entityManager.saveChanges([uploadRequest])
         .then((result) => {
           Tools.Debug.log(result, uploadRequest, $scope.model.fileTransferPolicies);
-          this.uploadLogo(file, uploadRequest);
-          return;
+          return this.uploadLogo(file, uploadRequest);
         }).catch((reason) => {
           Tools.Debug.log("Failure", reason);
           this.logger.error("We were unable to retrieve an upload policy for your image. Please try again later", "Failed to upload image.");
           this.cancelImageUpload();
           $scope.uploadingCollectionImage = false;
-          return;
         });
     }
 
@@ -1232,31 +1230,27 @@ export module Play.Collections {
         });
     }
 
-    private uploadLogo(file: File, policy: IBreezeCollectionImageFileTransferPolicy) {
+    private async uploadLogo(file: File, policy: IBreezeCollectionImageFileTransferPolicy) {
       var $scope = this.$scope;
-      this.dbContext.uploadToAmazonWithPolicy(file, policy.uploadPolicy)
-        .then(r => {
-          Tools.Debug.log(r);
+      try {
+        let r = await this.dbContext.uploadToAmazonWithPolicy(file, policy.uploadPolicy);
+        Tools.Debug.log(r);
 
-          this.logger.info("When you're happy click Save Changes to use the uploaded image.", "Image Uploaded");
-          policy.uploaded = true;
-          $scope.uploadingCollectionImage = false;
-        }).catch(r => {
-          Tools.Debug.log(r);
-          Tools.Debug.log("Failure");
+        this.logger.info("When you're happy click Save Changes to use the uploaded image.", "Image Uploaded");
+        policy.uploaded = true;
+        $scope.uploadingCollectionImage = false;
+      } catch (r) {
+        Tools.Debug.log(r);
 
-          this.cancelImageUpload();
-          $scope.uploadingCollectionImage = false;
+        this.cancelImageUpload();
+        $scope.uploadingCollectionImage = false;
 
-          let data = r.json();
+        let data = await r.text();
 
-          if (data.includes("EntityTooLarge")) {
-            this.logger.error("Your image can not be larger than 5MB", "Image too large");
-          }
-          if (data.includes("EntityTooSmall")) {
-            this.logger.error("Your image must be at least 10KB", "Image too small");
-          }
-        });
+        if (data.includes("EntityTooLarge")) this.logger.error("Your image can not be larger than 5MB", "Image too large");
+        if (data.includes("EntityTooSmall")) this.logger.error("Your image must be at least 10KB", "Image too small");
+        throw r;
+      }
     }
 
     private uploadRemoteLogo(file: string, policy: IBreezeCollectionImageFileTransferPolicy) {
@@ -4420,17 +4414,15 @@ export module Play.Mods {
         });
       };
 
-      var saveChanges = this.entityManager.saveChanges([uploadRequest])
+      return this.entityManager.saveChanges([uploadRequest])
         .then((result) => {
           Tools.Debug.log(result, uploadRequest, $scope.model.fileTransferPolicies);
-          this.uploadLogo(file, uploadRequest);
-          return;
+          return this.uploadLogo(file, uploadRequest);
         }).catch((reason) => {
           Tools.Debug.log("Failure", reason);
           this.logger.error("We were unable to retrieve an upload policy for your image. Please try again later", "Failed to upload image.");
           this.cancelImageUpload();
           $scope.uploadingModImage = false;
-          return;
         });
     }
 
@@ -4475,29 +4467,25 @@ export module Play.Mods {
         });
     }
 
-    private uploadLogo(file: File, policy: IBreezeModImageFileTransferPolicy) {
+    private async uploadLogo(file: File, policy: IBreezeModImageFileTransferPolicy) {
       var $scope = <IModScope>this.$scope;
-      this.uploadService.uploadToAmazonWithPolicy(file, policy.uploadPolicy)
-        .then(r => {
-          Tools.Debug.log(r);
+      try {
+        let r = await this.uploadService.uploadToAmazonWithPolicy(file, policy.uploadPolicy)
+        Tools.Debug.log(r);
 
-          this.logger.info("When you're happy click Save Changes to use the uploaded image.", "Image Uploaded");
-          policy.uploaded = true;
-          $scope.uploadingModImage = false;
-        }).catch(r => {
-          Tools.Debug.log(r);
-          Tools.Debug.log("Failure");
+        this.logger.info("When you're happy click Save Changes to use the uploaded image.", "Image Uploaded");
+        policy.uploaded = true;
+        $scope.uploadingModImage = false;
+      } catch (r) {
+        Tools.Debug.log(r);
 
-          this.cancelImageUpload();
-          $scope.uploadingModImage = false;
-          let data = r.json();
-          if (data.includes("EntityTooLarge")) {
-            this.logger.error("Your image can not be larger than 5MB", "Image too large");
-          }
-          if (data.includes("EntityTooSmall")) {
-            this.logger.error("Your image must be at least 10KB", "Image too small");
-          }
-        });
+        this.cancelImageUpload();
+        $scope.uploadingModImage = false;
+        let data = await r.text();
+        if (data.includes("EntityTooLarge")) this.logger.error("Your image can not be larger than 5MB", "Image too large");
+        if (data.includes("EntityTooSmall")) this.logger.error("Your image must be at least 10KB", "Image too small");
+        throw r;
+      }
     }
 
     private uploadRemoteLogo(file: string, policy: IBreezeModImageFileTransferPolicy) {
