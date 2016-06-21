@@ -16,11 +16,14 @@ export class CardView<T> extends ViewModel {
   @bindable adUnitId1 = "angular-ad1";
   @bindable adUnitId2 = "angular-ad2";
 
+  handleClearFix: boolean;
+
   $parent;
 
   bind(context) {
     this.$parent = context;
     this.cardContainerCls = `col-sm-${12 / this.cardColumns[0]} col-md-${12 / this.cardColumns[1]} col-lg-${12 / this.cardColumns[2]} col-xl-${12 / this.cardColumns[3]}`;
+    this.handleClearFix = this.cardColumns.filter(x => x > 1).length != this.cardColumns.length;
   }
 
   calculateIndex(i: number) {
