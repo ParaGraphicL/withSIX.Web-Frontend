@@ -1,6 +1,6 @@
 import {Tools} from './tools.jsc';
 import {EntityExtends} from './entity-extends.jsc';
-//import breeze from './breeze.debug.jsc';
+const breeze = require('./breeze.debug.jsc');
 
 export module TypeScriptTools {
 
