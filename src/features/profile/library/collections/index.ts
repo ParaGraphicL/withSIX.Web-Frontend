@@ -1,5 +1,5 @@
 import {BaseGame} from '../../lib';
-import {ContentDeleted, CollectionHelper, IUserInfo, IBreezeCollection, W6Context, Client, UploadService, CollectionDataService, UiContext, uiCommandWithLogin, Utils, IFilter, ISort, SortDirection, Query, DbClientQuery, handlerFor, IRequireUser, requireUser, IContent, TypeScope, ICollection, BasketService} from '../../../../framework';
+import {ContentDeleted, CollectionHelper, IUserInfo, IBreezeCollection, W6Context, Client, CollectionDataService, UiContext, uiCommandWithLogin, Utils, IFilter, ISort, SortDirection, Query, DbClientQuery, handlerFor, IRequireUser, requireUser, IContent, TypeScope, ICollection, BasketService} from '../../../../framework';
 import {Router} from 'aurelia-router';
 import {inject} from 'aurelia-framework';
 import {DialogService} from 'aurelia-dialog';
@@ -52,10 +52,10 @@ class GetCollections extends Query<ICollectionsData> implements IRequireUser {
 }
 
 @handlerFor(GetCollections)
-@inject(W6Context, Client, UploadService, BasketService, CollectionDataService)
+@inject(W6Context, Client, BasketService, CollectionDataService)
 class GetCollectionsHandler extends DbClientQuery<GetCollections, ICollectionsData> {
-		constructor(dbContext, modInfoService, uploadService, bs: BasketService, private collectionDataService: CollectionDataService) {
-    super(dbContext, modInfoService, uploadService, bs);
+		constructor(dbContext, modInfoService, bs: BasketService, private collectionDataService: CollectionDataService) {
+    super(dbContext, modInfoService, bs);
 		}
 		// TODO: Merge all data from client, and web queries etc... :S
   public async handle(request: GetCollections): Promise<ICollectionsData> {

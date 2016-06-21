@@ -1,5 +1,5 @@
 import breeze from 'breeze-client';
-import {EntityExtends, BreezeEntityGraph, _IntDefs, BreezeInitialzation, IBreezeUser} from './dtos';
+import {EntityExtends, BreezeEntityGraph, _IntDefs, BreezeInitialzation, IBreezeUser, IBreezeAWSUploadPolicy} from './dtos';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {Tools} from './tools';
 import {W6} from './withSIX';
@@ -14,6 +14,19 @@ export var RequiresLogin = Tools.createError('RequiresLogin');
 export var Forbidden = Tools.createError("Forbidden");
 export var ResourceNotFound = Tools.createError("ResourceNotFound");
 export var ValidationError = Tools.createError("ValidationError");
+
+export interface IAWSUploadPolicy {
+  AccessKey: string;
+  Signature: string;
+  SecurityToken: string;
+  ACL: string;
+  ContentType: string;
+  Key: string;
+  BucketName: string;
+  EncryptedPolicy: string;
+  CallbackUrl: string;
+}
+
 
 export interface IQueryResult<T extends breeze.Entity> extends breeze.QueryResult {
   results: T[];
@@ -336,6 +349,39 @@ export class W6Context {
 
   public rejectChanges() {
     this.manager.rejectChanges();
+  }
+
+  public uploadToAmazonWithPolicy(file: File, uploadPolicy: IBreezeAWSUploadPolicy) { return this.uploadToBucket(file, uploadPolicy); }
+
+  private getPolicy(file, authorizationPath, policyType, requestName?) { return this.getCustom(this.serviceName + '/' + authorizationPath, { requestName: requestName, params: { policyType: policyType, filePath: file } }); }
+
+  private uploadToBucket = async (file: File, s3Params: IBreezeAWSUploadPolicy, requestName?) => {
+    var data = {
+      key: s3Params.key,
+      acl: s3Params.aCL, // ?? acl vs CannedACL ?
+      //success_action_redirect: s3Params.callbackUrl,
+      'Content-Type': s3Params.contentType,
+      'x-amz-security-token': s3Params.securityToken,
+      AWSAccessKeyId: s3Params.accessKey, // ?? included in policy?
+      Policy: jQuery.parseJSON(s3Params.encryptedPolicy).policy, // TODO: We actually really only need the policy property??
+      Signature: s3Params.signature,
+      //filename: file.name, // ?? included in policy?
+      //filename: file.name //Required for IE8/9 //,
+    };
+
+    var fd = new FormData()
+    fd.append('file', file, file.name);
+    Object.keys(data).forEach(k => {
+      fd.append(k, data[k]);
+    });
+
+    let r = await window.fetch('https://' + s3Params.bucketName + '.s3.amazonaws.com/', {
+      method: 'POST',
+      body: fd
+    });
+
+    if (!r.ok) throw r;
+    return r;
   }
 
   public async saveChanges(requestName?, entities?: breeze.Entity[]) {

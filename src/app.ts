@@ -89,7 +89,7 @@ class RouteHandler {
   }
 }
 
-@inject(UiContext, HttpClient, Login, RouteHandler, 'DoubleClick', TaskQueue, Client, BasketService, LS, ClientMissingHandler, BindingSignaler)
+@inject(UiContext, HttpClient, Login, RouteHandler, TaskQueue, Client, BasketService, LS, ClientMissingHandler, BindingSignaler)
 export class App extends ViewModel {
   newVersionInterval: number;
   modules: any[];
@@ -100,7 +100,7 @@ export class App extends ViewModel {
   breadcrumbs: { title: string, path: string }[];
   gameInfo: GameClientInfo = new GameClientInfo(null, null, null);
 
-  constructor(ui: UiContext, public http: HttpClient, private login: Login, private routeHandler: RouteHandler, doubleClick, private taskQueue: TaskQueue, private client: Client, private basketService: BasketService, private ls: LS, private clientMissingHandler: ClientMissingHandler, private signaler: BindingSignaler) {
+  constructor(ui: UiContext, public http: HttpClient, private login: Login, private routeHandler: RouteHandler, private taskQueue: TaskQueue, private client: Client, private basketService: BasketService, private ls: LS, private clientMissingHandler: ClientMissingHandler, private signaler: BindingSignaler) {
     super(ui);
     var site = this.w6.url.site || "main";
     this.modules = [new FeaturesModule()];

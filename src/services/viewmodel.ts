@@ -29,11 +29,23 @@ export class ViewModel extends Base {
     this.tools.Debug.log("set changed: ", value);
     this._changed = value;
   }
-  constructor(private ui: UiContext) { super(); }
+
+  constructor(private ui: UiContext) {
+    super();
+  }
+
+  get isNavigating() { return this.router.isNavigating; }
 
   get tools() { return Tools; }
 
-  protected notifyAngular = () => angular.element(document).scope().$apply();
+  // This works around the issue of routing for Angular while Aurelia is involved..angular
+  // TODO: Better workaround than the rootscope apply?
+  protected notifyAngular = () => {
+    if (this.router.isNavigating) this.observeEx(x => x.isNavigating).skip(1).where(x => !x).take(1).subscribe(x => this.notifyAngularInternal())
+    else this.notifyAngularInternal();
+  }
+
+  notifyAngularInternal = () => angular.element(document).scope().$apply();
 
   handleFooterIf(sw: boolean) {
     if (this.features.uiVirtualization)
@@ -57,17 +69,23 @@ export class ViewModel extends Base {
   }
 
   handleAngularHeader = () => {
-    // This works around the issue of routing for Angular while Aurelia is involved..angular
-    // TODO: Better workaround than the rootscope apply?
-    let iv = setInterval(() => {
-      let row = angular.element("#root-content-row");
-      if (row.length == 0) return;
-      clearInterval(iv);
-      window.w6Cheat.aureliaReady = true;
-      this.tools.Debug.log("AURELIA: angular vm loaded");
-      this.notifyAngular();
-      $("#root-content-row").prepend($("#content"));
-    }, 500);
+    let row = angular.element("#root-content-row");
+    // TODO: Hide the row until isNavigating is done..
+    if (row.length == 0) {
+      let iv = setInterval(() => {
+        let row = angular.element("#root-content-row");
+        if (row.length == 0) return;
+        clearInterval(iv);
+        this.handleAngularHeaderInternal(row);
+      }, 50);
+    } else this.handleAngularHeaderInternal(row);
+  }
+
+  handleAngularHeaderInternal = (row: JQuery) => {
+    window.w6Cheat.aureliaReady = true;
+    this.tools.Debug.log("AURELIA: angular vm loaded");
+    this.notifyAngular();
+    row.prepend($("#content"));
   }
 
   reverseAngularHeader = () => $("#root-content-row").append($("#content"));

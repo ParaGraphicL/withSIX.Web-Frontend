@@ -31,7 +31,7 @@ module.exports = function(grunt) {
         files: [
           '../Libraries/SN.withSIX.UpdateBreeze.Library/bin/Release/SN.withSIX.UpdateBreeze.Library.dll'
         ],
-        tasks: ['shell:build_metadata', 'shell:toast:metadata']
+        tasks: ['metadata', 'shell:toast:metadata']
       }
     },
     bgShell: {
@@ -44,6 +44,11 @@ module.exports = function(grunt) {
       }
     },
     shell: {
+      prepare: {
+        command: function() {
+          return 'gulp scripts build-system build-other'
+        }
+      },
       build_metadata: {
         // Target
         command: function() {
@@ -348,8 +353,9 @@ module.exports = function(grunt) {
   grunt.registerTask('buildallPublish', ['buildBase', 'uglify:bower', 'ngtemplates', 'buildApp']); // , 'shell:bundle'
   // For development
   grunt.registerTask('watchAll', ['buildall', 'bgShell:watchGulp', 'watch']);
-  // General
-  grunt.registerTask('buildall', ['buildBase', 'shell:build_metadata']);
+  grunt.registerTask('metadata', ['shell:prepare', 'shell:build_metadata'])
+    // General
+  grunt.registerTask('buildall', ['buildBase', 'metadata']);
   grunt.registerTask('buildBase', ['shell:bower', 'bower_concat', 'buildAurelia', 'uglify:libs'])
   grunt.registerTask('buildApp', ['uglify:app']); // 'uglify:misc', 'uglify:admin'
   grunt.registerTask('buildAurelia', ['shell:prepare_release', 'shell:prod']);

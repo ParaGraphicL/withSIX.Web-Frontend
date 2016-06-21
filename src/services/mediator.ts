@@ -1,4 +1,3 @@
-import {UploadService} from './legacy';
 import breeze from 'breeze-client';
 import { IUserInfo } from './dtos';
 import { W6Context } from './w6context'
@@ -120,7 +119,7 @@ export function requireUser() {
 
 let ls = <{ on: (key: string, fn) => void; set: (key: string, value) => void }><any>require('local-storage');
 
-@inject(W6Context, UploadService)
+@inject(W6Context)
 export class DbQuery<TRequest, TResponse> implements IRequestHandler<TRequest, TResponse> {
   protected ui: UiContext;
   static pageSize = 12;
@@ -128,7 +127,7 @@ export class DbQuery<TRequest, TResponse> implements IRequestHandler<TRequest, T
   get tools() { return Tools; }
 
   // TODO: Move the w6context!!
-  constructor(protected context: W6Context, protected upload: UploadService) {
+  constructor(protected context: W6Context) {
     this.ui = Container.instance.get(UiContext);
   }
   handle(request: TRequest): Promise<TResponse> { throw "must implement handle method"; }
@@ -224,9 +223,9 @@ export interface IFilter<T> {
 export interface IFilterInfo<T> { search: { input: string, fields: string[] }, sortOrder: ISort<T>, enabledFilters: IFilter<T>[] }
 
 
-@inject(W6Context, Client, UploadService, BasketService)
+@inject(W6Context, Client, BasketService)
 export class DbClientQuery<TRequest, TResponse> extends DbQuery<TRequest, TResponse> {
-  constructor(dbContext, protected client: Client, uploadService, protected basketService: BasketService) { super(dbContext, uploadService); }
+  constructor(dbContext, protected client: Client, protected basketService: BasketService) { super(dbContext); }
   handle(request: TRequest): Promise<TResponse> { throw "must implement handle method"; }
 
 }

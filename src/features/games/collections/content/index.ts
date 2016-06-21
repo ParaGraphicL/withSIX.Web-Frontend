@@ -29,5 +29,5 @@ class GetModsHandler extends DbQuery<GetMods, IPaginated<IMod>> {
     };
   }
 
-  private desiredFields = ["id", "name", "packageName", "group", "groupId", "gameId", "game", "slug", "avatar", "avatarUpdatedAt", "tags", "description", "author", "authorText", "size", "sizePacked", "followersCount", "modVersion", "stat", "latestStableVersion"]
+  private desiredFields = ModHelper.interestingFields
 }

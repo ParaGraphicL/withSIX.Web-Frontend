@@ -1,5 +1,4 @@
 
-var UUIDjs: any = require('uuid-js');
 import VersionCompare from 'version_compare';
 
 String.prototype.indexOfIgnoreCase = function(prefix) {
@@ -449,6 +448,7 @@ export module Tools {
   } // guid_to_base64()
 
   function base64ToGuid(g, le) {
+    var UUIDjs: any = require('uuid-js');
     var s = UUIDjs.fromBinary(atob(g)).toString();
     if (le) {
       s = s.replace(/[^0-9a-f]/ig, '').toLowerCase();
@@ -815,17 +815,19 @@ export module Tools {
   }
 }
 
-if (window.location.host.includes("withsix.com")) {
-  Tools.setEnvironment(0);
-} else if (window.location.host.includes("staging.withsix.net")) {
-  Tools.setEnvironment(1);
-} else if (window.location.host.includes("localhost")) {
-  Tools.setEnvironment(2);
-} else {
-  Tools.setEnvironment(3);
-}
+export function setupEnv() {
+  if (window.location.host.includes("withsix.com")) {
+    Tools.setEnvironment(0);
+  } else if (window.location.host.includes("staging.withsix.net")) {
+    Tools.setEnvironment(1);
+  } else if (window.location.host.includes("localhost")) {
+    Tools.setEnvironment(2);
+  } else {
+    Tools.setEnvironment(3);
+  }
 
-window.w6Cheat = <IW6Cheat>{
-  isClient: window.six_client != null,
-  api: <IApi>{}
-};
+  window.w6Cheat = <IW6Cheat>{
+    isClient: window.six_client != null,
+    api: <IApi>{}
+  };
+}
