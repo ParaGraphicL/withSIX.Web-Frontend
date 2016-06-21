@@ -1,3 +1,7 @@
+import {Tools} from './tools.jsc';
+import {EntityExtends} from './entity-extends.jsc';
+//import breeze from './breeze.debug.jsc';
+
 export module TypeScriptTools {
 
   // ReSharper disable InconsistentNaming
