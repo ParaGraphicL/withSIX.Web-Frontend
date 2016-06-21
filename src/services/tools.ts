@@ -815,17 +815,19 @@ export module Tools {
   }
 }
 
-if (window.location.host.includes("withsix.com")) {
-  Tools.setEnvironment(0);
-} else if (window.location.host.includes("staging.withsix.net")) {
-  Tools.setEnvironment(1);
-} else if (window.location.host.includes("localhost")) {
-  Tools.setEnvironment(2);
-} else {
-  Tools.setEnvironment(3);
-}
+export function setupEnv() {
+  if (window.location.host.includes("withsix.com")) {
+    Tools.setEnvironment(0);
+  } else if (window.location.host.includes("staging.withsix.net")) {
+    Tools.setEnvironment(1);
+  } else if (window.location.host.includes("localhost")) {
+    Tools.setEnvironment(2);
+  } else {
+    Tools.setEnvironment(3);
+  }
 
-window.w6Cheat = <IW6Cheat>{
-  isClient: window.six_client != null,
-  api: <IApi>{}
-};
+  window.w6Cheat = <IW6Cheat>{
+    isClient: window.six_client != null,
+    api: <IApi>{}
+  };
+}
