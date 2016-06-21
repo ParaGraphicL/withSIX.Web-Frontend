@@ -29,11 +29,21 @@ export class ViewModel extends Base {
     this.tools.Debug.log("set changed: ", value);
     this._changed = value;
   }
-  constructor(private ui: UiContext) { super(); }
+
+  constructor(private ui: UiContext) {
+    super();
+  }
+
+  get isNavigating() { return this.router && this.router.isNavigating; }
 
   get tools() { return Tools; }
 
-  protected notifyAngular = () => angular.element(document).scope().$apply();
+  protected notifyAngular = () => {
+    if (this.router.isNavigating) this.observeEx(x => x.isNavigating).skip(1).where(x => !x).take(1).subscribe(x => this.notifyAngularInternal())
+    else this.notifyAngularInternal();
+  }
+
+  notifyAngularInternal = () => angular.element(document).scope().$apply();
 
   handleFooterIf(sw: boolean) {
     if (this.features.uiVirtualization)
