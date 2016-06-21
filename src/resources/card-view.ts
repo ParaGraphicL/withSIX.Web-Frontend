@@ -20,6 +20,8 @@ export class CardView<T> extends ViewModel {
 
   $parent;
 
+  get renderAds() { return this.w6.renderAds && this.showAds && this.ads && this.ads.length > 0 }
+
   bind(context) {
     this.$parent = context;
     this.cardContainerCls = `col-sm-${12 / this.cardColumns[0]} col-md-${12 / this.cardColumns[1]} col-lg-${12 / this.cardColumns[2]} col-xl-${12 / this.cardColumns[3]}`;
@@ -29,7 +31,7 @@ export class CardView<T> extends ViewModel {
   calculateIndex(i: number) {
     let originalIndex = i;
     i++;
-    if (!this.showAds || !this.ads || this.ads.length == 0) return i;
+    if (!this.renderAds) return i;
     this.ads.forEach(x => { if (originalIndex > x) i++; });
     return i;
   }
