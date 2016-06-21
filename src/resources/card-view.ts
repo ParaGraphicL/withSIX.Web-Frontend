@@ -23,7 +23,7 @@ export class CardView<T> extends ViewModel {
   bind(context) {
     this.$parent = context;
     this.cardContainerCls = `col-sm-${12 / this.cardColumns[0]} col-md-${12 / this.cardColumns[1]} col-lg-${12 / this.cardColumns[2]} col-xl-${12 / this.cardColumns[3]}`;
-    this.handleClearFix = this.cardColumns.filter(x => x > 1).length != this.cardColumns.length;
+    this.handleClearFix = this.cardColumns.asEnumerable().any(x => x > 1);
   }
 
   calculateIndex(i: number) {
