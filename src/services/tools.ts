@@ -815,7 +815,7 @@ export module Tools {
   }
 }
 
-export function setupEnv() {
+function setupEnv() {
   if (window.location.host.includes("withsix.com")) {
     Tools.setEnvironment(0);
   } else if (window.location.host.includes("staging.withsix.net")) {
@@ -831,3 +831,5 @@ export function setupEnv() {
     api: <IApi>{}
   };
 }
+
+if (window && window.location) setupEnv();
