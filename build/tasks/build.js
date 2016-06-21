@@ -68,15 +68,21 @@ gulp.task('scripts', ['clean-scripts'], function() {
 // the plumber() call prevents 'pipe breaking' caused
 // by errors from other gulp plugins
 // https://www.npmjs.com/package/gulp-plumber
-// gulp.task('build-system', function () {
-//   return gulp.src(paths.source)
-//     .pipe(plumber({errorHandler: notify.onError('Error: <%= error.message %>')}))
-//     .pipe(changed(paths.output, {extension: '.js'}))
-//     .pipe(sourcemaps.init({loadMaps: true}))
-//     .pipe(to5(assign({}, compilerOptions.system())))
-//     .pipe(sourcemaps.write(paths.output))
-//     .pipe(gulp.dest(paths.output));
-// });
+gulp.task('build-system', function() {
+  return gulp.src(paths.source)
+    .pipe(plumber({
+      errorHandler: notify.onError('Error: <%= error.message %>')
+    }))
+    .pipe(changed(paths.output, {
+      extension: '.js'
+    }))
+    .pipe(sourcemaps.init({
+      loadMaps: true
+    }))
+    .pipe(to5(assign({}, compilerOptions.base())))
+    .pipe(sourcemaps.write(paths.output))
+    .pipe(gulp.dest(paths.output));
+});
 
 gulp.task('build-misc', function() {
   var source = paths.otherMiscSource;
