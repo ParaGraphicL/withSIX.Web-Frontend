@@ -3,7 +3,7 @@
 		<compose view="../_header.html"></compose>
 		<filters filters.ref="filteredComponent" search-input-placeholder.bind="searchInputPlaceholder" typeahead-options.bind="typeahead" items.bind="items" filters.bind="filters" search-fields.bind="searchFields" sort.bind="sort" view-types.bind="availableViewTypes"></filters>
 
-		<card-view if.bind="filteredComponent.selectedViewType == 0" show-ads.one-time="true" items.bind="filteredComponent.filteredItems" view-path="features/profile/content/" item-type.bind="itemType">
+		<card-view if.bind="filteredComponent.selectedViewType == 0" card-columns.one-time="[2,2,3,3]" show-ads.one-time="true" items.bind="filteredComponent.filteredItems" view-path="features/profile/content/" item-type.bind="itemType">
 			<template replace-part="prepend-items">
 				<div class.bind="cardContainerCls">
 					<div class="card ${cardCls} new-item">
