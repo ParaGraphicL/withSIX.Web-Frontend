@@ -1,36 +1,45 @@
 <html>
+
 <head>
-    <title>Typescript Definition Generator</title>
-    <style>
-        code { white-space: pre; }
+  <title>Typescript Definition Generator</title>
+  <style>
+    code {
+      white-space: pre;
+    }
 
-        .CodeMirror { height: initial !important; }
-    </style>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/q.js/1.0.0/q.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.6.0/codemirror.js"></script>
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.6.0/codemirror.css"/>
-    <script src="../../../dist_legacy/bower.min.js"></script>
-    <script src="../../misc/tk.js"></script>
-    <script src="../../misc/tools.js"></script>
-    <script src="../../misc/withsix.js"></script>
-    <script src="../../misc/Window.js/../misc/downloads.js"></script><script src="../../misc/downloads.js"></script>
-    <script src="../../misc/console.js"></script>
-    <script src="../../app/components/entity-extends.js"></script>
-    <script src="CodeMirrorTypeScript.js"></script>
-    <script src="BreezeGenerator.js"></script>
-    <script type="text/javascript">
-        $(document).ready(function() {
+    .CodeMirror {
+      height: initial !important;
+    }
 
-            var a = new MyApp.TypeScriptTools.TypeScriptGenerator('https://api2.local.withsix.net/api/breeze/withsix');
+  </style>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/q.js/1.0.0/q.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.6.0/codemirror.js"></script>
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.6.0/codemirror.css" />
+  <script src="../../../dist_legacy/bower.min.js"></script>
+  <script src="../../../dist/services/tk.js"></script>
+  <script src="../../../dist/services/tools.js"></script>
+  <script src="../../../dist/services/withSIX.js"></script>
+  <!-- <script src="../../misc/Window.js/../misc/downloads.js"></script>
+    <script src="../../misc/downloads.js"></script> -->
+  <script src="../../../dist/services/entity-extends.js"></script>
+  <script src="CodeMirrorTypeScript.js"></script>
+  <script src="BreezeGenerator.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function() {
 
-            a.printTypeScript($('#stuff'));
+      var a = new MyApp.TypeScriptTools.TypeScriptGenerator('https://api2.local.withsix.net/api/breeze/withsix');
 
-        });
-    </script>
+      a.printTypeScript($('#stuff'));
+
+    });
+
+  </script>
 </head>
-<body>
-<div id="stuff">
 
-</div>
+<body>
+  <div id="stuff">
+
+  </div>
 </body>
+
 </html>
