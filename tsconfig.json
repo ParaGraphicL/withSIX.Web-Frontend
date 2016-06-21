@@ -225,8 +225,6 @@
         "./src/services/viewmodel.ts",
         "./src/services/w6context.ts",
         "./src/services/withSIX.ts",
-        "./src_legacy/app/internal/BreezeGenerator.ts",
-        "./src_legacy/app/internal/CodeMirrorTypeScript.ts",
         "./src_legacy/misc/Window.ts",
         "./typings/custom/angular-local-storage/angular-local-storage.d.ts",
         "./typings/custom/angular-ui/angular-ui-router.d.ts",
