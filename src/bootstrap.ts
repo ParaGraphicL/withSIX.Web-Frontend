@@ -35,8 +35,6 @@ breeze.DataType.parseDateFromServer = function(source) {
   return date.toDate();
 };
 
-setupEnv();
-
 bootstrap(async (aurelia: Aurelia) => {
 
   Tools.Debug.log("AURELIA: configuring aurelia");
