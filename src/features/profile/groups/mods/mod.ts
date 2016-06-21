@@ -26,8 +26,6 @@ export class Mod extends ViewModelOf<IMod> {
       // TODO: This should only be here if group admin instead?
       if (this.isLoggedIn)
         d(this.addToCollections = uiCommand2("Add to ...", async () => this.dialog.open({ viewModel: AddModsToCollections, model: { gameId: this.model.gameId, mods: [{ id: this.model.id, name: this.model.name, packageName: this.model.packageName, groupId: this.model.groupId }] } }), { icon: 'withSIX-icon-Nav-Collection' }));
-
-
     });
     if (this.isLoggedIn)
       this.menuItems.push(new MenuItem(this.addToCollections));
