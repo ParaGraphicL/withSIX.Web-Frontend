@@ -36,6 +36,9 @@ $bg: $colorSixBlue;
     &:hover {
       text-decoration: none;
     }
+    &:focus {
+      outline: none;
+    }
     .icon {
       color: white;
       text-align: center;
@@ -49,7 +52,7 @@ $bg: $colorSixBlue;
       top: 4px;
       left: 4px;
       position: absolute;
-      //display: none;
+      display: none;
     }
   }
   .the-bar {
