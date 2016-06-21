@@ -5005,12 +5005,7 @@ export module Play.Mods {
       super($scope, logger, $q, $timeout);
       Tools.Debug.log("Scope: ", $scope);
       $scope.createBlogPost = false;
-      /*
-      Tools.Debug.log(<any>BreezeEntityGraph.AccountWall.$name);
-
-      */
       $scope.model.entityModule = BreezeEntityGraph.ModEntityModule.createEntity();
-      //$scope.model.entityModule.entityAspect.loadNavigationProperty(BreezeEntityGraph.EntityModule.wall().$name);
 
       $scope.createBlogSection = () => {
         if ($scope.model.entityModule.wall != null)

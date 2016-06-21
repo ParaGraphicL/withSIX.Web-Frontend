@@ -244,14 +244,6 @@ export module Connect {
               controller: 'ProfileMessagesController',
               resolve: setupQuery(Profile.GetProfileMessagesQuery),
             });
-
-            // $routeProvider.
-            //     when('/wall', 'wall').
-            //     segment('wall', {
-            //         controller: 'WallController',
-            //         templateUrl: '/src_legacy/app/connect/wall/index.html',
-            //         resolve: setupQuery('GetWallQuery')
-            //     });
           }
         ]);
     }
