@@ -104,9 +104,9 @@ export module MyApp {
 
   export class MainAppController extends BaseController {
     static $name = "MainAppController";
-    static $inject = ['$scope', 'usSpinnerService', 'logger', 'w6', '$location', '$q', '$timeout', '$rootScope', '$anchorScroll', 'aur.eventBus'];
+    static $inject = ['$scope', 'usSpinnerService', 'logger', 'w6', '$location', '$q', '$timeout', '$rootScope', '$anchorScroll', 'aur.eventBus', 'DoubleClick'];
 
-    constructor($scope, private $spinner, logger, private w6: W6, private $location: ng.ILocationService, $q: ng.IQService, private $timeout: ng.ITimeoutService, private $rootScope: IRootScope, $anchorScroll, private eventBus: EventAggregator) {
+    constructor($scope, private $spinner, logger, private w6: W6, private $location: ng.ILocationService, $q: ng.IQService, private $timeout: ng.ITimeoutService, private $rootScope: IRootScope, $anchorScroll, private eventBus: EventAggregator, private dfpForLoading) {
       super($scope, logger, $q);
 
       $rootScope.logout = () => w6.logout();
