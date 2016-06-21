@@ -281,7 +281,7 @@
             import {W6} from './withSIX'
 import breeze from 'breeze-client';
 
-import {EntityExtends} from './entity-extends;
+import {EntityExtends} from './entity-extends';
 export * from './entity-extends';
 
 // DTOS
