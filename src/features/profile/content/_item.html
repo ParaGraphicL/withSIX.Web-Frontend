@@ -38,7 +38,7 @@
             <div class="clearfix"></div>
           </div>
 
-          <div class="title">
+          <div class="title" title.bind="model.name">
             <span if.bind="typeScopeIcon" class="icon ${typeScopeIcon} micro"></span>
             <span if.bind="scopeIcon" class="icon ${scopeIcon} micro"></span>
             <a if.bind="path" href="${w6.url.play}/${path}">${model.name}</a>

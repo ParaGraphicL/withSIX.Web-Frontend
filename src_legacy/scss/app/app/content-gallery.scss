@@ -342,7 +342,7 @@ sx-content-gallery {
       .title {
         line-height: 1;
         font-weight: $font-weight-bold;
-        @include limit-lines(2, 15px, 1);
+        @include limit-lines(1, $font-size-base, 1);
         span {
           display: inline-block;
           line-height: 1;
