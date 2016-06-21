@@ -29,10 +29,8 @@ export class CardView<T> extends ViewModel {
   calculateIndex(i: number) {
     let originalIndex = i;
     i++;
-    if (!this.ads || this.ads.length == 0) return i;
-    this.ads.forEach(x => {
-      if (originalIndex > x) i++;
-    });
+    if (!this.showAds || !this.ads || this.ads.length == 0) return i;
+    this.ads.forEach(x => { if (originalIndex > x) i++; });
     return i;
   }
 
