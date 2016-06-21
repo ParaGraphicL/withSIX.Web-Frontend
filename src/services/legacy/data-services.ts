@@ -1,6 +1,7 @@
 import {W6Context, IQueryResult} from '../w6context';
 import breeze from 'breeze-client';
 import {Tools} from '../tools'
+import {ModHelper} from '../helpers';
 import {IBreezeCollection, IBreezeMod, IBreezeMission} from '../dtos';
 import {inject} from 'aurelia-framework';
 
@@ -353,7 +354,7 @@ export class ModDataService extends W6ContextWrapper {
     return this.context.executeQueryT<IBreezeMod>(query);
   }
 
-  private getDesiredFields = query => query.select(["id", "name", "packageName", "group", "groupId", "gameId", "game", "slug", "avatar", "avatarUpdatedAt", "tags", "description", "author", "authorText", "size", "sizePacked", "followersCount", "modVersion", "stat", "latestStableVersion"]);
+  private getDesiredFields = query => query.select(ModHelper.interestingFields);
 
   public getAllModsByAuthor(authorSlug: string, options): Promise<IQueryResult<IBreezeMod>> {
     Tools.Debug.log("getting mods by author: " + authorSlug);
