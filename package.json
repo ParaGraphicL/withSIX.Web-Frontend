@@ -73,7 +73,7 @@
     "yargs": "^4.3.2"
   },
   "scripts": {
-    "global-packages": "npm i -g grunt-cli bower gulp jspm jspm-bower-endpoint protractor karma",
+    "global-packages": "npm i -g grunt-cli bower gulp jspm jspm-bower-endpoint protractor karma typings",
     "build-legacy": "gulp build-global-scss scripts && gulp build-other build-misc && grunt uglify:app uglify:misc",
     "dev": "webpack-dev-server --config webpack.config.js --hot --inline --progress --devtool eval",
     "start": "npm run dev",
