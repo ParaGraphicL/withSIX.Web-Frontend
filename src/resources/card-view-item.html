@@ -1,19 +1,31 @@
 <template>
-  <div class.bind="cardContainerCls">
+  <div class.bind="cardContainerCls" class="item-index-${$index}">
     <div class="card ${cardCls}">
       <template replaceable part="item-template">
         <compose model.bind="item" view.bind="view" view-model="${viewPath}${item.type || itemType}"></compose>
       </template>
     </div>
   </div>
-  <div class.bind="cardContainerCls" if.bind="w6.renderAds && showAds && $index == ads[0]">
+  <div if.bind="calculateIndex($index) % 2 == 0" class="clearfix visible-sm-block"></div>
+  <div if.bind="calculateIndex($index) % 3 == 0" class="clearfix visible-md-block"></div>
+  <div if.bind="calculateIndex($index) % 4 == 0" class="clearfix visible-lg-block"></div>
+  <div if.bind="calculateIndex($index) % 4 == 0" class="clearfix visible-xl-block"></div>
+  <div class.bind="cardContainerCls" class="item-index-${$index}" if.bind="w6.renderAds && showAds && $index == ads[0]">
     <div class="card ${cardCls}">
       <ad-unit unit-id="angular-ad1"></ad-unit>
     </div>
+    <div if.bind="calculateIndex($index + 1) % 2 == 0" class="clearfix visible-sm-block"></div>
+    <div if.bind="calculateIndex($index + 1) % 3 == 0" class="clearfix visible-md-block"></div>
+    <div if.bind="calculateIndex($index + 1) % 4 == 0" class="clearfix visible-lg-block"></div>
+    <div if.bind="calculateIndex($index + 1) % 4 == 0" class="clearfix visible-xl-block"></div>
   </div>
-  <div class.bind="cardContainerCls" if.bind="w6.renderAds && showAds && $index == ads[1]">
+  <div class.bind="cardContainerCls" class="item-index-${$index}" if.bind="w6.renderAds && showAds && $index == ads[1]">
     <div class="card ${cardCls}">
       <ad-unit unit-id="angular-ad2"></ad-unit>
     </div>
+    <div if.bind="calculateIndex($index + 1) % 2 == 0" class="clearfix visible-sm-block"></div>
+    <div if.bind="calculateIndex($index + 1) % 3 == 0" class="clearfix visible-md-block"></div>
+    <div if.bind="calculateIndex($index + 1) % 4 == 0" class="clearfix visible-lg-block"></div>
+    <div if.bind="calculateIndex($index + 1) % 4 == 0" class="clearfix visible-xl-block"></div>
   </div>
 </template>

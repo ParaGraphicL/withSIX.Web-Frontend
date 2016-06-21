@@ -21,5 +21,15 @@ export class CardView<T> extends ViewModel {
     this.$parent = context;
   }
 
+  calculateIndex(i: number) {
+    let originalIndex = i;
+    i++;
+    if (!this.ads || this.ads.length == 0) return i;
+    this.ads.forEach(x => {
+      if (originalIndex > x) i++;
+    });
+    return i;
+  }
+
   get itemsMapToArrayWorkaround() { return this.itemsMap == null ? null : Array.from(this.itemsMap, (x, i) => x[1]); }
 }
