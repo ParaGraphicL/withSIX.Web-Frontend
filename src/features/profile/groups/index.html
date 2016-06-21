@@ -2,7 +2,9 @@
   <section class="au-animate container-fluid" id="my-groups">
     <labs></labs>
     <div>
-      <router-view></router-view>
+      <loading-router router.bind="router">
+        <router-view></router-view>
+      </loading-router>
     </div>
   </section>
 </template>

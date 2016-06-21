@@ -28,6 +28,8 @@
         </div>
       </div>
     </div>
-    <router-view></router-view>
+    <loading-router router.bind="router">
+      <router-view></router-view>
+    </loading-router>
   </section>
 </template>

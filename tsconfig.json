@@ -185,6 +185,7 @@
         "./src/resources/labs.ts",
         "./src/resources/list-view.ts",
         "./src/resources/loading-composer.ts",
+        "./src/resources/loading-router.ts",
         "./src/resources/markdown.ts",
         "./src/resources/menu.ts",
         "./src/resources/nav-bar.ts",

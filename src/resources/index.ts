@@ -10,6 +10,7 @@ export function configure(config: FrameworkConfiguration) {
   config.globalResources('./tab-view/tab-view-render');
   config.globalResources('./filters');
   config.globalResources('./typeahead');
+  config.globalResources('./loading-router');
   config.globalResources('./command-button');
   config.globalResources('./optional-link');
 

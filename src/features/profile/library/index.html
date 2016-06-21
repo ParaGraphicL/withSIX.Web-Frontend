@@ -1,5 +1,7 @@
 <template>
   <section class="au-animate container-fluid" id="my-library">
-    <router-view></router-view>
+    <loading-router router.bind="router">
+      <router-view></router-view>
+    </loading-router>
   </section>
 </template>

@@ -4,7 +4,9 @@
       <menu items.bind="menuItems" menu-cls="well nav nav-pills nav-stacked"></menu>
     </div>
     <div style="margin-left: 192px">
-      <router-view></router-view>
+      <loading-router router.bind="router">
+        <router-view></router-view>
+      </loading-router>
     </div>
   </section>
 </template>

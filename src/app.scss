@@ -422,6 +422,13 @@ menu {
   font-size: 2.5em;
   margin-top: 0;
 }
+.w6-loader {
+  font-size: 64px;
+  text-align: center;
+  vertical-align: center;
+  height: 100%;
+  color: $colorSixGray;
+}
 .library-menu {
   .well {
     background-color: initial;

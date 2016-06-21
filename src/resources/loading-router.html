@@ -1,0 +1,9 @@
+<template>
+  <wrapper show.bind="!router.isNavigating">
+    <content></content>
+  </wrapper>
+
+  <div class="container-fluid w6-loader" show.bind="router.isNavigating">
+    <span class="icon withSIX-icon-Logo-SIX"></span>
+  </div>
+</template>
