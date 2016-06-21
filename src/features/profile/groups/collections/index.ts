@@ -20,7 +20,7 @@ export class Index extends ViewModel {
     let result = await this.dialog.open({
       viewModel: CreateCollectionDialog,
       model: {
-        game: { id: "9DE199E3-7342-4495-AD18-195CF264BA5B", slug: "arma-3" },
+        game: this.w6.activeGame,
         model: { groupId: this.group.id }
       }
     });
@@ -32,6 +32,7 @@ export class GetGroupCollections extends Query<IGroup> { constructor(public id: 
 export class GetGroupCollectionsHandler extends DbQuery<GetGroupCollections, IGroup> {
   async handle(request: GetGroupCollections): Promise<IGroup> {
     var r = await this.context.getCustom<ICollection[]>("groups/" + request.id + '/collections');
+    r.forEach(x => { let xAny = (<any>x); xAny.gameSlug = x.game.slug; xAny.author = xAny.author.displayName });
     return {
       id: request.id,
       collections: r

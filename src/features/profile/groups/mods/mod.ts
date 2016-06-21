@@ -23,11 +23,12 @@ export class Mod extends ViewModelOf<IMod> {
     this.url = `/p/${model.gameSlug}/mods/${model.id.toShortId()}/${model.name.sluggifyEntityName()}`;
     this.avatarUrl = this.w6.url.getUsercontentUrl2(model.avatar, model.avatarUpdatedAt);
     this.subscriptions.subd(d => {
-      // TODO: This should only be here if group admin?
+      // TODO: This should only be here if group admin instead?
       if (this.isLoggedIn)
         d(this.addToCollections = uiCommand2("Add to ...", async () => this.dialog.open({ viewModel: AddModsToCollections, model: { gameId: this.model.gameId, mods: [{ id: this.model.id, name: this.model.name, packageName: this.model.packageName, groupId: this.model.groupId }] } }), { icon: 'withSIX-icon-Nav-Collection' }));
     });
-    this.menuItems.push(new MenuItem(this.addToCollections));
+    if (this.isLoggedIn)
+      this.menuItems.push(new MenuItem(this.addToCollections));
   }
 
   get defaultAssetUrl() { return this.assets.defaultAssetUrl }
