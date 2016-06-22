@@ -156,6 +156,7 @@
         "./src/features/user-profile/content/mods/index.ts",
         "./src/features/user-profile/index.ts",
         "./src/framework.ts",
+        "./src/legacy.ts",
         "./src/legacy/admin.ts",
         "./src/legacy/app-base.ts",
         "./src/legacy/app.ts",
