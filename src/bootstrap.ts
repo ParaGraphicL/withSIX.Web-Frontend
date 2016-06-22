@@ -160,13 +160,11 @@ bootstrap(async (aurelia: Aurelia) => {
 
     const client: Client = Container.instance.get(Client);
     // WARNING CANT PASS THE ROUTER INSTANCE HERE OR Aurelia STOPS ROUTING
-    const w6 = window.w6Cheat = new W6(w6Urls, !userInfo.isPremium, window.six_client != null, null, userInfo, client, Container.instance.get(Api));
+    const w6 = window.w6Cheat = new W6(w6Urls, userInfo, client, Container.instance.get(Api));
     Container.instance.registerSingleton(W6, () => w6);
     legacySetup({
       dfp: { publisherId: "19223485" },
       adsense: { client: "ca-pub-8060864068276104" },
-      environment: Tools.getEnvironment(),
-      w6: window.w6Cheat
     });
     (<any>client).connection.promise(); // kick off the connection early
 
