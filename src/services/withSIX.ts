@@ -80,7 +80,7 @@ export class W6Urls {
 
   get tools() { return Tools }
 
-environment = Tools.getEnvironment();
+  environment = Tools.getEnvironment();
 
   private toSsl(host) { return host.replace(":9000", ":9001"); }
   private fromSsl(host) { return host.replace(":9001", ":9000"); }
@@ -475,6 +475,25 @@ export class W6 {
     let settings = window.localStorage.getItem('w6.settings');
     this.settings = settings ? JSON.parse(settings) : {};
     this.activeGame = this.deserializeActiveGame();
+    let hash = window.location.hash;
+
+    let hasSslRedir = window.location.hash.includes('sslredir=1');
+    let hasLoggedIn = window.location.hash.includes('loggedin=1');
+    if (hasSslRedir) {
+      this.redirected = true;
+      hash = Tools.cleanupHash(hash.replace(/\&?sslredir=1/g, ""));
+    }
+    if (hasLoggedIn) {
+      hash = Tools.cleanupHash(hash.replace(/\&?loggedin=1/g, ""))
+      this.redirectedWasLoggedIn = true;
+    }
+    if (hasSslRedir || hasLoggedIn) this.updateHistory(window.location.pathname + window.location.search + hash);
+  }
+
+
+  updateHistory = (desired) => {
+    Tools.Debug.log("$$$ updating history", desired);
+    history.replaceState("", document.title, desired)
   }
 
   deserializeActiveGame() {

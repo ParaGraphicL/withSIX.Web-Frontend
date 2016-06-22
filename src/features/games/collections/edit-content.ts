@@ -7,7 +7,7 @@ export class EditContent extends Show {
 
     // pff
     this.timeout = setInterval(() => {
-      if (window.w6Cheat.collection) {
+      if (this.w6.collection) {
         this.enableEditMode();
         clearInterval(this.timeout);
         this.timeout = null;

@@ -177,7 +177,7 @@ bootstrap(async (aurelia: Aurelia) => {
     });
     (<any>client).connection.promise(); // kick off the connection early
 
-    await legacyBootAngular();
+    await legacyBootAngular(w6Urls);
   }
 
   async function startApp() {
@@ -204,7 +204,7 @@ export class ContainerSetup {
     this.registerAngularSingletons(['commandExecutor']);
 
     this.instance.registerSingleton(Mediator,
-      () => new ErrorLoggingMediatorDecorator(new InjectingMediatorDecorator(new Mediator(), this.instance.get(W6)), this.instance.get(Toastr), this.instance.get(ClientMissingHandler)));
+      () => new ErrorLoggingMediatorDecorator(new InjectingMediatorDecorator(new Mediator(), this.instance.get(W6)), this.instance.get(Toastr), this.instance.get(ClientMissingHandler), this.instance.get(W6)));
   }
 
   registerAngularSingletons(services) {

@@ -107,7 +107,7 @@ export class App extends ViewModel {
       this.firefoxTimeoutPassed = true;
     }, 15 * 1000);
 
-    window.w6Cheat.navigate = (url: string) => this.navigateInternal(url);
+    this.w6.navigate = (url: string) => this.navigateInternal(url);
     this.subscriptions.subd(d => {
       // TODO: we might be better off abstracting this away in a service instead, so that we dont have all these eventclasses laying around just for interop from Angular...
       d(this.eventBus.subscribe(RestoreBasket, this.restoreBasket));
@@ -225,14 +225,14 @@ export class App extends ViewModel {
   activateNg() {
     if (!this.first) {
       let iv = setInterval(() => {
-        if (window.w6Cheat.aureliaReady) return;
+        if (this.w6.aureliaReady) return;
         let row = angular.element("#root-content-row");
         if (row.length == 0) return;
         clearInterval(iv);
         this.tools.Debug.log("activating ng from app..");
         let el = angular.element("#content");
         row.append(el)
-        window.w6Cheat.aureliaReady = true;
+        this.w6.aureliaReady = true;
       }, 100);
       this.first = true;
     }
@@ -316,7 +316,7 @@ export class App extends ViewModel {
         `Client v${newVersion} is available for download, click here to update now.`,
         "Sync Update available!", {
           timeOut: 10 * 1000
-        }).then(x => x ? window.w6Cheat.navigate("/update") : '');
+        }).then(x => x ? this.navigateInternal("/update") : '');
     }, 3000);
   };
 
@@ -483,7 +483,7 @@ class SslStep extends AuthorizeStep {
     if (isHttps) {
       if (!isPremium && matches.asEnumerable().all(x => !x.ssl)) {
         // Problem: We don't know if we got redirected for premium purposes, or because of required SSL, so hm
-        if (window.w6Cheat.redirected && !isLoggedIn) {
+        if (this.w6.redirected && !isLoggedIn) {
           setTimeout(() => {
             //var lastInstruction = routingContext.nextInstructions.asEnumerable().last();
             this.login.login(); // lastInstruction.fragment + lastInstruction.queryString
@@ -502,7 +502,7 @@ class SslStep extends AuthorizeStep {
         return next.cancel(this.getRedirect(LoginBase.toHttps(isLoggedIn)));
       }
     }
-    if (window.w6Cheat.redirected && !isLoggedIn && window.w6Cheat.redirectedWasLoggedIn) {
+    if (this.w6.redirected && !isLoggedIn && this.w6.redirectedWasLoggedIn) {
       setTimeout(() => {
         //var lastInstruction = routingContext.nextInstructions.asEnumerable().last();
         this.login.login(); // lastInstruction.fragment + lastInstruction.queryString

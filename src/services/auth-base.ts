@@ -176,7 +176,6 @@ export class LoginBase {
     let userInfo = await this.getUserInfoInternal();
     if (!userInfo) userInfo = new EntityExtends.UserInfo();
     let hasSslRedir = window.location.hash.includes('sslredir=1');
-    let hasLoggedIn = window.location.hash.includes('loggedin=1');
     let isLoggedIn = userInfo.id ? true : false;
     if (userInfo.isPremium) {
       let isSsl = window.location.protocol === 'https:';
@@ -186,18 +185,6 @@ export class LoginBase {
         throw new AbortError("need ssl redir");
       }
     }
-
-    let hash = window.location.hash;
-
-    if (hasSslRedir) {
-      window.w6Cheat.redirected = true;
-      hash = this.tools.cleanupHash(hash.replace(/\&?sslredir=1/g, ""));
-    }
-    if (hasLoggedIn) {
-      hash = this.tools.cleanupHash(hash.replace(/\&?loggedin=1/g, ""))
-      window.w6Cheat.redirectedWasLoggedIn = true;
-    }
-    if (hasSslRedir || hasLoggedIn) this.updateHistory(window.location.pathname + window.location.search + hash);
 
     return userInfo;
   }
@@ -209,11 +196,6 @@ export class LoginBase {
   clearLoginInfo() {
     this.clearRefreshToken();
     this.clearToken();
-  }
-
-  updateHistory = (desired) => {
-    Tools.Debug.log("$$$ updating history", desired);
-    history.replaceState("", document.title, desired)
   }
 
   buildLogoutParameters(url: string) { return window.localStorage[LoginBase.idToken] ? ("?id_token_hint=" + window.localStorage[LoginBase.idToken] + (url ? "&post_logout_redirect_uri=" + url : '')) : ""; }

@@ -40,10 +40,10 @@ export class Show extends ViewModel {
 
   _changed = false;
 
-  get changed() { return this._changed || (window.w6Cheat.collection && window.w6Cheat.collection.hasChangesFromAurelia()); }
+  get changed() { return this._changed || (this.w6.collection && this.w6.collection.hasChangesFromAurelia()); }
   set changed(value: boolean) { this._changed = value; }
 
-  get editModeEnabled() { return window.w6Cheat.collection && window.w6Cheat.collection.$scope.editConfig.editMode }
+  get editModeEnabled() { return this.w6.collection && this.w6.collection.$scope.editConfig.editMode }
 
   constructor(ui: UiContext) {
     super(ui);
@@ -90,7 +90,7 @@ export class Show extends ViewModel {
     await new Save(this.model).handle(this.mediator);
     this.changed = false;
     //try {
-    await window.w6Cheat.collection.saveFromAurelia();
+    await this.w6.collection.saveFromAurelia();
     //} catch (err) {
     // for crying out loud!
     //this.navigateInternal(window.location.pathname.replace("/content/edit", ""));
@@ -104,7 +104,7 @@ export class Show extends ViewModel {
   cancel = uiCommand2("Cancel", async () => {
     await this.resetup();
     this.changed = false;
-    window.w6Cheat.collection.cancelFromAurelia();
+    this.w6.collection.cancelFromAurelia();
   }, {
       canExecuteObservable: this.observeEx(x => x.changed).combineLatest(this.save.isExecutingObservable, (x, y) => x && !y),
       cls: "cancel"
@@ -115,14 +115,14 @@ export class Show extends ViewModel {
     if (this.changed)
       this.openChanges();
     else {
-      window.w6Cheat.collection.disableEditModeFromAurelia();
+      this.w6.collection.disableEditModeFromAurelia();
     }
   }, {
       isVisibleObservable: this.observeEx(x => x.editModeEnabled)
     })
 
   enableEditMode = uiCommand2("Open Editor", async () => {
-    window.w6Cheat.collection.enableEditModeFromAurelia();
+    this.w6.collection.enableEditModeFromAurelia();
   }, {
       isVisibleObservable: this.observeEx(x => x.editModeEnabled).select(x => !x)
     });

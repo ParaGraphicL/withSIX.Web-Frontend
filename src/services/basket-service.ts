@@ -76,7 +76,7 @@ export class BasketService extends Base {
       return this.getGameBaskets(gameId);
     }
 
-    return this.constructedBaskets[gameId] = window.w6Cheat.api.createGameBasket(gameId, basketModel);
+    return this.constructedBaskets[gameId] = this.w6.api.createGameBasket(gameId, basketModel);
   }
 
   addToBasket(gameId: string, item: IBasketItem) {

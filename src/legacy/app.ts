@@ -48,10 +48,10 @@ export module MyApp {
     angular.bootstrap(document, [mod]);
   }
 
-  export function bootAngular() {
+  export function bootAngular(w6Urls: W6Urls) {
     var promise = new Promise<void>((resolve, reject) => {
       let scriptElement = document.createElement('script');
-      scriptElement.src = window.w6Cheat.url.getAssetUrl('dist_legacy/app.min.js');
+      scriptElement.src = w6Urls.getAssetUrl('dist_legacy/app.min.js');
       scriptElement.onload = () => {
         let moduleName = "MyApp" || $('html').attr('six-ng-app');
         let myApplication = angular.module(moduleName);
@@ -330,11 +330,11 @@ export module MyApp {
     static $name = 'LoadingFailedController';
     static $inject = ['$scope', 'logger', 'ForwardService', 'error'];
 
-    constructor($scope, logger, private forwardService: Components.ForwardService, error) {
+    constructor($scope: IBaseScope, logger, private forwardService: Components.ForwardService, error) {
       super($scope);
-      var errorMsg = window.w6Cheat.api.errorMsg(error);
+      var errorMsg = $scope.w6.api.errorMsg(error);
 
-      $scope.reason = (errorMsg[1] != null ? (errorMsg[1] + ": ") : "") + errorMsg[0];
+      (<any>$scope).reason = (errorMsg[1] != null ? (errorMsg[1] + ": ") : "") + errorMsg[0];
       $scope.title = errorMsg.length >= 3 ? errorMsg[2] : "Oops! Loading failed :(";
 
       if (error instanceof Tools.RequireSslException) {

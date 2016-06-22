@@ -81,7 +81,7 @@ export class ViewModel extends Base {
   }
 
   handleAngularHeaderInternal = (row: JQuery) => {
-    window.w6Cheat.aureliaReady = true;
+    this.w6.aureliaReady = true;
     this.tools.Debug.log("AURELIA: angular vm loaded");
     this.notifyAngular();
     row.prepend($("#content"));

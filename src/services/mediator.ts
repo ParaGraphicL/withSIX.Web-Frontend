@@ -59,9 +59,9 @@ export class ClientMissingHandler {
 }
 
 // App specific starts
-@inject(Mediator, Toastr, ClientMissingHandler)
+@inject(Mediator, Toastr, ClientMissingHandler, W6)
 export class ErrorLoggingMediatorDecorator implements IMediator {
-  constructor(private mediator: IMediator, private toastr: Toastr, private clientMissingHandler: ClientMissingHandler) { }
+  constructor(private mediator: IMediator, private toastr: Toastr, private clientMissingHandler: ClientMissingHandler, private w6: W6) { }
 
   request<T>(request: IRequest<T>): Promise<T> {
     let action = (<any>request.constructor).action;
@@ -90,7 +90,7 @@ export class ErrorLoggingMediatorDecorator implements IMediator {
 
   handleGeneralError(err, action) {
     // TODO: Perhaps only show toast if we specified action?
-    var msg = window.w6Cheat.api.errorMsg(err);
+    var msg = this.w6.api.errorMsg(err);
     Tools.Debug.error(msg);
     this.toastr.error(msg[0], (action || "Action") + ": " + msg[1]);
   }
