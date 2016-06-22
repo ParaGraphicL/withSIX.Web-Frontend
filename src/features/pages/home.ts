@@ -56,6 +56,9 @@ export class Home extends MainBase {
       totalFollowers: 8,
       totalLikes: 9
     }
+    var result = await new GetHome().handle(this.mediator);
+    this.data = result;
+    this.post = result.latestPost;
   }
 }
 
