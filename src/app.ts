@@ -13,6 +13,8 @@ import {UiContext, ViewModel, Dialog, Mediator, Command, DbQuery, handlerFor, Me
   IUserErrorAdded, IUserErrorResolved, IUserError, GameChanged, CloseTabs, IBreezeErrorReason, ContentHelper, W6,
   IMiniClientInfo, Tools} from './framework';
 
+import {CreateCollectionDialog} from './features/games/collections/create-collection-dialog';
+import {AddModsToCollections} from './features/games/add-mods-to-collections';
 import {Index as SettingsIndex} from './features/settings/index';
 import {UserErrorDialog} from './features/user-error-dialog';
 import {GameBaskets} from './features/game-baskets';
