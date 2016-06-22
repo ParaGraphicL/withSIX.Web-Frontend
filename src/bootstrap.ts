@@ -168,9 +168,9 @@ bootstrap(async (aurelia: Aurelia) => {
 
     const client: Client = Container.instance.get(Client);
     const api: Api = Container.instance.get(Api);
-    window.w6Cheat = { api }
     // WARNING CANT PASS THE ROUTER INSTANCE HERE OR Aurelia STOPS ROUTING
     const w6 = W6.instance = new W6(w6Urls, userInfo, client, api);
+    window.w6Cheat = { api, navigate: w6.navigate }
     Container.instance.registerSingleton(W6, () => w6);
     legacySetup({
       dfp: { publisherId: "19223485" },

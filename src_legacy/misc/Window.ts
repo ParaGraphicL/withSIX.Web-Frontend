@@ -71,7 +71,7 @@ interface IApi {
 }
 
 interface Window {
-  // legacy client
+  // from legacy client
   six_client: {
     open_pws_uri: (url) => void;
     refresh_login(): void;
@@ -79,12 +79,13 @@ interface Window {
     subscribedToCollection(id: string): void;
     unsubscribedFromCollection(id: string): void;
   }
-  // node api
+  // from electron api
   api: {
     openExternalUrl(url: string): void
   }
   w6Cheat: {
-    api: IApi;
+    api: IApi; // for modern client
+    navigate: (string) => void; // for legacy client
   }
   assetHash: { [asset: string]: string }
   prerenderReady: boolean;
