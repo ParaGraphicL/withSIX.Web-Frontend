@@ -16,6 +16,8 @@ import {ClientWrapper, AppEventsWrapper} from './client-wrapper';
 
 import {UiContext} from './uicontext'
 
+import {Origin} from 'aurelia-metadata';
+
 import * as clipboard from 'clipboard-js';
 
 @inject(UiContext)
@@ -220,6 +222,10 @@ export class Dialog<T> extends ViewModelOf<T> {
         this.controller.cancel(null);
       });
     });
+  }
+
+  public static workaround = (f, id: string, member: string) => {
+    Origin.set(f, { moduleId: id, moduleMember: member });
   }
 
   attached() {

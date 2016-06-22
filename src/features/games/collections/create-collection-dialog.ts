@@ -135,3 +135,5 @@ class CreateCollectionHandler extends DbQuery<CreateCollection, string> {
     return result;
   }
 }
+
+Dialog.workaround(CreateCollectionDialog, "features/games/collections/create-collection-dialog", "CreateCollectionDialog");

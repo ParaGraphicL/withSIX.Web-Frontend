@@ -20,9 +20,6 @@ import {RouteHandler, RestoreBasket, OpenCreateCollectionDialog, OpenAddModDialo
 import {Login} from './services/auth';
 import {LoginBase, LoginUpdated} from './services/auth-base';
 
-// workaround for dialogs not working
-import {Origin} from 'aurelia-metadata';
-
 import {CreateCollectionDialog} from './features/games/collections/create-collection-dialog';
 import {AddModsToCollections} from './features/games/add-mods-to-collections';
 import {EditPlaylistItem} from './features/side-bar/playlist/edit-playlist-item';
@@ -80,16 +77,6 @@ export class App extends ViewModel {
     };
 
     this.activateNg();
-
-    // workaround for dialogs not working
-    Origin.set(SettingsIndex, { moduleId: "features/settings/index", moduleMember: "Index" });
-    Origin.set(CreateCollectionDialog, { moduleId: "features/games/collections/create-collection-dialog", moduleMember: "CreateCollectionDialog" });
-    Origin.set(AddModsToCollections, { moduleId: "features/games/add-mods-to-collections", moduleMember: "AddModsToCollections" });
-    Origin.set(EditDependency, { moduleId: "features/profile/content/edit-dependency", moduleMember: "EditDependency" });
-    Origin.set(EditPlaylistItem, { moduleId: "features/side-bar/playlist/edit-playlist-item", moduleMember: "EditPlaylistItem" });
-    Origin.set(NewGroupDialog, { moduleId: "features/profile/groups/new-group-dialog", moduleMember: "NewGroupDialog" });
-    Origin.set(UserErrorDialog, { moduleId: "features/user-error-dialog", moduleMember: "UserErrorDialog" });
-    Origin.set(MessageDialog, { moduleId: "features/message-dialog", moduleMember: "MessageDialog" });
 
     let isSync = window.location.search.includes('sync=1') ? true : false;
     if (isSync) { this.w6.updateSettings(x => x.hasSync = true); }

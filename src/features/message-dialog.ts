@@ -13,3 +13,5 @@ export class MessageDialog {
   static Ok = ['OK'];
   handle = (response) => (response == 'ok' || response == 'yes') ? this.controller.ok(response) : this.controller.cancel(response);
 }
+
+Dialog.workaround(MessageDialog, "features/message-dialog", "MessageDialog");

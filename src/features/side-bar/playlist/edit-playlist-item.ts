@@ -56,3 +56,5 @@ class GetAvailableVersionsHandler extends DbQuery<GetAvailableVersions, IAvailab
     return { versions: versions }
   }
 }
+
+Dialog.workaround(EditPlaylistItem, "features/side-bar/playlist/edit-playlist-item", "EditPlaylistItem");

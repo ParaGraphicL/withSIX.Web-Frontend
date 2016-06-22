@@ -28,3 +28,5 @@ class ResolveUserErrorHandler extends DbClientQuery<ResolveUserError, void> {
     return this.client.resolveUserError({ id: request.id, result: request.result, data: request.data });
   }
 }
+
+Dialog.workaround(UserErrorDialog, "features/user-error-dialog", "UserErrorDialog");

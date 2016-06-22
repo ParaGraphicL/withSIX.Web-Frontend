@@ -59,3 +59,5 @@ export class AddModsToCollectionsHandler extends DbQuery<AddModsToCollectionsCom
     await this.context.postCustom("collections/add-mods-to-collections", request);
   }
 }
+
+Dialog.workaround(AddModsToCollections, "features/games/add-mods-to-collections", "AddModsToCollections");

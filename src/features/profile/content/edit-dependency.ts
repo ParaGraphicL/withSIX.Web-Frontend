@@ -1,4 +1,4 @@
-import {inject,bindable} from 'aurelia-framework';
+import {inject, bindable} from 'aurelia-framework';
 import {IDependency} from './dependency';
 import {Dialog, uiCommand2} from '../../../framework';
 
@@ -25,6 +25,8 @@ export class EditDependency extends Dialog<IDependency> {
     this.model.isRequired = !this.isOptional;
     this.controller.ok(null);
   }, {
-    cls: "ok"
-  });
+      cls: "ok"
+    });
 }
+
+Dialog.workaround(EditDependency, "features/profile/content/edit-dependency", "EditDependency");

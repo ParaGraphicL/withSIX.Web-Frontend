@@ -54,3 +54,5 @@ export class CreateGroupHandler extends DbQuery<CreateGroup, string> {
     return await this.context.postCustom<string>("groups", postModel);
   }
 }
+
+Dialog.workaround(NewGroupDialog, "features/profile/groups/new-group-dialog", "NewGroupDialog");
