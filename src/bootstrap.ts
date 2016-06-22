@@ -23,6 +23,14 @@ import {MyApp} from './legacy/app';
 import legacySetup = MyApp.setup;
 import legacyBootAngular = MyApp.bootAngular;
 
+
+// hack for electron cant communicate with popup
+if (window.location.search.startsWith("?code=")) {
+  window.localStorage.setItem('auth-search', window.location.search);
+  window.localStorage.setItem('auth-hash', window.location.hash);
+  throw new Error("Window was used for auth code handling");
+}
+
 bootstrap(async (aurelia: Aurelia) => {
   Tools.Debug.log("AURELIA: configuring aurelia");
 
