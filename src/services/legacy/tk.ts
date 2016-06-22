@@ -156,14 +156,14 @@ export module Tk {
 
     public setupP = () => ['$interval', '$q', ($interval, $q) => {
       if (!this.p) {
-        this.p = new Promise((resolve, rej) => {
-          var i = $interval(() => {
-            if (window.w6Cheat.aureliaReady) {
-              $interval.cancel(i);
-              resolve();
-            }
-          }, 100);
-        })
+        var p = $q.defer();
+        var i = $interval(() => {
+          if (window.w6Cheat.aureliaReady) {
+            $interval.cancel(i);
+            p.resolve();
+          }
+        }, 100);
+        this.p = p.promise;
       }
       return this.p;
     }];
