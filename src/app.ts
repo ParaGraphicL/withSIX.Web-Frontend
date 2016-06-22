@@ -13,24 +13,14 @@ import {UiContext, ViewModel, Dialog, Mediator, Command, DbQuery, handlerFor, Me
   IUserErrorAdded, IUserErrorResolved, IUserError, GameChanged, CloseTabs, IBreezeErrorReason, ContentHelper, W6,
   IMiniClientInfo, Tools} from './framework';
 
+import {Index as SettingsIndex} from './features/settings/index';
+import {UserErrorDialog} from './features/user-error-dialog';
 import {GameBaskets} from './features/game-baskets';
-
 import {RouteHandler, RestoreBasket, OpenCreateCollectionDialog, OpenAddModDialog, OpenAddModsToCollectionsDialog, OpenSettings} from './services/api';
-
 import {Login} from './services/auth';
 import {LoginBase, LoginUpdated} from './services/auth-base';
-
-import {CreateCollectionDialog} from './features/games/collections/create-collection-dialog';
-import {AddModsToCollections} from './features/games/add-mods-to-collections';
-import {EditPlaylistItem} from './features/side-bar/playlist/edit-playlist-item';
-import {EditDependency} from './features/profile/content/edit-dependency';
-import {NewGroupDialog} from './features/profile/groups/new-group-dialog';
-import {Index as SettingsIndex} from './features/settings/index';
 import {SideBar} from './features/side-bar/side-bar';
 import {TopBar} from './features/top-bar/top-bar';
-import {UserErrorDialog} from './features/user-error-dialog';
-import {MessageDialog} from './features/message-dialog';
-
 import {BindingSignaler} from 'aurelia-templating-resources';
 
 @inject(UiContext, HttpClient, Login, RouteHandler, TaskQueue, Client, BasketService, LS, ClientMissingHandler, BindingSignaler)
