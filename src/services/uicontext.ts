@@ -56,6 +56,19 @@ export class UiContext {
   confirm = async (message: string, title = 'Please confirm'): Promise<boolean> => (await this.showMessageDialog(message, title, MessageDialog.YesNo)).output == "yes";
   showMessageDialog = <T>(message: string, title = 'Please confirm', buttons = MessageDialog.Ok, confirmations: Confirmation[] = null): DialogResultT<string> => this.showMessageDialogInternal({ title, message, buttons, confirmations })
   showMessageDialogInternal = <T>(model: MessageModel) => this.dialog.open({ viewModel: MessageDialog, model: model })
+  navigateInternal = (url: string) => {
+    let origin = location.origin;
+    if (url.startsWith(origin + '/')) url = url.substring(origin.length);
+    else if (url.startsWith("http://") && origin.startsWith("https://")) {
+      origin = origin.replace("https://", "http://");
+      if (url.startsWith(origin + '/')) url = url.substring(origin.length);
+    } else if (url.startsWith("https://") && origin.startsWith("http://")) {
+      origin = origin.replace("http://", "https://");
+      if (url.startsWith(origin + '/')) url = url.substring(origin.length);
+    }
+    Tools.Debug.log("$$$ navigating", url);
+    return this.router.navigate(url);
+  }
 }
 
 interface Confirmation { text: string, hint?: string, icon?: string, isChecked?: boolean }

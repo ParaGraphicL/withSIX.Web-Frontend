@@ -2,7 +2,6 @@ import {Tools} from './tools';
 import {Client, IMiniClientInfo} from 'withsix-sync-api';
 import breeze from 'breeze-client';
 import {IUserInfo} from './dtos';
-import {Router} from 'aurelia-router';
 
 export interface IAvatarInfo {
   avatarURL?: string;
@@ -456,20 +455,6 @@ export class W6 {
   redirectedWasLoggedIn: boolean;
   public w6OBot = "60f61960-23a3-11e4-8c21-0800200c9a66";
 
-  navigateInternal(url: string) {
-    let origin = location.origin;
-    if (url.startsWith(origin + '/')) url = url.substring(origin.length);
-    else if (url.startsWith("http://") && origin.startsWith("https://")) {
-      origin = origin.replace("https://", "http://");
-      if (url.startsWith(origin + '/')) url = url.substring(origin.length);
-    } else if (url.startsWith("https://") && origin.startsWith("http://")) {
-      origin = origin.replace("http://", "https://");
-      if (url.startsWith(origin + '/')) url = url.substring(origin.length);
-    }
-    Tools.Debug.log("$$$ navigating", url);
-    return this.router.navigate(url);
-  }
-
   get isLoggedIn() { return this.userInfo && this.userInfo.id != null; }
 
   showFooter = true;
@@ -479,7 +464,7 @@ export class W6 {
 
   get renderAds() { return this.enableAds && !this.ads.isPageExcluded; }
 
-  constructor(public url: W6Urls, public enableAds: boolean, public isClient: boolean, public clientVersion: string, public userInfo: IUserInfo, public miniClient: Client, public api: IApi, private router: Router) {
+  constructor(public url: W6Urls, public enableAds: boolean, public isClient: boolean, public clientVersion: string, public userInfo: IUserInfo, public miniClient: Client, public api: IApi) {
     this.chromeless = window.location.search.includes("chromeless") || isClient;
 
     this.slogan = "Because the game is just the beginning";

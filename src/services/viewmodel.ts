@@ -101,7 +101,7 @@ export class ViewModel extends Base {
 
   get isLoggedIn() { return this.w6.userInfo.id != null }
   get unchanged() { return !this.changed; }
-  get navigateInternal() { return this.w6.navigateInternal }
+  get navigateInternal() { return this.ui.navigateInternal }
   get features() { return this.ui.features; }
   get appEvents() { return this.ui.appEvents; }
   get clientWrapper() { return this.ui.clientWrapper; }
