@@ -18,7 +18,7 @@ import {Client} from 'withsix-sync-api';
 
 import {Components} from './components';
 
-import {registerService, registerCommands, registerCQ, registerController, getFactory} from './app-base';
+import {registerCommands, getFactory} from './app-base';
 
 
 export module Admin {

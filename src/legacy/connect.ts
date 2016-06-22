@@ -19,7 +19,7 @@ import {Client} from 'withsix-sync-api';
 import {Components} from './components';
 import {ToastLogger} from '../services/legacy/logger';
 
-import {registerService, registerCommands, registerCQ, registerController, getFactory, skyscraperSlotSizes, rectangleSlotSizes, leaderboardSlotSizes} from './app-base';
+import {registerCommands, getFactory, skyscraperSlotSizes, rectangleSlotSizes, leaderboardSlotSizes} from './app-base';
 
 declare var Fingerprint;
 

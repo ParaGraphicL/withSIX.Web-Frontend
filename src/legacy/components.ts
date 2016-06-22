@@ -5,7 +5,7 @@ import {W6, W6Urls} from '../services/withsix';
 import {Tools} from '../services/tools';
 import breeze from 'breeze-client';
 
-import {registerService, registerCommands, registerCQ, registerController, getFactory} from './app-base';
+import {registerCommands, getFactory} from './app-base';
 
 import {IBreezeMod, IBreezeUser, IBreezeCollection, IBreezeMission, IBreezeCollectionVersionDependency, IBreezePost, IBreezeModUpdate, IBreezeCollectionVersion, IBreezeGame, IBreezeAWSUploadPolicy,
   IBreezeMissionComment, IBreezeMissionVersion, IBreezeCollectionImageFileTransferPolicy, IBreezeModInfo,

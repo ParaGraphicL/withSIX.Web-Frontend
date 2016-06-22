@@ -25,7 +25,7 @@ import {BasketService} from '../services/basket-service';
 import {ModsHelper, Helper} from '../services/legacy/misc';
 import {ToastLogger} from '../services/legacy/logger';
 
-import {registerService, registerCommands, registerCQ, registerController, getFactory, skyscraperSlotSizes, rectangleSlotSizes, leaderboardSlotSizes} from './app-base';
+import {registerCommands, getFactory, skyscraperSlotSizes, rectangleSlotSizes, leaderboardSlotSizes} from './app-base';
 
 
 export class ContentDownloads {

@@ -18,7 +18,7 @@ import {Client} from 'withsix-sync-api';
 
 import {Components} from './components';
 
-import {registerService, registerCommands, registerCQ, registerController, getFactory, skyscraperSlotSizes, rectangleSlotSizes, leaderboardSlotSizes} from './app-base';
+import {registerCommands, getFactory, skyscraperSlotSizes, rectangleSlotSizes, leaderboardSlotSizes} from './app-base';
 
 export module Kb {
   angular.module('MyAppKbTemplates', []);
