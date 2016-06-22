@@ -1941,7 +1941,7 @@ export module Play.Games {
       $scope.ok = this.ok;
       $scope.ok_user = this.ok_user;
       $scope.ok_author = this.ok_author;
-      $scope.showExtension = window.w6Cheat.w6.miniClient.clientInfo && !window.w6Cheat.w6.miniClient.clientInfo.extensionInstalled;
+      $scope.showExtension = window.w6Cheat.miniClient.clientInfo && !window.w6Cheat.miniClient.clientInfo.extensionInstalled;
       $scope.installExtension = () => {
         $scope.showExtension = false;
         return this.modInfoService.installExplorerExtension();
@@ -3916,7 +3916,7 @@ export module Play.Mods {
             authors.forEach(x => {
               let user = { displayName: x.displayName, id: x.id, avatarURL: x.avatarURL, hasAvatar: x.hasAvatar, avatarUpdatedAt: x.avatarUpdatedAt, getAvatarUrl: null, _avatars: [] };
               user.
-                getAvatarUrl = (size) => user._avatars[size] || (user._avatars[size] = window.w6Cheat.w6.url.calculateAvatarUrl(<any>this, size));
+                getAvatarUrl = (size) => user._avatars[size] || (user._avatars[size] = window.w6Cheat.url.calculateAvatarUrl(<any>this, size));
               authorVms.push(user);
             });
             return authorVms;

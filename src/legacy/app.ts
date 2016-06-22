@@ -51,7 +51,7 @@ export module MyApp {
   export function bootAngular() {
     var promise = new Promise<void>((resolve, reject) => {
       let scriptElement = document.createElement('script');
-      scriptElement.src = window.w6Cheat.w6.url.getAssetUrl('dist_legacy/app.min.js');
+      scriptElement.src = window.w6Cheat.url.getAssetUrl('dist_legacy/app.min.js');
       scriptElement.onload = () => {
         let moduleName = "MyApp" || $('html').attr('six-ng-app');
         let myApplication = angular.module(moduleName);
