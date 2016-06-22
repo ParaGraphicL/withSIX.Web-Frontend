@@ -1,18 +1,12 @@
 //import 'bootstrap';
 //import 'bootstrap/css/bootstrap.css!';
 
-import {inject, autoinject, Container, TaskQueue} from 'aurelia-framework';
-import {Router, RouterConfiguration, NavigationInstruction, Redirect} from 'aurelia-router';
-import {EventAggregator} from 'aurelia-event-aggregator';
-import {DialogService} from 'aurelia-dialog';
-import {FeaturesModule} from './features/index';
-import {HttpClient} from 'aurelia-http-client';
-//import HttpClientConfig from 'aurelia-auth/app.httpClient.config';
 import {UiContext, ViewModel, Dialog, Mediator, Command, DbQuery, handlerFor, MenuItem, uiCommand2, CloseDialogs,
   ContentDeleted, Client, BasketService, StateChanged, ConnectionState, GameClientInfo, LS, ClientMissingHandler,
   IUserErrorAdded, IUserErrorResolved, IUserError, GameChanged, CloseTabs, IBreezeErrorReason, ContentHelper, W6,
   IMiniClientInfo, Tools} from './framework';
 
+import {FeaturesModule} from './features/index';
 import {CreateCollectionDialog} from './features/games/collections/create-collection-dialog';
 import {AddModsToCollections} from './features/games/add-mods-to-collections';
 import {Index as SettingsIndex} from './features/settings/index';
@@ -23,7 +17,15 @@ import {Login} from './services/auth';
 import {LoginBase, LoginUpdated} from './services/auth-base';
 import {SideBar} from './features/side-bar/side-bar';
 import {TopBar} from './features/top-bar/top-bar';
+
+import {inject, autoinject, Container, TaskQueue} from 'aurelia-framework';
+import {Router, RouterConfiguration, NavigationInstruction, Redirect} from 'aurelia-router';
+import {EventAggregator} from 'aurelia-event-aggregator';
+import {DialogService} from 'aurelia-dialog';
+import {HttpClient} from 'aurelia-http-client';
 import {BindingSignaler} from 'aurelia-templating-resources';
+//import HttpClientConfig from 'aurelia-auth/app.httpClient.config';
+
 
 @inject(UiContext, HttpClient, Login, RouteHandler, TaskQueue, Client, BasketService, LS, ClientMissingHandler, BindingSignaler)
 export class App extends ViewModel {
