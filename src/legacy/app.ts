@@ -11,7 +11,7 @@ import {EventAggregator} from 'aurelia-event-aggregator';
 import {Mediator} from 'aurelia-mediator';
 import {Client} from 'withsix-sync-api';
 
-import {registerService, registerCommands, registerCQ, registerController, getFactory} from './app-base';
+import {registerCommands, registerCQ, registerController, getFactory} from './app-base';
 import {CollectionDataService, ModDataService, MissionDataService} from '../services/legacy/data-services';
 import {ToastLogger} from '../services/legacy/logger';
 
