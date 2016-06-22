@@ -1,6 +1,7 @@
 import {Base} from './base';
 import {Mediator, LegacyMediator} from './mediator';
 import {W6} from './withSIX';
+import {Tools} from './tools';
 import {Toastr} from './toastr';
 import {ListFactory, ObservableEventAggregator, EventWrapper} from './reactive';
 import {ITabNotification} from '../resources/tab-view/tab-view';
@@ -63,6 +64,7 @@ export class UiContext {
       origin = origin.replace("http://", "https://");
       if (url.startsWith(origin + '/')) url = url.substring(origin.length);
     }
+    Tools.Debug.log("$$$ navigating", url);
     return this.router.navigate(url);
   }
 

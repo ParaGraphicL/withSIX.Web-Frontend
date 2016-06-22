@@ -1,16 +1,14 @@
 import {inject} from 'aurelia-framework';
-import {Mediator, VoidCommand, DbQuery, handlerFor} from '../../framework';
+import {ViewModel, VoidCommand, DbQuery, handlerFor} from '../../framework';
 
-@inject(Mediator)
-export class ConfirmRecurring {
+export class ConfirmRecurring extends ViewModel {
   orderId: string;
   payerId: string;
-  constructor(private mediator: Mediator) { }
   activate(params, routeConfig) {
     this.orderId = params.orderId;
     this.payerId = params.payerId;
     new ConfirmRecurringCommand(this.orderId, this.payerId).handle(this.mediator)
-      .then(x => window.location.href = `/orders/${this.orderId}/success`);
+      .then(x => this.navigateInternal(`/orders/${this.orderId}/success`));
   }
 }
 

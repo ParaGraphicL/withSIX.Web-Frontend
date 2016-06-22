@@ -1,18 +1,16 @@
 import {inject} from 'aurelia-framework';
-import {Mediator, VoidCommand, DbQuery, handlerFor} from '../../framework';
+import {ViewModel, VoidCommand, DbQuery, handlerFor} from '../../framework';
 
-@inject(Mediator)
-export class ConfirmPayment {
+export class ConfirmPayment extends ViewModel {
   payerId: string
   orderId: string;
   paymentId: string;
-  constructor(private mediator: Mediator) { }
   activate(params, routeConfig) {
     this.orderId = params.orderId;
     this.payerId = params.PayerID;
     this.paymentId = params.paymentId;
     new ConfirmPaymentCommand(this.orderId, this.payerId).handle(this.mediator)
-      .then(x => window.location.href = `/orders/${this.orderId}/success`);
+      .then(x => this.navigateInternal(`/orders/${this.orderId}/success`));
   }
 }
 

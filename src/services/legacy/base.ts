@@ -365,7 +365,7 @@ export class BaseController extends Tk.Controller {
 
   public forwardFull(fullUrl, $window: ng.IWindowService, $location: ng.ILocationService) {
     Tools.Debug.log("changing URL: " + fullUrl);
-    $window.location.href = fullUrl;
+    window.w6Cheat.navigate(fullUrl);
   }
 
   public processNames(results) {

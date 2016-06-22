@@ -1,0 +1,26 @@
+<template>
+  <require from="features/profile/profile.scss"></require>
+  <div class="container-fluid content-inner" id="my-games">
+    <h1 class="pagetitle">Discover fan-made content for these games</h1>
+    <!-- <center>
+          <div ng-
+include="'/src_legacy/app/components/ads/play-hz-large.html'"></div>
+      </center> -->
+
+    <card-view items.bind="games" item-type="game" view-path="features/profile/content/"></card-view>
+
+    <div class="row" if.bind="w6.renderAds">
+      <div class="col-sm-6">
+        <div class="tile">
+          <ad-unit unit-id="angular-ad1"></ad-unit>
+        </div>
+      </div>
+
+      <div class="col-sm-6">
+        <div class="tile">
+          <ad-unit unit-id="angular-ad2"></ad-unit>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>

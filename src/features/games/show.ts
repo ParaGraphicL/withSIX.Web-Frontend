@@ -37,7 +37,10 @@ export class Show extends ViewModel {
   async activate(params) {
     let game = await new GetGame(params.gameSlug).handle(this.mediator);
     this.eventBus.publish(new GameChanged(game.id, game.slug));
+    this.handleAngularHeader()
   }
+
+  deactivate() { super.deactivate(); this.reverseAngularHeader(); }
 }
 
 class GetGame extends Query<IBreezeGame> { constructor(public slug: string) { super() } }

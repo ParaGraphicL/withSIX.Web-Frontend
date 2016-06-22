@@ -6,7 +6,7 @@
   <require from="features/top-bar/top-bar"></require>
 
   <div id="wrapper" class.bind="classes" class="${w6.url.site} ${showSidebar ? 'show-sidebar' : 'hide-sidebar'} ${w6.url.site == 'main' && w6.url.isRoot ? 'home' : null} ${w6.chromeless ? 'chromeless' : null}">
-    <a name="top"></a>
+    <a name="top" id="top"></a>
 
     <top-bar view-model.ref="topBar" id="top-menu" class="shell-bar ${topBar.selectedTab ? 'active' : 'inactive'}" side-bar.bind="sideBar" show-sidebar.bind="showSidebar"></top-bar>
     <side-bar view-model.ref="sideBar" id="sidebar" class="shell-bar ${sideBar.selectedTab ? 'active' : 'inactive'}" show.bind="showSidebar"></side-bar>

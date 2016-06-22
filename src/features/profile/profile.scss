@@ -44,6 +44,17 @@
       color: white;
     }
   }
+  .game {
+    .imageholder {
+      height: 144px;
+    }
+    .logo {
+      // .imageholder.image {
+      //   margin-left: 50px;
+      //   width: 256px;
+      // }    }
+    }
+  }
   .row-header-button {
     &.c-blue {
       button {

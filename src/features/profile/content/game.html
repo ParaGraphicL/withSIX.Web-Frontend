@@ -1,9 +1,8 @@
 <template>
-  <div class="inner content-stateable content-state-${itemStateClass}">
+  <div class="game inner content-stateable content-state-${itemStateClass}">
     <div class="content-state-c-bgd-border">
       <div class="img">
-        <dropdown-menu class="basketable-dropdown new-style hide-until-open" menu-cls="content-stateable content-state-${itemStateClass}" if.bind="topMenuActions && topMenuActions.length > 0" items.bind="topMenuActions"></dropdown-menu>
-        <div class="stats pull-right">
+        <div class="stats pull-right" if.bind="hasStats">
           <div>
             <span class="icon withSIX-icon-Nav-Collection"></span> ${model.collectionsCount | amount}
           </div>
@@ -14,16 +13,19 @@
             <span class="icon withSIX-icon-Nav-Mission"></span> ${model.missionsCount | amount}
           </div>
         </div>
-        <a href="/me/library/${model.slug}">
+        <a href.bind="url">
           <span class="logo">
-          <img itemprop="image" src.bind="image">
-        </span>
-          <span class="bg-hover" css="background-image: url(${bgUrl});"></span>
+            <!-- <span class="imagecontent image imageholder" back-img.bind="image"> -->
+            <img src.bind="image" />
+          </span>
+          <span class="imagecontent imageholder bg-hover" back-img.bind="bgUrl"></span>
+          </span>
         </a>
+        <dropdown-menu class="pull-right basketable-dropdown new-style hide-until-open" menu-cls="content-stateable content-state-${itemStateClass}" if.bind="topMenuActions && topMenuActions.length > 0" items.bind="topMenuActions"></dropdown-menu>
       </div>
       <div class="info">
         <div class="title">
-          <a href="/me/library/${model.slug}">${model.name}</a>
+          <a href.bind="url">${model.name}</a>
         </div>
       </div>
     </div>

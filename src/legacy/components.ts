@@ -1812,7 +1812,7 @@ Depends on: editableController, editableFormFactory
 
     public forwardNaked(fullUrl) {
       Tools.Debug.log("changing URL: " + fullUrl);
-      this.$window.location.href = fullUrl;
+      window.w6Cheat.navigate(fullUrl);
     }
 
 
@@ -1862,18 +1862,12 @@ Depends on: editableController, editableFormFactory
       return false;
     }
 
-    public switchToSsl() {
-      this.$window.location.href = this.$location.absUrl().replace('http', 'https').replace(":9000", ":9001");
-    }
+    public switchToSsl() { window.w6Cheat.navigate(this.$location.absUrl().replace('http', 'https').replace(":9000", ":9001")) }
 
 
-    public switchToNonSsl() {
-      this.$window.location.href = this.$location.absUrl().replace('https', 'http').replace(":9001", ":9000");
-    }
+    public switchToNonSsl() { window.w6Cheat.navigate(this.$location.absUrl().replace('https', 'http').replace(":9001", ":9000")) }
 
-    public isSsl(): boolean {
-      return this.$location.protocol() == 'https';
-    }
+    public isSsl(): boolean { return this.$location.protocol() == 'https'; }
   }
 
   registerService(ForwardService);
@@ -2972,10 +2966,8 @@ export module Components.Dialogs {
       if (fallbackUrl && (fallbackUrl.containsIgnoreCase("/login") || fallbackUrl.containsIgnoreCase("/register") || fallbackUrl.containsIgnoreCase("/forgot-password") || fallbackUrl.containsIgnoreCase("/forgot-username")
         || fallbackUrl.containsIgnoreCase("/finalize")))
         fallbackUrl = undefined;
-      if (fallbackUrl == "reload")
-        this.$window.location.reload(true);
-      else
-        this.$window.location.href = fallbackUrl || (this.w6.url.connect + "/u/" + this.w6.userInfo.slug);
+      if (fallbackUrl == "reload") this.$window.location.reload(true);
+      else window.w6Cheat.navigate(fallbackUrl || (this.w6.url.connect + "/u/" + this.w6.userInfo.slug));
       return { success: true, message: this.msg };
     };
   }
