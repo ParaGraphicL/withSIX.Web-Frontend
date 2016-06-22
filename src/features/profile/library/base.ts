@@ -33,7 +33,7 @@ export class BaseGame extends ViewModel {
 
   activate(params, routeConfig) {
     // NASTY, but bind bindingContext returns self so :S
-    this.libraryParent = window.w6Cheat.libraryParent;
+    this.libraryParent = this.w6.libraryParent;
     //Tools.Debug.log("$$$ parent", this.$parent, params, routeConfig, routeConfig.navModel.router.parent);
     this.game = this.libraryParent.model.game;
     this.selectedGame = this.libraryParent.model.games.get(this.game.id);

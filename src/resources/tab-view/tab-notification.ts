@@ -1,5 +1,4 @@
-import {ITabNotification} from './tab-view';
-import {ViewModel} from '../../services/lib';
+import {ViewModel, ITabNotification} from '../../services/lib';
 
 export class TabNotification extends ViewModel {
   model;

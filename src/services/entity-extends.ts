@@ -137,11 +137,11 @@ export module EntityExtends {
     private _profileUrl: string;
     public slug: string;
 
-    getAvatarUrl(size) { return this._avatars[size] || (this._avatars[size] = window.w6Cheat.w6.url.calculateAvatarUrl(<any>this, size)); }
+    getAvatarUrl(size) { return this._avatars[size] || (this._avatars[size] = W6.instance.url.calculateAvatarUrl(<any>this, size)); }
 
     clearAvatars() { this._avatars = {}; }
 
-    get profileUrl() { return this._profileUrl || (this._profileUrl = this.slug ? window.w6Cheat.w6.url.getUserSlugUrl(this.slug) : null); }
+    get profileUrl() { return this._profileUrl || (this._profileUrl = this.slug ? W6.instance.url.getUserSlugUrl(this.slug) : null); }
 
     isInRole(role: string): boolean { return this.roles.asEnumerable().contains(role) }
     isInRoles(...roles: string[]): boolean;

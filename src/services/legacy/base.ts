@@ -101,13 +101,13 @@ export class DbCommandBase extends Tk.CommandBase {
       return {
         message: "Unknown error",
         errors: {},
-        httpFailed: window.w6Cheat.api.errorMsg(reason)
+        httpFailed: this.context.w6.api.errorMsg(reason)
       };
     }
     return {
       message: !reason.data ? "Unknown error" : reason.data.message,
       errors: reason.data.modelState,
-      httpFailed: window.w6Cheat.api.errorMsg(reason)
+      httpFailed: this.context.w6.api.errorMsg(reason)
     };
   };
   public respondSuccess = message => {
@@ -355,7 +355,7 @@ export class BaseController extends Tk.Controller {
   public httpFailed = (reason) => {
     this.$scope.first = true;
     Tools.Debug.log("Reason:", reason);
-    var msg = window.w6Cheat.api.errorMsg(reason);
+    var msg = this.$scope.w6.api.errorMsg(reason);
     this.logger.error(msg[0], msg[1]);
   };
 
@@ -365,7 +365,7 @@ export class BaseController extends Tk.Controller {
 
   public forwardFull(fullUrl, $window: ng.IWindowService, $location: ng.ILocationService) {
     Tools.Debug.log("changing URL: " + fullUrl);
-    window.w6Cheat.navigate(fullUrl);
+    this.$scope.w6.navigate(fullUrl);
   }
 
   public processNames(results) {

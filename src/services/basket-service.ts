@@ -11,7 +11,6 @@ import {ContentHelper} from './helpers';
 import {ActionType, IActionNotification, Client, ConnectionState, IContentState, ItemState, IContentStateChange, IContentStatusChange, IClientInfo, IActionTabStateUpdate, StateChanged, IContentGuidSpec, IContentsBase, IContentBase,
   IUserErrorAdded, IUserErrorResolved} from 'withsix-sync-api';
 import {ClientWrapper, AppEventsWrapper} from './client-wrapper';
-import {GameBaskets} from '../features/game-baskets';
 
 @inject(EventAggregator, W6, Client, Toastr, ClientWrapper, AppEventsWrapper)
 export class BasketService extends Base {
@@ -77,7 +76,7 @@ export class BasketService extends Base {
       return this.getGameBaskets(gameId);
     }
 
-    return this.constructedBaskets[gameId] = window.w6Cheat.api.createGameBasket(gameId, basketModel);
+    return this.constructedBaskets[gameId] = this.w6.api.createGameBasket(gameId, basketModel);
   }
 
   addToBasket(gameId: string, item: IBasketItem) {

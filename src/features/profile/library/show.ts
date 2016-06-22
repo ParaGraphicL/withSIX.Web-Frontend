@@ -25,7 +25,7 @@ export class Show extends ViewModel {
   }
 
   async activate(params, routeConfig) {
-    window.w6Cheat.libraryParent = this;
+    this.w6.libraryParent = this;
     let x = await new GetGame(params['gameSlug']).handle(this.mediator)
     this.model.game = x;
     this.eventBus.publish(new GameChanged(x.id, x.slug));
@@ -42,7 +42,7 @@ export class Show extends ViewModel {
 
   deactivate() {
     super.deactivate();
-    window.w6Cheat.libraryParent = null;
+    this.w6.libraryParent = null;
     //this.eventBus.publish(new GameChanged());
   }
 }

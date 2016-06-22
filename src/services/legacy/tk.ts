@@ -1,4 +1,5 @@
 import {Tools} from '../tools';
+import {W6} from '../withSIX';
 
 export module Tk {
   export class Base {
@@ -158,7 +159,7 @@ export module Tk {
       if (!this.p) {
         var p = $q.defer();
         var i = $interval(() => {
-          if (window.w6Cheat.aureliaReady) {
+          if (W6.instance.aureliaReady) {
             $interval.cancel(i);
             p.resolve();
           }

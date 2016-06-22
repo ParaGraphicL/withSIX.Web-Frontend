@@ -15,7 +15,7 @@ import {UiContext, ViewModel, Dialog, Mediator, Command, DbQuery, handlerFor, Me
 
 import {GameBaskets} from './features/game-baskets';
 
-import {RestoreBasket, OpenCreateCollectionDialog, OpenAddModDialog, OpenAddModsToCollectionsDialog} from './services/api';
+import {RouteHandler, RestoreBasket, OpenCreateCollectionDialog, OpenAddModDialog, OpenAddModsToCollectionsDialog, OpenSettings} from './services/api';
 
 import {Login} from './services/auth';
 import {LoginBase, LoginUpdated} from './services/auth-base';
@@ -35,59 +35,6 @@ import {UserErrorDialog} from './features/user-error-dialog';
 import {MessageDialog} from './features/message-dialog';
 
 import {BindingSignaler} from 'aurelia-templating-resources';
-
-@inject(HttpClient, W6)
-class RouteHandler {
-  routingData;
-  site: string;
-  constructor(private http: HttpClient, private w6: W6) { }
-
-  async configure(site: string) {
-    this.site = site;
-    // may not use Authorization header
-    var r = await this.http.get(this.w6.url.getSerialUrl("data/routing.json"));
-    let main = r.content["main"]
-    let routes = r.content["play"];
-    for (let e in routes) main["/p" + (e == "/" ? "" : e)] = routes[e];
-    routes = r.content["connect"];
-    for (let e in routes) main[e] = routes[e];
-    this.routingData = r.content;
-
-  }
-  getRouteMatch(fragment) {
-    var data = this.routingData[this.site];
-    for (var d in data) {
-      var match = this.getRouteSpecificMatch(fragment, d, data[d]);
-      if (match)
-        return match;
-    }
-    return null;
-  }
-
-  cache = {};
-
-  getRx(d) {
-    var rx = d.split("/");
-    var newRx = [];
-    rx.forEach(e => {
-      if (e.startsWith(":")) {
-        if (e.endsWith("?"))
-          newRx.push("?([^/]*)");
-        else
-          newRx.push("([^/]+)");
-      } else {
-        newRx.push(e);
-      }
-    });
-    var rxStr = '^' + newRx.join("/") + '$';
-    return new RegExp(rxStr, "i");
-  }
-
-  getRouteSpecificMatch(fragment, d, data) {
-    if (fragment.match(this.cache[d] || (this.cache[d] = this.getRx(d))))
-      return data;
-  }
-}
 
 @inject(UiContext, HttpClient, Login, RouteHandler, TaskQueue, Client, BasketService, LS, ClientMissingHandler, BindingSignaler)
 export class App extends ViewModel {
@@ -109,6 +56,11 @@ export class App extends ViewModel {
     this.w6.openLoginDialog = evt => this.login.login();
     this.w6.logout = () => this.logout();
     setInterval(() => signaler.signal('timeago'), 60 * 1000);
+    this.w6.api.createGameBasket = (gameId, basketModel) => {
+      var gm = Container.instance.get(GameBaskets);
+      gm.activate(gameId, basketModel);
+      return gm;
+    }
     //this.eventBus.subscribe('router:navigation:processing', () => console.log("$$$ processing route"));
     //this.eventBus.subscribe('router:navigation:complete', () => console.log("$$$ complete route"));
   }
@@ -155,7 +107,7 @@ export class App extends ViewModel {
       this.firefoxTimeoutPassed = true;
     }, 15 * 1000);
 
-    window.w6Cheat.navigate = (url: string) => this.navigateInternal(url);
+    this.w6.navigate = (url: string) => this.navigateInternal(url);
     this.subscriptions.subd(d => {
       // TODO: we might be better off abstracting this away in a service instead, so that we dont have all these eventclasses laying around just for interop from Angular...
       d(this.eventBus.subscribe(RestoreBasket, this.restoreBasket));
@@ -273,14 +225,14 @@ export class App extends ViewModel {
   activateNg() {
     if (!this.first) {
       let iv = setInterval(() => {
-        if (window.w6Cheat.aureliaReady) return;
+        if (this.w6.aureliaReady) return;
         let row = angular.element("#root-content-row");
         if (row.length == 0) return;
         clearInterval(iv);
         this.tools.Debug.log("activating ng from app..");
         let el = angular.element("#content");
         row.append(el)
-        window.w6Cheat.aureliaReady = true;
+        this.w6.aureliaReady = true;
       }, 100);
       this.first = true;
     }
@@ -364,7 +316,7 @@ export class App extends ViewModel {
         `Client v${newVersion} is available for download, click here to update now.`,
         "Sync Update available!", {
           timeOut: 10 * 1000
-        }).then(x => x ? window.w6Cheat.navigate("/update") : '');
+        }).then(x => x ? this.navigateInternal("/update") : '');
     }, 3000);
   };
 
@@ -531,7 +483,7 @@ class SslStep extends AuthorizeStep {
     if (isHttps) {
       if (!isPremium && matches.asEnumerable().all(x => !x.ssl)) {
         // Problem: We don't know if we got redirected for premium purposes, or because of required SSL, so hm
-        if (window.w6Cheat.redirected && !isLoggedIn) {
+        if (this.w6.redirected && !isLoggedIn) {
           setTimeout(() => {
             //var lastInstruction = routingContext.nextInstructions.asEnumerable().last();
             this.login.login(); // lastInstruction.fragment + lastInstruction.queryString
@@ -550,7 +502,7 @@ class SslStep extends AuthorizeStep {
         return next.cancel(this.getRedirect(LoginBase.toHttps(isLoggedIn)));
       }
     }
-    if (window.w6Cheat.redirected && !isLoggedIn && window.w6Cheat.redirectedWasLoggedIn) {
+    if (this.w6.redirected && !isLoggedIn && this.w6.redirectedWasLoggedIn) {
       setTimeout(() => {
         //var lastInstruction = routingContext.nextInstructions.asEnumerable().last();
         this.login.login(); // lastInstruction.fragment + lastInstruction.queryString
@@ -567,130 +519,3 @@ class SslStep extends AuthorizeStep {
     return new Redirect(url);
   }
 }
-
-class Ipc<T> {
-  static statId = 0;
-  id: number;
-  promise: Promise<T>
-  resolve; reject;
-  constructor() {
-    this.id = Ipc.statId++;
-    this.promise = new Promise((resolve, reject) => {
-      this.resolve = resolve;
-      this.reject = reject;
-    })
-  }
-}
-class IpcHandler {
-  get tools() { return Tools }
-  messages = new Map<number, Ipc<any>[]>();
-  api;
-  constructor() {
-    var w = <any>window;
-    this.api = w.api;
-    this.api.signalrListeners2.push(this.receive);
-  }
-  send<T>(hub, message, data?) {
-    var msg = new Ipc<T>();
-    this.messages[msg.id] = msg;
-    this.tools.Debug.log("Sending message", msg);
-    this.api.sendSignalrMessage(msg.id, hub, message, data);
-    this.tools.Debug.log("Sent message", msg);
-    return msg.promise;
-  }
-
-  receive = (id, type, args) => {
-    try {
-      if (type == 0)
-        this.messages[id].resolve(args);
-      else
-        this.messages[id].reject(args);
-    } finally {
-      this.messages.delete(id);
-    }
-  }
-}
-
-export class OpenSettings { }
-
-@inject(IpcHandler)
-export class Test {
-  constructor(ipcHandler: IpcHandler) { }
-}
-
-var w = <any>window;
-if (Tools.getEnvironment() >= Tools.Environment.Staging && w.api) {
-  var test = Container.instance.get(Test);
-  w.test = test;
-}
-
-@inject(UiContext)
-class Api {
-  get tools() { return Tools }
-  constructor(private ui: UiContext) { }
-  openSettings = (model?) => this.ui.eventBus.publish(new OpenSettings());
-  createCommand = uiCommand2;
-  getContentStateInitial = ContentHelper.getConstentStateInitial;
-  errorMsg = (reason) => {
-    try {
-      this.tools.Debug.log("$$$ err reason", JSON.stringify(reason));
-    } catch (err) { this.tools.Debug.warn("Err while converting error reason", err) }
-    if (typeof (reason) == 'string') return [reason, 'Unknown error occurred'];
-
-    if (reason instanceof this.tools.NotFoundException || reason instanceof this.tools.InvalidShortIdException) {
-      return [reason.message, "404: The requested resource could not be found"];
-    }
-
-    if (reason instanceof this.tools.RequireSslException) {
-      return [reason.message, "please wait until you are redirected", "Requires SSL"];
-    }
-
-    if (reason instanceof this.tools.RequireNonSslException) {
-      return [reason.message, "please wait until you are redirected", "Requires NO-SSL"];
-    }
-
-    if (reason.httpResponse != null) {
-      var breezeReason = <IBreezeErrorReason>reason;
-      if (breezeReason.httpResponse.data) {
-        if (breezeReason.httpResponse.data.ExceptionType && breezeReason.httpResponse.data.ExceptionMessage) {
-          var exType = breezeReason.httpResponse.data.ExceptionType;
-          switch (exType) {
-            case "SN.withSIX.Api.Models.Exceptions.ArchivedException":
-              return [breezeReason.httpResponse.data.ExceptionMessage, null, "This Content is currently unavailable"];
-            default:
-              return [breezeReason.httpResponse.data.ExceptionMessage, 'Unknown Error'];
-          }
-        } else {
-          return [breezeReason.httpResponse.data.Message, 'Unknown Error'];
-        }
-      } else {
-        return ["Site down?!", 'Unknown Error'];
-      }
-    }
-    if (reason.entityErrors) {
-      let message = "";
-      reason.entityErrors.forEach(x => {
-        message += "\n" + x.errorMessage; //x.propertyName + ": " + x.errorMessage;
-      })
-      return [message, "Validation failed"];
-    }
-    if (!reason.data) return [reason, 'Unknown error'];
-
-    let message = reason.data.message;
-    if (reason.data.modelState) {
-      angular.forEach(reason.data.modelState, (v, k) => {
-        message += "\n" + v;
-      });
-    }
-
-    let status = reason.status && reason.statusText ? "\n(" + reason.status + ": " + reason.statusText + ")" : '';
-
-    return [message + status, "Request failed"];
-  };
-  createGameBasket = (gameId, basketModel) => {
-    var gm = Container.instance.get(GameBaskets);
-    gm.activate(gameId, basketModel);
-    return gm;
-  }
-}
-window.w6Cheat.api = Container.instance.get(Api);

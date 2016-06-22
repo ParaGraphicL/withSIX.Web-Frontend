@@ -42,12 +42,12 @@ export class ContentDownloads {
       //localStorageService.set('clientInstalled', true);
     } else {
       localStorageService.set('clientInstalled', true);
-      this.startDownload(url);
+      this.startDownload(url, w6);
     }
   }
 
-  static startDownload(url: string) {
-    if (window.six_client == null || window.six_client.open_pws_uri == null) window.w6Cheat.navigate(url);
+  static startDownload(url: string, w6: W6) {
+    if (window.six_client == null || window.six_client.open_pws_uri == null) w6.navigate(url);
     else window.six_client.open_pws_uri(url);
   }
 }
@@ -784,7 +784,7 @@ export module Play.Collections {
     constructor(public $scope: ICollectionScope, public logger, public $routeParams, $q, $sce: ng.ISCEService, private localStorageService, private w6: W6, private forwardService: Components.ForwardService, private $timeout: ng.ITimeoutService, private dbContext: W6Context, private $popover, $rootScope: IRootScope, basketService: BasketService, eventBus: EventAggregator, private mediator, model: IBreezeCollection) {
       super($scope, logger, $routeParams, $q, $sce, model);
 
-      window.w6Cheat.collection = this;
+      w6.collection = this;
 
       $scope.tryDirectDownloadCollection = () => {
         if (model.latestVersion.repositories != null) {
@@ -874,10 +874,10 @@ export module Play.Collections {
         menuEntry.url = newV ? $scope.gameUrl + "/collections/" + model.id.toShortId() + "/" + model.name.sluggifyEntityName() + "/content/edit" : null;
         if (newV) {
           if (window.location.pathname.endsWith("/content"))
-            window.w6Cheat.navigate(window.location.pathname + "/edit");
+            w6.navigate(window.location.pathname + "/edit");
         } else {
           if (window.location.pathname.endsWith("/edit"))
-            window.w6Cheat.navigate(window.location.pathname.replace("/edit", ""));
+            w6.navigate(window.location.pathname.replace("/edit", ""));
         }
       }
 
@@ -889,7 +889,7 @@ export module Play.Collections {
       handleEditMode($scope.editConfig.editMode);
 
       $scope.$on('$destroy', () => {
-        window.w6Cheat.collection = null;
+        w6.collection = null;
         eventBus.publish(new RestoreBasket());
         w();
       });
@@ -906,7 +906,7 @@ export module Play.Collections {
       try {
         let model = this.$scope.model;
         let id = await new ForkCollection(model.id).handle(this.mediator);
-        window.w6Cheat.navigate("/p/" + model.game.slug + "/collections/" + id.toShortId() + "/" + (model.name + ' [Forked]').sluggifyEntityName());
+        this.w6.navigate("/p/" + model.game.slug + "/collections/" + id.toShortId() + "/" + (model.name + ' [Forked]').sluggifyEntityName());
       } finally {
         this.forking = false;
       }
@@ -1941,7 +1941,7 @@ export module Play.Games {
       $scope.ok = this.ok;
       $scope.ok_user = this.ok_user;
       $scope.ok_author = this.ok_author;
-      $scope.showExtension = window.w6Cheat.w6.miniClient.clientInfo && !window.w6Cheat.w6.miniClient.clientInfo.extensionInstalled;
+      $scope.showExtension = $scope.w6.miniClient.clientInfo && !$scope.w6.miniClient.clientInfo.extensionInstalled;
       $scope.installExtension = () => {
         $scope.showExtension = false;
         return this.modInfoService.installExplorerExtension();
@@ -2111,7 +2111,7 @@ export module Play.Games {
           this.$modalInstance.close();
           let url = Tools.joinUri([this.$scope.url.play, this.model.slug, "mods", shortId, slug]);
           // workaround page load issue... weird!
-          window.w6Cheat.navigate(url + "?landing=1");
+          this.$scope.w6.navigate(url + "?landing=1");
           this.$location.path(url).search('landing', 1);
           return modId;
         })
@@ -2377,7 +2377,7 @@ export module Play.Games {
         //}
         if ($scope.showBusyState())
           postState = "-busy";
-        let state = window.w6Cheat.api.getContentStateInitial(ciItem, item.constraint);
+        let state = $rootScope.w6.api.getContentStateInitial(ciItem, item.constraint);
         switch (state) {
           case ItemState.NotInstalled:
             return "install" + postState;
@@ -2645,18 +2645,18 @@ export module Play.Missions {
 
   export class NewMissionQuery extends DbQueryBase {
     static $name = 'NewMission';
-    static $inject = ['dbContext', 'userInfo'];
+    static $inject = ['dbContext'];
 
     // tODO: more flexible if we don't inject userInfo in the constructor, but from the router??
-    constructor(context: W6Context, private userInfo) {
+    constructor(context: W6Context) {
       super(context);
     }
 
     public execute = [
       () => {
-        Tools.Debug.log("getting missions by author: " + this.userInfo.slug);
+        Tools.Debug.log("getting missions by author: " + this.context.w6.userInfo.slug);
         var query = breeze.EntityQuery.from("Missions")
-          .where("author.slug", breeze.FilterQueryOp.Equals, this.userInfo.slug)
+          .where("author.slug", breeze.FilterQueryOp.Equals, this.context.w6.userInfo.slug)
           .select(["name", "slug", "id"]);
         return this.context.executeQuery(query)
           .then((data) => data.results);
@@ -3061,9 +3061,9 @@ export module Play.Missions {
 
   export class UploadNewmissionController extends BaseController {
     static $name = 'UploadNewmissionController';
-    static $inject = ['$scope', 'logger', '$routeParams', '$timeout', 'userInfo', '$q', 'model'];
+    static $inject = ['$scope', 'logger', '$routeParams', '$timeout', '$q', 'model'];
 
-    constructor(public $scope: IUploadNewmissionScope, public logger, private $routeParams, private $timeout, userInfo, $q, model) {
+    constructor(public $scope: IUploadNewmissionScope, public logger, private $routeParams, private $timeout, $q, model) {
       super($scope, logger, $q);
 
       $scope.routeParams = $routeParams;
@@ -3916,7 +3916,7 @@ export module Play.Mods {
             authors.forEach(x => {
               let user = { displayName: x.displayName, id: x.id, avatarURL: x.avatarURL, hasAvatar: x.hasAvatar, avatarUpdatedAt: x.avatarUpdatedAt, getAvatarUrl: null, _avatars: [] };
               user.
-                getAvatarUrl = (size) => user._avatars[size] || (user._avatars[size] = window.w6Cheat.w6.url.calculateAvatarUrl(<any>this, size));
+                getAvatarUrl = (size) => user._avatars[size] || (user._avatars[size] = this.$scope.w6.url.calculateAvatarUrl(<any>this, size));
               authorVms.push(user);
             });
             return authorVms;

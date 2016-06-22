@@ -2,7 +2,6 @@ import {Base} from './base';
 import {Mediator, LegacyMediator, DbQuery} from './mediator';
 import {Toastr} from './toastr';
 import {ListFactory, ObservableEventAggregator, EventWrapper, uiCommand2} from './reactive';
-import {ITabNotification} from '../resources/tab-view/tab-view';
 import {Tools} from './tools';
 
 import {Client} from 'withsix-sync-api';
@@ -82,7 +81,7 @@ export class ViewModel extends Base {
   }
 
   handleAngularHeaderInternal = (row: JQuery) => {
-    window.w6Cheat.aureliaReady = true;
+    this.w6.aureliaReady = true;
     this.tools.Debug.log("AURELIA: angular vm loaded");
     this.notifyAngular();
     row.prepend($("#content"));

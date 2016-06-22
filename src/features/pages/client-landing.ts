@@ -13,7 +13,7 @@ export class ClientLanding extends ViewModel {
     if (params.openClientSettings) {
       let model = {};
       this.dialog.open({ viewModel: SettingsIndex, model: model })
-      //window.w6Cheat.api.openSettings();
+      //this.w6.api.openSettings();
     } else if (params.openTab) {
       this.eventBus.publish(new SelectTab(params.openTab));
     }

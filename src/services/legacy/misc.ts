@@ -1,6 +1,7 @@
 import {IBreezeModUpdate, IBreezeMod, IBreezeCollection} from '../dtos';
 import {IBasketItem, BasketItemType} from './baskets';
 import {Tools} from '../tools';
+import {W6} from '../withSIX';
 import breeze from 'breeze-client';
 
 export enum FileSize {
@@ -66,25 +67,24 @@ export class ModsHelper {
   static versionCompare = (x: IBreezeModUpdate, y: IBreezeModUpdate) => Tools.versionCompare(ModsHelper.getFullVersion(x, false), ModsHelper.getFullVersion(y, false))
 }
 
+// TODO: Not static
 export class Helper {
   static modToBasket(mod: IBreezeMod, gameId?: string): IBasketItem {
-    var w6 = window.w6Cheat.w6;
     return {
       id: mod.id, name: mod.name, gameId: mod.gameId || gameId, itemType: BasketItemType.Mod, packageName: mod.packageName,
-      image: mod.avatar ? w6.url.getUsercontentUrl2(mod.avatar, mod.avatarUpdatedAt) : ((<any>mod).image ? (<any>mod).image : null),
-      author: mod.author && mod.author.id != window.w6Cheat.w6.w6OBot ? mod.author.displayName : mod.authorText, sizePacked: mod.sizePacked
+      image: mod.avatar ? W6.instance.url.getUsercontentUrl2(mod.avatar, mod.avatarUpdatedAt) : ((<any>mod).image ? (<any>mod).image : null),
+      author: mod.author && mod.author.id != W6.instance.w6OBot ? mod.author.displayName : mod.authorText, sizePacked: mod.sizePacked
     }
   }
 
   static collectionToBasket(collection: IBreezeCollection, gameId?: string): IBasketItem {
-    var w6 = window.w6Cheat.w6;
     return {
       id: collection.id,
       itemType: BasketItemType.Collection,
       gameId: collection.gameId || gameId,
       packageName: collection.slug, // pff
       author: collection.author.displayName,
-      image: collection.avatar ? w6.url.getUsercontentUrl2(collection.avatar, collection.avatarUpdatedAt) : null, // item.image ? item.image :
+      image: collection.avatar ? W6.instance.url.getUsercontentUrl2(collection.avatar, collection.avatarUpdatedAt) : null, // item.image ? item.image :
       name: collection.name,
       sizePacked: collection.sizePacked,
       isOnlineCollection: true
@@ -92,10 +92,9 @@ export class Helper {
   }
 
   static streamModToBasket(mod: any, gameId?: string): IBasketItem {
-    var w6 = window.w6Cheat.w6;
     return {
       id: mod.id, name: mod.headerName, gameId: mod.gameId || gameId, itemType: BasketItemType.Mod, packageName: mod.packageName,
-      image: mod.image ? w6.url.getUsercontentUrl2(mod.image, mod.imageUpdatedAt) : null, author: mod.author, sizePacked: mod.sizePacked
+      image: mod.image ? W6.instance.url.getUsercontentUrl2(mod.image, mod.imageUpdatedAt) : null, author: mod.author, sizePacked: mod.sizePacked
     }
   }
 }

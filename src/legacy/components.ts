@@ -1812,7 +1812,7 @@ Depends on: editableController, editableFormFactory
 
     public forwardNaked(fullUrl) {
       Tools.Debug.log("changing URL: " + fullUrl);
-      window.w6Cheat.navigate(fullUrl);
+      this.w6.navigate(fullUrl);
     }
 
 
@@ -1862,10 +1862,10 @@ Depends on: editableController, editableFormFactory
       return false;
     }
 
-    public switchToSsl() { window.w6Cheat.navigate(this.$location.absUrl().replace('http', 'https').replace(":9000", ":9001")) }
+    public switchToSsl() { this.w6.navigate(this.$location.absUrl().replace('http', 'https').replace(":9000", ":9001")) }
 
 
-    public switchToNonSsl() { window.w6Cheat.navigate(this.$location.absUrl().replace('https', 'http').replace(":9001", ":9000")) }
+    public switchToNonSsl() { this.w6.navigate(this.$location.absUrl().replace('https', 'http').replace(":9001", ":9000")) }
 
     public isSsl(): boolean { return this.$location.protocol() == 'https'; }
   }
@@ -2967,7 +2967,7 @@ export module Components.Dialogs {
         || fallbackUrl.containsIgnoreCase("/finalize")))
         fallbackUrl = undefined;
       if (fallbackUrl == "reload") this.$window.location.reload(true);
-      else window.w6Cheat.navigate(fallbackUrl || (this.w6.url.connect + "/u/" + this.w6.userInfo.slug));
+      else this.w6.navigate(fallbackUrl || (this.w6.url.connect + "/u/" + this.w6.userInfo.slug));
       return { success: true, message: this.msg };
     };
   }

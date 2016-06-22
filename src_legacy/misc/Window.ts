@@ -30,18 +30,6 @@ interface String {
   truncate: (count: number) => string;
 }
 
-interface IW6Cheat {
-  w6;//: W6;
-  isClient: boolean;
-  aureliaReady: boolean;
-  navigate: (url: string) => void;
-  libraryParent;
-  collection;
-  redirected: boolean;
-  redirectedWasLoggedIn: boolean;
-  api: IApi;
-}
-
 interface IPromiseFunction<T> {
   (...args): Promise<T>
 }
@@ -83,6 +71,7 @@ interface IApi {
 }
 
 interface Window {
+  // from legacy client
   six_client: {
     open_pws_uri: (url) => void;
     refresh_login(): void;
@@ -90,11 +79,15 @@ interface Window {
     subscribedToCollection(id: string): void;
     unsubscribedFromCollection(id: string): void;
   }
-  assetHash: { [asset: string]: string }
+  // from electron api
   api: {
     openExternalUrl(url: string): void
   }
-  w6Cheat: IW6Cheat;
+  w6Cheat: {
+    api: IApi; // for modern client
+    navigate: (string) => void; // for legacy client
+  }
+  assetHash: { [asset: string]: string }
   prerenderReady: boolean;
   RedactorPlugins;
 }

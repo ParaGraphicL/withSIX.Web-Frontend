@@ -1,6 +1,6 @@
 import {bindable, inject, bindingMode} from 'aurelia-framework';
 import {ViewModel} from '../../services/viewmodel';
-import {ShowTabNotification, SelectTab} from '../../services/api';
+import {ShowTabNotification, SelectTab, ITabNotification} from '../../services/api';
 
 interface IProgressInfo {
   progress?: number;
@@ -78,18 +78,4 @@ export class TabView<T extends ITab> extends ViewModel {
 
 export class CloseTabs {
   constructor(public exclude = null) { }
-}
-export interface ITabNotification {
-  title?: string;
-  text?: string;
-  details?: string;
-  icon?: string;
-  cls?: string;
-  active?: boolean;
-  view?: string;
-  href?: string;
-  progress?: number;
-  speed?: number;
-  command?: ICommand<any>;
-  isPersistent?: boolean;
 }
