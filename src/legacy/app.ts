@@ -51,7 +51,7 @@ export module MyApp {
   export function bootAngular() {
     var promise = new Promise<void>((resolve, reject) => {
       let scriptElement = document.createElement('script');
-      scriptElement.src = window.w6Cheat.w6.url.getAssetUrl('dist_legacy/app.min.js');
+      scriptElement.src = window.w6Cheat.url.getAssetUrl('dist_legacy/app.min.js');
       scriptElement.onload = () => {
         let moduleName = "MyApp" || $('html').attr('six-ng-app');
         let myApplication = angular.module(moduleName);
@@ -90,15 +90,13 @@ export module MyApp {
       super('constants', []);
       Tools.Debug.log("setupInfo", setupInfo);
       this.app
-        .constant("userInfo", setupInfo.w6.userInfo)
-        .constant('environment', setupInfo.environment)
         .constant('dfp', setupInfo.dfp)
         .constant('adsense', setupInfo.adsense)
         .constant('angularMomentConfig', {
           preprocess: 'utc', // optional
           //timezone: 'Europe/London' // optional
         })
-        .constant('w6', setupInfo.w6);
+        .constant('w6', setupInfo.w6)
     }
   }
 
@@ -194,11 +192,9 @@ export module MyApp {
       else
         this.logger.error(rejection.data.message + "\n(" + rejection.status + ": " + rejection.statusText + ")");
 
-    }; // These help us bring Angular awesomeness to outside the current scope of ng-app; something we'll improve on in the future...
-    // Generally you should NOT manipulate DOM directly from within controllers. But directives / binding instead.
+    };
     backwardsCompatibility() {
       jQuery(document).ready(() => {
-        this.w6.handleClient();
         this.legacy();
       });
     }

@@ -1941,7 +1941,7 @@ export module Play.Games {
       $scope.ok = this.ok;
       $scope.ok_user = this.ok_user;
       $scope.ok_author = this.ok_author;
-      $scope.showExtension = window.w6Cheat.w6.miniClient.clientInfo && !window.w6Cheat.w6.miniClient.clientInfo.extensionInstalled;
+      $scope.showExtension = window.w6Cheat.miniClient.clientInfo && !window.w6Cheat.miniClient.clientInfo.extensionInstalled;
       $scope.installExtension = () => {
         $scope.showExtension = false;
         return this.modInfoService.installExplorerExtension();
@@ -2645,18 +2645,18 @@ export module Play.Missions {
 
   export class NewMissionQuery extends DbQueryBase {
     static $name = 'NewMission';
-    static $inject = ['dbContext', 'userInfo'];
+    static $inject = ['dbContext'];
 
     // tODO: more flexible if we don't inject userInfo in the constructor, but from the router??
-    constructor(context: W6Context, private userInfo) {
+    constructor(context: W6Context) {
       super(context);
     }
 
     public execute = [
       () => {
-        Tools.Debug.log("getting missions by author: " + this.userInfo.slug);
+        Tools.Debug.log("getting missions by author: " + this.context.w6.userInfo.slug);
         var query = breeze.EntityQuery.from("Missions")
-          .where("author.slug", breeze.FilterQueryOp.Equals, this.userInfo.slug)
+          .where("author.slug", breeze.FilterQueryOp.Equals, this.context.w6.userInfo.slug)
           .select(["name", "slug", "id"]);
         return this.context.executeQuery(query)
           .then((data) => data.results);
@@ -3061,9 +3061,9 @@ export module Play.Missions {
 
   export class UploadNewmissionController extends BaseController {
     static $name = 'UploadNewmissionController';
-    static $inject = ['$scope', 'logger', '$routeParams', '$timeout', 'userInfo', '$q', 'model'];
+    static $inject = ['$scope', 'logger', '$routeParams', '$timeout', '$q', 'model'];
 
-    constructor(public $scope: IUploadNewmissionScope, public logger, private $routeParams, private $timeout, userInfo, $q, model) {
+    constructor(public $scope: IUploadNewmissionScope, public logger, private $routeParams, private $timeout, $q, model) {
       super($scope, logger, $q);
 
       $scope.routeParams = $routeParams;
@@ -3916,7 +3916,7 @@ export module Play.Mods {
             authors.forEach(x => {
               let user = { displayName: x.displayName, id: x.id, avatarURL: x.avatarURL, hasAvatar: x.hasAvatar, avatarUpdatedAt: x.avatarUpdatedAt, getAvatarUrl: null, _avatars: [] };
               user.
-                getAvatarUrl = (size) => user._avatars[size] || (user._avatars[size] = window.w6Cheat.w6.url.calculateAvatarUrl(<any>this, size));
+                getAvatarUrl = (size) => user._avatars[size] || (user._avatars[size] = window.w6Cheat.url.calculateAvatarUrl(<any>this, size));
               authorVms.push(user);
             });
             return authorVms;

@@ -825,11 +825,6 @@ function setupEnv() {
   } else {
     Tools.setEnvironment(3);
   }
-
-  window.w6Cheat = <IW6Cheat>{
-    isClient: window.six_client != null,
-    api: <IApi>{}
-  };
 }
 
 if (window && window.location) setupEnv();

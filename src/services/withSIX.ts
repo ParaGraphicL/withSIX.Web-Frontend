@@ -80,7 +80,7 @@ export class W6Urls {
 
   get tools() { return Tools }
 
-  environment: Tools.Environment;
+environment = Tools.getEnvironment();
 
   private toSsl(host) { return host.replace(":9000", ":9001"); }
   private fromSsl(host) { return host.replace(":9001", ":9000"); }
@@ -442,11 +442,17 @@ interface ISettings {
 }
 
 export class W6 {
-  public subSlogan: string;
-  public slogan: string;
+  public subSlogan = "The ultimate community driven content delivery platform";
+  public slogan = "Because the game is just the beginning";
   public chromeless: any;
   public enableBasket: boolean;
   public isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+  aureliaReady: boolean;
+  navigate: (url: string) => void; // here for the legacy client
+  libraryParent;
+  collection;
+  redirected: boolean;
+  redirectedWasLoggedIn: boolean;
   public w6OBot = "60f61960-23a3-11e4-8c21-0800200c9a66";
 
   get isLoggedIn() { return this.userInfo && this.userInfo.id != null; }
@@ -456,14 +462,15 @@ export class W6 {
   activeGame: { id: string; slug: string }
   settings: ISettings = {}
 
+  get enableAds() { return !this.userInfo.isPremium }
   get renderAds() { return this.enableAds && !this.ads.isPageExcluded; }
+  get isClient() { return window.six_client != null }
 
-  constructor(public url: W6Urls, public enableAds: boolean, public isClient: boolean, public clientVersion: string, public userInfo: IUserInfo, public miniClient: Client) {
-    this.chromeless = window.location.search.includes("chromeless") || isClient;
-
-    this.slogan = "Because the game is just the beginning";
-    this.subSlogan = "The ultimate community driven content delivery platform";
+  constructor(public url: W6Urls, public userInfo: IUserInfo, public miniClient: Client, public api: IApi) {
+    this.chromeless = window.location.search.includes("chromeless") || this.isClient;
     this.enableBasket = !this.isClient;
+    if (this.isClient)
+      this.client = new W6Client(<IClient>window.six_client);
 
     let settings = window.localStorage.getItem('w6.settings');
     this.settings = settings ? JSON.parse(settings) : {};
@@ -665,13 +672,6 @@ export class W6 {
   };
 
   basketUrlDisabled() { return /[?\&]basket=0/.test(window.location.href); }
-
-  handleClient() {
-    this.isClient = window.six_client != null;
-    this.enableBasket = !this.isClient;
-    if (this.isClient)
-      this.client = new W6Client(<IClient>window.six_client);
-  }
 
   client: W6Client;
   adsenseId: string;

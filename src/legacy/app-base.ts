@@ -96,7 +96,7 @@ class AppModule extends Tk.Module {
         }
       ])
       .run([
-        'environment', '$rootScope', 'w6', '$timeout', (environment: Tools.Environment, $rootScope: IRootScope, w6: W6, $timeout) => {
+        '$rootScope', 'w6', '$timeout', ($rootScope: IRootScope, w6: W6, $timeout) => {
 
 
           // TODO: No Dom manipulation in controllers..
@@ -143,7 +143,7 @@ class AppModule extends Tk.Module {
               }, 2 * 1000);
             }
           };
-          $rootScope.environment = environment;
+          $rootScope.environment = w6.url.environment;
           $rootScope.toShortId = (id) => Tools.toShortId(id);
           $rootScope.sluggify = (str) => Tools.sluggify(str);
           $rootScope.sluggifyEntityName = (str) => Tools.sluggifyEntityName(str);
