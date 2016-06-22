@@ -330,7 +330,7 @@ export class BaseController extends Tk.Controller {
     var httpFailed = result.httpFailed;
     this.logger.error(httpFailed[1], httpFailed[0]);
 
-    return this.$q.reject(result);
+    return Promise.reject(result);
   }; // TODO: Make this available on the root $scope ??
   public requestAndProcessCommand = (command, pars?, message?) => {
     return this.processCommand(this.$scope.request(command, pars), message);
