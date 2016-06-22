@@ -442,6 +442,7 @@ interface ISettings {
 }
 
 export class W6 {
+  public static instance: W6;
   public subSlogan = "The ultimate community driven content delivery platform";
   public slogan = "Because the game is just the beginning";
   public chromeless: any;

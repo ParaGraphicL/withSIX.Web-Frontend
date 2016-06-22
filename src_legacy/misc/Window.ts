@@ -30,20 +30,6 @@ interface String {
   truncate: (count: number) => string;
 }
 
-interface IW6 {
-  url;
-  isClient: boolean;
-  aureliaReady: boolean;
-  navigate: (url: string) => void; // here for the legacy client
-  libraryParent;
-  collection;
-  redirected: boolean;
-  redirectedWasLoggedIn: boolean;
-  api: IApi;
-  w6OBot: string;
-  miniClient;
-}
-
 interface IPromiseFunction<T> {
   (...args): Promise<T>
 }
@@ -97,7 +83,9 @@ interface Window {
   api: {
     openExternalUrl(url: string): void
   }
-  w6Cheat: IW6;
+  w6Cheat: {
+    api: IApi;
+  }
   assetHash: { [asset: string]: string }
   prerenderReady: boolean;
   RedactorPlugins;
