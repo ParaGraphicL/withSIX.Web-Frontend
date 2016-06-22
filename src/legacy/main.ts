@@ -79,18 +79,14 @@ export module Main {
               );
 
             var global = $routeProvider
-              .when('/changelog/:nolayout?', 'globalMenu.changelog')
-              .when('/gopremium', 'globalMenu.premium')
-              .when('/download/start', 'globalMenu.download_start')
-              .when('/blog', 'globalMenu.blog')
-              .when('/blog/team', 'globalMenu.blog_team')
-              .when('/blog/archive/:year/:month', 'globalMenu.blog_archive')
-              .when('/blog/team/archive/:year/:month', 'globalMenu.blog_team_archive')
-              .when('/blog/:slug', 'globalMenu.blog_show')
-              .segment('globalMenu', {
-                controller: 'MainController',
-                templateUrl: '/src_legacy/app/main/main.html'
-              }).within();
+              .when('/changelog/:nolayout?', 'changelog')
+              .when('/gopremium', 'premium')
+              .when('/download/start', 'download_start')
+              .when('/blog', 'blog')
+              .when('/blog/team', 'blog_team')
+              .when('/blog/archive/:year/:month', 'blog_archive')
+              .when('/blog/team/archive/:year/:month', 'blog_team_archive')
+              .when('/blog/:slug', 'blog_show');
 
             global.segment('changelog', {
               templateUrl: '/src_legacy/app/main/changelog/show.html',
@@ -175,25 +171,6 @@ export module Main {
 
   var app = new MainModule();
 
-  class MainController extends BaseController {
-    static $name = 'MainController';
-
-    constructor(public $scope: IBaseScope, public logger, public $q) {
-      super($scope, logger, $q);
-      var items = [
-        { header: "Get started", segment: "static_getting-started", mainSegment: "", isRight: false, icon: null, cls: null, url: null },
-        { header: "Download", segment: "static_download", mainSegment: "" },
-        { header: "Our Blog", segment: "blog" },
-        { header: "Community", segment: "static_community", mainSegment: "" }
-      ];
-      if (!$scope.w6.userInfo.isPremium)
-        items.push({ header: "Go Premium", segment: "premium", isRight: true, icon: "icon withSIX-icon-Badge-Sponsor", cls: 'gopremium' });
-      $scope.menuItems = this.getMenuItems(items, "globalMenu");
-    }
-  }
-
-  registerController(MainController);
-
   export interface IDownloadScope extends IBaseScope {
     model: { basket: string; redir: string; client: string };
   }
@@ -263,12 +240,12 @@ export module Main {
       if (this.$scope.model.enableBasket) this.$scope.w6.updateSettings(x => x.downloadedSync = true)
       else this.$scope.w6.updateSettings(x => x.downloadedPWS = true);
 
-      window.location.href = this.$scope.url.api + '/downloads' + mini + '/latest2?type=' + final_type;
+      window.w6Cheat.navigate(this.$scope.url.api + '/downloads' + mini + '/latest2?type=' + final_type);
 
       var redir: string = this.$location.search().redirect;
       if (redir && (redir.includes("withsix.com/") || redir.includes(".withsix.net/"))) // TODO: Proper protect
         var interval = setInterval(() => {
-          window.location.href = redir;
+          window.w6Cheat.navigate(redir);
           clearInterval(interval);
         }, 3000);
     }

@@ -47,11 +47,8 @@ export class ContentDownloads {
   }
 
   static startDownload(url: string) {
-    if (window.six_client == null || window.six_client.open_pws_uri == null) {
-      window.location.href = url;
-    } else {
-      window.six_client.open_pws_uri(url);
-    }
+    if (window.six_client == null || window.six_client.open_pws_uri == null) window.w6Cheat.navigate(url);
+    else window.six_client.open_pws_uri(url);
   }
 }
 
@@ -456,12 +453,7 @@ export module Play {
 
             $routeProvider.
               when('/', 'games').
-              segment('games', {
-                controller: 'GamesController',
-                templateUrl: '/src_legacy/app/play/games/index.html',
-                resolve: setupQuery(Games.GetGamesQuery)
-              });
-
+              segment('games', {});
             var game = $routeProvider.
               when('/:gameSlug', 'game').
               when('/:gameSlug/order', 'game.order').
@@ -577,11 +569,6 @@ export module Play {
               });
 
             game.
-              // segment('missions', {
-              //   controller: 'MissionsController',
-              //   templateUrl: '/src_legacy/app/components/default_index.html',
-              //   dependencies: ['gameSlug']
-              // }).
               segment('new_mission', {
                 controller: 'UploadNewmissionController',
                 templateUrl: '/src_legacy/app/play/missions/upload-newmission.html',
@@ -622,11 +609,6 @@ export module Play {
               });
 
             game.
-              // segment('collections', {
-              //   controller: 'CollectionsController',
-              //   templateUrl: '/src_legacy/app/components/default_index.html',
-              //   dependencies: ['gameSlug']
-              // }).
               segment('collectionsShow', {
                 controller: 'CollectionController',
                 templateUrl: '/src_legacy/app/play/collections/show.html',
@@ -2277,20 +2259,6 @@ export module Play.Games {
 
   registerCQ(OpenAddCollectionDialogQuery);
 
-  export class GetGamesQuery extends DbQueryBase {
-    static $name = "GetGames";
-
-    public execute = [
-      () => this.context.executeQuery(breeze.EntityQuery.from("Games")
-        .where("parentId", breeze.FilterQueryOp.Equals, null)
-        .where("public", breeze.FilterQueryOp.Equals, true) // ...
-        .orderBy("name"))
-        .then(data => data.results)
-    ];
-  }
-
-  registerCQ(GetGamesQuery);
-
   export class GetGameQuery extends DbQueryBase {
     static $name = "GetGame";
     static $inject = ['dbContext', 'basketService'];
@@ -2339,19 +2307,6 @@ export module Play.Games {
   interface IGamesScope extends IBaseScopeT<IBreezeGame[]> {
 
   }
-
-  class GamesController extends BaseQueryController<IBreezeGame[]> {
-    static $name = "GamesController";
-
-    constructor(public $scope: IGamesScope, public logger, $q, model: IBreezeGame[]) {
-      super($scope, logger, $q, model);
-      // TODO: Move to Directive..
-      $('#header-row').attr('style', 'background-image: url("' + $scope.url.getAssetUrl('img/play.withSIX/header.jpg') + '");');
-      $('body').removeClass('game-profile');
-    }
-  }
-
-  registerController(GamesController);
 
   class GameController extends BaseQueryController<IBreezeGame> {
     static $name = "GameController";

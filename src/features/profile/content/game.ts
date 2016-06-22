@@ -5,13 +5,17 @@ import {Index as SettingsIndex} from '../../settings/index';
 export class Game extends ViewModel {
   image: string;
   bgUrl: string;
+  url: string;
   public model: IGame;
   icon = "withSIX-icon-Joystick";
   itemStateClass = 'uptodate';
   openConfigFolder: ICommand<void>;
 
+  hasStats: boolean;
+
   activate(model: IGame) {
     this.model = model;
+    this.hasStats = (<any>model).collectionsCount != null;
     this.subscriptions.subd(d => {
       d(this.launch);
       d(this.openFolder);
@@ -19,11 +23,11 @@ export class Game extends ViewModel {
         d(this.openConfigFolder = uiCommand2("Open config folder", () => new OpenFolder(this.model.id, this.tools.emptyGuid, FolderType.Config).handle(this.mediator), { icon: 'icon withSIX-icon-Folder' }));
         this.topMenuActions.push(new MenuItem(this.openConfigFolder));
       }
-
     })
     let base = 'img/play.withSIX/games/' + model.slug;
     this.image = this.w6.url.getAssetUrl(`${base}/logo-overview.png`);
     this.bgUrl = this.w6.url.getAssetUrl(`${base}/headers/header.png`);
+    this.url = window.location.pathname == '/p' || window.location.pathname.startsWith("/p/") ? `/p/${model.slug}` : `/me/library/${model.slug}`
   }
 
   launch = uiCommand2("Launch", () => new LaunchGame(this.model.id).handle(this.mediator), { icon: "icon withSIX-icon-Hexagon-Play" });

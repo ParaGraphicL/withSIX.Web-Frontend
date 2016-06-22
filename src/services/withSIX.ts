@@ -85,11 +85,6 @@ export class W6Urls {
   private toSsl(host) { return host.replace(":9000", ":9001"); }
   private fromSsl(host) { return host.replace(":9001", ":9000"); }
 
-  public navigate($event, url) {
-    $event.preventDefault();
-    window.location.href = url;
-  }
-
   private setupDomain() {
     this.currentSite = "//" + window.location.host;
     var host = this.domain;

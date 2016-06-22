@@ -1,15 +1,13 @@
 import {inject} from 'aurelia-framework';
-import {Mediator, Query, DbQuery, handlerFor} from '../../framework';
+import {ViewModel, Mediator, Query, DbQuery, handlerFor} from '../../framework';
 
-@inject(Mediator)
-export class Checkout {
+export class Checkout extends ViewModel {
   orderId: string;
-  constructor(private mediator: Mediator) { }
 
   activate(params, routeConfig) {
     this.orderId = params.orderId;
     new CheckoutQuery(this.orderId).handle(this.mediator)
-      .then(x => window.location.href = x.redirectTo);
+      .then(x => this.navigateInternal(x.redirectTo));
     // todo handle failure
   }
 }
