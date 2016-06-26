@@ -448,6 +448,7 @@ export class W6 {
   public chromeless: any;
   public enableBasket: boolean;
   public isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+  public collection2;
   aureliaReady: boolean;
   navigate: (url: string) => void; // here for the legacy client
   libraryParent;

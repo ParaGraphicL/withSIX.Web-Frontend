@@ -4,6 +4,9 @@ export class EditContent extends Show {
   timeout;
   async activate(params, routeConfig) {
     await super.activate(params, routeConfig);
+    // TODO!
+    this.model = this.w6.collection2;
+
 
     // pff
     this.timeout = setInterval(() => {

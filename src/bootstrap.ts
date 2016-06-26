@@ -10,6 +10,7 @@ import Linq from 'linq4es2015';
 import numeral from 'numbro';
 import breeze from 'breeze-client';
 
+import {bootAngular} from './legacy';
 
 import {Toastr, UiContext, Mediator, ErrorLoggingMediatorDecorator, InjectingMediatorDecorator, BasketService, Client,
   CollectionDataService, ModDataService, MissionDataService, PromiseCache,
@@ -18,11 +19,6 @@ import {Toastr, UiContext, Mediator, ErrorLoggingMediatorDecorator, InjectingMed
 import {ToastLogger} from './services/legacy/logger';
 import {AbortError, LoginBase} from './services/auth-base';
 import {Api} from './services/api';
-
-import {MyApp} from './legacy/app';
-import legacySetup = MyApp.setup;
-import legacyBootAngular = MyApp.bootAngular;
-
 
 // hack for electron cant communicate with popup
 if (window.location.search.startsWith("?code=")) {
@@ -172,18 +168,13 @@ bootstrap(async (aurelia: Aurelia) => {
     const w6 = W6.instance = new W6(w6Urls, userInfo, client, api);
     window.w6Cheat = { api, navigate: (url: string) => w6.navigate(url) }
     Container.instance.registerSingleton(W6, () => w6);
-    legacySetup({
-      dfp: { publisherId: "19223485" },
-      adsense: { client: "ca-pub-8060864068276104" },
-      w6
-    });
     (<any>client).connection.promise(); // kick off the connection early
 
-    await legacyBootAngular(w6Urls);
+    await bootAngular(w6);
   }
 
   async function startApp() {
-    new ContainerSetup(Container.instance, angular.element("body").injector());
+    new ContainerSetup(Container.instance);
     Tools.Debug.log("AURELIA: starting app");
     var app = await aurelia.start();
     Tools.Debug.log("AURELIA: app started");
@@ -192,9 +183,8 @@ bootstrap(async (aurelia: Aurelia) => {
 });
 
 export class ContainerSetup {
-  constructor(private instance: Container, private angularInjector) {
+  constructor(private instance: Container) {
     if (instance == null) throw "instance null";
-    if (angularInjector == null) throw "angularInjector null";
     // this.instance.registerSingleton(HttpClient, () => {
     //   var client = new HttpClient();
     //   client.configure(x => {
@@ -203,21 +193,9 @@ export class ContainerSetup {
     //   return client;
     // });
     this.instance.registerTransient(UiContext);
-    this.registerAngularSingletons(['commandExecutor']);
 
     this.instance.registerSingleton(Mediator,
       () => new ErrorLoggingMediatorDecorator(new InjectingMediatorDecorator(new Mediator(), this.instance.get(W6)), this.instance.get(Toastr), this.instance.get(ClientMissingHandler), this.instance.get(W6)));
-  }
-
-  registerAngularSingletons(services) {
-    services.forEach(s => this.registerAngularSingleton(s));
-  }
-
-  registerAngularSingleton(name) {
-    if (name.name) {
-      if (name.cls) this.instance.registerSingleton(name.cls, () => this.angularInjector.get(name.name));
-      else this.instance.registerSingleton(name.name, () => this.angularInjector.get(name.name));
-    } else this.instance.registerSingleton(name, () => this.angularInjector.get(name));
   }
 }
 

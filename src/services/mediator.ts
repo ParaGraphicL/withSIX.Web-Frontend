@@ -232,9 +232,12 @@ export class DbClientQuery<TRequest, TResponse> extends DbQuery<TRequest, TRespo
 
 interface IModInfo { type?: string, folder?: string, groupId?: string }
 
-@inject("commandExecutor")
 export class LegacyMediator extends Mediator {
-  constructor(private commandExecutor) { super(); }
+  _angularInjector;
+  get angularInjector() { return this._angularInjector || (this._angularInjector = angular.element("body").injector()) }
+
+  get commandExecutor() { return this.angularInjector.get('commandExecutor') }
+
   legacyRequest<T>(requestName: string, requestParams?): Promise<T> {
     return this.commandExecutor.execute(requestName, requestParams)
       .then(x => x.lastResult);
