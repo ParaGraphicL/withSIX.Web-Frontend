@@ -4,7 +4,10 @@ import {Router, RouterConfiguration} from 'aurelia-router';
 export class Content extends Show {
   async activate(params, routeConfig) {
     await super.activate(params, routeConfig);
+    this.w6.collection2 = this.model;
   }
+
+  deactivate() { this.w6.collection2 = null; super.deactivate() }
 
   get canEdit() { return this.w6.userInfo.isManager || this.w6.userInfo.id == this.model.author.id }
 
