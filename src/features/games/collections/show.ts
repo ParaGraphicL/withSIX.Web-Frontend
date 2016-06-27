@@ -53,9 +53,8 @@ export class Show extends ViewModel {
     this.shortId = params.id;
     await this.setupModel();
 
-
     this.subscriptions.subd(d => {
-      d(this.current);
+      d(() => this.current.dispose());
     });
   }
 
