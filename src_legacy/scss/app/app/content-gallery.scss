@@ -592,8 +592,8 @@ dropdown-menu.new-style {
   .new-title {
     font-size: 2em;
   }
-  a,
-  button {
+   > button,
+  > a {
     color: $colorSixBlue;
     background-color: white;
     text-decoration: none;

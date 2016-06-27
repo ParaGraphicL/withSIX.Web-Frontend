@@ -58,7 +58,7 @@ export class Show extends ViewModel {
     });
   }
 
-  deactivate() { this.w6.collection2 = null; super.deactivate() }
+  //deactivate() { this.w6.collection2 = null; super.deactivate() }
 
   async canDeactivate() {
     if (!this._changed) return true;
