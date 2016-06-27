@@ -269,12 +269,11 @@ export class PlaylistItem extends ViewModel {
     return "content-in-progress content-progress-" + percent;
   };
 
+  get itemStateClass() { return this.basketService.getItemStateClassInternal(this.itemState); }
   get itemState() { return this.state ? this.calculateState(this.state.state, this.state.version, this.model.constraint) : null; }
   calculateState(state: ItemState, version: string, constraint: string) { return ContentHelper.getContentState(state, version, constraint); }
-
   // .where(x => x.itemType != BasketItemType.Collection)
   get dependencySize() { return this.localChain.asEnumerable().select(x => this.chain.get(x)).where(x => x != null).select(x => x.sizePacked).where(x => x != null).sum() }
-  get itemStateClass() { return this.basketService.getItemStateClassInternal(this.itemState); }
 
   informAngular = () => this.appEvents.emitBasketChanged();
 

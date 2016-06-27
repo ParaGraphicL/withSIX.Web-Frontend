@@ -50,6 +50,7 @@ export class ModHelper {
   public static convertOnlineMod(x: IBreezeMod, game: { id: string; slug: string }, w6: W6) {
     return {
       id: x.id,
+      packageName: x.packageName,
       image: w6.url.getContentAvatarUrl(x.avatar, x.avatarUpdatedAt),
       author: x.authorText || x.author.displayName,
       authorSlug: x.author ? x.author.slug : null,
