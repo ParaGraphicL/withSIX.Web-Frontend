@@ -32,6 +32,7 @@ export class FindModel<T> extends Base implements IFindModel<T> {
     this.subscriptions.subd(d => {
       // TODO: debounce and make sure old results dont overwrite new results
       d(this.observeEx(x => x.searchItem)
+        .where(x => !!x)
         .selectMany(async (x) => await this.finder(x))
         .concat()
         .subscribe(x => this.results = x));
