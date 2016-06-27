@@ -93,7 +93,10 @@ export class EditContent extends ViewModel {
 }
 
 class SearchQuery extends Query<IFindDependency[]> {
-  constructor(public query: string, public gameIds: string[]) { super(); }
+  constructor(public query: string, public gameIds: string[]) {
+    super();
+    if (!query) throw new Error("Query cannot be empty")
+  }
 }
 
 @handlerFor(SearchQuery)
