@@ -121,13 +121,15 @@ export class LoginBase {
             let tries = (<any>request).tries || 0;
             if (tries > 0) throw response;
             (<any>request).tries = ++tries;
+            let newRequest = new Request(request);
+            (<any>newRequest).tries = tries;
             try {
-              if (this.shouldLog) Tools.Debug.log(`[HTTP-FETCH] Retrying after refreshtoken`, request);
-              await handleAt(request);
+              if (this.shouldLog) Tools.Debug.log(`[HTTP-FETCH] Retrying after refreshtoken`, newRequest);
+              await handleAt(newRequest);
             } catch (err) {
               throw response;
             }
-            return await this.httpFetch.fetch(request);
+            return await this.httpFetch.fetch(newRequest);
           }
         });
     })
