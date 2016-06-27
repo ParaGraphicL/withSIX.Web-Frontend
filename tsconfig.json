@@ -103,7 +103,6 @@
         "./src/features/profile/lib.ts",
         "./src/features/profile/library/base.ts",
         "./src/features/profile/library/collections/index.ts",
-        "./src/features/profile/library/collections/show.ts",
         "./src/features/profile/library/games.ts",
         "./src/features/profile/library/home/index.ts",
         "./src/features/profile/library/index.ts",
