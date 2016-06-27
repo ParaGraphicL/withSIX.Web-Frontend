@@ -1,8 +1,6 @@
-import {ContentHelper, ItemState, IMod, IInContent} from '../../../framework';
+import {ContentHelper, ItemState, IMod, IModInContent} from '../../../framework';
 
 import {Mod} from './mod';
-
-interface IModInContent extends IMod, IInContent { }
 
 export class ModInContent extends Mod {
   model: IModInContent;

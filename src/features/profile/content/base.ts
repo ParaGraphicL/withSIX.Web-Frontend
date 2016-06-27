@@ -270,8 +270,3 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
   ]
   bottomActions: IMenuItem[] = []
 }
-
-
-export interface IInContent {
-  constraint?: string;
-}

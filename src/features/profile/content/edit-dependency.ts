@@ -1,6 +1,5 @@
-import {inject,bindable} from 'aurelia-framework';
-import {IDependency} from './dependency';
-import {Dialog, uiCommand2} from '../../../framework';
+import {inject, bindable} from 'aurelia-framework';
+import {Dialog, uiCommand2, IDependency} from '../../../framework';
 
 import VersionCompare from 'version_compare';
 
@@ -25,6 +24,6 @@ export class EditDependency extends Dialog<IDependency> {
     this.model.isRequired = !this.isOptional;
     this.controller.ok(null);
   }, {
-    cls: "ok"
-  });
+      cls: "ok"
+    });
 }
