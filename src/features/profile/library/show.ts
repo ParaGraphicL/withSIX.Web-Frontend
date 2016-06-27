@@ -16,7 +16,6 @@ export class Show extends ViewModel {
     config.map([
       { route: '', name: 'library_game', moduleId: 'features/profile/library/home/index', nav: true, title: 'Home', settings: { icon: "icon withSIX-icon-Home" } },
       { route: 'collections', name: 'library_game_collections', moduleId: 'features/profile/library/collections/index', nav: true, title: 'Collections', settings: { icon: "icon withSIX-icon-Nav-Collection" } },
-      { route: 'collections/:id/:slug', name: 'library_game_collections_show', moduleId: 'features/profile/library/collections/show', nav: false, title: 'Collection', settings: { icon: "icon withSIX-icon-Nav-Collection" } },
       { route: 'mods', name: 'library_game_mods', moduleId: 'features/profile/library/mods/index', nav: true, title: 'Mods', settings: { icon: "icon withSIX-icon-Nav-Mod" } },
       { route: 'missions', name: 'library_game_missions', moduleId: 'features/profile/library/missions/index', nav: true, title: 'Missions', settings: { icon: "icon withSIX-icon-Nav-Mission" } }
     ]);
