@@ -224,9 +224,3 @@ class IpcHandler {
 export class Test {
   constructor(ipcHandler: IpcHandler) { }
 }
-
-var w = <any>window;
-if (Tools.getEnvironment() >= Tools.Environment.Staging && w.api) {
-  var test = Container.instance.get(Test);
-  w.test = test;
-}

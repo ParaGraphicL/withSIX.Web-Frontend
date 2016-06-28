@@ -15,7 +15,7 @@ import {UiContext, ViewModel, Dialog, Mediator, Command, DbQuery, handlerFor, Me
 
 import {GameBaskets} from './features/game-baskets';
 
-import {RouteHandler, RestoreBasket, OpenCreateCollectionDialog, OpenAddModDialog, OpenAddModsToCollectionsDialog, OpenSettings} from './services/api';
+import {RouteHandler, RestoreBasket, OpenCreateCollectionDialog, OpenAddModDialog, OpenAddModsToCollectionsDialog, OpenSettings, Test} from './services/api';
 
 import {Login} from './services/auth';
 import {LoginBase, LoginUpdated} from './services/auth-base';
@@ -80,6 +80,13 @@ export class App extends ViewModel {
     };
 
     this.activateNg();
+
+    var w = <any>window;
+    if (Tools.getEnvironment() >= Tools.Environment.Staging && w.api) {
+      var test = Container.instance.get(Test);
+      w.test = test;
+    }
+
 
     // workaround for dialogs not working
     Origin.set(SettingsIndex, { moduleId: "features/settings/index", moduleMember: "Index" });

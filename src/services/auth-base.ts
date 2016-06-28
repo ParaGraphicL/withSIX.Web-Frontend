@@ -19,7 +19,7 @@ export class LoginBase {
   static token = 'aurelia_token';
   static localClientId = 'withsix-spa';
   constructor(private http: HttpClient, private httpFetch: FetchClient, protected w6Url: W6Urls, private eventBus: EventAggregator) { }
-  static resetUnload() { window.onbeforeunload = null; }
+  static resetUnload() { window.onbeforeunload = undefined; }
   resetUnload() { LoginBase.resetUnload(); }
   refreshing: Promise<boolean>;
   async tryHandleRefreshToken() {
