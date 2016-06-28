@@ -77,21 +77,22 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
   };
   get versionInfo() {
     if (this.state && this.state.version) {
-      if (!this.model.version) return this.state.version;
+      if (!this.desiredVersion) return this.state.version;
       if (this.itemState == ItemState.Uptodate) return this.state.version; // we return the state version because the model version might be out of sync atm..
-      return this.state.version == this.model.version ? this.model.version : `${this.state.version} / ${this.model.version}`;
+      return this.state.version == this.desiredVersion ? this.desiredVersion : `${this.state.version} / ${this.desiredVersion}`;
     }
     // if (this.model.installedVersion) {
     //   if (!this.model.version) return this.model.installedVersion;
     //   return this.model.installedVersion == this.model.version ? this.model.version : `${this.model.installedVersion} / ${this.model.version}`;
     // }
-    return this.model.version;
+    return this.desiredVersion;
   }
   get itemStateClass() { return this.basketService.getItemStateClassInternal(this.itemState); }
   get itemBusyClass() { return this.basketService.getItemBusyClassInternal(this.itemState) }
   get itemState() { return this.hasState ? this.state.state : null; }
   get basketableText() { return this.isInBasket ? "Remove from Playlist" : "Add to Playlist" }
   get basketableIcon() { return this.isInBasket ? "withSIX-icon-X" : "withSIX-icon-Add" }
+  get desiredVersion() { return this.model.version }
 
   type;
 
