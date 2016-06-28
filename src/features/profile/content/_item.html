@@ -52,7 +52,7 @@
                 <span if.bind="!hasRealAuthor">${model.author}</span>
               </div>
               <div>
-                <span class="icon withSIX-icon-Lock" if.bind="model.constraint"></span>
+                <span class="icon withSIX-icon-Lock" title="The content is locked to v${model.constraint}" if.bind="model.constraint"></span>
                 <span class="small">v${versionInfo}</span> &nbsp;
                 <span class="followers small" if.bind="installs != null"><i>${installs | amount } ${installs | pluralizeWord:statTitle}</i></span>
               </div>
