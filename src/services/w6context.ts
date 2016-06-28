@@ -99,15 +99,15 @@ export class W6Context {
 
   public getUrl(path) { return Tools.uriHasProtocol(path) || path.startsWith("/") ? path : this.w6.url.api + "/" + path; }
 
-  public getMd(subPath) { return this.getCustom<string>(this.w6.url.getSerialUrl("docs/" + subPath)); }
+  public getMd(subPath) { return this.getText(this.w6.url.getSerialUrl("docs/" + subPath)); }
 
-  public getCdnMd(subPath: string) { return this.getCustom<string>(this.w6.url.docsCdn + "/software/withSIX/drop/docs/" + subPath) } //  + (subPath.includes('?') ? '&' : '?') + "site=" + this.w6.url.site
+  public getCdnMd(subPath: string) { return this.getText(this.w6.url.docsCdn + "/software/withSIX/drop/docs/" + subPath) } //  + (subPath.includes('?') ? '&' : '?') + "site=" + this.w6.url.site
 
   // TODO: We should check for the latest commit or tag on github, every minute or so, and then use that commit SHA
   public async getDocMd(subPath, addTag = false) {
     var path = 'docs/' + subPath;
     var latestCommit = await this.getLatestCommit(path);
-    return await this.getCustom<string>('https://cdn.rawgit.com/SIXNetworks/withsix-docs/' + latestCommit + '/' + path)
+    return await this.getText('https://cdn.rawgit.com/SIXNetworks/withsix-docs/' + latestCommit + '/' + path)
   }
 
   async getLatestCommit(path, repo = 'SIXNetworks/withsix-docs') {
@@ -121,10 +121,11 @@ export class W6Context {
     return `${d.getUTCFullYear()}${d.getUTCMonth()}${d.getUTCDay()}${d.getUTCHours()}${Math.round(d.getUTCMinutes() / minuteGranulary)}`
   }
 
-  public getCustom = <T>(path, configOverrides?: IRequestShortcutConfig) => this.handle<T>(path, configOverrides)
-  public postCustom = <T>(path, data?, configOverrides?: IRequestShortcutConfig) => this.handleJson<T>(path, data, Object.assign({ method: 'POST' }, configOverrides));
-  public putCustom = <T>(path, data, configOverrides?: IRequestShortcutConfig) => this.handleJson<T>(path, data, Object.assign({ method: 'PUT' }, configOverrides));
-  public patchCustom = <T>(path, data, configOverrides?: IRequestShortcutConfig) => this.handleJson<T>(path, data, Object.assign({ method: 'PATCH' }, configOverrides));
+  public get = <T>(path, query?) => this.handleJson<T>(this.serviceName + '/' + path, { params: query });
+  public getCustom = <T>(path, configOverrides?: IRequestShortcutConfig) => this.handleJson<T>(path, configOverrides)
+  public postCustom = <T>(path, data?, configOverrides?: IRequestShortcutConfig) => this.handleJsonWithBody<T>(path, data, Object.assign({ method: 'POST' }, configOverrides));
+  public putCustom = <T>(path, data, configOverrides?: IRequestShortcutConfig) => this.handleJsonWithBody<T>(path, data, Object.assign({ method: 'PUT' }, configOverrides));
+  public patchCustom = <T>(path, data, configOverrides?: IRequestShortcutConfig) => this.handleJsonWithBody<T>(path, data, Object.assign({ method: 'PATCH' }, configOverrides));
 
   public postCustomFormData(path, fd, configOverrides?: IRequestShortcutConfig) {
     Tools.Debug.log("postCustomFormData", path, fd, configOverrides);
@@ -134,17 +135,27 @@ export class W6Context {
     //     'Content-Type': undefined
     //   }
     // }, configOverrides)));
-    return this.handle(path, Object.assign({
+    return this.handleJson(path, Object.assign({
       body: fd
     }, configOverrides));
   }
-  public deleteCustom = <T>(path, configOverrides?: IRequestShortcutConfig) => this.handle(path, { method: 'DELETE' })
+  public deleteCustom = <T>(path, configOverrides?: IRequestShortcutConfig) => this.handleJson(path, { method: 'DELETE' })
 
-  handleJson = <T>(path, data, configOverride?) => this.handle<T>(path, Object.assign({
+  handleJsonWithBody = <T>(path, data, configOverride?) => this.handleJson<T>(path, Object.assign({
     body: data ? json(data) : null
   }, configOverride));
 
-  handle = async <T>(path, configOverride?) => {
+  handleJson = async <T>(path, configOverride?) => {
+    let r = await this.getResponse(path, configOverride);
+    return <T>this.w6.convertToClient(await r.json());
+  }
+
+  getText = async <T>(path, configOverride?) => {
+    let r = await this.getResponse(path, configOverride);
+    return <T>this.w6.convertToClient(await r.text());
+  }
+
+  getResponse = async (path, configOverride?) => {
     let url = this.getUrl(path);
     if (configOverride && configOverride.params) {
       var params = Object.keys(configOverride.params)
@@ -163,7 +174,7 @@ export class W6Context {
 
     let r: Response;
     try {
-      r = await this.http.fetch(url, configOverride);
+      return await this.http.fetch(url, configOverride);
     } catch (err) {
       if (err instanceof Response) {
         let r: Response = err;
@@ -171,7 +182,6 @@ export class W6Context {
       }
       throw err;
     }
-    return <T>this.w6.convertToClient(await r.json());
   }
 
   private handleOverrides(configOverrides) {
@@ -184,8 +194,6 @@ export class W6Context {
       fd.append('file', files[i]);
     return fd;
   }
-
-  public get = <T>(path, query?) => this.handle<T>(this.serviceName + '/' + path, { params: query });
 
   public getOpByKeyLength(key: string): breeze.FilterQueryOpSymbol {
     return key.length > W6Context.minFilterLength ? breeze.FilterQueryOp.Contains : breeze.FilterQueryOp.StartsWith;
