@@ -56,16 +56,14 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
   get isActive() { return this.gameInfo.isLocked && this.basketService.lastActiveItem == this.model.id };
   get canAbort() { return this.gameInfo.clientInfo.canAbort; }
   get hasState() { return this.state != null; }
-  get isIncomplete() { return this.hasState && this.state.state == ItemState.Incomplete; }
-  get isInstalled() { return this.hasState && this.state.state != ItemState.Incomplete; }
+  get isIncomplete() { return this.itemState == ItemState.Incomplete; }
+  get isInstalled() { return this.itemState != ItemState.Incomplete; }
   get canBeUninstalled() { return this.isIncomplete || this.isInstalled; }
-  get hasUpdateAvailable() { return this.isInstalled && this.state.state == ItemState.UpdateAvailable; }
+  get hasUpdateAvailable() { return this.isInstalled && this.itemState == ItemState.UpdateAvailable; }
   get activeGameId() { return this.w6.activeGame.id }
   get canAddToBasket() { return this.activeGameId == this.model.gameId; }
   get isInBasket() { return ContentViewModel.isInBasketFunction(this.baskets.active, this.model.id); }
-  get isBusy() { return this.state && this.busyStates.asEnumerable().contains(this.state.state) }
-  get itemStateClass() { return this.basketService.getItemStateClassInternal(this.state ? this.state.state : null); }
-  get itemBusyClass() { return this.basketService.getItemBusyClassInternal(this.state ? this.state.state : null); }
+  get isBusy() { return this.hasState && this.busyStates.asEnumerable().contains(this.itemState) }
   get progressClass() {
     let state = this.state;
     if (!state || !(state.state == ItemState.Updating || state.state == ItemState.Installing)) return null;
@@ -80,7 +78,7 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
   get versionInfo() {
     if (this.state && this.state.version) {
       if (!this.model.version) return this.state.version;
-      if (this.state.state == ItemState.Uptodate) return this.state.version; // we return the state version because the model version might be out of sync atm..
+      if (this.itemState == ItemState.Uptodate) return this.state.version; // we return the state version because the model version might be out of sync atm..
       return this.state.version == this.model.version ? this.model.version : `${this.state.version} / ${this.model.version}`;
     }
     // if (this.model.installedVersion) {
@@ -89,7 +87,9 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
     // }
     return this.model.version;
   }
-
+  get itemStateClass() { return this.basketService.getItemStateClassInternal(this.itemState); }
+  get itemBusyClass() { return this.basketService.getItemBusyClassInternal(this.itemState) }
+  get itemState() { return this.hasState ? this.state.state : null; }
   get basketableText() { return this.isInBasket ? "Remove from Playlist" : "Add to Playlist" }
   get basketableIcon() { return this.isInBasket ? "withSIX-icon-X" : "withSIX-icon-Add" }
 
