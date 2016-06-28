@@ -66,16 +66,19 @@ export class LoginBase {
     //http://stackoverflow.com/questions/9314730/display-browser-loading-indicator-like-when-a-postback-occurs-on-ajax-calls
 
     this.http.configure(config => {
+      const handleAt = async (request, force = false) => {
+        let at: string;
+        if (at = await this.getAccessToken(request.url, accessToken, force)) {
+          accessToken = at;
+          request.headers.headers['Authorization'] = `Bearer ${accessToken}`;
+        }
+      }
       config.withHeader('Accept', 'application/json');
       config.withInterceptor({
         request: async (request) => {
           if (!request) return;
           if (this.shouldLog) Tools.Debug.log(`[HTTP] Requesting ${request.method} ${request.url}`, request);
-          let at: string;
-          if (at = await this.getAccessToken(request.url, accessToken)) {
-            accessToken = at;
-            request.headers.headers['Authorization'] = `Bearer ${accessToken}`;
-          }
+          await handleAt(request);
           return request;
         },
         response: (response) => {
@@ -92,9 +95,9 @@ export class LoginBase {
         //'X-Requested-With': 'Fetch'
       }
 
-      const handleAt = async (request: Request) => {
+      const handleAt = async (request: Request, force = false) => {
         let at: string;
-        if (at = await this.getAccessToken(request.url, accessToken)) {
+        if (at = await this.getAccessToken(request.url, accessToken, force)) {
           accessToken = at;
           request.headers.append('Authorization', `Bearer ${accessToken}`);
         }
@@ -125,7 +128,7 @@ export class LoginBase {
             (<any>newRequest).tries = tries;
             try {
               if (this.shouldLog) Tools.Debug.log(`[HTTP-FETCH] Retrying after refreshtoken`, newRequest);
-              await handleAt(newRequest);
+              await handleAt(newRequest, true);
             } catch (err) {
               throw response;
             }
@@ -135,9 +138,9 @@ export class LoginBase {
     })
   }
 
-  async getAccessToken(url: string, accessToken: string) {
-    if (!url.startsWith(this.w6Url.authSsl)) return null;
-    if (!this.isLogin(url) && accessToken && Tools.isTokenExpired(accessToken))
+  async getAccessToken(url: string, accessToken: string, force = false) {
+    if (!url.startsWith(this.w6Url.authSsl + '/')) return null;
+    if (!this.isLogin(url) && accessToken && (force || Tools.isTokenExpired(accessToken)))
       if (await this.handleRefresh()) accessToken = window.localStorage[LoginBase.token];
     return accessToken;
   }
