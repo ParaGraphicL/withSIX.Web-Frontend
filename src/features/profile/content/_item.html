@@ -54,7 +54,7 @@
               <div>
                 <span class="icon withSIX-icon-Lock" if.bind="model.constraint"></span>
                 <span class="small">v${versionInfo}</span> &nbsp;
-                <span class="followers small" if.bind="installs != null"><i>${installs | amount } ${installs | pluralizeWord:(model.type == 'collection' ? 'subscriber' : 'install')}</i></span>
+                <span class="followers small" if.bind="installs != null"><i>${installs | amount } ${installs | pluralizeWord:statTitle}</i></span>
               </div>
               <div class="clearfix"></div>
             </div>

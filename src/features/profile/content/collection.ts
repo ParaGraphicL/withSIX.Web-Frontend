@@ -18,6 +18,8 @@ export class Collection extends ContentViewModel<ICollection> {
   loadIntoPlaylist: ICommand<void>
   topMenuActions = []
 
+  get statTitle() { return 'subscriber' }
+
   async activate(model: ICollection) {
     await super.activate(model);
     this.scopeIcon = this.getScopeIcon();
