@@ -167,7 +167,8 @@ export class W6Context {
       url = url + "?" + params;
     }
 
-    return <T>(await this.http.fetch(url, configOverride).then(x => x.json()).then(x => this.w6.convertToClient(x)));
+    let r = await this.http.fetch(url, configOverride);
+    return <T>this.w6.convertToClient(r.json());
   }
 
   private handleOverrides(configOverrides) {
