@@ -10,6 +10,6 @@ export class ModInContent extends Mod {
 
   async activate(model: IModInContent) {
     await super.activate(model);
-    this.type = 'Mod';
   }
+  get type() { return 'mod' }
 }

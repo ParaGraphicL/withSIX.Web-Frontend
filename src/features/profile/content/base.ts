@@ -37,6 +37,7 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
   isForActiveGame: boolean;
   launchMenuItem: MenuItem<any>;
 
+  get statTitle() { return 'install' }
   get defaultAssetUrl() { return this.assets.defaultAssetUrl }
   get defaultBackUrl() { return this.assets.defaultBackUrl }
   // TODO: This could be modeled by events similar to the state handling?
@@ -93,9 +94,7 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
   get basketableText() { return this.isInBasket ? "Remove from Playlist" : "Add to Playlist" }
   get basketableIcon() { return this.isInBasket ? "withSIX-icon-X" : "withSIX-icon-Add" }
   get desiredVersion() { return this.model.version }
-
-  type;
-
+  get type() { return this.model.type }
 
   async activate(model: TContent) {
     this.model = model;
@@ -105,8 +104,6 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
     this.image = this.getImage();
     this.gameName = (this.model.originalGameSlug || this.model.gameSlug).replace("-", " ");
     this.isForActiveGame = !this.model.originalGameId || this.model.originalGameId == this.model.gameId;
-
-    this.type = model.type.toUpperCaseFirst();
 
     this.url = '/p/' + this.getPath();
 
@@ -177,19 +174,19 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
         .skip(1) // we need to first 'setupMenuItems'
         .subscribe(x => this.handleUpdateAvailable(x)));
 
-      d(this.openFolder = uiCommand2("Open folder", () => new OpenFolder(this.model.gameId, this.model.type == 'mod' ? this.model.id : this.tools.emptyGuid).handle(this.mediator), {
+      d(this.openFolder = uiCommand2("Open folder", () => new OpenFolder(this.model.gameId, this.type === 'mod' ? this.model.id : this.tools.emptyGuid).handle(this.mediator), {
         isVisibleObservable: this.isInstalledObservable,
         icon: 'withSIX-icon-Folder'
       }))
       if (this.shouldAddConfigAction)
-        d(this.openConfigFolder = uiCommand2("Open config folder", () => new OpenFolder(this.model.gameId, this.model.type == 'mod' ? this.model.id : this.tools.emptyGuid, FolderType.Config).handle(this.mediator), { icon: 'icon withSIX-icon-Folder', isVisibleObservable: this.isInstalledObservable }));
+        d(this.openConfigFolder = uiCommand2("Open config folder", () => new OpenFolder(this.model.gameId, this.type === 'mod' ? this.model.id : this.tools.emptyGuid, FolderType.Config).handle(this.mediator), { icon: 'icon withSIX-icon-Folder', isVisibleObservable: this.isInstalledObservable }));
 
     });
 
     this.setupMenuItems();
     this.handleUpdateAvailable(this.hasUpdateAvailable);
     let m = <any>this.model;
-    this.installs = this.model.type == 'collection' ? m.subscribers : m.statInstall;
+    this.installs = this.type === 'collection' ? m.subscribers : m.statInstall;
     this.updatedAt = m.updated || m.updatedAt || this.model.updatedVersion || this.model.lastUpdated || this.model.lastInstalled;
 
     this.hasRealAuthor = model.authorSlug != 'withSIX-o-bot';
@@ -262,7 +259,7 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
 
   getPath() {
     var slug = this.model.name ? this.model.name.sluggify() : null;
-    var path = `${this.model.gameSlug}/${this.model.type}s/${this.model.id.toShortId()}`;
+    var path = `${this.model.gameSlug}/${this.type}s/${this.model.id.toShortId()}`;
     return slug ? path + "/" + slug : path;
   }
   getImage() { return this.model.image ? this.w6.url.getContentAvatarUrl(this.model.image, (<any>this.model).imageUpdatedAt) : this.defaultAssetUrl; }
