@@ -9,11 +9,6 @@ import {PromiseCache} from 'withsix-sync-api';
 
 import {HttpClient, json} from 'aurelia-fetch-client';
 
-export var LoginNoLongerValid = Tools.createError('LoginNoLongerValid');
-export var RequiresLogin = Tools.createError('RequiresLogin');
-export var Forbidden = Tools.createError("Forbidden");
-export var ValidationError = Tools.createError("ValidationError");
-
 export interface IAWSUploadPolicy {
   AccessKey: string;
   Signature: string;
@@ -544,13 +539,13 @@ export class W6Context {
   private registerEntityTypeCtor(store, ctor) { store.registerEntityTypeCtor(ctor.$name, ctor); }
 
   handleResponseErrorStatus(status: number, statusText: string, body, isLoggedIn: boolean) {
-    if (status == 400) throw new ValidationError("Input not valid: " + body);
+    if (status == 400) throw new Tools.ValidationError("Input not valid", { status, statusText, body });
     if (status == 401) {
       // todo; retry the request after trying refresh token? but only once..
-      throw isLoggedIn ? new LoginNoLongerValid("The login is no longer valid, please retry after logging in again") : new RequiresLogin("The requested action requires you to be logged-in");
+      throw isLoggedIn ? new Tools.LoginNoLongerValid("The login is no longer valid, please retry after logging in again") : new Tools.RequiresLogin("The requested action requires you to be logged-in");
     }
-    if (status == 403) throw new Forbidden("You do not have access to this resource: " + body);
-    if (status == 404) throw new Tools.NotFoundException("The requested resource does not appear to exist: " + body);
-    throw new Tools.HttpException(`Unknown error`, status, statusText, body)
+    if (status == 403) throw new Tools.Forbidden("You do not have access to this resource");
+    if (status == 404) throw new Tools.NotFoundException("The requested resource does not appear to exist");
+    throw new Tools.HttpException(`Unknown error`, { status, statusText, body })
   }
 }

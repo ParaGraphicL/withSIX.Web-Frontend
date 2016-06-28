@@ -130,8 +130,14 @@ export module Tools {
     return f;
   }
 
+  interface IRequestInfo<T> {
+    status: number;
+    statusText: string;
+    body: T;
+  }
+
   export var createHttpError = (name: string) => {
-    var f = function(message: string, status: number, statusText: string, data) {
+    var f = function(message: string, requestInfo: IRequestInfo<any>) {
       Object.defineProperty(this, 'name', {
         enumerable: false,
         writable: false,
@@ -140,18 +146,18 @@ export module Tools {
       Object.defineProperty(this, 'status', {
         enumerable: false,
         writable: false,
-        value: status
+        value: requestInfo.status
       });
       Object.defineProperty(this, 'statusText', {
         enumerable: false,
         writable: false,
-        value: statusText
+        value: requestInfo.statusText
       });
 
       Object.defineProperty(this, 'data', {
         enumerable: false,
         writable: false,
-        value: data
+        value: requestInfo.body
       });
       Object.defineProperty(this, 'message', {
         enumerable: false,
@@ -178,11 +184,15 @@ export module Tools {
   }
 
   // TODO: ES6/TS valid exceptions
-  export var NotFoundException = createError('NotFoundException');
   export var RequireSslException = createError('RequireSslException');
   export var RequireNonSslException = createError('RequireNonSslException');
   export var InvalidShortIdException = createError('InvalidShortIdException');
+  export var NotFoundException = createError('NotFoundException');
+  export var RequiresLogin = Tools.createError('RequiresLogin');
+  export var LoginNoLongerValid = Tools.createError('LoginNoLongerValid');
   export var HttpException = createHttpError('HttpException');
+  export var Forbidden = Tools.createError("Forbidden");
+  export var ValidationError = Tools.createHttpError("ValidationError");
 
   export function disposableTimeout(f: () => void, timeout): IDisposable {
     let id = setTimeout(f, timeout);
