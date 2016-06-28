@@ -109,20 +109,13 @@ export class Api {
     try {
       this.tools.Debug.log("$$$ err reason", JSON.stringify(reason));
     } catch (err) { this.tools.Debug.warn("Err while converting error reason", err) }
-    if (typeof (reason) == 'string') return [reason, 'Unknown error occurred'];
 
-    if (reason instanceof this.tools.NotFoundException || reason instanceof this.tools.InvalidShortIdException) {
-      return [reason.message, "404: The requested resource could not be found"];
-    }
+    if (reason instanceof String) return [reason, 'Unknown error occurred'];
+    if (reason instanceof this.tools.NotFoundException || reason instanceof this.tools.InvalidShortIdException) return [reason.message, "404: The requested resource could not be found"];
+    if (reason instanceof this.tools.RequireSslException) return [reason.message, "please wait until you are redirected", "Requires SSL"];
+    if (reason instanceof this.tools.RequireNonSslException) return [reason.message, "please wait until you are redirected", "Requires NO-SSL"];
 
-    if (reason instanceof this.tools.RequireSslException) {
-      return [reason.message, "please wait until you are redirected", "Requires SSL"];
-    }
-
-    if (reason instanceof this.tools.RequireNonSslException) {
-      return [reason.message, "please wait until you are redirected", "Requires NO-SSL"];
-    }
-
+    // Breeze server errors
     if (reason.httpResponse != null) {
       var breezeReason = <IBreezeErrorReason>reason;
       if (breezeReason.httpResponse.data) {
@@ -141,6 +134,8 @@ export class Api {
         return ["Site down?!", 'Unknown Error'];
       }
     }
+
+    // Breeze client-side validation
     if (reason.entityErrors) {
       let message = "";
       reason.entityErrors.forEach(x => {
@@ -148,17 +143,13 @@ export class Api {
       })
       return [message, "Validation failed"];
     }
-    if (!reason.data) return [reason, 'Unknown error'];
 
+    // HttpFetchClient based w6context errors
+    if (!reason.data) return [reason, 'Unknown error'];
     let message = reason.data.message;
-    if (reason.data.modelState) {
-      angular.forEach(reason.data.modelState, (v, k) => {
-        message += "\n" + v;
-      });
-    }
+    if (reason.data.modelState) angular.forEach(reason.data.modelState, (v, k) => message += "\n" + v);
 
     let status = reason.status && reason.statusText ? "\n(" + reason.status + ": " + reason.statusText + ")" : '';
-
     return [message + status, "Request failed"];
   };
   createGameBasket = (gameId, basketModel) => { return null; }
