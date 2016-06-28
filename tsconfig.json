@@ -79,6 +79,7 @@
         "./src/features/profile/content/lib.ts",
         "./src/features/profile/content/mission.ts",
         "./src/features/profile/content/missions/index.ts",
+        "./src/features/profile/content/mod-in-content.ts",
         "./src/features/profile/content/mod.ts",
         "./src/features/profile/content/mods/index.ts",
         "./src/features/profile/friends/index.ts",

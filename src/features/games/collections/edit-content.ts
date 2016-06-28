@@ -1,8 +1,8 @@
 import {breeze, IBreezeMod, IBreezeCollectionVersion, IBreezeCollection, IBreezeModUpdate, ModsHelper, ProcessingState, IFindModel, FindModel, UiContext, Base, bindingEngine, uiCommand2, Subscriptions, ReactiveList, Debouncer, ObserveAll, ListFactory, ViewModel, ITypeahead, IFilter, ISort, Filters, ViewType, Mediator, Query, DbQuery, handlerFor, VoidCommand,
-  CollectionScope, PreferredClient} from '../../../framework';
+  CollectionScope, PreferredClient, IShowDependency} from '../../../framework';
 import {inject} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
-import {IShowDependency, RemoveDependencyEvent} from '../../profile/lib';
+import {RemoveDependencyEvent} from '../../profile/lib';
 
 
 export class EditContent extends ViewModel {
@@ -93,7 +93,10 @@ export class EditContent extends ViewModel {
 }
 
 class SearchQuery extends Query<IFindDependency[]> {
-  constructor(public query: string, public gameIds: string[]) { super(); }
+  constructor(public query: string, public gameIds: string[]) {
+    super();
+    if (!query) throw new Error("Query cannot be empty")
+  }
 }
 
 @handlerFor(SearchQuery)

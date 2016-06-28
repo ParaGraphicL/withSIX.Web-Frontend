@@ -1,10 +1,10 @@
 import {Router, RouterConfiguration} from 'aurelia-router';
 
 import {breeze, IBreezeMod, IBreezeCollectionVersion, IBreezeCollection, IBreezeModUpdate, ModsHelper, ProcessingState, IFindModel, FindModel, UiContext, Base, bindingEngine, uiCommand2, Subscriptions, ReactiveList, Debouncer, ObserveAll, ListFactory, ViewModel, ITypeahead, IFilter, ISort, Filters, ViewType, Mediator, Query, DbQuery, handlerFor, VoidCommand,
-  CollectionScope, PreferredClient} from '../../../framework';
+  CollectionScope, PreferredClient, ICollectionData, IShowDependency, IServer} from '../../../framework';
 import {inject} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
-import {IShowDependency, RemoveDependencyEvent} from '../../profile/lib';
+import {RemoveDependencyEvent} from '../../profile/lib';
 
 @inject(UiContext)
 export class Show extends ViewModel {
@@ -134,24 +134,6 @@ export class Show extends ViewModel {
     await new RefreshRepo(this.model.id).handle(this.mediator);
     await this.resetup();
   }, { canExecuteObservable: this.observeEx(x => x.changed).select(x => !x) }); // TODO: Monitor also this.model.repositories, but we have to swap when we refresh the model :S
-}
-
-interface IServer {
-  address: string;
-  password: string;
-}
-
-interface ICollectionData {
-  id: string;
-  name: string;
-  gameId: string;
-  items: IShowDependency[];
-  servers: IServer[];
-  repositories: string;
-  scope: CollectionScope;
-  updatedAt: Date;
-  author: { id?: string; displayName?: string; userName?: string; }
-  preferredClient: PreferredClient;
 }
 
 class GetCollection extends Query<ICollectionData> {

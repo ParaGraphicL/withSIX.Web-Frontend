@@ -1,5 +1,5 @@
 import {Tools} from './tools';
-import {Client, IMiniClientInfo} from 'withsix-sync-api';
+import {Client, IMiniClientInfo, PreferredClient, CollectionScope} from 'withsix-sync-api';
 import breeze from 'breeze-client';
 import {IUserInfo} from './dtos';
 
@@ -448,7 +448,7 @@ export class W6 {
   public chromeless: any;
   public enableBasket: boolean;
   public isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
-  public collection2;
+  public collection2: ICollectionData;
   aureliaReady: boolean;
   navigate: (url: string) => void; // here for the legacy client
   libraryParent;
@@ -700,3 +700,39 @@ export class W6 {
   logout: () => any;
   openRegisterDialog: (event: any) => void;
 };
+
+export interface ICollectionData {
+  id: string;
+  name: string;
+  gameId: string;
+  items: IShowDependency[];
+  servers: IServer[];
+  repositories: string;
+  scope: CollectionScope;
+  updatedAt: Date;
+  author: { id?: string; displayName?: string; userName?: string; }
+  preferredClient: PreferredClient;
+}
+
+
+export interface IDependency {
+  dependency: string;
+  id?: string;
+  constraint?: string;
+  isRequired?: boolean;
+  type: string;
+  availableVersions?: string[];
+}
+
+export interface IShowDependency extends IDependency {
+  name?: string;
+  image?: string;
+  newlyAdded?: boolean;
+  gameId: string;
+  //avatarUpdatedAt?: Date;
+}
+
+export interface IServer {
+  address: string;
+  password: string;
+}

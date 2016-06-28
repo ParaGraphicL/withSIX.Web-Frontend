@@ -1,4 +1,4 @@
-import {MenuItem, UiContext, uiCommand2, ViewModel, IMenuItem, Query, DbQuery, DbClientQuery, handlerFor, VoidCommand} from '../../../framework';
+import {MenuItem, UiContext, uiCommand2, ViewModel, IMenuItem, Query, DbQuery, DbClientQuery, handlerFor, VoidCommand, IShowDependency, IDependency} from '../../../framework';
 import {inject, bindable} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {DialogService} from 'aurelia-dialog';
@@ -48,20 +48,3 @@ export class RemoveDependencyEvent {
 // export class DependencyChangedEvent {
 //   constructor(public model: IDependency) {}
 // }
-
-export interface IDependency {
-  dependency: string;
-  id?: string;
-  constraint?: string;
-  isRequired?: boolean;
-  type: string;
-  availableVersions?: string[];
-}
-
-export interface IShowDependency extends IDependency {
-  name?: string;
-  image?: string;
-  newlyAdded?: boolean;
-  gameId: string;
-  //avatarUpdatedAt?: Date;
-}
