@@ -30,6 +30,7 @@ class GetModsHandler extends DbQuery<GetMods, IPaginated<IModInContent>> {
       if (!request.versions.has(pn)) return;
       let vInfo = request.versions.get(pn);
       x.constraint = vInfo.constraint;
+      x.type = 'mod-in-content';
     })
     return {
       items: mods,

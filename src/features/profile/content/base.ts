@@ -93,6 +93,8 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
   get basketableText() { return this.isInBasket ? "Remove from Playlist" : "Add to Playlist" }
   get basketableIcon() { return this.isInBasket ? "withSIX-icon-X" : "withSIX-icon-Add" }
 
+  type;
+
 
   async activate(model: TContent) {
     this.model = model;
@@ -102,6 +104,8 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
     this.image = this.getImage();
     this.gameName = (this.model.originalGameSlug || this.model.gameSlug).replace("-", " ");
     this.isForActiveGame = !this.model.originalGameId || this.model.originalGameId == this.model.gameId;
+
+    this.type = model.type.toUpperCaseFirst();
 
     this.url = '/p/' + this.getPath();
 
