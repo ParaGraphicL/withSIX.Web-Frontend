@@ -130,11 +130,69 @@ export module Tools {
     return f;
   }
 
+  interface IRequestInfo<T> {
+    status: number;
+    statusText: string;
+    body: T;
+  }
+
+  export var createHttpError = (name: string) => {
+    var f = function(message: string, requestInfo: IRequestInfo<any>) {
+      Object.defineProperty(this, 'name', {
+        enumerable: false,
+        writable: false,
+        value: name
+      });
+      Object.defineProperty(this, 'status', {
+        enumerable: false,
+        writable: false,
+        value: requestInfo.status
+      });
+      Object.defineProperty(this, 'statusText', {
+        enumerable: false,
+        writable: false,
+        value: requestInfo.statusText
+      });
+
+      Object.defineProperty(this, 'data', {
+        enumerable: false,
+        writable: false,
+        value: requestInfo.body
+      });
+      Object.defineProperty(this, 'message', {
+        enumerable: false,
+        writable: true,
+        value: message
+      });
+
+      if (Error.hasOwnProperty('captureStackTrace')) { // V8
+        (<any>Error).captureStackTrace(this, this.constructor);
+      } else {
+        Object.defineProperty(this, 'stack', {
+          enumerable: false,
+          writable: false,
+          value: (<any>(new Error(message))).stack
+        });
+      }
+    }
+    if (typeof Object.setPrototypeOf === 'function') {
+      Object.setPrototypeOf(f.prototype, Error.prototype);
+    } else {
+      f.prototype = Object.create(Error.prototype);
+    }
+    return f;
+  }
+
   // TODO: ES6/TS valid exceptions
-  export var NotFoundException = createError('NotFoundException');
   export var RequireSslException = createError('RequireSslException');
   export var RequireNonSslException = createError('RequireNonSslException');
   export var InvalidShortIdException = createError('InvalidShortIdException');
+  export var NotFoundException = createError('NotFoundException');
+  export var RequiresLogin = Tools.createError('RequiresLogin');
+  export var LoginNoLongerValid = Tools.createError('LoginNoLongerValid');
+  export var HttpException = createHttpError('HttpException');
+  export var Forbidden = Tools.createError("Forbidden");
+  export var ValidationError = Tools.createHttpError("ValidationError");
 
   export function disposableTimeout(f: () => void, timeout): IDisposable {
     let id = setTimeout(f, timeout);
@@ -411,6 +469,10 @@ export module Tools {
     }
   }
 
+  export class KeyCodes {
+    public static enter = 13;
+  }
+
   // Convert GUID string to Base-64 in Javascript
   // by Mark Seecof, 2012-03-31
 
@@ -467,9 +529,7 @@ export module Tools {
     return shortBase64.substring(0, 22).replace(/_/g, "/").replace(/\-/g, "+") + "==";
   }
 
-  export class KeyCodes {
-    public static enter = 13;
-  }
+
 
   var r = new RegExp("[^A-Za-z0-9-]+", "g");
   var r2 = new RegExp("^[-]+");
