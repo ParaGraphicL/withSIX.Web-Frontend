@@ -32,6 +32,7 @@ class FeatureToggles extends Base {
   private get isPrereleaseClient() { return this.clientInfo && this.clientInfo.version.includes('-') }
   loggedIn = this.w6.userInfo.id != null;
 
+  get clientAutostart() { return !this.isTestEnvironment }
   get groups() { return this.groupTestingFlag }
   get notifications() { return this.isManager }
   get library() { return this.syncFeatures }
