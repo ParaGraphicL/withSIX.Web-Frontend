@@ -49,6 +49,8 @@
     "jquery-timeago": "",
     "modernizr": "2.8.3",
     "moment": "",
+    "ng-file-upload": "~1.6.5",
+    "ng-file-upload-shim": "~1.6.5",
     "ng-password-strength": "~0.2.0",
     "ng-remote-validate": "~0.3.1",
     "ng-tags-input": ">= 2.1.1",
