@@ -334,13 +334,7 @@ export class ContentModelController<TModel extends breeze.Entity> extends Conten
 
     var hasChanges = () => {
       var graph = <breeze.Entity[]>(<any>this.entityManager).getEntityGraph(this.$scope.model, graphExpands);
-
-      var changed = false;
-      graph.forEach((v, i, arr) => {
-        changed = changed ? true : v.entityAspect.entityState.isAddedModifiedOrDeleted();
-      });
-
-      return changed;
+      return graph.some(v => v.entityAspect.entityState.isAddedModifiedOrDeleted())
     };
 
     var _editConfig = <IEditConfiguration<TModel>>{
@@ -935,9 +929,9 @@ export module Play.Collections {
         this.$scope.editConfig.discardChanges();
     }
 
-    public hasChangesFromAurelia() {
-      return this.$scope.editConfig.hasChanges();
-    }
+    get hasChangesFromAurelia() { return CollectionController.hasChanges(this.$scope.editConfig); }
+
+    static hasChanges(editConfig) { return editConfig.hasChanges() }
 
     private setupCategoriesAutoComplete() {
       var $scope = this.$scope;

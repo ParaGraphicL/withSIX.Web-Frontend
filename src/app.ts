@@ -110,7 +110,7 @@ export class App extends ViewModel {
 
     setTimeout(() => {
       if (!this.w6.settings.hasSync && (this.w6.miniClient.isConnected || this.basketService.hasConnected)) { this.w6.updateSettings(x => x.hasSync = true) } // TODO: put it on a connected handler?
-      if (!this.w6.miniClient.isConnected && this.w6.settings.hasSync) this.clientMissingHandler.addClientIframe();
+      if (!this.w6.miniClient.isConnected && this.w6.settings.hasSync && this.features.clientAutostart) this.clientMissingHandler.addClientIframe();
       this.firefoxTimeoutPassed = true;
     }, 15 * 1000);
 

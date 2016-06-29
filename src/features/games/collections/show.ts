@@ -23,7 +23,7 @@ export class Show extends ViewModel {
 
   _changed = false;
 
-  get changed() { return this._changed || (this.w6.collection && this.w6.collection.hasChangesFromAurelia()); }
+  get changed() { return this._changed || (this.w6.collection && this.w6.collection.hasChangesFromAurelia); }
   set changed(value: boolean) { this._changed = value; }
 
   get editModeEnabled() { return this.w6.collection && this.w6.collection.$scope.editConfig.editMode }
