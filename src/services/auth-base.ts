@@ -1,5 +1,5 @@
-import {HttpClient} from 'aurelia-http-client';
-import {HttpClient as FetchClient} from 'aurelia-fetch-client';
+import {HttpClient, HttpRequestMessage, HttpResponseMessage} from 'aurelia-http-client';
+import {HttpClient as FetchClient, json} from 'aurelia-fetch-client';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject, Container} from 'aurelia-dependency-injection';
 
@@ -35,14 +35,19 @@ export class LoginBase {
     if (!refreshToken) return false;
     if (this.shouldLog) Tools.Debug.log(`[HTTP] Trying to refresh token`);
     try {
-      var r = await this.http.post(this.w6Url.authSsl + "/api/login/refresh", { refreshToken: refreshToken, clientId: LoginBase.localClientId, idToken: window.localStorage[LoginBase.idToken] }); /* authConfig.providers.localIdentityServer.clientId */
-      this.updateAuthInfo(r.content.refresh_token, r.content.token, r.content.id_token);
+      var r = await this.httpFetch.fetch(this.w6Url.authSsl + "/api/login/refresh", { method: 'post', body: json({ refreshToken: refreshToken, clientId: LoginBase.localClientId, idToken: window.localStorage[LoginBase.idToken] }) }); /* authConfig.providers.localIdentityServer.clientId */
+      let c = await r.json();
+      this.updateAuthInfo(c.refresh_token, c.token, c.id_token);
       return true;
     } catch (err) {
       this.tools.Debug.error("[HTTP] Error trying to use refresh token", err);
-      if (err.statusCode == 401) {
-        window.localStorage.removeItem(LoginBase.refreshToken);
-        return false;
+      if (r instanceof Response) {
+        let r: Response = err;
+        if (r.status == 401) {
+          this.tools.Debug.error("[HTTP] 401, refreshtoken probably invalid", err);
+          window.localStorage.removeItem(LoginBase.refreshToken);
+          return false;
+        }
       }
       // TODO: Wait for X amount of delay, then see if we actually have a valid refresh token (other tab)
       throw err;
@@ -54,34 +59,33 @@ export class LoginBase {
     window.localStorage[LoginBase.token] = accessToken;
     window.localStorage[LoginBase.idToken] = idToken;
 
-    this.setHeaders(accessToken);
+    this.setHeaders();
 
     this.eventBus.publish(new LoginUpdated(accessToken));
   }
 
   get isRequesting() { return this.httpFetch.isRequesting || this.http.isRequesting }
 
-  setHeaders(accessToken: string) {
+  private get accessToken() { return window.localStorage[LoginBase.token]; }
+
+  setHeaders() {
     let ag = Container.instance.get(EventAggregator);
     //http://stackoverflow.com/questions/9314730/display-browser-loading-indicator-like-when-a-postback-occurs-on-ajax-calls
 
     this.http.configure(config => {
-      const handleAt = async (request, force = false) => {
+      const handleAt = async (request: HttpRequestMessage, force = false) => {
         let at: string;
-        if (at = await this.getAccessToken(request.url, accessToken, force)) {
-          accessToken = at;
-          request.headers.headers['Authorization'] = `Bearer ${accessToken}`;
-        }
+        if (at = await this.getAccessToken(request.url, force)) request.headers.add('Authorization', `Bearer ${at}`);
       }
       config.withHeader('Accept', 'application/json');
       config.withInterceptor({
-        request: async (request) => {
+        request: async (request: HttpRequestMessage) => {
           if (!request) return;
           if (this.shouldLog) Tools.Debug.log(`[HTTP] Requesting ${request.method} ${request.url}`, request);
           await handleAt(request);
           return request;
         },
-        response: (response) => {
+        response: (response: HttpResponseMessage) => {
           if (!response) return response;
           if (this.shouldLog) Tools.Debug.log(`[HTTP] Received ${response.statusCode} ${response.requestMessage.url}`, response);
           return response;
@@ -97,10 +101,7 @@ export class LoginBase {
 
       const handleAt = async (request: Request, force = false) => {
         let at: string;
-        if (at = await this.getAccessToken(request.url, accessToken, force)) {
-          accessToken = at;
-          request.headers.append('Authorization', `Bearer ${accessToken}`);
-        }
+        if (at = await this.getAccessToken(request.url, force)) request.headers.set('Authorization', `Bearer ${at}`);
       }
 
       config //.useStandardConfiguration()
@@ -119,8 +120,8 @@ export class LoginBase {
             return response;
           },
           responseError: async (response: Response, request: Request) => {
+            if (response.status !== 401) throw response;
             if (this.isLogin(request.url)) throw response;
-            if (response.status != 401) throw response;
             let tries = (<any>request).tries || 0;
             if (tries > 0) throw response;
             (<any>request).tries = ++tries;
@@ -138,10 +139,12 @@ export class LoginBase {
     })
   }
 
-  async getAccessToken(url: string, accessToken: string, force = false) {
+  async getAccessToken(url: string, force = false) {
+    this.tools.Debug.log("GetAT", this.w6Url.authSsl + '/', url);
     if (!url.startsWith(this.w6Url.authSsl + '/')) return null;
+    let accessToken = this.accessToken;
     if (!this.isLogin(url) && accessToken && (force || Tools.isTokenExpired(accessToken)))
-      if (await this.handleRefresh()) accessToken = window.localStorage[LoginBase.token];
+      if (await this.handleRefresh()) return this.accessToken;
     return accessToken;
   }
   handleRefresh = () => this.refreshing || this.tryHandleRefreshToken();
@@ -175,8 +178,7 @@ export class LoginBase {
 
   async getUserInfo(): Promise<IUserInfo> {
     this.handleLogout();
-
-    this.setHeaders(window.localStorage[LoginBase.token]);
+    this.setHeaders();
 
     let userInfo = await this.getUserInfoInternal();
     if (!userInfo) userInfo = new EntityExtends.UserInfo();
@@ -237,33 +239,22 @@ export class LoginBase {
       this.clearIdToken();
       return userInfo;
     }
-    var isValid = false;
-    isValid = !Tools.isTokenExpired(token);
-    if (!isValid) {
-      this.tools.Debug.log("token is not valid")
-      try {
-        if (!(await this.tryHandleRefreshToken())) throw new Error("Expired token");
-      } catch (err) {
-        throw new Error("Expired token");
-      }
-    }
-    // TODO: add #login=1 etc, to prevent endless loops?
 
-    var req = <any>this.http.createRequest(this.w6Url.authSsl + '/identity/connect/userinfo');
-    var response = await req.asGet().send();
-    var roles = typeof (response.content["role"]) == "string" ? [response.content["role"]] : response.content["role"];
+    var req = await this.httpFetch.fetch(this.w6Url.authSsl + '/identity/connect/userinfo');
+    var r = await req.json();
+    var roles = typeof (r["role"]) == "string" ? [r["role"]] : r["role"];
 
     let uInfo = {
-      id: response.content["sub"],
-      userName: response.content["preferred_username"],
-      slug: response.content["preferred_username"].sluggifyEntityName(),
-      displayName: response.content["nickname"],
-      firstName: response.content["given_name"],
-      lastName: response.content["family_name"],
-      avatarURL: response.content["withsix:avatar_url"],
-      hasAvatar: response.content["withsix:has_avatar"],
-      avatarUpdatedAt: new Date(response.content["withsix:avatar_updated_at"]),
-      emailMd5: response.content["withsix:email_md5"],
+      id: r["sub"],
+      userName: r["preferred_username"],
+      slug: r["preferred_username"].sluggifyEntityName(),
+      displayName: r["nickname"],
+      firstName: r["given_name"],
+      lastName: r["family_name"],
+      avatarURL: r["withsix:avatar_url"],
+      hasAvatar: r["withsix:has_avatar"],
+      avatarUpdatedAt: new Date(r["withsix:avatar_updated_at"]),
+      emailMd5: r["withsix:email_md5"],
       roles: roles,
       isAdmin: roles.indexOf("admin") > -1,
       isManager: roles.indexOf("manager") > -1,
