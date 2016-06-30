@@ -32,7 +32,6 @@ export class GetGames extends Query<IGamesData> { }
 class GetGamesHandler extends DbClientQuery<GetGames, IGamesData> {
   public async handle(request: GetGames): Promise<IGamesData> {
     try {
-      if (!this.w6.miniClient.isConnected) throw new Error("client not running");
       let d: { games: IGame[] } = await this.client.getGames();
       d.games.forEach(x => (<any>x).state = ItemState.Uptodate)
       return { games: this.tools.aryToMap(d.games, x => x.id) }

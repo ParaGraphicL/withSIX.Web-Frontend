@@ -13,7 +13,7 @@ export class Game extends ViewModel {
 
   hasStats: boolean;
 
-  get isInstalled() { return (<any>this).model.state == ItemState.Uptodate }
+  get isInstalled() { return (<any>this.model).state === ItemState.Uptodate }
 
   activate(model: IGame) {
     this.model = model;

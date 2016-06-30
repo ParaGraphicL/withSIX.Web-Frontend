@@ -11,8 +11,7 @@ export class Games extends ViewModel {
   async handleGameStates() {
     let d = await new GetInstalledGames().handle(this.mediator);
     this.games.forEach(x => {
-      if (d.has(x.id))
-        (<any>x).state = (<any>d[x.id]).state;
+      if (d.has(x.id)) (<any>x).state = (<any>d.get(x.id)).state;
     })
   }
 }
@@ -35,7 +34,6 @@ export class GetInstalledGames extends Query<Map<string, IGame>> { }
 class GetInstalledGamesHandler extends DbClientQuery<GetInstalledGames, Map<string, IGame>> {
   public async handle(request: GetInstalledGames): Promise<Map<string, IGame>> {
     try {
-      if (!this.w6.miniClient.isConnected) throw new Error("client not running");
       let d: { games: IGame[] } = await this.client.getGames();
       d.games.forEach(x => (<any>x).state = ItemState.Uptodate)
       return this.tools.aryToMap(d.games, x => x.id);
