@@ -6,10 +6,11 @@ import {inject, Container} from 'aurelia-dependency-injection';
 import {EntityExtends, IUserInfo} from './dtos';
 import {W6Urls} from './withSIX';
 import {Tools} from './tools';
+import {LS} from './base';
 
 export var AbortError = Tools.createError('AbortError');
 
-@inject(HttpClient, FetchClient, W6Urls, EventAggregator)
+@inject(HttpClient, FetchClient, W6Urls, EventAggregator, LS)
 export class LoginBase {
   shouldLog = (Tools.getEnvironment() > Tools.Environment.Production);
 
@@ -18,14 +19,21 @@ export class LoginBase {
   static idToken = 'aurelia_id_token';
   static token = 'aurelia_token';
   static localClientId = 'withsix-spa';
-  constructor(private http: HttpClient, private httpFetch: FetchClient, protected w6Url: W6Urls, private eventBus: EventAggregator) { }
+  static key = 'w6.refreshToken';
+
+  constructor(private http: HttpClient, private httpFetch: FetchClient, protected w6Url: W6Urls, private eventBus: EventAggregator, protected ls: LS) { }
   static resetUnload() { window.onbeforeunload = undefined; }
   resetUnload() { LoginBase.resetUnload(); }
   refreshing: Promise<boolean>;
+  heartbeat = () => this.ls.set(LoginBase.key, JSON.stringify(new Date()));
   async tryHandleRefreshToken() {
+    this.heartbeat();
+    let interval = setInterval(this.heartbeat, 2 * 1000);
     try {
       return await (this.refreshing = this.handleRefreshToken());
     } finally {
+      clearInterval(interval);
+      this.ls.set(LoginBase.key, JSON.stringify(null));
       this.refreshing = null;
     }
   }
@@ -59,8 +67,6 @@ export class LoginBase {
     window.localStorage[LoginBase.token] = accessToken;
     window.localStorage[LoginBase.idToken] = idToken;
 
-    this.setHeaders();
-
     this.eventBus.publish(new LoginUpdated(accessToken));
   }
 
@@ -68,7 +74,35 @@ export class LoginBase {
 
   private get accessToken() { return window.localStorage[LoginBase.token]; }
 
+  refreshDate: Date;
+  interval;
+  p: { resolve: () => void, reject: (reason) => void };
+
   setHeaders() {
+    this.ls.on(LoginBase.key, (v, old, url) => {
+      if (this.interval) clearInterval(this.interval);
+      if (!v) if (this.p) { this.refreshing = null; this.p.resolve(); this.p = null; return; }
+      this.refreshDate = JSON.parse(v);
+      if (!this.refreshing) {
+        this.refreshing = new Promise((resolve, reject) => {
+          this.p = { resolve, reject };
+        });
+      }
+      if (this.p) {
+        this.interval = setInterval(() => {
+          let currentDate = new Date();
+          if ((currentDate.getTime() - this.refreshDate.getTime()) > (5 * 1000)) {
+            // probably done (tab closed or ?)
+            clearInterval(this.interval);
+            this.refreshing = null
+            this.p.reject(new Error("Other tab timed out"));
+            this.p = null;
+          } else {
+            // probably still running
+          }
+        }, 1000);
+      }
+    });
     let ag = Container.instance.get(EventAggregator);
     //http://stackoverflow.com/questions/9314730/display-browser-loading-indicator-like-when-a-postback-occurs-on-ajax-calls
 
@@ -178,7 +212,6 @@ export class LoginBase {
 
   async getUserInfo(): Promise<IUserInfo> {
     this.handleLogout();
-    this.setHeaders();
 
     let userInfo = await this.getUserInfoInternal();
     if (!userInfo) userInfo = new EntityExtends.UserInfo();
@@ -239,7 +272,7 @@ export class LoginBase {
       this.clearIdToken();
       return userInfo;
     }
-
+    this.setHeaders();
     var req = await this.httpFetch.fetch(this.w6Url.authSsl + '/identity/connect/userinfo');
     var r = await req.json();
     var roles = typeof (r["role"]) == "string" ? [r["role"]] : r["role"];
