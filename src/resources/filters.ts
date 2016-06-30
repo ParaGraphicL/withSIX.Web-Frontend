@@ -1,6 +1,8 @@
 import {bindable, inject} from 'aurelia-framework';
 import {ViewModel, bindingEngine, ReactiveList, ListFactory, IFilterInfo, SortDirection, IFilter, ISort, Tools} from '../services/lib';
 
+var firstBy: any = require('thenby');
+
 export class Filters<T> extends ViewModel {
   @bindable items: T[] = [];
   @bindable filters: IFilter<T>[] = [];
@@ -102,6 +104,8 @@ export class Filters<T> extends ViewModel {
   public orderItems(items: Enumerable<any>): Enumerable<any> {
     if (!this.customSort && !this.sortOrder) return items;
 
+
+
     // TODO: Don't build these functions dynamically
     // TODO: Consider using 'thenBy' library
     let sortOrders: ISort<T>[] = [];
@@ -114,15 +118,13 @@ export class Filters<T> extends ViewModel {
     });
     if (this.customSort != null) sortFunctions.unshift(this.customSort);
 
-    return items.toArray().sort((a, b) => {
-      for (var i in sortFunctions) {
-        let r = sortFunctions[i](a, b);
-        if (r) return r;
-      }
-      return 0;
-    }).asEnumerable();
+    let chain = null;
+    let sorter = sortFunctions.forEach(x => {
+      if (!chain) chain = firstBy(x)
+      else chain = chain.thenBy(x);
+    })
 
-    // TODO: Linq orderBy comes back with the wrong order, however we loose some stuff here now..
+    return items.toArray().sort(chain).asEnumerable();
 
     // return items.orderBy(x => x, (a, b) => {
     //   for (var i in sortFunctions) {
