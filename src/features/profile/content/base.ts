@@ -107,7 +107,7 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
 
     this.url = '/p/' + this.getPath();
 
-    this.tools.Debug.log("Mod State: " + this.model.packageName, this.model.version, this.model.id, this.state);
+    //this.tools.Debug.log("Mod State: " + this.model.packageName, this.model.version, this.model.id, this.state);
     this.subscriptions.subd(d => {
       this.updateState();
       this.isInstalledObservable = this.observeEx(x => x.isInstalled);

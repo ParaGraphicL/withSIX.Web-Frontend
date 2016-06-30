@@ -59,8 +59,6 @@ export class LoginBase {
     window.localStorage[LoginBase.token] = accessToken;
     window.localStorage[LoginBase.idToken] = idToken;
 
-    this.setHeaders();
-
     this.eventBus.publish(new LoginUpdated(accessToken));
   }
 
