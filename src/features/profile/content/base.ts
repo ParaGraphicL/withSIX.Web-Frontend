@@ -53,18 +53,17 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
     super(ui);
   }
 
-  get hasLastUsed() { return this.state && this.state.lastUsed != null; }
-  get isActive() { return this.gameInfo.isLocked && this.basketService.lastActiveItem == this.model.id };
+  get hasLastUsed() { return this.state.lastUsed != null; }
+  get isActive() { return this.gameInfo.isLocked && this.basketService.lastActiveItem === this.model.id };
   get canAbort() { return this.gameInfo.clientInfo.canAbort; }
-  get hasState() { return this.state != null; }
-  get isIncomplete() { return this.itemState == ItemState.Incomplete; }
-  get isInstalled() { return this.itemState != ItemState.Incomplete; }
+  get hasUpdateAvailable() { return this.itemState === ItemState.UpdateAvailable; }
+  get isInstalled() { return !this.isIncomplete && this.itemState !== ItemState.NotInstalled; }
   get canBeUninstalled() { return this.isIncomplete || this.isInstalled; }
-  get hasUpdateAvailable() { return this.isInstalled && this.itemState == ItemState.UpdateAvailable; }
+  get isIncomplete() { return this.itemState === ItemState.Incomplete; }
   get activeGameId() { return this.w6.activeGame.id }
-  get canAddToBasket() { return this.activeGameId == this.model.gameId; }
+  get canAddToBasket() { return this.activeGameId === this.model.gameId; }
   get isInBasket() { return ContentViewModel.isInBasketFunction(this.baskets.active, this.model.id); }
-  get isBusy() { return this.hasState && this.busyStates.asEnumerable().contains(this.itemState) }
+  get isBusy() { return this.busyStates.some(x => x === this.itemState) }
   get progressClass() {
     let state = this.state;
     if (!state || !(state.state == ItemState.Updating || state.state == ItemState.Installing)) return null;
@@ -90,7 +89,7 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
   }
   get itemStateClass() { return this.basketService.getItemStateClassInternal(this.itemState); }
   get itemBusyClass() { return this.basketService.getItemBusyClassInternal(this.itemState) }
-  get itemState() { return this.hasState ? this.state.state : null; }
+  get itemState() { return this.state.state; }
   get basketableText() { return this.isInBasket ? "Remove from Playlist" : "Add to Playlist" }
   get basketableIcon() { return this.isInBasket ? "withSIX-icon-X" : "withSIX-icon-Add" }
   get desiredVersion() { return this.model.version }
@@ -208,7 +207,7 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
   emitGameChanged = () => this.eventBus.publish(new GameChanged(this.model.gameId, this.model.gameSlug)); // incase we are on Home..
 
   getNoteInfo() { return { text: this.model.name || this.model.packageName, href: this.url } };
-  updateState() { this.state = this.gameInfo.clientInfo.content[this.model.id]; }
+  updateState() { this.state = (this.gameInfo.clientInfo.content[this.model.id] || { state: ItemState.NotInstalled, version: null, id: this.model.id, gameId: this.model.gameId }); }
 
   handleUpdateAvailable(updateAvailable: boolean) {
     if (updateAvailable) {
