@@ -130,7 +130,7 @@ export class App extends ViewModel {
       d(this.observeEx(x => x.isNavigating)
         .skip(1)
         .where(x => !x)
-        .subscribe(this.notifyAngular));
+        .subscribe(this.notifyAngularInternal));
 
       d(this.observeEx(x => x.overlayShown)
         .subscribe(x => {

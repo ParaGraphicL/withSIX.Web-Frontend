@@ -6,14 +6,14 @@ export class Angular extends ViewModel {
     this.tools.Debug.log("AURELIA: angular vm loaded");
     // This works around the issue of routing for Angular while Aurelia is involved..angular
     // TODO: Better workaround than the rootscope apply?
-    this.notifyAngular();
+    this.notifyAngularInternal();
   }
 
   deactivate() {
     this.tools.Debug.log("AURELIA: angular vm unloaded");
     // This works around the issue of routing for Angular while Aurelia is involved..angular
     // TODO: Better workaround than the rootscope apply?
-    this.notifyAngular();
+    this.notifyAngularInternal();
   }
 
   determineActivationStrategy() {
