@@ -1191,7 +1191,7 @@ export module Play.Collections {
       this.tempCollectionImagePath = file;
       try {
         let result = await this.entityManager.saveChanges([uploadRequest]);
-        Tools.Debug.log(result, uploadRequest, $scope.model.fileTransferPolicies);
+        Tools.Debug.log(result, uploadRequest, this.$scope.model.fileTransferPolicies);
         this.uploadRemoteLogo(file, uploadRequest);
       } catch (reason) {
         Tools.Debug.log("Failure", reason);
