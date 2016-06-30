@@ -121,7 +121,6 @@
     "ms-signalr-client": "^2.2.2",
     "numbro": "^1.7.1",
     "rx": "^4.1.0",
-    "thenby": "^1.2.1",
     "typeahead.js": "git+https://github.com/twitter/typeahead.js.git",
     "uuid-js": "^0.7.5",
     "version_compare": "0.0.3",
