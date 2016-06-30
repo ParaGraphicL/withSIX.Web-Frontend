@@ -119,9 +119,9 @@ export class ContentHelper {
     return ContentHelper.getContentState(state.state, state.version, constraint);
   }
   public static getContentState = (state: ItemState, version: string, constraint?: string) => {
-    if (!constraint || !version) return state;
-    if (state != ItemState.UpdateAvailable && state != ItemState.Uptodate) return state;
-    return constraint == version ? ItemState.Uptodate : ItemState.UpdateAvailable;
+    if (!state || !constraint || !version) return state;
+    if (state !== ItemState.UpdateAvailable && state !== ItemState.Uptodate) return state;
+    return constraint === version ? ItemState.Uptodate : ItemState.UpdateAvailable;
   }
 
   public static itemStateToAction = (state: ItemState) => {
