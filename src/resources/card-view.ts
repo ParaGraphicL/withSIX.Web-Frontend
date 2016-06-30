@@ -15,6 +15,7 @@ export class CardView<T> extends ViewModel {
   @bindable ads = [this.tools.getRandomIntInclusive(0, 3), this.tools.getRandomIntInclusive(4, 7)]
   @bindable adUnitId1 = "angular-ad1";
   @bindable adUnitId2 = "angular-ad2";
+  @bindable indexOffset = 0;
 
   handleClearFix: boolean;
 
@@ -29,10 +30,11 @@ export class CardView<T> extends ViewModel {
   }
 
   calculateIndex(i: number) {
+    i += this.indexOffset;
     let originalIndex = i;
     i++;
     if (!this.renderAds) return i;
-    this.ads.forEach(x => { if (originalIndex > x) i++; });
+    this.ads.map(x => x + this.indexOffset).forEach(x => { if (originalIndex > x) i++; });
     return i;
   }
 

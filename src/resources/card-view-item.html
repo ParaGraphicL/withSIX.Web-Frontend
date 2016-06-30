@@ -6,15 +6,15 @@
       </template>
     </div>
   </div>
-  <card-clearfix if.bind="handleClearFix" index.one-time="calculateIndex($index)" columns.one-time="cardColumns"></card-clearfix>
+  <card-clearfix if.bind="handleClearFix" index.bind="calculateIndex($index)" columns.one-time="cardColumns"></card-clearfix>
 
-  <template if.bind="renderAds && $index == ads[0]">
+  <template if.bind="renderAds && ($index + indexOffset) == ads[0]">
     <div class.bind="cardContainerCls">
       <div class="card ${cardCls}">
         <ad-unit unit-id="angular-ad1"></ad-unit>
       </div>
     </div>
-    <card-clearfix if.bind="handleClearFix" index.one-time="calculateIndex($index) + 1" columns.one-time="cardColumns"></card-clearfix>
+    <card-clearfix if.bind="handleClearFix" index.bind="calculateIndex($index) + 1" columns.one-time="cardColumns"></card-clearfix>
   </template>
 
   <template if.bind="renderAds && $index == ads[1]">
@@ -23,6 +23,6 @@
         <ad-unit unit-id="angular-ad2"></ad-unit>
       </div>
     </div>
-    <card-clearfix if.bind="handleClearFix" index.one-time="calculateIndex($index) + 1 + ($index == ads[0] ? 1 : 0)" columns.one-time="cardColumns"></card-clearfix>
+    <card-clearfix if.bind="handleClearFix" index.bind="calculateIndex($index) + 1 + (($index + indexOffset) == ads[0] ? 1 : 0)" columns.one-time="cardColumns"></card-clearfix>
   </template>
 </template>
