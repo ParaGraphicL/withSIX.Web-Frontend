@@ -20,9 +20,12 @@ export class EditContent extends ViewModel {
   addContentModel: IFindModel<IFindDependency>;
   sort: ISort<IShowDependency>[] = [{ name: "name" }]
   customSort = (item: IShowDependency, item2: IShowDependency) => {
-    if (item.newlyAdded == item2.newlyAdded) return 0;
-    if (item.newlyAdded) return -1;
-    return 1;
+    this.tools.Debug.log("Comparing", item.newlyAdded, item2.newlyAdded);
+    let i1 = item.newlyAdded || 0;
+    let i2 = item2.newlyAdded || 0;
+    if (i1 > i2) return -1;
+    if (i1 < i2) return 1;
+    return 0;
   }
   searchFields = ["name"];
   viewType = ViewType.Card;
@@ -79,7 +82,7 @@ export class EditContent extends ViewModel {
     if (selectedContent) {
       item.image = this.w6.url.getContentAvatarUrl(selectedContent.avatar, selectedContent.avatarUpdatedAt);
       item.name = selectedContent.name;
-      item.newlyAdded = true;
+      item.newlyAdded = this.addedId++;
       // TODO: Optimize: Only fetch the versions upon adding..
       item.availableVersions = selectedContent.updates.asEnumerable()
         .where(x => x.currentState == ProcessingState[ProcessingState.Finished])
@@ -91,6 +94,8 @@ export class EditContent extends ViewModel {
   }
 
   removeDependency(model: IShowDependency) { this.tools.removeEl(this.items, model); }
+
+  addedId = 1;
 }
 
 class SearchQuery extends Query<IFindDependency[]> {
