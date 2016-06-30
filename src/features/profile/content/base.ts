@@ -30,12 +30,14 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
   removeRecent: ICommand<void>;
   addToBasket: ICommand<void>;
   openConfigFolder: ICommand<any>;
-  state: IContentState;
+  state: IContentState = this.getDefaultState();
   bottomMenuActions = [];
   url: string;
 
   isForActiveGame: boolean;
   launchMenuItem: MenuItem<any>;
+
+  getDefaultState() { return { state: ItemState.NotInstalled, version: null, id: this.model ? this.model.id : null, gameId: this.model ? this.model.gameId : null } }
 
   get statTitle() { return 'install' }
   get defaultAssetUrl() { return this.assets.defaultAssetUrl }
@@ -65,9 +67,8 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
   get isInBasket() { return ContentViewModel.isInBasketFunction(this.baskets.active, this.model.id); }
   get isBusy() { return this.busyStates.some(x => x === this.itemState) }
   get progressClass() {
-    let state = this.state;
-    if (!state || !(state.state == ItemState.Updating || state.state == ItemState.Installing)) return null;
-    var percent = Math.round(state.progress);
+    if (!(this.state.state == ItemState.Updating || this.state.state == ItemState.Installing)) return null;
+    var percent = Math.round(this.state.progress);
     if (percent < 1)
       return "content-in-progress content-progress-0";
     if (percent > 100)
@@ -76,7 +77,7 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
     return "content-in-progress content-progress-" + percent;
   };
   get versionInfo() {
-    if (this.state && this.state.version) {
+    if (this.state.version) {
       if (!this.desiredVersion) return this.state.version;
       if (this.itemState == ItemState.Uptodate) return this.state.version; // we return the state version because the model version might be out of sync atm..
       return this.state.version == this.desiredVersion ? this.desiredVersion : `${this.state.version} / ${this.desiredVersion}`;
@@ -106,8 +107,7 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
 
     this.url = '/p/' + this.getPath();
 
-    //Tools.Debug.log("Mod State: " + this.model.packageName, this.model.version, this.model.id, this.state);
-
+    this.tools.Debug.log("Mod State: " + this.model.packageName, this.model.version, this.model.id, this.state);
     this.subscriptions.subd(d => {
       this.updateState();
       this.isInstalledObservable = this.observeEx(x => x.isInstalled);
@@ -207,7 +207,7 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
   emitGameChanged = () => this.eventBus.publish(new GameChanged(this.model.gameId, this.model.gameSlug)); // incase we are on Home..
 
   getNoteInfo() { return { text: this.model.name || this.model.packageName, href: this.url } };
-  updateState() { this.state = (this.gameInfo.clientInfo.content[this.model.id] || { state: ItemState.NotInstalled, version: null, id: this.model.id, gameId: this.model.gameId }); }
+  updateState() { this.state = (this.gameInfo.clientInfo.content[this.model.id] || this.getDefaultState()); }
 
   handleUpdateAvailable(updateAvailable: boolean) {
     if (updateAvailable) {

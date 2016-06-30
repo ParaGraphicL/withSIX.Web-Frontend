@@ -727,7 +727,7 @@ export interface IDependency {
 export interface IShowDependency extends IDependency {
   name?: string;
   image?: string;
-  newlyAdded?: boolean;
+  newlyAdded?: number;
   gameId: string;
   //avatarUpdatedAt?: Date;
 }
