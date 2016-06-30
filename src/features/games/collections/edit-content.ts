@@ -47,6 +47,7 @@ export class EditContent extends ViewModel {
     }, 500);
 
     let debouncer = Debouncer.debouncePromise<IFindDependency[]>(async (q) => {
+      if (!q) return [];
       var data = await new SearchQuery(q, ModsHelper.getGameIds(this.model.gameId)).handle(this.mediator)
       data.forEach(d => {
         Object.defineProperty(d, 'selected', { get: () => !this.shouldShowItemButton(d) });
