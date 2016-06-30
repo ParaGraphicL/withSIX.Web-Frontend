@@ -9,7 +9,7 @@ import {LoginBase} from './auth-base';
 
 @inject(AuthService, UiContext, HttpClient, FetchClient, LS)
 export class Login extends LoginBase {
-  constructor(public authService: AuthService, private ui: UiContext, http: HttpClient, fetch: FetchClient, private ls: LS) { super(http, fetch, ui.w6.url, ui.eventBus); }
+  constructor(public authService: AuthService, private ui: UiContext, http: HttpClient, fetch: FetchClient, ls: LS) { super(http, fetch, ui.w6.url, ui.eventBus, ls); }
   async login(pathAndSearch?) {
     try {
       if (console && console.log) console.log("$$$$ Trying to login")

@@ -146,7 +146,7 @@ bootstrap(async (aurelia: Aurelia) => {
 
   async function bs(w6Urls: W6Urls) {
     Container.instance.registerSingleton(W6Urls, () => w6Urls);
-    let login = new LoginBase(Container.instance.get(HttpClient), Container.instance.get(FetchClient), w6Urls, Container.instance.get(EventAggregator));
+    let login = Container.instance.get(LoginBase);
     let userInfo: IUserInfo = null;
     try {
       userInfo = await login.getUserInfo();
