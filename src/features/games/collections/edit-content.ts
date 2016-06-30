@@ -20,9 +20,9 @@ export class EditContent extends ViewModel {
   addContentModel: IFindModel<IFindDependency>;
   sort: ISort<IShowDependency>[] = [{ name: "name" }]
   customSort = (item: IShowDependency, item2: IShowDependency) => {
-    if (item.newlyAdded && item2.newlyAdded) return 0;
+    if (item.newlyAdded == item2.newlyAdded) return 0;
     if (item.newlyAdded) return -1;
-    return 0;
+    return 1;
   }
   searchFields = ["name"];
   viewType = ViewType.Card;
@@ -47,6 +47,7 @@ export class EditContent extends ViewModel {
     }, 500);
 
     let debouncer = Debouncer.debouncePromise<IFindDependency[]>(async (q) => {
+      if (!q) return [];
       var data = await new SearchQuery(q, ModsHelper.getGameIds(this.model.gameId)).handle(this.mediator)
       data.forEach(d => {
         Object.defineProperty(d, 'selected', { get: () => !this.shouldShowItemButton(d) });

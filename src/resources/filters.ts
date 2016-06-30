@@ -22,6 +22,7 @@ export class Filters<T> extends ViewModel {
   viewTypeEnum = ViewType;
 
   typeaheadSelect: (e: T) => void;
+  collectionObserver;
 
   bind(bindingContext) {
     // to workaround aurelia not picking up the changed selection..
@@ -38,6 +39,12 @@ export class Filters<T> extends ViewModel {
 
     this.updateFilteredItems();
 
+    // this.collectionObserver = bindingEngine.collectionObserver(this.items)
+    //   //.where(x => this.customHandler == null)
+    //   .subscribe(x => { if (!this.customHandler) this.initiateUpdate() })
+
+    this.handleItemsChange(this.items);
+
     this.subscriptions.subd(d => {
       d(this.observeEx(x => x.searchInput)
         .skip(1)
@@ -45,12 +52,22 @@ export class Filters<T> extends ViewModel {
       d(this.observeEx(x => x.sortOrder)
         .skip(1)
         .subscribe(x => this.initiateUpdate()));
-      d(bindingEngine.collectionObserver(this.items)
-        //.where(x => this.customHandler == null)
-        .subscribe(x => { if (!this.customHandler) this.initiateUpdate() }));
+      d(() => this.collectionObserver ? this.collectionObserver.dispose() : null);
       d(bindingEngine.collectionObserver(this.enabledFilters)
         .subscribe(x => this.initiateUpdate()));
     });
+  }
+
+  itemsChanged(value) {
+    this.handleItemsChange(value);
+    this.initiateUpdate();
+  }
+
+  handleItemsChange(value) {
+    let old = this.collectionObserver;
+    this.collectionObserver = value ? bindingEngine.collectionObserver(value)
+      .subscribe(x => { if (!this.customHandler) this.initiateUpdate() }) : null;
+    if (old) old.dispose();
   }
 
   unbind() { this.subscriptions.dispose(); }
@@ -84,27 +101,58 @@ export class Filters<T> extends ViewModel {
 
   public orderItems(items: Enumerable<any>): Enumerable<any> {
     if (!this.customSort && !this.sortOrder) return items;
-    let start = 0;
 
-    if (this.customSort && !this.sortOrder) { // TODO: We can't do 'thenBy' yet...
-      start = 1;
-      items = items.orderBy(x => x, this.customSort);
-    }
-
-    if (!this.sortOrder) return items;
-    var sortOrders = [this.sortOrder];
-    sortOrders.forEach((s, i) => {
-      if ((i + start) == 0) {
-        items = s.direction == SortDirection.Desc
-          ? items.orderByDescending(x => x[s.name] || '')
-          : items.orderBy(x => x[s.name] || '');
-      } else {
-        items = s.direction == SortDirection.Desc
-          ? (<OrderedEnumerable<any>>items).thenByDescending(x => x[s.name])
-          : (<OrderedEnumerable<any>>items).thenBy(x => x[s.name]);
-      }
+    // TODO: Don't build these functions dynamically
+    // TODO: Consider using 'thenBy' library
+    let sortOrders: ISort<T>[] = [];
+    if (this.sortOrder) sortOrders.push(this.sortOrder);
+    let sortFunctions = sortOrders.map((x, i) => (a, b) => {
+      let order = x.direction == SortDirection.Desc ? -1 : 1;
+      if (a[x.name] > b[x.name]) return 1 * order;
+      if (a[x.name] < b[x.name]) return (1 * -1) * order;
+      return 0;
     });
-    return items;
+    if (this.customSort != null) sortFunctions.unshift(this.customSort);
+
+    return items.toArray().sort((a, b) => {
+      for (var i in sortFunctions) {
+        let r = sortFunctions[i](a, b);
+        if (r) return r;
+      }
+      return 0;
+    }).asEnumerable();
+
+    // TODO: Linq orderBy comes back with the wrong order, however we loose some stuff here now..
+
+    // return items.orderBy(x => x, (a, b) => {
+    //   for (var i in sortFunctions) {
+    //     let r = sortFunctions[i](a, b);
+    //     if (r) return r;
+    //   }
+    //   return 0;
+    // })
+
+    // let start = 0;
+    //
+    // if (this.customSort && !this.sortOrder) { // TODO: We can't do 'thenBy' yet...
+    //   start = 1;
+    //   items = items.orderBy(x => x, this.customSort);
+    // }
+    //
+    // if (!this.sortOrder) return items;
+    // var sortOrders = [this.sortOrder];
+    // sortOrders.forEach((s, i) => {
+    //   if ((i + start) == 0) {
+    //     items = s.direction === SortDirection.Desc
+    //       ? items.orderByDescending(x => x[s.name] || '')
+    //       : items.orderBy(x => x[s.name] || '');
+    //   } else {
+    //     items = s.direction === SortDirection.Desc
+    //       ? (<OrderedEnumerable<any>>items).thenByDescending(x => x[s.name])
+    //       : (<OrderedEnumerable<any>>items).thenBy(x => x[s.name]);
+    //   }
+    // });
+    // return items;
   }
 
   public filterItems(): Enumerable<any> {

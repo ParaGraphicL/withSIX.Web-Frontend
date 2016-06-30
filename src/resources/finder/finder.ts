@@ -31,11 +31,10 @@ export class FindModel<T> extends Base implements IFindModel<T> {
     super();
     this.subscriptions.subd(d => {
       // TODO: debounce and make sure old results dont overwrite new results
-      d(this.observeEx(x => x.searchItem)
-        .where(x => !!x)
+      d(this.toProperty(this.observeEx(x => x.searchItem)
+        .skip(1)
         .selectMany(async (x) => await this.finder(x))
-        .concat()
-        .subscribe(x => this.results = x));
+        .concat(), x => x.results))
     })
   }
 }
