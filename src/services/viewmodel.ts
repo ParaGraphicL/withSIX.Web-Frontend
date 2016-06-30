@@ -44,7 +44,7 @@ export class ViewModel extends Base {
     else this.notifyAngularInternal();
   }
 
-  notifyAngularInternal = () => {
+  protected notifyAngularInternal = () => {
     Tools.Debug.log("$$$ Notifying Angular!");
     let scope = angular.element(document).scope()
     if (!scope) return;

@@ -1108,18 +1108,16 @@ export module Play.Collections {
     };
 
     private cancelImageUpload() {
-      var $scope = this.$scope;
-
       this.tempCollectionImagePath = null;
-      if ($scope.model.fileTransferPolicies.length > 0) {
-        var transferPolicy = $scope.model.fileTransferPolicies[0];
+      if (this.$scope.model.fileTransferPolicies.length > 0) {
+        var transferPolicy = this.$scope.model.fileTransferPolicies[0];
 
         transferPolicy.entityAspect.setDeleted();
-        $scope.editConfig.saveChanges(transferPolicy);
+        this.$scope.editConfig.saveChanges(transferPolicy);
       }
     }
 
-    private newLogoUploadRequest(file: File, $event: any) {
+    private async newLogoUploadRequest(file: File, $event: any) {
       var $scope = this.$scope;
       //if ($scope.model.imageFileTransferPolicy) {
       //    throw Error("An Upload Request already exists.");
@@ -1153,27 +1151,27 @@ export module Play.Collections {
         });
       };
 
-      return this.entityManager.saveChanges([uploadRequest])
-        .then((result) => {
-          Tools.Debug.log(result, uploadRequest, $scope.model.fileTransferPolicies);
-          return this.uploadLogo(file, uploadRequest);
-        }).catch((reason) => {
-          Tools.Debug.log("Failure", reason);
-          this.logger.error("We were unable to retrieve an upload policy for your image. Please try again later", "Failed to upload image.");
-          this.cancelImageUpload();
-          $scope.uploadingCollectionImage = false;
-        });
+      try {
+        let result = await this.entityManager.saveChanges([uploadRequest]);
+        Tools.Debug.log(result, uploadRequest, $scope.model.fileTransferPolicies);
+        await this.uploadLogo(file, uploadRequest);
+      } catch (reason) {
+        Tools.Debug.log("Failure", reason);
+        this.logger.error("We were unable to retrieve an upload policy for your image. Please try again later", "Failed to upload image.");
+        this.cancelImageUpload();
+      } finally {
+        $scope.$apply(_ => $scope.uploadingCollectionImage = false);
+      }
     }
 
-    private newRemoteLogoUploadRequest(file: string, $event: any) {
-      var $scope = this.$scope;
+    private async newRemoteLogoUploadRequest(file: string, $event: any) {
       //if ($scope.model.imageFileTransferPolicy) {
       //    throw Error("An Upload Request already exists.");
       //}
       if (file == null)
         return;
 
-      if ($scope.uploadingCollectionImage) {
+      if (this.$scope.uploadingCollectionImage) {
         this.logger.error("You are already uploading an image! Please wait!");
         return;
       }
@@ -1183,57 +1181,49 @@ export module Play.Collections {
         return;
       }
 
-      $scope.uploadingCollectionImage = true;
+      this.$scope.uploadingCollectionImage = true;
 
       var uploadRequest = BreezeEntityGraph.CollectionImageFileTransferPolicy.createEntity({
         path: file,
-        collectionId: $scope.model.id
+        collectionId: this.$scope.model.id
       });
 
       this.tempCollectionImagePath = file;
-
-      var saveChanges = this.entityManager.saveChanges([uploadRequest])
-        .then((result) => {
-          Tools.Debug.log(result, uploadRequest, $scope.model.fileTransferPolicies);
-          this.uploadRemoteLogo(file, uploadRequest);
-          return;
-        }).catch((reason) => {
-          Tools.Debug.log("Failure", reason);
-          this.logger.error("We were unable to retrieve an upload policy for your image. Please try again later", "Failed to upload image.");
-          this.cancelImageUpload();
-          $scope.uploadingCollectionImage = false;
-          return;
-        });
+      try {
+        let result = await this.entityManager.saveChanges([uploadRequest]);
+        Tools.Debug.log(result, uploadRequest, this.$scope.model.fileTransferPolicies);
+        this.uploadRemoteLogo(file, uploadRequest);
+      } catch (reason) {
+        Tools.Debug.log("Failure", reason);
+        this.logger.error("We were unable to retrieve an upload policy for your image. Please try again later", "Failed to upload image.");
+        this.cancelImageUpload();
+      } finally {
+        this.$scope.$apply(_ => this.$scope.uploadingCollectionImage = false);
+      }
     }
 
     private async uploadLogo(file: File, policy: IBreezeCollectionImageFileTransferPolicy) {
-      var $scope = this.$scope;
       try {
         let r = await this.dbContext.uploadToAmazonWithPolicy(file, policy.uploadPolicy);
         Tools.Debug.log(r);
-
         this.logger.info("When you're happy click Save Changes to use the uploaded image.", "Image Uploaded");
         policy.uploaded = true;
-        $scope.uploadingCollectionImage = false;
       } catch (r) {
         Tools.Debug.log(r);
-
         this.cancelImageUpload();
-        $scope.uploadingCollectionImage = false;
-
         let data = await r.text();
-
         if (data.includes("EntityTooLarge")) this.logger.error("Your image can not be larger than 5MB", "Image too large");
         if (data.includes("EntityTooSmall")) this.logger.error("Your image must be at least 10KB", "Image too small");
         throw r;
+      } finally {
+        this.$scope.$apply(_ => this.$scope.uploadingCollectionImage = false);
       }
     }
 
     private uploadRemoteLogo(file: string, policy: IBreezeCollectionImageFileTransferPolicy) {
-      var $scope = this.$scope;
       this.logger.info("When you're happy click Save Changes to use the uploaded image.", "Image Uploaded");
       policy.uploaded = true;
-      $scope.uploadingCollectionImage = false;
+      this.$scope.uploadingCollectionImage = false;
     }
 
     showUploadBanner() {
@@ -4218,14 +4208,12 @@ export module Play.Mods {
     }
 
     private cancelImageUpload() {
-      var $scope = <IModScope>this.$scope;
-
       this.tempModImagePath = null;
-      if ($scope.model.fileTransferPolicies.length > 0) {
-        var transferPolicy = $scope.model.fileTransferPolicies[0];
+      if (this.$scope.model.fileTransferPolicies.length > 0) {
+        var transferPolicy = this.$scope.model.fileTransferPolicies[0];
 
         transferPolicy.entityAspect.setDeleted();
-        $scope.editConfig.saveChanges(transferPolicy);
+        this.$scope.editConfig.saveChanges(transferPolicy);
       }
     }
 
@@ -4328,16 +4316,14 @@ export module Play.Mods {
         .catch(this.breezeQueryFailed);
     }
 
-    private newLogoUploadRequest(file: File, $event: any) {
-      var $scope = <IModScope>this.$scope;
-
+    private async newLogoUploadRequest(file: File, $event: any) {
       //if ($scope.model.imageFileTransferPolicy) {
       //    throw Error("An Upload Request already exists.");
       //}
       if (file == null)
         return;
 
-      if ($scope.uploadingModImage) {
+      if (this.$scope.uploadingModImage) {
         this.logger.error("You are already uploading an image! Please wait!");
         return;
       }
@@ -4347,35 +4333,36 @@ export module Play.Mods {
         return;
       }
 
-      $scope.uploadingModImage = true;
+      this.$scope.uploadingModImage = true;
 
       var uploadRequest = BreezeEntityGraph.ModImageFileTransferPolicy.createEntity({
         path: file.name,
-        modId: $scope.model.id
+        modId: this.$scope.model.id
       });
 
       var fileReader = new FileReader();
       fileReader.readAsDataURL(file);
       fileReader.onload = e => {
         this.$timeout(() => {
-          if ($scope.uploadingModImage)
+          if (this.$scope.uploadingModImage)
             this.tempModImagePath = (<any>e.target).result;
         });
       };
 
-      return this.entityManager.saveChanges([uploadRequest])
-        .then((result) => {
-          Tools.Debug.log(result, uploadRequest, $scope.model.fileTransferPolicies);
-          return this.uploadLogo(file, uploadRequest);
-        }).catch((reason) => {
-          Tools.Debug.log("Failure", reason);
-          this.logger.error("We were unable to retrieve an upload policy for your image. Please try again later", "Failed to upload image.");
-          this.cancelImageUpload();
-          $scope.uploadingModImage = false;
-        });
+      try {
+        let result = await this.entityManager.saveChanges([uploadRequest])
+        Tools.Debug.log(result, uploadRequest, this.$scope.model.fileTransferPolicies);
+        await this.uploadLogo(file, uploadRequest);
+      } catch (reason) {
+        Tools.Debug.log("Failure", reason);
+        this.logger.error("We were unable to retrieve an upload policy for your image. Please try again later", "Failed to upload image.");
+        this.cancelImageUpload();
+      } finally {
+        this.$scope.$apply(_ => this.$scope.uploadingModImage = false)
+      }
     }
 
-    private newRemoteLogoUploadRequest(file: string, $event: any) {
+    private async newRemoteLogoUploadRequest(file: string, $event: any) {
       var $scope = this.$scope;
       //if ($scope.model.imageFileTransferPolicy) {
       //    throw Error("An Upload Request already exists.");
@@ -4401,47 +4388,43 @@ export module Play.Mods {
       });
 
       this.tempModImagePath = file;
-
-      var saveChanges = this.entityManager.saveChanges([uploadRequest])
-        .then((result) => {
-          Tools.Debug.log(result, uploadRequest, $scope.model.fileTransferPolicies);
-          this.uploadRemoteLogo(file, uploadRequest);
-          return;
-        }).catch((reason) => {
-          Tools.Debug.log("Failure", reason);
-          this.logger.error("We were unable to retrieve an upload policy for your image. Please try again later", "Failed to upload image.");
-          this.cancelImageUpload();
-          $scope.uploadingModImage = false;
-          return;
-        });
+      try {
+        let result = await this.entityManager.saveChanges([uploadRequest]);
+        Tools.Debug.log(result, uploadRequest, $scope.model.fileTransferPolicies);
+        this.uploadRemoteLogo(file, uploadRequest);
+      } catch (reason) {
+        Tools.Debug.log("Failure", reason);
+        this.logger.error("We were unable to retrieve an upload policy for your image. Please try again later", "Failed to upload image.");
+        this.cancelImageUpload();
+      } finally {
+        this.$scope.$apply(_ => $scope.uploadingModImage = false);
+      }
     }
 
     private async uploadLogo(file: File, policy: IBreezeModImageFileTransferPolicy) {
-      var $scope = <IModScope>this.$scope;
       try {
         let r = await this.uploadService.uploadToAmazonWithPolicy(file, policy.uploadPolicy)
         Tools.Debug.log(r);
 
         this.logger.info("When you're happy click Save Changes to use the uploaded image.", "Image Uploaded");
         policy.uploaded = true;
-        $scope.uploadingModImage = false;
       } catch (r) {
         Tools.Debug.log(r);
 
         this.cancelImageUpload();
-        $scope.uploadingModImage = false;
         let data = await r.text();
         if (data.includes("EntityTooLarge")) this.logger.error("Your image can not be larger than 5MB", "Image too large");
         if (data.includes("EntityTooSmall")) this.logger.error("Your image must be at least 10KB", "Image too small");
         throw r;
+      } finally {
+        this.$scope.$apply(_ => this.$scope.uploadingModImage = false);
       }
     }
 
     private uploadRemoteLogo(file: string, policy: IBreezeModImageFileTransferPolicy) {
-      var $scope = this.$scope;
       this.logger.info("When you're happy click Save Changes to use the uploaded image.", "Image Uploaded");
       policy.uploaded = true;
-      $scope.uploadingModImage = false;
+      this.$scope.uploadingModImage = false;
     }
 
     unfollow() {
