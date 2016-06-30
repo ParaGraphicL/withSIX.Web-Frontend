@@ -147,6 +147,8 @@ export class W6Context {
 
   handleJson = async <T>(path, configOverride?) => {
     let r = await this.getResponse(path, configOverride);
+    if (r.status === 204) return null;
+    //if (r.status === 204) throw new Error("Received a 204 no content response, however expected JSON to be returned")
     return <T>this.w6.convertToClient(await r.json());
   }
 
