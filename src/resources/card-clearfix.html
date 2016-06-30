@@ -1,6 +1,6 @@
 <template>
-  <div if.one-time="columns[0] > 1 && index % columns[0] == 0" class="clearfix visible-sm-block"></div>
-  <div if.one-time="columns[1] > 1 && index % columns[1] == 0" class="clearfix visible-md-block"></div>
-  <div if.one-time="columns[2] > 1 && index % columns[2] == 0" class="clearfix visible-lg-block"></div>
-  <div if.one-time="columns[3] > 1 && index % columns[3] == 0" class="clearfix visible-xl-block"></div>
+  <div if.bind="columns[0] > 1 && index % columns[0] == 0" class="clearfix visible-sm-block"></div>
+  <div if.bind="columns[1] > 1 && index % columns[1] == 0" class="clearfix visible-md-block"></div>
+  <div if.bind="columns[2] > 1 && index % columns[2] == 0" class="clearfix visible-lg-block"></div>
+  <div if.bind="columns[3] > 1 && index % columns[3] == 0" class="clearfix visible-xl-block"></div>
 </template>
