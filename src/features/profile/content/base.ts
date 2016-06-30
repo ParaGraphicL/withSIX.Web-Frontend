@@ -53,18 +53,18 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
     super(ui);
   }
 
-  get hasLastUsed() { return this.state && this.state.lastUsed != null; }
-  get isActive() { return this.gameInfo.isLocked && this.basketService.lastActiveItem == this.model.id };
+  get hasLastUsed() { return this.hasState && this.state.lastUsed != null; }
+  get isActive() { return this.gameInfo.isLocked && this.basketService.lastActiveItem === this.model.id };
   get canAbort() { return this.gameInfo.clientInfo.canAbort; }
-  get hasState() { return this.state != null; }
-  get isIncomplete() { return this.itemState == ItemState.Incomplete; }
-  get isInstalled() { return this.itemState != ItemState.Incomplete; }
+  get hasUpdateAvailable() { return this.itemState === ItemState.UpdateAvailable; }
+  get isInstalled() { return this.hasState && !this.isIncomplete && this.itemState !== ItemState.NotInstalled; }
   get canBeUninstalled() { return this.isIncomplete || this.isInstalled; }
-  get hasUpdateAvailable() { return this.isInstalled && this.itemState == ItemState.UpdateAvailable; }
+  get isIncomplete() { return this.itemState === ItemState.Incomplete; }
   get activeGameId() { return this.w6.activeGame.id }
-  get canAddToBasket() { return this.activeGameId == this.model.gameId; }
+  get canAddToBasket() { return this.activeGameId === this.model.gameId; }
   get isInBasket() { return ContentViewModel.isInBasketFunction(this.baskets.active, this.model.id); }
   get isBusy() { return this.hasState && this.busyStates.asEnumerable().contains(this.itemState) }
+  get hasState() { return this.state != null; }
   get progressClass() {
     let state = this.state;
     if (!state || !(state.state == ItemState.Updating || state.state == ItemState.Installing)) return null;
