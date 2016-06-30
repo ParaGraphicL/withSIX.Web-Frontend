@@ -20,7 +20,6 @@ export class EditContent extends ViewModel {
   addContentModel: IFindModel<IFindDependency>;
   sort: ISort<IShowDependency>[] = [{ name: "name" }]
   customSort = (item: IShowDependency, item2: IShowDependency) => {
-    this.tools.Debug.log("Comparing", item.newlyAdded, item2.newlyAdded);
     let i1 = item.newlyAdded || 0;
     let i2 = item2.newlyAdded || 0;
     if (i1 > i2) return -1;
