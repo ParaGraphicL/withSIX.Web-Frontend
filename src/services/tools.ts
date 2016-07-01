@@ -99,7 +99,7 @@ export module Tools {
   //
 
 
-  export var createError = (name: string) => {
+  export var createError = (name: string, proto = Error.prototype): ErrorConstructor => {
     var f = function(message: string) {
       Object.defineProperty(this, 'name', {
         enumerable: false,
@@ -123,20 +123,20 @@ export module Tools {
       }
     }
     if (typeof Object.setPrototypeOf === 'function') {
-      Object.setPrototypeOf(f.prototype, Error.prototype);
+      Object.setPrototypeOf(f.prototype, proto);
     } else {
-      f.prototype = Object.create(Error.prototype);
+      f.prototype = Object.create(proto);
     }
-    return f;
+    return <any>f;
   }
 
-  interface IRequestInfo<T> {
+  export interface IRequestInfo<T> {
     status: number;
     statusText: string;
     body: T;
   }
 
-  export var createHttpError = (name: string) => {
+  export var createHttpError = (name: string, proto = Error.prototype): HttpErrorConstructor<any> => {
     var f = function(message: string, requestInfo: IRequestInfo<any>) {
       Object.defineProperty(this, 'name', {
         enumerable: false,
@@ -154,7 +154,7 @@ export module Tools {
         value: requestInfo.statusText
       });
 
-      Object.defineProperty(this, 'data', {
+      Object.defineProperty(this, 'body', {
         enumerable: false,
         writable: false,
         value: requestInfo.body
@@ -176,23 +176,29 @@ export module Tools {
       }
     }
     if (typeof Object.setPrototypeOf === 'function') {
-      Object.setPrototypeOf(f.prototype, Error.prototype);
+      Object.setPrototypeOf(f.prototype, proto);
     } else {
-      f.prototype = Object.create(Error.prototype);
+      f.prototype = Object.create(proto);
     }
-    return f;
+    return <any>f;
   }
+
+  export interface HttpErrorConstructor<T> {
+    new (message: string, requestInfo: IRequestInfo<T>): IHttpException<T>;
+  }
+
+  export interface IHttpException<T> extends Error, IRequestInfo<T> { }
 
   // TODO: ES6/TS valid exceptions
   export var RequireSslException = createError('RequireSslException');
   export var RequireNonSslException = createError('RequireNonSslException');
   export var InvalidShortIdException = createError('InvalidShortIdException');
-  export var NotFoundException = createError('NotFoundException');
-  export var RequiresLogin = Tools.createError('RequiresLogin');
-  export var LoginNoLongerValid = Tools.createError('LoginNoLongerValid');
   export var HttpException = createHttpError('HttpException');
-  export var Forbidden = Tools.createError("Forbidden");
-  export var ValidationError = Tools.createHttpError("ValidationError");
+  export var NotFoundException = createHttpError('NotFoundException', HttpException.prototype);
+  export var Forbidden = createHttpError("Forbidden", HttpException.prototype);
+  export var ValidationError = createHttpError("ValidationError", HttpException.prototype);
+  export var RequiresLogin = createHttpError('RequiresLogin', HttpException.prototype);
+  export var LoginNoLongerValid = createHttpError('LoginNoLongerValid', HttpException.prototype);
 
   export function disposableTimeout(f: () => void, timeout): IDisposable {
     let id = setTimeout(f, timeout);

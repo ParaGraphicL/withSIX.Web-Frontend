@@ -180,7 +180,7 @@ export class W6Context {
     } catch (err) {
       if (err instanceof Response) {
         let r: Response = err;
-        throw this.handleResponseErrorStatus(r.status, r.statusText, await r.json(), this.w6.isLoggedIn);
+        throw this.handleResponseErrorStatus({ status: r.status, statusText: r.statusText, body: await r.json() }, this.w6.isLoggedIn);
       }
       throw err;
     }
@@ -548,14 +548,12 @@ export class W6Context {
 
   private registerEntityTypeCtor(store, ctor) { store.registerEntityTypeCtor(ctor.$name, ctor); }
 
-  handleResponseErrorStatus(status: number, statusText: string, body, isLoggedIn: boolean) {
-    if (status == 400) throw new Tools.ValidationError("Input not valid", { status, statusText, body });
-    if (status == 401) {
-      // todo; retry the request after trying refresh token? but only once..
-      throw isLoggedIn ? new Tools.LoginNoLongerValid("The login is no longer valid, please retry after logging in again") : new Tools.RequiresLogin("The requested action requires you to be logged-in");
-    }
-    if (status == 403) throw new Tools.Forbidden("You do not have access to this resource");
-    if (status == 404) throw new Tools.NotFoundException("The requested resource does not appear to exist");
-    throw new Tools.HttpException(`Unknown error`, { status, statusText, body })
+  handleResponseErrorStatus(requestInfo: Tools.IRequestInfo<any>, isLoggedIn: boolean) {
+    const {status} = requestInfo;
+    if (status == 400) throw new Tools.ValidationError("Input not valid", requestInfo);
+    if (status == 401) throw isLoggedIn ? new Tools.LoginNoLongerValid("The login is no longer valid, please retry after logging in again", requestInfo) : new Tools.RequiresLogin("The requested action requires you to be logged-in", requestInfo);
+    if (status == 403) throw new Tools.Forbidden("You do not have access to this resource", requestInfo);
+    if (status == 404) throw new Tools.NotFoundException("The requested resource does not appear to exist", requestInfo);
+    throw new Tools.HttpException(`Unknown error`, requestInfo)
   }
 }

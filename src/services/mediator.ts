@@ -1,6 +1,6 @@
 import breeze from 'breeze-client';
 import { IUserInfo } from './dtos';
-import { W6Context } from './w6context'
+import { W6Context, IQueryResult } from './w6context'
 import { BasketService } from './basket-service';
 import { Toastr } from './toastr';
 import { Client } from 'withsix-sync-api';
@@ -140,36 +140,32 @@ export class DbQuery<TRequest, TResponse> implements IRequestHandler<TRequest, T
     ls.set('w6.event', { name: eventName, data: data });
   }
 
-  public findBySlug(type: string, slug: string, requestName: string) {
-    return this.processSingleResult(this.context.executeQuery(breeze.EntityQuery.from(type)
-      .where("slug", breeze.FilterQueryOp.Equals, slug)
-      .top(1), requestName));
-  }
+  public findBySlug = <T extends breeze.Entity>(type: string, slug: string, requestName: string) => this.processSingleResult<T>(this.context.executeQuery<T>(breeze.EntityQuery.from(type)
+    .where("slug", breeze.FilterQueryOp.Equals, slug)
+    .top(1), requestName));
 
-  public executeKeyQuery<T extends breeze.Entity>(query: () => breeze.EntityQuery): Promise<T> {
-    return this.processSingleResult(this.context.executeKeyQuery(query));
-  }
+  public executeKeyQuery = <T extends breeze.Entity>(query: () => breeze.EntityQuery): Promise<T> => this.processSingleResult<T>(this.context.executeKeyQuery<T>(query));
 
-  processSingleResult = promise => promise.
-    then(result => {
-      if (result.results.length == 0)
-        return Promise.reject(new this.tools.NotFoundException("There were no results returned from the server"));
-      return result.results[0];
-    }).catch(failure => {
-      if (failure.status == 404)
-        return Promise.reject(new this.tools.NotFoundException("The server responded with 404"));
-      else
-        return Promise.reject(failure);
-    });
+  processSingleResult = async <T extends breeze.Entity>(promise: Promise<IQueryResult<T>>) => {
+    let result: IQueryResult<T>;
+    try {
+      result = await promise;
+    } catch (failure) {
+      if (failure.status == 404) throw new Tools.NotFoundException("The server responded with 404", { status: 404, statusText: 'NotFound', body: {} });
+      else throw failure;
+    }
+    if (result.results.length == 0) throw new Tools.NotFoundException("There were no results returned from the server", { status: 404, statusText: 'NotFound', body: {} });
+    return result.results[0];
+  }
 
   public getEntityQueryFromShortId(type: string, id: string): breeze.EntityQuery {
-    this.tools.Debug.log("getting " + type + " by shortId: " + id);
+    Tools.Debug.log("getting " + type + " by shortId: " + id);
     return breeze.EntityQuery
       .fromEntityKey(this.context.getEntityKeyFromShortId(type, id));
   }
 
   public getEntityQuery(type: string, id: string): breeze.EntityQuery {
-    this.tools.Debug.log("getting " + type + " by id: " + id);
+    Tools.Debug.log("getting " + type + " by id: " + id);
     return breeze.EntityQuery
       .fromEntityKey(this.context.getEntityKey(type, id));
   }
