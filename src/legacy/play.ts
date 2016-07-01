@@ -2252,7 +2252,7 @@ export module Play.Games {
     }
 
     public execute = ['gameSlug', async (gameSlug) => {
-      let game = await this.findBySlug("Games", gameSlug, "getGame");
+      let game = await this.findBySlug<IBreezeGame>("Games", gameSlug, "getGame");
 
       return { game: game, gameInfo: await this.basketService.getGameInfo(game.id) };
     }

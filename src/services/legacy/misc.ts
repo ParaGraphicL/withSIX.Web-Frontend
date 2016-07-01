@@ -16,21 +16,31 @@ export enum FileSize {
   YB
 }
 
-export interface IBreezeErrorReason extends IBreezeHttpResponse<IHttpResponse<IHttpResponseException>> {
+export interface IBreezeSaveError {
+  entityErrors: breeze.EntityError[];
+  httpResponse: IHttpResponse<breeze.Entity[]>;
+  message: string;
+  stack?: string;
+  status?: number
 }
 
+export interface IBreezeErrorReason extends IBreezeHttpResponse<IHttpResponseException> { }
+
 export interface IBreezeHttpResponse<TResponse> {
-  httpResponse: TResponse;
+  httpResponse: IHttpResponse<TResponse>;
   entityManager: breeze.EntityManager;
   query: breeze.EntityQuery;
-  status: number;
-  message: string;
+  message?: string;
+  stack?: string
 }
 
 export interface IHttpResponse<TData> {
+  config: any;
   data: TData;
+  error?: any;
+  saveContext?: any;
   status: number;
-  statusText: string;
+  getHeaders(headerName: string): string
 }
 
 export interface IHttpResponseException {

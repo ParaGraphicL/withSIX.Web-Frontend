@@ -4,9 +4,10 @@ import {Mediator, LegacyMediator} from './mediator';
 import {Toastr} from './toastr';
 import {ListFactory, uiCommand2} from './reactive';
 import {Tools} from './tools';
-import {IBreezeErrorReason} from './legacy/misc';
+import {IBreezeErrorReason, IBreezeSaveError} from './legacy/misc';
 import {ContentHelper} from './helpers';
 
+import breeze from 'breeze-client';
 import {HttpClient} from 'aurelia-http-client';
 import {Client} from 'withsix-sync-api';
 import {EventAggregator} from 'aurelia-event-aggregator';
@@ -111,49 +112,42 @@ export class Api {
     } catch (err) { this.tools.Debug.warn("Err while converting error reason", err) }
 
     if (reason instanceof String) return [reason, 'Unknown error occurred'];
-    if (reason instanceof this.tools.NotFoundException || reason instanceof this.tools.InvalidShortIdException) return [reason.message, "404: The requested resource could not be found"];
-    if (reason instanceof this.tools.RequireSslException) return [reason.message, "please wait until you are redirected", "Requires SSL"];
-    if (reason instanceof this.tools.RequireNonSslException) return [reason.message, "please wait until you are redirected", "Requires NO-SSL"];
-
-    // Breeze server errors
-    if (reason.httpResponse != null) {
-      var breezeReason = <IBreezeErrorReason>reason;
-      if (breezeReason.httpResponse.data) {
-        if (breezeReason.httpResponse.data.ExceptionType && breezeReason.httpResponse.data.ExceptionMessage) {
-          var exType = breezeReason.httpResponse.data.ExceptionType;
-          switch (exType) {
-            case "SN.withSIX.Api.Models.Exceptions.ArchivedException":
-              return [breezeReason.httpResponse.data.ExceptionMessage, null, "This Content is currently unavailable"];
-            default:
-              return [breezeReason.httpResponse.data.ExceptionMessage, 'Unknown Error'];
-          }
-        } else {
-          return [breezeReason.httpResponse.data.Message, 'Unknown Error'];
-        }
-      } else {
-        return ["Site down?!", 'Unknown Error'];
-      }
-    }
-
-    // Breeze client-side validation
-    if (reason.entityErrors) {
-      let message = "";
-      reason.entityErrors.forEach(x => {
-        message += "\n" + x.errorMessage; //x.propertyName + ": " + x.errorMessage;
-      })
-      return [message, "Validation failed"];
-    }
-
-    // HttpFetchClient based w6context errors
-    if (!reason.data) return [reason, 'Unknown error'];
-    let message = reason.data.message;
-    if (reason.data.modelState) angular.forEach(reason.data.modelState, (v, k) => message += "\n" + v);
-
-    let status = reason.status && reason.statusText ? "\n(" + reason.status + ": " + reason.statusText + ")" : '';
-    return [message + status, "Request failed"];
+    if (reason instanceof Tools.NotFoundException || reason instanceof Tools.InvalidShortIdException) return [reason.message, "404: The requested resource could not be found"];
+    if (reason instanceof Tools.HttpException) return this.handleHttpError(reason);
+    if (reason instanceof Tools.RequireSslException) return [reason.message, "please wait until you are redirected", "Requires SSL"];
+    if (reason instanceof Tools.RequireNonSslException) return [reason.message, "please wait until you are redirected", "Requires NO-SSL"];
+    if (reason.entityErrors && reason.entityErrors.length > 0) return this.handleBreezeSaveError(reason);
+    if (reason.httpResponse != null) return this.handleBreezeErrorResponse(reason);
+    return [reason, 'Unknown error'];
   };
+
+  handleBreezeSaveError(r: IBreezeSaveError) {
+    if (r.entityErrors.length == 0) return this.handleBreezeErrorResponse(<any>r);
+    return [r.entityErrors.map(x => x.errorMessage).join("\n"), "Validation failed"]; // //x.propertyName + ": " + x.errorMessage;
+  }
+
+  handleBreezeErrorResponse(r: IBreezeErrorReason) {
+    let d = r.httpResponse.data;
+    if (!d) return ["Site down?!", 'Unknown Error'];
+    if (!d.ExceptionType || !d.ExceptionMessage) return [d.Message, 'Unknown Error'];
+    switch (d.ExceptionType) {
+      case "SN.withSIX.Api.Models.Exceptions.ArchivedException":
+        return [d.ExceptionMessage, 'This Content is currently unavailable'];
+      default:
+        return [d.ExceptionMessage, 'Unknown Error'];
+    }
+  }
+
+  handleHttpError(r: Tools.IHttpException<any>) {
+    let message = r.body && r.body.message || '';
+    if (r.body && r.body.modelState) angular.forEach(r.body.modelState, (v, k) => message += "\n" + v);
+    let status = r.status && r.statusText ? "\n(" + r.status + ": " + r.statusText + ")" : '';
+    return [message + status, "Request failed"];
+  }
+
   createGameBasket = (gameId, basketModel) => { return null; }
 }
+
 
 
 export class ShowTabNotification {
