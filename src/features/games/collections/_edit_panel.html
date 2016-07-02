@@ -8,7 +8,7 @@
         <h2>Edit panel</h2>
       </header>
 
-      <section>
+      <section if.bind="!isGroupCollection">
         Set Visibility
         <select value.bind="model.scope">
           <option repeat.for="scope of scopes" model.bind="scope">${$parent.CollectionScope[scope]}</option>
