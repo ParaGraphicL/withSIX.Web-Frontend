@@ -33,6 +33,7 @@ class FeatureToggles extends Base {
   loggedIn = this.w6.userInfo.id != null;
 
   get clientAutostart() { return !this.isTestEnvironment }
+  get servers() { return this.isTestEnvironment }
   get groups() { return this.groupTestingFlag }
   get notifications() { return this.isManager }
   get library() { return this.syncFeatures }
