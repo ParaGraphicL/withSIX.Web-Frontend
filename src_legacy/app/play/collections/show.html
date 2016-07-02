@@ -11,7 +11,7 @@
             <a ng-href="{{header.contentRootUrl}}">
                 <span class="withSIX-icon-Folder"></span> Collection
     </a>
-    (<span ng-class="{'edit-border-blue edit-field': editConfig.canManage()}" can-edit="editConfig.isEditing && editConfig.canManage()" blur-saves buttons="no" sx-editable-select="model.scope" e-ng-options="s.text as s.text for s in $parent.scopes">{{model.scope}}</span>)
+    (<span ng-class="{'edit-border-blue edit-field': editConfig.canManage() && !model.groupId}" can-edit="editConfig.isEditing && editConfig.canManage() && !model.groupId" blur-saves buttons="no" sx-editable-select="model.scope" e-ng-options="s.text as s.text for s in $parent.scopes">{{model.scope}}</span>)
 
     <!-- <button ng-if="w6.userInfo.id" class="default" ng-click="vm.fork()" ng-disabled="vm.forking">
       <i class="fa fa-code-fork"></i> Save as copy
