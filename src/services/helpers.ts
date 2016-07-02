@@ -74,7 +74,7 @@ export class CollectionHelper {
   public static scopeHints = [
     'Your collection will be listed and can be searched for',
     'Only Users with a direct link will be able to download this collection',
-    'Only you will be able to access this collection',
+    'Only you will be able to access this collection'
   ]
 
   public static scopeIcons = [
