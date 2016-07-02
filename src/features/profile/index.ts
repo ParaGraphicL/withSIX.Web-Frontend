@@ -17,9 +17,9 @@ export class Index extends ViewModel {
       { route: 'library', name: 'library', moduleId: 'features/profile/library/index', nav: this.w6.enableBasket, title: 'Library' },
       { route: 'content', name: 'content', moduleId: `${modulePath}content/index`, nav: this.isLoggedIn, title: 'Content', auth: true },
       { route: 'friends', name: 'friends', moduleId: 'features/pages/angular', nav: this.isLoggedIn, title: 'Friends', auth: true },
-      { route: 'groups', name: 'groups', moduleId: 'features/profile/groups/index', nav: this.features.groups || this.w6.userInfo.isManager, title: 'Groups', auth: true },
+      { route: 'groups', name: 'groups', moduleId: 'features/profile/groups/index', nav: this.features.groups, title: 'Groups', auth: true },
       { route: 'messages', name: 'messages', moduleId: 'features/pages/angular', nav: this.isLoggedIn, title: 'Messages', auth: true },
-      { route: 'blog', name: 'blog', moduleId: 'features/pages/angular', nav: this.w6.userInfo.id && (this.w6.userInfo.isAdmin || this.w6.userInfo.isManager) ? true : false, auth: true, title: 'Blog' },
+      { route: 'blog', name: 'blog', moduleId: 'features/pages/angular', nav: this.features.managerFeatures ? true : false, auth: true, title: 'Blog' },
       { route: 'settings', name: 'settings', moduleId: 'features/pages/angular', nav: this.isLoggedIn, title: 'Settings', auth: true, settings: { cls: 'pull-right' } }
     ]);
 
