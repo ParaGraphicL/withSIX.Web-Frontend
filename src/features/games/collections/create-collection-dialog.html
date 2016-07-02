@@ -2,10 +2,10 @@
   <ai-dialog class="ai-dialog">
     <ai-dialog-header>
       <h1 if.bind="!model.forkedCollectionId">
-        <span>Create <b>${gameName}</b>${model.groupId ? ' Group' : ''} Collection</span>
+        <span>Create <b>${gameName}</b>${isGroupCollection ? ' Group' : ''} Collection</span>
       </h1>
       <div if.bind="model.forkedCollectionId">
-        <h1>Create ${model.groupId ? ' Group' : ''} copy of ${originalName & oneTime}</h1>
+        <h1>Create ${isGroupCollection ? ' Group' : ''} copy of ${originalName & oneTime}</h1>
         <i>This will create an identical copy of this collection that you can edit</i>
       </div>
     </ai-dialog-header>
@@ -20,11 +20,15 @@
         <div class="form-group collection-scope">
           <label for="visibility">Visibility</label>
           <span class="icon ${collectionScopeIcon}"></span>
-          <select class="naked" value.bind="model.scope" name="visibility" id="visibility">
+          <select class="naked" value.bind="model.scope" name="visibility" id="visibility" if.bind="!isGroupCollection">
             <option repeat.for="scope of scopes" model.bind="scope" title.bind="$parent.scopeHints[scope]">${$parent.CollectionScope[scope]}</option>
           </select>
+          <span if.bind="isGroupCollection">Group Private</span>
           <br />
-          <i>${collectionScopeHint}</i>
+          <i>
+            <span if.bind="isGroupCollection">Only group members will be able to access this collection</span>
+            <span if.bind="!isGroupCollection">${collectionScopeHint}</span>
+          </i>
         </div>
 
         <div class="form-group">

@@ -26,6 +26,8 @@ export class Show extends ViewModel {
   get changed() { return this._changed || (this.w6.collection && this.w6.collection.hasChangesFromAurelia); }
   set changed(value: boolean) { this._changed = value; }
 
+  get isGroupCollection() { return this.model.groupId != null }
+
   get editModeEnabled() { return this.w6.collection && this.w6.collection.$scope.editConfig.editMode }
 
   constructor(ui: UiContext) {
@@ -160,7 +162,7 @@ class GetCollectionHandler extends DbQuery<GetCollection, ICollectionData> {
     var server = ver.servers ? ver.servers.asEnumerable().firstOrDefault() : null;
     var s = server ? { address: server.address, password: server.password } : { address: "", password: "" };
 
-    return { id: col.id, name: col.name, author: col.author, gameId: col.gameId, items: items, servers: [s], repositories: ver.repositories || "", scope: CollectionScope[col.scope], updatedAt: col.updatedAt, preferredClient: PreferredClient[col.preferredClient] };
+    return { id: col.id, name: col.name, author: col.author, gameId: col.gameId, items: items, servers: [s], repositories: ver.repositories || "", scope: CollectionScope[col.scope], updatedAt: col.updatedAt, preferredClient: PreferredClient[col.preferredClient], groupId: col.groupId };
   }
 }
 

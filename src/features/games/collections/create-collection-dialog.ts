@@ -31,6 +31,7 @@ export class CreateCollectionDialog extends Dialog<ICollectionModel> {
   scopes = CollectionHelper.scopes;
   scopeHints = CollectionHelper.scopeHints;
 
+  get isGroupCollection() { return this.model.groupId != null }
   get gameName() { return this.game.name || this.w6.activeGame.slug.toUpperCaseFirst().replace(/-/g, " "); }
   get originalName() { return this.model.name.replace(" (COPY)", "") }
 

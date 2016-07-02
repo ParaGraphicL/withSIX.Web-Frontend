@@ -705,6 +705,7 @@ export interface ICollectionData {
   id: string;
   name: string;
   gameId: string;
+  groupId: string;
   items: IShowDependency[];
   servers: IServer[];
   repositories: string;
