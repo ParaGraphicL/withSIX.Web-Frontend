@@ -30,7 +30,7 @@ export class Show extends ViewModel {
       { route: 'members', name: 'members', moduleId: 'features/profile/groups/members/index', nav: true, title: 'Members' },
       { route: 'collections', name: 'collections', moduleId: 'features/profile/groups/collections/index', nav: true, title: 'Collections', settings: { icon: "icon withSIX-icon-Nav-Collection" } },
       { route: 'mods', name: 'mods', moduleId: 'features/profile/groups/mods/index', nav: true, title: 'Mods', settings: { icon: "icon withSIX-icon-Nav-Collection" } },
-      { route: 'servers', name: 'servers', moduleId: 'features/profile/groups/servers/index', nav: this.features.groups && this.features.servers, title: 'Servers', settings: { icon: "icon withSIX-icon-Nav-Server" } }
+      { route: 'servers', name: 'servers', moduleId: 'features/profile/groups/servers/index', nav: this.features.servers, title: 'Servers', settings: { icon: "icon withSIX-icon-Nav-Server" } }
     ])
   }
 }

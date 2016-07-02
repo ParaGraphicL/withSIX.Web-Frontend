@@ -32,6 +32,8 @@ class FeatureToggles extends Base {
   private get isPrereleaseClient() { return this.clientInfo && this.clientInfo.version.includes('-') }
   loggedIn = this.w6.userInfo.id != null;
 
+  get managerFeatures() { return this.w6.userInfo.isManager || this.adminFeatures }
+  get adminFeatures() { return this.w6.userInfo.isAdmin }
   get clientAutostart() { return !this.isTestEnvironment }
   get servers() { return this.isTestEnvironment }
   get groups() { return this.groupTestingFlag }
