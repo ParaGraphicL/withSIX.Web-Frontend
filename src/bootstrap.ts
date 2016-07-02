@@ -139,7 +139,7 @@ bootstrap(async (aurelia: Aurelia) => {
       cacheBuster: 71,
       assetSalt: 5, //@Environments.AssetSalt,
       buckets: {
-        "withsix-usercontent": envPiece ? uc + envPiece + ".s3-eu-west-1.amazonaws.com" : uc + "-cdn.withsix.com"
+        "withsix-usercontent": envPiece ? uc + envPiece + ".s3-eu-west-1.amazonaws.com" : uc + ".azureedge.net"
       }
     });
   }
