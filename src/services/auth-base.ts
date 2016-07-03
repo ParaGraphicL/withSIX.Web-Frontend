@@ -177,7 +177,7 @@ export class LoginBase {
     this.tools.Debug.log("GetAT", this.w6Url.authSsl + '/', url);
     if (!url.startsWith(this.w6Url.authSsl + '/')) return null;
     let accessToken = this.accessToken;
-    if (!this.isLogin(url) && accessToken && (force || Tools.isTokenExpired(accessToken)))
+    if (accessToken && !this.isLogin(url) && (force || Tools.isTokenExpired(accessToken)))
       if (await this.handleRefresh()) return this.accessToken;
     return accessToken;
   }
