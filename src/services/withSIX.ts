@@ -43,7 +43,7 @@ globalRedactorOptions.plugins = ['bufferbuttons', 'image', 'video', 'table', 'fu
 */
 
 export class W6Urls {
-  imageCdn = "https://img-cdn.withsix.com";
+  imageCdn = "https://withsix-img.azureedge.net";
   urlNonSsl: string;
   constructor(urls) {
     Object.assign(this, urls);
@@ -55,7 +55,7 @@ export class W6Urls {
     this.setupDomain();
 
     this.contentCdn = "//" + this.buckets["withsix-usercontent"];
-    this.docsCdn = "//cdn2.withsix.com";
+    this.docsCdn = "//withsix-cdn.azureedge.net";
   }
 
   getCurrentPageWithoutHash() { return window.location.protocol + '//' + window.location.host + window.location.pathname + window.location.search; }
