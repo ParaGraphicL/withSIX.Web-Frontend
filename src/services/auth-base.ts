@@ -49,7 +49,7 @@ export class LoginBase {
       return true;
     } catch (err) {
       this.tools.Debug.error("[HTTP] Error trying to use refresh token", err);
-      if (r instanceof Response) {
+      if (err instanceof Response) {
         let r: Response = err;
         if (r.status == 401) {
           this.tools.Debug.error("[HTTP] 401, refreshtoken probably invalid", err);
