@@ -1,5 +1,5 @@
 import {EventWrapper} from './reactive';
-import {IActionTabStateUpdate, IActionNotification, IUserErrorAdded, IUserErrorResolved, StateChanged, IMod, IContent} from 'withsix-sync-api';
+import {IActionTabStateUpdate, IActionNotification, IUserErrorAdded, IUserErrorResolved, StateChanged, IMod, ICollection, IContent} from 'withsix-sync-api';
 
 export class ClientWrapper extends EventWrapper {
   get stateChanged() { return this.observableFromEvent<StateChanged>(StateChanged) }
@@ -23,3 +23,4 @@ export interface IInContent extends IContent {
 }
 
 export interface IModInContent extends IMod, IInContent { }
+export interface ICollectionInContent extends ICollection, IInContent { }

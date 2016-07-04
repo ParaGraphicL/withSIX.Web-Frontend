@@ -108,6 +108,7 @@ export class Filters<T> extends ViewModel {
     if (this.sortOrder) sortOrders.push(this.sortOrder);
     let sortFunctions = sortOrders.map((x, i) => (a, b) => {
       let order = x.direction == SortDirection.Desc ? -1 : 1;
+      if (x.customSort) return x.customSort(a, b) * order;
       if (a[x.name] > b[x.name]) return 1 * order;
       if (a[x.name] < b[x.name]) return (1 * -1) * order;
       return 0;

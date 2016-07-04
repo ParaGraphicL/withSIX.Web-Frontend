@@ -69,6 +69,7 @@
         "./src/features/pages/static.ts",
         "./src/features/pages/update.ts",
         "./src/features/profile/content/base.ts",
+        "./src/features/profile/content/collection-in-content.ts",
         "./src/features/profile/content/collection.ts",
         "./src/features/profile/content/collections/index.ts",
         "./src/features/profile/content/dependency.ts",

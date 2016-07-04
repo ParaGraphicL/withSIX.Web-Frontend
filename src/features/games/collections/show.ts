@@ -152,8 +152,7 @@ class GetCollectionHandler extends DbQuery<GetCollection, ICollectionData> {
     var ver = await this.context.getCustom<IBreezeCollectionVersion>("collectionversions/" + col.latestVersionId);
     var items = ver.dependencies.asEnumerable()
       .select(x => {
-        var availableVersions = (<any>x).availableVersions;
-        var dep = <IShowDependency>{ dependency: x.dependency, type: "dependency", id: x.id, gameId: col.gameId, constraint: x.constraint, isRequired: x.isRequired, availableVersions: availableVersions, name: (<any>x).name };
+        var dep = <IShowDependency>{ dependency: x.dependency, type: "dependency", id: x.id, gameId: col.gameId, constraint: x.constraint, isRequired: x.isRequired, availableVersions: (<any>x).availableVersions, name: x.name, version: (<any>x).latestStableVersion };
         var dx = (<any>x);
         if (dx.avatar)
           dep.image = this.w6.url.getContentAvatarUrl(dx.avatar, dx.avatarUpdatedAt);
