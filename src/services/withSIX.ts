@@ -547,19 +547,19 @@ export class W6 {
   public convertToClient<T>(obj, convertPropertyNames = true) {
     var converter = breeze.NamingConvention.defaultInstance;
     if (obj instanceof Array) {
-      var newAr: T = [];
+      var newAr = [];
       angular.forEach(obj, (v, i) => newAr[i] = this.convertToClient(v, convertPropertyNames));
-      return newAr;
+      return <T><any>newAr;
     } else if (obj instanceof Date) {
       return <T>obj;
     } else if (obj instanceof Object) {
-      var newObj: T = {};
+      var newObj = {};
       if (convertPropertyNames) angular.forEach(obj, (v, p) => newObj[converter.serverPropertyNameToClient(p)] = this.convertToClient(v, convertPropertyNames));
       else angular.forEach(obj, (v, p) => newObj[p] = this.convertToClient(v, convertPropertyNames));
-      return newObj;
+      return <T>newObj;
     } else if (typeof obj == "string") {
       if (this.iso8601RegEx.test(obj)) {
-        return <T>breeze.DataType.parseDateFromServer(obj);
+        return <T><any>breeze.DataType.parseDateFromServer(obj);
         // if (!obj.endsWith("Z")) obj = obj + "Z";
         // return new Date(obj);
       }
@@ -571,15 +571,15 @@ export class W6 {
   private convertToServer<T>(obj) {
     var converter = breeze.NamingConvention.defaultInstance;
     if (obj instanceof Array) {
-      var newAr: T = [];
+      var newAr = [];
       angular.forEach(obj, (v, i) => newAr[i] = this.convertToServer(v));
-      return newAr;
+      return <T><any>newAr;
     } else if (obj instanceof Date) {
       return <T>obj;
     } else if (obj instanceof Object) {
-      var newObj: T = {};
+      var newObj = {};
       angular.forEach(obj, (v, p) => newObj[converter.clientPropertyNameToServer(p)] = v instanceof Object ? this.convertToServer(v) : v);
-      return newObj;
+      return <T>newObj;
     }
     return <T>obj;
   }
