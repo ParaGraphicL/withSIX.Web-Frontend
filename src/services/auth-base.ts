@@ -288,6 +288,8 @@ export class LoginBase {
       hasAvatar: r["withsix:has_avatar"],
       avatarUpdatedAt: new Date(r["withsix:avatar_updated_at"]),
       emailMd5: r["withsix:email_md5"],
+      passwordSet: r["withsix:password_set"],
+      emailConfirmed: r["withsix:email_confirmed"],
       roles: roles,
       isAdmin: roles.indexOf("admin") > -1,
       isManager: roles.indexOf("manager") > -1,
