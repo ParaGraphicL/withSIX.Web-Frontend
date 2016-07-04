@@ -1807,7 +1807,7 @@ Depends on: editableController, editableFormFactory
 
     public reload() {
       Tools.Debug.log("reloading url");
-      this.$window.location.reload(true);
+      this.w6.reload();
     }
 
     public forwardNaked(fullUrl) {

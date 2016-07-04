@@ -681,7 +681,9 @@ export module Main.Premium {
   import Moment = moment.Moment;
 
   export interface IPremiumScope extends IBaseScope {
+    clickedVerification: boolean;
     completeOrder: () => void;
+    reload: () => void;
     getRenewal: () => Moment;
     location;
     openTermsDialog: () => any;
@@ -720,6 +722,9 @@ export module Main.Premium {
 
       model.ref = $location.search().ref;
       $scope.model = model;
+
+      $scope.clickedVerification = false;
+      $scope.reload = () => forwardService.reload();
 
       $scope.payMethod = PayMethod.Paypal;
       $scope.getPerMonth = product => product.pricing.total / (product.unitAmount * (product.unit == 'Year' ? 12 : 1));

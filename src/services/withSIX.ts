@@ -525,7 +525,12 @@ export class W6 {
     copy.id = newUserInfo.id; // wth?
     Object.assign(userInfo, copy);
     userInfo.clearAvatars();
-  };
+  }
+
+  reload() {
+    window.onbeforeunload = undefined;
+    window.location.reload(true);
+  }
 
   public userTitling(title?: string) {
     var titling = this.userInfo.id ? this.userInfo.userName + "'s" : "Your";
