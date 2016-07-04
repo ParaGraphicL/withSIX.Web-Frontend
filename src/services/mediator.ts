@@ -202,7 +202,7 @@ export interface ISort<T> {
   title?: string;
   direction?: SortDirection;
   isEnabled?: boolean;
-  //sort: (a, b) => number;
+  customSort?: (a: T, b: T) => number;
 }
 
 export enum SortDirection {

@@ -17,8 +17,21 @@ export class EditContent extends ViewModel {
       this.availableViewTypes.push(ViewType.List);
   }
 
+  getState(mod: IShowDependency) {
+    return
+  }
+
   addContentModel: IFindModel<IFindDependency>;
-  sort: ISort<IShowDependency>[] = [{ name: "name" }]
+  sort: ISort<IShowDependency>[] = [{ name: "name" },
+    {
+      name: "Has Updates", customSort: (a, b) => {
+        let asort = a.constraint && a.constraint !== a.version ? 1 : 0;
+        let bsort = b.constraint && b.constraint !== b.version ? 1 : 0;
+        if (asort > bsort) return -1;
+        if (bsort > asort) return 1;
+        return 0;
+      }
+    }]
   customSort = (item: IShowDependency, item2: IShowDependency) => {
     let i1 = item.newlyAdded || 0;
     let i2 = item2.newlyAdded || 0;
@@ -74,7 +87,7 @@ export class EditContent extends ViewModel {
     // TODO; allow specify version and branching directly
     if (!dependency || this.containsDependency(dependency)) return;
 
-    let item = <IShowDependency>{ dependency: dependency, gameId: this.model.gameId, id: null, type: "dependency", isRequired: true, constraint: null };
+    let item = <IShowDependency>{ dependency: dependency, gameId: this.model.gameId, id: null, type: "dependency", isRequired: true, constraint: null, version: i.latestStableVersion }
     let s = this.addContentModel.selectedItem;
     // TODO: unclusterfuck :)
     let selectedContent = i || (s && this.addContentModel.searchItem == s.packageName && s);
@@ -123,11 +136,11 @@ class SearchQueryHandler extends DbQuery<SearchQuery, IFindDependency[]> {
     query = query.where(new breeze.Predicate("toLower(packageName)", op, key)
       .or(new breeze.Predicate("toLower(name)", op, key)))
       .orderBy("packageName")
-      .select(["packageName", "name", "id", "avatar", "avatarUpdatedAt", "updates"])
+      .select(["packageName", "name", "id", "avatar", "avatarUpdatedAt", "updates", "latestStableVersion"])
       .take(this.context.defaultTakeTag);
 
     var r = await this.context.executeQuery<IBreezeMod>(query)
-    return r.results.asEnumerable().toArray();
+    return r.results;
   }
 }
 
@@ -135,5 +148,5 @@ class SearchQueryHandler extends DbQuery<SearchQuery, IFindDependency[]> {
 
 interface IFindDependency {
   id?: string, name: string, packageName?: string, avatar?: string, avatarUpdatedAt?: Date
-  updates: IBreezeModUpdate[];
+  latestStableVersion?: string; updates: IBreezeModUpdate[];
 }
