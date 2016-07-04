@@ -544,44 +544,44 @@ export class W6 {
 
   iso8601RegEx = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z?$/;
 
-  public convertToClient(obj, convertPropertyNames = true) {
+  public convertToClient<T>(obj, convertPropertyNames = true) {
     var converter = breeze.NamingConvention.defaultInstance;
     if (obj instanceof Array) {
-      var newAr = [];
+      var newAr: T = [];
       angular.forEach(obj, (v, i) => newAr[i] = this.convertToClient(v, convertPropertyNames));
       return newAr;
     } else if (obj instanceof Date) {
-      return obj;
+      return <T>obj;
     } else if (obj instanceof Object) {
-      var newObj = {};
+      var newObj: T = {};
       if (convertPropertyNames) angular.forEach(obj, (v, p) => newObj[converter.serverPropertyNameToClient(p)] = this.convertToClient(v, convertPropertyNames));
       else angular.forEach(obj, (v, p) => newObj[p] = this.convertToClient(v, convertPropertyNames));
       return newObj;
     } else if (typeof obj == "string") {
       if (this.iso8601RegEx.test(obj)) {
-        return breeze.DataType.parseDateFromServer(obj);
+        return <T>breeze.DataType.parseDateFromServer(obj);
         // if (!obj.endsWith("Z")) obj = obj + "Z";
         // return new Date(obj);
       }
     }
 
-    return obj;
+    return <T>obj;
   }
 
-  private convertToServer(obj) {
+  private convertToServer<T>(obj) {
     var converter = breeze.NamingConvention.defaultInstance;
     if (obj instanceof Array) {
-      var newAr = [];
+      var newAr: T = [];
       angular.forEach(obj, (v, i) => newAr[i] = this.convertToServer(v));
       return newAr;
     } else if (obj instanceof Date) {
-      return obj;
+      return <T>obj;
     } else if (obj instanceof Object) {
-      var newObj = {};
+      var newObj: T = {};
       angular.forEach(obj, (v, p) => newObj[converter.clientPropertyNameToServer(p)] = v instanceof Object ? this.convertToServer(v) : v);
       return newObj;
     }
-    return obj;
+    return <T>obj;
   }
   // Divisable by 8! Keep in sync with C#: ImageConstants
   public imageSizes = {
@@ -705,7 +705,7 @@ export interface ICollectionData {
   id: string;
   name: string;
   gameId: string;
-  groupId: string;
+  groupId?: string;
   items: IShowDependency[];
   servers: IServer[];
   repositories: string;
@@ -723,6 +723,7 @@ export interface IDependency {
   isRequired?: boolean;
   type: string;
   availableVersions?: string[];
+  version: string;
 }
 
 export interface IShowDependency extends IDependency {
