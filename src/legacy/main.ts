@@ -542,14 +542,14 @@ export module Main.Blog {
         }
 
         this.$scope.likeComment = comment => {
-          this.$scope.request(LikePostCommentCommand, { postId: this.$scope.model.id, id: comment.id })
+          return this.$scope.request(LikePostCommentCommand, { postId: this.$scope.model.id, id: comment.id })
             .then(() => {
               comment.likesCount += 1;
               this.$scope.commentLikeStates[comment.id] = true;
             });
         };
         this.$scope.unlikeComment = comment => {
-          this.$scope.request(UnlikePostCommentCommand, { postId: this.$scope.model.id, id: comment.id }).then(() => {
+          return this.$scope.request(UnlikePostCommentCommand, { postId: this.$scope.model.id, id: comment.id }).then(() => {
             comment.likesCount -= 1;
             this.$scope.commentLikeStates[comment.id] = false;
           });
@@ -595,12 +595,12 @@ export module Main.Changelog {
       $scope.changelog = model;
 
       $scope.changelogOldShown = false;
-      $scope.toggleOlderChangelogs = () => {
+      $scope.toggleOlderChangelogs = async () => {
         if ($scope.changelogOld) {
           $scope.changelogOldShown = !$scope.changelogOldShown;
         } else if (!$scope.changelogOldShown) {
           $scope.changelogOldShown = true;
-          $scope.request(GetChangelogOldQuery)
+          await $scope.request(GetChangelogOldQuery)
             .then(result => $scope.changelogOld = result);
         }
       };
@@ -787,7 +787,7 @@ export module Main.Premium {
       }
       var selectedProduct = this.$scope.model.selectedProduct;
       var recurring = this.$scope.model.autoRenew && selectedProduct.unitAmount != null;
-      this.$scope.request<{ data }>(CreatePremiumOrderCommand, { data: { articleId: selectedProduct.articleId, isRecurring: recurring, termsAccepted: this.$scope.model.termsAccepted, ref: this.$scope.model.ref, overwrite: this.$scope.model.overwrite } })
+      return this.$scope.request<{ data }>(CreatePremiumOrderCommand, { data: { articleId: selectedProduct.articleId, isRecurring: recurring, termsAccepted: this.$scope.model.termsAccepted, ref: this.$scope.model.ref, overwrite: this.$scope.model.overwrite } })
         .then((result) => {
           this.forwardService.forwardNaked(this.$scope.url.urlSsl + "/orders/" + result.data + "/checkout");
         }).catch(reason => {

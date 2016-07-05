@@ -213,10 +213,10 @@ export class ContentModelController<TModel extends breeze.Entity> extends Conten
       currentPage: $scope.header.contentUrl
     });
 
-    $scope.reportContent = () => {
+    $scope.reportContent = async () => {
       // TODO: Tell to login if not logged in...
       if (this.$scope.w6.userInfo.id) {
-        this.$scope.request(Components.Dialogs.OpenReportDialogQuery);
+        await this.$scope.request(Components.Dialogs.OpenReportDialogQuery);
       };
     };
 
@@ -781,11 +781,11 @@ export module Play.Collections {
 
       w6.collection = this;
 
-      $scope.tryDirectDownloadCollection = () => {
+      $scope.tryDirectDownloadCollection = async () => {
         if (model.latestVersion.repositories != null) {
-          this.$scope.request(OpenRepoCollectionDialogQuery, { model: this.$scope.model });
+          await this.$scope.request(OpenRepoCollectionDialogQuery, { model: this.$scope.model });
         }
-        return $scope.directDownloadCollection(this.$scope.model);
+        return await $scope.directDownloadCollection(this.$scope.model);
       }
 
       var basket = $scope.game && basketService.getGameBaskets($scope.game.id);
@@ -1432,13 +1432,13 @@ export module Play.Collections {
         }
 
         this.$scope.likeComment = comment => {
-          this.$scope.request(LikeCollectionCommentCommand, { collectionId: this.$scope.model.id, id: comment.id }).then(() => {
+          return this.$scope.request(LikeCollectionCommentCommand, { collectionId: this.$scope.model.id, id: comment.id }).then(() => {
             comment.likesCount += 1;
             this.$scope.commentLikeStates[comment.id] = true;
           });
         };
         this.$scope.unlikeComment = comment => {
-          this.$scope.request(UnlikeCollectionCommentCommand, { collectionId: this.$scope.model.id, id: comment.id }).then(() => {
+          return this.$scope.request(UnlikeCollectionCommentCommand, { collectionId: this.$scope.model.id, id: comment.id }).then(() => {
             comment.likesCount -= 1;
             this.$scope.commentLikeStates[comment.id] = false;
           });
@@ -1736,12 +1736,9 @@ export module Play.Games {
       $scope.gameName = model.name;
       $scope.page = this.$subViewBaseFolder + 'add-collection-1.html';
       $scope.quote = this.getQuote();
-      $scope.openTerms = () => {
-        $scope.request(Components.Dialogs.OpenTermsDialogQuery);
-      };
+      $scope.openTerms = () => $scope.request(Components.Dialogs.OpenTermsDialogQuery);
       $scope.hints = AddModDialogController.hints;
       $scope.inlineHints = AddModDialogController.inlineHints;
-
     }
 
     private getQuote = (): string => {
@@ -1754,10 +1751,10 @@ export module Play.Games {
     private cancel = () => this.$modalInstance.close();
     private reload = () => window.location.reload();
 
-    private ok = () => {
+    private ok = async () => {
       var data = this.$scope.model;
       if ((<string>data.uri).endsWithIgnoreCase("config.yml")) {
-        this.$scope.request<{ data: any[] }>(NewImportedCollectionCommand, { data: data })
+        await this.$scope.request<{ data: any[] }>(NewImportedCollectionCommand, { data: data })
           .then(result => {
             if (result.data.length == 1) {
               var modId = Tools.toShortId(result.data[0]);
@@ -1774,7 +1771,7 @@ export module Play.Games {
           })
           .catch(this.httpFailed);
       } else {
-        this.$scope.request<{ data: string }>(NewMultiImportedCollectionCommand, { data: data })
+        await this.$scope.request<{ data: string }>(NewMultiImportedCollectionCommand, { data: data })
           .then(result => {
             var modId = Tools.toShortId(result.data);
             this.$modalInstance.close();
@@ -1783,7 +1780,6 @@ export module Play.Games {
           })
           .catch(this.httpFailed);
       }
-
     };
 
     private okNew = () => {
@@ -2000,34 +1996,33 @@ export module Play.Games {
     private checkPackageName = (packageName: string) => {
       this.$scope.checkingPackageName = true;
       this.$scope.model.packageNameAvailable = false;
-      this.$scope.request<boolean>(Mods.ModExistsQuery, { packageName: packageName, groupId: this.$scope.model.mod.groupId, gameId: this.model.id })
+      return this.$scope.request<boolean>(Mods.ModExistsQuery, { packageName: packageName, groupId: this.$scope.model.mod.groupId, gameId: this.model.id })
         .then((result) => {
           this.$scope.checkingPackageName = false;
           Tools.Debug.log(result);
           this.$scope.model.packageNameAvailable = !result;
         })
         .catch(this.httpFailed);
-    };
+    }
 
     getAuthorId() { return this.authorSubmission ? this.$scope.w6.userInfo.id : this.$scope.w6.w6OBot }
 
     private checkName = (name: string) => {
       this.$scope.checkingName = true;
       this.$scope.model.nameAvailable = false;
-      this.$scope.request<boolean>(Mods.ModNameExistsQuery, { name: name, authorId: this.getAuthorId(), gameId: this.model.id })
+      return this.$scope.request<boolean>(Mods.ModNameExistsQuery, { name: name, authorId: this.getAuthorId(), gameId: this.model.id })
         .then((result) => {
           this.$scope.checkingName = false;
           Tools.Debug.log(result);
           this.$scope.model.nameAvailable = !result;
         })
         .catch(this.httpFailed);
-    };
-
+    }
 
     checkDownloadLink(uri: string) {
       this.$scope.checkingDownloadLink = true;
       this.$scope.model.downloadLinkAvailable = false;
-      this.$scope.request<boolean>(GetCheckLinkQuery, { linkToCheck: uri })
+      return this.$scope.request<boolean>(GetCheckLinkQuery, { linkToCheck: uri })
         .then((result) => {
           this.$scope.checkingDownloadLink = false;
           Tools.Debug.log(result);
@@ -2047,7 +2042,7 @@ export module Play.Games {
 
     getLatestInfo() {
       let model = this.$scope.model;
-      this.$scope.request<IModVersionInfo>(Mods.GetLatestInfo, { data: { downloadUri: model.mod.download } }).then(r => {
+      return this.$scope.request<IModVersionInfo>(Mods.GetLatestInfo, { data: { downloadUri: model.mod.download } }).then(r => {
         model.mod.version = r.version;
         model.mod.branch = r.branch;
         if (!model.mod.name) model.mod.name = r.name;
@@ -2081,7 +2076,7 @@ export module Play.Games {
       }
 
       if (this.authorSubmission) data.author = "";
-      this.$scope.request<string>(NewModCommand, { data: data })
+      return this.$scope.request<string>(NewModCommand, { data: data })
         .then(modId => {
           let shortId = Tools.toShortId(modId);
           let slug = <string>data.name.sluggifyEntityName();
@@ -2130,7 +2125,7 @@ export module Play.Games {
     };
 
     private setupDependencyAutoComplete() {
-      this.$scope.getDependencies = (query) => this.$scope.request(Mods.GetModTagsQuery, { gameId: this.model.id, query: query })
+      return this.$scope.getDependencies = (query) => this.$scope.request(Mods.GetModTagsQuery, { gameId: this.model.id, query: query })
         .then((d) => this.processModNames(d))
         .catch(this.breezeQueryFailed);
     }
@@ -2939,14 +2934,15 @@ export module Play.Missions {
       var $scope = this.$scope;
       this.$scope.addComment = newComment => {
         Tools.Debug.log('Add new comment', newComment);
-        $scope.request(CreateMissionCommentCommand, { model: { replyTo: newComment.replyTo, contentId: $scope.model.id, message: newComment.message, replyToId: newComment.replyTo ? newComment.replyTo.id : undefined } });
+        let r = $scope.request(CreateMissionCommentCommand, { model: { replyTo: newComment.replyTo, contentId: $scope.model.id, message: newComment.message, replyToId: newComment.replyTo ? newComment.replyTo.id : undefined } });
         //WM<ICreateComment<IBreezeMissionComment>>
         newComment.message = "";
+        return r;
       };
       this.$scope.deleteComment = comment => this.$scope.request(DeleteMissionCommentCommand, { model: comment });
       this.$scope.saveComment = comment => {
         Tools.Debug.log("Saving comment", comment);
-        this.$scope.request(SaveMissionCommentCommand, { model: comment });
+        return this.$scope.request(SaveMissionCommentCommand, { model: comment });
       };
       this.$scope.reportComment = (comment) => { };
 
@@ -2958,22 +2954,19 @@ export module Play.Missions {
             .catch(this.breezeQueryFailed));
         }
 
-        this.$scope.likeComment = comment => {
-          this.$scope.request(LikeMissionCommentCommand, { missionId: this.$scope.model.id, id: comment.id }).then(() => {
-            comment.likesCount += 1;
-            this.$scope.commentLikeStates[comment.id] = true;
-          });
-        };
-        this.$scope.unlikeComment = comment => {
-          this.$scope.request(UnlikeMissionCommentCommand, { missionId: this.$scope.model.id, id: comment.id }).then(() => {
-            comment.likesCount -= 1;
-            this.$scope.commentLikeStates[comment.id] = false;
-          });
-        };
+        this.$scope.likeComment = comment => this.$scope.request(LikeMissionCommentCommand, { missionId: this.$scope.model.id, id: comment.id }).then(() => {
+          comment.likesCount += 1;
+          this.$scope.commentLikeStates[comment.id] = true;
+        });
+        this.$scope.unlikeComment = comment => this.$scope.request(UnlikeMissionCommentCommand, { missionId: this.$scope.model.id, id: comment.id }).then(() => {
+          comment.likesCount -= 1;
+          this.$scope.commentLikeStates[comment.id] = false;
+        });
       }
 
       this.$timeout(() => this.$scope.request(GetMissionCommentsQuery, { missionId: this.$scope.model.id }));
-    };
+    }
+
     private setupEditing = () => {
       this.setupEditConfig({
         canEdit: () => this.$scope.model.author.id == this.$scope.w6.userInfo.id,
@@ -3169,7 +3162,7 @@ export module Play.Mods {
     private showInformation = () => { this.$scope.stepOneInfo = true; };
 
     private ok = () => {
-      this.$scope.request<{ token; formatProvider; data }>(GetClaimQuery, { modId: this.$scope.model.id })
+      return this.$scope.request<{ token; formatProvider; data }>(GetClaimQuery, { modId: this.$scope.model.id })
         .then((result) => {
           this.$scope.claimToken = result.token;
           this.$scope.formatProvider = result.formatProvider;
@@ -3181,7 +3174,7 @@ export module Play.Mods {
 
     private verifyToken = () => {
       this.$scope.verificationFailed = false;
-      this.$scope.request(VerifyClaimCommand, { modId: this.$scope.model.id })
+      return this.$scope.request(VerifyClaimCommand, { modId: this.$scope.model.id })
         .then((result) => {
           this.$scope.page = '/src_legacy/app/play/mods/dialogs/_claim-page3.html';
           this.$scope.error = undefined;
@@ -3970,19 +3963,15 @@ export module Play.Mods {
       this.$scope.openRequestModDeletion = () => this.$scope.request(OpenModDeleteRequestDialogQuery, { model: this.$scope.model });
       this.$scope.openModUploadDialog = (type = "download") => this.$scope.request(OpenModUploadDialogQuery, { model: this.$scope.model, info: type });
       this.$scope.openArchivalStatusDialog = () => this.$scope.request(OpenArchiveModDialogQuery, { model: this.$scope });
-      this.$scope.openUploadVersionDialog = () => {
-        this.$scope.request(GetModUpdatesQuery, { modId: this.$scope.model.id });
-
+      this.$scope.openUploadVersionDialog = async () => {
         if (isUploading(getCurrentChange())) {
           this.logger.error("The mod is currently processing a change, please wait until it finishes.");
           return;
         }
-
-        this.$scope.request(OpenModUploadDialogQuery, { model: this.$scope.model, info: "download" });
+        await this.$scope.request(GetModUpdatesQuery, { modId: this.$scope.model.id });
+        await this.$scope.request(OpenModUploadDialogQuery, { model: this.$scope.model, info: "download" });
       };
-      this.$scope.openVersionHistoryDialog = () => {
-        this.$scope.request(ModVersionHistoryDialogQuery, { model: this.$scope.model });
-      };
+      this.$scope.openVersionHistoryDialog = () => this.$scope.request(ModVersionHistoryDialogQuery, { model: this.$scope.model });
       this.$scope.openAddModDialog = (info = { type: "download", folder: "" }) => this.eventBus.publish(new OpenAddModDialog(this.$scope.model.game, info));
 
       this.$scope.$watch("uploadingModImage", (newValue, oldValue, scope) => {
@@ -4023,7 +4012,6 @@ export module Play.Mods {
         var updating = result != null && isUploading(result);
 
         if (timeout === 0 || (updating && !_updating)) {
-
           timeout = setTimeout(() => {
             this.$scope.request(GetModUpdatesQuery, { modId: this.$scope.model.id });
             timeout = 0;
@@ -4048,42 +4036,38 @@ export module Play.Mods {
 
       $scope.approving = false;
 
-      this.$scope.approveUpload = (update: IBreezeModUpdate): void => {
+      this.$scope.approveUpload = async (update: IBreezeModUpdate) => {
         $scope.approving = true;
         if (!$scope.editConfig.canManage()) {
           this.logger.error("Only management can approve an upload.");
           $scope.approving = false;
           return;
         }
-        $scope.request(ApproveUploadRequestQuery, { requestId: getCurrentChange().id })
-          .then((result) => {
-            $scope.request(GetModUpdatesQuery, { modId: $scope.model.id });
-            setTimeout(() => {
-              $scope.approving = false;
-            }, 1000 * 2);
-          }).catch(reason => {
-            $scope.request(GetModUpdatesQuery, { modId: $scope.model.id });
-            this.httpFailed(reason);
+        await $scope.request(ApproveUploadRequestQuery, { requestId: getCurrentChange().id })
+          .then(async (result) => {
+            setTimeout(() => $scope.approving = false, 1000 * 2);
+            await $scope.request(GetModUpdatesQuery, { modId: $scope.model.id });
+          }).catch(async (reason) => {
             $scope.approving = false;
+            this.httpFailed(reason);
+            await $scope.request(GetModUpdatesQuery, { modId: $scope.model.id });
           });
       };
-      this.$scope.denyUpload = (update: IBreezeModUpdate): void => {
+      this.$scope.denyUpload = async (update: IBreezeModUpdate) => {
         $scope.approving = true;
         if (!$scope.editConfig.canManage()) {
           this.logger.error("Only management can deny an upload.");
           $scope.approving = false;
           return;
         }
-        $scope.request(DenyUploadRequestQuery, { requestId: getCurrentChange().id })
-          .then((result) => {
-            $scope.request(GetModUpdatesQuery, { modId: $scope.model.id });
-            setTimeout(() => {
-              $scope.approving = false;
-            }, 1000 * 2);
-          }).catch(reason => {
-            $scope.request(GetModUpdatesQuery, { modId: $scope.model.id });
-            this.httpFailed(reason);
+        await $scope.request(DenyUploadRequestQuery, { requestId: getCurrentChange().id })
+          .then(async (result) => {
+            setTimeout(() => $scope.approving = false, 1000 * 2);
+            await $scope.request(GetModUpdatesQuery, { modId: $scope.model.id });
+          }).catch(async (reason) => {
             $scope.approving = false;
+            await $scope.request(GetModUpdatesQuery, { modId: $scope.model.id });
+            this.httpFailed(reason);
           });
       };
       this.$scope.confirmCancel = false;
@@ -4153,11 +4137,11 @@ export module Play.Mods {
           $scope.confirmCancel = state;
       };
 
-      this.$scope.cancelUpload = (force: boolean = false) => {
+      this.$scope.cancelUpload = async (force: boolean = false) => {
         if ($scope.confirmCancel || $scope.confirmAbandon) {
           setCancelState(true, force);
           setCancelConfirmState(false, force);
-          $scope.request(CancelUploadRequestQuery, { requestId: getCurrentChange().id, force: force })
+          await $scope.request(CancelUploadRequestQuery, { requestId: getCurrentChange().id, force: force })
             .then((result) => {
               $scope.request(GetModUpdatesQuery, { modId: $scope.model.id });
               setTimeout(() => {
@@ -4172,12 +4156,9 @@ export module Play.Mods {
               }, 1000 * 2);
               this.httpFailed(reason);
             });
-          return;
         } else {
           setCancelConfirmState(true, force);
-          setTimeout(() => {
-            setCancelConfirmState(false, force);
-          }, 5000);
+          setTimeout(() => setCancelConfirmState(false, force), 5000);
         }
       };
       this.$scope.getPendingLinkDeletions = () => <IBreezeModMediaItem[]>this.$scope.model.entityAspect.entityManager.getChanges(BreezeEntityGraph.Mod.mediaItems().$name).filter((x: any, index, array) => x.type == "Link" && x.modId == this.$scope.model.id && x.entityAspect.entityState.isDeleted());
@@ -4754,26 +4735,20 @@ export module Play.Mods {
             .catch(this.breezeQueryFailed));
         }
 
-        this.$scope.likeComment = comment => {
-          this.$scope.request(LikeModCommentCommand, { modId: this.$scope.model.id, id: comment.id }).then(() => {
-            comment.likesCount += 1;
-            this.$scope.commentLikeStates[comment.id] = true;
-          });
-        };
-        this.$scope.unlikeComment = comment => {
-          this.$scope.request(UnlikeModCommentCommand, { modId: this.$scope.model.id, id: comment.id }).then(() => {
-            comment.likesCount -= 1;
-            this.$scope.commentLikeStates[comment.id] = false;
-          });
-        };
+        this.$scope.likeComment = comment => this.$scope.request(LikeModCommentCommand, { modId: this.$scope.model.id, id: comment.id }).then(() => {
+          comment.likesCount += 1;
+          this.$scope.commentLikeStates[comment.id] = true;
+        });
+        this.$scope.unlikeComment = comment => this.$scope.request(UnlikeModCommentCommand, { modId: this.$scope.model.id, id: comment.id }).then(() => {
+          comment.likesCount -= 1;
+          this.$scope.commentLikeStates[comment.id] = false;
+        });
       }
 
       this.$timeout(() => this.$scope.request(GetModCommentsQuery, { modId: this.$scope.model.id }));
     }
 
-    private setupClaiming() {
-      this.$scope.openClaimDialog = () => this.$scope.request(OpenClaimDialogQuery, { gameSlug: this.$routeParams.gameSlug, modId: this.$routeParams.modId });
-    }
+    private setupClaiming() { this.$scope.openClaimDialog = () => this.$scope.request(OpenClaimDialogQuery, { gameSlug: this.$routeParams.gameSlug, modId: this.$routeParams.modId }); }
 
     private setupStatistics() {
       //[x,y], [day, amount]
