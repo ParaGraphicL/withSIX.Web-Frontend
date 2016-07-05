@@ -20,12 +20,13 @@ export class Dependency extends ViewModel {
     this.subscriptions.subd(d => {
       d(this.changeVersion);
       d(this.remove);
-      if (this.model.id && this.isLoggedIn)
+      if (this.model.id && this.isLoggedIn) {
         d(this.addToCollections = uiCommand2("Add to ...", async () => {
           this.dialog.open({ viewModel: AddModsToCollections, model: { gameId: this.model.gameId, mods: [{ id: this.model.id, name: this.model.name, packageName: this.model.dependency }] } })
         }, { icon: 'withSIX-icon-Nav-Collection' }));
+        this.topMenuActions.push(new MenuItem(this.addToCollections));
+      }
     })
-    if (this.model.id) this.topMenuActions.push(new MenuItem(this.addToCollections));
   }
 
   get isLocked() { return this.model.constraint ? true : false; }
