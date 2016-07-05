@@ -38,24 +38,8 @@ export module Components {
               refreshType: (type) => cache[type] = !cache[type]
             };
           }
-        ]);
-    }
-  }
-
-  export function registerCQ(command) { app.registerCommand(command); }
-
-  export function registerService(service) { app.app.service(service.$name, service); }
-
-  export function registerController(controller) { app.app.controller(controller.$name, controller); }
-
-  var app = new ComponentsModule();
-
-  class DirectivesComponent extends Tk.Module {
-    static $name = "DirectivesComponentModule";
-
-    constructor() {
-      super('Components.Directives', []);
-      this.app // http://stackoverflow.com/questions/21249441/disable-nganimate-form-some-elements
+        ])
+        // http://stackoverflow.com/questions/21249441/disable-nganimate-form-some-elements
         .directive('sxDisableAnimation', [
           '$animate', ($animate) => {
             return {
@@ -84,9 +68,9 @@ export module Components {
                 var compiledContents;
                 return {
                   pre: (link && link.pre) ? link.pre : null,
-                                    /**
-                                 * Compiles and re-adds the contents
-                                 */ post(scope, element) {
+                                      /**
+                                   * Compiles and re-adds the contents
+                                   */ post(scope, element) {
                     // Compile the contents
                     if (!compiledContents) {
                       compiledContents = $compile(contents);
@@ -550,9 +534,79 @@ export module Components {
             // do something awesome
             focus('email');
           };
-        });
+        })
+        .filter('uppercaseFirst', () => (val: string) => val ? val.toUpperCaseFirst() : val)
+        .filter('lowercaseFirst', () => (val: string) => val ? val.toLowerCaseFirst() : val)
+        // TODO: Dedup; this does pretty much the same as the bytes filter!
+        .filter('amount', ['aur.amountConverter', c => count => c.toView(count)])
+        .filter('speed', ['aur.speedConverter', c => (size, format, includeMarkup = true) => c.toView(size, format, includeMarkup)])
+        .filter('size', ['aur.sizeConverter', c => (size, format, includeMarkup = true) => c.toView(size, format, includeMarkup)])
+        .filter('accounting', () => (nmb, currencyCode) => {
+          var currency = {
+            USD: "$",
+            GBP: "£",
+            AUD: "$",
+            EUR: "€",
+            CAD: "$",
+            MIXED: "~"
+          },
+            thousand,
+            decimal,
+            format;
+          if ($.inArray(currencyCode, ["USD", "AUD", "CAD", "MIXED"]) >= 0) {
+            thousand = ",";
+            decimal = ".";
+            format = "%s %v";
+          } else {
+            thousand = ".";
+            decimal = ",";
+            format = "%s %v";
+          };
+          return accounting.formatMoney(nmb, currency[currencyCode], 2, thousand, decimal, format);
+        })
+        .filter('pagedown', () => (input, htmlSafe?) => {
+          if (input == null) return input;
+          // TODO: Markdown is not rendered the same here in JS as in the backend, support for following seems lacking:
+          // - AutoNewLines
+          // - StrictBoldItalic
+          // - EncodeProblemUrlCharacters
+          // One way to solve it would be to have a markdown web api endpoint on the server which renders markdown input into html output?
+          var converter = htmlSafe ? new Markdown.Converter() : Markdown.getSanitizingConverter();
+          return converter.makeHtml(input);
+        })
+        .filter('htmlToPlaintext', () => text => String(text).replace(/<[^>]+>/gm, ''))
+        .filter('htmlToPlaintext2', () => text => angular.element('<span>' + text + '</span>').text())
+        // For some reason htmlSafe switch not working on main pagedown directive??
+        .filter('pagedownSafe', () => (input) => {
+          if (input == null) return input;
+          var converter = new Markdown.Converter();
+          return converter.makeHtml(input);
+        })
+        .filter('commentfilter', () => (input: any[]) => !input ? input : input.asEnumerable().where(x => !x.replyToId).toArray())
+        .filter('deletedfilter', () => (input: IBreezeModMediaItem[], mod: IBreezeMod) => {
+          if (!input || input.length == 0 || mod == null) return [];
+          return input.asEnumerable().where(x => x.modId == mod.id && x.entityAspect.entityState.isDeleted()).toArray()
+        })
+        .filter('unsafe', ['$sce', function($sce) { return $sce.trustAsHtml; }])
+        .filter('monthName', [
+          () => monthNumber => { //1 = January
+            var monthNames = [
+              'January', 'February', 'March', 'April', 'May', 'June',
+              'July', 'August', 'September', 'October', 'November', 'December'
+            ];
+            return monthNames[monthNumber - 1];
+          }
+        ]);
     }
   }
+
+  export function registerCQ(command) { app.registerCommand(command); }
+
+  export function registerService(service) { app.app.service(service.$name, service); }
+
+  export function registerController(controller) { app.app.controller(controller.$name, controller); }
+
+  var app = new ComponentsModule();
 
   class MultiTranscludeDirectiveController {
     static $inject = ['$scope', '$element', '$attrs', '$transclude'];
@@ -569,8 +623,6 @@ export module Components {
 
     $transclude;
   }
-
-  var app = new DirectivesComponent();
 
   angular.module('xeditable').factory('editableController2',
     [
@@ -2529,79 +2581,6 @@ Depends on: editableController, editableFormFactory
 
   })();
 
-  class FiltersComponent extends Tk.Module {
-    static $name = "FiltersComponentModule";
-
-    constructor() {
-      super('Components.Filters', []);
-
-      this.app.filter('uppercaseFirst', () => (val: string) => val ? val.toUpperCaseFirst() : val)
-        .filter('lowercaseFirst', () => (val: string) => val ? val.toLowerCaseFirst() : val)
-        // TODO: Dedup; this does pretty much the same as the bytes filter!
-        .filter('amount', ['aur.amountConverter', c => count => c.toView(count)])
-        .filter('speed', ['aur.speedConverter', c => (size, format, includeMarkup = true) => c.toView(size, format, includeMarkup)])
-        .filter('size', ['aur.sizeConverter', c => (size, format, includeMarkup = true) => c.toView(size, format, includeMarkup)])
-        .filter('accounting', () => (nmb, currencyCode) => {
-          var currency = {
-            USD: "$",
-            GBP: "£",
-            AUD: "$",
-            EUR: "€",
-            CAD: "$",
-            MIXED: "~"
-          },
-            thousand,
-            decimal,
-            format;
-          if ($.inArray(currencyCode, ["USD", "AUD", "CAD", "MIXED"]) >= 0) {
-            thousand = ",";
-            decimal = ".";
-            format = "%s %v";
-          } else {
-            thousand = ".";
-            decimal = ",";
-            format = "%s %v";
-          };
-          return accounting.formatMoney(nmb, currency[currencyCode], 2, thousand, decimal, format);
-        })
-        .filter('pagedown', () => (input, htmlSafe?) => {
-          if (input == null) return input;
-          // TODO: Markdown is not rendered the same here in JS as in the backend, support for following seems lacking:
-          // - AutoNewLines
-          // - StrictBoldItalic
-          // - EncodeProblemUrlCharacters
-          // One way to solve it would be to have a markdown web api endpoint on the server which renders markdown input into html output?
-          var converter = htmlSafe ? new Markdown.Converter() : Markdown.getSanitizingConverter();
-          return converter.makeHtml(input);
-        })
-        .filter('htmlToPlaintext', () => text => String(text).replace(/<[^>]+>/gm, ''))
-        .filter('htmlToPlaintext2', () => text => angular.element('<span>' + text + '</span>').text())
-        // For some reason htmlSafe switch not working on main pagedown directive??
-        .filter('pagedownSafe', () => (input) => {
-          if (input == null) return input;
-          var converter = new Markdown.Converter();
-          return converter.makeHtml(input);
-        })
-        .filter('commentfilter', () => (input: any[]) => !input ? input : input.asEnumerable().where(x => !x.replyToId).toArray())
-        .filter('deletedfilter', () => (input: IBreezeModMediaItem[], mod: IBreezeMod) => {
-          if (!input || input.length == 0 || mod == null) return [];
-          return input.asEnumerable().where(x => x.modId == mod.id && x.entityAspect.entityState.isDeleted()).toArray()
-        })
-        .filter('unsafe', ['$sce', function($sce) { return $sce.trustAsHtml; }])
-        .filter('monthName', [
-          () => monthNumber => { //1 = January
-            var monthNames = [
-              'January', 'February', 'March', 'April', 'May', 'June',
-              'July', 'August', 'September', 'October', 'November', 'December'
-            ];
-            return monthNames[monthNumber - 1];
-          }
-        ]);
-    }
-  }
-
-  var app = new FiltersComponent();
-
   class Debounce {
     static $name = 'debounce';
     static $inject = ['$timeout'];
@@ -3463,7 +3442,6 @@ export module Components.Fields {
   }
 
   var app = new FieldsModule();
-
 }
 
 export module Components.Pagedown {

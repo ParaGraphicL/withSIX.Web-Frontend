@@ -28,7 +28,7 @@ export module Admin {
     static $name = "AdminModule";
 
     constructor() {
-      super("MyAppAdmin", ['app', 'commangular', 'ngRoute', 'route-segment', 'view-segment', 'Components.Directives', 'Components', 'MyAppAdminTemplates']);
+      super("MyAppAdmin", ['app', 'commangular', 'ngRoute', 'route-segment', 'view-segment', 'Components', 'MyAppAdminTemplates']);
       this.app.config(['$commangularProvider', $commangularProvider => registerCommands(this.commands, $commangularProvider)])
         .config([
           '$routeProvider', '$routeSegmentProvider', ($r1, $r2) => {
