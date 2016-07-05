@@ -134,7 +134,7 @@ export module Tools {
     status: number;
     statusText: string;
     body: T;
-    headers: Headers;
+    headers?: Headers;
   }
 
   export var createHttpError = (name: string, proto = Error.prototype): HttpErrorConstructor<any> => {
