@@ -1,5 +1,6 @@
 import {Tools} from '../tools';
 import {W6} from '../withSIX';
+import {LegacyMediator} from '../mediator';
 
 export module Tk {
   export class Base {
@@ -169,23 +170,24 @@ export module Tk {
       return this.p;
     }];
 
-    public setupQueryPart = (query, defaults?) => ['$commangular', '$route', '$interval', '$q', ($commangular, $route, $interval, $q) => {
-      if (!this.p) {
-        (<any>this.setupP())[2]($interval, $q);
-      }
-      return this.p.then(x => $commangular.dispatch(query.$name, Object.assign({}, defaults, $route.current.params)));
-    }];
 
     public setupQuery = (query, defaults?) => {
       if (defaults) defaults = angular.copy(defaults);
       if (!defaults) defaults = {};
       return { model: this.setupQueryPart(query, defaults) };
-    };
+    }
+    public setupQueryPart = (query, defaults?) => ['aur.legacyMediator', '$route', '$interval', '$q', (m: LegacyMediator, $route, $interval, $q) => {
+      if (!this.p) {
+        (<any>this.setupP())[2]($interval, $q);
+      }
+      return this.p.then(x => m.legacyRequest(query.$name, Object.assign({}, defaults, $route.current.params)));
+    }]
+
     public defaultRefreshFunction = type => {
       var refreshFunc = service => service.getType(type);
       refreshFunc['$inject'] = ['refreshService'];
       return refreshFunc;
-    };
+    }
     private defaultUntilResolved = { templateUrl: '/src_legacy/app/components/loading.html', controller: "LoadingController" };
 
     private defaultResolvedFailed = {
