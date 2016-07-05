@@ -3047,8 +3047,8 @@ export module Components.Dialogs {
       super($scope, logger, $modalInstance, $q);
 
       $scope.model = { content: $routeParams.content || $location.absUrl() };
-      $scope.sendReport = () => this.processCommand($scope.request(SendReportCommand, { data: $scope.model }, "Report sent!")
-        .then((data) => $scope.sent = true));
+      $scope.sendReport = () => this.requestAndProcessCommand(SendReportCommand, { data: $scope.model }, "Report sent!")
+        .then((data) => $scope.sent = true);
     }
   }
 
@@ -3062,7 +3062,7 @@ export module Components.Dialogs {
       $scope.model = {
         email: model.email
       };
-      $scope.submit = () => this.processCommand($scope.request(ForgotPasswordCommand, { data: $scope.model }).then(result => $scope.success = true), "Request sent!");
+      $scope.submit = () => this.requestAndProcessCommand(ForgotPasswordCommand, { data: $scope.model }, "Request sent!").then(result => $scope.success = true);
     }
   }
 
@@ -3166,9 +3166,9 @@ export module Components.Fields {
                 if ($attrs.checkAlreadyExists) {
                   // TODO: Only if not other validations failed?
                   // using viewValue as workaround because model not set when already invalid last time
-                  $scope.checkExists = () => $rootScope.request(Dialogs.EmailExistsQuery, { email: ctrl.email.$viewValue })
+                  $scope.checkExists = () => $rootScope.request<boolean>(Dialogs.EmailExistsQuery, { email: ctrl.email.$viewValue })
                     .then(result => {
-                      ctrl.email.$setValidity("sxExists", !result.lastResult);
+                      ctrl.email.$setValidity("sxExists", !result);
                       // workaround angular not updating the model after setValidity..
                       // https://github.com/angular/angular.js/issues/8080
                       if (ctrl.email.$valid) $scope.email = ctrl.email.$viewValue;
@@ -3233,9 +3233,9 @@ export module Components.Fields {
                 if ($attrs.checkAlreadyExists) {
                   // TODO: Only if not other validations failed?
                   // using viewValue as workaround because model not set when already invalid last time
-                  $scope.checkExists = () => $rootScope.request(Dialogs.UsernameExistsQuery, { userName: ctrl.userName.$viewValue })
+                  $scope.checkExists = () => $rootScope.request<boolean>(Dialogs.UsernameExistsQuery, { userName: ctrl.userName.$viewValue })
                     .then(result => {
-                      ctrl.userName.$setValidity("sxExists", !result.lastResult);
+                      ctrl.userName.$setValidity("sxExists", !result);
                       // workaround angular not updating the model after setValidity..
                       // https://github.com/angular/angular.js/issues/8080
                       if (ctrl.userName.$valid) $scope.userName = ctrl.userName.$viewValue;

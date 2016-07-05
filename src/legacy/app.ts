@@ -158,7 +158,7 @@ export module MyApp {
     }
     openRegisterDialog(evt) {
       if (evt) evt.preventDefault();
-      this.$scope.request(Components.Dialogs.OpenRegisterDialogQuery);
+      return this.$scope.request(Components.Dialogs.OpenRegisterDialogQuery);
     }
 
     private routeStart = (scope, next, current) => {

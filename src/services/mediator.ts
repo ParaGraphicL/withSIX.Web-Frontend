@@ -228,15 +228,15 @@ export class DbClientQuery<TRequest, TResponse> extends DbQuery<TRequest, TRespo
 
 interface IModInfo { type?: string, folder?: string, groupId?: string }
 
-export class LegacyMediator extends Mediator {
+export class LegacyMediator {
   _angularInjector;
   get angularInjector() { return this._angularInjector || (this._angularInjector = angular.element("body").injector()) }
 
   get commandExecutor() { return this.angularInjector.get('commandExecutor') }
 
-  legacyRequest<T>(requestName: string, requestParams?): Promise<T> {
-    return this.commandExecutor.execute(requestName, requestParams)
-      .then(x => x.lastResult);
+  async legacyRequest<T>(requestName: string, requestParams?): Promise<T> {
+    let r = await this.commandExecutor.execute(requestName, requestParams);
+    return r.lastResult;
   }
 
   openAddModDialog = (gameSlug: string, info: IModInfo = { type: "download", folder: "" }) => this.legacyRequest<void>('OpenAddModDialog', { gameSlug: gameSlug, info: info });

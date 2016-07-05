@@ -13,6 +13,7 @@ import {BasketService} from '../services/basket-service';
 
 import {SpeedValueConverter, SizeValueConverter, AmountValueConverter} from '../resources/converters';
 import {CollectionDataService, ModDataService, MissionDataService} from '../services/legacy/data-services';
+import {LegacyMediator} from '../services/mediator';
 import {Mediator} from 'aurelia-mediator';
 import {Client, PromiseCache} from 'withsix-sync-api';
 
@@ -73,6 +74,7 @@ class AppModule extends Tk.Module {
       .factory('aur.speedConverter', () => Container.instance.get(SpeedValueConverter))
       .factory('aur.sizeConverter', () => Container.instance.get(SizeValueConverter))
       .factory('aur.mediator', () => Container.instance.get(Mediator))
+      .factory('aur.legacyMediator', () => Container.instance.get(LegacyMediator))
       .factory('aur.eventBus', () => Container.instance.get(EventAggregator))
       .factory('aur.client', () => Container.instance.get(Client))
       .config(['redactorOptions', redactorOptions => angular.copy(globalRedactorOptions, redactorOptions)])
@@ -96,7 +98,7 @@ class AppModule extends Tk.Module {
         }
       ])
       .run([
-        '$rootScope', 'w6', '$timeout', ($rootScope: IRootScope, w6: W6, $timeout) => {
+        '$rootScope', 'w6', '$timeout', 'aur.legacyMediator', ($rootScope: IRootScope, w6: W6, $timeout, legacyMediator: LegacyMediator) => {
 
 
           // TODO: No Dom manipulation in controllers..
@@ -147,8 +149,8 @@ class AppModule extends Tk.Module {
           $rootScope.toShortId = (id) => Tools.toShortId(id);
           $rootScope.sluggify = (str) => Tools.sluggify(str);
           $rootScope.sluggifyEntityName = (str) => Tools.sluggifyEntityName(str);
-          $rootScope.request = (cq, data?) => $rootScope.dispatch(cq.$name, data);
-          $rootScope.requestWM = (cq, data?) => $rootScope.dispatch(cq.$name, data);
+          $rootScope.dispatch = <T>(cq: string, data?) => legacyMediator.legacyRequest<T>(cq, data);
+          $rootScope.request = <T>(cq, data?) => $rootScope.dispatch<T>(cq.$name, data);
           $rootScope.isInvalid = (field, ctrl) => {
             if (!field.$invalid) return false;
             if (ctrl.sxValidateOnBlur && field.sxBlurred) return true;

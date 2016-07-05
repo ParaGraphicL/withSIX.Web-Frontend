@@ -26,6 +26,7 @@ export class Index extends ViewModel {
     this.router = router;
   }
   activate() {
+    this.reverseAngularHeader(); // workaround for games/show.ts deactivate not getting called?!
     if (!this.w6.enableBasket) this.navigateInternal("/me/settings")
     this.handleFooterIf(false);
   }
