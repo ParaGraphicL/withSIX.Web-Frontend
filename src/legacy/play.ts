@@ -3559,7 +3559,9 @@ export module Play.Mods {
     public execute = [
       'packageName', 'gameId', 'groupId', (packageName, gameId, groupId) => {
         if (!packageName || packageName.length == 0) return false;
-        return <any>this.context.getCustom<BooleanResult>("mods/package-name-exists", { params: { packageName, gameId, groupId } })
+        let p = <any>{ packageName, gameId };
+        if (groupId) p.groupId = groupId;
+        return <any>this.context.getCustom<BooleanResult>("mods/package-name-exists", { params: p })
           .then(result => result.result);
       }
     ];
