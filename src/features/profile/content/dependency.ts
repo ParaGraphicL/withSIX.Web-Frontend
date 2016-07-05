@@ -1,4 +1,4 @@
-import {MenuItem, UiContext, uiCommand2, ViewModel, IMenuItem, Query, DbQuery, DbClientQuery, handlerFor, VoidCommand, IShowDependency, IDependency} from '../../../framework';
+import {MenuItem, UiContext, uiCommand2, ViewModel, IMenuItem, Query, DbQuery, DbClientQuery, handlerFor, VoidCommand, IShowDependency, IDependency, ItemState} from '../../../framework';
 import {inject, bindable} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {DialogService} from 'aurelia-dialog';
@@ -29,7 +29,17 @@ export class Dependency extends ViewModel {
     })
   }
 
+  get contentState() {
+    return this.isLocked && this.model.constraint != this.model.version ? ItemState[ItemState.UpdateAvailable].toLowerCase() : 'uptodate';
+  }
+
   get isLocked() { return this.model.constraint ? true : false; }
+
+  get versionInfo() {
+    if (!this.isLocked) return this.model.version;
+    if (this.model.constraint === this.model.version) return this.model.version;
+    return `${this.model.constraint} / ${this.model.version}`;
+  }
 
   changeVersion = uiCommand2("Change version", async () => this.dialog.open({ viewModel: EditDependency, model: this.model }), { icon: "icon withSIX-icon-Edit-Pencil" })
   remove = uiCommand2("Remove", async () => this.eventBus.publish(new RemoveDependencyEvent(this.model)), { icon: "icon withSIX-icon-Square-X" })

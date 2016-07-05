@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="content-stateable content-state-${contentState}">
     <dropdown-menu class="basketable-dropdown pull-right" if.bind="topMenuActions && topMenuActions.length > 0" items.bind="topMenuActions"></dropdown-menu>
     <!-- <action-bar class="pull-left basketable-action" items.bind="topActions"></action-bar> -->
     <div class="imagecontent imageholder" back-img.bind="defaultBackUrl">
@@ -8,11 +8,13 @@
         </div>
       </div>
     </div>
-    <div class="info">
+    <div class="info content-state-c-bgd-border">
+      <!--  content-state-c-bgd content-state-c-bgd-drkb -->
       <div class="title" title.bind="model.dependency">${model.name || model.dependency}</div>
       <div>
-        <span if.bind="isLocked">Locked to: ${model.constraint}</span>
-        <span if.bind="!isLocked">Latest</span>
+        <span>
+          <span class="icon withSIX-Icon-Lock" if.bind="isLocked"></span> v${versionInfo}
+        </span>
         <span if.bind="!model.isRequired">Optional</span>
       </div>
     </div>
