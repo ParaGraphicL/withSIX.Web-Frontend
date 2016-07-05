@@ -1411,7 +1411,7 @@ export module Play.Collections {
       this.$scope.addComment = newComment => {
         Tools.Debug.log('Add new comment', newComment);
 
-        var r = this.$scope.requestWM<ICreateComment<IBreezeCollectionComment>>(CreateCollectionCommentCommand, { model: { replyTo: newComment.replyTo, contentId: this.$scope.model.id, message: newComment.message, replyToId: newComment.replyTo ? newComment.replyTo.id : undefined } }).catch(x => { this.breezeQueryFailed(x); });
+        var r = this.$scope.request<ICreateComment<IBreezeCollectionComment>>(CreateCollectionCommentCommand, { model: { replyTo: newComment.replyTo, contentId: this.$scope.model.id, message: newComment.message, replyToId: newComment.replyTo ? newComment.replyTo.id : undefined } }).catch(x => { this.breezeQueryFailed(x); });
         newComment.message = "";
         newComment.valueOf = false;
 
@@ -4735,7 +4735,7 @@ export module Play.Mods {
     private setupComments(mod: IBreezeMod) {
       this.$scope.addComment = newComment => {
         Tools.Debug.log('Add new comment', newComment);
-        var r = this.$scope.requestWM<ICreateComment<IBreezeModComment>>(CreateModCommentCommand, { model: { replyTo: newComment.replyTo, contentId: this.$scope.model.id, message: newComment.message, replyToId: newComment.replyTo ? newComment.replyTo.id : undefined } }).catch(x => { this.breezeQueryFailed(x); });
+        var r = this.$scope.request<ICreateComment<IBreezeModComment>>(CreateModCommentCommand, { model: { replyTo: newComment.replyTo, contentId: this.$scope.model.id, message: newComment.message, replyToId: newComment.replyTo ? newComment.replyTo.id : undefined } }).catch(x => { this.breezeQueryFailed(x); });
         newComment.message = "";
         newComment.valueOf = false;
         return r;

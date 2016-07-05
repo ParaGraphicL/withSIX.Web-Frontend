@@ -151,7 +151,6 @@ class AppModule extends Tk.Module {
           $rootScope.sluggifyEntityName = (str) => Tools.sluggifyEntityName(str);
           $rootScope.dispatch = <T>(cq: string, data?) => legacyMediator.legacyRequest<T>(cq, data);
           $rootScope.request = <T>(cq, data?) => $rootScope.dispatch<T>(cq.$name, data);
-          $rootScope.requestWM = <T>(cq, data?) => $rootScope.dispatch<T>(cq.$name, data);
           $rootScope.isInvalid = (field, ctrl) => {
             if (!field.$invalid) return false;
             if (ctrl.sxValidateOnBlur && field.sxBlurred) return true;
