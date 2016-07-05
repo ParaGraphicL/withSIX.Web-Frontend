@@ -40,7 +40,7 @@ export class Show extends ViewModel {
     this.handleAngularHeader()
   }
 
-  deactivate() { super.deactivate(); this.reverseAngularHeader(); }
+  deactivate() { this.reverseAngularHeader(); super.deactivate(); }
 }
 
 class GetGame extends Query<IBreezeGame> { constructor(public slug: string) { super() } }

@@ -72,7 +72,8 @@ export class ViewModel extends Base {
     });
   }
 
-  handleAngularHeader = () => {
+  protected handleAngularHeader = () => {
+    Tools.Debug.log("$$$ Handling angular header");
     let row = angular.element("#root-content-row");
     // TODO: Hide the row until isNavigating is done..
     if (row.length == 0) {
@@ -85,14 +86,17 @@ export class ViewModel extends Base {
     } else this.handleAngularHeaderInternal(row);
   }
 
-  handleAngularHeaderInternal = (row: JQuery) => {
+  private handleAngularHeaderInternal = (row: JQuery) => {
     this.w6.aureliaReady = true;
     this.tools.Debug.log("AURELIA: angular vm loaded");
     this.notifyAngular();
     row.prepend($("#content"));
   }
 
-  reverseAngularHeader = () => $("#root-content-row").append($("#content"));
+  protected reverseAngularHeader = () => {
+    Tools.Debug.log("$$$ Reversing angular header");
+    $("#root-content-row").append($("#content"))
+  };
 
   async copyToClipboard(str: string): Promise<any> {
     await clipboard.copy(str);
