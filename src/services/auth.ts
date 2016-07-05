@@ -37,22 +37,21 @@ export class Login extends LoginBase {
     if (!err) throw err;
     if (err.data) {
       if (err.data == "Provider Popup Blocked") {
-      // TODO: Reconfigure without popup but redirect?
-      if (await this.ui.toastr.error("Popup blocked, please allow withSIX popups, and click here to try again", "Login failure", { timeOut: 0 })) {
-        await this.login(pathAndSearch);
-        return;
-      } else this.ui.toastr.error("Please allow withSIX popups and try again", "Login failure");
-    } else if (err.data == "Problem poll popup") {
-      if (await this.ui.toastr.error(`The popup was closed without logging in succesfully. Click here to try again`, "Login failure", { timeOut: 0 })) {
-        await this.login(pathAndSearch);
-        return;
-      }
-    } else this.ui.toastr.error(`Unknown error: ${err.data}`, "Login failure")
-  } else if (err.error) this.ui.toastr.error(`Unknown error: ${err.error}`, "Login failure")
-  else {
-      if (err instanceof Error) this.ui.toastr.error(`Unknown error: ${err}`, "Login failure")
-      else this.ui.toastr.error(`Unknown error`, "Login failure")
-    }
+        // TODO: Reconfigure without popup but redirect?
+        if (await this.ui.toastr.error("Popup blocked, please allow withSIX popups, and click here to try again", "Login failure", { timeOut: 0 })
+          || await this.ui.toastr.error("Please allow withSIX popups and click here to try again", "Login failure", { timeOut: 0 })) {
+          await this.login(pathAndSearch);
+          return;
+        }
+      } else if (err.data == "Problem poll popup") {
+        if (await this.ui.toastr.error(`The popup was closed without logging in succesfully. Click here to try again`, "Login failure", { timeOut: 0 })) {
+          await this.login(pathAndSearch);
+          return;
+        }
+      } else this.ui.toastr.error(`Unknown error: ${err.data}`, "Login failure")
+    } else if (err.error) this.ui.toastr.error(`Unknown error: ${err.error}`, "Login failure")
+    else if (err instanceof Error) this.ui.toastr.error(`Unknown error: ${err}`, "Login failure")
+    else this.ui.toastr.error(`Unknown error`, "Login failure")
     throw err;
   }
 
