@@ -182,7 +182,7 @@ export class W6Context {
     } catch (err) {
       if (err instanceof Response) {
         let r: Response = err;
-        throw this.handleResponseErrorStatus({ status: r.status, statusText: r.statusText, body: await r.json(), headers: r.headers }, this.w6.isLoggedIn);
+        throw this.handleResponseErrorStatus({ status: r.status, statusText: r.statusText, body: this.w6.convertToClient(await r.json()), headers: r.headers }, this.w6.isLoggedIn);
       }
       throw err;
     }
