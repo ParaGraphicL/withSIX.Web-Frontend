@@ -4299,7 +4299,7 @@ export module Play.Mods {
         }
         $scope.header.tags = $scope.model.tags;
       };
-      $scope.getCategories = (query) => this.$scope.request(Mods.GetCategoriesQuery, { query: query })
+      $scope.getCategories = (query) => this.$scope.request<{ name }[]>(Mods.GetCategoriesQuery, { query: query })
         .then((d) => this.processNames(d))
         .catch(this.breezeQueryFailed);
     }
