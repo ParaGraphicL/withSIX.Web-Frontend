@@ -8,9 +8,13 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-12 no-horizontal-padding">
-          <label for="mod-name">Mod Name: <a class="hint-link" tabindex="-1" href="#" data-container="body" data-html="true" data-html="true" data-title="{{hints.name}}" bs-tooltip>(?)</a></label>
-          <p ng-class="{'has-error' : form['mod-name'].$invalid && form['mod-name'].$touched, 'field-invalid': form['mod-name'].$invalid}">
+          <label for="mod-name">Mod Name:
+            <a class="hint-link" tabindex="-1" href="#" data-container="body" data-html="true" data-html="true" data-title="{{hints.name}}" bs-tooltip>(?)</a>
+            <span ng-show="checkingName" style="color: green">Checking...</span>
+          </label>
+          <p ng-class="{'has-error' : form['mod-name'].$touched && ((!model.nameAvailable && (!form['mod-name'].$invalid && !checkingName)) || (form['mod-name'].$invalid && !checkingName)), 'field-invalid': form['modFolder'].$invalid}">
             <input class="form-control" type="text" name="mod-name" id="mod-name" ng-model="model.mod.name" required/>
+            <span class="tiny error-msg" ng-show="!model.nameAvailable && (!form['mod-name'].$invalid && !checkingName)" style="color: red" data-container="body" data-html="true" data-title="{{hints.nameUnavailable}}" bs-tooltip>{{inlineHints.nameUnavailable}}</span>
             <span class="tiny error-msg" style="color: red">{{inlineHints.name}}</span>
           </p>
         </div>
