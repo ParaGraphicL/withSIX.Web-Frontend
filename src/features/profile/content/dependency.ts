@@ -16,9 +16,11 @@ export class Dependency extends ViewModel {
   constructor(ui: UiContext) { super(ui); }
 
   model: IShowDependency;
+  type: string;
   activate(model: IShowDependency) {
     this.model = model;
-    if (this.model.id) this.url = `/p/${this.w6.activeGame.slug}/mods/${this.model.id.toShortId()}/${this.model.name.sluggifyEntityName()}`;
+    this.type = model.type ? model.type : 'mod';
+    if (this.model.id) this.url = `/p/${this.w6.activeGame.slug}/${this.type}s/${this.model.id.toShortId()}/${this.model.name.sluggifyEntityName()}`;
 
     this.subscriptions.subd(d => {
       d(this.changeVersion);
