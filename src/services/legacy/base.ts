@@ -178,9 +178,8 @@ export interface IPageInfo {
 export interface IRootScope extends ng.IRootScopeService {
   vm;
   canceler: ng.IDeferred<{}>;
-  dispatch(evt: string, pars?: Object);
-  request(evt, pars?: Object);
-  request<T>(evt, pars?: IModel<T>);
+  dispatch<T>(evt: string, pars?: Object): Promise<T>;
+  request<T>(evt, pars?: Object): Promise<T>;
   environment; //: Tools.Environment;
   loading: boolean;
   w6: W6;
@@ -314,11 +313,9 @@ export class BaseController extends Tk.Controller {
   };
   public successResponse = (commandResult) => {
     Tools.Debug.log("success response");
-    var result = commandResult.lastResult;
-    this.$scope.response = result;
-    this.logger.success(result.message, "Action completed");
-
-    return result;
+    this.$scope.response = commandResult;
+    this.logger.success(commandResult.message, "Action completed");
+    return commandResult;
   };
   public errorResponse = (result) => {
     this.$scope.response = result;
@@ -327,18 +324,17 @@ export class BaseController extends Tk.Controller {
 
     return this.$q.reject(result);
   }; // TODO: Make this available on the root $scope ??
-  public requestAndProcessCommand = (command, pars?, message?) => {
-    return this.processCommand(this.$scope.request(command, pars), message);
-  };
-  public processCommand = <TType>(q: TType, message?): TType => {
-    return (<any>q).then((result) => {
+  public requestAndProcessCommand = <T>(command, pars?, message?) => this.processCommand<T>(this.$scope.request<T>(command, pars), message);
+  public processCommand = async <T>(q: Promise<T>, message?): Promise<T> => {
+    try {
+      let result = await q;
       this.logger.success(message || "Saved", "Action completed");
       return result;
-    }).catch(reason => {
+    } catch (reason) {
       this.httpFailed(reason);
-      return Promise.reject(reason);
-    });
-  };
+      throw reason;
+    }
+  }
   public breezeQueryFailed2 = (reason) => {
     this.logger.error(reason.message, "Query failed");
     this.$scope.first = true;

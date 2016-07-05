@@ -83,7 +83,7 @@ export module Kb {
       super($scope, logger, $q, model);
       $scope.$on('$routeChangeSuccess', () => {
         $scope.model = null;
-        $scope.request(GetKbQuery, { '$routeParams': $routeParams }).then(result => $scope.model = result.lastResult);
+        $scope.request<IKbModel>(GetKbQuery, { '$routeParams': $routeParams }).then(result => $scope.model = result);
       });
     }
   }

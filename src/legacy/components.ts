@@ -3166,9 +3166,9 @@ export module Components.Fields {
                 if ($attrs.checkAlreadyExists) {
                   // TODO: Only if not other validations failed?
                   // using viewValue as workaround because model not set when already invalid last time
-                  $scope.checkExists = () => $rootScope.request(Dialogs.EmailExistsQuery, { email: ctrl.email.$viewValue })
+                  $scope.checkExists = () => $rootScope.request<boolean>(Dialogs.EmailExistsQuery, { email: ctrl.email.$viewValue })
                     .then(result => {
-                      ctrl.email.$setValidity("sxExists", !result.lastResult);
+                      ctrl.email.$setValidity("sxExists", !result);
                       // workaround angular not updating the model after setValidity..
                       // https://github.com/angular/angular.js/issues/8080
                       if (ctrl.email.$valid) $scope.email = ctrl.email.$viewValue;
@@ -3233,9 +3233,9 @@ export module Components.Fields {
                 if ($attrs.checkAlreadyExists) {
                   // TODO: Only if not other validations failed?
                   // using viewValue as workaround because model not set when already invalid last time
-                  $scope.checkExists = () => $rootScope.request(Dialogs.UsernameExistsQuery, { userName: ctrl.userName.$viewValue })
+                  $scope.checkExists = () => $rootScope.request<boolean>(Dialogs.UsernameExistsQuery, { userName: ctrl.userName.$viewValue })
                     .then(result => {
-                      ctrl.userName.$setValidity("sxExists", !result.lastResult);
+                      ctrl.userName.$setValidity("sxExists", !result);
                       // workaround angular not updating the model after setValidity..
                       // https://github.com/angular/angular.js/issues/8080
                       if (ctrl.userName.$valid) $scope.userName = ctrl.userName.$viewValue;

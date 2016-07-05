@@ -173,7 +173,7 @@ export module Tk {
       if (!this.p) {
         (<any>this.setupP())[2]($interval, $q);
       }
-      return this.p.then(x => $commangular.dispatch(query.$name, Object.assign({}, defaults, $route.current.params)).then((result) => result.lastResult));
+      return this.p.then(x => $commangular.dispatch(query.$name, Object.assign({}, defaults, $route.current.params)));
     }];
 
     public setupQuery = (query, defaults?) => {

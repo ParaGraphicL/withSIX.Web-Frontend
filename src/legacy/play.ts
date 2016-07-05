@@ -6,6 +6,8 @@ import {IBreezeMod, IBreezeUser, IBreezeCollection, IBreezeMission, IBreezeColle
   IBreezeModMediaItem, IUserInfo, Resource, Permission, Role,
   EntityExtends, BreezeEntityGraph, _IntDefs} from '../services/dtos';
 
+import {LegacyMediator} from '../services/mediator';
+
 import {RestoreBasket, OpenCreateCollectionDialog, OpenAddModDialog, OpenAddModsToCollectionsDialog} from '../services/api';
 import {ForkCollection} from '../features/profile/content/collection';
 import {W6, W6Urls, globalRedactorOptions} from '../services/withSIX';
@@ -430,9 +432,8 @@ export module Play {
       function getModFileResolve(fileType) {
         return {
           model: [
-            '$commangular', '$route',
-            ($commangular, $route) => $commangular.dispatch(Mods.GetModFileQuery.$name, { fileType: fileType, gameSlug: $route.current.params.gameSlug, modId: $route.current.params.modId })
-              .then((result) => result.lastResult)
+            'aur.legacyMediator', '$route',
+            (m: LegacyMediator, $route) => m.legacyRequest(Mods.GetModFileQuery.$name, { fileType: fileType, gameSlug: $route.current.params.gameSlug, modId: $route.current.params.modId })
           ]
         };
       }
@@ -714,9 +715,9 @@ export module Play {
 
   export class GetUserTagsQuery extends DbQueryBase {
     static $name = "GetUserTags";
-    static $inject = ['dbContext', '$commangular'];
+    static $inject = ['dbContext', 'aur.legacyMediator'];
 
-    constructor(context: W6Context, private $commangular) {
+    constructor(context: W6Context, private m: LegacyMediator) {
       super(context);
     }
 
@@ -728,10 +729,10 @@ export module Play {
 
     public execute = [
       'query', (name: string) => {
-        return this.$commangular.dispatch(GetUsersQuery.$name, { query: name })
+        return this.m.legacyRequest(GetUsersQuery.$name, { query: name })
           .then(results => {
             var obj = [];
-            angular.forEach(results.lastResult, (user: any) => obj.push({ text: "user:" + this.escapeIfNeeded(user.displayName), key: "user:" + this.escapeIfNeeded(user.displayName) }));
+            angular.forEach(results, (user: any) => obj.push({ text: "user:" + this.escapeIfNeeded(user.displayName), key: "user:" + this.escapeIfNeeded(user.displayName) }));
             return obj;
           });
       }
@@ -967,13 +968,10 @@ export module Play.Collections {
         }
         $scope.header.tags = $scope.model.tags;
       };
-      //$scope.getCategories = (query) => this.$scope.request(Mods.GetCategoriesQuery, { query: query })
-      //    .then((d) => this.processNames(d.lastResult))
-      //    .catch(this.breezeQueryFailed);
     }
 
     unsubscribe() {
-      this.requestAndProcessResponse(UnsubscribeCollectionCommand, { model: this.$scope.model })
+      return this.requestAndProcessResponse(UnsubscribeCollectionCommand, { model: this.$scope.model })
         .then(r => {
           delete this.$scope.subscribedCollections[this.$scope.model.id];
           this.$scope.model.subscribersCount -= 1;
@@ -983,7 +981,7 @@ export module Play.Collections {
     }
 
     subscribe() {
-      this.requestAndProcessResponse(SubscribeCollectionCommand, { model: this.$scope.model })
+      return this.requestAndProcessResponse(SubscribeCollectionCommand, { model: this.$scope.model })
         .then(r => {
           this.$scope.subscribedCollections[this.$scope.model.id] = true;
           this.$scope.model.subscribersCount += 1;
@@ -1051,7 +1049,7 @@ export module Play.Collections {
     }
     private setupDependencyAutoComplete() {
       this.$scope.getDependencies = (query) => this.$scope.request(Mods.GetModTagsQuery, { gameId: this.$scope.game.id, query: query })
-        .then((d) => this.processModNames(d.lastResult))
+        .then((d) => this.processModNames(d))
         .catch(this.breezeQueryFailed);
       this.$scope.addModDependency = (data, hide) => {
         var found = false;
@@ -1419,17 +1417,17 @@ export module Play.Collections {
 
         return r;
       };
-      this.$scope.deleteComment = comment => this.$scope.request(DeleteCollectionCommentCommand, { model: comment }).catch(x => { this.breezeQueryFailed(x); }),
+      this.$scope.deleteComment = comment => this.$scope.request(DeleteCollectionCommentCommand, { model: comment }).catch(x => this.breezeQueryFailed(x)),
         this.$scope.saveComment = comment => {
           Tools.Debug.log("Saving comment", comment);
-          return this.$scope.request(SaveCollectionCommentCommand, { model: comment }).catch(x => { this.breezeQueryFailed(x); });
+          return this.$scope.request(SaveCollectionCommentCommand, { model: comment }).catch(x => this.breezeQueryFailed(x));
         };
       this.$scope.reportComment = (comment) => { throw "NotImplemented"; };
       if (this.$scope.environment != Tools.Environment.Production) {
         this.$scope.commentLikeStates = {};
         if (this.$scope.w6.userInfo.id) {
           this.$timeout(() => this.$scope.request(GetCollectionCommentLikeStateQuery, { collectionId: this.$scope.model.id })
-            .then(results => this.subscriptionQuerySucceeded(results.lastResult, this.$scope.commentLikeStates))
+            .then(results => this.subscriptionQuerySucceeded(results, this.$scope.commentLikeStates))
             .catch(this.breezeQueryFailed));
         }
 
@@ -1759,26 +1757,26 @@ export module Play.Games {
     private ok = () => {
       var data = this.$scope.model;
       if ((<string>data.uri).endsWithIgnoreCase("config.yml")) {
-        this.$scope.request(NewImportedCollectionCommand, { data: data })
+        this.$scope.request<{ data: any[] }>(NewImportedCollectionCommand, { data: data })
           .then(result => {
-            if (result.lastResult.length == 1) {
-              var modId = Tools.toShortId(result.lastResult.data[0]);
+            if (result.data.length == 1) {
+              var modId = Tools.toShortId(result.data[0]);
               this.$modalInstance.close();
               //var slug = <string>data.name.sluggifyEntityName();
               this.$location.path(Tools.joinUri([this.$scope.url.play, this.model.slug, "collections", modId, "slug"])).search('landingrepo', 1);
             } else {
               this.$scope.importResult = [];
-              for (var i = 0; i < result.lastResult.length; i++) {
-                this.$scope.importResult[i] = Tools.joinUri([this.$scope.url.play, this.model.slug, "collections", Tools.toShortId(result.lastResult.data[i]), "slug"]);
+              for (var i = 0; i < result.data.length; i++) {
+                this.$scope.importResult[i] = Tools.joinUri([this.$scope.url.play, this.model.slug, "collections", Tools.toShortId(result.data[i]), "slug"]);
               }
               this.$scope.page = this.$newViewBaseFolder + 'add-collection-3.html';
             }
           })
           .catch(this.httpFailed);
       } else {
-        this.$scope.request(NewMultiImportedCollectionCommand, { data: data })
+        this.$scope.request<{ data: string }>(NewMultiImportedCollectionCommand, { data: data })
           .then(result => {
-            var modId = Tools.toShortId(result.lastResult.data);
+            var modId = Tools.toShortId(result.data);
             this.$modalInstance.close();
             //var slug = <string>data.name.sluggifyEntityName();
             this.$location.path(Tools.joinUri([this.$scope.url.play, this.model.slug, "collections", modId, "slug"])).search('landingrepo', 1);
@@ -1961,12 +1959,12 @@ export module Play.Games {
           this.checkDownloadLink(newValue);
       });
 
-      $scope.getForumPost = () => this.requestAndProcessCommand(Play.Mods.GetForumPostQuery, { forumUrl: $scope.model.mod.homepage }, 'fetch first post') // "http://forums.bistudio.com/showthread.php?171722-Discover-Play-Promote-missions-and-mods-withSIX"
+      $scope.getForumPost = () => this.requestAndProcessCommand<{ title; author; body }>(Play.Mods.GetForumPostQuery, { forumUrl: $scope.model.mod.homepage }, 'fetch first post') // "http://forums.bistudio.com/showthread.php?171722-Discover-Play-Promote-missions-and-mods-withSIX"
         .then(r => {
           $timeout(() => {
-            $scope.model.mod.name = r.lastResult.title;
-            $scope.model.mod.author = r.lastResult.author;
-            $scope.model.mod.description = r.lastResult.body;
+            $scope.model.mod.name = r.title;
+            $scope.model.mod.author = r.author;
+            $scope.model.mod.description = r.body;
           }, 1000);
         });
 
@@ -2002,11 +2000,11 @@ export module Play.Games {
     private checkPackageName = (packageName: string) => {
       this.$scope.checkingPackageName = true;
       this.$scope.model.packageNameAvailable = false;
-      this.$scope.request(Mods.ModExistsQuery, { packageName: packageName, groupId: this.$scope.model.mod.groupId, gameId: this.model.id })
+      this.$scope.request<boolean>(Mods.ModExistsQuery, { packageName: packageName, groupId: this.$scope.model.mod.groupId, gameId: this.model.id })
         .then((result) => {
           this.$scope.checkingPackageName = false;
           Tools.Debug.log(result);
-          this.$scope.model.packageNameAvailable = !result.lastResult;
+          this.$scope.model.packageNameAvailable = !result;
         })
         .catch(this.httpFailed);
     };
@@ -2016,11 +2014,11 @@ export module Play.Games {
     private checkName = (name: string) => {
       this.$scope.checkingName = true;
       this.$scope.model.nameAvailable = false;
-      this.$scope.request(Mods.ModNameExistsQuery, { name: name, authorId: this.getAuthorId(), gameId: this.model.id })
+      this.$scope.request<boolean>(Mods.ModNameExistsQuery, { name: name, authorId: this.getAuthorId(), gameId: this.model.id })
         .then((result) => {
           this.$scope.checkingName = false;
           Tools.Debug.log(result);
-          this.$scope.model.nameAvailable = !result.lastResult;
+          this.$scope.model.nameAvailable = !result;
         })
         .catch(this.httpFailed);
     };
@@ -2029,11 +2027,11 @@ export module Play.Games {
     checkDownloadLink(uri: string) {
       this.$scope.checkingDownloadLink = true;
       this.$scope.model.downloadLinkAvailable = false;
-      this.$scope.request(GetCheckLinkQuery, { linkToCheck: uri })
+      this.$scope.request<boolean>(GetCheckLinkQuery, { linkToCheck: uri })
         .then((result) => {
           this.$scope.checkingDownloadLink = false;
           Tools.Debug.log(result);
-          this.$scope.model.downloadLinkAvailable = result.lastResult;
+          this.$scope.model.downloadLinkAvailable = result;
         })
         .catch(this.httpFailed);
     }
@@ -2049,8 +2047,7 @@ export module Play.Games {
 
     getLatestInfo() {
       let model = this.$scope.model;
-      this.$scope.request(Mods.GetLatestInfo, { data: { downloadUri: model.mod.download } }).then(x => {
-        let r = <IModVersionInfo>x.lastResult;
+      this.$scope.request<IModVersionInfo>(Mods.GetLatestInfo, { data: { downloadUri: model.mod.download } }).then(r => {
         model.mod.version = r.version;
         model.mod.branch = r.branch;
         if (!model.mod.name) model.mod.name = r.name;
@@ -2084,9 +2081,8 @@ export module Play.Games {
       }
 
       if (this.authorSubmission) data.author = "";
-      this.$scope.request(NewModCommand, { data: data })
-        .then(r => {
-          let modId = r.lastResult;
+      this.$scope.request<string>(NewModCommand, { data: data })
+        .then(modId => {
           let shortId = Tools.toShortId(modId);
           let slug = <string>data.name.sluggifyEntityName();
           this.$modalInstance.close();
@@ -2135,7 +2131,7 @@ export module Play.Games {
 
     private setupDependencyAutoComplete() {
       this.$scope.getDependencies = (query) => this.$scope.request(Mods.GetModTagsQuery, { gameId: this.model.id, query: query })
-        .then((d) => this.processModNames(d.lastResult))
+        .then((d) => this.processModNames(d))
         .catch(this.breezeQueryFailed);
     }
 
@@ -2884,7 +2880,7 @@ export module Play.Missions {
 
 
     unfollow() {
-      this.requestAndProcessResponse(UnfollowMissionCommand, { model: this.$scope.model })
+      return this.requestAndProcessResponse(UnfollowMissionCommand, { model: this.$scope.model })
         .then(r => {
           delete this.$scope.followedMissions[this.$scope.model.id];
           this.$scope.model.followersCount -= 1;
@@ -2892,7 +2888,7 @@ export module Play.Missions {
     }
 
     follow() {
-      this.requestAndProcessResponse(FollowMissionCommand, { model: this.$scope.model })
+      return this.requestAndProcessResponse(FollowMissionCommand, { model: this.$scope.model })
         .then(r => {
           this.$scope.followedMissions[this.$scope.model.id] = true;
           this.$scope.model.followersCount += 1;
@@ -2958,7 +2954,7 @@ export module Play.Missions {
         this.$scope.commentLikeStates = {};
         if (this.$scope.w6.userInfo.id) {
           this.$timeout(() => this.$scope.request(GetMissionCommentLikeStateQuery, { missionId: this.$scope.model.id })
-            .then(results => this.subscriptionQuerySucceeded(results.lastResult, this.$scope.commentLikeStates))
+            .then(results => this.subscriptionQuerySucceeded(results, this.$scope.commentLikeStates))
             .catch(this.breezeQueryFailed));
         }
 
@@ -3173,11 +3169,11 @@ export module Play.Mods {
     private showInformation = () => { this.$scope.stepOneInfo = true; };
 
     private ok = () => {
-      this.$scope.request(GetClaimQuery, { modId: this.$scope.model.id })
+      this.$scope.request<{ token; formatProvider; data }>(GetClaimQuery, { modId: this.$scope.model.id })
         .then((result) => {
-          this.$scope.claimToken = result.lastResult.token;
-          this.$scope.formatProvider = result.lastResult.formatProvider;
-          this.$scope.ctModel = result.lastResult.data;
+          this.$scope.claimToken = result.token;
+          this.$scope.formatProvider = result.formatProvider;
+          this.$scope.ctModel = result.data;
           this.$scope.page = '/src_legacy/app/play/mods/dialogs/_claim-page2.html';
         })
         .catch(this.httpFailed);
@@ -3648,9 +3644,9 @@ export module Play.Mods {
 
   export class GetModUserTagsQuery extends DbQueryBase {
     static $name = "GetModUserTags";
-    static $inject = ['dbContext', '$commangular'];
+    static $inject = ['dbContext', 'aur.legacyMediator'];
 
-    constructor(context: W6Context, private $commangular) {
+    constructor(context: W6Context, private m: LegacyMediator) {
       super(context);
     }
 
@@ -3660,10 +3656,10 @@ export module Play.Mods {
 
     public execute = [
       'query', 'gameSlug', (name: string, gameSlug: string) => {
-        if (gameSlug == null) return this.$commangular.dispatch(GetUserTagsQuery.$name, { query: name }).then(r => r.lastResult);
+        if (gameSlug == null) return this.m.legacyRequest(GetUserTagsQuery.$name, { query: name });
 
         return Promise.all([
-          this.$commangular.dispatch(GetUsersQuery.$name, { query: name }).then(r => r.lastResult), this.context.executeQuery(breeze.EntityQuery.from("ModsByGame")
+          this.m.legacyRequest(GetUsersQuery.$name, { query: name }), this.context.executeQuery(breeze.EntityQuery.from("ModsByGame")
             .withParameters({ gameSlug: gameSlug })
             .where(new breeze.Predicate("toLower(authorText)", this.context.getOpByKeyLength(name), name.toLowerCase()))
             .orderBy("authorText")
@@ -3841,7 +3837,7 @@ export module Play.Mods {
       this.setupCategoriesAutoComplete();
       this.setupHelp();
       this.showUploadBanner();
-      $scope.getForumPost = (descriptionEditor) => this.requestAndProcessCommand(GetForumPostQuery, { forumUrl: model.homepageUrl }, "fetch first post") // "http://forums.bistudio.com/showthread.php?171722-Discover-Play-Promote-missions-and-mods-withSIX"
+      $scope.getForumPost = (descriptionEditor) => this.requestAndProcessCommand<{ body }>(GetForumPostQuery, { forumUrl: model.homepageUrl }, "fetch first post") // "http://forums.bistudio.com/showthread.php?171722-Discover-Play-Promote-missions-and-mods-withSIX"
         .then(r => {
           // grr jquery in controller
           descriptionEditor.$show();
@@ -3849,8 +3845,8 @@ export module Play.Mods {
             var redactor = $("textarea[redactor]").first().redactor("core.getObject");
             // import in editor:
             redactor.selection.selectAll();
-            redactor.insert.html(r.lastResult.body, false);
-            //model.descriptionFull = r.lastResult.body;
+            redactor.insert.html(r.body, false);
+            //model.descriptionFull = r.body;
           }, 1000);
         });
 
@@ -3901,12 +3897,12 @@ export module Play.Mods {
           return [];
         }
 
-        var newQuery = this.$scope.request(GetUsersQuery, { query: (typeof query == 'string' || <any>query instanceof String) ? query : query.displayName })
+        var newQuery = this.$scope.request<any[]>(GetUsersQuery, { query: (typeof query == 'string' || <any>query instanceof String) ? query : query.displayName })
           .catch(this.breezeQueryFailed).then(r => {
             // breeze objects cause deep reference stackoverflow because of circular references, so we shape the objects
             // into just the vm properties we need fr the view. Which is a good practice in general..
             // UPDATE: Even shaped objects have problems when they are extended off EntityExtends.User... So now just building the objectg manually ;S
-            authors = r.lastResult;
+            authors = r;
             var authorVms = [];
             authors.forEach(x => {
               let user = { displayName: x.displayName, id: x.id, avatarURL: x.avatarURL, hasAvatar: x.hasAvatar, avatarUpdatedAt: x.avatarUpdatedAt, getAvatarUrl: null, _avatars: [] };
@@ -4323,7 +4319,7 @@ export module Play.Mods {
         $scope.header.tags = $scope.model.tags;
       };
       $scope.getCategories = (query) => this.$scope.request(Mods.GetCategoriesQuery, { query: query })
-        .then((d) => this.processNames(d.lastResult))
+        .then((d) => this.processNames(d))
         .catch(this.breezeQueryFailed);
     }
 
@@ -4744,17 +4740,17 @@ export module Play.Mods {
         newComment.valueOf = false;
         return r;
       };
-      this.$scope.deleteComment = comment => this.$scope.request(DeleteModCommentCommand, { model: comment }).catch(x => { this.breezeQueryFailed(x); }),
+      this.$scope.deleteComment = comment => this.$scope.request(DeleteModCommentCommand, { model: comment }).catch(x => this.breezeQueryFailed(x)),
         this.$scope.saveComment = comment => {
           Tools.Debug.log("Saving comment", comment);
-          return this.$scope.request(SaveModCommentCommand, { model: comment }).catch(x => { this.breezeQueryFailed(x); });
+          return this.$scope.request(SaveModCommentCommand, { model: comment }).catch(x => this.breezeQueryFailed(x));
         };
       this.$scope.reportComment = (comment) => { throw "NotImplemented"; };
       if (this.$scope.environment != Tools.Environment.Production) {
         this.$scope.commentLikeStates = {};
         if (this.$scope.w6.userInfo.id) {
           this.$timeout(() => this.$scope.request(GetModCommentLikeStateQuery, { modId: this.$scope.model.id })
-            .then(results => this.subscriptionQuerySucceeded(results.lastResult, this.$scope.commentLikeStates))
+            .then(results => this.subscriptionQuerySucceeded(results, this.$scope.commentLikeStates))
             .catch(this.breezeQueryFailed));
         }
 
@@ -4833,7 +4829,7 @@ export module Play.Mods {
         return list;
       };
       this.$scope.getDependencies = (query) => this.$scope.request(Mods.GetModTagsQuery, { gameId: this.$scope.game.id, query: query })
-        .then((d) => this.processModNames(d.lastResult))
+        .then((d) => this.processModNames(d))
         .catch(this.breezeQueryFailed);
     }
 
@@ -5134,8 +5130,7 @@ export module Play.Mods {
 
     getLatestInfo() {
       let model = this.$scope.model;
-      this.$scope.request(GetLatestInfo, { data: { downloadUri: model.mod.download } }).then(x => {
-        let r = <Play.Games.IModVersionInfo>x.lastResult;
+      this.$scope.request<Play.Games.IModVersionInfo>(GetLatestInfo, { data: { downloadUri: model.mod.download } }).then(r => {
         model.mod.version = r.version;
         model.mod.branch = r.branch;
       });
@@ -5144,11 +5139,11 @@ export module Play.Mods {
     checkDownloadLink(uri: string) {
       this.$scope.checkingDownloadLink = true;
       this.$scope.model.downloadLinkAvailable = false;
-      this.$scope.request(Games.GetCheckLinkQuery, { linkToCheck: uri })
+      this.$scope.request<boolean>(Games.GetCheckLinkQuery, { linkToCheck: uri })
         .then((result) => {
           this.$scope.checkingDownloadLink = false;
           Tools.Debug.log(result);
-          this.$scope.model.downloadLinkAvailable = result.lastResult;
+          this.$scope.model.downloadLinkAvailable = result;
         })
         .catch(this.httpFailed);
     }

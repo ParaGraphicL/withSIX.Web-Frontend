@@ -537,7 +537,7 @@ export module Main.Blog {
         this.$scope.commentLikeStates = {};
         if (this.$scope.w6.userInfo.id) {
           this.$timeout(() => this.$scope.request(GetPostCommentLikeStateQuery, { postId: this.$scope.model.id })
-            .then(results => this.subscriptionQuerySucceeded(results.lastResult, this.$scope.commentLikeStates))
+            .then(results => this.subscriptionQuerySucceeded(results, this.$scope.commentLikeStates))
             .catch(this.breezeQueryFailed));
         }
 
@@ -575,7 +575,7 @@ export module Main.Blog {
       this.$scope.likedPosts = {};
       if (this.$scope.w6.userInfo.id) {
         this.$timeout(() => this.$scope.request(GetPostLikeStateQuery)
-          .then(results => this.subscriptionQuerySucceeded(results.lastResult, this.$scope.likedPosts))
+          .then(results => this.subscriptionQuerySucceeded(results, this.$scope.likedPosts))
           .catch(this.breezeQueryFailed));
       }
     }
@@ -601,7 +601,7 @@ export module Main.Changelog {
         } else if (!$scope.changelogOldShown) {
           $scope.changelogOldShown = true;
           $scope.request(GetChangelogOldQuery)
-            .then(result => $scope.changelogOld = result.lastResult);
+            .then(result => $scope.changelogOld = result);
         }
       };
     }
@@ -787,9 +787,9 @@ export module Main.Premium {
       }
       var selectedProduct = this.$scope.model.selectedProduct;
       var recurring = this.$scope.model.autoRenew && selectedProduct.unitAmount != null;
-      this.$scope.request(CreatePremiumOrderCommand, { data: { articleId: selectedProduct.articleId, isRecurring: recurring, termsAccepted: this.$scope.model.termsAccepted, ref: this.$scope.model.ref, overwrite: this.$scope.model.overwrite } })
+      this.$scope.request<{ data }>(CreatePremiumOrderCommand, { data: { articleId: selectedProduct.articleId, isRecurring: recurring, termsAccepted: this.$scope.model.termsAccepted, ref: this.$scope.model.ref, overwrite: this.$scope.model.overwrite } })
         .then((result) => {
-          this.forwardService.forwardNaked(this.$scope.url.urlSsl + "/orders/" + result.lastResult.data + "/checkout");
+          this.forwardService.forwardNaked(this.$scope.url.urlSsl + "/orders/" + result.data + "/checkout");
         }).catch(reason => {
           this.httpFailed(reason);
         });
