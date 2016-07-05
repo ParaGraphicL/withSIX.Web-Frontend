@@ -2017,7 +2017,7 @@ export module Play.Games {
     private checkName = (name: string) => {
       this.$scope.checkingName = true;
       this.$scope.model.nameAvailable = false;
-      this.$scope.request(Mods.ModExistsQuery, { name: name, authorId: this.$scope.w6.userInfo.id, gameId: this.model.id })
+      this.$scope.request(Mods.ModNameExistsQuery, { name: name, authorId: this.$scope.w6.userInfo.id, gameId: this.model.id })
         .then((result) => {
           this.$scope.checkingName = false;
           Tools.Debug.log(result);

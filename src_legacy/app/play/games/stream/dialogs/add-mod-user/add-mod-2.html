@@ -15,7 +15,7 @@
           <p ng-class="{'has-error' : form['mod-name'].$touched && ((!model.nameAvailable && (!form['mod-name'].$invalid && !checkingName)) || (form['mod-name'].$invalid && !checkingName)), 'field-invalid': form['modFolder'].$invalid}">
             <input class="form-control" type="text" name="mod-name" id="mod-name" ng-model="model.mod.name" required/>
             <span class="tiny error-msg" ng-show="!model.nameAvailable && (!form['mod-name'].$invalid && !checkingName)" style="color: red" data-container="body" data-html="true" data-title="{{hints.nameUnavailable}}" bs-tooltip>{{inlineHints.nameUnavailable}}</span>
-            <span class="tiny error-msg" style="color: red">{{inlineHints.name}}</span>
+            <span class="tiny error-msg" ng-show="form['mod-name'].$invalid" style="color: red">{{inlineHints.name}}</span>
           </p>
         </div>
       </div>
