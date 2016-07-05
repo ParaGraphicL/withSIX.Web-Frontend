@@ -11,12 +11,17 @@ export class Dependency extends ViewModel {
   get defaultAssetUrl() { return this.assets.defaultAssetUrl }
   get defaultBackUrl() { return this.assets.defaultBackUrl }
   addToCollections;
+  url: string;
 
   constructor(ui: UiContext) { super(ui); }
 
   model: IShowDependency;
+  type: string;
   activate(model: IShowDependency) {
     this.model = model;
+    this.type = 'mod'; // todo; col.
+    if (this.model.id) this.url = `/p/${this.w6.activeGame.slug}/${this.type}s/${this.model.id.toShortId()}/${this.model.name.sluggifyEntityName()}`;
+
     this.subscriptions.subd(d => {
       d(this.changeVersion);
       d(this.remove);
@@ -29,12 +34,8 @@ export class Dependency extends ViewModel {
     })
   }
 
-  get contentState() {
-    return this.isLocked && this.model.constraint != this.model.version ? ItemState[ItemState.UpdateAvailable].toLowerCase() : 'uptodate';
-  }
-
+  get contentState() { return this.isLocked && this.model.constraint != this.model.version ? ItemState[ItemState.UpdateAvailable].toLowerCase() : 'uptodate'; }
   get isLocked() { return this.model.constraint ? true : false; }
-
   get versionInfo() {
     if (!this.isLocked) return this.model.version;
     if (this.model.constraint === this.model.version) return this.model.version;
