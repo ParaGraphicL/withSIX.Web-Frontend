@@ -134,6 +134,7 @@ export module Tools {
     status: number;
     statusText: string;
     body: T;
+    headers: Headers;
   }
 
   export var createHttpError = (name: string, proto = Error.prototype): HttpErrorConstructor<any> => {
@@ -142,6 +143,11 @@ export module Tools {
         enumerable: false,
         writable: false,
         value: name
+      });
+      Object.defineProperty(this, 'message', {
+        enumerable: false,
+        writable: true,
+        value: message
       });
       Object.defineProperty(this, 'status', {
         enumerable: false,
@@ -153,16 +159,20 @@ export module Tools {
         writable: false,
         value: requestInfo.statusText
       });
-
       Object.defineProperty(this, 'body', {
         enumerable: false,
         writable: false,
         value: requestInfo.body
       });
-      Object.defineProperty(this, 'message', {
+      Object.defineProperty(this, 'headers', {
         enumerable: false,
         writable: true,
-        value: message
+        value: requestInfo.headers
+      });
+      Object.defineProperty(this, 'requestID', {
+        enumerable: false,
+        writable: true,
+        value: requestInfo.headers ? requestInfo.headers['withSIX-RequestID'] : null
       });
 
       if (Error.hasOwnProperty('captureStackTrace')) { // V8
