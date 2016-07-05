@@ -1752,29 +1752,6 @@ export module Play.Games {
       ];
       return arr[Math.floor(Math.random() * arr.length)];
     };
-    private checkPackageName = (packageName: string) => {
-      this.$scope.checkingPackageName = true;
-      this.$scope.model.packageNameAvailable = false;
-      this.$scope.request(Mods.ModExistsQuery, { packageName: packageName })
-        .then((result) => {
-          this.$scope.checkingPackageName = false;
-          Tools.Debug.log(result);
-          this.$scope.model.packageNameAvailable = !result.lastResult;
-        })
-        .catch(this.httpFailed);
-    };
-
-    checkDownloadLink(uri: string) {
-      this.$scope.checkingDownloadLink = true;
-      this.$scope.model.downloadLinkAvailable = false;
-      this.$scope.request(GetCheckLinkQuery, { linkToCheck: uri })
-        .then((result) => {
-          this.$scope.checkingDownloadLink = false;
-          Tools.Debug.log(result);
-          this.$scope.model.downloadLinkAvailable = result.lastResult;
-        })
-        .catch(this.httpFailed);
-    }
 
     private cancel = () => this.$modalInstance.close();
     private reload = () => window.location.reload();
@@ -1864,6 +1841,7 @@ export module Play.Games {
       acceptToS: boolean;
       amAuthor: boolean;
       packageNameAvailable: boolean;
+      nameAvailable: boolean;
       downloadLinkAvailable: boolean;
     }
     claimToken: string;
@@ -1888,6 +1866,7 @@ export module Play.Games {
     gameName: string;
     hints: any;
     checkingPackageName: boolean;
+    checkingName: boolean;
     inlineHints: any;
     branches: { displayName: string; value: string }[];
     getForumPost: () => any;
@@ -1948,6 +1927,7 @@ export module Play.Games {
         acceptToS: false,
         amAuthor: false,
         packageNameAvailable: false,
+        nameAvailable: false,
         downloadLinkAvailable: false
       };
       $scope.branches = AddModDialogController.branches;
@@ -1969,6 +1949,11 @@ export module Play.Games {
       $scope.$watch("model.mod.packageName", (newValue: string, oldValue: string, scope) => {
         if (newValue != oldValue && newValue != null && newValue != "")
           this.checkPackageName(newValue);
+      });
+
+      $scope.$watch("model.mod.name", (newValue: string, oldValue: string, scope) => {
+        if (newValue != oldValue && newValue != null && newValue != "")
+          this.checkName(newValue);
       });
 
       $scope.$watch("model.mod.download", (newValue: string, oldValue: string, scope) => {
@@ -2020,7 +2005,7 @@ export module Play.Games {
     private checkPackageName = (packageName: string) => {
       this.$scope.checkingPackageName = true;
       this.$scope.model.packageNameAvailable = false;
-      this.$scope.request(Mods.ModExistsQuery, { packageName: packageName })
+      this.$scope.request(Mods.ModExistsQuery, { packageName: packageName, groupId: this.$scope.model.mod.groupId, gameId: this.model.id })
         .then((result) => {
           this.$scope.checkingPackageName = false;
           Tools.Debug.log(result);
@@ -2028,6 +2013,19 @@ export module Play.Games {
         })
         .catch(this.httpFailed);
     };
+
+    private checkName = (name: string) => {
+      this.$scope.checkingName = true;
+      this.$scope.model.nameAvailable = false;
+      this.$scope.request(Mods.ModNameExistsQuery, { name: name, authorId: this.$scope.w6.userInfo.id, gameId: this.model.id })
+        .then((result) => {
+          this.$scope.checkingName = false;
+          Tools.Debug.log(result);
+          this.$scope.model.nameAvailable = !result.lastResult;
+        })
+        .catch(this.httpFailed);
+    };
+
 
     checkDownloadLink(uri: string) {
       this.$scope.checkingDownloadLink = true;
@@ -2171,7 +2169,8 @@ export module Play.Games {
       homepage: "The homepage is the source of the download and is required to check for authenticity and origin.<br /><br/><b>Hint:</b> If you add a BI Forum thread as Homepage, the first post can be injected as a description automatically.",
       comments: "Please add any special requests or information that would help us to process your mod faster as a comment.<br /><br/><b>Hint:</b> Let us know if your mod requires dependencies that you couldn´t find on our network.",
       packageName: "The Folder is the physical directory for the modification, it has to be unique in order to prevent conflicts with other mods of the ArmA series.<br /><br/><b>Hint:</b> You can use this to check if the mod is already available.",
-      packageNameUnavailable: "Unfortunately the name you have chosen is already taken.<br/>We recommend you confirm that the mod has not already been uploaded, otherwise choose a different name.",
+      packageNameUnavailable: "Unfortunately the folder name you have chosen is already taken.<br/>We recommend you confirm that the mod has not already been uploaded, otherwise choose a different name.",
+      nameUnavailable: "Unfortunately the name you have chosen is already taken.<br/>We recommend you confirm that the mod has not already been uploaded, otherwise choose a different name.",
       downloadLinkUnavailable: "We can't seem to determine if the download link you provided is online or a real download, submitting this may increase processing time."
     };
 
@@ -2186,6 +2185,7 @@ export module Play.Games {
       comments: "",
       packageName: "Must be at least 3 characters long",
       packageNameUnavailable: "Folder Name already exists",
+      nameUnavailable: "Name already exists",
       packageNameMissingPrefix: "Must start with '@'",
       packageNameEmpty: "Must have a Folder Name",
       downloadLinkUnavailable: "Link Availability Unknown.",
@@ -3541,15 +3541,27 @@ export module Play.Mods {
   registerCQ(OpenArchiveModDialogQuery);
 
 
+  export class ModNameExistsQuery extends DbQueryBase {
+    static $name = "ModNameExists";
+    public execute = [
+      'name', 'gameId', 'authorId', (name, gameId, authorId) => {
+        if (!name || name.length == 0) return false;
+        return <any>this.context.getCustom<BooleanResult>("mods/package-name-exists", { params: { name, gameId, authorId } })
+          .then(result => result.result);
+      }
+    ];
+  }
+
+  registerCQ(ModNameExistsQuery);
+
   export class ModExistsQuery extends DbQueryBase {
     static $name = "ModExists";
     public execute = [
-      'packageName', packageName => {
+      'packageName', 'gameId', 'groupId', (packageName, gameId, groupId) => {
         if (!packageName || packageName.length == 0) return false;
-        //var cache = this.context.getModExistsCache(mod);
-        //if (cache === false || cache === true) return cache;
-
-        return <any>this.context.getCustom<BooleanResult>("mods/package-name-exists", { params: { packageName: packageName } })
+        let p = <any>{ packageName, gameId };
+        if (groupId) p.groupId = groupId;
+        return <any>this.context.getCustom<BooleanResult>("mods/package-name-exists", { params: p })
           .then(result => result.result);
       }
     ];

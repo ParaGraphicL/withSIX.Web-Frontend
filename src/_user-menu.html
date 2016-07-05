@@ -11,7 +11,7 @@
 
   <ul if.bind="!isLoggedIn">
     <li>
-      <a class="login" click.delegate="login.login() && $event.preventDefault()" title="or register">Login</a>
+      <a class="login" click.trigger="login.login() && $event.preventDefault()" title="or register">Login</a>
     </li>
   </ul>
 </template>

@@ -28,6 +28,11 @@
           <span if.bind="w6.miniClient.clientInfo.updateState == 4">Installing new client version...</span>
         </div>
 
+        <div class="update-header" if.bind="isLoggedIn && (!w6.userInfo.emailConfirmed)">
+          Please confirm your account <a href="/me/settings/credentials">here</a>
+        </div>
+
+
         <header id="header-row" css.bind="w6.headerImage">
           <div class="overlay">
             <ad-unit class="container-fluid header-add" unit-class="add-leaderboard" unit-id="angular-ad-leader" if.bind="!w6.url.isRoot && w6.renderAds"></ad-unit>

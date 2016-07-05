@@ -134,6 +134,7 @@ export module Tools {
     status: number;
     statusText: string;
     body: T;
+    headers?: Headers;
   }
 
   export var createHttpError = (name: string, proto = Error.prototype): HttpErrorConstructor<any> => {
@@ -142,6 +143,11 @@ export module Tools {
         enumerable: false,
         writable: false,
         value: name
+      });
+      Object.defineProperty(this, 'message', {
+        enumerable: false,
+        writable: true,
+        value: message
       });
       Object.defineProperty(this, 'status', {
         enumerable: false,
@@ -153,17 +159,29 @@ export module Tools {
         writable: false,
         value: requestInfo.statusText
       });
-
       Object.defineProperty(this, 'body', {
         enumerable: false,
         writable: false,
         value: requestInfo.body
       });
-      Object.defineProperty(this, 'message', {
+      Object.defineProperty(this, 'headers', {
         enumerable: false,
         writable: true,
-        value: message
+        value: requestInfo.headers
       });
+      Object.defineProperty(this, 'requestID', {
+        enumerable: false,
+        writable: true,
+        value: requestInfo.headers ? requestInfo.headers['withSIX-RequestID'] : null
+      });
+
+      if (requestInfo.body && requestInfo.body.modelState) {
+        Object.defineProperty(this, 'modelState', {
+          enumerable: false,
+          writable: true,
+          value: requestInfo.body.modelState
+        });
+      }
 
       if (Error.hasOwnProperty('captureStackTrace')) { // V8
         (<any>Error).captureStackTrace(this, this.constructor);
@@ -183,11 +201,26 @@ export module Tools {
     return <any>f;
   }
 
-  export interface HttpErrorConstructor<T> {
+  export interface HttpErrorConstructor<T extends ErrorResponseBody> {
     new (message: string, requestInfo: IRequestInfo<T>): IHttpException<T>;
   }
 
-  export interface IHttpException<T> extends Error, IRequestInfo<T> { }
+  export interface ValidationErrorConstructor {
+    new (message: string, requestInfo: IRequestInfo<ValidationResponseBody>): IValidationException;
+  }
+
+  export interface IHttpException<T extends ErrorResponseBody> extends Error, IRequestInfo<T> { }
+  export interface IValidationException extends IHttpException<ValidationResponseBody> {
+    modelState?;
+  }
+
+  export interface ErrorResponseBody {
+    message: string;
+  }
+
+  export interface ValidationResponseBody extends ErrorResponseBody {
+    modelState?
+  }
 
   // TODO: ES6/TS valid exceptions
   export var RequireSslException = createError('RequireSslException');
@@ -196,7 +229,7 @@ export module Tools {
   export var HttpException = createHttpError('HttpException');
   export var NotFoundException = createHttpError('NotFoundException', HttpException.prototype);
   export var Forbidden = createHttpError("Forbidden", HttpException.prototype);
-  export var ValidationError = createHttpError("ValidationError", HttpException.prototype);
+  export var ValidationError = <ValidationErrorConstructor>createHttpError("ValidationError", HttpException.prototype);
   export var RequiresLogin = createHttpError('RequiresLogin', HttpException.prototype);
   export var LoginNoLongerValid = createHttpError('LoginNoLongerValid', HttpException.prototype);
 

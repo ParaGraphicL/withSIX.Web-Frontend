@@ -16,6 +16,8 @@ import {inject, Container} from 'aurelia-framework';
 import {Validation, ValidationResult} from 'aurelia-validation';
 import {Router} from 'aurelia-router';
 
+const routing = require('../../data/routing.json');
+
 export class CloseDropdowns { }
 export class CloseDialogs { }
 export class OpenCreateCollectionDialog { constructor(public game) { } }
@@ -32,13 +34,12 @@ export class RouteHandler {
   async configure(site: string) {
     this.site = site;
     // may not use Authorization header
-    var r = await this.http.get(this.w6.url.getSerialUrl("data/routing.json"));
-    let main = r.content["main"]
-    let routes = r.content["play"];
+    let main = routing["main"]
+    let routes = routing["play"];
     for (let e in routes) main["/p" + (e == "/" ? "" : e)] = routes[e];
-    routes = r.content["connect"];
+    routes = routing["connect"];
     for (let e in routes) main[e] = routes[e];
-    this.routingData = r.content;
+    this.routingData = routing;
 
   }
   getRouteMatch(fragment) {
@@ -119,7 +120,7 @@ export class Api {
     if (reason.entityErrors && reason.entityErrors.length > 0) return this.handleBreezeSaveError(reason);
     if (reason.httpResponse != null) return this.handleBreezeErrorResponse(reason);
     return [reason, 'Unknown error'];
-  };
+  }
 
   handleBreezeSaveError(r: IBreezeSaveError) {
     if (r.entityErrors.length == 0) return this.handleBreezeErrorResponse(<any>r);
@@ -127,6 +128,8 @@ export class Api {
   }
 
   handleBreezeErrorResponse(r: IBreezeErrorReason) {
+    let requestId = r.httpResponse.getHeaders('withSIX-RequestID');
+    Tools.Debug.error('ERROR during request, Request ID: ' + requestId, r);
     let d = r.httpResponse.data;
     if (!d) return ["Site down?!", 'Unknown Error'];
     if (!d.ExceptionType || !d.ExceptionMessage) return [d.Message, 'Unknown Error'];
@@ -138,11 +141,12 @@ export class Api {
     }
   }
 
-  handleHttpError(r: Tools.IHttpException<any>) {
+  handleHttpError(r: Tools.IHttpException<Tools.ErrorResponseBody>) {
+    Tools.Debug.error('ERROR during request, Request ID: ' + r.headers['withSIX-RequestID'], r);
     let message = r.body && r.body.message || '';
-    if (r.body && r.body.modelState) angular.forEach(r.body.modelState, (v, k) => message += "\n" + v);
+    if (r instanceof Tools.ValidationError && r.modelState) angular.forEach(r.modelState, (v, k) => message += "\n" + v);
     let status = r.status && r.statusText ? "\n(" + r.status + ": " + r.statusText + ")" : '';
-    return [message + status, "Request failed"];
+    return [message + status, `Request failed`];
   }
 
   createGameBasket = (gameId, basketModel) => { return null; }

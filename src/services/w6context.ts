@@ -9,6 +9,8 @@ import {PromiseCache} from 'withsix-sync-api';
 
 import {HttpClient, json} from 'aurelia-fetch-client';
 
+const metadata = require('../../data/metadata.json');
+
 export interface IAWSUploadPolicy {
   AccessKey: string;
   Signature: string;
@@ -180,7 +182,7 @@ export class W6Context {
     } catch (err) {
       if (err instanceof Response) {
         let r: Response = err;
-        throw this.handleResponseErrorStatus({ status: r.status, statusText: r.statusText, body: await r.json() }, this.w6.isLoggedIn);
+        throw this.handleResponseErrorStatus({ status: r.status, statusText: r.statusText, body: this.w6.convertToClient(await r.json()), headers: r.headers }, this.w6.isLoggedIn);
       }
       throw err;
     }
@@ -428,7 +430,7 @@ export class W6Context {
   fetchMetadata() {
     // may not use authorization header..
     return this.promiseCache.getOrAdd<void>('fetchMetadata',
-      () => this.getCustom(this.w6.url.getSerialUrl('data/metadata.json'))
+      () => Promise.resolve(metadata)
         // TODO: Replace...
         .then(result => this.createMetadataStore(this.serviceName, result))
         .then(() => this.createDefaultManager()), { expireOnFailure: true }
@@ -554,6 +556,7 @@ export class W6Context {
     if (status == 401) throw isLoggedIn ? new Tools.LoginNoLongerValid("The login is no longer valid, please retry after logging in again", requestInfo) : new Tools.RequiresLogin("The requested action requires you to be logged-in", requestInfo);
     if (status == 403) throw new Tools.Forbidden("You do not have access to this resource", requestInfo);
     if (status == 404) throw new Tools.NotFoundException("The requested resource does not appear to exist", requestInfo);
-    throw new Tools.HttpException(`Unknown error`, requestInfo)
+    if (status == 500) throw new Tools.HttpException(`Internal server error. We've been notified about the problem and will investigate. For your reference: ${requestInfo.headers['withSIX-RequestID']}`, requestInfo);
+    throw new Tools.HttpException(`Unknown error. For your reference: ${requestInfo.headers['withSIX-RequestID']}`, requestInfo);
   }
 }
