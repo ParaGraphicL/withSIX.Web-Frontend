@@ -39,7 +39,7 @@ export class Dependency extends ViewModel {
   get versionInfo() {
     if (!this.isLocked) return this.model.version;
     if (this.model.constraint === this.model.version) return this.model.version;
-    return `${this.model.constraint} / ${this.model.version}`;
+    return `${this.model.constraint}/${this.model.version}`;
   }
 
   changeVersion = uiCommand2("Change version", async () => this.dialog.open({ viewModel: EditDependency, model: this.model }), { icon: "icon withSIX-icon-Edit-Pencil" })

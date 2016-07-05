@@ -1,13 +1,15 @@
 <template>
-  <div class="content-stateable content-state-${contentState}">
+  <div class="dependency content-stateable content-state-${contentState} ${isLocked ? 'locked' : ''}">
     <dropdown-menu class="basketable-dropdown pull-right" if.bind="topMenuActions && topMenuActions.length > 0" items.bind="topMenuActions"></dropdown-menu>
     <!-- <action-bar class="pull-left basketable-action" items.bind="topActions"></action-bar> -->
+
     <div class="imagecontent imageholder" back-img.bind="defaultBackUrl">
       <div class="imageholder" back-img.bind="defaultAssetUrl">
         <div class="imageholder" back-img.bind="model.image">
         </div>
       </div>
     </div>
+
     <div class="info content-state-c-bgd-border">
       <!--  content-state-c-bgd content-state-c-bgd-drkb -->
       <div class="title" title.bind="model.dependency">
@@ -15,8 +17,8 @@
         <a if.bind="url" href.bind="url">${model.name || model.dependency}</a>
       </div>
       <div>
-        <span>
-          <span class="icon withSIX-Icon-Lock" if.bind="isLocked"></span> v${versionInfo}
+        <span class="version-info">
+          <span class="icon withSIX-icon-Lock" if.bind="isLocked"></span> v${versionInfo}
         </span>
         <span if.bind="!model.isRequired">Optional</span>
       </div>
