@@ -22,7 +22,7 @@ export class EditContent extends ViewModel {
   }
 
   addContentModel: IFindModel<IFindDependency>;
-  sort: ISort<IShowDependency>[] = [{ name: "name" },
+  sort: ISort<IShowDependency>[] = [{ name: "name" }, { title: "PackageName", name: "dependency" },
     {
       name: "Has Updates", customSort: (a, b) => {
         let asort = a.constraint && a.constraint !== a.version ? 1 : 0;
@@ -39,7 +39,7 @@ export class EditContent extends ViewModel {
     if (i1 < i2) return 1;
     return 0;
   }
-  searchFields = ["name"];
+  searchFields = ["name", "dependency"];
   viewType = ViewType.Card;
   filters: IFilter<IShowDependency>[] = [];
   typeahead: ITypeahead<IShowDependency>;
