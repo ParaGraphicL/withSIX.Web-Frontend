@@ -1971,11 +1971,8 @@ export module Play.Games {
         });
 
       //if (info.folder) {
-      if ($scope.w6.userInfo.isAdmin) {
-        this.ok_user();
-      } else {
-        this.ok_author();
-      }
+      if ($scope.w6.userInfo.isAdmin) this.ok_user();
+      else this.ok_author();
       //}
     }
     // todo; make part of commands
@@ -2014,10 +2011,12 @@ export module Play.Games {
         .catch(this.httpFailed);
     };
 
+    getAuthorId() { return this.authorSubmission ? this.$scope.w6.userInfo.id : this.$scope.w6.w6OBot }
+
     private checkName = (name: string) => {
       this.$scope.checkingName = true;
       this.$scope.model.nameAvailable = false;
-      this.$scope.request(Mods.ModNameExistsQuery, { name: name, authorId: this.$scope.w6.userInfo.id, gameId: this.model.id })
+      this.$scope.request(Mods.ModNameExistsQuery, { name: name, authorId: this.getAuthorId(), gameId: this.model.id })
         .then((result) => {
           this.$scope.checkingName = false;
           Tools.Debug.log(result);
