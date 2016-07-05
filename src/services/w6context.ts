@@ -9,6 +9,8 @@ import {PromiseCache} from 'withsix-sync-api';
 
 import {HttpClient, json} from 'aurelia-fetch-client';
 
+const metadata = require('../../data/metadata.json');
+
 export interface IAWSUploadPolicy {
   AccessKey: string;
   Signature: string;
@@ -428,7 +430,7 @@ export class W6Context {
   fetchMetadata() {
     // may not use authorization header..
     return this.promiseCache.getOrAdd<void>('fetchMetadata',
-      () => this.getCustom(this.w6.url.getSerialUrl('data/metadata.json'))
+      () => Promise.resolve(metadata)
         // TODO: Replace...
         .then(result => this.createMetadataStore(this.serviceName, result))
         .then(() => this.createDefaultManager()), { expireOnFailure: true }

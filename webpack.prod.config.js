@@ -84,9 +84,13 @@ module.exports = {
         }]),
         exclude: /bower_components|node_modules|typings/
       },
+      {
+        test: /\.json$/,
+        loader: 'json-loader'
+      },
       //{ test: /\.ts$/, loader: 'ignore-loader' },
       {
-        test: /\.(map)$/,
+        test: /\.map$/,
         loader: 'ignore-loader'
       },
       //{ test: /\.map$/, loader: 'raw' },

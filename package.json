@@ -55,6 +55,7 @@
     "gulp-typescript": "^2.12.1",
     "html-webpack-plugin": "^2.15.0",
     "ignore-loader": "^0.1.1",
+    "json-loader": "^0.5.4",
     "load-grunt-tasks": "^3.4.1",
     "merge2": "^1.0.1",
     "node-sass": "^3.7.0",

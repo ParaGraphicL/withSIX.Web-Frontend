@@ -16,6 +16,8 @@ import {inject, Container} from 'aurelia-framework';
 import {Validation, ValidationResult} from 'aurelia-validation';
 import {Router} from 'aurelia-router';
 
+const routing = require('../../data/routing.json');
+
 export class CloseDropdowns { }
 export class CloseDialogs { }
 export class OpenCreateCollectionDialog { constructor(public game) { } }
@@ -32,13 +34,12 @@ export class RouteHandler {
   async configure(site: string) {
     this.site = site;
     // may not use Authorization header
-    var r = await this.http.get(this.w6.url.getSerialUrl("data/routing.json"));
-    let main = r.content["main"]
-    let routes = r.content["play"];
+    let main = routing["main"]
+    let routes = routing["play"];
     for (let e in routes) main["/p" + (e == "/" ? "" : e)] = routes[e];
-    routes = r.content["connect"];
+    routes = routing["connect"];
     for (let e in routes) main[e] = routes[e];
-    this.routingData = r.content;
+    this.routingData = routing;
 
   }
   getRouteMatch(fragment) {
