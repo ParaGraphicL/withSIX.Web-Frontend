@@ -175,6 +175,14 @@ export module Tools {
         value: requestInfo.headers ? requestInfo.headers['withSIX-RequestID'] : null
       });
 
+      if (requestInfo.body && requestInfo.body.modelState) {
+        Object.defineProperty(this, 'modelState', {
+          enumerable: false,
+          writable: true,
+          value: requestInfo.body.modelState
+        });
+      }
+
       if (Error.hasOwnProperty('captureStackTrace')) { // V8
         (<any>Error).captureStackTrace(this, this.constructor);
       } else {
@@ -193,11 +201,26 @@ export module Tools {
     return <any>f;
   }
 
-  export interface HttpErrorConstructor<T> {
+  export interface HttpErrorConstructor<T extends ErrorResponseBody> {
     new (message: string, requestInfo: IRequestInfo<T>): IHttpException<T>;
   }
 
-  export interface IHttpException<T> extends Error, IRequestInfo<T> { }
+  export interface ValidationErrorConstructor {
+    new (message: string, requestInfo: IRequestInfo<ValidationResponseBody>): IValidationException;
+  }
+
+  export interface IHttpException<T extends ErrorResponseBody> extends Error, IRequestInfo<T> { }
+  export interface IValidationException extends IHttpException<ValidationResponseBody> {
+    modelState?;
+  }
+
+  export interface ErrorResponseBody {
+    message: string;
+  }
+
+  export interface ValidationResponseBody extends ErrorResponseBody {
+    modelState?
+  }
 
   // TODO: ES6/TS valid exceptions
   export var RequireSslException = createError('RequireSslException');
@@ -206,7 +229,7 @@ export module Tools {
   export var HttpException = createHttpError('HttpException');
   export var NotFoundException = createHttpError('NotFoundException', HttpException.prototype);
   export var Forbidden = createHttpError("Forbidden", HttpException.prototype);
-  export var ValidationError = createHttpError("ValidationError", HttpException.prototype);
+  export var ValidationError = <ValidationErrorConstructor>createHttpError("ValidationError", HttpException.prototype);
   export var RequiresLogin = createHttpError('RequiresLogin', HttpException.prototype);
   export var LoginNoLongerValid = createHttpError('LoginNoLongerValid', HttpException.prototype);
 

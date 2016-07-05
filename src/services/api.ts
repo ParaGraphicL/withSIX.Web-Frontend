@@ -141,12 +141,12 @@ export class Api {
     }
   }
 
-  handleHttpError(r: Tools.IHttpException<any>) {
+  handleHttpError(r: Tools.IHttpException<Tools.ErrorResponseBody>) {
     Tools.Debug.error('ERROR during request, Request ID: ' + r.headers['withSIX-RequestID'], r);
     let message = r.body && r.body.message || '';
-    if (r.body && r.body.modelState) angular.forEach(r.body.modelState, (v, k) => message += "\n" + v);
-    let status = r.status && r.statusText ? " (" + r.status + ": " + r.statusText + ")" : '';
-    return [message, `Request failed${status}`];
+    if (r instanceof Tools.ValidationError && r.modelState) angular.forEach(r.modelState, (v, k) => message += "\n" + v);
+    let status = r.status && r.statusText ? "\n(" + r.status + ": " + r.statusText + ")" : '';
+    return [message + status, `Request failed`];
   }
 
   createGameBasket = (gameId, basketModel) => { return null; }
