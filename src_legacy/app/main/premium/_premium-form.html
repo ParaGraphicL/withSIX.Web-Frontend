@@ -192,9 +192,9 @@
                     </p>
                   </div>
                   <p ng-if="!w6.userInfo.id">
-                    Please login above first
+                    Please login above to continue
                   </p>
-                  <button type="submit" ng-disabled="!model.termsAccepted || model.processing || !w6.userInfo.id || !model.emailConfirmed" http-single-use="t" http-processing="model.processing" http-progress="createPremiumOrder" http-pending="Processing..." http-success="Redirecting to PayPal..."
+                  <button ng-show="w6.userInfo.id && model.emailConfirmed" type="submit" ng-disabled="!model.termsAccepted || model.processing" http-single-use="t" http-processing="model.processing" http-progress="createPremiumOrder" http-pending="Processing..." http-success="Redirecting to PayPal..."
                       http-error="Failed...">
                     Pay now with
                     <img ng-src="{{::url.cdn}}/img/withSIX/paypallogo.png" />
