@@ -1411,7 +1411,7 @@ export module Play.Collections {
       this.$scope.addComment = newComment => {
         Tools.Debug.log('Add new comment', newComment);
 
-        var r = this.$scope.request<ICreateComment<IBreezeCollectionComment>>(CreateCollectionCommentCommand, { model: { replyTo: newComment.replyTo, contentId: this.$scope.model.id, message: newComment.message, replyToId: newComment.replyTo ? newComment.replyTo.id : undefined } }).catch(x => { this.breezeQueryFailed(x); });
+        var r = this.$scope.request<ICreateComment<IBreezeCollectionComment>>(CreateCollectionCommentCommand, { model: { replyTo: newComment.replyTo, contentId: this.$scope.model.id, message: newComment.message, replyToId: newComment.replyTo ? newComment.replyTo.id : undefined } }).catch(x => this.breezeQueryFailed(x));
         newComment.message = "";
         newComment.valueOf = false;
 
@@ -4735,7 +4735,7 @@ export module Play.Mods {
     private setupComments(mod: IBreezeMod) {
       this.$scope.addComment = newComment => {
         Tools.Debug.log('Add new comment', newComment);
-        var r = this.$scope.request<ICreateComment<IBreezeModComment>>(CreateModCommentCommand, { model: { replyTo: newComment.replyTo, contentId: this.$scope.model.id, message: newComment.message, replyToId: newComment.replyTo ? newComment.replyTo.id : undefined } }).catch(x => { this.breezeQueryFailed(x); });
+        var r = this.$scope.request<ICreateComment<IBreezeModComment>>(CreateModCommentCommand, { model: { replyTo: newComment.replyTo, contentId: this.$scope.model.id, message: newComment.message, replyToId: newComment.replyTo ? newComment.replyTo.id : undefined } }).catch(x => this.breezeQueryFailed(x));
         newComment.message = "";
         newComment.valueOf = false;
         return r;
@@ -4991,8 +4991,8 @@ export module Play.Mods {
     constructor(public $scope, public logger, $modalInstance, $q, model: IBreezeMod) {
       super($scope, logger, $modalInstance, $q, model);
 
-      $scope.sendReport = () => this.processCommand($scope.request(Components.Dialogs.SendReportCommand, { data: $scope.model }, "Report sent!")
-        .then((data) => $scope.sent = true));
+      $scope.sendReport = () => this.requestAndProcessCommand(Components.Dialogs.SendReportCommand, { data: $scope.model }, "Report sent!")
+        .then((data) => $scope.sent = true);
     }
   }
 

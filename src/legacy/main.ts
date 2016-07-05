@@ -519,19 +519,19 @@ export module Main.Blog {
 
     setupComments(post: IBreezePost) {
       this.$scope.addComment = (newComment) => {
-        this.processCommand(this.$scope.request(CreatePostCommentCommand, {
+        return this.requestAndProcessCommand(CreatePostCommentCommand, {
           model: {
             replyTo: newComment.replyTo,
             postId: this.$scope.model.id,
             message: newComment.message,
             replyToId: newComment.replyTo ? newComment.replyTo.id : undefined
           }
-        }).then(x => {
+        }, 'Create comment').then(x => {
           newComment.message = "";
-        }), 'Create comment');
+        })
       };
-      this.$scope.deleteComment = (comment) => this.processCommand(this.$scope.request(DeletePostCommentCommand, { model: comment }), 'Delete comment');
-      this.$scope.saveComment = (comment) => this.processCommand(this.$scope.request(SavePostCommentCommand, { model: comment }), 'Save comment');
+      this.$scope.deleteComment = (comment) => this.requestAndProcessCommand(DeletePostCommentCommand, { model: comment }, 'Delete comment');
+      this.$scope.saveComment = (comment) => this.requestAndProcessCommand(SavePostCommentCommand, { model: comment }, 'Save comment');
 
       if (this.$scope.environment != Tools.Environment.Production) {
         this.$scope.commentLikeStates = {};

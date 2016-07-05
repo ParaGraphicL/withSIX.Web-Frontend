@@ -324,7 +324,7 @@ export class BaseController extends Tk.Controller {
     return this.$q.reject(result);
   }; // TODO: Make this available on the root $scope ??
   public requestAndProcessCommand = <T>(command, pars?, message?) => this.processCommand<T>(this.$scope.request<T>(command, pars), message);
-  public processCommand = async <T>(q: Promise<T>, message?): Promise<T> => {
+  private processCommand = async <T>(q: Promise<T>, message?): Promise<T> => {
     try {
       let result = await q;
       this.logger.success(message || "Saved", "Action completed");
@@ -342,7 +342,7 @@ export class BaseController extends Tk.Controller {
     this.breezeQueryFailed2(reason);
     return <any>null;
   }
-  public httpFailed = (reason) => {
+  protected httpFailed = (reason) => {
     this.$scope.first = true;
     Tools.Debug.log("Reason:", reason);
     var msg = this.$scope.w6.api.errorMsg(reason);

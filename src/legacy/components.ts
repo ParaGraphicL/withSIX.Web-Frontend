@@ -3047,8 +3047,8 @@ export module Components.Dialogs {
       super($scope, logger, $modalInstance, $q);
 
       $scope.model = { content: $routeParams.content || $location.absUrl() };
-      $scope.sendReport = () => this.processCommand($scope.request(SendReportCommand, { data: $scope.model }, "Report sent!")
-        .then((data) => $scope.sent = true));
+      $scope.sendReport = () => this.requestAndProcessCommand(SendReportCommand, { data: $scope.model }, "Report sent!")
+        .then((data) => $scope.sent = true);
     }
   }
 
@@ -3062,7 +3062,7 @@ export module Components.Dialogs {
       $scope.model = {
         email: model.email
       };
-      $scope.submit = () => this.processCommand($scope.request(ForgotPasswordCommand, { data: $scope.model }).then(result => $scope.success = true), "Request sent!");
+      $scope.submit = () => this.requestAndProcessCommand(ForgotPasswordCommand, { data: $scope.model }, "Request sent!").then(result => $scope.success = true);
     }
   }
 

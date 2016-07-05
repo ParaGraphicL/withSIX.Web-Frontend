@@ -693,9 +693,9 @@ export module Connect.Me {
     constructor(public $scope, public logger, $q, model) {
       super($scope, logger, $q, model);
 
-      $scope.accept = (friendRequest) => this.processCommand($scope.request(AcceptFriendRequestCommand, { friendId: friendRequest.sender.id }))
+      $scope.accept = (friendRequest) => this.requestAndProcessCommand(AcceptFriendRequestCommand, { friendId: friendRequest.sender.id })
         .then((data) => Tools.removeEl(model.friendshipRequests, friendRequest));
-      $scope.deny = (friendRequest) => this.processCommand($scope.request(DenyFriendRequestCommand, { friendId: friendRequest.sender.id }))
+      $scope.deny = (friendRequest) => this.requestAndProcessCommand(DenyFriendRequestCommand, { friendId: friendRequest.sender.id })
         .then((data) => Tools.removeEl(model.friendshipRequests, friendRequest));
     }
   }
@@ -718,13 +718,12 @@ export module Connect.Me {
       $scope.sendMessage = this.sendMessage;
     }
 
-    sendMessage = form =>
-      this.processCommand(this.$scope.request(CreatePrivateMessageCommand, { userSlug: this.$scope.model.partner.slug, data: this.$scope.inputModel })
-        .then((data) => {
-          this.$scope.model.messages.push({ message: this.$scope.inputModel.body, receivedAt: new Date(), isAuthor: true });
-          this.$scope.inputModel.body = "";
-          form.$setPristine();
-        }));
+    sendMessage = form => this.requestAndProcessCommand(CreatePrivateMessageCommand, { userSlug: this.$scope.model.partner.slug, data: this.$scope.inputModel })
+      .then((data) => {
+        this.$scope.model.messages.push({ message: this.$scope.inputModel.body, receivedAt: new Date(), isAuthor: true });
+        this.$scope.inputModel.body = "";
+        form.$setPristine();
+      });
   }
 
   class MeBlogArchiveController extends BaseQueryController<any> {
@@ -741,7 +740,7 @@ export module Connect.Me {
       $scope.model = { created: new Date() };
       $scope.updateDate = () => $scope.model.created = new Date();
       $scope.cancel = () => back();
-      $scope.save = form => this.processCommand($scope.request(CreateBlogPostCommand, { data: $scope.model }))
+      $scope.save = form => this.requestAndProcessCommand(CreateBlogPostCommand, { data: $scope.model })
         .then(() => {
           form.$setPristine();
           back();
@@ -765,7 +764,7 @@ export module Connect.Me {
 
       var back = () => $location.url($routeSegment.getSegmentUrl("me.blog"));
 
-      $scope.save = form => this.processCommand($scope.request(UpdateBlogPostCommand, { id: model.id, data: model }))
+      $scope.save = form => this.requestAndProcessCommand(UpdateBlogPostCommand, { id: model.id, data: model })
         .then(() => {
           form.$setPristine();
           back();
@@ -774,7 +773,7 @@ export module Connect.Me {
       $scope.updateDate = () => $scope.model.created = new Date();
 
       $scope.cancel = () => back();
-      $scope.delete = () => this.processCommand($scope.request(DeleteBlogPostCommand, { id: model.id }), 'Post deleted')
+      $scope.delete = () => this.requestAndProcessCommand(DeleteBlogPostCommand, { id: model.id }, 'Post deleted')
         .then(() => back());
     }
   }
@@ -852,7 +851,7 @@ export module Connect.Pages {
       super($scope, logger, $q);
 
       $scope.model = {};
-      $scope.submit = () => this.processCommand($scope.request(Components.Dialogs.ForgotPasswordCommand, { data: $scope.model }).then(result => $scope.success = true), "Request sent!");
+      $scope.submit = () => this.requestAndProcessCommand(Components.Dialogs.ForgotPasswordCommand, { data: $scope.model }, "Request sent!").then(result => $scope.success = true);
     }
   }
 
@@ -866,7 +865,7 @@ export module Connect.Pages {
       super($scope, logger, $q);
 
       $scope.model = {};
-      $scope.submit = () => this.processCommand($scope.request(Components.Dialogs.ForgotUsernameCommand, { data: $scope.model }).then(result => $scope.success = true), "Request sent!");
+      $scope.submit = () => this.requestAndProcessCommand(Components.Dialogs.ForgotUsernameCommand, { data: $scope.model }, "Request sent!").then(result => $scope.success = true);
     }
   }
 
@@ -887,8 +886,8 @@ export module Connect.Pages {
       // TODO
       $scope.tokenKnown = true;
 
-      $scope.submit = () => this.processCommand($scope.request(ResetPasswordCommand, { data: $scope.model })
-        .then(result => $scope.success = true));
+      $scope.submit = () => this.requestAndProcessCommand(ResetPasswordCommand, { data: $scope.model })
+        .then(result => $scope.success = true);
     }
   }
 
@@ -1006,10 +1005,10 @@ export module Connect.Profile {
 
       $scope.menuItems = this.getMenuItems(menuItems, "profile");
       // TODO: Switch menuitems based on isFriend dynamically changing
-      $scope.addFriend = () => this.processCommand($scope.request(AddAsFriendCommand, { userSlug: model.slug })
-        .then((data) => model.isFriend = true));
-      $scope.removeFriend = () => this.processCommand($scope.request(RemoveAsFriendCommand, { userSlug: model.slug })
-        .then((data) => model.isFriend = false));
+      $scope.addFriend = () => this.requestAndProcessCommand(AddAsFriendCommand, { userSlug: model.slug })
+        .then((data) => model.isFriend = true);
+      $scope.removeFriend = () => this.requestAndProcessCommand(RemoveAsFriendCommand, { userSlug: model.slug })
+        .then((data) => model.isFriend = false);
     }
   }
 
@@ -1025,12 +1024,12 @@ export module Connect.Profile {
 
       $scope.inputModel = { message: "" };
       $scope.sendMessage = form =>
-        this.processCommand(this.$scope.request(Me.CreatePrivateMessageCommand, { userSlug: this.$scope.model.partner.slug, data: this.$scope.inputModel })
+        this.requestAndProcessCommand(Me.CreatePrivateMessageCommand, { userSlug: this.$scope.model.partner.slug, data: this.$scope.inputModel })
           .then((data) => {
             this.$scope.model.messages.push({ message: this.$scope.inputModel.body, receivedAt: new Date(), isAuthor: true });
             this.$scope.inputModel.body = "";
             form.$setPristine();
-          }));
+          });
     }
   }
 
