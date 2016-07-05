@@ -303,30 +303,37 @@ export class BaseController extends Tk.Controller {
   subscriptionQuerySucceeded = (result, d) => {
     for (var v in result.data)
       d[result.data[v]] = true;
-  };
-  public requestAndProcessResponse = (command, data?) => {
+  }
+
+  public requestAndProcessResponse = async <T>(command, data?) => {
     this.$scope.response = undefined;
-    return this.$scope.request(command, data)
-      .then(this.successResponse)
-      .catch(this.errorResponse);
-  };
-  public successResponse = (commandResult) => {
+    try {
+      let r = await this.$scope.request<T>(command, data);
+      this.successResponse(r);
+      return r;
+    } catch (err) {
+      this.errorResponse(err);
+    }
+  }
+
+  private successResponse = (r) => {
     Tools.Debug.log("success response");
-    this.$scope.response = commandResult;
-    this.logger.success(commandResult.message, "Action completed");
-    return commandResult;
-  };
-  public errorResponse = (result) => {
+    this.$scope.response = r;
+    this.logger.success(r.message, "Action completed");
+    return r;
+  }
+
+  private errorResponse = (result) => {
     this.$scope.response = result;
     var httpFailed = result.httpFailed;
     this.logger.error(httpFailed[1], httpFailed[0]);
 
     return this.$q.reject(result);
-  }; // TODO: Make this available on the root $scope ??
-  public requestAndProcessCommand = <T>(command, pars?, message?) => this.processCommand<T>(this.$scope.request<T>(command, pars), message);
-  private processCommand = async <T>(q: Promise<T>, message?): Promise<T> => {
+  } // TODO: Make this available on the root $scope ??
+  public requestAndProcessCommand = <T>(command, pars?, message?) => this.processCommand<T>(() => this.$scope.request<T>(command, pars), message);
+  private processCommand = async <T>(q: () => Promise<T>, message?): Promise<T> => {
     try {
-      let result = await q;
+      let result = await q();
       this.logger.success(message || "Saved", "Action completed");
       return result;
     } catch (reason) {
@@ -349,30 +356,18 @@ export class BaseController extends Tk.Controller {
     this.logger.error(msg[0], msg[1]);
   };
 
-  public forward(url, $window: ng.IWindowService, $location: ng.ILocationService) {
-    this.forwardFull($location.protocol() + ":" + url, $window, $location);
-  }
-
-  public forwardFull(fullUrl, $window: ng.IWindowService, $location: ng.ILocationService) {
+  public forward = (url, $window: ng.IWindowService, $location: ng.ILocationService) => this.forwardFull($location.protocol() + ":" + url);
+  public forwardFull(fullUrl) {
     Tools.Debug.log("changing URL: " + fullUrl);
-    this.$scope.w6.navigate(fullUrl);
+    return this.$scope.w6.navigate(fullUrl);
   }
 
-  public processNames(results) {
-    var obj = [];
-    angular.forEach(results, item => obj.push({ text: item.name, key: item.name }));
-    return obj;
-  }
+  public processNames = (results: { name: string }[]) => results.map(x => { return { text: x.name, key: x.name } });
+  public processNamesWithPrefix = (results: { name: string }[], prefix: string) => results.map(x => { return { text: prefix + x.name, key: prefix + x.name } });
 
-  public processNamesWithPrefix(results, prefix) {
-    var obj = [];
-    angular.forEach(results, item => obj.push({ text: prefix + item.name, key: prefix + item.name }));
-    return obj;
-  }
-
-  public getMenuItems(items: Array<IMenuItem>, mainSegment: string, parentIsDefault?: boolean): IMenuItem[] {
+  public getMenuItems(items: IMenuItem[], mainSegment: string, parentIsDefault?: boolean): IMenuItem[] {
     var menuItems = [];
-    angular.forEach(items, item => {
+    items.forEach(item => {
       var main = item.mainSegment || item.mainSegment == "" ? item.mainSegment : mainSegment;
       var fullSegment = main && main != "" ? main + "." + item.segment : item.segment;
       var segment = item.isDefault ? main : fullSegment; // This will make menu links link to the parent where this page is default
