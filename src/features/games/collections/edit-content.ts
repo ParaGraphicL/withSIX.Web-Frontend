@@ -22,9 +22,12 @@ export class EditContent extends ViewModel {
   }
 
   addContentModel: IFindModel<IFindDependency>;
-  sort: ISort<IShowDependency>[] = [{ name: "name" }, { title: "PackageName", name: "dependency" },
+  sort: ISort<IShowDependency>[] = [
+    { name: "name" },
+    { title: "Folder name", name: "dependency" },
     {
-      name: "Has Updates", customSort: (a, b) => {
+      name: "hasUpdates",
+      title: "Updates available", customSort: (a, b) => {
         let asort = a.constraint && a.constraint !== a.version ? 1 : 0;
         let bsort = b.constraint && b.constraint !== b.version ? 1 : 0;
         if (asort > bsort) return -1;
