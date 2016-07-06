@@ -60,7 +60,7 @@ export class Filters<T> extends ViewModel {
 
   itemsChanged(value) {
     this.handleItemsChange(value);
-    this.initiateUpdate();
+    if (!this.customHandler) this.initiateUpdate();
   }
 
   handleItemsChange(value) {
