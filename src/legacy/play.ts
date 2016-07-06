@@ -294,40 +294,30 @@ export class ContentModelController<TModel extends breeze.Entity> extends Conten
       graphExpands = changeGraph.join(",");
     }
 
-    var saveChanges = async (entity?: breeze.Entity, ...entities: breeze.Entity[]): Promise<breeze.SaveResult> => {
+    var saveChanges = async (entity?: breeze.Entity, ...entities: breeze.Entity[]): Promise<boolean> => {
       if (entity != null) {
         var changedEntites: breeze.Entity[] = [];
-
         entities.push(entity);
-
-        entities.forEach((v, i, arr) => {
-          if (!v.entityAspect.entityState.isUnchanged())
-            changedEntites.push(v);
-        });
-
+        entities.forEach((v, i, arr) => { if (!v.entityAspect.entityState.isUnchanged()) changedEntites.push(v) });
         try {
-          return await this.entityManager.saveChanges(changedEntites);
+          await this.entityManager.saveChanges(changedEntites);
+          return true;
         } catch (reason) {
           var reasons = (<string>(<any>breeze).saveErrorMessageService.getErrorMessage(reason)).replace(/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/gi, "").replace(/[ ]\(\)[ ][-][ ]/g, ": ");
           this.breezeQueryFailed({ message: 'Save failed, See Validation Errors Below:<br/><br/>' + reasons });
-          throw reason;
-        };
+          return false;
+        }
       } else {
-
         var changedEntites: breeze.Entity[] = [];
         var entities: breeze.Entity[] = (<any>this.entityManager).getEntityGraph(this.$scope.model, graphExpands);
-
-        entities.forEach((v, i, arr) => {
-          if (!v.entityAspect.entityState.isUnchanged())
-            changedEntites.push(v);
-        });
+        entities.forEach((v, i, arr) => { if (!v.entityAspect.entityState.isUnchanged()) changedEntites.push(v) });
         try {
-          return await this.entityManager.saveChanges(changedEntites);
+          await this.entityManager.saveChanges(changedEntites);
+          return true;
         } catch (reason) {
           var reasons = (<string>(<any>breeze).saveErrorMessageService.getErrorMessage(reason)).replace(/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/gi, "").replace(/[ ]\(\)[ ][-][ ]/g, ": ");
-
           this.breezeQueryFailed({ message: 'Save failed, See Validation Errors Below:<br/><br/>' + reasons });
-          throw reason;
+          return false;
         }
       }
     }
@@ -353,24 +343,18 @@ export class ContentModelController<TModel extends breeze.Entity> extends Conten
 
     var normalChangeWatch = ["model.author", "userInfo.id", "editConfig.isManaging", "editConfig.editMode"];
 
-    if (watchForChanges != null)
-      watchForChanges.forEach((value, index, array) => {
-        normalChangeWatch.push(value);
-      });
+    if (watchForChanges != null) watchForChanges.forEach((value, index, array) => normalChangeWatch.push(value));
 
-
-    this.$scope.$watchGroup(normalChangeWatch, (newValue, oldValue, scope) => {
-      this.$scope.editConfig.isEditing = ((this.$scope.editConfig.isManaging || this.$scope.editConfig.hasChanges()) && this.$scope.editConfig.canManage()) || (this.$scope.editConfig.canEdit() && this.$scope.editConfig.editMode);
-    });
+    this.$scope.$watchGroup(normalChangeWatch, (newValue, oldValue, scope) =>
+      this.$scope.editConfig.isEditing = ((this.$scope.editConfig.isManaging || this.$scope.editConfig.hasChanges()) && this.$scope.editConfig.canManage()) || (this.$scope.editConfig.canEdit() && this.$scope.editConfig.editMode)
+    );
 
     this.$scope.$watch("editConfig.hasChanges()", (newValue: boolean, oldValue, scope) => {
       if (newValue == oldValue) return;
 
       this.$scope.editConfig.hasChangesProperty = newValue;
 
-      if (newValue && !(this.$scope.editConfig.isEditing || this.$scope.editConfig.isManaging)) {
-        this.$scope.editConfig.enableEditing();
-      }
+      if (newValue && !(this.$scope.editConfig.isEditing || this.$scope.editConfig.isManaging)) this.$scope.editConfig.enableEditing();
     });
 
     return _editConfig;
@@ -1107,13 +1091,13 @@ export module Play.Collections {
       this.setupDependencyAutoComplete();
     };
 
-    private cancelImageUpload() {
+    private async cancelImageUpload() {
       this.tempCollectionImagePath = null;
       if (this.$scope.model.fileTransferPolicies.length > 0) {
         var transferPolicy = this.$scope.model.fileTransferPolicies[0];
 
         transferPolicy.entityAspect.setDeleted();
-        this.$scope.editConfig.saveChanges(transferPolicy);
+        await this.$scope.editConfig.saveChanges(transferPolicy);
       }
     }
 
@@ -3941,11 +3925,11 @@ export module Play.Mods {
         return currentQuery;
       };
 
-      this.$scope.setAuthor = (newAuthor: IBreezeUser) => {
+      this.$scope.setAuthor = async (newAuthor: IBreezeUser) => {
         var author = authors.find(x => x.id === newAuthor.id);
         this.$scope.model.author = author;
         if (!this.$scope.editConfig.isEditing && !this.$scope.editConfig.isManaging)
-          this.$scope.editConfig.saveChanges();
+          await this.$scope.editConfig.saveChanges();
       };
 
       this.$scope.changeAuthorCheck = (scope: any): boolean => {
@@ -4233,13 +4217,13 @@ export module Play.Mods {
       };
     }
 
-    private cancelImageUpload() {
+    private async cancelImageUpload() {
       this.tempModImagePath = null;
       if (this.$scope.model.fileTransferPolicies.length > 0) {
         var transferPolicy = this.$scope.model.fileTransferPolicies[0];
 
         transferPolicy.entityAspect.setDeleted();
-        this.$scope.editConfig.saveChanges(transferPolicy);
+        await this.$scope.editConfig.saveChanges(transferPolicy);
       }
     }
 
@@ -4966,14 +4950,14 @@ export module Play.Mods {
       $scope.createBlogPost = false;
       $scope.model.entityModule = BreezeEntityGraph.ModEntityModule.createEntity();
 
-      $scope.createBlogSection = () => {
+      $scope.createBlogSection = async () => {
         if ($scope.model.entityModule.wall != null)
           return;
 
         $scope.model.entityModule.wall = BreezeEntityGraph.Wall.createEntity({
           entityModule: $scope.model.entityModule
         });
-        $scope.editConfig.saveChanges($scope.model.entityModule.wall);
+        await $scope.editConfig.saveChanges($scope.model.entityModule.wall);
       };
 
       $scope.save = (a) => {
@@ -5046,7 +5030,7 @@ export module Play.Mods {
       super($scope, logger, $modalInstance, $q, model);
 
       $scope.model = model.model;
-      $scope.setArchivedStatus = (archive: boolean) => {
+      $scope.setArchivedStatus = async (archive: boolean) => {
         var shouldSave = !model.editConfig.isEditing && !model.editConfig.isManaging;
         if (archive) {
           model.model.archivedAt = new Date();
@@ -5054,8 +5038,8 @@ export module Play.Mods {
           model.model.archivedAt = null;
         }
         if (shouldSave) {
-          model.editConfig.saveChanges();
           this.$modalInstance.close();
+          await model.editConfig.saveChanges();
         }
       };
     }

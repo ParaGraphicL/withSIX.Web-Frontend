@@ -302,10 +302,12 @@ export class BaseController extends Tk.Controller {
     this.$scope.response = undefined;
     try {
       let r = await this.$scope.request<T>(command, data);
-      this.successResponse(r);
+      this.applyIfNeeded(() => this.successResponse(r));
       return r;
     } catch (err) {
-      this.errorResponse(err);
+      this.applyIfNeeded(() => this.errorResponse(err));
+      err.__wsprocessed = true;
+      throw err;
     }
   }
 
@@ -320,9 +322,8 @@ export class BaseController extends Tk.Controller {
     this.$scope.response = result;
     var httpFailed = result.httpFailed;
     this.logger.error(httpFailed[1], httpFailed[0]);
-
-    return this.$q.reject(result);
-  } // TODO: Make this available on the root $scope ??
+  }
+  // TODO: Make this available on the root $scope ??
   public requestAndProcessCommand = <T>(command, pars?, message?) => this.processCommand<T>(() => this.$scope.request<T>(command, pars), message);
   private processCommand = async <T>(q: () => Promise<T>, message?): Promise<T> => {
     try {
@@ -331,6 +332,7 @@ export class BaseController extends Tk.Controller {
       return result;
     } catch (reason) {
       this.httpFailed(reason);
+      reason.__wsprocessed = true;
       throw reason;
     }
   }

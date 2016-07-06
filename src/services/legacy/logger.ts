@@ -1,3 +1,4 @@
+import {inject} from 'aurelia-framework';
 import {Tk} from './tk';
 import {Tools} from '../tools';
 
@@ -48,4 +49,28 @@ export class ToastLogger {
   }
 
   public log(message) { Tools.Debug.log(message); }
+}
+
+@inject(ToastLogger)
+export class GlobalErrorHandler {
+  constructor(private toastr: ToastLogger) { }
+
+  // TODO: https://github.com/aurelia/framework/issues/174
+  // https://www.npmjs.com/package/aurelia-rollbar
+  // TODO: window.onerror (/ addEVentListenter('error') ... however what about ADsense and other unrelated errors?)
+  // TODO: Auto report to the remote exception logger service..
+  // http://www.mikeobrien.net/blog/client-side-exception-logging-in-aurelia/
+  silence = [];
+  silenceAngular = ["Cannot read property 'toLowerCase' of undefined"];
+
+  handleError(exception: Error, cause = 'Unknown') {
+    if (this.silence.some(x => x === exception.message)) return;
+    Tools.Debug.error(`An unexpected error has occured: ${exception} (Cause: ${cause})\nPlease report the issue.`);
+    return this.toastr.error(`An unexpected error has occured: ${exception} (Cause: ${cause})\nPlease report the issue.`, 'Unexpected error has occurred');
+  }
+
+  handleAngularError(exception: Error, cause?: string) {
+    if (this.silenceAngular.some(x => x === exception.message)) return;
+    return this.handleError(exception, cause);
+  }
 }
