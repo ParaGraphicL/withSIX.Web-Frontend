@@ -53,6 +53,7 @@ export class ToastLogger {
 
 @inject(ToastLogger)
 export class GlobalErrorHandler {
+  private logSilentErrors = false;
   constructor(private toastr: ToastLogger) { }
 
   // TODO: https://github.com/aurelia/framework/issues/174
@@ -61,16 +62,22 @@ export class GlobalErrorHandler {
   // TODO: Auto report to the remote exception logger service..
   // http://www.mikeobrien.net/blog/client-side-exception-logging-in-aurelia/
   silence = [];
-  silenceAngular = ["Cannot read property 'toLowerCase' of undefined"];
+  silenceAngular = ["Cannot read property 'toLowerCase' of undefined", "Cannot read property 'toUpperCase' of undefined"];
 
-  handleError(exception: Error, cause = 'Unknown') {
-    if (this.silence.some(x => x === exception.message)) return;
-    Tools.Debug.error(`An unexpected error has occured: ${exception} (Cause: ${cause})\nPlease report the issue.`);
-    return this.toastr.error(`An unexpected error has occured: ${exception} (Cause: ${cause})\nPlease report the issue.`, 'Unexpected error has occurred');
+  handleError = (exception: Error, cause = 'Unknown') => this.handleErrorInternal(exception, cause, this.silence.some(x => x === exception.message));
+  handleAngularError = (exception: Error, cause?: string) => this.handleErrorInternal(exception, cause, this.silenceAngular.some(x => x === exception.message));
+
+  private handleErrorInternal(exception, cause, silent) {
+    if (silent && !this.logSilentErrors) return;
+    this.tryErrorLog(`An unexpected error has occured: ${exception} (Cause: ${cause})\nPlease report the issue.`);
+    if (!silent) return this.toastr.error(`An unexpected error has occured: ${exception} (Cause: ${cause})\nPlease report the issue.`, 'Unexpected error has occurred');
   }
 
-  handleAngularError(exception: Error, cause?: string) {
-    if (this.silenceAngular.some(x => x === exception.message)) return;
-    return this.handleError(exception, cause);
+  private tryErrorLog(msg, ...args) {
+    try {
+      if (window.console && window.console.error) {
+        window.console.error(msg, ...args);
+      }
+    } catch (err) { }
   }
 }
