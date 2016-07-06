@@ -21,7 +21,7 @@ export class LoginBase {
   static localClientId = 'withsix-spa';
   static key = 'w6.refreshToken';
 
-  constructor(private http: HttpClient, private httpFetch: FetchClient, protected w6Url: W6Urls, private eventBus: EventAggregator, protected ls: LS) { }
+  constructor(private http: HttpClient, private httpFetch: FetchClient, protected w6Url: W6Urls, private eventBus: EventAggregator, protected ls: LS) {}
   static resetUnload() { window.onbeforeunload = undefined; }
   resetUnload() { LoginBase.resetUnload(); }
   refreshing: Promise<boolean>;
@@ -111,20 +111,21 @@ export class LoginBase {
         let at: string;
         if (at = await this.getAccessToken(request.url, force)) request.headers.add('Authorization', `Bearer ${at}`);
       }
-      config.withHeader('Accept', 'application/json');
-      config.withInterceptor({
-        request: async (request: HttpRequestMessage) => {
-          if (!request) return;
-          if (this.shouldLog) Tools.Debug.log(`[HTTP] Requesting ${request.method} ${request.url}`, request);
-          await handleAt(request);
-          return request;
-        },
-        response: (response: HttpResponseMessage) => {
-          if (!response) return response;
-          if (this.shouldLog) Tools.Debug.log(`[HTTP] Received ${response.statusCode} ${response.requestMessage.url}`, response);
-          return response;
-        }
-      })
+      config
+        .withHeader('Accept', 'application/json')
+        .withInterceptor({
+          request: async (request: HttpRequestMessage) => {
+            if (!request) return;
+            if (this.shouldLog) Tools.Debug.log(`[HTTP] Requesting ${request.method} ${request.url}`, request);
+            await handleAt(request);
+            return request;
+          },
+          response: (response: HttpResponseMessage) => {
+            if (!response) return response;
+            if (this.shouldLog) Tools.Debug.log(`[HTTP] Received ${response.statusCode} ${response.requestMessage.url}`, response);
+            return response;
+          }
+        })
     })
 
     this.httpFetch.configure(config => {
@@ -272,7 +273,6 @@ export class LoginBase {
       this.clearIdToken();
       return userInfo;
     }
-    this.setHeaders();
     var req = await this.httpFetch.fetch(this.w6Url.authSsl + '/identity/connect/userinfo');
     var r = await req.json();
     var roles = typeof (r["role"]) == "string" ? [r["role"]] : r["role"];
