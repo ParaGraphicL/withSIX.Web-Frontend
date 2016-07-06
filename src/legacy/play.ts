@@ -973,7 +973,7 @@ export module Play.Collections {
     unsubscribe() {
       return this.requestAndProcessResponse(UnsubscribeCollectionCommand, { model: this.$scope.model })
         .then(r => {
-          this.$scope.$apply(() => {
+          this.applyIfNeeded(() => {
             delete this.$scope.subscribedCollections[this.$scope.model.id];
             this.$scope.model.subscribersCount -= 1;
             if (window.six_client.unsubscribedFromCollection)
@@ -985,7 +985,7 @@ export module Play.Collections {
     subscribe() {
       return this.requestAndProcessResponse(SubscribeCollectionCommand, { model: this.$scope.model })
         .then(r => {
-          this.$scope.$apply(() => {
+          this.applyIfNeeded(() => {
             this.$scope.subscribedCollections[this.$scope.model.id] = true;
             this.$scope.model.subscribersCount += 1;
             if (window.six_client.subscribedToCollection)
@@ -1162,7 +1162,7 @@ export module Play.Collections {
         this.logger.error("We were unable to retrieve an upload policy for your image. Please try again later", "Failed to upload image.");
         this.cancelImageUpload();
       } finally {
-        $scope.$apply(_ => $scope.uploadingCollectionImage = false);
+        this.applyIfNeeded(_ => $scope.uploadingCollectionImage = false);
       }
     }
 
@@ -1200,7 +1200,7 @@ export module Play.Collections {
         this.logger.error("We were unable to retrieve an upload policy for your image. Please try again later", "Failed to upload image.");
         this.cancelImageUpload();
       } finally {
-        this.$scope.$apply(_ => this.$scope.uploadingCollectionImage = false);
+        this.applyIfNeeded(_ => this.$scope.uploadingCollectionImage = false);
       }
     }
 
@@ -1218,7 +1218,7 @@ export module Play.Collections {
         if (data.includes("EntityTooSmall")) this.logger.error("Your image must be at least 10KB", "Image too small");
         throw r;
       } finally {
-        this.$scope.$apply(_ => this.$scope.uploadingCollectionImage = false);
+        this.applyIfNeeded(_ => this.$scope.uploadingCollectionImage = false);
       }
     }
 
@@ -1437,14 +1437,18 @@ export module Play.Collections {
 
         this.$scope.likeComment = comment => {
           return this.$scope.request(LikeCollectionCommentCommand, { collectionId: this.$scope.model.id, id: comment.id }).then(() => {
-            comment.likesCount += 1;
-            this.$scope.commentLikeStates[comment.id] = true;
+            this.applyIfNeeded(() => {
+              comment.likesCount += 1;
+              this.$scope.commentLikeStates[comment.id] = true;
+            });
           });
         };
         this.$scope.unlikeComment = comment => {
           return this.$scope.request(UnlikeCollectionCommentCommand, { collectionId: this.$scope.model.id, id: comment.id }).then(() => {
-            comment.likesCount -= 1;
-            this.$scope.commentLikeStates[comment.id] = false;
+            this.applyIfNeeded(() => {
+              comment.likesCount -= 1;
+              this.$scope.commentLikeStates[comment.id] = false;
+            });
           });
         };
       }
@@ -1760,18 +1764,20 @@ export module Play.Games {
       if ((<string>data.uri).endsWithIgnoreCase("config.yml")) {
         await this.$scope.request<{ data: any[] }>(NewImportedCollectionCommand, { data: data })
           .then(result => {
-            if (result.data.length == 1) {
-              var modId = Tools.toShortId(result.data[0]);
-              this.$modalInstance.close();
-              //var slug = <string>data.name.sluggifyEntityName();
-              this.$location.path(Tools.joinUri([this.$scope.url.play, this.model.slug, "collections", modId, "slug"])).search('landingrepo', 1);
-            } else {
-              this.$scope.importResult = [];
-              for (var i = 0; i < result.data.length; i++) {
-                this.$scope.importResult[i] = Tools.joinUri([this.$scope.url.play, this.model.slug, "collections", Tools.toShortId(result.data[i]), "slug"]);
+            this.applyIfNeeded(() => {
+              if (result.data.length == 1) {
+                var modId = Tools.toShortId(result.data[0]);
+                this.$modalInstance.close();
+                //var slug = <string>data.name.sluggifyEntityName();
+                this.$location.path(Tools.joinUri([this.$scope.url.play, this.model.slug, "collections", modId, "slug"])).search('landingrepo', 1);
+              } else {
+                this.$scope.importResult = [];
+                for (var i = 0; i < result.data.length; i++) {
+                  this.$scope.importResult[i] = Tools.joinUri([this.$scope.url.play, this.model.slug, "collections", Tools.toShortId(result.data[i]), "slug"]);
+                }
+                this.$scope.page = this.$newViewBaseFolder + 'add-collection-3.html';
               }
-              this.$scope.page = this.$newViewBaseFolder + 'add-collection-3.html';
-            }
+            });
           })
           .catch(this.httpFailed);
       } else {
@@ -1961,11 +1967,11 @@ export module Play.Games {
 
       $scope.getForumPost = () => this.requestAndProcessCommand<{ title; author; body }>(Play.Mods.GetForumPostQuery, { forumUrl: $scope.model.mod.homepage }, 'fetch first post') // "http://forums.bistudio.com/showthread.php?171722-Discover-Play-Promote-missions-and-mods-withSIX"
         .then(r => {
-          $timeout(() => {
+          this.applyIfNeeded(() => {
             $scope.model.mod.name = r.title;
             $scope.model.mod.author = r.author;
             $scope.model.mod.description = r.body;
-          }, 1000);
+          });
         });
 
       //if (info.folder) {
@@ -2002,7 +2008,7 @@ export module Play.Games {
       this.$scope.model.packageNameAvailable = false;
       return this.$scope.request<boolean>(Mods.ModExistsQuery, { packageName: packageName, groupId: this.$scope.model.mod.groupId, gameId: this.model.id })
         .then((result) => {
-          this.$scope.$apply(() => {
+          this.applyIfNeeded(() => {
             this.$scope.checkingPackageName = false;
             Tools.Debug.log(result);
             this.$scope.model.packageNameAvailable = !result;
@@ -2018,7 +2024,7 @@ export module Play.Games {
       this.$scope.model.nameAvailable = false;
       return this.$scope.request<boolean>(Mods.ModNameExistsQuery, { name: name, authorId: this.getAuthorId(), gameId: this.model.id })
         .then((result) => {
-          this.$scope.$apply(() => {
+          this.applyIfNeeded(() => {
             this.$scope.checkingName = false;
             Tools.Debug.log(result);
             this.$scope.model.nameAvailable = !result;
@@ -2032,7 +2038,7 @@ export module Play.Games {
       this.$scope.model.downloadLinkAvailable = false;
       return this.$scope.request<boolean>(GetCheckLinkQuery, { linkToCheck: uri })
         .then((result) => {
-          this.$scope.$apply(() => {
+          this.applyIfNeeded(() => {
             this.$scope.checkingDownloadLink = false;
             Tools.Debug.log(result);
             this.$scope.model.downloadLinkAvailable = result;
@@ -2053,7 +2059,7 @@ export module Play.Games {
     getLatestInfo() {
       let model = this.$scope.model;
       return this.$scope.request<IModVersionInfo>(Mods.GetLatestInfo, { data: { downloadUri: model.mod.download } }).then(r => {
-        this.$scope.$apply(() => {
+        this.applyIfNeeded(() => {
           model.mod.version = r.version;
           model.mod.branch = r.branch;
           if (!model.mod.name) model.mod.name = r.name;
@@ -2889,16 +2895,20 @@ export module Play.Missions {
     unfollow() {
       return this.requestAndProcessResponse(UnfollowMissionCommand, { model: this.$scope.model })
         .then(r => {
-          delete this.$scope.followedMissions[this.$scope.model.id];
-          this.$scope.model.followersCount -= 1;
+          this.applyIfNeeded(() => {
+            delete this.$scope.followedMissions[this.$scope.model.id];
+            this.$scope.model.followersCount -= 1;
+          });
         });
     }
 
     follow() {
       return this.requestAndProcessResponse(FollowMissionCommand, { model: this.$scope.model })
         .then(r => {
-          this.$scope.followedMissions[this.$scope.model.id] = true;
-          this.$scope.model.followersCount += 1;
+          this.applyIfNeeded(() => {
+            this.$scope.followedMissions[this.$scope.model.id] = true;
+            this.$scope.model.followersCount += 1;
+          });
         });
     }
 
@@ -2967,12 +2977,16 @@ export module Play.Missions {
         }
 
         this.$scope.likeComment = comment => this.$scope.request(LikeMissionCommentCommand, { missionId: this.$scope.model.id, id: comment.id }).then(() => {
-          comment.likesCount += 1;
-          this.$scope.commentLikeStates[comment.id] = true;
+          this.applyIfNeeded(() => {
+            comment.likesCount += 1;
+            this.$scope.commentLikeStates[comment.id] = true;
+          });
         });
         this.$scope.unlikeComment = comment => this.$scope.request(UnlikeMissionCommentCommand, { missionId: this.$scope.model.id, id: comment.id }).then(() => {
-          comment.likesCount -= 1;
-          this.$scope.commentLikeStates[comment.id] = false;
+          this.applyIfNeeded(() => {
+            comment.likesCount -= 1;
+            this.$scope.commentLikeStates[comment.id] = false;
+          });
         });
       }
 
@@ -3176,10 +3190,12 @@ export module Play.Mods {
     private ok = () => {
       return this.$scope.request<{ token; formatProvider; data }>(GetClaimQuery, { modId: this.$scope.model.id })
         .then((result) => {
-          this.$scope.claimToken = result.token;
-          this.$scope.formatProvider = result.formatProvider;
-          this.$scope.ctModel = result.data;
-          this.$scope.page = '/src_legacy/app/play/mods/dialogs/_claim-page2.html';
+          this.applyIfNeeded(() => {
+            this.$scope.claimToken = result.token;
+            this.$scope.formatProvider = result.formatProvider;
+            this.$scope.ctModel = result.data;
+            this.$scope.page = '/src_legacy/app/play/mods/dialogs/_claim-page2.html';
+          });
         })
         .catch(this.httpFailed);
     };
@@ -3188,12 +3204,16 @@ export module Play.Mods {
       this.$scope.verificationFailed = false;
       return this.$scope.request(VerifyClaimCommand, { modId: this.$scope.model.id })
         .then((result) => {
-          this.$scope.page = '/src_legacy/app/play/mods/dialogs/_claim-page3.html';
-          this.$scope.error = undefined;
+          this.applyIfNeeded(() => {
+            this.$scope.page = '/src_legacy/app/play/mods/dialogs/_claim-page3.html';
+            this.$scope.error = undefined;
+          });
         })
         .catch((reason) => {
-          this.httpFailed(reason);
-          this.$scope.error = reason.data.message;
+          this.applyIfNeeded(() => {
+            this.httpFailed(reason);
+            this.$scope.error = reason.data.message;
+          });
         });
     };
   }
@@ -4060,8 +4080,10 @@ export module Play.Mods {
             setTimeout(() => $scope.approving = false, 1000 * 2);
             await $scope.request(GetModUpdatesQuery, { modId: $scope.model.id });
           }).catch(async (reason) => {
-            $scope.approving = false;
-            this.httpFailed(reason);
+            this.applyIfNeeded(() => {
+              $scope.approving = false;
+              this.httpFailed(reason);
+            });
             await $scope.request(GetModUpdatesQuery, { modId: $scope.model.id });
           });
       };
@@ -4077,7 +4099,9 @@ export module Play.Mods {
             setTimeout(() => $scope.approving = false, 1000 * 2);
             await $scope.request(GetModUpdatesQuery, { modId: $scope.model.id });
           }).catch(async (reason) => {
-            $scope.approving = false;
+            this.applyIfNeeded(() => {
+              $scope.approving = false;
+            });
             await $scope.request(GetModUpdatesQuery, { modId: $scope.model.id });
             this.httpFailed(reason);
           });
@@ -4157,14 +4181,18 @@ export module Play.Mods {
             .then((result) => {
               $scope.request(GetModUpdatesQuery, { modId: $scope.model.id });
               setTimeout(() => {
-                setCancelConfirmState(false, force);
-                setCancelState(false, force);
+                this.applyIfNeeded(() => {
+                  setCancelConfirmState(false, force);
+                  setCancelState(false, force);
+                });
               }, 1000 * 2);
             }).catch(reason => {
               $scope.request(GetModUpdatesQuery, { modId: $scope.model.id });
               setTimeout(() => {
-                setCancelConfirmState(false, force);
-                setCancelState(false, force);
+                this.applyIfNeeded(() => {
+                  setCancelConfirmState(false, force);
+                  setCancelState(false, force);
+                });
               }, 1000 * 2);
               this.httpFailed(reason);
             });
@@ -4358,7 +4386,7 @@ export module Play.Mods {
         this.logger.error("We were unable to retrieve an upload policy for your image. Please try again later", "Failed to upload image.");
         this.cancelImageUpload();
       } finally {
-        this.$scope.$apply(_ => this.$scope.uploadingModImage = false)
+        this.applyIfNeeded(_ => this.$scope.uploadingModImage = false)
       }
     }
 
@@ -4397,7 +4425,7 @@ export module Play.Mods {
         this.logger.error("We were unable to retrieve an upload policy for your image. Please try again later", "Failed to upload image.");
         this.cancelImageUpload();
       } finally {
-        this.$scope.$apply(_ => $scope.uploadingModImage = false);
+        this.applyIfNeeded(_ => $scope.uploadingModImage = false);
       }
     }
 
@@ -4417,7 +4445,7 @@ export module Play.Mods {
         if (data.includes("EntityTooSmall")) this.logger.error("Your image must be at least 10KB", "Image too small");
         throw r;
       } finally {
-        this.$scope.$apply(_ => this.$scope.uploadingModImage = false);
+        this.applyIfNeeded(_ => this.$scope.uploadingModImage = false);
       }
     }
 
@@ -4430,16 +4458,20 @@ export module Play.Mods {
     unfollow() {
       this.requestAndProcessResponse(UnfollowModCommand, { model: this.$scope.model })
         .then(r => {
-          delete this.$scope.followedMods[this.$scope.model.id];
-          this.$scope.model.followersCount -= 1;
+          this.applyIfNeeded(() => {
+            delete this.$scope.followedMods[this.$scope.model.id];
+            this.$scope.model.followersCount -= 1;
+          });
         });
     }
 
     follow() {
       this.requestAndProcessResponse(FollowModCommand, { model: this.$scope.model })
         .then(r => {
-          this.$scope.followedMods[this.$scope.model.id] = true;
-          this.$scope.model.followersCount += 1;
+          this.applyIfNeeded(() => {
+            this.$scope.followedMods[this.$scope.model.id] = true;
+            this.$scope.model.followersCount += 1;
+          });
         });
     }
 
@@ -4748,12 +4780,16 @@ export module Play.Mods {
         }
 
         this.$scope.likeComment = comment => this.$scope.request(LikeModCommentCommand, { modId: this.$scope.model.id, id: comment.id }).then(() => {
-          comment.likesCount += 1;
-          this.$scope.commentLikeStates[comment.id] = true;
+          this.applyIfNeeded(() => {
+            comment.likesCount += 1;
+            this.$scope.commentLikeStates[comment.id] = true;
+          });
         });
         this.$scope.unlikeComment = comment => this.$scope.request(UnlikeModCommentCommand, { modId: this.$scope.model.id, id: comment.id }).then(() => {
-          comment.likesCount -= 1;
-          this.$scope.commentLikeStates[comment.id] = false;
+          this.applyIfNeeded(() => {
+            comment.likesCount -= 1;
+            this.$scope.commentLikeStates[comment.id] = false;
+          });
         });
       }
 
@@ -4836,9 +4872,6 @@ export module Play.Mods {
 
   export interface IModCreditsScope extends IEditableModScope {
     newUser: IBreezeUser;
-
-    addGroup:
-
     addGroup: (name: string) => void;
     addUserToGroup: (group: IBreezeModUserGroup, $hide: any) => void;
     userCheck: (user: any) => boolean;
@@ -4952,7 +4985,7 @@ export module Play.Mods {
           content: a.content.$modelValue
         }));
         $scope.createBlogPost = false;
-        $scope.$apply();
+        this.applyIfNeeded();
       };
       this.setupTitle("model.name", "Blog - {0} (" + $scope.model.packageName + ") - " + $scope.model.game.name);
     }
@@ -4981,7 +5014,7 @@ export module Play.Mods {
       super($scope, logger, $modalInstance, $q, model);
 
       $scope.sendReport = () => this.requestAndProcessCommand(Components.Dialogs.SendReportCommand, { data: $scope.model }, "Report sent!")
-        .then((data) => $scope.sent = true);
+        .then((data) => this.applyIfNeeded(() => $scope.sent = true));
     }
   }
 
@@ -5105,7 +5138,7 @@ export module Play.Mods {
       // TODO: Handle not connected handler??
       if (this.$scope.w6.miniClient.isConnected) {
         this.modInfoService.getUploadFolder(model.id)
-          .then(x => $scope.model.info.folder = x)
+          .then(x => this.applyIfNeeded(() => $scope.model.info.folder = x))
           .catch(x => Tools.Debug.log("failed to retrieve existing folder", x));
       }
 
@@ -5120,8 +5153,10 @@ export module Play.Mods {
     getLatestInfo() {
       let model = this.$scope.model;
       this.$scope.request<Play.Games.IModVersionInfo>(GetLatestInfo, { data: { downloadUri: model.mod.download } }).then(r => {
-        model.mod.version = r.version;
-        model.mod.branch = r.branch;
+        this.applyIfNeeded(() => {
+          model.mod.version = r.version;
+          model.mod.branch = r.branch;
+        });
       });
     }
 
@@ -5130,9 +5165,11 @@ export module Play.Mods {
       this.$scope.model.downloadLinkAvailable = false;
       this.$scope.request<boolean>(Games.GetCheckLinkQuery, { linkToCheck: uri })
         .then((result) => {
-          this.$scope.checkingDownloadLink = false;
-          Tools.Debug.log(result);
-          this.$scope.model.downloadLinkAvailable = result;
+          this.applyIfNeeded(() => {
+            this.$scope.checkingDownloadLink = false;
+            Tools.Debug.log(result);
+            this.$scope.model.downloadLinkAvailable = result;
+          });
         })
         .catch(this.httpFailed);
     }
