@@ -220,10 +220,7 @@ export class LoginBase {
     let isLoggedIn = userInfo.id ? true : false;
     if (userInfo.isPremium) {
       let isSsl = window.location.protocol === 'https:';
-      if (!isSsl && !hasSslRedir) {
-        if (console && console.log) console.log("$$$$ premium and Not SSL, and NOT SSLRedirected");
-        this.redirect(LoginBase.toHttps(isLoggedIn));
-      }
+      if (!isSsl && !hasSslRedir) this.redirect(LoginBase.toHttps(isLoggedIn));
     }
 
     return userInfo;
@@ -245,17 +242,14 @@ export class LoginBase {
     if (!hasLogout) return;
     this.clearLoginInfo();
     this.resetUnload();
-    if (window.location.protocol == 'https:') {
-      if (console && console.log) console.log("$$$$ Logging out, redirecting to http");
-      this.redirect(LoginBase.toHttp(false));
-    } else {
+    if (window.location.protocol == 'https:') this.redirect(LoginBase.toHttp(false));
+    else {
       var redirectUri = window.location.search.startsWith('?redirect=') ? window.location.search.replace('?redirect=', '') : null;
       if (redirectUri) {
         // must be without #loggedin and #sslredir etc
         var idx = redirectUri.indexOf('#');
         if (idx > -1) redirectUri = redirectUri.substring(0, idx);
       }
-      if (console && console.log) console.log("$$$$ Logged out, redirecting to auth endpoint");
       this.redirect(this.w6Url.authSsl + "/identity/connect/endsession" + this.buildLogoutParameters(redirectUri || encodeURI(this.w6Url.urlNonSsl)));
     }
     throw new AbortError("have to logout");

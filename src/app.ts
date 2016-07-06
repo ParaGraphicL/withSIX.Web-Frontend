@@ -521,7 +521,6 @@ class SslStep extends AuthorizeStep {
 
   getRedirect(url) {
     this.tools.Debug.log("$$$ router redirect", url);
-    if (console && console.log) console.log("$$$$ router redirect!");
     this.login.resetUnload();
     return new Redirect(url);
   }
