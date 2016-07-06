@@ -5,7 +5,7 @@ import {HttpClient as FetchClient} from 'aurelia-fetch-client';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
 import {AuthService} from 'aurelia-auth';
-import {LoginBase} from './auth-base';
+import {LoginBase, AbortError} from './auth-base';
 
 @inject(AuthService, UiContext, HttpClient, FetchClient, LS)
 export class Login extends LoginBase {
@@ -28,13 +28,16 @@ export class Login extends LoginBase {
       if (console && console.log) console.log("$$$$ Succesfully loggedin")
       this.ls.set('w6.event', { name: 'login', data: null }); // TODO: Include user id so we can switch logged in accts if needed?
       this.redirect(url);
+      return true;
     } catch (err) {
+      if (!err) throw err;
+      if (err instanceof AbortError) return true;
       await this.handleLoginError(err, pathAndSearch);
+      return false;
     }
   }
 
   async handleLoginError(err, pathAndSearch?) {
-    if (!err) throw err;
     if (err.data) {
       if (err.data == "Provider Popup Blocked") {
         // TODO: Reconfigure without popup but redirect?
