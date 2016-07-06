@@ -294,39 +294,30 @@ export class ContentModelController<TModel extends breeze.Entity> extends Conten
       graphExpands = changeGraph.join(",");
     }
 
-    var saveChanges = async (entity?: breeze.Entity, ...entities: breeze.Entity[]): Promise<breeze.SaveResult> => {
+    var saveChanges = async (entity?: breeze.Entity, ...entities: breeze.Entity[]): Promise<boolean> => {
       if (entity != null) {
         var changedEntites: breeze.Entity[] = [];
-
         entities.push(entity);
-
-        entities.forEach((v, i, arr) => {
-          if (!v.entityAspect.entityState.isUnchanged())
-            changedEntites.push(v);
-        });
-
+        entities.forEach((v, i, arr) => { if (!v.entityAspect.entityState.isUnchanged()) changedEntites.push(v) });
         try {
-          return await this.entityManager.saveChanges(changedEntites);
+          await this.entityManager.saveChanges(changedEntites);
+          return true;
         } catch (reason) {
           var reasons = (<string>(<any>breeze).saveErrorMessageService.getErrorMessage(reason)).replace(/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/gi, "").replace(/[ ]\(\)[ ][-][ ]/g, ": ");
           this.breezeQueryFailed({ message: 'Save failed, See Validation Errors Below:<br/><br/>' + reasons });
-          throw reason;
-        };
+          return false;
+        }
       } else {
-
         var changedEntites: breeze.Entity[] = [];
         var entities: breeze.Entity[] = (<any>this.entityManager).getEntityGraph(this.$scope.model, graphExpands);
-
-        entities.forEach((v, i, arr) => {
-          if (!v.entityAspect.entityState.isUnchanged())
-            changedEntites.push(v);
-        });
+        entities.forEach((v, i, arr) => { if (!v.entityAspect.entityState.isUnchanged()) changedEntites.push(v) });
         try {
-          return await this.entityManager.saveChanges(changedEntites);
+          await this.entityManager.saveChanges(changedEntites);
+          return true;
         } catch (reason) {
           var reasons = (<string>(<any>breeze).saveErrorMessageService.getErrorMessage(reason)).replace(/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/gi, "").replace(/[ ]\(\)[ ][-][ ]/g, ": ");
           this.breezeQueryFailed({ message: 'Save failed, See Validation Errors Below:<br/><br/>' + reasons });
-          throw reason;
+          return false;
         }
       }
     }
@@ -352,24 +343,18 @@ export class ContentModelController<TModel extends breeze.Entity> extends Conten
 
     var normalChangeWatch = ["model.author", "userInfo.id", "editConfig.isManaging", "editConfig.editMode"];
 
-    if (watchForChanges != null)
-      watchForChanges.forEach((value, index, array) => {
-        normalChangeWatch.push(value);
-      });
+    if (watchForChanges != null) watchForChanges.forEach((value, index, array) => normalChangeWatch.push(value));
 
-
-    this.$scope.$watchGroup(normalChangeWatch, (newValue, oldValue, scope) => {
-      this.$scope.editConfig.isEditing = ((this.$scope.editConfig.isManaging || this.$scope.editConfig.hasChanges()) && this.$scope.editConfig.canManage()) || (this.$scope.editConfig.canEdit() && this.$scope.editConfig.editMode);
-    });
+    this.$scope.$watchGroup(normalChangeWatch, (newValue, oldValue, scope) =>
+      this.$scope.editConfig.isEditing = ((this.$scope.editConfig.isManaging || this.$scope.editConfig.hasChanges()) && this.$scope.editConfig.canManage()) || (this.$scope.editConfig.canEdit() && this.$scope.editConfig.editMode)
+    );
 
     this.$scope.$watch("editConfig.hasChanges()", (newValue: boolean, oldValue, scope) => {
       if (newValue == oldValue) return;
 
       this.$scope.editConfig.hasChangesProperty = newValue;
 
-      if (newValue && !(this.$scope.editConfig.isEditing || this.$scope.editConfig.isManaging)) {
-        this.$scope.editConfig.enableEditing();
-      }
+      if (newValue && !(this.$scope.editConfig.isEditing || this.$scope.editConfig.isManaging)) this.$scope.editConfig.enableEditing();
     });
 
     return _editConfig;
