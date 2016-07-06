@@ -56,8 +56,10 @@ export class GlobalErrorHandler {
   constructor(private toastr: ToastLogger) { }
 
   // TODO: https://github.com/aurelia/framework/issues/174
+  // https://www.npmjs.com/package/aurelia-rollbar
   // TODO: window.onerror (/ addEVentListenter('error') ... however what about ADsense and other unrelated errors?)
   // TODO: Auto report to the remote exception logger service..
+  // http://www.mikeobrien.net/blog/client-side-exception-logging-in-aurelia/
   silence = [];
   silenceAngular = ["Cannot read property 'toLowerCase' of undefined"];
 
