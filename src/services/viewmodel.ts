@@ -265,6 +265,7 @@ export class PaginatedViewModel<T> extends ViewModel {
   morePagesAvailable = this.observeEx(x => x.inlineCount).combineLatest(this.observeEx(x => x.page), (c, p) => p < this.totalPages);
 
   addPage = async () => {
+    if (!this.morePagesAvailable) return;
     let r = await this.getMore(this.model.page + 1);
     this.model.inlineCount = r.inlineCount;
     this.model.page = r.page;
