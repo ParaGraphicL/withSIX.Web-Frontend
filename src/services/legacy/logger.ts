@@ -1,3 +1,4 @@
+import {inject} from 'aurelia-framework';
 import {Tk} from './tk';
 import {Tools} from '../tools';
 
@@ -48,4 +49,17 @@ export class ToastLogger {
   }
 
   public log(message) { Tools.Debug.log(message); }
+}
+
+@inject(ToastLogger)
+export class GlobalErrorHandler {
+  constructor(private toastr: ToastLogger) { }
+
+  // TODO: https://github.com/aurelia/framework/issues/174
+  // TODO: window.onerror (/ addEVentListenter('error') ... however what about ADsense and other unrelated errors?)
+  handleError(exception: Error, cause?: string) {
+    // TODO: Auto report to the exception logger service..
+    Tools.Debug.error(`An unexpected error has occured: ${exception} (Cause: ${cause})\nPlease report the issue.`);
+    return this.toastr.error(`An unexpected error has occured: ${exception} (Cause: ${cause})\nPlease report the issue.`, 'Unexpected error has occurred');
+  }
 }
