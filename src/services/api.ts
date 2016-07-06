@@ -128,7 +128,7 @@ export class Api {
   }
 
   handleBreezeErrorResponse(r: IBreezeErrorReason) {
-    let requestId = r.httpResponse.getHeaders('withSIX-RequestID');
+    let requestId = r.httpResponse.status ? r.httpResponse.getHeaders('withSIX-RequestID') : 'FAIL';
     Tools.Debug.error('ERROR during request, Request ID: ' + requestId, r);
     let d = r.httpResponse.data;
     if (!d) return ["Site down?!", 'Unknown Error'];
