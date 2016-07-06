@@ -1998,9 +1998,11 @@ export module Play.Games {
       this.$scope.model.packageNameAvailable = false;
       return this.$scope.request<boolean>(Mods.ModExistsQuery, { packageName: packageName, groupId: this.$scope.model.mod.groupId, gameId: this.model.id })
         .then((result) => {
-          this.$scope.checkingPackageName = false;
-          Tools.Debug.log(result);
-          this.$scope.model.packageNameAvailable = !result;
+          this.$scope.$apply(() => {
+            this.$scope.checkingPackageName = false;
+            Tools.Debug.log(result);
+            this.$scope.model.packageNameAvailable = !result;
+          });
         })
         .catch(this.httpFailed);
     }
@@ -2012,9 +2014,11 @@ export module Play.Games {
       this.$scope.model.nameAvailable = false;
       return this.$scope.request<boolean>(Mods.ModNameExistsQuery, { name: name, authorId: this.getAuthorId(), gameId: this.model.id })
         .then((result) => {
-          this.$scope.checkingName = false;
-          Tools.Debug.log(result);
-          this.$scope.model.nameAvailable = !result;
+          this.$scope.$apply(() => {
+            this.$scope.checkingName = false;
+            Tools.Debug.log(result);
+            this.$scope.model.nameAvailable = !result;
+          });
         })
         .catch(this.httpFailed);
     }

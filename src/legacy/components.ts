@@ -3110,6 +3110,9 @@ export module Components.Dialogs {
 }
 
 export module Components.Fields {
+  interface EmailScope extends ng.IScope {
+    email; checkExists; blurred;
+  }
   class FieldsModule extends Tk.Module {
     static $name = "FieldsModule";
 
@@ -3160,7 +3163,7 @@ export module Components.Fields {
                 showLabel: '=?'
               },
               restrict: 'E',
-              link: ($scope, $element, $attrs: any, ctrl) => {
+              link: ($scope: EmailScope, $element, $attrs: any, ctrl) => {
                 new FieldBase().link($scope, $element, $attrs, ctrl, 'email', 'Email');
                 // TODO: OnBlur only!sb@
                 if ($attrs.checkAlreadyExists) {
@@ -3168,10 +3171,12 @@ export module Components.Fields {
                   // using viewValue as workaround because model not set when already invalid last time
                   $scope.checkExists = () => $rootScope.request<boolean>(Dialogs.EmailExistsQuery, { email: ctrl.email.$viewValue })
                     .then(result => {
-                      ctrl.email.$setValidity("sxExists", !result);
-                      // workaround angular not updating the model after setValidity..
-                      // https://github.com/angular/angular.js/issues/8080
-                      if (ctrl.email.$valid) $scope.email = ctrl.email.$viewValue;
+                      $scope.$apply(() => {
+                        ctrl.email.$setValidity("sxExists", !result);
+                        // workaround angular not updating the model after setValidity..
+                        // https://github.com/angular/angular.js/issues/8080
+                        if (ctrl.email.$valid) $scope.email = ctrl.email.$viewValue;
+                      })
                     });
                 };
                 $scope.blurred = () => {
@@ -3202,10 +3207,12 @@ export module Components.Fields {
                   // using viewValue as workaround because model not set when already invalid last time
                   $scope.checkExists = () => $scope.checkAlreadyExists({ value: ctrl.text.$viewValue })
                     .then(result => {
-                      ctrl.text.$setValidity("sxExists", !result);
-                      // workaround angular not updating the model after setValidity..
-                      // https://github.com/angular/angular.js/issues/8080
-                      if (ctrl.text.$valid) $scope.text = ctrl.text.$viewValue;
+                      $scope.$apply(() => {
+                        ctrl.text.$setValidity("sxExists", !result);
+                        // workaround angular not updating the model after setValidity..
+                        // https://github.com/angular/angular.js/issues/8080
+                        if (ctrl.text.$valid) $scope.text = ctrl.text.$viewValue;
+                      });
                     });
                 };
                 $scope.blurred = () => {
@@ -3235,10 +3242,12 @@ export module Components.Fields {
                   // using viewValue as workaround because model not set when already invalid last time
                   $scope.checkExists = () => $rootScope.request<boolean>(Dialogs.UsernameExistsQuery, { userName: ctrl.userName.$viewValue })
                     .then(result => {
-                      ctrl.userName.$setValidity("sxExists", !result);
-                      // workaround angular not updating the model after setValidity..
-                      // https://github.com/angular/angular.js/issues/8080
-                      if (ctrl.userName.$valid) $scope.userName = ctrl.userName.$viewValue;
+                      $scope.$apply(() => {
+                        ctrl.userName.$setValidity("sxExists", !result);
+                        // workaround angular not updating the model after setValidity..
+                        // https://github.com/angular/angular.js/issues/8080
+                        if (ctrl.userName.$valid) $scope.userName = ctrl.userName.$viewValue;
+                      });
                     });
                 };
                 $scope.blurred = () => {
