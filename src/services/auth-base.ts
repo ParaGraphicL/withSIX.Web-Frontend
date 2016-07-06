@@ -21,7 +21,7 @@ export class LoginBase {
   static localClientId = 'withsix-spa';
   static key = 'w6.refreshToken';
 
-  constructor(private http: HttpClient, private httpFetch: FetchClient, protected w6Url: W6Urls, private eventBus: EventAggregator, protected ls: LS) {}
+  constructor(private http: HttpClient, private httpFetch: FetchClient, protected w6Url: W6Urls, private eventBus: EventAggregator, protected ls: LS) { }
   static resetUnload() { window.onbeforeunload = undefined; }
   resetUnload() { LoginBase.resetUnload(); }
   refreshing: Promise<boolean>;
@@ -223,7 +223,6 @@ export class LoginBase {
       if (!isSsl && !hasSslRedir) {
         if (console && console.log) console.log("$$$$ premium and Not SSL, and NOT SSLRedirected");
         this.redirect(LoginBase.toHttps(isLoggedIn));
-        throw new AbortError("need ssl redir");
       }
     }
 
