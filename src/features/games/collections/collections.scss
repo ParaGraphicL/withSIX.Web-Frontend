@@ -1,6 +1,13 @@
 @import "_base";
 #collection-edit {
   .card {
+    .dependency {
+      &.content-state-updateavailable {
+        .version-info {
+          color: $colorSixOrange;
+        }
+      }
+    }
     dropdown-menu {
       display: none;
     }
@@ -24,10 +31,9 @@
       border: 1px solid $colorSixSomeGray;
       max-height: 150px;
     }
-    finder-results,
-    finder {
+    finder,
+    finder-results {
       button.execute {
-
         // TODO: Make a frigging color button style etc
         background-color: $colorSixGreen;
       }
