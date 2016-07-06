@@ -21,9 +21,7 @@ export class LoginBase {
   static localClientId = 'withsix-spa';
   static key = 'w6.refreshToken';
 
-  constructor(private http: HttpClient, private httpFetch: FetchClient, protected w6Url: W6Urls, private eventBus: EventAggregator, protected ls: LS) {
-    this.setHeaders();
-  }
+  constructor(private http: HttpClient, private httpFetch: FetchClient, protected w6Url: W6Urls, private eventBus: EventAggregator, protected ls: LS) {}
   static resetUnload() { window.onbeforeunload = undefined; }
   resetUnload() { LoginBase.resetUnload(); }
   refreshing: Promise<boolean>;
