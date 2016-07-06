@@ -57,9 +57,18 @@ export class GlobalErrorHandler {
 
   // TODO: https://github.com/aurelia/framework/issues/174
   // TODO: window.onerror (/ addEVentListenter('error') ... however what about ADsense and other unrelated errors?)
+  // TODO: Auto report to the remote exception logger service..
+  silence = [];
+  silenceAngular = ["Cannot read property 'toLowerCase' of undefined"];
+
   handleError(exception: Error, cause?: string) {
-    // TODO: Auto report to the exception logger service..
+    if (this.silence.some(x => x === exception.message)) return;
     Tools.Debug.error(`An unexpected error has occured: ${exception} (Cause: ${cause})\nPlease report the issue.`);
     return this.toastr.error(`An unexpected error has occured: ${exception} (Cause: ${cause})\nPlease report the issue.`, 'Unexpected error has occurred');
+  }
+
+  handleAngularError(exception: Error, cause?: string) {
+    if (this.silenceAngular.some(x => x === exception.message)) return;
+    return this.handleError(exception, cause);
   }
 }

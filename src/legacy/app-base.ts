@@ -78,7 +78,7 @@ class AppModule extends Tk.Module {
       .factory('aur.legacyMediator', () => Container.instance.get(LegacyMediator))
       .factory('aur.eventBus', () => Container.instance.get(EventAggregator))
       .factory('aur.client', () => Container.instance.get(Client))
-      .factory("$exceptionHandler", ['errorHandler', (eh: GlobalErrorHandler) => (exception, cause) => eh.handleError(exception, cause)])
+      .factory("$exceptionHandler", ['errorHandler', (eh: GlobalErrorHandler) => (exception, cause) => eh.handleAngularError(exception, cause)])
       .config(['redactorOptions', redactorOptions => angular.copy(globalRedactorOptions, redactorOptions)])
       .config([
         '$httpProvider', $httpProvider => {
