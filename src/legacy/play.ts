@@ -294,8 +294,7 @@ export class ContentModelController<TModel extends breeze.Entity> extends Conten
       graphExpands = changeGraph.join(",");
     }
 
-    var saveChanges = (entity?: breeze.Entity, ...entities: breeze.Entity[]): Promise<breeze.SaveResult> => {
-      var promise: Promise<breeze.SaveResult> = null;
+    var saveChanges = async (entity?: breeze.Entity, ...entities: breeze.Entity[]): Promise<breeze.SaveResult> => {
       if (entity != null) {
         var changedEntites: breeze.Entity[] = [];
 
@@ -306,13 +305,13 @@ export class ContentModelController<TModel extends breeze.Entity> extends Conten
             changedEntites.push(v);
         });
 
-        promise = <any>this.entityManager.saveChanges(changedEntites);
-        promise.catch(reason => {
+        try {
+          return await this.entityManager.saveChanges(changedEntites);
+        } catch (reason) {
           var reasons = (<string>(<any>breeze).saveErrorMessageService.getErrorMessage(reason)).replace(/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/gi, "").replace(/[ ]\(\)[ ][-][ ]/g, ": ");
-
           this.breezeQueryFailed({ message: 'Save failed, See Validation Errors Below:<br/><br/>' + reasons });
-          return (<breeze.SaveResult>{});
-        });
+          throw reason;
+        };
       } else {
 
         var changedEntites: breeze.Entity[] = [];
@@ -322,17 +321,16 @@ export class ContentModelController<TModel extends breeze.Entity> extends Conten
           if (!v.entityAspect.entityState.isUnchanged())
             changedEntites.push(v);
         });
-
-        promise = <any>this.entityManager.saveChanges(changedEntites);
-        promise.catch(reason => {
+        try {
+          return await this.entityManager.saveChanges(changedEntites);
+        } catch (reason) {
           var reasons = (<string>(<any>breeze).saveErrorMessageService.getErrorMessage(reason)).replace(/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/gi, "").replace(/[ ]\(\)[ ][-][ ]/g, ": ");
 
           this.breezeQueryFailed({ message: 'Save failed, See Validation Errors Below:<br/><br/>' + reasons });
-          return (<breeze.SaveResult>{});
-        });
+          throw reason;
+        }
       }
-      return promise;
-    };
+    }
 
     var hasChanges = () => {
       var graph = <breeze.Entity[]>(<any>this.entityManager).getEntityGraph(this.$scope.model, graphExpands);

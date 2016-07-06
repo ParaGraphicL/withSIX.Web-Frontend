@@ -132,7 +132,7 @@ export module MyApp {
       };
       $rootScope.startLoading = () => {
         $rootScope.status = 'loading';
-        if (!$rootScope.$$phase) $scope.$apply();
+        $scope.$evalAsync();
       };
 
       $rootScope.initialLoad = true;
