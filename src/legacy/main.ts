@@ -337,7 +337,6 @@ export module Main.Blog {
           .where("postId", breeze.FilterQueryOp.Equals, postId)
           .orderByDesc("created");
         return this.context.executeQuery(query)
-          .then((result) => result);
       }
     ];
   }
@@ -526,9 +525,7 @@ export module Main.Blog {
             message: newComment.message,
             replyToId: newComment.replyTo ? newComment.replyTo.id : undefined
           }
-        }, 'Create comment').then(x => {
-          newComment.message = "";
-        })
+        }, 'Create comment').then(x => this.applyIfNeeded(() => newComment.message = ""))
       };
       this.$scope.deleteComment = (comment) => this.requestAndProcessCommand(DeletePostCommentCommand, { model: comment }, 'Delete comment');
       this.$scope.saveComment = (comment) => this.requestAndProcessCommand(SavePostCommentCommand, { model: comment }, 'Save comment');
@@ -541,19 +538,16 @@ export module Main.Blog {
             .catch(this.breezeQueryFailed));
         }
 
-        this.$scope.likeComment = comment => {
-          return this.$scope.request(LikePostCommentCommand, { postId: this.$scope.model.id, id: comment.id })
-            .then(() => {
-              comment.likesCount += 1;
-              this.$scope.commentLikeStates[comment.id] = true;
-            });
-        };
-        this.$scope.unlikeComment = comment => {
-          return this.$scope.request(UnlikePostCommentCommand, { postId: this.$scope.model.id, id: comment.id }).then(() => {
+        this.$scope.likeComment = comment => this.$scope.request(LikePostCommentCommand, { postId: this.$scope.model.id, id: comment.id })
+          .then(() => this.applyIfNeeded(() => {
+            comment.likesCount += 1;
+            this.$scope.commentLikeStates[comment.id] = true;
+          }));
+        this.$scope.unlikeComment = comment =>  this.$scope.request(UnlikePostCommentCommand, { postId: this.$scope.model.id, id: comment.id })
+          .then(() => this.applyIfNeeded(() => {
             comment.likesCount -= 1;
             this.$scope.commentLikeStates[comment.id] = false;
-          });
-        };
+          }));
       }
 
       this.$timeout(() => this.$scope.request(GetPostCommentsQuery, { postId: this.$scope.model.id }));
@@ -561,15 +555,15 @@ export module Main.Blog {
 
     setupLikes() {
       this.$scope.like = () => this.$scope.request(LikePostCommand, { id: this.$scope.model.id })
-        .then(() => {
+        .then(() => this.applyIfNeeded(() => {
           this.$scope.model.likesCount += 1;
           this.$scope.likedPosts[this.$scope.model.id] = true;
-        });
+        }));
       this.$scope.unlike = () => this.$scope.request(UnlikePostCommand, { id: this.$scope.model.id })
-        .then(() => {
+        .then(() => this.applyIfNeeded(() => {
           this.$scope.model.likesCount -= 1;
           delete this.$scope.likedPosts[this.$scope.model.id];
-        });
+        }));
 
       // TODO: Move to a BlogsController that is parent of current Blogs+BlogController
       this.$scope.likedPosts = {};
@@ -601,7 +595,7 @@ export module Main.Changelog {
         } else if (!$scope.changelogOldShown) {
           $scope.changelogOldShown = true;
           await $scope.request(GetChangelogOldQuery)
-            .then(result => $scope.changelogOld = result);
+            .then(result => this.applyIfNeeded(() => $scope.changelogOld = result));
         }
       };
     }
@@ -788,11 +782,8 @@ export module Main.Premium {
       var selectedProduct = this.$scope.model.selectedProduct;
       var recurring = this.$scope.model.autoRenew && selectedProduct.unitAmount != null;
       return this.$scope.request<{ data }>(CreatePremiumOrderCommand, { data: { articleId: selectedProduct.articleId, isRecurring: recurring, termsAccepted: this.$scope.model.termsAccepted, ref: this.$scope.model.ref, overwrite: this.$scope.model.overwrite } })
-        .then((result) => {
-          this.forwardService.forwardNaked(this.$scope.url.urlSsl + "/orders/" + result.data + "/checkout");
-        }).catch(reason => {
-          this.httpFailed(reason);
-        });
+        .then((result) => this.forwardService.forwardNaked(this.$scope.url.urlSsl + "/orders/" + result.data + "/checkout"))
+        .catch(reason => this.httpFailed(reason));
     };
     payMethod: PayMethodT;
 

@@ -536,10 +536,10 @@ export module Connect.Me {
 
       $scope.today = new Date();
       $scope.save = (form) => this.requestAndProcessResponse(SaveMeSettingsPersonalCommand, { data: $scope.model })
-        .then((data) => {
+        .then((data) => this.applyIfNeeded(() => {
           form.$setPristine();
-          $scope.$emit('myNameChanged', { firstName: $scope.model.firstName, lastName: $scope.model.lastName });
-        });
+          $scope.$emit('myNameChanged', { firstName: $scope.model.firstName, lastName: $scope.model.lastName })
+        }));
     }
   }
 
@@ -560,7 +560,7 @@ export module Connect.Me {
         .then((result) => refreshService.refreshType('me.settings.premium'));
 
       $scope.save = (form) => this.requestAndProcessResponse(SavePremiumCommand, { data: { hidePremium: model.hidePremium } })
-        .then((result) => form.$setPristine());
+        .then((result) => this.applyIfNeeded(() => form.$setPristine()));
     }
   }
 
@@ -592,7 +592,7 @@ export module Connect.Me {
 
       // TODO: Second controller
       $scope.saveOther = form => this.requestAndProcessResponse(SaveMeSettingsCredentialsOtherCommand, { data: $scope.modelOther })
-        .then((result) => form.$setPristine());
+        .then((result) => this.applyIfNeeded(() => form.$setPristine()));
 
       $scope.connectExternal = system =>
         this.forward($scope.url.connect + "/login/" + system + "?connect=true&fingerprint=" + new Fingerprint().get() + ($scope.model.rememberMe ? "&rememberme=true" : ""), $window, $location);
@@ -624,24 +624,22 @@ export module Connect.Me {
 
       $scope.updateFileInfo = (files) => $scope.files = files;
 
-      $scope.uploadAvatar = (form) => {
-        this.requestAndProcessResponse(SaveMeSettingsAvatarCommand, { file: $scope.files[0] })
-          .then((data) => this.avatarUploaded(data, form));
-      };
+      $scope.uploadAvatar = (form) => this.requestAndProcessResponse(SaveMeSettingsAvatarCommand, { file: $scope.files[0] })
+        .then((data) => this.avatarUploaded(data, form));
     }
 
-    private avatarCleared = (data) => {
+    private avatarCleared = (data) => this.applyIfNeeded(() => {
       this.$scope.model.hasAvatar = false;
       this.avatarChanged();
-    };
-    private avatarUploaded = (data, form) => {
+    });
+    private avatarUploaded = (data, form) => this.applyIfNeeded(() => {
       (<HTMLFormElement>document.forms[form.$name]).reset();
       this.$scope.files = [];
       this.$scope.model.hasAvatar = true;
       this.$scope.model.avatarURL = this.$scope.url.contentCdn + "/account/" + this.$scope.w6.userInfo.id + "/profile/avatar/";
       this.$scope.model.avatarUpdatedAt = new Date().toISOString();
       this.avatarChanged();
-    };
+    });
 
     private getUserModel() {
       var info = angular.copy(this.$scope.model);
@@ -694,9 +692,9 @@ export module Connect.Me {
       super($scope, logger, $q, model);
 
       $scope.accept = (friendRequest) => this.requestAndProcessCommand(AcceptFriendRequestCommand, { friendId: friendRequest.sender.id })
-        .then((data) => Tools.removeEl(model.friendshipRequests, friendRequest));
+        .then((data) => this.applyIfNeeded(() => Tools.removeEl(model.friendshipRequests, friendRequest)));
       $scope.deny = (friendRequest) => this.requestAndProcessCommand(DenyFriendRequestCommand, { friendId: friendRequest.sender.id })
-        .then((data) => Tools.removeEl(model.friendshipRequests, friendRequest));
+        .then((data) => this.applyIfNeeded(() => Tools.removeEl(model.friendshipRequests, friendRequest)));
     }
   }
 
@@ -719,11 +717,12 @@ export module Connect.Me {
     }
 
     sendMessage = form => this.requestAndProcessCommand(CreatePrivateMessageCommand, { userSlug: this.$scope.model.partner.slug, data: this.$scope.inputModel })
-      .then((data) => {
-        this.$scope.model.messages.push({ message: this.$scope.inputModel.body, receivedAt: new Date(), isAuthor: true });
-        this.$scope.inputModel.body = "";
-        form.$setPristine();
-      });
+      .then((data) =>
+        this.applyIfNeeded(() => {
+          this.$scope.model.messages.push({ message: this.$scope.inputModel.body, receivedAt: new Date(), isAuthor: true });
+          this.$scope.inputModel.body = "";
+          form.$setPristine();
+        }));
   }
 
   class MeBlogArchiveController extends BaseQueryController<any> {
@@ -741,10 +740,10 @@ export module Connect.Me {
       $scope.updateDate = () => $scope.model.created = new Date();
       $scope.cancel = () => back();
       $scope.save = form => this.requestAndProcessCommand(CreateBlogPostCommand, { data: $scope.model })
-        .then(() => {
+        .then(() => this.applyIfNeeded(() => {
           form.$setPristine();
           back();
-        });
+        }));
     }
   }
 
@@ -765,10 +764,10 @@ export module Connect.Me {
       var back = () => $location.url($routeSegment.getSegmentUrl("me.blog"));
 
       $scope.save = form => this.requestAndProcessCommand(UpdateBlogPostCommand, { id: model.id, data: model })
-        .then(() => {
+        .then(() => this.applyIfNeeded(() => {
           form.$setPristine();
           back();
-        });
+        }));
 
       $scope.updateDate = () => $scope.model.created = new Date();
 
@@ -851,7 +850,8 @@ export module Connect.Pages {
       super($scope, logger, $q);
 
       $scope.model = {};
-      $scope.submit = () => this.requestAndProcessCommand(Components.Dialogs.ForgotPasswordCommand, { data: $scope.model }, "Request sent!").then(result => $scope.success = true);
+      $scope.submit = () => this.requestAndProcessCommand(Components.Dialogs.ForgotPasswordCommand, { data: $scope.model }, "Request sent!")
+        .then(result => this.applyIfNeeded(() => $scope.success = true));
     }
   }
 
@@ -865,7 +865,8 @@ export module Connect.Pages {
       super($scope, logger, $q);
 
       $scope.model = {};
-      $scope.submit = () => this.requestAndProcessCommand(Components.Dialogs.ForgotUsernameCommand, { data: $scope.model }, "Request sent!").then(result => $scope.success = true);
+      $scope.submit = () => this.requestAndProcessCommand(Components.Dialogs.ForgotUsernameCommand, { data: $scope.model }, "Request sent!")
+        .then(result => this.applyIfNeeded(() => $scope.success = true));
     }
   }
 
@@ -887,7 +888,7 @@ export module Connect.Pages {
       $scope.tokenKnown = true;
 
       $scope.submit = () => this.requestAndProcessCommand(ResetPasswordCommand, { data: $scope.model })
-        .then(result => $scope.success = true);
+        .then(result => this.applyIfNeeded(() => $scope.success = true));
     }
   }
 
@@ -1006,9 +1007,9 @@ export module Connect.Profile {
       $scope.menuItems = this.getMenuItems(menuItems, "profile");
       // TODO: Switch menuitems based on isFriend dynamically changing
       $scope.addFriend = () => this.requestAndProcessCommand(AddAsFriendCommand, { userSlug: model.slug })
-        .then((data) => model.isFriend = true);
+        .then((data) => this.applyIfNeeded(() => model.isFriend = true));
       $scope.removeFriend = () => this.requestAndProcessCommand(RemoveAsFriendCommand, { userSlug: model.slug })
-        .then((data) => model.isFriend = false);
+        .then((data) => this.applyIfNeeded(() => model.isFriend = false));
     }
   }
 
@@ -1025,11 +1026,11 @@ export module Connect.Profile {
       $scope.inputModel = { message: "" };
       $scope.sendMessage = form =>
         this.requestAndProcessCommand(Me.CreatePrivateMessageCommand, { userSlug: this.$scope.model.partner.slug, data: this.$scope.inputModel })
-          .then((data) => {
+          .then((data) => this.applyIfNeeded(() => {
             this.$scope.model.messages.push({ message: this.$scope.inputModel.body, receivedAt: new Date(), isAuthor: true });
             this.$scope.inputModel.body = "";
             form.$setPristine();
-          });
+          }));
     }
   }
 
