@@ -31,8 +31,10 @@ bootstrap(async (aurelia: Aurelia) => {
   Tools.Debug.log("AURELIA: configuring aurelia");
 
   require('breeze-client-labs/breeze.getEntityGraph');
+  require('breeze-client-labs/breeze.saveErrorExtensions');
   // workaround
-  (<any>breeze.EntityManager.prototype).getEntityGraph = (<any>window).breeze.EntityManager.prototype.getEntityGraph
+  (<any>breeze.EntityManager.prototype).getEntityGraph = (<any>window).breeze.EntityManager.prototype.getEntityGraph;
+  (<any>breeze).saveErrorMessageService = (<any>window).breeze.saveErrorMessageService;
 
   breeze.NamingConvention.camelCase.setAsDefault();
   breeze.DataType.parseDateFromServer = function(source) {
