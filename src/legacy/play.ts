@@ -973,34 +973,38 @@ export module Play.Collections {
     unsubscribe() {
       return this.requestAndProcessResponse(UnsubscribeCollectionCommand, { model: this.$scope.model })
         .then(r => {
-          delete this.$scope.subscribedCollections[this.$scope.model.id];
-          this.$scope.model.subscribersCount -= 1;
-          if (window.six_client.unsubscribedFromCollection)
-            window.six_client.unsubscribedFromCollection(this.$scope.model.id);
+          this.$scope.$apply(() => {
+            delete this.$scope.subscribedCollections[this.$scope.model.id];
+            this.$scope.model.subscribersCount -= 1;
+            if (window.six_client.unsubscribedFromCollection)
+              window.six_client.unsubscribedFromCollection(this.$scope.model.id);
+          });
         });
     }
 
     subscribe() {
       return this.requestAndProcessResponse(SubscribeCollectionCommand, { model: this.$scope.model })
         .then(r => {
-          this.$scope.subscribedCollections[this.$scope.model.id] = true;
-          this.$scope.model.subscribersCount += 1;
-          if (window.six_client.subscribedToCollection)
-            window.six_client.subscribedToCollection(this.$scope.model.id)
+          this.$scope.$apply(() => {
+            this.$scope.subscribedCollections[this.$scope.model.id] = true;
+            this.$scope.model.subscribersCount += 1;
+            if (window.six_client.subscribedToCollection)
+              window.six_client.subscribedToCollection(this.$scope.model.id)
 
-          if (this.w6.client && this.w6.client.clientFound) {
-            this.w6.client.openPwsUri("pws://?c=" + this.$scope.toShortId(this.$scope.model.id));
-            return;
-          }
-          if (this.localStorageService.get('clientInstalled') == null
-            && !this.$scope.w6.isClient
-            && confirm("Before downloading this content, make sure you have \"Play\" our withSIX client installed. To download the client software now, click ok. To proceed with the download, click cancel.")) {
-            this.forwardService.forward(this.w6.url.main + "/download" + this.w6.enableBasket ? '' : '?basket=0');
-            //localStorageService.set('clientInstalled', true);
-          } else {
-            this.localStorageService.set('clientInstalled', true);
-            //Downloads.startDownload(url);
-          }
+            if (this.w6.client && this.w6.client.clientFound) {
+              this.w6.client.openPwsUri("pws://?c=" + this.$scope.toShortId(this.$scope.model.id));
+              return;
+            }
+            if (this.localStorageService.get('clientInstalled') == null
+              && !this.$scope.w6.isClient
+              && confirm("Before downloading this content, make sure you have \"Play\" our withSIX client installed. To download the client software now, click ok. To proceed with the download, click cancel.")) {
+              this.forwardService.forward(this.w6.url.main + "/download" + this.w6.enableBasket ? '' : '?basket=0');
+              //localStorageService.set('clientInstalled', true);
+            } else {
+              this.localStorageService.set('clientInstalled', true);
+              //Downloads.startDownload(url);
+            }
+          });
         });
     }
 
@@ -2028,9 +2032,11 @@ export module Play.Games {
       this.$scope.model.downloadLinkAvailable = false;
       return this.$scope.request<boolean>(GetCheckLinkQuery, { linkToCheck: uri })
         .then((result) => {
-          this.$scope.checkingDownloadLink = false;
-          Tools.Debug.log(result);
-          this.$scope.model.downloadLinkAvailable = result;
+          this.$scope.$apply(() => {
+            this.$scope.checkingDownloadLink = false;
+            Tools.Debug.log(result);
+            this.$scope.model.downloadLinkAvailable = result;
+          });
         })
         .catch(this.httpFailed);
     }
@@ -2047,14 +2053,16 @@ export module Play.Games {
     getLatestInfo() {
       let model = this.$scope.model;
       return this.$scope.request<IModVersionInfo>(Mods.GetLatestInfo, { data: { downloadUri: model.mod.download } }).then(r => {
-        model.mod.version = r.version;
-        model.mod.branch = r.branch;
-        if (!model.mod.name) model.mod.name = r.name;
-        if (!model.mod.author) model.mod.author = r.author;
-        if (!model.mod.homepage) model.mod.homepage = r.url;
-        if (!model.mod.description) model.mod.description = r.description;
-        if (!model.mod.homepage) model.mod.download;
-        model.mod.tags = r.tags;
+        this.$scope.$apply(() => {
+          model.mod.version = r.version;
+          model.mod.branch = r.branch;
+          if (!model.mod.name) model.mod.name = r.name;
+          if (!model.mod.author) model.mod.author = r.author;
+          if (!model.mod.homepage) model.mod.homepage = r.url;
+          if (!model.mod.description) model.mod.description = r.description;
+          if (!model.mod.homepage) model.mod.download;
+          model.mod.tags = r.tags;
+        });
       });
     }
 
@@ -4828,6 +4836,8 @@ export module Play.Mods {
 
   export interface IModCreditsScope extends IEditableModScope {
     newUser: IBreezeUser;
+
+    addGroup:
 
     addGroup: (name: string) => void;
     addUserToGroup: (group: IBreezeModUserGroup, $hide: any) => void;
