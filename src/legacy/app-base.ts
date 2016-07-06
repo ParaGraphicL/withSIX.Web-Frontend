@@ -94,6 +94,30 @@ class AppModule extends Tk.Module {
             .setPrefix('withSIX'); // production vs staging etc?
         }
       ])
+      .config(['$provide', function($provide) {
+        $provide.decorator('ngClickDirective', ['$delegate', '$parse', 'errorHandler', function($delegate, $parse, errorHandler: GlobalErrorHandler) {
+          $delegate[0].compile = function($element, attr) {
+            var fn = $parse(attr.ngClick, null, true);
+
+            return function(scope, element) {
+              element.on('click', function(event) {
+                if (element[0].disabled) return;
+                var result, promise: Promise<any>, d;
+                result = fn(scope, { $event: event });
+                if (result != null && typeof result.then === 'function') promise = result;
+                else promise = Promise.resolve();
+                element[0].disabled = true;
+                function enable() { element[0].disabled = false; }
+                promise.then(enable, x => {
+                  enable();
+                  if (!x.__wsprocessed) errorHandler.handleAngularError(x);
+                });
+              });
+            };
+          };
+          return $delegate;
+        }]);
+      }])
       .run([
         'editableOptions', editableOptions => {
           editableOptions.theme = 'bs3'; // bootstrap3 theme. Can be also 'bs2', 'default'

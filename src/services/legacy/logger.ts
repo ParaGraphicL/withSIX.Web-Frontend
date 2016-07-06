@@ -63,7 +63,7 @@ export class GlobalErrorHandler {
   silence = [];
   silenceAngular = ["Cannot read property 'toLowerCase' of undefined"];
 
-  handleError(exception: Error, cause?: string) {
+  handleError(exception: Error, cause = 'Unknown') {
     if (this.silence.some(x => x === exception.message)) return;
     Tools.Debug.error(`An unexpected error has occured: ${exception} (Cause: ${cause})\nPlease report the issue.`);
     return this.toastr.error(`An unexpected error has occured: ${exception} (Cause: ${cause})\nPlease report the issue.`, 'Unexpected error has occurred');
