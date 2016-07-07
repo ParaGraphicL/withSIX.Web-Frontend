@@ -73,6 +73,12 @@ export class UiContext {
     Tools.Debug.log("$$$ navigating", url);
     return this.router.navigate(url);
   }
+  public notifyAngularInternal = () => {
+    Tools.Debug.log("$$$ Notifying Angular!");
+    let scope = angular.element(document).scope()
+    if (!scope) return;
+    scope.$apply()
+  }
 }
 
 interface Confirmation { text: string, hint?: string, icon?: string, isChecked?: boolean }
