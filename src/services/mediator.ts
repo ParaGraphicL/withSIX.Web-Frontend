@@ -10,6 +10,7 @@ import {EventAggregator} from 'aurelia-event-aggregator';
 import {Validation, ValidationResult} from 'aurelia-validation';
 import {Mediator, IMediator, IRequest, IRequestHandler} from 'aurelia-mediator';
 import {UiContext} from './uicontext';
+import {GlobalErrorHandler} from './legacy/logger';
 import {Tools} from './tools';
 import {W6} from './withSIX';
 import {Container} from 'aurelia-dependency-injection';
@@ -59,9 +60,9 @@ export class ClientMissingHandler {
 }
 
 // App specific starts
-@inject(Mediator, Toastr, ClientMissingHandler, W6)
+@inject(Mediator, Toastr, ClientMissingHandler, W6, GlobalErrorHandler)
 export class ErrorLoggingMediatorDecorator implements IMediator {
-  constructor(private mediator: IMediator, private toastr: Toastr, private clientMissingHandler: ClientMissingHandler, private w6: W6) { }
+  constructor(private mediator: IMediator, private toastr: Toastr, private clientMissingHandler: ClientMissingHandler, private w6: W6, private eh: GlobalErrorHandler) { }
 
   request<T>(request: IRequest<T>): Promise<T> {
     let action = (<any>request.constructor).action;
@@ -78,6 +79,7 @@ export class ErrorLoggingMediatorDecorator implements IMediator {
         else if (fail == 'Error: Error during negotiation request.') this.handleClientMissing(fail, action);
         else if (fail == 'Error: The user cancelled the operation') {
         } else this.handleGeneralError(fail, action);
+        this.eh.handleUseCaseError(fail);
         return Promise.reject<T>(fail);
       });
   }

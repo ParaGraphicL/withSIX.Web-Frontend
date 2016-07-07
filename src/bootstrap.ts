@@ -16,7 +16,7 @@ import {Toastr, UiContext, Mediator, ErrorLoggingMediatorDecorator, InjectingMed
   CollectionDataService, ModDataService, MissionDataService, PromiseCache,
   EntityExtends, IUserInfo, W6Context, ClientMissingHandler,
   W6Urls, W6, Tools} from './services/lib';
-import {ToastLogger} from './services/legacy/logger';
+import {ToastLogger, GlobalErrorHandler, LogAppender} from './services/legacy/logger';
 import {AbortError, LoginBase} from './services/auth-base';
 import {Api} from './services/api';
 
@@ -85,9 +85,7 @@ bootstrap(async (aurelia: Aurelia) => {
     aurelia.use
       .standardConfiguration()
       .plugin('aurelia-auth', baseConfig => baseConfig.configure(authConfig))
-      .plugin('aurelia-fetch-client', config => {
-        Tools.Debug.log("$$$ fetch!!", config)
-      })
+      .plugin('aurelia-fetch-client')
       .plugin('aurelia-animator-css')
       //.plugin('aurelia-animator-velocity')
       .plugin('aurelia-validation')
@@ -108,9 +106,7 @@ bootstrap(async (aurelia: Aurelia) => {
       aurelia.use.developmentLogging();
       //LogManager.setLevel(Tools.getEnvironment() != Tools.Environment.Production ? LogManager.logLevel.debug : LogManager.logLevel.warn);
     }
-
-    if (useRouter)
-      aurelia.use.router();
+    if (useRouter) aurelia.use.router();
   }
 
   function createW6Urls(site: string) {
@@ -172,7 +168,10 @@ bootstrap(async (aurelia: Aurelia) => {
     window.w6Cheat = { api, navigate: (url: string) => w6.navigate(url) }
     Container.instance.registerSingleton(W6, () => w6);
     (<any>client).connection.promise(); // kick off the connection early
-
+    LogManager.addAppender(Container.instance.get(LogAppender))
+    const eh: GlobalErrorHandler = Container.instance.get(GlobalErrorHandler);
+    let f: any = (e) => { eh.handleWindowError(e.message, e.source, e.line, e.column, e.error); }
+    window.addEventListener('error', f);
     await bootAngular(w6);
   }
 
@@ -188,17 +187,10 @@ bootstrap(async (aurelia: Aurelia) => {
 export class ContainerSetup {
   constructor(private instance: Container) {
     if (instance == null) throw "instance null";
-    // this.instance.registerSingleton(HttpClient, () => {
-    //   var client = new HttpClient();
-    //   client.configure(x => {
-    //     //x.withInterceptor(new RequestInterceptor());
-    //   });
-    //   return client;
-    // });
     this.instance.registerTransient(UiContext);
 
     this.instance.registerSingleton(Mediator,
-      () => new ErrorLoggingMediatorDecorator(new InjectingMediatorDecorator(new Mediator(), this.instance.get(W6)), this.instance.get(Toastr), this.instance.get(ClientMissingHandler), this.instance.get(W6)));
+      () => new ErrorLoggingMediatorDecorator(new InjectingMediatorDecorator(new Mediator(), this.instance.get(W6)), this.instance.get(Toastr), this.instance.get(ClientMissingHandler), this.instance.get(W6), this.instance.get(GlobalErrorHandler)));
   }
 }
 
