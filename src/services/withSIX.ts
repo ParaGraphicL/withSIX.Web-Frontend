@@ -450,7 +450,6 @@ export class W6 {
   public isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
   public collection2: ICollectionData;
   aureliaReady: boolean;
-  navigate: (url: string) => void; // here for the legacy client
   libraryParent;
   collection;
   redirected: boolean;
@@ -701,12 +700,13 @@ export class W6 {
 
   client: W6Client;
   adsenseId: string;
-  get openLoginDialog() { return this.api.openLoginDialog }
-  set openLoginDialog(value) { this.api.openLoginDialog = value }
+  get openLoginDialog() { return this.api.login }
+  set openLoginDialog(value) { this.api.login = value }
   get logout() { return this.api.logout }
   set logout(value) { this.api.logout = value }
-  get openLoginDialog() { return this.api.openopenRegisterDialogLoginDialog }
-  set openLoginDialog(value) { this.api.openRegisterDialog = value }
+  openRegisterDialog: (evt?) => void;
+  get navigate() { return this.api.navigate }
+  set navigate(value) { this.api.navigate = value }
 };
 
 export interface ICollectionData {
