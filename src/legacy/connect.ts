@@ -516,7 +516,7 @@ export module Connect.Me {
         { header: "Credentials", segment: "credentials", icon: "fa fa-key" }
       ];
 
-      menuItems.push({ header: "Premium", segment: "premium", mainSegment: $scope.w6.userInfo.isPremium ? null : "globalMenu", icon: "icon withSIX-icon-Badge-Sponsor", cls: "premium" });
+      menuItems.push({ header: "Premium", segment: "premium", url: $scope.w6.userInfo.isPremium ? '/me/settings/premium' : '/gopremium', icon: "icon withSIX-icon-Badge-Sponsor", cls: "premium" });
 
       $scope.menuItems = this.getMenuItems(menuItems, "me.settings", true);
     }
