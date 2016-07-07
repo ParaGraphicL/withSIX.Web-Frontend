@@ -130,12 +130,12 @@ export class App extends ViewModel {
         }
       }
       */
-      d(this.eventBus.subscribe('router:navigation:error', x => {
+      d(this.eventBus.subscribe('router:navigation:error', async (x) => {
         if (!x.result || !x.result.output) return this.router.navigate("/errors/500?resource=" + window.location.href);
         let err: Error = x.result.output;
         if (err instanceof Tools.NotFoundException) return this.router.navigate(`/errors/404?resource=` + window.location.href);
-        //if (err instanceof Tools.RequiresLogin) { this.login.login(); return; }
         if (err instanceof Tools.Forbidden) return this.router.navigate(`/errors/403?resource=` + window.location.href);
+        if (err instanceof Tools.RequiresLogin || err instanceof Tools.LoginNoLongerValid) return await this.login.login();
         return this.router.navigate(`/errors/500?resource=` + window.location.href)
       }))
 
