@@ -180,7 +180,11 @@ class AppModule extends Tk.Module {
           $rootScope.toShortId = (id) => Tools.toShortId(id);
           $rootScope.sluggify = (str) => Tools.sluggify(str);
           $rootScope.sluggifyEntityName = (str) => Tools.sluggifyEntityName(str);
-          $rootScope.dispatch = <T>(cq: string, data?) => legacyMediator.legacyRequest<T>(cq, data);
+          $rootScope.dispatch = async <T>(cq: string, data?) => {
+            try {
+              return await legacyMediator.legacyRequest<T>(cq, data);
+            } finally { $rootScope.$evalAsync() }
+          }
           $rootScope.request = <T>(cq, data?) => $rootScope.dispatch<T>(cq.$name, data);
           $rootScope.isInvalid = (field, ctrl) => {
             if (!field.$invalid) return false;

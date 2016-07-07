@@ -300,7 +300,7 @@ export class ContentModelController<TModel extends breeze.Entity> extends Conten
         entities.push(entity);
         entities.forEach((v, i, arr) => { if (!v.entityAspect.entityState.isUnchanged()) changedEntites.push(v) });
         try {
-          await this.entityManager.saveChanges(changedEntites);
+          await this.saveChanges(changedEntites);
           return true;
         } catch (reason) {
           var reasons = (<string>(<any>breeze).saveErrorMessageService.getErrorMessage(reason)).replace(/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/gi, "").replace(/[ ]\(\)[ ][-][ ]/g, ": ");
@@ -312,7 +312,7 @@ export class ContentModelController<TModel extends breeze.Entity> extends Conten
         var entities: breeze.Entity[] = (<any>this.entityManager).getEntityGraph(this.$scope.model, graphExpands);
         entities.forEach((v, i, arr) => { if (!v.entityAspect.entityState.isUnchanged()) changedEntites.push(v) });
         try {
-          await this.entityManager.saveChanges(changedEntites);
+          await this.saveChanges(changedEntites);
           return true;
         } catch (reason) {
           var reasons = (<string>(<any>breeze).saveErrorMessageService.getErrorMessage(reason)).replace(/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/gi, "").replace(/[ ]\(\)[ ][-][ ]/g, ": ");
@@ -362,6 +362,14 @@ export class ContentModelController<TModel extends breeze.Entity> extends Conten
   public editConfigDefaults: IEditConfiguration<TModel> = null;
 
   public setupContentHeader(model: TModel): IContentHeader { throw new Error("setupContentHeader not implemented!"); }
+
+  async saveChanges(changedEntities?) {
+    try {
+      return await this.entityManager.saveChanges(changedEntities);
+    } finally {
+      this.applyIfNeeded();
+    }
+  }
 
   entityManager: breeze.EntityManager;
 }
@@ -1136,7 +1144,7 @@ export module Play.Collections {
       };
 
       try {
-        let result = await this.entityManager.saveChanges([uploadRequest]);
+        let result = await this.saveChanges([uploadRequest]);
         Tools.Debug.log(result, uploadRequest, $scope.model.fileTransferPolicies);
         await this.uploadLogo(file, uploadRequest);
       } catch (reason) {
@@ -1174,7 +1182,7 @@ export module Play.Collections {
 
       this.tempCollectionImagePath = file;
       try {
-        let result = await this.entityManager.saveChanges([uploadRequest]);
+        let result = await this.saveChanges([uploadRequest]);
         Tools.Debug.log(result, uploadRequest, this.$scope.model.fileTransferPolicies);
         this.uploadRemoteLogo(file, uploadRequest);
       } catch (reason) {
@@ -1183,6 +1191,14 @@ export module Play.Collections {
         this.cancelImageUpload();
       } finally {
         this.applyIfNeeded(_ => this.$scope.uploadingCollectionImage = false);
+      }
+    }
+
+    async saveChanges(changedEntities?) {
+      try {
+        return await this.entityManager.saveChanges(changedEntities);
+      } finally {
+        this.applyIfNeeded();
       }
     }
 
@@ -4360,7 +4376,7 @@ export module Play.Mods {
       };
 
       try {
-        let result = await this.entityManager.saveChanges([uploadRequest])
+        let result = await this.saveChanges([uploadRequest])
         Tools.Debug.log(result, uploadRequest, this.$scope.model.fileTransferPolicies);
         await this.uploadLogo(file, uploadRequest);
       } catch (reason) {
@@ -4369,6 +4385,14 @@ export module Play.Mods {
         this.cancelImageUpload();
       } finally {
         this.applyIfNeeded(_ => this.$scope.uploadingModImage = false)
+      }
+    }
+
+    async saveChanges(changedEntities?) {
+      try {
+        return await this.entityManager.saveChanges(changedEntities);
+      } finally {
+        this.applyIfNeeded();
       }
     }
 
@@ -4399,7 +4423,7 @@ export module Play.Mods {
 
       this.tempModImagePath = file;
       try {
-        let result = await this.entityManager.saveChanges([uploadRequest]);
+        let result = await this.saveChanges([uploadRequest]);
         Tools.Debug.log(result, uploadRequest, $scope.model.fileTransferPolicies);
         this.uploadRemoteLogo(file, uploadRequest);
       } catch (reason) {
