@@ -39,12 +39,28 @@ export class GetStream extends Query<IStream> {
   constructor(public gameSlug: string, public streamType = 0) { super() }
 }
 
+enum ContentTypes {
+  Default = 0,
+
+  Mod = 1001,
+  Mission,
+  Collection
+}
+
 @handlerFor(GetStream)
 export class GetStreamHandler extends DbQuery<GetStream, IStream> {
   async handle(request: GetStream) {
     let r = await this.context.getCustom<{ contentItems: any[] }>("games/" + request.gameSlug + "/stream?streamType=" + request.streamType);
     console.log("$$$", r)
-    r.contentItems.forEach(x => x.type = 'mod');
+    r.contentItems.forEach(x => x.type = this.getType(x));
     return r;
+  }
+
+  getType(i) {
+    switch (i.contentType) {
+      case ContentTypes.Mission: return 'mission';
+      case ContentTypes.Collection: return 'collection';
+      default: return 'mod';
+    }
   }
 }
