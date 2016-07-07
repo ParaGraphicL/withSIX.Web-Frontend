@@ -67,6 +67,7 @@
         "./src/features/pages/legal.ts",
         "./src/features/pages/premium.ts",
         "./src/features/pages/static.ts",
+        "./src/features/pages/thankyou.ts",
         "./src/features/pages/update.ts",
         "./src/features/profile/content/base.ts",
         "./src/features/profile/content/collection-in-content.ts",
