@@ -4,6 +4,7 @@ import {ViewModel} from '../services/viewmodel';
 export class CardView<T> extends ViewModel {
   @bindable cardColumns = [2, 3, 3, 4]   // sm, md, lg, xl
   cardContainerCls = "";
+  @bindable noClearfix = false;
   @bindable cardCls: string = "";
   @bindable view: string;
   @bindable viewPath: string;
@@ -26,7 +27,7 @@ export class CardView<T> extends ViewModel {
   bind(context) {
     this.$parent = context;
     this.cardContainerCls = `col-sm-${12 / this.cardColumns[0]} col-md-${12 / this.cardColumns[1]} col-lg-${12 / this.cardColumns[2]} col-xl-${12 / this.cardColumns[3]}`;
-    this.handleClearFix = this.cardColumns.asEnumerable().any(x => x > 1);
+    this.handleClearFix = !this.noClearfix && this.cardColumns.asEnumerable().any(x => x > 1);
   }
 
   calculateIndex(i: number) {
