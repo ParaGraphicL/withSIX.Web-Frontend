@@ -58,8 +58,8 @@ export class GetStreamHandler extends DbQuery<GetStream, IStream> {
 
   getType(i) {
     switch (i.contentType) {
-      case ContentTypes.Mission: return 'mission';
-      case ContentTypes.Collection: return 'collection';
+      case ContentTypes[ContentTypes.Mission]: return 'mission';
+      case ContentTypes[ContentTypes.Collection]: return 'collection';
       default: return 'mod';
     }
   }
