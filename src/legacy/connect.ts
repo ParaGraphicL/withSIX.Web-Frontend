@@ -894,7 +894,7 @@ export module Connect.Pages {
       super($scope, logger, $q);
 
       $scope.model = { fingerPrint: new Fingerprint().get() };
-      $scope.register = () => this.requestAndProcessResponse(Components.Dialogs.RegisterCommand, { data: $scope.model });
+      $scope.register = () => this.requestAndProcessResponse(Components.Dialogs.RegisterCommand, { data: $scope.model }).then(x => this.$scope.w6.navigate('/thanks'));
       $scope.openForgotPasswordDialog = () => $scope.request(Components.Dialogs.OpenForgotPasswordDialogQuery, { email: $scope.model.email });
       //$scope.openLoginDialog = () => $scope.request(Components.Dialogs.OpenLoginDialogQuery);
     }

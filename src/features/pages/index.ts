@@ -20,6 +20,7 @@ export class PagesModule {
       { route: `${routeMount}blog`, name: 'blog', moduleId: `${mount}blank`, nav: true, title: 'Our Blog' },
       { route: `${routeMount}community`, name: 'community', redirect: "https://community.withsix.com", nav: true, title: 'Community' },
       { route: `${routeMount}update`, name: 'update', moduleId: `${mount}update`, nav: false, title: 'Update' },
+      { route: `${routeMount}thanks`, name: 'thanks', moduleId: `${mount}thankyou`, nav: false, title: 'Thanks for registering!' },
       { route: 'errors/404', name: '404', moduleId: 'errors/404', title: '404 not found' },
       { route: 'errors/403', name: '403', moduleId: 'errors/403', title: 'Forbidden' },
       { route: 'errors/500', name: '500', moduleId: 'errors/500', title: 'Internal server error' }
