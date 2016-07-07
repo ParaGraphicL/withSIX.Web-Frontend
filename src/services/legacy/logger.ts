@@ -60,6 +60,15 @@ LE.init(Tools.getEnvironment() == Tools.Environment.Production ? '3a2f5219-696a-
 // TODO: https://github.com/aurelia/framework/issues/174
 // https://www.npmjs.com/package/aurelia-rollbar
 
+// TODO: Implement sane UseCase (Command/Query) error handling process:
+// - Initiator handlers should handle expected errors
+//  - Commands (clicks, etc)
+//  - Queries (routing, loading, refreshing etc)
+// When the errors are not handled by iniator handlers, the initiator (One for commands, and e.g one for Router Queries) should handle the error. General recovery options may be available, like render 401, 403, 404 content.
+// Eventually, a global error handler will take over. Global recovery options may be available
+
+// So mediator decorators and deeper should only handle retryable errors
+
 @inject(ToastLogger, W6)
 export class GlobalErrorHandler {
   private logSilentErrors = true;

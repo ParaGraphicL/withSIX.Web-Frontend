@@ -44,12 +44,7 @@ export class ViewModel extends Base {
     else this.notifyAngularInternal();
   }
 
-  protected notifyAngularInternal = () => {
-    Tools.Debug.log("$$$ Notifying Angular!");
-    let scope = angular.element(document).scope()
-    if (!scope) return;
-    scope.$apply()
-  }
+  protected notifyAngularInternal = this.ui.notifyAngularInternal;
 
   handleFooterIf(sw: boolean) {
     if (this.features.uiVirtualization)

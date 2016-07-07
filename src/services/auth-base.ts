@@ -189,7 +189,8 @@ export class LoginBase {
   static redirect(url) {
     Tools.Debug.log("$$$ [HTTP] redirecting", url);
     this.resetUnload();
-    window.location.href = url;
+    if (window.location.href === url) window.location.reload();
+    else window.location.href = url;
     throw new AbortError("[HTTP] Redirecting to " + url);
   }
 

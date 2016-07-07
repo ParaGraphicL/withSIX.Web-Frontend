@@ -13,10 +13,9 @@ export class Login extends LoginBase {
   async login(pathAndSearch?) {
     try {
       // Must remove the hash or we won't redirect back :)
-      var url = pathAndSearch ? (this.getOrigin() + pathAndSearch) : this.w6Url.getCurrentPageWithoutHash();
-      this.tools.Debug.log("logging in, return: ", url);
+      this.tools.Debug.log("logging in, return: ", pathAndSearch);
       if (await this.handleRefreshToken()) {
-        this.redirect(url);
+        await this.handleUserUpgrade(pathAndSearch);
         return;
       }
 
@@ -24,7 +23,7 @@ export class Login extends LoginBase {
       window.localStorage[LoginBase.refreshToken] = response.content.refresh_token;
       window.localStorage[LoginBase.idToken] = response.content.id_token;
       this.ls.set('w6.event', { name: 'login', data: null }); // TODO: Include user id so we can switch logged in accts if needed?
-      this.redirect(url);
+      await this.handleUserUpgrade(pathAndSearch);
       return true;
     } catch (err) {
       if (!err) throw err;
@@ -34,7 +33,15 @@ export class Login extends LoginBase {
     }
   }
 
-  async handleLoginError(err, pathAndSearch?) {
+  async handleUserUpgrade(pathAndSearch?: string) {
+    let url = pathAndSearch ? (this.getOrigin() + pathAndSearch) : this.w6Url.getCurrentPageWithoutHash(); //pathAndSearch;
+    //this.ui.w6.userInfo = await this.getUserInfo();
+    if (url) this.redirect(url);
+    //else if (this.ui.w6.userInfo.isPremium && !window.location.href.startsWith("https://")) this.redirect(window.location.href);
+    this.ui.notifyAngularInternal();
+  }
+
+  async handleLoginError(err, pathAndSearch?: string) {
     if (err.data) {
       if (err.data == "Provider Popup Blocked") {
         // TODO: Reconfigure without popup but redirect?
