@@ -67,8 +67,10 @@ export class GlobalErrorHandler {
   constructor(private toastr: ToastLogger, private w6: W6) { }
   silence = [];
   silenceAngular = [
+    // These are coming from Angular elements that no longer exist, while Angular (components) expect the element to still live.
     "Cannot read property 'toLowerCase' of undefined", "Cannot read property 'toUpperCase' of undefined",
-    "Unable to get property 'toLowerCase' of undefined or null reference", "Unable to get property 'toUpperCase' of undefined or null reference"];
+    "Unable to get property 'toLowerCase' of undefined or null reference", "Unable to get property 'toUpperCase' of undefined or null reference",
+    "TypeError: f[0].nodeName is undefined"];
   silenceAngularAction = [];
   silenceGeneral = ["Error: Error during negotiation request.", "Error: The user cancelled the operation"];
 
