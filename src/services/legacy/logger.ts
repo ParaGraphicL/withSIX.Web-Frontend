@@ -67,17 +67,24 @@ export class GlobalErrorHandler {
   constructor(private toastr: ToastLogger, private w6: W6) { }
   silence = [];
   silenceAngular = [
+    // These are coming from Angular elements that no longer exist, while Angular (components) expect the element to still live.
     "Cannot read property 'toLowerCase' of undefined", "Cannot read property 'toUpperCase' of undefined",
-    "Unable to get property 'toLowerCase' of undefined or null reference", "Unable to get property 'toUpperCase' of undefined or null reference"];
+    "Unable to get property 'toLowerCase' of undefined or null reference", "Unable to get property 'toUpperCase' of undefined or null reference",
+    "TypeError: f[0].nodeName is undefined",
+    "Uncaught TypeError: f[0].nodeName is undefined"];
   silenceAngularAction = [];
   silenceGeneral = ["Error: Error during negotiation request.", "Error: The user cancelled the operation"];
+  silenceWindow = [
+    // This comes from the browser disallowing cross-origin calls: http://stackoverflow.com/questions/5913978/cryptic-script-error-reported-in-javascript-in-chrome-and-firefox
+    'Script error'
+  ];
 
-  handleError = (exception: Error, cause = 'Unknown') => this.handleErrorInternal(`[Aurelia]`, exception, cause, this.silence.some(x => x === exception.message));
-  handleAngularError = (exception: Error, cause?: string) => { if (!this.silenceAngular.some(x => x === exception.message)) this.leLog(this.getErrorInfo(`[Angular]`, cause, exception)) };
-  handleAngularActionError = (exception: Error, cause?: string) => this.handleErrorInternal(`[Angular Action]`, exception, cause, this.silenceAngularAction.some(x => x === exception.message));
-  handleUseCaseError = (exception: Error, cause = 'Unknown') => this.leLog(`[Aurelia UC ${cause}] ${exception}`, (<any>exception).stack);
-  handleLog = (loggerId, ...logParams: any[]) => this.leLog(`[Aurelia: ${loggerId}]`, ...logParams);
-  handleWindowError = (message: string, source, line: number, column: number, error?: Error) => this.leLog(`[Window] ${message}`, source, line, column, error ? error.toString() : null, error ? (<any>error).stack : null);
+  //handleAureliaError = (exception: Error, cause = 'Unknown') => this.handleErrorInternal(`[Aurelia]`, exception, cause, this.isSilence(exception))
+  handleAngularError = (exception: Error, cause?: string) => { if (!this.isSilenceAngular(exception)) this.leLog(this.getErrorInfo(`[Angular]`, cause, exception)) }
+  handleAngularActionError = (exception: Error, cause?: string) => { if (!this.isUserError(exception)) this.handleErrorInternal(`[Angular Action]`, exception, cause, this.isSilenceAngularAction(exception)) }
+  handleUseCaseError = (exception: Error, cause = 'Unknown') => { if (!this.isUserError(exception)) this.leLog(`[Aurelia UC ${cause}] ${exception}`, (<any>exception).stack) }
+  handleLog = (loggerId, ...logParams: any[]) => this.leLog(`[Aurelia: ${loggerId}]`, ...logParams)
+  handleWindowError = (message: string, source, line: number, column: number, error?: Error) => { if (!this.isSilenceWindow(message)) this.leLog(`[Window] ${message}`, source, line, column, error ? error.toString() : null, error ? (<any>error).stack : null) }
 
   private handleErrorInternal(source: string, exception, cause?: string, silent = false) {
     if (!silent && this.silenceGeneral.some(x => x === exception.message)) silent = true;
@@ -85,7 +92,7 @@ export class GlobalErrorHandler {
     let errorInfo = this.getErrorInfo(source, cause, exception);
     this.tryErrorLog(errorInfo);
     this.leLog(errorInfo, this.logStacktraces && exception.stack ? exception.stack : null);
-    //if (!silent) return this.toastr.error(`${errorInfo}\nPlease report the issue.`, 'Unexpected error has occurred');
+    if (!silent) return this.toastr.error(`${errorInfo}\nPlease report the issue.`, 'Unexpected error has occurred');
   }
 
   private getErrorInfo(source, cause, exception) {
@@ -102,6 +109,14 @@ export class GlobalErrorHandler {
       if (window.console && window.console.error) { window.console.error(msg, ...args); }
     } catch (err) { }
   }
+
+  private isUserError = (err: Error) => Tools.isUserError(err);
+  private isSilence = (err: Error) => this.isSilentFiltered(err.message, this.silence);
+  private isSilenceAngular = (err: Error) => this.isSilentFiltered(err.message, this.silenceAngular);
+  private isSilenceAngularAction = (err: Error) => this.isSilentFiltered(err.message, this.silenceAngularAction);
+  private isSilenceGeneral = (err: Error) => this.isSilentFiltered(err.message, this.silenceGeneral);
+  private isSilenceWindow = (msg: string) => this.isSilentFiltered(msg, this.silenceWindow);
+  private isSilentFiltered = (msg: string, silencia: string[]) => silencia.some(x => x === msg);
 }
 
 // http://www.mikeobrien.net/blog/client-side-exception-logging-in-aurelia/
