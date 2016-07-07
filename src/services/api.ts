@@ -92,9 +92,9 @@ export interface ITabNotification {
   isPersistent?: boolean;
 }
 
-@inject(Client, EventAggregator, LS, W6)
+@inject(Client, EventAggregator, LS)
 export class Api {
-  constructor(private client: Client, private eventBus: EventAggregator, private ls: LS, private w6: W6) {
+  constructor(private client: Client, private eventBus: EventAggregator, private ls: LS) {
     // we could use debounce here, but then the menus don't close on the initiation of the scroll, but rather on the stop.
     // so throttle seems the better option
     this.subj.throttle(1000).subscribe(x => this.eventBus.publish(new CloseDropdowns()));
@@ -107,9 +107,9 @@ export class Api {
   openSettings = (model?) => this.eventBus.publish(new OpenSettings());
   createCommand = uiCommand2;
   getContentStateInitial = ContentHelper.getConstentStateInitial;
-  logout = () => this.w6.logout();
-  login = () => this.w6.openLoginDialog();
-  navigate = (url) => this.w6.navigate(url);
+  logout;// = () => this.w6.logout();
+  login; //= () => this.w6.openLoginDialog();
+  navigate; // = (url) => this.w6.navigate(url);
   errorMsg = (reason) => {
     try {
       this.tools.Debug.log("$$$ err reason", JSON.stringify(reason));

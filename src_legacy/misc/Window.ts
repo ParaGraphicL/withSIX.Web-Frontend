@@ -68,6 +68,9 @@ interface IApi {
   createCommand<T>(name: string, action: IPromiseFunction<T>, options?: ICommandInfo): ICommand<T>;
   createGameBasket(gameId, basketModel): any;
   getContentStateInitial(state: { state /*: MyApp.Components.ModInfo.ItemState */; version: string }, constraint?: string);//: MyApp.Components.ModInfo.ItemState;
+  login(evt?): void;
+  navigate(url: string): void;
+  logout(): void;
 }
 
 interface Window {
