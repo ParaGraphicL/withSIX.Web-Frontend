@@ -170,8 +170,12 @@ bootstrap(async (aurelia: Aurelia) => {
 
     LogManager.addAppender(Container.instance.get(LogAppender))
     const eh: GlobalErrorHandler = Container.instance.get(GlobalErrorHandler);
-    let f: any = (e) => { eh.handleWindowError(e.message, e.source, e.line, e.column, e.error); }
-    window.addEventListener('error', f);
+    //window.addEventListener("error", (e: ErrorEvent) => { eh.handleWindowError(e.message, e.filename, e.lineno, e.colno, e.error); });
+    let existing = window.onerror;
+    window.onerror = (message, file, line, col, error?) => {
+      eh.handleWindowError(message, file, line, col, error);
+      if (existing) (<any>existing)(message, file, line, col, error);
+    }
 
     if (w6.enableBasket) (<any>client).connection.promise(); // kick off the connection early
 
