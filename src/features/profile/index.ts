@@ -13,8 +13,8 @@ export class Index extends ViewModel {
   configureRouter(config: RouterConfiguration, router: Router) {
     let modulePath = 'features/profile/';
     config.map([
-      { route: ['', 'home'], name: 'home', moduleId: 'features/profile/home/index', nav: this.w6.enableBasket, title: 'Home' },
-      { route: 'library', name: 'library', moduleId: 'features/profile/library/index', nav: this.w6.enableBasket, title: 'Library' },
+      { route: ['', 'home'], name: 'home', moduleId: 'features/profile/home/index', nav: this.w6.enableBasket, title: 'Home', auth: !this.w6.enableBasket },
+      { route: 'library', name: 'library', moduleId: 'features/profile/library/index', nav: this.w6.enableBasket, title: 'Library', auth: !this.w6.enableBasket },
       { route: 'content', name: 'content', moduleId: `${modulePath}content/index`, nav: this.isLoggedIn, title: 'Content', auth: true },
       { route: 'friends', name: 'friends', moduleId: 'features/pages/angular', nav: this.isLoggedIn, title: 'Friends', auth: true },
       { route: 'groups', name: 'groups', moduleId: 'features/profile/groups/index', nav: this.features.groups, title: 'Groups', auth: true },

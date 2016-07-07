@@ -51,7 +51,7 @@ export class Login extends LoginBase {
           return;
         }
       } else if (err.data == "Problem poll popup") {
-        if (await this.ui.toastr.error(`The popup was closed without logging in succesfully. Click here to try again`, "Login failure", { timeOut: 0 })) {
+        if (await this.ui.toastr.warning(`The popup was closed without logging in succesfully. Click here to try again`, "Login cancelled", { timeOut: 0 })) {
           await this.login(pathAndSearch);
           return;
         }
