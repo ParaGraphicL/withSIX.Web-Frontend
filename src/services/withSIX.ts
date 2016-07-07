@@ -701,9 +701,12 @@ export class W6 {
 
   client: W6Client;
   adsenseId: string;
-  openLoginDialog: (evt?: any) => void;
-  logout: () => any;
-  openRegisterDialog: (event?: any) => void;
+  get openLoginDialog() { return this.api.openLoginDialog }
+  set openLoginDialog(value) { this.api.openLoginDialog = value }
+  get logout() { return this.api.logout }
+  set logout(value) { this.api.logout = value }
+  get openLoginDialog() { return this.api.openopenRegisterDialogLoginDialog }
+  set openLoginDialog(value) { this.api.openRegisterDialog = value }
 };
 
 export interface ICollectionData {
