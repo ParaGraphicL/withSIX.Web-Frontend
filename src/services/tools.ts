@@ -1,5 +1,6 @@
 
 import VersionCompare from 'version_compare';
+import {ValidationResult} from 'aurelia-validation';
 
 String.prototype.indexOfIgnoreCase = function(prefix) {
   return this.toLowerCase().indexOf(prefix.toLowerCase());
@@ -232,6 +233,9 @@ export module Tools {
   export var ValidationError = <ValidationErrorConstructor>createHttpError("ValidationError", HttpException.prototype);
   export var RequiresLogin = createHttpError('RequiresLogin', HttpException.prototype);
   export var LoginNoLongerValid = createHttpError('LoginNoLongerValid', HttpException.prototype);
+
+  var userExceptions = [NotFoundException, Forbidden, ValidationError, RequiresLogin, RequireSslException, RequireNonSslException, ValidationResult];
+  export function isUserError(err: Error) { return userExceptions.some(x => err instanceof x) }
 
   export function disposableTimeout(f: () => void, timeout): IDisposable {
     let id = setTimeout(f, timeout);
