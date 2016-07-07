@@ -160,7 +160,7 @@ export class App extends ViewModel {
     //this.httpClientConfig.configure();
 
     this.loginLegacyClient({ accessToken: this.w6.userInfo.id ? window.localStorage.getItem(LoginBase.token) : null });
-    this.client.getInfo(); // instead of connection.promise();
+    if (this.w6.enableBasket) this.client.getInfo(); // instead of connection.promise();
     $('body').attr('style', '');
 
     this.checkVersion();

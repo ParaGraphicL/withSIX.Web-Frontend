@@ -167,11 +167,14 @@ bootstrap(async (aurelia: Aurelia) => {
     const w6 = W6.instance = new W6(w6Urls, userInfo, client, api);
     window.w6Cheat = { api, navigate: (url: string) => w6.navigate(url) }
     Container.instance.registerSingleton(W6, () => w6);
-    (<any>client).connection.promise(); // kick off the connection early
+
     LogManager.addAppender(Container.instance.get(LogAppender))
     const eh: GlobalErrorHandler = Container.instance.get(GlobalErrorHandler);
     let f: any = (e) => { eh.handleWindowError(e.message, e.source, e.line, e.column, e.error); }
     window.addEventListener('error', f);
+
+    if (w6.enableBasket) (<any>client).connection.promise(); // kick off the connection early
+
     await bootAngular(w6);
   }
 
