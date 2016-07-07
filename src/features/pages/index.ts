@@ -19,10 +19,10 @@ export class PagesModule {
       { route: `${routeMount}gopremium`, name: 'gopremium', moduleId: `${mount}blank`, nav: false, title: 'Go Premium' },
       { route: `${routeMount}blog`, name: 'blog', moduleId: `${mount}blank`, nav: true, title: 'Our Blog' },
       { route: `${routeMount}community`, name: 'community', redirect: "https://community.withsix.com", nav: true, title: 'Community' },
-      { route: `${routeMount}update`, name: 'update', moduleId: `${mount}update`, nav: false, title: 'Update' }
+      { route: `${routeMount}update`, name: 'update', moduleId: `${mount}update`, nav: false, title: 'Update' },
       { route: 'errors/404', name: '404', moduleId: 'errors/404', title: '404 not found' },
       { route: 'errors/403', name: '403', moduleId: 'errors/403', title: 'Forbidden' },
-      { route: 'errors/500', name: '500', moduleId: 'errors/500', title: 'Internal server error' },
+      { route: 'errors/500', name: '500', moduleId: 'errors/500', title: 'Internal server error' }
       //{ route: `${routeMount}go-premium`,         name: 'premium',        moduleId: `${mount}premium`,        nav: true, title:'Go Premium' },
       //{ route: `${routeMount}child-router`,  name: 'child-router', moduleId: `${mount}child-router`, nav: true, title:'Child Router' }
     ]);
