@@ -1,6 +1,8 @@
 import {inject} from 'aurelia-framework';
 import {Tk} from './tk';
 import {Tools} from '../tools';
+import {W6} from '../withSIX';
+import {Logger} from 'aurelia-logging';
 
 export class ToastLogger {
   constructor() {
@@ -51,33 +53,54 @@ export class ToastLogger {
   public log(message) { Tools.Debug.log(message); }
 }
 
-@inject(ToastLogger)
-export class GlobalErrorHandler {
-  private logSilentErrors = false;
-  constructor(private toastr: ToastLogger) { }
+//const LE = <any>require('le_js/product/le.min');
+declare var LE: { init; error; log; info; warn; debug; trace };
+LE.init(Tools.getEnvironment() == Tools.Environment.Production ? '3a2f5219-696a-4498-92b5-0fe5307f8103' : '79397c51-5b4d-4a47-8ef5-4fce44cdea00');
 
-  // TODO: https://github.com/aurelia/framework/issues/174
-  // https://www.npmjs.com/package/aurelia-rollbar
-  // TODO: window.onerror (/ addEVentListenter('error') ... however what about ADsense and other unrelated errors?)
-  // TODO: Auto report to the remote exception logger service..
-  // http://www.mikeobrien.net/blog/client-side-exception-logging-in-aurelia/
+// TODO: https://github.com/aurelia/framework/issues/174
+// https://www.npmjs.com/package/aurelia-rollbar
+
+@inject(ToastLogger, W6)
+export class GlobalErrorHandler {
+  private logSilentErrors = true;
+  private logStacktraces = true;
+  constructor(private toastr: ToastLogger, private w6: W6) { }
   silence = [];
   silenceAngular = ["Cannot read property 'toLowerCase' of undefined", "Cannot read property 'toUpperCase' of undefined"];
 
-  handleError = (exception: Error, cause = 'Unknown') => this.handleErrorInternal(exception, cause, this.silence.some(x => x === exception.message));
-  handleAngularError = (exception: Error, cause?: string) => this.handleErrorInternal(exception, cause, this.silenceAngular.some(x => x === exception.message));
+  handleError = (exception: Error, cause = 'Unknown') => this.handleErrorInternal(`[Aurelia]`, exception, cause, this.silence.some(x => x === exception.message));
+  handleAngularError = (exception: Error, cause?: string) => this.handleErrorInternal(`[Angular]`, exception, cause, this.silenceAngular.some(x => x === exception.message));
+  handleUseCaseError = (exception: Error, cause = 'Unknown') => this.leLog(`[Aurelia UC ${cause}] ${exception}`, (<any>exception).stack);
+  handleLog = (loggerId, ...logParams: any[]) => this.leLog(`[Aurelia: ${loggerId}]`, ...logParams);
+  handleWindowError = (message, source, line, column, error?) => this.leLog(`[Window] ${message}`, source, line, column, error ? error.toString() : null, error ? error.stack : null);
 
-  private handleErrorInternal(exception, cause, silent) {
+  private handleErrorInternal(source: string, exception, cause?: string, silent = false) {
     if (silent && !this.logSilentErrors) return;
-    this.tryErrorLog(`An unexpected error has occured: ${exception} (Cause: ${cause})\nPlease report the issue.`);
-    if (!silent) return this.toastr.error(`An unexpected error has occured: ${exception} (Cause: ${cause})\nPlease report the issue.`, 'Unexpected error has occurred');
+    let causeInfo = cause ? ` (Cause: ${cause})` : '';
+    let errorInfo = `${source} An unexpected error has occured: ${exception}${causeInfo}`;
+    this.tryErrorLog(errorInfo);
+    this.leLog(errorInfo, this.logStacktraces && exception.stack ? exception.stack : null);
+    if (!silent) return this.toastr.error(`${errorInfo}\nPlease report the issue.`, 'Unexpected error has occurred');
   }
+
+  private getInfo = () => { return { userId: this.w6.userInfo.id, roles: this.w6.userInfo.roles, location: window.location.pathname + window.location.search + window.location.hash, ua: window.navigator.userAgent } }
+
+  private leLog(message, ...params) { LE.error(message, this.getInfo(), ...params); }
 
   private tryErrorLog(msg, ...args) {
     try {
-      if (window.console && window.console.error) {
-        window.console.error(msg, ...args);
-      }
+      if (window.console && window.console.error) { window.console.error(msg, ...args); }
     } catch (err) { }
   }
+}
+
+// http://www.mikeobrien.net/blog/client-side-exception-logging-in-aurelia/
+@inject(GlobalErrorHandler)
+export class LogAppender {
+  constructor(private eh: GlobalErrorHandler) { }
+
+  debug(logger: Logger, ...rest: any[]): void { }
+  info(logger: Logger, ...rest: any[]): void { }
+  warn(logger: Logger, ...rest: any[]): void { }
+  error(logger: Logger, ...rest: any[]): void { this.eh.handleLog(logger.id, ...rest); }
 }
