@@ -53,7 +53,7 @@ export class App extends ViewModel {
     this.modules = [new FeaturesModule()];
     this.original = this.w6.enableBasket;
     this.breadcrumbs = this.setupBreadcrumbs();
-    this.w6.openLoginDialog = evt => this.login.login();
+    this.w6.openLoginDialog = evt => { if (evt) evt.preventDefault(); return this.login.login(); }
     this.w6.logout = () => this.logout();
     setInterval(() => signaler.signal('timeago'), 60 * 1000);
     this.w6.api.createGameBasket = (gameId, basketModel) => {

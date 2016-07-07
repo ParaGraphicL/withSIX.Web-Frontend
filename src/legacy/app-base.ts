@@ -110,7 +110,7 @@ class AppModule extends Tk.Module {
                 function enable() { element[0].disabled = false; }
                 promise.then(enable, x => {
                   enable();
-                  if (!x.__wsprocessed) errorHandler.handleAngularError(x);
+                  if (!x.__wsprocessed) errorHandler.handleAngularActionError(x);
                 });
               });
             };

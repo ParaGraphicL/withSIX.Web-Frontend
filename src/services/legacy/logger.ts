@@ -67,10 +67,12 @@ export class GlobalErrorHandler {
   constructor(private toastr: ToastLogger, private w6: W6) { }
   silence = [];
   silenceAngular = ["Cannot read property 'toLowerCase' of undefined", "Cannot read property 'toUpperCase' of undefined"];
+  silenceAngularAction = [];
   silenceGeneral = ["Error: Error during negotiation request.", "Error: The user cancelled the operation"];
 
   handleError = (exception: Error, cause = 'Unknown') => this.handleErrorInternal(`[Aurelia]`, exception, cause, this.silence.some(x => x === exception.message));
-  handleAngularError = (exception: Error, cause?: string) => this.handleErrorInternal(`[Angular]`, exception, cause, this.silenceAngular.some(x => x === exception.message));
+  handleAngularError = (exception: Error, cause?: string) => { if (!this.silenceAngular.some(x => x === exception.message)) this.leLog(this.getErrorInfo(`[Angular]`, cause, exception)) };
+  handleAngularActionError = (exception: Error, cause?: string) => this.handleErrorInternal(`[Angular]`, exception, cause, this.silenceAngularAction.some(x => x === exception.message));
   handleUseCaseError = (exception: Error, cause = 'Unknown') => this.leLog(`[Aurelia UC ${cause}] ${exception}`, (<any>exception).stack);
   handleLog = (loggerId, ...logParams: any[]) => this.leLog(`[Aurelia: ${loggerId}]`, ...logParams);
   handleWindowError = (message, source, line, column, error?) => this.leLog(`[Window] ${message}`, source, line, column, error ? error.toString() : null, error ? error.stack : null);
@@ -78,11 +80,15 @@ export class GlobalErrorHandler {
   private handleErrorInternal(source: string, exception, cause?: string, silent = false) {
     if (!silent && this.silenceGeneral.some(x => x === exception.message)) silent = true;
     if (silent && !this.logSilentErrors) return;
-    let causeInfo = cause ? ` (Cause: ${cause})` : '';
-    let errorInfo = `${source} An unexpected error has occured: ${exception}${causeInfo}`;
+    let errorInfo = this.getErrorInfo(source, cause, exception);
     this.tryErrorLog(errorInfo);
     this.leLog(errorInfo, this.logStacktraces && exception.stack ? exception.stack : null);
-    if (!silent) return this.toastr.error(`${errorInfo}\nPlease report the issue.`, 'Unexpected error has occurred');
+    //if (!silent) return this.toastr.error(`${errorInfo}\nPlease report the issue.`, 'Unexpected error has occurred');
+  }
+
+  private getErrorInfo(source, cause, exception) {
+    let causeInfo = cause ? ` (Cause: ${cause})` : '';
+    return `${source} An unexpected error has occured: ${exception}${causeInfo}`;
   }
 
   private getInfo = () => { return { userId: this.w6.userInfo.id, roles: this.w6.userInfo.roles, location: window.location.pathname + window.location.search + window.location.hash, ua: window.navigator.userAgent } }

@@ -108,11 +108,8 @@ export module MyApp {
       super($scope, logger, $q);
 
       $rootScope.logout = () => w6.logout();
-      $rootScope.openLoginDialog = evt => {
-        if (evt) evt.preventDefault();
-        w6.openLoginDialog(evt);
-      };
-      w6.openRegisterDialog = (event) => this.openRegisterDialog(event);
+      $rootScope.openLoginDialog = (evt?) => w6.openLoginDialog(evt);
+      w6.openRegisterDialog = (event?) => this.openRegisterDialog(event);
 
       $rootScope.ready = () => {
         Tools.Debug.log('ready');
@@ -156,7 +153,7 @@ export module MyApp {
 
       this.backwardsCompatibility();
     }
-    openRegisterDialog(evt) {
+    openRegisterDialog(evt?) {
       if (evt) evt.preventDefault();
       return this.$scope.request(Components.Dialogs.OpenRegisterDialogQuery);
     }

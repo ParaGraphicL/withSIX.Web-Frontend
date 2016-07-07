@@ -9,7 +9,7 @@ export class VerifyCode extends ViewModel {
   async activate(params, routeConfig) {
     await new VerifyCodeCommand(params.activationCode).handle(this.mediator);
     this.navigateInternal("/");
-    this.w6.openLoginDialog(null);
+    this.w6.openLoginDialog();
   }
 }
 
