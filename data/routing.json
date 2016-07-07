@@ -1,11 +1,9 @@
 {
   "main": {
     "/": { "type": "aurelia" },
-    "/errors/500": { },
-    "/errors/404": { },
-    "/errors/401": { },
-    "/errors/402": { },
-    "/errors/403": { },
+    "/errors/500": { "type": "aurelia" },
+    "/errors/404": { "type": "aurelia" },
+    "/errors/403": { "type": "aurelia" },
 
     "/getting-started": {
       "type": "static",
@@ -38,11 +36,9 @@
     "/blog/:slug": { }
   },
   "connect": {
-    "/errors/500": { },
-    "/errors/404": { },
-    "/errors/401": { },
-    "/errors/402": { },
-    "/errors/403": { },
+    "/errors/500": { "type": "aurelia" },
+    "/errors/404": { "type": "aurelia" },
+    "/errors/403": { "type": "aurelia" },
     "/login/verify": {
       "ssl": 1
     },
@@ -106,11 +102,9 @@
   },
   "play": {
     "/": { },
-    "/errors/500": { },
-    "/errors/404": { },
-    "/errors/401": { },
-    "/errors/402": { },
-    "/errors/403": {},
+    "/errors/500": { "type": "aurelia" },
+    "/errors/404": { "type": "aurelia" },
+    "/errors/403": { "type": "aurelia" },
 
     "/:gameSlug": {},
     "/:gameSlug/order": {},

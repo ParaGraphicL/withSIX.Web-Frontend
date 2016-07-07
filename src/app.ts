@@ -116,6 +116,29 @@ export class App extends ViewModel {
 
     this.w6.navigate = (url: string) => this.navigateInternal(url);
     this.subscriptions.subd(d => {
+      // TODO: Custom activation handling?
+      /*
+      getViewStrategy: () => string;
+      protected accessDenied() { this.getViewStrategy = () => '/dist/errors/403.html'; }
+
+      protected async handleAccessDenied(p: () => Promise<any>) {
+        try {
+          await p();
+        } catch (err) {
+          if (err == "access denied") this.accessDenied();
+          else throw err;
+        }
+      }
+      */
+      d(this.eventBus.subscribe('router:navigation:error', x => {
+        if (!x.result || !x.result.output) return this.router.navigate("/errors/500?resource=" + window.location.href);
+        let err: Error = x.result.output;
+        if (err instanceof Tools.NotFoundException) return this.router.navigate(`/errors/404?resource=` + window.location.href);
+        //if (err instanceof Tools.RequiresLogin) { this.login.login(); return; }
+        if (err instanceof Tools.Forbidden) return this.router.navigate(`/errors/403?resource=` + window.location.href);
+        return this.router.navigate(`/errors/500?resource=` + window.location.href)
+      }))
+
       // TODO: we might be better off abstracting this away in a service instead, so that we dont have all these eventclasses laying around just for interop from Angular...
       d(this.eventBus.subscribe(RestoreBasket, this.restoreBasket));
       d(this.eventBus.subscribe(OpenCreateCollectionDialog, this.openCreateCollectionDialog));

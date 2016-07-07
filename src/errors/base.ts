@@ -1,7 +1,9 @@
 export abstract class BaseError {
   el: JQuery;
-  constructor(private code: string) {}
-  activate() {
+  constructor(private code: string) { }
+  resource: string;
+  activate(param) {
+    this.resource = param.resource;
     this.el = $('<meta name="prerender-status-code" content="' + this.code + '">');
     $('head').append(this.el);
     window.prerenderReady = true;
