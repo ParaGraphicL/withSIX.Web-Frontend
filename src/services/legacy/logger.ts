@@ -67,6 +67,7 @@ export class GlobalErrorHandler {
   constructor(private toastr: ToastLogger, private w6: W6) { }
   silence = [];
   silenceAngular = ["Cannot read property 'toLowerCase' of undefined", "Cannot read property 'toUpperCase' of undefined"];
+  silenceGeneral = ["Error: Error during negotiation request.", "Error: The user cancelled the operation"];
 
   handleError = (exception: Error, cause = 'Unknown') => this.handleErrorInternal(`[Aurelia]`, exception, cause, this.silence.some(x => x === exception.message));
   handleAngularError = (exception: Error, cause?: string) => this.handleErrorInternal(`[Angular]`, exception, cause, this.silenceAngular.some(x => x === exception.message));
@@ -75,6 +76,7 @@ export class GlobalErrorHandler {
   handleWindowError = (message, source, line, column, error?) => this.leLog(`[Window] ${message}`, source, line, column, error ? error.toString() : null, error ? error.stack : null);
 
   private handleErrorInternal(source: string, exception, cause?: string, silent = false) {
+    if (!silent && this.silenceGeneral.some(x => x === exception.message)) silent = true;
     if (silent && !this.logSilentErrors) return;
     let causeInfo = cause ? ` (Cause: ${cause})` : '';
     let errorInfo = `${source} An unexpected error has occured: ${exception}${causeInfo}`;

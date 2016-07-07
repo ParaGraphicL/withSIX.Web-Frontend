@@ -78,8 +78,10 @@ export class ErrorLoggingMediatorDecorator implements IMediator {
         if (fail instanceof ValidationResult) this.handleValidationError(fail, action);
         else if (fail == 'Error: Error during negotiation request.') this.handleClientMissing(fail, action);
         else if (fail == 'Error: The user cancelled the operation') {
-        } else this.handleGeneralError(fail, action);
-        this.eh.handleUseCaseError(fail);
+        } else {
+          this.handleGeneralError(fail, action);
+          this.eh.handleUseCaseError(fail);
+        }
         return Promise.reject<T>(fail);
       });
   }
