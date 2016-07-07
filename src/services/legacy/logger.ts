@@ -66,13 +66,15 @@ export class GlobalErrorHandler {
   private logStacktraces = true;
   constructor(private toastr: ToastLogger, private w6: W6) { }
   silence = [];
-  silenceAngular = ["Cannot read property 'toLowerCase' of undefined", "Cannot read property 'toUpperCase' of undefined"];
+  silenceAngular = [
+    "Cannot read property 'toLowerCase' of undefined", "Cannot read property 'toUpperCase' of undefined",
+    "Unable to get property 'toLowerCase' of undefined or null reference", "Unable to get property 'toUpperCase' of undefined or null reference"];
   silenceAngularAction = [];
   silenceGeneral = ["Error: Error during negotiation request.", "Error: The user cancelled the operation"];
 
   handleError = (exception: Error, cause = 'Unknown') => this.handleErrorInternal(`[Aurelia]`, exception, cause, this.silence.some(x => x === exception.message));
   handleAngularError = (exception: Error, cause?: string) => { if (!this.silenceAngular.some(x => x === exception.message)) this.leLog(this.getErrorInfo(`[Angular]`, cause, exception)) };
-  handleAngularActionError = (exception: Error, cause?: string) => this.handleErrorInternal(`[Angular]`, exception, cause, this.silenceAngularAction.some(x => x === exception.message));
+  handleAngularActionError = (exception: Error, cause?: string) => this.handleErrorInternal(`[Angular Action]`, exception, cause, this.silenceAngularAction.some(x => x === exception.message));
   handleUseCaseError = (exception: Error, cause = 'Unknown') => this.leLog(`[Aurelia UC ${cause}] ${exception}`, (<any>exception).stack);
   handleLog = (loggerId, ...logParams: any[]) => this.leLog(`[Aurelia: ${loggerId}]`, ...logParams);
   handleWindowError = (message: string, source, line: number, column: number, error?: Error) => this.leLog(`[Window] ${message}`, source, line, column, error ? error.toString() : null, error ? (<any>error).stack : null);
