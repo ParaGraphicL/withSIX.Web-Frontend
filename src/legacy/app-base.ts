@@ -102,18 +102,21 @@ class AppModule extends Tk.Module {
             return function(scope, element) {
               element.on('click', function(event) {
                 if (element[0].disabled) return;
-                var result, promise: Promise<any>, d;
+                var result, d;
                 try {
                   result = fn(scope, { $event: event });
                 } catch (err) {
                   if (!err.__wsprocessed) errorHandler.handleAngularActionError(err);
                   return;
                 }
-                if (result != null && typeof result.then === 'function') promise = result;
-                else promise = Promise.resolve();
+
+                let isPromise = result != null && typeof result.then === 'function';
+                if (!isPromise) return;
+
                 element[0].disabled = true;
-                function enable() { element[0].disabled = false; }
-                promise.then(enable, x => {
+
+                function enable() { scope.$evalAsync(() => element[0].disabled = false); }
+                if (isPromise) result.then(enable, x => {
                   enable();
                   if (!x.__wsprocessed) errorHandler.handleAngularActionError(x);
                 });
