@@ -6,6 +6,7 @@ import {inject, Container} from 'aurelia-dependency-injection';
 import {EntityExtends, IUserInfo} from './dtos';
 import {W6Urls} from './withSIX';
 import {Tools} from './tools';
+import {Toastr} from './toastr';
 import {LS} from './base';
 
 export var AbortError = Tools.createError('AbortError');
@@ -191,6 +192,8 @@ export class LoginBase {
     this.resetUnload();
     if (window.location.href === url) window.location.reload();
     else window.location.href = url;
+    let toastr: Toastr = Container.instance.get(Toastr);
+    toastr.warning("Redirecting, please stand by...", "Redirecting...", { timeOut: 0 })
     throw new AbortError("[HTTP] Redirecting to " + url);
   }
 
