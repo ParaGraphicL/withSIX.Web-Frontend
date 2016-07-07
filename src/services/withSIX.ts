@@ -701,9 +701,9 @@ export class W6 {
 
   client: W6Client;
   adsenseId: string;
-  openLoginDialog: (evt: any) => void;
+  openLoginDialog: (evt?: any) => void;
   logout: () => any;
-  openRegisterDialog: (event: any) => void;
+  openRegisterDialog: (event?: any) => void;
 };
 
 export interface ICollectionData {
