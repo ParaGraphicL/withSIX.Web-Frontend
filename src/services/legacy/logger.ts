@@ -79,10 +79,10 @@ export class GlobalErrorHandler {
     // These are coming from Angular elements that no longer exist, while Angular (components) expect the element to still live.
     "Cannot read property 'toLowerCase' of undefined", "Cannot read property 'toUpperCase' of undefined",
     "Unable to get property 'toLowerCase' of undefined or null reference", "Unable to get property 'toUpperCase' of undefined or null reference",
-    "TypeError: f[0].nodeName is undefined",
-    "Uncaught TypeError: f[0].nodeName is undefined"];
+    "f[0].nodeName is undefined"
+  ];
   silenceAngularAction = [];
-  silenceGeneral = ["Error: Error during negotiation request.", "Error: The user cancelled the operation"];
+  silenceGeneral = ["Error during negotiation request.", "The user cancelled the operation", 'Operation aborted'];
   silenceWindow = [
     // This comes from the browser disallowing cross-origin calls: http://stackoverflow.com/questions/5913978/cryptic-script-error-reported-in-javascript-in-chrome-and-firefox
     'Script error'
