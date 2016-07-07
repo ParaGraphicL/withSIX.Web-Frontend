@@ -73,13 +73,17 @@ export class GlobalErrorHandler {
     "TypeError: f[0].nodeName is undefined"];
   silenceAngularAction = [];
   silenceGeneral = ["Error: Error during negotiation request.", "Error: The user cancelled the operation"];
+  silenceWindow = [
+    // This comes from the browser disallowing cross-origin calls: http://stackoverflow.com/questions/5913978/cryptic-script-error-reported-in-javascript-in-chrome-and-firefox
+    'Script error'
+  ];
 
-  handleError = (exception: Error, cause = 'Unknown') => this.handleErrorInternal(`[Aurelia]`, exception, cause, this.silence.some(x => x === exception.message));
-  handleAngularError = (exception: Error, cause?: string) => { if (!this.silenceAngular.some(x => x === exception.message)) this.leLog(this.getErrorInfo(`[Angular]`, cause, exception)) };
-  handleAngularActionError = (exception: Error, cause?: string) => this.handleErrorInternal(`[Angular Action]`, exception, cause, this.silenceAngularAction.some(x => x === exception.message));
-  handleUseCaseError = (exception: Error, cause = 'Unknown') => this.leLog(`[Aurelia UC ${cause}] ${exception}`, (<any>exception).stack);
-  handleLog = (loggerId, ...logParams: any[]) => this.leLog(`[Aurelia: ${loggerId}]`, ...logParams);
-  handleWindowError = (message: string, source, line: number, column: number, error?: Error) => this.leLog(`[Window] ${message}`, source, line, column, error ? error.toString() : null, error ? (<any>error).stack : null);
+  handleError = (exception: Error, cause = 'Unknown') => this.handleErrorInternal(`[Aurelia]`, exception, cause, this.silence.some(x => x === exception.message))
+  handleAngularError = (exception: Error, cause?: string) => { if (!this.silenceAngular.some(x => x === exception.message)) this.leLog(this.getErrorInfo(`[Angular]`, cause, exception)) }
+  handleAngularActionError = (exception: Error, cause?: string) => this.handleErrorInternal(`[Angular Action]`, exception, cause, this.silenceAngularAction.some(x => x === exception.message))
+  handleUseCaseError = (exception: Error, cause = 'Unknown') => this.leLog(`[Aurelia UC ${cause}] ${exception}`, (<any>exception).stack)
+  handleLog = (loggerId, ...logParams: any[]) => this.leLog(`[Aurelia: ${loggerId}]`, ...logParams)
+  handleWindowError = (message: string, source, line: number, column: number, error?: Error) => { if (!this.silenceWindow.some(x => x === message)) this.leLog(`[Window] ${message}`, source, line, column, error ? error.toString() : null, error ? (<any>error).stack : null) }
 
   private handleErrorInternal(source: string, exception, cause?: string, silent = false) {
     if (!silent && this.silenceGeneral.some(x => x === exception.message)) silent = true;
