@@ -75,7 +75,7 @@ export class GlobalErrorHandler {
   handleAngularActionError = (exception: Error, cause?: string) => this.handleErrorInternal(`[Angular]`, exception, cause, this.silenceAngularAction.some(x => x === exception.message));
   handleUseCaseError = (exception: Error, cause = 'Unknown') => this.leLog(`[Aurelia UC ${cause}] ${exception}`, (<any>exception).stack);
   handleLog = (loggerId, ...logParams: any[]) => this.leLog(`[Aurelia: ${loggerId}]`, ...logParams);
-  handleWindowError = (message, source, line, column, error?) => this.leLog(`[Window] ${message}`, source, line, column, error ? error.toString() : null, error ? error.stack : null);
+  handleWindowError = (message: string, source, line: number, column: number, error?: Error) => this.leLog(`[Window] ${message}`, source, line, column, error ? error.toString() : null, error ? (<any>error).stack : null);
 
   private handleErrorInternal(source: string, exception, cause?: string, silent = false) {
     if (!silent && this.silenceGeneral.some(x => x === exception.message)) silent = true;
