@@ -131,12 +131,12 @@ export class App extends ViewModel {
       }
       */
       d(this.eventBus.subscribe('router:navigation:error', async (x) => {
-        if (!x.result || !x.result.output) return this.router.navigate("/errors/500?resource=" + window.location.href);
+        if (!x.result || !x.result.output) return this.redirectToError(500);
         let err: Error = x.result.output;
-        if (err instanceof Tools.NotFoundException) return this.router.navigate(`/errors/404?resource=` + window.location.href);
-        if (err instanceof Tools.Forbidden) return this.router.navigate(`/errors/403?resource=` + window.location.href);
+        if (err instanceof Tools.NotFoundException) return this.redirectToError(404);
+        if (err instanceof Tools.Forbidden) return this.redirectToError(403);
         if (err instanceof Tools.RequiresLogin || err instanceof Tools.LoginNoLongerValid) return await this.login.login();
-        return this.router.navigate(`/errors/500?resource=` + window.location.href)
+        return this.redirectToError(500);
       }))
 
       // TODO: we might be better off abstracting this away in a service instead, so that we dont have all these eventclasses laying around just for interop from Angular...
@@ -192,6 +192,8 @@ export class App extends ViewModel {
     this.ls.on('w6.event', (v, old, url) => this.raiseCrossEvent(v.name, v.data));
     window.addEventListener('keydown', this.myKeypressCallback, false);
   }
+
+  redirectToError(statusCode: number) { return this.router.navigate(`/errors/${statusCode}?resource=${encodeURIComponent(window.location.href)}#initial=1`) }
 
   dialogMap = [];
 

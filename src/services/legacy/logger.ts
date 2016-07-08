@@ -3,6 +3,7 @@ import {Tk} from './tk';
 import {Tools} from '../tools';
 import {W6} from '../withSIX';
 import {Logger} from 'aurelia-logging';
+import {ValidationResult} from 'aurelia-validation';
 
 export class ToastLogger {
   constructor() {
@@ -119,7 +120,9 @@ export class GlobalErrorHandler {
     } catch (err) { }
   }
 
-  private isUserError = (err: Error) => Tools.isUserError(err);
+  userExceptions = [Tools.NotFoundException, Tools.Forbidden, Tools.ValidationError, Tools.RequiresLogin, Tools.RequireSslException, Tools.RequireNonSslException, ValidationResult];
+  private isUserError(err: Error) { return this.userExceptions.some(x => err instanceof x) }
+
   private isSilence = (err: Error) => this.isSilentFiltered(err.message, this.silence);
   private isSilenceAngular = (err: Error) => this.isSilentFiltered(err.message, this.silenceAngular);
   private isSilenceAngularAction = (err: Error) => this.isSilentFiltered(err.message, this.silenceAngularAction);
