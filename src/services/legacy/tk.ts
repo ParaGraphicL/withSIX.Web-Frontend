@@ -180,7 +180,7 @@ export module Tk {
       if (!this.p) {
         (<any>this.setupP())[2]($interval, $q);
       }
-      return this.p.then(x => m.legacyRequest(query.$name, Object.assign({}, defaults, $route.current.params)));
+      return this.p.then(x => m.legacyRequest(query.$name, Object.assign({}, defaults, $route.current ? $route.current.params : {})));
     }]
 
     public defaultRefreshFunction = type => {

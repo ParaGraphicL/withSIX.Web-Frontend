@@ -13,7 +13,7 @@
             <span ng-show="checkingName" style="color: green">Checking...</span>
           </label>
           <p ng-class="{'has-error' : form['mod-name'].$touched && ((!model.nameAvailable && (!form['mod-name'].$invalid && !checkingName)) || (form['mod-name'].$invalid && !checkingName)), 'field-invalid': form['modFolder'].$invalid}">
-            <input class="form-control" type="text" name="mod-name" id="mod-name" ng-model="model.mod.name" required/>
+            <input class="form-control" type="text" name="mod-name" id="mod-name" ng-model="model.mod.name" required min-length="3" max-length="150" />
             <span class="tiny error-msg" ng-show="!model.nameAvailable && (!form['mod-name'].$invalid && !checkingName)" style="color: red" data-container="body" data-html="true" data-title="{{hints.nameUnavailable}}" bs-tooltip>{{inlineHints.nameUnavailable}}</span>
             <span class="tiny error-msg" ng-show="form['mod-name'].$invalid" style="color: red">{{inlineHints.name}}</span>
           </p>
@@ -28,7 +28,7 @@
           </label>
           <p ng-class="{'has-error' : form.modFolder.$touched && ((!model.packageNameAvailable && (!form.modFolder.$invalid && !checkingPackageName)) || (form.modFolder.$invalid && !checkingPackageName)), 'field-invalid': form['modFolder'].$invalid}">
             <input type="text" name="modFolder" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }" id="modFolder" class="form-control" placeholder="@FolderName" ng-model="model.mod.packageName" required ng-pattern="folderPattern"
-            />
+                min-length="3" max-length="150" />
             <span class="tiny error-msg" ng-show="!model.packageNameAvailable && (!form.modFolder.$invalid && !checkingPackageName)" style="color: red" data-container="body" data-html="true" data-title="{{hints.packageNameUnavailable}}" bs-tooltip>{{inlineHints.packageNameUnavailable}}</span>
             <span class="tiny error-msg" ng-show="form.modFolder.$invalid && model.mod.packageName.startsWith('@')" style="color: red">{{inlineHints.packageName}}</span>
             <span class="tiny error-msg" ng-show="form.modFolder.$invalid && !model.mod.packageName.startsWith('@') && !model.mod.packageName.trim().length == 0" style="color: red">{{inlineHints.packageNameMissingPrefix}}</span>
