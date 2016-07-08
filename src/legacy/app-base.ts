@@ -110,13 +110,13 @@ class AppModule extends Tk.Module {
                   return;
                 }
 
-                let isPromise = result != null && typeof result.then === 'function';
+                let isPromise = result != null && typeof result.then == 'function';
                 if (!isPromise) return;
 
                 element[0].disabled = true;
 
                 function enable() { scope.$evalAsync(() => element[0].disabled = false); }
-                if (isPromise) result.then(enable, x => {
+                result.then(enable, x => {
                   enable();
                   if (!x.__wsprocessed) errorHandler.handleAngularActionError(x);
                 });

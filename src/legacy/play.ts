@@ -2072,7 +2072,7 @@ export module Play.Games {
       });
     }
 
-    private ok = () => {
+    private ok = async () => {
       // TODO: All or almost all should be validators on the form. The rest should be checked on the server so that people manipulating the Post, are still blocked
       if (!this.$scope.model.acceptToS || !this.$scope.model.packageNameAvailable || this.$scope.checkingPackageName)
         return;
@@ -2094,7 +2094,7 @@ export module Play.Games {
       }
 
       if (this.authorSubmission) data.author = "";
-      return this.$scope.request<string>(NewModCommand, { data: data })
+      await this.$scope.request<string>(NewModCommand, { data: data })
         .then(modId => {
           let shortId = Tools.toShortId(modId);
           let slug = <string>data.name.sluggifyEntityName();
@@ -5218,7 +5218,7 @@ export module Play.Mods {
         this.$scope.model.mod.download = `rsync://${this.$scope.model.info.userName}:${this.$scope.model.info.password}@staging.sixmirror.com`;
       }
 
-      this.$scope.request(NewModVersionCommand, { data: this.$scope.model.mod })
+      return this.$scope.request(NewModVersionCommand, { data: this.$scope.model.mod })
         .then(async (result) => {
           this.$scope.request(GetModUpdatesQuery, { modId: this.$scope.model.cmod.id });
           this.$modalInstance.close();
