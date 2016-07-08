@@ -1,5 +1,8 @@
 import {BaseError} from './base';
+import {UiContext} from '../framework';
+import {inject} from 'aurelia-framework';
 
-export class Error404 extends BaseError {
-  constructor() { super("404") }
+@inject(UiContext)
+export class Error403 extends BaseError {
+  constructor(ui) { super("404", ui) }
 }
