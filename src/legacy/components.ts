@@ -2899,58 +2899,6 @@ export module Components.Dialogs {
     overrideInPage: boolean;
   }
 
-  /*
-      export class ClearSessionCommand extends DbCommandBase {
-          static $inject = ['dbContext', '$q', 'w6'];
-          constructor(public context: W6Context, public $q: ng.IQService, private w6: W6) {
-              super(context, $q);
-          }
-
-          static $name = 'ClearSession'
-          public execute = [() => this.context.postCustom(this.w6.url.authSsl + "/api/login/clear", null, { requestName: 'login' })]
-      }
-
-      registerCQ(ClearSessionCommand);*/
-
-  export class LoginCommand extends DbCommandBase {
-    static $name = 'Login';
-    static $inject = ['dbContext', '$location', '$window', '$rootScope', 'w6', '$q'];
-
-    constructor(w6Context: W6Context, private $location: ng.ILocationService, private $window: ng.IWindowService, private $rootScope: IRootScope, private w6: W6, $q: ng.IQService) { super(w6Context); }
-
-    public execute = [
-      'data', 'config', (data, config: ILoginConfig) =>
-        /*                this.context.postCustom(this.w6.url.authSsl + "/api/login/clear", null, { requestName: 'login' })
-                            .then(r => */
-        this.context.postCustom(this.w6.url.authSsl + "/api/login", data, { requestName: 'login' })
-          .then(result => this.processReturn(result, config))
-          .catch(this.respondError)
-    ];
-
-    private msg = "Sucessfully logged in";
-
-    processReturn = (result, config) => {
-      // Or should we get these things from the server, hmm?
-      var returnUrl = this.$location.search().ReturnUrl;
-      this.w6.updateUserInfo(result.account, this.w6.userInfo);
-
-      if (config.overrideInPage) {
-        if (config.fallbackUrl) throw new Error("Cannot have both overrideInPage and fallbackUrl specified");
-        if (returnUrl) Tools.Debug.warn("returnUrl specified while overrideInPage");
-        return { success: true, message: this.msg };
-      }
-
-      // TODO: Validate ReturnUrl domain..
-      var fallbackUrl = returnUrl || config.fallbackUrl;
-      if (fallbackUrl && (fallbackUrl.containsIgnoreCase("/login") || fallbackUrl.containsIgnoreCase("/register") || fallbackUrl.containsIgnoreCase("/forgot-password") || fallbackUrl.containsIgnoreCase("/forgot-username")
-        || fallbackUrl.containsIgnoreCase("/finalize")))
-        fallbackUrl = undefined;
-      if (fallbackUrl == "reload") this.$window.location.reload(true);
-      else this.w6.navigate(fallbackUrl || (this.w6.url.connect + "/u/" + this.w6.userInfo.slug));
-      return { success: true, message: this.msg };
-    };
-  }
-
   export class RegisterCommand extends DbCommandBase {
     static $name = 'Register';
     public execute = [
@@ -3013,7 +2961,6 @@ export module Components.Dialogs {
   registerCQ(ForgotPasswordCommand);
   registerCQ(ForgotUsernameCommand);
 
-  registerCQ(LoginCommand);
   registerCQ(RegisterCommand);
 }
 

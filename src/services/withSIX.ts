@@ -520,9 +520,7 @@ export class W6 {
   saveSettings() { window.localStorage.setItem('w6.settings', JSON.stringify(this.settings)); }
 
   updateUserInfo = (newUserInfo: IUserInfo, userInfo: IUserInfo) => {
-    var copy = angular.copy(newUserInfo);
-    copy.id = newUserInfo.id; // wth?
-    Object.assign(userInfo, copy);
+    Object.assign(userInfo, newUserInfo);
     userInfo.clearAvatars();
   }
 
