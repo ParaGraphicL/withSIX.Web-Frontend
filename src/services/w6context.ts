@@ -131,15 +131,7 @@ export class W6Context {
 
   public postCustomFormData(path, fd, configOverrides?: IRequestShortcutConfig) {
     Tools.Debug.log("postCustomFormData", path, fd, configOverrides);
-    // return this.postCustom(path, fd, this.handleOverrides(Object.assign({
-    //   transformRequest: angular.identity,
-    //   headers: {
-    //     'Content-Type': undefined
-    //   }
-    // }, configOverrides)));
-    return this.handleJson(path, Object.assign({
-      body: fd
-    }, configOverrides));
+    return this.handleJson(path, Object.assign({ body: fd, method: 'POST' }, configOverrides));
   }
   public deleteCustom = <T>(path, configOverrides?: IRequestShortcutConfig) => this.handleJson(path, { method: 'DELETE' })
 

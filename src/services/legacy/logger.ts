@@ -86,7 +86,7 @@ export class GlobalErrorHandler {
   silenceGeneral = ["Error during negotiation request.", "The user cancelled the operation", 'Operation aborted'];
   silenceWindow = [
     // This comes from the browser disallowing cross-origin calls: http://stackoverflow.com/questions/5913978/cryptic-script-error-reported-in-javascript-in-chrome-and-firefox
-    'Script error'
+    'Script error', 'Script error.'
   ];
 
   //handleAureliaError = (exception: Error, cause = 'Unknown') => this.handleErrorInternal(`[Aurelia]`, exception, cause, this.isSilence(exception))
