@@ -33,6 +33,7 @@ import {SideBar} from './features/side-bar/side-bar';
 import {TopBar} from './features/top-bar/top-bar';
 import {UserErrorDialog} from './features/user-error-dialog';
 import {MessageDialog} from './features/message-dialog';
+import {Finalize} from './features/login/finalize';
 
 import {BindingSignaler} from 'aurelia-templating-resources';
 
@@ -97,6 +98,7 @@ export class App extends ViewModel {
     Origin.set(NewGroupDialog, { moduleId: "features/profile/groups/new-group-dialog", moduleMember: "NewGroupDialog" });
     Origin.set(UserErrorDialog, { moduleId: "features/user-error-dialog", moduleMember: "UserErrorDialog" });
     Origin.set(MessageDialog, { moduleId: "features/message-dialog", moduleMember: "MessageDialog" });
+    Origin.set(Finalize, { moduleId: "features/login/finalize", moduleMember: "Finalize" })
 
     let isSync = window.location.search.includes('sync=1') ? true : false;
     if (isSync) { this.w6.updateSettings(x => x.hasSync = true); }
@@ -196,6 +198,8 @@ export class App extends ViewModel {
   redirectToError(statusCode: number) { return this.router.navigate(`/errors/${statusCode}?resource=${encodeURIComponent(window.location.href)}#initial=1`) }
 
   dialogMap = [];
+
+  finalizeAccount = () => this.dialog.open({ viewModel: Finalize });
 
   get clientInfo() { return this.gameInfo.clientInfo };
   get userErrors() { return this.clientInfo.userErrors; }

@@ -172,7 +172,7 @@ export class FilterOnExistingValueConverter {
 
 @valueConverter('fileListToArray')
 export class FileListToArrayValueConverter {
-  toView(fileList) {
+  toView(fileList: FileList) {
     let files = [];
     if (!fileList) {
       return files;
@@ -186,9 +186,7 @@ export class FileListToArrayValueConverter {
 
 @valueConverter('blobToUrl')
 export class BlobToUrlValueConverter {
-  toView(blob) {
-    return URL.createObjectURL(blob);
-  }
+  toView(blob) {  return URL.createObjectURL(blob); }
 }
 
 // TODO

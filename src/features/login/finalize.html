@@ -1,0 +1,45 @@
+<template>
+  <require from="./finalize.scss"></require>
+  <ai-dialog class="ai-dialog" id="finalize-dialog">
+    <ai-dialog-header>
+      <h2><b>Welcome</b> You're almost there</h2> Please check if all the fields are filled in correctly,
+      <br /> then press submit to complete your registration.
+    </ai-dialog-header>
+    <ai-dialog-body>
+      <div class="pull-left">
+        Avatar:
+        <div>
+          <img if.bind="files[0]" src.bind="files[0] | blobToUrl"></img>
+        </div>
+        <input type="file" files.bind="files">
+      </div>
+
+      <div class="pull-left">
+        <div class="form-group">
+          <label for="display-name">Display Name:</label>
+          <input value.bind="model.input.displayName" class="form-control" type="text" id="display-name" name="display-name" />
+        </div>
+
+        <div class="form-group">
+          <label for="email">E-Mail:</label>
+          <input value.bind="model.input.email" class="form-control" type="text" id="email" name="email" />
+        </div>
+
+        <div class="form-group">
+          <label for="Birthday">Birthday:</label>
+          <input value.bind="model.input.birthday" class="form-control" type="date" id="birthday" name="birthday" />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password:</label>
+          <input value.bind="model.input.password" class="form-control" type="password" id="password" name="password" />
+        </div>
+      </div>
+      <div class="clearfix"></div>
+    </ai-dialog-body>
+    <ai-dialog-footer>
+      <command-button model.bind="cancel"></command-button>
+      <command-button model.bind="save"></command-button>
+    </ai-dialog-footer>
+  </ai-dialog>
+</template>
