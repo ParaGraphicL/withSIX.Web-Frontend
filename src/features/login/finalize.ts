@@ -16,6 +16,7 @@ export class Finalize extends Dialog<{ input: IInput; output: IOutput }> {
   imgSrc;
   imgTitle: string;
   cancel;
+  files: FileList;
 
   async activate(model) {
     model = { input: await new GetUserInfo().handle(this.mediator), output: {} }
@@ -25,19 +26,8 @@ export class Finalize extends Dialog<{ input: IInput; output: IOutput }> {
     this.cancel = uiCommand2('Cancel', async () => this.controller.cancel(false), { cls: "cancel" });
   }
 
-  onFileSelected(event) {
-    var selectedFile = event.target.files[0];
-    var reader = new FileReader();
-    this.imgTitle = selectedFile.name;
-
-    reader.onload = (event) => {
-      this.imgSrc = (<any>event.target).result;
-    };
-
-    reader.readAsDataURL(selectedFile);
-  }
-
   saveInternal = async () => {
+    this.model.input.avatar = !this.files || this.files.length == 0 ? null : this.files[0];
     this.model.output = { userName: await new Save(this.model.input).handle(this.mediator) }
     this.saved = true;
   }
@@ -47,7 +37,7 @@ class GetUserInfo extends Query<IInputReceive> { }
 
 @handlerFor(GetUserInfo)
 class GetUserInfoHandler extends DbQuery<GetUserInfo, IInputReceive> {
-  handle(request: GetUserInfo) { return this.context.getCustom<IInputReceive>("/me/finalize") }
+  handle(request: GetUserInfo) { return this.context.getCustom<IInputReceive>("me/finalize") }
 }
 
 class Save extends Command<string> {
@@ -58,11 +48,16 @@ class Save extends Command<string> {
 export class SaveHandler extends DbQuery<Save, string> {
   handle(request: Save) {
     let fd = new FormData();
-    fd.append('avatar', request.model.avatar);
-    fd.append('email', request.model.email);
-    fd.append('displayName', request.model.displayName);
-    fd.append('birthday', request.model.birthday);
-    fd.append('password', request.model.password);
-    return this.context.postCustomFormData<string>("/me/finalize", fd);
+    // todo; object to formData?
+    this.appendIfNotNull(fd, 'avatar', request.model.avatar);
+    this.appendIfNotNull(fd, 'email', request.model.email);
+    this.appendIfNotNull(fd, 'displayName', request.model.displayName);
+    this.appendIfNotNull(fd, 'birthday', request.model.birthday);
+    this.appendIfNotNull(fd, 'password', request.model.password);
+    return this.context.postCustomFormData<string>("me/finalize", fd);
+  }
+
+  appendIfNotNull(fd: FormData, key, value) {
+    if (value != null) fd.append(key, value);
   }
 }
