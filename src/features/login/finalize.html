@@ -1,5 +1,6 @@
 <template>
-  <ai-dialog class="ai-dialog">
+  <require from="./finalize.scss"></require>
+  <ai-dialog class="ai-dialog" id="finalize-dialog">
     <ai-dialog-header>
       <h2><b>Welcome</b> You're almost there</h2> Please check if all the fields are filled in correctly,
       <br /> then press submit to complete your registration.
@@ -7,7 +8,9 @@
     <ai-dialog-body>
       <div class="pull-left">
         Avatar:
-        <img if.bind="files[0]" src.bind="files[0] | blobToUrl"></img>
+        <div>
+          <img if.bind="files[0]" src.bind="files[0] | blobToUrl"></img>
+        </div>
         <input type="file" files.bind="files">
       </div>
 
