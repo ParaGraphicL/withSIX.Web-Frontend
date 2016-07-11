@@ -16,11 +16,13 @@ export class Finalize extends Dialog<{ input: IInput; output: IOutput }> {
   imgSrc;
   imgTitle: string;
   cancel;
+
   async activate(model) {
+    model = { input: await new GetUserInfo().handle(this.mediator), output: {} }
     super.activate(model);
 
     this.save = uiCommand2("Save", this.saveInternal, { cls: 'ok' });
-    this.cancel = UiCommand2('Cancel', async () => this.controller.cancel(), { cls: "cancel" });
+    this.cancel = uiCommand2('Cancel', async () => this.controller.cancel(false), { cls: "cancel" });
   }
 
   onFileSelected(event) {
