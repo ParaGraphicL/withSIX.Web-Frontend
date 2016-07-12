@@ -109,6 +109,11 @@ export class LoginBase {
     let ag = Container.instance.get(EventAggregator);
     //http://stackoverflow.com/questions/9314730/display-browser-loading-indicator-like-when-a-postback-occurs-on-ajax-calls
 
+    let buildUrl = (url) => {
+      if (url.startsWith("//")) return new URL(window.location.protocol + url);
+      return new URL(url);
+    }
+
     this.http.configure(config => {
       const handleAt = async (request: HttpRequestMessage, force = false) => {
         let at: string;
@@ -119,7 +124,7 @@ export class LoginBase {
           request: async (request: HttpRequestMessage) => {
             if (!request) return;
             // TODO: better!
-            let parsedUrl = new URL(request.url);
+            let parsedUrl = buildUrl(request.url);
             if (!parsedUrl.pathname.endsWith('.md')) request.headers.add('Accept', 'application/json');
             if (this.shouldLog) Tools.Debug.log(`[HTTP] Requesting ${request.method} ${request.url}`, request);
             await handleAt(request);
@@ -150,7 +155,7 @@ export class LoginBase {
           request: async (request) => {
             if (!request) return request;
             // TODO: better!
-            let parsedUrl = new URL(request.url);
+            let parsedUrl = buildUrl(request.url);
             if (!parsedUrl.pathname.endsWith('.md')) request.headers.set('Accept', 'application/json');
             if (this.shouldLog) Tools.Debug.log(`[HTTP-FETCH] Requesting ${request.method} ${request.url}`, request);
             await handleAt(request);
