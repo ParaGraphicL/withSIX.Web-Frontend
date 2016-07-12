@@ -65,6 +65,8 @@ String.prototype.format = function() {
 };
 
 
+declare var URL;
+
 export module Tools {
   // todo; with inner ex
 
@@ -97,6 +99,21 @@ export module Tools {
   //     }
   // }
   //
+
+  export function createUrl(url: string) {
+    try {
+      return new URL(url);
+    } catch (err) {
+      var parser = document.createElement('a');
+      parser.href = url;
+      return parser;
+    }
+  }
+
+  export function buildUrl(url: string) {
+    if (url.startsWith("//")) return Tools.createUrl(window.location.protocol + url);
+    return Tools.createUrl(url);
+  }
 
 
   export var createError = (name: string, proto = Error.prototype): ErrorConstructor => {

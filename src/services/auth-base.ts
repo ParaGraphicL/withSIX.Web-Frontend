@@ -11,8 +11,6 @@ import {LS} from './base';
 
 export var AbortError = Tools.createError('AbortError');
 
-declare var URL;
-
 @inject(HttpClient, FetchClient, W6Urls, EventAggregator, LS)
 export class LoginBase {
   shouldLog = (Tools.getEnvironment() > Tools.Environment.Production);
@@ -109,21 +107,6 @@ export class LoginBase {
     let ag = Container.instance.get(EventAggregator);
     //http://stackoverflow.com/questions/9314730/display-browser-loading-indicator-like-when-a-postback-occurs-on-ajax-calls
 
-    let createUrl = (url) => {
-      try {
-        return new URL(url);
-      } catch (err) {
-        var parser = document.createElement('a');
-        parser.href = url;
-        return parser;
-      }
-    }
-
-    let buildUrl = (url) => {
-      if (url.startsWith("//")) return createUrl(window.location.protocol + url);
-      return createUrl(url);
-    }
-
     this.http.configure(config => {
       const handleAt = async (request: HttpRequestMessage, force = false) => {
         let at: string;
@@ -134,7 +117,7 @@ export class LoginBase {
           request: async (request: HttpRequestMessage) => {
             if (!request) return;
             // TODO: better!
-            let parsedUrl = buildUrl(request.url);
+            let parsedUrl = Tools.buildUrl(request.url);
             if (!parsedUrl.pathname.endsWith('.md')) request.headers.add('Accept', 'application/json');
             if (this.shouldLog) Tools.Debug.log(`[HTTP] Requesting ${request.method} ${request.url}`, request);
             await handleAt(request);
@@ -165,7 +148,7 @@ export class LoginBase {
           request: async (request) => {
             if (!request) return request;
             // TODO: better!
-            let parsedUrl = buildUrl(request.url);
+            let parsedUrl = Tools.buildUrl(request.url);
             if (!parsedUrl.pathname.endsWith('.md')) request.headers.set('Accept', 'application/json');
             if (this.shouldLog) Tools.Debug.log(`[HTTP-FETCH] Requesting ${request.method} ${request.url}`, request);
             await handleAt(request);
