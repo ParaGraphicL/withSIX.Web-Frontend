@@ -100,6 +100,7 @@ export module Tools {
   // }
   //
 
+  // TODO https://github.com/github/url-polyfill
   export function createUrl(url: string) {
     try {
       return new URL(url);
