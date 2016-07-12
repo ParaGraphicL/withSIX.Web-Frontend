@@ -61,7 +61,12 @@ export class CreateCollectionDialog extends Dialog<ICollectionModel> {
   get collectionScopeHint() { return CollectionHelper.scopeHints[this.model.scope] }
 
   save = uiCommand2('Save', async () => {
-    await this.validation.validate(); // TODO: how to wrap this into the UI, catch ValidationResult and then display the error info?
+    try {
+      await this.validation.validate();
+    } catch (err) {
+      this.toastr.warning("Please correct the inputs", "Invalid input");
+      return;
+    }
     var id = await new CreateCollection(this.game.id, this.model).handle(this.mediator);
     var landing = this.model.forkedCollectionId ? '' : '?landing=1';
     this.navigateInternal(this.w6.url.play + "/" + this.w6.activeGame.slug + "/collections/" + id.toShortId() + '/' + this.model.name.sluggifyEntityName() + landing);

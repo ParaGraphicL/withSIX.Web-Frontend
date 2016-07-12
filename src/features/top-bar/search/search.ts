@@ -1,6 +1,7 @@
 import {ViewModel, MenuItem, uiCommand2, Debouncer, IMenuItem, UiContext,
   ModsHelper, DbQuery, Query, VoidCommand, handlerFor, CloseTabs} from '../../../framework';
 import {inject} from 'aurelia-framework';
+import {ValidationGroup} from 'aurelia-validation';
 
 enum SearchContentType {
   User,
@@ -22,7 +23,7 @@ export class Search extends ViewModel {
   debouncer: (...args: any[]) => Promise<void>;
   types: string[];
   searchInput: string;
-  validation;
+  validation: ValidationGroup;
   contentType;
   contentTypes: string[];
   results = [];
