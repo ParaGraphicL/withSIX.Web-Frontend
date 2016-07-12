@@ -109,9 +109,19 @@ export class LoginBase {
     let ag = Container.instance.get(EventAggregator);
     //http://stackoverflow.com/questions/9314730/display-browser-loading-indicator-like-when-a-postback-occurs-on-ajax-calls
 
+    let createUrl = (url) => {
+      try {
+        return new URL(url);
+      } catch (err) {
+        var parser = document.createElement('a');
+        parser.href = url;
+        return parser;
+      }
+    }
+
     let buildUrl = (url) => {
-      if (url.startsWith("//")) return new URL(window.location.protocol + url);
-      return new URL(url);
+      if (url.startsWith("//")) return createUrl(window.location.protocol + url);
+      return createUrl(url);
     }
 
     this.http.configure(config => {
