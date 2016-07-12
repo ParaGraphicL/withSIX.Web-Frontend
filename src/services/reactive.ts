@@ -259,7 +259,7 @@ class UiCommandInternal<T> extends Base {
   icon: string;
   textCls: string;
   tooltip: string;
-  public thrownExceptions: Rx.IObservable<Error>;
+  public thrownExceptions = new Rx.Subject<Error>();
   public isExecutingObservable = this.observeEx(x => x.isExecuting);
   public isVisibleObservable = this.observeEx(x => x.isVisible);
   public canExecuteObservable = this.observeEx(x => x.canExecute);
@@ -273,7 +273,6 @@ class UiCommandInternal<T> extends Base {
     this.icon = options.icon;
     this.textCls = options.textCls;
     this.tooltip = options.tooltip;
-    this.thrownExceptions = new Rx.Subject<Error>();
 
     if (options.canExecuteObservable) this.subscriptions.subd(d => d(options.canExecuteObservable.subscribe(x => this.otherBusy = !x)));
     if (options.isVisibleObservable) this.subscriptions.subd(d => d(options.isVisibleObservable.subscribe(x => this.isVisible = x)));
