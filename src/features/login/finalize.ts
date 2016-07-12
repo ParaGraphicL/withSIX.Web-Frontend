@@ -67,7 +67,6 @@ export class Finalize extends Dialog<IInput> {
     await this.validation.validate();
     this.model.avatar = !this.files || this.files.length == 0 ? null : this.files[0];
     let userName = await new Save(this.model).handle(this.mediator);
-    this.w6.userInfo.emailConfirmed = true;
     this.w6.userInfo.passwordConfirmed = true;
     this.controller.ok(true);
     this.router.navigate(`/u/${userName.sluggifyEntityName()}`);
