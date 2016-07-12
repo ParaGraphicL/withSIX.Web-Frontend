@@ -11,6 +11,8 @@ import {LS} from './base';
 
 export var AbortError = Tools.createError('AbortError');
 
+declare var URL;
+
 @inject(HttpClient, FetchClient, W6Urls, EventAggregator, LS)
 export class LoginBase {
   shouldLog = (Tools.getEnvironment() > Tools.Environment.Production);
@@ -113,10 +115,12 @@ export class LoginBase {
         if (at = await this.getAccessToken(request.url, force)) request.headers.add('Authorization', `Bearer ${at}`);
       }
       config
-        .withHeader('Accept', 'application/json')
         .withInterceptor({
           request: async (request: HttpRequestMessage) => {
             if (!request) return;
+            // TODO: better!
+            let parsedUrl = new URL(request.url);
+            if (!parsedUrl.pathname.endsWith('.md')) request.headers.add('Accept', 'application/json');
             if (this.shouldLog) Tools.Debug.log(`[HTTP] Requesting ${request.method} ${request.url}`, request);
             await handleAt(request);
             return request;
@@ -141,10 +145,13 @@ export class LoginBase {
       }
 
       config //.useStandardConfiguration()
-        .withDefaults({ headers, credentials: 'same-origin' })
+        .withDefaults({ credentials: 'same-origin' })
         .withInterceptor({
           request: async (request) => {
             if (!request) return request;
+            // TODO: better!
+            let parsedUrl = new URL(request.url);
+            if (!parsedUrl.pathname.endsWith('.md')) request.headers.set('Accept', 'application/json');
             if (this.shouldLog) Tools.Debug.log(`[HTTP-FETCH] Requesting ${request.method} ${request.url}`, request);
             await handleAt(request);
             return request;
