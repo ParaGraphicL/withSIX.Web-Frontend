@@ -7,6 +7,8 @@ import {Toastr} from './toastr';
 import {inject} from 'aurelia-framework';
 import {PromiseCache} from 'withsix-sync-api';
 
+import {BooleanResult} from './legacy/base';
+
 import {HttpClient, json} from 'aurelia-fetch-client';
 
 const metadata = require('../../data/metadata.json');
@@ -401,23 +403,51 @@ export class W6Context {
     }
   }
 
+  userNameExistsCached = async (userName: string) => {
+    if (!userName || userName.length == 0) return false;
+    var cache = this.getUsernameExistsCache(userName);
+    if (cache === false || cache === true) return cache;
+
+    let r = await this.getCustom<BooleanResult>("accounts/username-exists", { params: { userName: userName } })
+    return this.addUsernameExistsCache(userName, r.result);
+  }
+
+  // userSlugExistsCached = userSlug => {
+  //   if (!userSlug || userSlug.length == 0) return false;
+  //   var cache = this.getUserSlugCache(userSlug);
+  //   if (cache === false || cache === true) return cache;
+  //
+  //   return <any>this.getCustom<BooleanResult>("accounts/username-exists", { params: { userName: userName } })
+  //     .then(result => this.addUsernameExistsCache(userName, result.result));
+  // }
+
+
+  emailExistsCached = async (email: string) => {
+    if (!email || email.length == 0) return false;
+    var cache = this.getEmailExistsCache(email);
+    if (cache === false || cache === true) return cache;
+
+    let r = await this.getCustom<BooleanResult>("accounts/email-exists", { params: { email: email } })
+    return this.addEmailExistsCache(email, r.result);
+  }
+
   addUserSlugCache(userSlug: string, id: string): string { return this.userSlugCache[userSlug] = id; }
 
   getUserSlugCache(userSlug: string): string { return this.userSlugCache[userSlug]; }
 
-  userSlugCache: {};
+  private userSlugCache: {};
 
-  addUsernameExistsCache(username: string, value: boolean): boolean { return this.usernameExistsCache[username] = value; }
+  private addUsernameExistsCache(username: string, value: boolean): boolean { return this.usernameExistsCache[username] = value; }
 
-  getUsernameExistsCache(username: string): boolean { return this.usernameExistsCache[username]; }
+  private getUsernameExistsCache(username: string): boolean { return this.usernameExistsCache[username]; }
 
-  usernameExistsCache: {};
+  private usernameExistsCache: {};
 
-  addEmailExistsCache(email: string, value: boolean): boolean { return this.emailExistsCache[email] = value; }
+  private addEmailExistsCache(email: string, value: boolean): boolean { return this.emailExistsCache[email] = value; }
 
-  getEmailExistsCache(email: string): boolean { return this.emailExistsCache[email]; }
+  private getEmailExistsCache(email: string): boolean { return this.emailExistsCache[email]; }
 
-  emailExistsCache: {};
+  private emailExistsCache: {};
 
   fetchMetadata() {
     // may not use authorization header..

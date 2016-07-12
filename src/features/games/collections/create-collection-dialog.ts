@@ -48,7 +48,7 @@ export class CreateCollectionDialog extends Dialog<ICollectionModel> {
     if (this.model.scope == null) this.model.scope = CollectionScope.Private;
     this.game = model.game;
     let debouncer = Debouncer.debouncePromise(async (newValue) => { let exists = await new CollectionExists(newValue, this.game.id, this.model.groupId).handle(this.mediator); return !exists }, 250);
-    this.validation = (<any>this.validator).on(this)
+    this.validation = this.validator.on(this)
       .ensure('model.name')
       .isNotEmpty()
       .passes(debouncer, 250)
