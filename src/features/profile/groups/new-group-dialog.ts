@@ -1,5 +1,6 @@
 import {Dialog, Command, DbQuery, handlerFor, uiCommand2} from '../../../framework'
 import {UploadCover, UploadLogo} from './home/index';
+import {ValidationGroup} from 'aurelia-validation';
 
 interface IGroup {
   name: string;
@@ -10,7 +11,7 @@ interface IGroup {
 }
 
 export class NewGroupDialog extends Dialog<IGroup> {
-  validation;
+  validation: ValidationGroup;
   activate() {
     super.activate({
       name: null,
@@ -31,7 +32,12 @@ export class NewGroupDialog extends Dialog<IGroup> {
     //.withMessage("you already own a collection with this name");
   }
   ok = uiCommand2("ok", async () => {
-    await this.validation.validate();
+    try {
+      await this.validation.validate();
+    } catch (err) {
+      this.toastr.warning("Please correct the inputs", "Invalid input");
+      return;
+    }
     let id = await new CreateGroup(this.model).handle(this.mediator);
     if (this.model.logo && this.model.logo.length > 0) await new UploadLogo(id, this.model.logo[0]).handle(this.mediator);
     if (this.model.cover && this.model.cover.length > 0) await new UploadCover(id, this.model.cover[0]).handle(this.mediator);

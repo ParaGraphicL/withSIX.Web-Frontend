@@ -1,4 +1,5 @@
 import {IBreezeAWSUploadPolicy, UiContext, ViewModel, Mediator, DbQuery, Query, Command, VoidCommand, handlerFor, uiCommand2, bindingEngine, EditConfig, IDisposable} from '../../../../framework'
+import {ValidationGroup} from 'aurelia-validation';
 
 export interface IGroup {
   id: string;
@@ -17,7 +18,7 @@ export class Index extends ViewModel {
   originalGroup: IGroup;
   slug: string;
   shortId: string;
-  validation;
+  validation: ValidationGroup;
   uploadModel: { cover: FileList, logo: FileList } = { cover: null, logo: null }
   editConfig = new EditConfig();
   joinToken: string;
@@ -120,7 +121,12 @@ export class Index extends ViewModel {
   }
 
   save = uiCommand2("Save Changes", async () => {
-    await this.validation.validate();
+    try {
+      await this.validation.validate();
+    } catch (err) {
+      this.toastr.warning("Please correct the inputs", "Invalid input");
+      return;
+    }
     await this.handleWatch(async () => {
       //this.group = Object.assign({}, this.group);
       await new SaveChanges(this.group).handle(this.mediator);

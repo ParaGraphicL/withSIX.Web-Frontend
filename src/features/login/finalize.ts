@@ -23,8 +23,8 @@ export class Finalize extends Dialog<IInput> {
 
     let initialEmail: string = model.email.toLowerCase();
 
-    this.save = uiCommand2("Save", this.saveInternal, { cls: 'ok' });
-    this.cancel = uiCommand2('Cancel', async () => this.controller.cancel(false), { cls: "cancel" });
+    this.save = uiCommand2("Submit", this.saveInternal, { cls: 'ok' });
+    this.cancel = uiCommand2('Abort', async () => this.controller.cancel(false), { cls: "cancel" });
     this.validation = this.validator.on(this)
       .ensure('model.email')
       .isNotEmpty()
@@ -64,7 +64,12 @@ export class Finalize extends Dialog<IInput> {
   }
 
   saveInternal = async () => {
-    await this.validation.validate();
+    try {
+      await this.validation.validate();
+    } catch (err) {
+      this.toastr.warning("Please correct the inputs", "Invalid input");
+      return;
+    }
     this.model.avatar = !this.files || this.files.length == 0 ? null : this.files[0];
     let userName = await new Save(this.model).handle(this.mediator);
     this.w6.userInfo.passwordConfirmed = true;

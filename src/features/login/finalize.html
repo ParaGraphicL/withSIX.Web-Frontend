@@ -18,30 +18,36 @@
 
           <div class="col-md-6">
             <div class="form-group">
-              <label for="display-name">Display Name:</label>
-              <input value.bind="model.displayName" class="form-control" type="text" id="display-name" name="display-name" />
+              <label for="display-name">Display Name:
+                <input value.bind="model.displayName" class="form-control" type="text" id="display-name" name="display-name" />
+              </label>
             </div>
 
             <div class="form-group">
-              <label for="email">E-Mail: <span title="Connecting your email address with your account allows you to recover your profile, upload mods to our network and subscribe to premium. WithSIX will not share your email or use it for advertisement purposes">(?)</span></label>
-              <input value.bind="model.email" class="form-control" type="text" id="email" name="email" />
+              <label for="email">E-Mail: <span title="Connecting your email address with your account allows you to recover your profile, upload mods to our network and subscribe to premium. WithSIX will not share your email or use it for advertisement purposes">(?)</span>
+                <input value.bind="model.email" class="form-control" type="text" id="email" name="email" />
+              </label>
               <div show.bind="model.email">
-                <label for="email-confirmation">E-Mail confirmation:</label>
-                <input value.bind="model.emailConfirmation" class="form-control" type="text" id="email-confirmation" name="email-confirmation" />
+                <label for="email-confirmation">E-Mail confirmation:
+                  <input value.bind="model.emailConfirmation" class="form-control" type="text" id="email-confirmation" name="email-confirmation" />
+                </label>
               </div>
             </div>
 
             <div class="form-group">
-              <label for="Birthday">Birthday:</label>
-              <input value.bind="model.birthday | dateInput & updateTrigger:'blur'" class="form-control" type="date" id="birthday" name="birthday" />
+              <label for="Birthday">Birthday:
+                <input value.bind="model.birthday | dateInput & updateTrigger:'blur'" class="form-control" type="date" id="birthday" name="birthday" />
+              </label>
             </div>
 
             <div class="form-group">
-              <label for="password">Password:</label>
-              <input value.bind="model.password" class="form-control" type="password" id="password" name="password" />
+              <label for="password">Password:
+                <input value.bind="model.password" class="form-control" type="password" id="password" name="password" />
+              </label>
               <div show.bind="model.password">
-                <label for="password-confirmation">Password Confirmation:</label>
-                <input value.bind="model.passwordConfirmation" class="form-control" type="password" id="password-confirmation" name="password-confirmation" />
+                <label for="password-confirmation">Password Confirmation:
+                  <input value.bind="model.passwordConfirmation" class="form-control" type="password" id="password-confirmation" name="password-confirmation" />
+                </label>
               </div>
             </div>
           </div>
