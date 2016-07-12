@@ -438,7 +438,7 @@ enum UpdateState {
 
 
 interface ISettings {
-  template?: string; hasSync?: boolean; downloadedSync?: boolean; downloadedPWS?: boolean;
+  template?: string; hasSync?: boolean; downloadedSync?: boolean; downloadedPWS?: boolean; remindedFinalize?: boolean;
 }
 
 export class W6 {
