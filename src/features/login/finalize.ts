@@ -68,8 +68,10 @@ export class Finalize extends Dialog<IInput> {
     this.model.avatar = !this.files || this.files.length == 0 ? null : this.files[0];
     let userName = await new Save(this.model).handle(this.mediator);
     this.w6.userInfo.passwordConfirmed = true;
-    this.controller.ok(true);
     this.router.navigate(`/u/${userName.sluggifyEntityName()}`);
+    this.controller.ok(true);
+    if (await this.toastr.success("Please check your Email and click on the Activation link within, to complete the verification process. Or click here to resend", "Almost done", { timeOut: 0 }))
+      this.router.navigate(`/login/verify/?email=${this.model.email}`);
   }
 }
 
