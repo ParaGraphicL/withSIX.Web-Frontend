@@ -11,49 +11,46 @@ interface IInput extends IInputReceive {
 
 interface IOutput { userName: string }
 
-export class Finalize extends Dialog<{ input: IInput; output: IOutput }> {
+export class Finalize extends Dialog<IInput> {
   save;
-  saved = false;
-  imgSrc;
-  imgTitle: string;
   cancel;
   files: FileList;
   validation: ValidationGroup;
 
-  async activate(model) {
-    model = { input: await new GetUserInfo().handle(this.mediator), output: {} }
+  async activate(model: IInput) {
+    model = <IInput>(await new GetUserInfo().handle(this.mediator));
     super.activate(model);
 
-    let initialEmail: string = model.input.email.toLowerCase();
+    let initialEmail: string = model.email.toLowerCase();
 
     this.save = uiCommand2("Save", this.saveInternal, { cls: 'ok' });
     this.cancel = uiCommand2('Cancel', async () => this.controller.cancel(false), { cls: "cancel" });
     this.validation = this.validator.on(this)
-      .ensure('model.input.email')
+      .ensure('model.email')
       .isNotEmpty()
       .isEmail()
       .passes(async (x: string) => { return x.toLowerCase() === initialEmail || !(await new EmailExists(x).handle(this.mediator)) }, 250)
       .withMessage("email already in use")
-      .ensure('model.input.emailConfirmation')
+      .ensure('model.emailConfirmation')
       .isNotEmpty()
-      .passes((x: string) => x === this.model.input.email)
+      .passes((x: string) => x === this.model.email)
       .withMessage("Please confirm the email address")
-      .ensure('model.input.displayName')
+      .ensure('model.displayName')
       .isNotEmpty()
       .hasMinLength(3)
       .hasMaxLength(150)
-      .ensure('model.input.password')
+      .ensure('model.password')
       .isNotEmpty()
       .hasMinLength(6)
       .hasMaxLength(255)
       .passes(this.isComplexPassword)
       .withMessage('Requires at least one lower case character, one upper case character and one digit')
-      .ensure('model.input.passwordConfirmation')
+      .ensure('model.passwordConfirmation')
       .isNotEmpty()
-      .passes((x: string) => x === this.model.input.password)
+      .passes((x: string) => x === this.model.password)
       .withMessage("Please confirm the password");
 
-    // .ensure('model.input.birthday')
+    // .ensure('model.birthday')
     //   .isNotEmpty();
     ;
   }
@@ -68,9 +65,12 @@ export class Finalize extends Dialog<{ input: IInput; output: IOutput }> {
 
   saveInternal = async () => {
     await this.validation.validate();
-    this.model.input.avatar = !this.files || this.files.length == 0 ? null : this.files[0];
-    this.model.output = { userName: await new Save(this.model.input).handle(this.mediator) }
-    this.saved = true;
+    this.model.avatar = !this.files || this.files.length == 0 ? null : this.files[0];
+    let userName = await new Save(this.model).handle(this.mediator);
+    this.w6.userInfo.emailConfirmed = true;
+    this.w6.userInfo.passwordConfirmed = true;
+    this.controller.ok(true);
+    this.router.navigate(`/u/${userName.sluggifyEntityName()}`);
   }
 }
 
