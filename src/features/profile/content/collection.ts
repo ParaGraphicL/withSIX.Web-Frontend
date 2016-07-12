@@ -45,6 +45,12 @@ export class Collection extends ContentViewModel<ICollection> {
         this.topMenuActions.push(new MenuItem(this.loadIntoPlaylist))
       }
 
+      d(this.fork = uiCommand2("Save as copy", async () => {
+        let id = await new ForkCollection(this.model.id).handle(this.mediator);
+        this.navigateInternal("/p/" + this.model.gameSlug + "/collections/" + id.toShortId() + "/" + (this.model.name + " [Forked]").sluggify());
+      }, { icon: "fa fa-code-fork" }));
+      this.topMenuActions.push(new MenuItem(this.fork));
+
       d(this.launch2 = uiCommand2("Launch", this.launchInternal, {
         isVisibleObservable: this.isInstalledObservable.combineLatest(Base.observeEx(this.model, x => x.hasServers), (x, y) => x && y),
         canExecuteObservable: this.canExecuteObservable,
@@ -52,12 +58,6 @@ export class Collection extends ContentViewModel<ICollection> {
       }));
 
       this.topMenuActions.push(new MenuItem(this.launch2));
-
-      d(this.fork = uiCommand2("Save as copy", async () => {
-        let id = await new ForkCollection(this.model.id).handle(this.mediator);
-        this.navigateInternal("/p/" + this.model.gameSlug + "/collections/" + id.toShortId() + "/" + (this.model.name + " [Forked]").sluggify());
-      }, { icon: "fa fa-code-fork" }));
-      this.topMenuActions.push(new MenuItem(this.fork));
 
       if (this.model.typeScope != null) d(this.uninstall = this.createDeleteCommand());
     })
