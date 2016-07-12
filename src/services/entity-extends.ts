@@ -20,6 +20,8 @@ export interface IUserInfo {
   firstName: string;
   lastName: string;
   profileUrl: string; // computed
+  emailConfirmed: boolean;
+  passwordConfirmed: boolean;
   clearAvatars(): void;
   getAvatarUrl(size: number): string;
   isInRole(role: string): boolean;
@@ -378,6 +380,8 @@ export module EntityExtends {
     displayName: string;
     failedLogin: boolean;
     avatarUpdatedAt: Date;
+    emailConfirmed: boolean;
+    passwordConfirmed: boolean;
 
     // TODO: Listen to avatar changes at a global place and ClearAvatars() so that the next calls will refresh the info. Already implemented for the updateUserInfo calls...
   }
