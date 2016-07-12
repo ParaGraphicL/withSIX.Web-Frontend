@@ -73,6 +73,8 @@ export class App extends ViewModel {
   get showFirefoxNotice() { return this.w6.isFirefox && this.w6.settings.downloadedSync && this.firefoxTimeoutPassed && !this.w6.miniClient.isConnected && !this.basketService.hasConnected; }
 
   get currentRoute() { return this.router.currentInstruction }
+  get shouldFinalizeAccount() { return this.isLoggedIn && (!this.w6.userInfo.emailConfirmed && !this.w6.userInfo.passwordConfirmed) };
+  get shouldConfirmEmail() { return this.isLoggedIn && (!this.w6.userInfo.emailConfirmed && this.w6.userInfo.passwordConfirmed) }
 
   activate() {
     if (this.hasApi) window.onbeforeunload = () => {
@@ -193,6 +195,13 @@ export class App extends ViewModel {
 
     this.ls.on('w6.event', (v, old, url) => this.raiseCrossEvent(v.name, v.data));
     window.addEventListener('keydown', this.myKeypressCallback, false);
+
+    if (this.shouldFinalizeAccount && !this.w6.settings.remindedFinalize) {
+      this.w6.updateSettings(x => {
+        this.finalizeAccount();
+        x.remindedFinalize = true;
+      })
+    }
   }
 
   redirectToError(statusCode: number) { return this.router.navigate(`/errors/${statusCode}?resource=${encodeURIComponent(window.location.href)}#initial=1`) }

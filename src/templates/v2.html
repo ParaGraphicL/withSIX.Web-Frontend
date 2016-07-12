@@ -28,9 +28,9 @@
           <span if.bind="w6.miniClient.clientInfo.updateState == 4">Installing new client version...</span>
         </div>
 
-        <div class="update-header" if.bind="isLoggedIn && (!w6.userInfo.emailConfirmed && w6.userInfo.passwordConfirmed)">Please confirm your account <a href="/me/settings/credentials">here</a></div>
+        <div class="update-header" if.bind="shouldConfirmEmail">Please confirm your account <a href="/me/settings/credentials">here</a></div>
 
-        <div class="update-header" if.bind="isLoggedIn && (!w6.userInfo.emailConfirmed && !w6.userInfo.passwordConfirmed)">Please finalize your account
+        <div class="update-header" if.bind="features.isTestEnvironment || shouldFinalizeAccount">Please finalize your account
           <button class="anchor" click.delegate="finalizeAccount()">here</button>
         </div>
 
