@@ -68,7 +68,7 @@ export class Index extends ViewModel {
     });
     if (this.isAdmin) {
       //let debouncer = Debouncer.debouncePromise(async (newValue) => { let exists = await new CollectionExists(newValue, this.game.id).handle(this.mediator); return !exists }, 250);
-      this.validation = (<any>this.validator).on(this)
+      this.validation = this.validator.on(this)
         .ensure('group.name')
         .isNotEmpty()
         .hasMinLength(3)

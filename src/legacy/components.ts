@@ -2910,32 +2910,14 @@ export module Components.Dialogs {
 
   export class UsernameExistsQuery extends DbQueryBase {
     static $name = "UsernameExists";
-    public execute = [
-      'userName', userName => {
-        if (!userName || userName.length == 0) return false;
-        var cache = this.context.getUsernameExistsCache(userName);
-        if (cache === false || cache === true) return cache;
-
-        return <any>this.context.getCustom<BooleanResult>("accounts/username-exists", { params: { userName: userName } })
-          .then(result => this.context.addUsernameExistsCache(userName, result.result));
-      }
-    ];
+    public execute = ['userName', this.context.userNameExistsCached];
   }
 
   registerCQ(UsernameExistsQuery);
 
   export class EmailExistsQuery extends DbQueryBase {
     static $name = "EmailExists";
-    public execute = [
-      'email', email => {
-        if (!email || email.length == 0) return false;
-        var cache = this.context.getEmailExistsCache(email);
-        if (cache === false || cache === true) return cache;
-
-        return <any>this.context.getCustom<BooleanResult>("accounts/email-exists", { params: { email: email } })
-          .then(result => this.context.addEmailExistsCache(email, result.result));
-      }
-    ];
+    public execute = ['email', this.context.emailExistsCached];
   }
 
   registerCQ(EmailExistsQuery);
@@ -2960,7 +2942,6 @@ export module Components.Dialogs {
   registerCQ(OpenTermsDialogQuery);
   registerCQ(ForgotPasswordCommand);
   registerCQ(ForgotUsernameCommand);
-
   registerCQ(RegisterCommand);
 }
 
