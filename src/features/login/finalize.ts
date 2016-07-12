@@ -76,7 +76,7 @@ export class Finalize extends Dialog<IInput> {
     this.router.navigate(`/u/${userName.sluggifyEntityName()}`);
     this.controller.ok(true);
     if (await this.toastr.success("Please check your Email and click on the Activation link within, to complete the verification process. Or click here to resend", "Almost done", { timeOut: 0 }))
-      this.router.navigate(`/login/verify/?email=${this.model.email}`);
+      this.router.navigate(`/login/verify?email=${this.model.email}`);
   }
 }
 
