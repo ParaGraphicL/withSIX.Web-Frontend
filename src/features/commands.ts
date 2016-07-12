@@ -29,6 +29,19 @@ class ClientQuery<T, T2> extends DbClientQuery<T, T2> {
   }
 }
 
+export enum LaunchAction {
+  Default,
+  Launch,
+  Join
+}
+
+export enum LaunchType {
+  Default,
+  Singleplayer,
+  Multiplayer,
+  Editor
+}
+
 @handlerFor(SubscribeCollection)
 class SubscribeCollectionHandler extends DbClientQuery<SubscribeCollection, void> {
   async handle(request: SubscribeCollection): Promise<void> {
@@ -36,29 +49,30 @@ class SubscribeCollectionHandler extends DbClientQuery<SubscribeCollection, void
   }
 }
 
-export class LaunchContent extends VoidCommand { constructor(public gameId: string, public id: string, public noteInfo: INoteInfo) { super(); } }
+export class LaunchContent extends VoidCommand { constructor(public gameId: string, public id: string, public noteInfo: INoteInfo, public action = LaunchAction.Launch) { super(); } }
 
 @handlerFor(LaunchContent)
 class LaunchContentHandler extends ClientQuery<LaunchContent, void> {
   async handle(request: LaunchContent): Promise<void> {
     //this.raiseDownloadNotification('Launching', null, request.noteInfo);
-    await this.client.launchContent({ gameId: request.gameId, content: { id: request.id } });
+    await this.client.launchContent(<any>{ gameId: request.gameId, content: { id: request.id }, action: request.action });
     // TODO: Add delay?
     //this.raiseDownloadNotification('Launched', null, request.noteInfo);
     //this.context.eventBus.publish(new ContentLaunched(request.gameId, request.id));
   }
 }
 
-export class LaunchContents extends VoidCommand { constructor(public gameId: string, public contents: IContentGuidSpec[], public noteInfo: INoteInfo) { super(); } }
+export class LaunchContents extends VoidCommand { constructor(public gameId: string, public contents: IContentGuidSpec[], public noteInfo: INoteInfo, public action = LaunchAction.Launch) { super(); } }
 
 @handlerFor(LaunchContents)
 class LaunchContentsHandler extends ClientQuery<LaunchContents, void> {
   async handle(request: LaunchContents): Promise<void> {
     //this.raiseDownloadNotification('Launching', null, request.noteInfo);
-    await this.client.launchContents({
+    await this.client.launchContents(<any>{
       gameId: request.gameId,
       contents: request.contents,
-      name: request.noteInfo.text
+      name: request.noteInfo.text,
+      action: request.action
     });
     // TODO: Add delay?
     //this.raiseDownloadNotification('Launched', null, request.noteInfo);
