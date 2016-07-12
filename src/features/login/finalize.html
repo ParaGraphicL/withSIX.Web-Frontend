@@ -19,29 +19,29 @@
           <div class="col-md-6">
             <div class="form-group">
               <label for="display-name">Display Name:</label>
-              <input value.bind="model.input.displayName" class="form-control" type="text" id="display-name" name="display-name" />
+              <input value.bind="model.displayName" class="form-control" type="text" id="display-name" name="display-name" />
             </div>
 
             <div class="form-group">
               <label for="email">E-Mail:</label>
-              <input value.bind="model.input.email" class="form-control" type="text" id="email" name="email" />
-              <div show.bind="model.input.password">
+              <input value.bind="model.email" class="form-control" type="text" id="email" name="email" />
+              <div show.bind="model.password">
                 <label for="email-confirmation">E-Mail confirmation:</label>
-                <input value.bind="model.input.emailConfirmation" class="form-control" type="text" id="email-confirmation" name="email-confirmation" />
+                <input value.bind="model.emailConfirmation" class="form-control" type="text" id="email-confirmation" name="email-confirmation" />
               </div>
             </div>
 
             <div class="form-group">
               <label for="Birthday">Birthday:</label>
-              <input value.bind="model.input.birthday" class="form-control" type="date" id="birthday" name="birthday" />
+              <input value.bind="model.birthday" class="form-control" type="date" id="birthday" name="birthday" />
             </div>
 
             <div class="form-group">
               <label for="password">Password:</label>
-              <input value.bind="model.input.password" class="form-control" type="password" id="password" name="password" />
-              <div show.bind="model.input.password">
+              <input value.bind="model.password" class="form-control" type="password" id="password" name="password" />
+              <div show.bind="model.password">
                 <label for="password-confirmation">Password Confirmation:</label>
-                <input value.bind="model.input.passwordConfirmation" class="form-control" type="password" id="password-confirmation" name="password-confirmation" />
+                <input value.bind="model.passwordConfirmation" class="form-control" type="password" id="password-confirmation" name="password-confirmation" />
               </div>
             </div>
           </div>
