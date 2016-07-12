@@ -112,7 +112,7 @@ export class SaveHandler extends DbQuery<Save, string> {
     this.appendIfNotNull(fd, 'avatar', request.model.avatar);
     this.appendIfNotNull(fd, 'email', request.model.email);
     this.appendIfNotNull(fd, 'displayName', request.model.displayName);
-    this.appendIfNotNull(fd, 'birthday', request.model.birthday);
+    this.appendIfNotNull(fd, 'birthday', request.model.birthday ? request.model.birthday.toISOString() : request.model.birthday);
     this.appendIfNotNull(fd, 'password', request.model.password);
     return this.context.postCustomFormData<string>("me/finalize", fd);
   }

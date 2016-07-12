@@ -11,6 +11,16 @@ export class ActiveValueConverter {
   }
 }
 
+@valueConverter('dateInput')
+export class DateInputValueConverter {
+  toView(d) {
+    return d ? moment(d).format("YYYY-MM-DD") : d
+  }
+  fromView(d) {
+    return d ? new Date(d + ' 00:00:00') : d;
+  }
+}
+
 @valueConverter('monthName')
 export class MonthNameValueConverter {
   toView = monthNumber => { //1 = January
@@ -186,7 +196,7 @@ export class FileListToArrayValueConverter {
 
 @valueConverter('blobToUrl')
 export class BlobToUrlValueConverter {
-  toView(blob) {  return URL.createObjectURL(blob); }
+  toView(blob) { return URL.createObjectURL(blob); }
 }
 
 // TODO

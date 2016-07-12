@@ -14,6 +14,7 @@ export class Collection extends ContentViewModel<ICollection> {
   scopeIcon: string;
   typeScopeIcon: string;
   delete: ICommand<void>;
+  launch2: ICommand<void>;
   edit: ICommand<boolean>;
   loadIntoPlaylist: ICommand<void>
   topMenuActions = []
@@ -43,6 +44,14 @@ export class Collection extends ContentViewModel<ICollection> {
         d(this.loadIntoPlaylist = uiCommand2("Load into playlist", this.loadIntoPlaylistInternal, { icon: "icon withSIX-icon-Edit-Pencil" }))
         this.topMenuActions.push(new MenuItem(this.loadIntoPlaylist))
       }
+
+      d(this.launch2 = uiCommand2("Launch", this.launchInternal, {
+        isVisibleObservable: this.isInstalledObservable.combineLatest(Base.observeEx(this.model, x => x.hasServers), (x, y) => x && y),
+        canExecuteObservable: this.canExecuteObservable,
+        icon: "withSIX-icon-Hexagon-Play"
+      }));
+
+      this.topMenuActions.push(new MenuItem(this.launch2));
 
       d(this.fork = uiCommand2("Save as copy", async () => {
         let id = await new ForkCollection(this.model.id).handle(this.mediator);
