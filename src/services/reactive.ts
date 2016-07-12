@@ -6,6 +6,7 @@ import * as Rx from 'rx';
 import {Container, inject, PropertyObserver} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {Validation, ValidationResult} from 'aurelia-validation';
+import {GlobalErrorHandler} from './legacy/logger';
 
 
 export class ObservableEventAggregator extends EventAggregator {
@@ -197,6 +198,8 @@ export var uiCommandWithLogin = function <T>(action: IPromiseFunction<T>, canExe
 
 export var uiCommand2 = function <T>(name: string, action: IPromiseFunction<T>, options?: ICommandInfo): ICommand<T> { // Rx.Observable<boolean>
   let command = new UiCommandInternal<T>(name, action, options);
+  let eh: GlobalErrorHandler = Container.instance.get(GlobalErrorHandler);
+  command.thrownExceptions.subscribe(x => eh.handleUseCaseError(x, 'unhandled'));
 
   // TODO: Optimize?
   let f = (...args) => command.execute(...args);
@@ -214,6 +217,7 @@ export var uiCommand2 = function <T>(name: string, action: IPromiseFunction<T>, 
   Object.defineProperty(f, 'canExecuteObservable', { get: () => command.canExecuteObservable });
   Object.defineProperty(f, 'isExecutingObservable', { get: () => command.isExecutingObservable });
   Object.defineProperty(f, 'isVisibleObservable', { get: () => command.isVisibleObservable });
+  Object.defineProperty(f, 'thrownExceptions', { get: () => command.thrownExceptions });
   return f2;
 }
 
@@ -243,6 +247,7 @@ interface ICommand<T> extends IDisposable, IPromiseFunction<T> {
   tooltip: string;
   canExecute: boolean;
   canExecuteObservable: Rx.Observable<boolean>;
+  thrownExceptions: Rx.Observable<Error>;
   execute(...args): Promise<T>;
 }
 
@@ -254,7 +259,7 @@ class UiCommandInternal<T> extends Base {
   icon: string;
   textCls: string;
   tooltip: string;
-
+  public thrownExceptions: Rx.IObservable<Error>;
   public isExecutingObservable = this.observeEx(x => x.isExecuting);
   public isVisibleObservable = this.observeEx(x => x.isVisible);
   public canExecuteObservable = this.observeEx(x => x.canExecute);
@@ -268,6 +273,7 @@ class UiCommandInternal<T> extends Base {
     this.icon = options.icon;
     this.textCls = options.textCls;
     this.tooltip = options.tooltip;
+    this.thrownExceptions = new Rx.Subject<Error>();
 
     if (options.canExecuteObservable) this.subscriptions.subd(d => d(options.canExecuteObservable.subscribe(x => this.otherBusy = !x)));
     if (options.isVisibleObservable) this.subscriptions.subd(d => d(options.isVisibleObservable.subscribe(x => this.isVisible = x)));
@@ -276,11 +282,13 @@ class UiCommandInternal<T> extends Base {
   public get canExecute() { return !this.isExecuting && !this.otherBusy; }
   public dispose() { this.subscriptions.dispose(); }
 
-  // TODO: Global error handler
   public async execute(...args): Promise<T> {
     this.isExecuting = true;
     try {
       return await this.action(...args);
+    } catch (err) {
+      if (this.thrownExceptions.hasObservers) this.thrownExceptions.onNext(err);
+      else throw (err); // TODO: Unhandled exception handler!!
     } finally {
       this.isExecuting = false;
     }
