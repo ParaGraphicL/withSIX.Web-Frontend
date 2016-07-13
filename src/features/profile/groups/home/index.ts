@@ -41,7 +41,7 @@ export class Index extends ViewModel {
   get avatarUrl() { return this.w6.url.processAssetVersion(this.group.avatarUrl, this.group.avatarUpdatedAt) }
   get backgroundUrl() { return this.w6.url.processAssetVersion(this.group.backgroundUrl, this.group.backgroundUpdatedAt) }
 
-  setupWatch = () => this.subscriptions.subd(d => d(this.watch = this.toProperty(this.listFactory.getObserveAll(this.group).select(x => true), x => x.changed)))
+  setupWatch = () => this.subscriptions.subd(d => d(this.watch = this.toProperty(this.listFactory.getObserveAll(this.group).map(x => true), x => x.changed)))
 
   async refreshGroup(id: string) {
     let group = await new GetGroup(id).handle(this.mediator);
