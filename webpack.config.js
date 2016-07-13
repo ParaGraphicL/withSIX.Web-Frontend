@@ -85,9 +85,8 @@ module.exports = {
             compiler: 'ntypescript'
           }
         }]),
-        exclude: /bower_components|node_modules|typings/
-      },
-      {
+        exclude: /bower_components|typings/
+      }, {
         test: /\.json$/,
         loader: 'json-loader'
       },
