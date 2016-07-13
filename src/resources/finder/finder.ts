@@ -33,7 +33,7 @@ export class FindModel<T> extends Base implements IFindModel<T> {
       // TODO: debounce and make sure old results dont overwrite new results
       d(this.toProperty(this.observeEx(x => x.searchItem)
         .skip(1)
-        .selectMany(async (x) => await this.finder(x))
+        .flatMap(async (x) => await this.finder(x))
         .concat(), x => x.results))
     })
   }

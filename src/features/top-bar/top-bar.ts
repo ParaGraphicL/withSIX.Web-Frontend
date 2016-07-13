@@ -14,7 +14,7 @@ export class TopBar extends ViewModel {
   constructor(uiContext: UiContext, public login: Login, private clientMissingHandler: ClientMissingHandler) { super(uiContext) }
 
   bind() {
-    let notLoggedInObs = this.observeEx(x => x.isLoggedin).select(x => !x);
+    let notLoggedInObs = this.observeEx(x => x.isLoggedin).map(x => !x);
     if (this.features.groups) {
       let groupTab: ITab = {
         header: "Your groups",
@@ -38,7 +38,7 @@ export class TopBar extends ViewModel {
       type: 'dropdown', instant: true, disabledAction: () => this.disabledAction()
     };
     this.tabs.push(uploadContent);
-    this.subscriptions.subd(d => d(Base.toProperty(this.observeEx(x => x.hasActiveGame).select(x => !x)
+    this.subscriptions.subd(d => d(Base.toProperty(this.observeEx(x => x.hasActiveGame).map(x => !x)
       // .combineLatest(notLoggedInObs, (x, y) => x || y)
       , x => x.disabled, uploadContent)));
 

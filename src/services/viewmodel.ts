@@ -40,7 +40,7 @@ export class ViewModel extends Base {
   // This works around the issue of routing for Angular while Aurelia is involved..angular
   // TODO: Better workaround than the rootscope apply?
   protected notifyAngular = () => {
-    if (this.isNavigating) this.observeEx(x => x.isNavigating).skip(1).where(x => !x).take(1).subscribe(this.notifyAngularInternal)
+    if (this.isNavigating) this.observeEx(x => x.isNavigating).skip(1).map(x => !x).take(1).subscribe(this.notifyAngularInternal)
     else this.notifyAngularInternal();
   }
 

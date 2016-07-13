@@ -6,7 +6,7 @@ export class UserErrorDialog extends Dialog<IUserError> {
     super.activate(model);
     this.subscriptions.subd(d => {
       d(this.clientWrapper.userErrorResolved
-        .where(x => x.id == this.model.id)
+        .filter(x => x.id == this.model.id)
         .subscribe(x => this.controller.close(false, null)));
     });
 
