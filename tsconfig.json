@@ -262,7 +262,6 @@
         "./typings/custom/nprogress.d.ts",
         "./typings/custom/numbro.d.ts",
         "./typings/custom/phantomjs/phantomjs.d.ts",
-        "./typings/custom/proxy-shim.d.ts",
         "./typings/custom/reflect-metadata.d.ts",
         "./typings/custom/signalr/signalr.d.ts",
         "./typings/custom/typeahead/typeahead.d.ts",
