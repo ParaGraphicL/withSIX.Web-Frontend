@@ -46,12 +46,12 @@ export class General extends ViewModel {
 
   installExtension = uiCommand2("Install explorer folder synchronization", () => this.client.installExplorerExtension(), {
     tooltip: "This will allow you to start uploads directly from the Mod folder, using the right click menu",
-    isVisibleObservable: this.observeEx(x => x.isExtensionInstalled).map(x => !x)
+    isVisibleObservable: this.whenAnyValue(x => x.isExtensionInstalled).map(x => !x)
   });
 
   uninstallExtension = uiCommand2("Uninstall explorer folder synchronization", () => this.client.uninstallExplorerExtension(), {
     //tooltip: "This will allow you to start uploads directly from the Mod folder, using the right click menu",
-    isVisibleObservable: this.observeEx(x => x.isExtensionInstalled)
+    isVisibleObservable: this.whenAnyValue(x => x.isExtensionInstalled)
   });
 
 }

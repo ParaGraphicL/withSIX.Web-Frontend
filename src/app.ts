@@ -150,16 +150,16 @@ export class App extends ViewModel {
       d(this.eventBus.subscribe(OpenAddModsToCollectionsDialog, this.openAddModsToCollectionsDialog));
       d(this.eventBus.subscribe(LoginUpdated, this.loginUpdated));
       d(this.eventBus.subscribe(OpenSettings, this.openClientSettings));
-      d(this.toProperty(this.observeEx(x => x.isRequesting)
-        .combineLatest(this.observeEx(x => x.isNavigating), (api, router) => api || router)
+      d(this.toProperty(this.whenAnyValue(x => x.isRequesting)
+        .combineLatest(this.whenAnyValue(x => x.isNavigating), (api, router) => api || router)
         .debounceTime(250), x => x.isApiBusy))
-      d(this.observeEx(x => x.currentRoute).subscribe(_ => this.signaler.signal('router-signal')))
-      d(this.observeEx(x => x.isNavigating)
+      d(this.whenAnyValue(x => x.currentRoute).subscribe(_ => this.signaler.signal('router-signal')))
+      d(this.whenAnyValue(x => x.isNavigating)
         .skip(1)
         .filter(x => !x)
         .subscribe(this.notifyAngularInternal));
 
-      d(this.observeEx(x => x.overlayShown)
+      d(this.whenAnyValue(x => x.overlayShown)
         .subscribe(x => {
           if (x) $("body").addClass("overlay-shown")
           else $("body").removeClass("overlay-shown");
@@ -174,7 +174,7 @@ export class App extends ViewModel {
         .subscribe(state => {
           if (state.newState == ConnectionState.connected) this.infoReceived(this.client.clientInfo);
         }));
-      let userErrors = this.observeEx(x => x.userErrors).filter(x => x != null);
+      let userErrors = this.whenAnyValue(x => x.userErrors).filter(x => x != null);
       d(userErrors.subscribe(x => {
         // close all open dialogs
         this.dialogMap.forEach(x => { this.eventBus.publish("client.userErrorResolved", { id: x }); this.tools.removeEl(this.dialogMap, x); })

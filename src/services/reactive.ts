@@ -309,7 +309,7 @@ class ReactiveCommand<T> extends ReactiveBase {
   }
 }
 
-export class EditConfig extends Base {
+export class EditConfig extends ReactiveBase {
   enabled: boolean;
   changed: boolean;
   constructor() {
@@ -323,6 +323,6 @@ export class EditConfig extends Base {
   get canEdit() { return !this.enabled; }
   get canClose() { return this.enabled; }
 
-  edit = uiCommand2("Edit", async () => this.enabled = true, { isVisibleObservable: this.observeEx(x => x.canEdit) });
-  close = uiCommand2("Close", async () => this.enabled = false, { canExecuteObservable: this.observeEx(x => x.canClose) });
+  edit = uiCommand2("Edit", async () => this.enabled = true, { isVisibleObservable: this.whenAnyValue(x => x.canEdit) });
+  close = uiCommand2("Close", async () => this.enabled = false, { canExecuteObservable: this.whenAnyValue(x => x.canClose) });
 }

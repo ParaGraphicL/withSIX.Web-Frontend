@@ -72,31 +72,31 @@ export class Playlist extends ViewModel {
     this.subscriptions.subd(d => {
       d(this.action);
       d(this.saveBasket = uiCommandWithLogin2("Create Collection", this.saveBasketInternal, {
-        canExecuteObservable: this.observeEx(x => x.canSaveBasket),
-        isVisibleObservable: this.observeEx(x => x.canSaveBasket),
+        canExecuteObservable: this.whenAnyValue(x => x.canSaveBasket),
+        isVisibleObservable: this.whenAnyValue(x => x.canSaveBasket),
         cls: 'save-as-collection',
         icon: 'withSIX-icon-Hexagon-Cloud'
       }));
       d(this.saveBasket2 = uiCommandWithLogin2("Save as\nCollection", this.saveBasketInternal, {
-        canExecuteObservable: this.observeEx(x => x.canSaveBasket),
-        isVisibleObservable: this.observeEx(x => x.canSaveBasket),
+        canExecuteObservable: this.whenAnyValue(x => x.canSaveBasket),
+        isVisibleObservable: this.whenAnyValue(x => x.canSaveBasket),
         cls: 'save-as-collection',
         icon: 'withSIX-icon-Hexagon-Cloud'
       }));
       d(this.saveBasket3 = uiCommandWithLogin2("Save as \nCopy", this.saveAsNewCollectionInternal, {
-        canExecuteObservable: this.observeEx(x => x.canSaveBasket),
-        isVisibleObservable: this.observeEx(x => x.canSaveBasket),
+        canExecuteObservable: this.whenAnyValue(x => x.canSaveBasket),
+        isVisibleObservable: this.whenAnyValue(x => x.canSaveBasket),
         cls: 'save-as-collection',
         icon: 'withSIX-icon-Hexagon-Cloud',
         tooltip: 'This will create an identical copy of this collection that you can edit'
       }));
       d(this.disposeOld);
-      d(this.clearBasket = uiCommand2("Clear", this.unload, { icon: "icon withSIX-icon-Square-X", cls: "ignore-close", isVisibleObservable: this.observeEx(x => x.hasItems) }))
+      d(this.clearBasket = uiCommand2("Clear", this.unload, { icon: "icon withSIX-icon-Square-X", cls: "ignore-close", isVisibleObservable: this.whenAnyValue(x => x.hasItems) }))
       d(this.abort = uiCommand2("Cancel", async () => {
         await this.client.abort(this.activeBasket.model.gameId);
       }, {
-          isVisibleObservable: this.observeEx(x => x.isExecuting),
-          canExecuteObservable: this.observeEx(x => x.canAbort),
+          isVisibleObservable: this.whenAnyValue(x => x.isExecuting),
+          canExecuteObservable: this.whenAnyValue(x => x.canAbort),
           cls: "ignore-close abort-btn",
           icon: "icon withSIX-icon-X",
           textCls: "aurelia-hide"
@@ -115,8 +115,8 @@ export class Playlist extends ViewModel {
         this.collectionChanged = false;
       }, {
           cls: 'ok ignore-close',
-          canExecuteObservable: this.observeEx(x => x.hasItems),
-          isVisibleObservable: this.observeEx(x => x.collectionChanged).combineLatest(this.observeEx(x => x.isYourCollection), (x, y) => x && y)
+          canExecuteObservable: this.whenAnyValue(x => x.hasItems),
+          isVisibleObservable: this.whenAnyValue(x => x.collectionChanged).combineLatest(this.whenAnyValue(x => x.isYourCollection), (x, y) => x && y)
         }));
       d(this.undoCollection = uiCommand2("Cancel", async () => {
         await this.updateCollections();
@@ -126,7 +126,7 @@ export class Playlist extends ViewModel {
         this.updateCollection(col);
       }, {
           cls: 'cancel ignore-close',
-          isVisibleObservable: this.observeEx(x => x.collectionChanged)
+          isVisibleObservable: this.whenAnyValue(x => x.collectionChanged)
         }));
       d(this.appEvents.gameChanged.subscribe(this.gameChanged));
       d(this.findModel = new FindModel(this.findCollections, (col: IPlaylistCollection) => this.selectCollection(col), e => e.name));
@@ -264,7 +264,7 @@ export class Playlist extends ViewModel {
   unloadCollection;
   saveCollection;
   undoCollection;
-  action = uiCommand2("Execute", () => this.executeBasket(this.activeBasket), { canExecuteObservable: this.observeEx(x => x.isNotLocked) });
+  action = uiCommand2("Execute", () => this.executeBasket(this.activeBasket), { canExecuteObservable: this.whenAnyValue(x => x.isNotLocked) });
 
   gameChanged = async (info: GameChanged) => {
     let equal = this.game.id == info.id;

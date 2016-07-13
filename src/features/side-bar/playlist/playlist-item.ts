@@ -117,9 +117,9 @@ export class PlaylistItem extends ViewModel {
 
     this.subscriptions.subd(d => {
       this.updateState();
-      this.isInstalledObservable = this.observeEx(x => x.isInstalled);
-      this.isNotInstalledObservable = this.observeEx(x => x.isNotInstalled);
-      this.canExecuteObservable = this.gameInfo.observeEx(x => x.canExecute).combineLatest(this.observeEx(x => x.isBusy), (can, busy) => can && !busy);
+      this.isInstalledObservable = this.whenAnyValue(x => x.isInstalled);
+      this.isNotInstalledObservable = this.whenAnyValue(x => x.isNotInstalled);
+      this.canExecuteObservable = this.gameInfo.observeEx(x => x.canExecute).combineLatest(this.whenAnyValue(x => x.isBusy), (can, busy) => can && !busy);
 
       d(this.eventBus.subscribe('refreshContentInfo-' + model.currentGameId, x => this.updateState()));
       d(this.eventBus.subscribe('contentInfoStateChange-' + this.model.id, x => this.updateState()));
@@ -127,7 +127,7 @@ export class PlaylistItem extends ViewModel {
       d(this.abort = uiCommand2("Cancel", async () => {
         await new Abort(this.model.gameId, this.model.id).handle(this.mediator);
       }, {
-          isVisibleObservable: this.observeEx(x => x.isActive),
+          isVisibleObservable: this.whenAnyValue(x => x.isActive),
           icon: "icon withSIX-icon-X"
         }));
       d(this.uninstall = uiCommand2("Uninstall", async () => {
@@ -151,14 +151,14 @@ export class PlaylistItem extends ViewModel {
         //this.emitGameChanged();
         await this.installInternal();
       }, {
-          isVisibleObservable: this.observeEx(x => x.isInstalled).map(x => !x).combineLatest(this.observeEx(x => x.hasUpdateAvailable).map(x => !x), (x, y) => x && y),
+          isVisibleObservable: this.whenAnyValue(x => x.isInstalled).map(x => !x).combineLatest(this.whenAnyValue(x => x.hasUpdateAvailable).map(x => !x), (x, y) => x && y),
           canExecuteObservable: this.canExecuteObservable,
           icon: "content-state-icon",
           textCls: "content-state-text" // TODO
         }));
 
       d(this.update = uiCommand2("Update", this.installInternal, {
-        isVisibleObservable: this.observeEx(x => x.hasUpdateAvailable),
+        isVisibleObservable: this.whenAnyValue(x => x.hasUpdateAvailable),
         canExecuteObservable: this.canExecuteObservable,
         icon: 'withSIX-icon-Hexagon-Upload2'
       }));
@@ -182,7 +182,7 @@ export class PlaylistItem extends ViewModel {
       if (this.isLoggedIn) {
         d(this.addToCollections = uiCommand2("Add to ...", async () => this.dialog.open({ viewModel: AddModsToCollections, model: { gameId: this.model.gameId, mods: [this.model] } }), { icon: 'withSIX-icon-Nav-Collection' }));
       }
-      d(this.observeEx(x => x.hasUpdateAvailable)
+      d(this.whenAnyValue(x => x.hasUpdateAvailable)
         .skip(1)
         .subscribe(x => {
           //this.install.name = x ? "Update" : "Install"
@@ -200,14 +200,14 @@ export class PlaylistItem extends ViewModel {
       d(this.edit = uiCommand2("Select Version", async () => {
         await this.dialogService.open({ viewModel: EditPlaylistItem, model: this.model });
         this.informAngular();
-      }, { icon: "icon withSIX-icon-Edit-Pencil", cls: "ignore-close", canExecuteObservable: this.observeEx(x => x.canEdit) }));
+      }, { icon: "icon withSIX-icon-Edit-Pencil", cls: "ignore-close", canExecuteObservable: this.whenAnyValue(x => x.canEdit) }));
 
       d(this.removeFromBasket = uiCommand2("Remove", async () => {
         this.basket.active.removeFromBasket(this.model);
         //this.basket.cloneBasket(this.basket.active);
         //this.informAngular();
         // TODO: This should require the dependency chain to be reset .. hm
-      }, { icon: "icon withSIX-icon-Square-X", canExecuteObservable: this.observeEx(x => x.canEdit) }));
+      }, { icon: "icon withSIX-icon-Square-X", canExecuteObservable: this.whenAnyValue(x => x.canEdit) }));
 
     });
 

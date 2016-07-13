@@ -14,7 +14,7 @@ export class TopBar extends ViewModel {
   constructor(uiContext: UiContext, public login: Login, private clientMissingHandler: ClientMissingHandler) { super(uiContext) }
 
   bind() {
-    let notLoggedInObs = this.observeEx(x => x.isLoggedin).map(x => !x);
+    let notLoggedInObs = this.whenAnyValue(x => x.isLoggedin).map(x => !x);
     if (this.features.groups) {
       let groupTab: ITab = {
         header: "Your groups",
@@ -26,7 +26,7 @@ export class TopBar extends ViewModel {
       };
       this.tabs.push(groupTab)
       this.subscriptions.subd(d => {
-        d(Base.toProperty(notLoggedInObs, x => x.disabled, groupTab));
+        d(TopBar.bindObservableTo(notLoggedInObs, groupTab, x => x.disabled));
       });
     }
 
@@ -38,9 +38,9 @@ export class TopBar extends ViewModel {
       type: 'dropdown', instant: true, disabledAction: () => this.disabledAction()
     };
     this.tabs.push(uploadContent);
-    this.subscriptions.subd(d => d(Base.toProperty(this.observeEx(x => x.hasActiveGame).map(x => !x)
+    this.subscriptions.subd(d => d(TopBar.bindObservableTo(this.whenAnyValue(x => x.hasActiveGame).map(x => !x)
       // .combineLatest(notLoggedInObs, (x, y) => x || y)
-      , x => x.disabled, uploadContent)));
+      , uploadContent, x => x.disabled)));
 
     if (this.features.notifications) {
       let notificationTab: ITab = {
@@ -52,7 +52,7 @@ export class TopBar extends ViewModel {
         location: "middle"
       };
       this.tabs.push(notificationTab);
-      this.subscriptions.subd(d => d(Base.toProperty(notLoggedInObs, x => x.disabled, notificationTab)));
+      this.subscriptions.subd(d => d(TopBar.bindObservableTo(notLoggedInObs, notificationTab, x => x.disabled)));
     }
 
     if (this.isLoggedin) {

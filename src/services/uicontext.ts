@@ -1,4 +1,4 @@
-import {Base} from './base';
+import {ReactiveBase} from './base';
 import {Mediator, LegacyMediator} from './mediator';
 import {W6} from './withSIX';
 import {Tools} from './tools';
@@ -20,7 +20,7 @@ import {MessageDialog} from '../features/message-dialog'
 export {MessageDialog, Confirmation}
 
 @inject(W6)
-class FeatureToggles extends Base {
+class FeatureToggles extends ReactiveBase {
   constructor(private w6: W6) { super() }
 
   private isManager = this.w6.userInfo.isManager || this.w6.userInfo.isAdmin;

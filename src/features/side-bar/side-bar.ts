@@ -23,8 +23,8 @@ export class SideBar extends ViewModel {
 
   bind() {
     this.subscriptions.subd(d => {
-      d(Base.toProperty(this.observeEx(x => x.hasActiveGame)
-        //.combineLatest(this.observeEx(x => x.isClientConnected), (x, y) => x && y)
+      d(Base.bindObservableTo(this.whenAnyValue(x => x.hasActiveGame)
+        //.combineLatest(this.whenAnyValue(x => x.isClientConnected), (x, y) => x && y)
         .map(x => !x), x => x.disabled, this.tabs[1], this.tabs[2]));
       d(this.eventBus.subscribe(SwitchSideBarTab, this.switchTab))
     });

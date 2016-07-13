@@ -91,14 +91,14 @@ export class Base implements IDisposable {
   observeEx = <T extends this, TProp>(propertyEx: (v: T) => TProp) => Base.observeEx(this, propertyEx);
   static observeEx<T, TProp>(obj: T, propertyEx: (v: T) => TProp) { return Base.observe<TProp>(obj, this.getPropertyName(propertyEx), true); }
 
-  static toProperty<T, TProp>(observer: Rx.Observable<TProp>, propertyEx: PropertyExpression<T, TProp>, ...objs: T[]): IDisposable {
+  static bindObservableTo<T, TProp>(observer: Rx.Observable<TProp>, propertyEx: PropertyExpression<T, TProp>, ...objs: T[]): IDisposable {
     var propertyName = this.getPropertyName(propertyEx);
     let dsp = new Subscriptions();
     objs.forEach(obj => dsp.subd(d => observer.subscribe(x => obj[propertyName] = x)));
     return dsp;
   }
 
-  toProperty<T extends this, TProp>(observer: Rx.Observable<TProp>, propertyEx: PropertyExpression<T, TProp>) { return Base.toProperty(observer, propertyEx, this) }
+  toProperty<T extends this, TProp>(observer: Rx.Observable<TProp>, propertyEx: PropertyExpression<T, TProp>) { return Base.bindObservableTo(observer, propertyEx, this) }
 
   static getPropertyName<T, TProp>(propertyEx: PropertyExpression<T, TProp>) {
     var p = propertyEx.toString();

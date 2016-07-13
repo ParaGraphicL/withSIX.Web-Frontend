@@ -46,10 +46,10 @@ export class Filters<T> extends ViewModel {
     this.handleItemsChange(this.items);
 
     this.subscriptions.subd(d => {
-      d(this.observeEx(x => x.searchInput)
+      d(this.whenAnyValue(x => x.searchInput)
         .skip(1)
         .subscribe(x => this.initiateUpdate()));
-      d(this.observeEx(x => x.sortOrder)
+      d(this.whenAnyValue(x => x.sortOrder)
         .skip(1)
         .subscribe(x => this.initiateUpdate()));
       d(() => this.collectionObserver ? this.collectionObserver.dispose() : null);

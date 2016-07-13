@@ -61,7 +61,7 @@ export class Search extends ViewModel {
     }, 400);
 
     this.subscriptions.subd(d => {
-      d(this.observeEx(x => x.searchInput).skip(1).subscribe(x => this.debouncer(x)));
+      d(this.whenAnyValue(x => x.searchInput).skip(1).subscribe(x => this.debouncer(x)));
       d(this.observableFromEvent<CloseTabs>(CloseTabs).filter(x => x.exclude != this).subscribe(x => this.closeNow()));
     });
   }

@@ -80,7 +80,7 @@ export class Show extends ViewModel {
     //throw err;
     //}
   }, {
-      canExecuteObservable: this.observeEx(x => x.changed),
+      canExecuteObservable: this.whenAnyValue(x => x.changed),
       cls: "ok"
     }) // , this.changedObservable
 
@@ -89,7 +89,7 @@ export class Show extends ViewModel {
     this.changed = false;
     this.w6.collection.cancelFromAurelia();
   }, {
-      canExecuteObservable: this.observeEx(x => x.changed).combineLatest(this.save.isExecutingObservable, (x, y) => x && !y),
+      canExecuteObservable: this.whenAnyValue(x => x.changed).combineLatest(this.save.isExecutingObservable, (x, y) => x && !y),
       cls: "cancel"
     })
   // TODO: have to dispose the Multi?
@@ -101,13 +101,13 @@ export class Show extends ViewModel {
       this.w6.collection.disableEditModeFromAurelia();
     }
   }, {
-      isVisibleObservable: this.observeEx(x => x.editModeEnabled)
+      isVisibleObservable: this.whenAnyValue(x => x.editModeEnabled)
     })
 
   enableEditMode = uiCommand2("Open Editor", async () => {
     this.w6.collection.enableEditModeFromAurelia();
   }, {
-      isVisibleObservable: this.observeEx(x => x.editModeEnabled).map(x => !x)
+      isVisibleObservable: this.whenAnyValue(x => x.editModeEnabled).map(x => !x)
     });
 
   async resetup() {
@@ -135,7 +135,7 @@ export class Show extends ViewModel {
   refreshRepo = uiCommand2("Refresh Repo", async () => {
     await new RefreshRepo(this.model.id).handle(this.mediator);
     await this.resetup();
-  }, { canExecuteObservable: this.observeEx(x => x.changed).map(x => !x) }); // TODO: Monitor also this.model.repositories, but we have to swap when we refresh the model :S
+  }, { canExecuteObservable: this.whenAnyValue(x => x.changed).map(x => !x) }); // TODO: Monitor also this.model.repositories, but we have to swap when we refresh the model :S
 }
 
 class GetCollection extends Query<ICollectionData> {

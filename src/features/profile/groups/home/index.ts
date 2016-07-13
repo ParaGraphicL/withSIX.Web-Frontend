@@ -149,18 +149,18 @@ export class Index extends ViewModel {
     });
     this.changed = false;
     this.editConfig.close();
-  }, { cls: 'ok', canExecuteObservable: this.observeEx(x => x.changed) })
+  }, { cls: 'ok', canExecuteObservable: this.whenAnyValue(x => x.changed) })
 
   cancel = uiCommand2("Cancel", async () => {
     if (!(await this.confirm("Are you sure you want to discard your changes?"))) return;
     await this.handleWatch(async () => this.group = Object.assign({}, this.originalGroup));
     this.changed = false;
     this.editConfig.close();
-  }, { cls: 'cancel', canExecuteObservable: this.observeEx(x => x.changed) })
+  }, { cls: 'cancel', canExecuteObservable: this.whenAnyValue(x => x.changed) })
 
   close = uiCommand2("Close", async () => {
     this.editConfig.close();
-  }, { cls: 'default', canExecuteObservable: this.observeEx(x => x.unchanged) })
+  }, { cls: 'default', canExecuteObservable: this.whenAnyValue(x => x.unchanged) })
 }
 
 export class GetGroup extends Query<IGroup> { constructor(public id: string) { super(); } }

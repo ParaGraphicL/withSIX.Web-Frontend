@@ -18,7 +18,7 @@ export class DownloaderHeader extends ViewModel {
     this.tab = tab;
     this.subscriptions.subd(d => {
       d(this.appEvents.gameChanged.subscribe(this.gameChanged));
-      d(this.observeEx(x => x.actionInfo).subscribe(this.handleActionInfo));
+      d(this.whenAnyValue(x => x.actionInfo).subscribe(this.handleActionInfo));
       //d(this.clientWrapper.actionNotification.subscribe(this.handleActionNotification));
       d(this.clientWrapper.actionUpdateNotification.subscribe(this.handleActionUpdate));
     });

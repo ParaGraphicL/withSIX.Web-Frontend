@@ -18,7 +18,7 @@ export class Game extends ViewModel {
   activate(model: IGame) {
     this.model = model;
     this.hasStats = (<any>model).collectionsCount != null;
-    let isInstalledObservable = this.observeEx(x => x.isInstalled);
+    let isInstalledObservable = this.whenAnyValue(x => x.isInstalled);
     this.subscriptions.subd(d => {
       d(this.launch = uiCommand2("Launch", () => new LaunchGame(this.model.id).handle(this.mediator), { icon: "icon withSIX-icon-Hexagon-Play", isVisibleObservable: isInstalledObservable }));
       d(this.openFolder = uiCommand2("Open folder", () => new OpenFolder(this.model.id).handle(this.mediator), { icon: 'icon withSIX-icon-Folder', isVisibleObservable: isInstalledObservable }));

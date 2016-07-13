@@ -18,8 +18,8 @@ export class ConditionalTitle extends ViewModel {
     this.jElement = $(this.element);
     this.setTitle(this.desiredTitle);
     this.subscriptions.subd(d => {
-      d(this.observeEx(x => x.desiredTitle).subscribe(x => this.setTitle(x)))
-      d(this.observeEx(x => x.condition).subscribe(x => this.setTitle(this.desiredTitle)))
+      d(this.whenAnyValue(x => x.desiredTitle).subscribe(x => this.setTitle(x)))
+      d(this.whenAnyValue(x => x.condition).subscribe(x => this.setTitle(this.desiredTitle)))
     })
   }
 

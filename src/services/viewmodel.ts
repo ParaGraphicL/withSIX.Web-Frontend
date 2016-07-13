@@ -40,7 +40,7 @@ export class ViewModel extends ReactiveBase {
   // This works around the issue of routing for Angular while Aurelia is involved..angular
   // TODO: Better workaround than the rootscope apply?
   protected notifyAngular = () => {
-    if (this.isNavigating) this.observeEx(x => x.isNavigating).skip(1).map(x => !x).take(1).subscribe(this.notifyAngularInternal)
+    if (this.isNavigating) this.whenAnyValue(x => x.isNavigating).skip(1).map(x => !x).take(1).subscribe(this.notifyAngularInternal)
     else this.notifyAngularInternal();
   }
 
@@ -257,7 +257,7 @@ export class PaginatedViewModel<T> extends ViewModel {
   get totalPages() { return this.inlineCount / DbQuery.pageSize }
   get inlineCount() { return this.model.inlineCount }
   get page() { return this.model.page }
-  morePagesAvailable = this.observeEx(x => x.inlineCount).combineLatest(this.observeEx(x => x.page), (c, p) => p < this.totalPages);
+  morePagesAvailable = this.whenAnyValue(x => x.inlineCount).combineLatest(this.whenAnyValue(x => x.page), (c, p) => p < this.totalPages);
 
   addPage = async () => {
     if (!this.morePagesAvailable) return;

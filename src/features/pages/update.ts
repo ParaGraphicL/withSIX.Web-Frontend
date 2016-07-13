@@ -45,7 +45,7 @@ export class Update extends MainBase {
       this.model.isUpdating = false;
     }
   }, {
-      canExecuteObservable: this.observeEx(x => x.hasUpdates).combineLatest(this.observeEx(x => x.isConnected), (hasUpdates, isConnected) => hasUpdates && isConnected)
+      canExecuteObservable: this.whenAnyValue(x => x.hasUpdates).combineLatest(this.whenAnyValue(x => x.isConnected), (hasUpdates, isConnected) => hasUpdates && isConnected)
     })
 }
 

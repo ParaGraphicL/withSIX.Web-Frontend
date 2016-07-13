@@ -31,7 +31,7 @@ export class FindModel<T> extends Base implements IFindModel<T> {
     super();
     this.subscriptions.subd(d => {
       // TODO: debounce and make sure old results dont overwrite new results
-      d(this.toProperty(this.observeEx(x => x.searchItem)
+      d(this.toProperty(this.whenAnyValue(x => x.searchItem)
         .skip(1)
         .flatMap(async (x) => await this.finder(x))
         .concat(), x => x.results))

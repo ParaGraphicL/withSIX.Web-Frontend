@@ -1,10 +1,10 @@
 import {customAttribute, bindable, inject} from 'aurelia-framework';
-import {Base} from '../../services/base';
+import {ReactiveBase} from '../../services/base';
 import {ReactiveList, ListFactory} from '../../services/reactive';
 import {IMenuItem} from './dropdown-menu';
 
 @inject(ListFactory)
-export class ActionBar extends Base {
+export class ActionBar extends ReactiveBase {
   @bindable items: IMenuItem[];
   @bindable hideWhenEmpty = true;
   @bindable orientation = "horizontal";

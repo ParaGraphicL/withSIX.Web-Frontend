@@ -8,7 +8,7 @@ export class TabViewNavButton extends ViewModel {
   activate(tab: ITab) {
     this.tab = tab;
     this.subscriptions.subd(d => {
-      d(this.observeEx(x => x.notificationClass).subscribe(x => {
+      d(this.whenAnyValue(x => x.notificationClass).subscribe(x => {
         if (x !== null) this.lastNotificationClass = x;
       }));
     })

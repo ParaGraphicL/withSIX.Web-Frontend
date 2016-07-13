@@ -1,6 +1,6 @@
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
-import {Base} from './base';
+import {ReactiveBase} from './base';
 import {_Indexer} from './legacy/base';
 import {Toastr} from './toastr';
 import {ObservableEventAggregator} from './reactive';
@@ -13,7 +13,7 @@ import {ActionType, IActionNotification, Client, ConnectionState, IContentState,
 import {ClientWrapper, AppEventsWrapper} from './client-wrapper';
 
 @inject(EventAggregator, W6, Client, Toastr, ClientWrapper, AppEventsWrapper)
-export class BasketService extends Base {
+export class BasketService extends ReactiveBase {
   private clientInfos: { [id: string]: GameClientInfo } = {};
   private clientPromises: { [id: string]: Promise<GameClientInfo> } = {};
   busyCount = 0;
@@ -202,7 +202,7 @@ export class BasketService extends Base {
   }
 }
 
-export class GameClientInfo extends Base {
+export class GameClientInfo extends ReactiveBase {
   defaults: { speed: number; progress: number; };
   clientInfo: IClientInfo = {
     content: {},

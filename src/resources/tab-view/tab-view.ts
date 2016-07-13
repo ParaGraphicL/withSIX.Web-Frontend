@@ -46,7 +46,7 @@ export class TabView<T extends ITab> extends ViewModel {
       d(this.observableFromEvent<CloseTabs>(CloseTabs).map(x => x.exclude != this).subscribe(x => this.selectedTab = null))
       d(this.eventBus.subscribe(ShowTabNotification, this.showTabNotification));
       d(this.eventBus.subscribe(SelectTab, this.selectTab));
-      d(this.observeEx(x => x.selectedTab).subscribe(x => this.tabs.forEach(this.disableNotification)));
+      d(this.whenAnyValue(x => x.selectedTab).subscribe(x => this.tabs.forEach(this.disableNotification)));
     });
   }
 

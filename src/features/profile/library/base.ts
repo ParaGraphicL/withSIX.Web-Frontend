@@ -39,7 +39,7 @@ export class BaseGame extends ViewModel {
     this.selectedGame = this.libraryParent.model.games.get(this.game.id);
     var itemSlug = this.itemType ? "/" + this.itemType + "s" : '';
     this.subscriptions.subd(d =>
-      d(this.observeEx(x => x.selectedGame)
+      d(this.whenAnyValue(x => x.selectedGame)
         .skip(1)
         .subscribe(x => this.navigateInternal("/me/library/" + this.selectedGame.slug + itemSlug))));
     //this.$parent = routeConfig.navModel.router.parent.viewPorts.default.view.executionContext
