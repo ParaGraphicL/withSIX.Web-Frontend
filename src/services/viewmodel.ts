@@ -1,4 +1,4 @@
-import {Base} from './base';
+import {ReactiveBase} from './base';
 import {Mediator, LegacyMediator, DbQuery} from './mediator';
 import {Toastr} from './toastr';
 import {ListFactory, ObservableEventAggregator, EventWrapper, uiCommand2} from './reactive';
@@ -19,7 +19,7 @@ import {UiContext} from './uicontext'
 import * as clipboard from 'clipboard-js';
 
 @inject(UiContext)
-export class ViewModel extends Base {
+export class ViewModel extends ReactiveBase {
   hasApi: boolean = (<any>window).api != null
   _router: Router;
   _changed = false;
