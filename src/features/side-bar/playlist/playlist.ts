@@ -1,4 +1,4 @@
-import {ViewModel, Query, DbQuery, handlerFor, IGame, ITab, IMenuItem, MenuItem, uiCommand2, VoidCommand,
+import {ViewModel, Query, DbQuery, handlerFor, IGame, ITab, IMenuItem, MenuItem, uiCommand2, VoidCommand, IReactiveCommand, IDisposable, Rx,
   CollectionScope, IBreezeCollectionVersion, IBreezeCollectionVersionDependency, BasketItemType, TypeScope, UiContext, CollectionHelper, Confirmation, MessageDialog,
   ReactiveList, IBasketItem, FindModel, ActionType, BasketState, BasketType, ConnectionState, Debouncer, GameChanged, uiCommandWithLogin2, GameClientInfo, UninstallContent,
   IBreezeCollection, IRequireUser, IUserInfo, W6Context, Client, BasketService, CollectionDataService, DbClientQuery, Utils, requireUser, ICollection} from '../../../framework';
@@ -130,7 +130,7 @@ export class Playlist extends ViewModel {
         }));
       d(this.appEvents.gameChanged.subscribe(this.gameChanged));
       d(this.findModel = new FindModel(this.findCollections, (col: IPlaylistCollection) => this.selectCollection(col), e => e.name));
-      d(ViewModel.toProperty(this.observeEx(x => x.isCollection).select(x => x ? "Save as new collection" : "Save as collection"), x => x.name, this.saveBasket));
+      d(ViewModel.toProperty(this.observeEx(x => x.isCollection).map(x => x ? "Save as new collection" : "Save as collection"), x => x.name, this.saveBasket));
       d(this.tools.disposableInterval(() => this.basketService.saveChanges(), 10 * 1000)); // TODO: what about unload of frame?
     });
 
@@ -185,10 +185,10 @@ export class Playlist extends ViewModel {
 
   saveAsNewCollectionInternal = () => this.baskets.active.saveAsNewCollection();
 
-  saveBasket: ICommand<void>;
-  saveBasket2: ICommand<void>;
-  saveBasket3: ICommand<void>;
-  clearBasket: ICommand<void>;
+  saveBasket: IReactiveCommand<void>;
+  saveBasket2: IReactiveCommand<void>;
+  saveBasket3: IReactiveCommand<void>;
+  clearBasket: IReactiveCommand<void>;
 
   async getMyCollections() {
     var result = await new GetMyCollections(this.game.id, true).handle(this.mediator);
@@ -247,8 +247,8 @@ export class Playlist extends ViewModel {
     if (c != null) {
       (<any>this.collection).url = `/p/${this.collection.gameSlug}/collections/${this.collection.id.toShortId()}/${this.collection.name.sluggifyEntityName()}`;
       this.rxList = this.listFactory.getList(this.basket.items);
-      let listObs = Rx.Observable.merge(this.rxList.itemsAdded.select(x => true), this.rxList.itemsRemoved.select(x => true), this.rxList.itemChanged.where(x => x.propertyName == "constraint").take(1).select(x => true));
-      let objObs = ViewModel.observeEx(c, x => x.scope).skip(1).take(1).select(x => true);
+      let listObs = Rx.Observable.merge(this.rxList.itemsAdded.map(x => true), this.rxList.itemsRemoved.map(x => true), this.rxList.itemChanged.map(x => x.propertyName == "constraint").take(1).map(x => true));
+      let objObs = ViewModel.observeEx(c, x => x.scope).skip(1).take(1).map(x => true);
       let obs = Rx.Observable.merge(listObs, objObs).startWith(startVal).take(2);
       listObs.subscribe(x => { this.tools.Debug.log("$$$ list val", x); });
       objObs.subscribe(x => { this.tools.Debug.log("$$$ obj val", x); });

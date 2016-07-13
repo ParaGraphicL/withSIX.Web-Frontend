@@ -33,7 +33,6 @@
     "aurelia-templating-router": "github:aurelia/templating-router/dist/aurelia-templating-router.d.ts#68460e0398f896c5883be81588bdd5f3855f05c3",
     "aurelia-ui-virtualization": "github:aurelia/ui-virtualization/dist/aurelia-ui-virtualization.d.ts#f311d24efd166b8695d238e8df8ada4e63d23411",
     "aurelia-validation": "github:aurelia/validation/dist/aurelia-validation.d.ts#ac30de2330a191b3cbc05f78354d68fc7bcb8d36",
-    "rx": "github:Reactive-Extensions/RxJS/ts/rx.all.es6.d.ts",
     "toastr": "registry:dt/toastr#2.1.1+20160510010435",
     "withsix-sync-api": "github:SIXNetworks/withsix-sync-api-js/dist/withsix-sync-api.d.ts"
   }

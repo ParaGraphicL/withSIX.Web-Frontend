@@ -10,7 +10,7 @@ export abstract class GameSettingsVM<T extends IGameSettingsBase> extends ViewMo
     let r = await new GetGameSettings<T>(model.id).handle(this.mediator);
     this.model = r.settings;
     this.subscriptions.subd(d => {
-      d(this.toProperty(this.listFactory.getObserveAll(this.model).select(x => true), x => x.changed));
+      d(this.toProperty(this.listFactory.getObserveAll(this.model).map(x => true), x => x.changed));
     });
   }
 

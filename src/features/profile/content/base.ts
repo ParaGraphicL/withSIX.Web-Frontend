@@ -1,6 +1,6 @@
 import {inject} from 'aurelia-framework';
 import {IContentGuidSpec, BasketItemType, IBasketItem, BasketService, Base, GameClientInfo, uiCommand, uiCommand2, UiContext, MenuItem, ViewModel, Mediator, Query, DbQuery, DbClientQuery, handlerFor, VoidCommand, IContent, ItemState, IContentState,
-  RemoveRecent, Abort, UninstallContent, LaunchContent, OpenFolder, InstallContent, UnFavoriteContent, FavoriteContent, GameChanged, IMenuItem, FolderType, LaunchAction} from '../../../framework';
+  RemoveRecent, Abort, UninstallContent, LaunchContent, OpenFolder, InstallContent, UnFavoriteContent, FavoriteContent, GameChanged, IMenuItem, FolderType, LaunchAction, IReactiveCommand} from '../../../framework';
 import {Router} from 'aurelia-router';
 import {GameBaskets, Basket} from '../../game-baskets';
 import {AddModsToCollections} from '../../games/add-mods-to-collections';
@@ -18,18 +18,18 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
   isInstalledObservable;
   canExecuteObservable;
 
-  addToCollections: ICommand<any>;
-  openFolder: ICommand<void>;
-  diagnose: ICommand<void>;
-  install: ICommand<void>;
-  update: ICommand<void>;
-  omni: ICommand<void>;
-  uninstall: ICommand<void>;
-  launch: ICommand<void>;
-  abort: ICommand<void>;
-  removeRecent: ICommand<void>;
-  addToBasket: ICommand<void>;
-  openConfigFolder: ICommand<any>;
+  addToCollections: IReactiveCommand<any>;
+  openFolder: IReactiveCommand<void>;
+  diagnose: IReactiveCommand<void>;
+  install: IReactiveCommand<void>;
+  update: IReactiveCommand<void>;
+  omni: IReactiveCommand<void>;
+  uninstall: IReactiveCommand<void>;
+  launch: IReactiveCommand<void>;
+  abort: IReactiveCommand<void>;
+  removeRecent: IReactiveCommand<void>;
+  addToBasket: IReactiveCommand<void>;
+  openConfigFolder: IReactiveCommand<any>;
   state: IContentState = this.getDefaultState();
   bottomMenuActions = [];
   url: string;
@@ -147,7 +147,7 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
       }));
 
       d(this.install = uiCommand2("Install", this.installInternal, {
-        isVisibleObservable: this.observeEx(x => x.isInstalled).select(x => !x).combineLatest(this.observeEx(x => x.hasUpdateAvailable).select(x => !x), (x, y) => x && y),
+        isVisibleObservable: this.observeEx(x => x.isInstalled).map(x => !x).combineLatest(this.observeEx(x => x.hasUpdateAvailable).map(x => !x), (x, y) => x && y),
         canExecuteObservable: this.canExecuteObservable,
         icon: 'withSIX-icon-Hexagon-Download2'
       }));

@@ -1,4 +1,4 @@
-import {ViewModel, Query, DbClientQuery, handlerFor, IGame, IMenuItem, MenuItem, uiCommand2, OpenFolder, FolderType} from '../../../framework';
+import {ViewModel, Query, DbClientQuery, handlerFor, IGame, IMenuItem, MenuItem, uiCommand2, OpenFolder, FolderType, IReactiveCommand} from '../../../framework';
 import {Index as SettingsIndex} from '../../settings/index';
 import {LaunchGame} from '../../profile/content/game';
 
@@ -9,7 +9,7 @@ export class Game extends ViewModel {
   menuItems: IMenuItem[] = [];
   defaultBackUrl = this.w6.url.getAssetUrl('img/play.withSIX/games/stream-bg.jpg');
   itemStateClass = 'uptodate';
-  openConfigFolder: ICommand<void>;
+  openConfigFolder: IReactiveCommand<void>;
 
   activate(model: IGame) {
     this.model = model;

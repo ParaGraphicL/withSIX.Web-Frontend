@@ -1,5 +1,5 @@
 import {inject, Container, BindingEngine} from 'aurelia-framework';
-import * as Rx from 'rx';
+import * as Rx from 'rxjs/Rx';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {Tools} from './tools';
 
@@ -25,7 +25,7 @@ export interface IDisposable {
 }
 
 export interface LooseDisposable {
-  (fnc: IDisposable | Function): void
+  (fnc: IDisposable | Rx.Subscription | Function): void
 }
 
 export interface ISubscription<T> {
@@ -43,7 +43,7 @@ export interface IFunction<T> {
 export class Subscriptions {
   items = [];
 
-  subd = (func: (d: LooseDisposable) => void) => func((fnc: any) => this.items.push(fnc.dispose ? fnc.dispose.bind(fnc) : fnc));
+  subd = (func: (d: LooseDisposable) => void) => func((fnc: any) => this.items.push(fnc.dispose ? fnc.dispose.bind(fnc) : (fnc.unsubscribe ? fnc.unsubscribe.bind(fnc) : fnc)));
 
   dispose() { this.reset(); }
   reset() {
@@ -88,11 +88,11 @@ export class Base implements IDisposable {
 
   // deprecate in favor of observeEx variants
   observe = <T>(property: string) => Base.observe<T>(this, property);
-  static observe<T>(obj, property: string) {
+  static observe<T>(obj, property: string): Rx.Observable<T> {
     if (obj == null) throw new Error("null obj");
     if (!property) throw new Error("null property");
     let b = bindingEngine.propertyObserver<T>(obj, property);
-    return Rx.Observable.create<T>((observer) => {
+    return Rx.Observable.create((observer) => {
       observer.onNext(obj[property]);
       return b.subscribe(x => observer.onNext(x));
     }).distinctUntilChanged();

@@ -1,5 +1,6 @@
 
 import VersionCompare from 'version_compare';
+import {IDisposable} from './base';
 
 String.prototype.indexOfIgnoreCase = function(prefix) {
   return this.toLowerCase().indexOf(prefix.toLowerCase());

@@ -1,5 +1,5 @@
 import {inject} from 'aurelia-framework';
-import {IBasketItem, BasketItemType, IBreezeMod, ModsHelper, Helper, FolderType,
+import {IBasketItem, BasketItemType, IBreezeMod, ModsHelper, Helper, FolderType, IReactiveCommand,
   BasketService, UiContext, uiCommand2, ViewModel, Base, MenuItem, IMenuItem, GameClientInfo, uiCommand, Mediator, Query, DbQuery, DbClientQuery, handlerFor, VoidCommand, IContentState, ItemState,
   Abort, UninstallContent, OpenFolder, LaunchContent, InstallContent, UnFavoriteContent, FavoriteContent, IBreezeUser, ContentHelper,
   breeze, ModHelper, IBreezeCollection, IBreezeCollectionVersion} from '../../../framework';
@@ -48,17 +48,17 @@ export class PlaylistItem extends ViewModel {
 
   addToCollections;
 
-  diagnose: ICommand<void>;
-  edit: ICommand<void>;
-  removeFromBasket: ICommand<void>;
-  omni: ICommand<void>;
-  install: ICommand<void>;
-  uninstall: ICommand<void>;
-  update: ICommand<void>;
-  launch: ICommand<void>;
-  abort: ICommand<void>;
-  openFolder: ICommand<void>;
-  openConfigFolder: ICommand<void>;
+  diagnose: IReactiveCommand<void>;
+  edit: IReactiveCommand<void>;
+  removeFromBasket: IReactiveCommand<void>;
+  omni: IReactiveCommand<void>;
+  install: IReactiveCommand<void>;
+  uninstall: IReactiveCommand<void>;
+  update: IReactiveCommand<void>;
+  launch: IReactiveCommand<void>;
+  abort: IReactiveCommand<void>;
+  openFolder: IReactiveCommand<void>;
+  openConfigFolder: IReactiveCommand<void>;
   gameName: string;
 
   get isInstalled() { return this.itemState != ItemState.Incomplete };
@@ -151,7 +151,7 @@ export class PlaylistItem extends ViewModel {
         //this.emitGameChanged();
         await this.installInternal();
       }, {
-          isVisibleObservable: this.observeEx(x => x.isInstalled).select(x => !x).combineLatest(this.observeEx(x => x.hasUpdateAvailable).select(x => !x), (x, y) => x && y),
+          isVisibleObservable: this.observeEx(x => x.isInstalled).map(x => !x).combineLatest(this.observeEx(x => x.hasUpdateAvailable).map(x => !x), (x, y) => x && y),
           canExecuteObservable: this.canExecuteObservable,
           icon: "content-state-icon",
           textCls: "content-state-text" // TODO

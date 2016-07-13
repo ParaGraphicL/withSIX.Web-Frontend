@@ -2,7 +2,7 @@ import {Base, Subscriptions, IDisposable, ISubscription, IPromiseFunction, bindi
 import {LegacyMediator, Mediator} from './mediator';
 import {W6} from './withSIX';
 import {Toastr} from './toastr';
-import * as Rx from 'rx';
+import * as Rx from 'rxjs/Rx';
 import {Container, inject, PropertyObserver} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {Validation, ValidationResult} from 'aurelia-validation';
@@ -11,8 +11,8 @@ import {GlobalErrorHandler} from './legacy/logger';
 
 export class ObservableEventAggregator extends EventAggregator {
   observableFromEvent = <T>(evt: Function | string) => ObservableEventAggregator.observableFromEvent<T>(evt, this);
-  static observableFromEvent = <T>(evt: Function | string, eventBus: EventAggregator) =>
-    Rx.Observable.create<T>((observer) => eventBus.subscribe(evt, x => observer.onNext(x)))
+  static observableFromEvent = <T>(evt: Function | string, eventBus: EventAggregator): Rx.Observable<T> =>
+    Rx.Observable.create((observer) => eventBus.subscribe(evt, x => observer.onNext(x)))
       .publish().refCount();
 }
 
@@ -87,7 +87,7 @@ export class ListFactory {
   // }
 }
 
-export class ReactiveList<T> extends Base implements Rx.Disposable {
+export class ReactiveList<T> extends Base implements IDisposable {
   items: T[];
 
   allObservable: ObserveAll<T>;
@@ -110,32 +110,32 @@ export class ReactiveList<T> extends Base implements Rx.Disposable {
             if (x.addedCount > 0) this.items.asEnumerable().skip(x.index).take(x.addedCount).toArray().forEach(x => added.push(x))// XXX:
             if (x.removed.length > 0) x.removed.forEach(x => removed.push(x));
           });
-          if (added.length > 0) this.itemsAdded.onNext(added);
-          if (removed.length > 0) this.itemsRemoved.onNext(removed);
+          if (added.length > 0) this.itemsAdded.next(added);
+          if (removed.length > 0) this.itemsRemoved.next(removed);
         });
       d(sub);
       d(this.itemsAdded.subscribe(evt => evt.filter(x => x != null).forEach(x => this.observeItem(x))));
-      d(this.itemsRemoved.subscribe(evt => evt.filter(x => x != null).forEach(x => { this.changedSubs.get(x).dispose(); this.changedSubs.delete(x); })));
-      d(() => this.changedSubs.forEach((v, k) => { v.dispose(); this.changedSubs.delete(k) }));
+      d(this.itemsRemoved.subscribe(evt => evt.filter(x => x != null).forEach(x => { this.changedSubs.get(x).unsubscribe(); this.changedSubs.delete(x); })));
+      d(() => this.changedSubs.forEach((v, k) => { v.unsubscribe(); this.changedSubs.delete(k) }));
     });
   }
 
   observeItem = (x: T) => this.changedSubs.set(x, this.observeItemInternal(x));
-  observeItemInternal = (x: T) => this.allObservable.generateObservable(x).subscribe(evt => { try { this.itemChanged.onNext(evt) } catch (err) { this.tools.Debug.warn("uncaught err handling observable", err) } });
+  observeItemInternal = (x: T) => this.allObservable.generateObservable(x).subscribe(evt => { try { this.itemChanged.next(evt) } catch (err) { this.tools.Debug.warn("uncaught err handling observable", err) } });
 
   dispose() {
     this.subscriptions.dispose();
-    this.itemsAdded.dispose();
-    this.itemsRemoved.dispose();
-    this.itemChanged.dispose();
+    this.itemsAdded.unsubscribe();
+    this.itemsRemoved.unsubscribe();
+    this.itemChanged.unsubscribe();
   }
 
-  get modified() { return Rx.Observable.merge(this.itemsAdded.select(x => 0), this.itemsRemoved.select(x => 0), this.itemChanged.select(x => 0)) }
+  get modified() { return Rx.Observable.merge(this.itemsAdded.map(x => 0), this.itemsRemoved.map(x => 0), this.itemChanged.map(x => 0)) }
 
   itemsAdded = new Rx.Subject<T[]>();
   itemsRemoved = new Rx.Subject<T[]>();
   itemChanged = new Rx.Subject<IPropertyChange<T>>();
-  changedSubs = new Map<T, IDisposable>();
+  changedSubs = new Map<T, Rx.Subscription>();
 }
 
 export class ObserveAll<T> {
@@ -151,7 +151,7 @@ export class ObserveAll<T> {
     */
 
     if (this.properties)
-      return Rx.Observable.merge(this.properties.map(p => this.observeProperty(x, p)));
+      return Rx.Observable.merge(this.properties.map(p => this.observeProperty(x, p))).mergeAll();
 
     let obs: Rx.Observable<IPropertyChange<T>>[] = [];
     this.properties = [];
@@ -162,7 +162,7 @@ export class ObserveAll<T> {
         obs.push(this.observeProperty(x, i))
       }
     }
-    return Rx.Observable.merge(obs);
+    return Rx.Observable.merge(obs).mergeAll();
   }
 
   // observeItemInternal(x: T, callback): IDisposable {
@@ -175,12 +175,12 @@ export class ObserveAll<T> {
 
   observeProperty = (x: T, p: string) => Base.observe<T>(x, p)
     .skip(this.includeInitial ? 0 : 1)
-    .select(evt => { return { item: x, propertyName: p, change: evt } })
+    .map(evt => { return { item: x, propertyName: p, change: evt } })
 }
 
 export interface ICommandInfo {
-  canExecuteObservable?: ISubscription<boolean> | Rx.Observable<boolean>;
-  isVisibleObservable?: ISubscription<boolean> | Rx.Observable<boolean>;
+  canExecuteObservable?: Rx.Observable<boolean>;
+  isVisibleObservable?: Rx.Observable<boolean>;
   icon?: string;
   textCls?: string;
   cls?: string;
@@ -196,14 +196,14 @@ export var uiCommandWithLogin = function <T>(action: IPromiseFunction<T>, canExe
   return uiCommandWithLogin2(null, action, { canExecuteObservable: canExecuteObservable, isVisibleObservable: isVisibleObservable });
 }
 
-export var uiCommand2 = function <T>(name: string, action: IPromiseFunction<T>, options?: ICommandInfo): ICommand<T> { // Rx.Observable<boolean>
+export var uiCommand2 = function <T>(name: string, action: IPromiseFunction<T>, options?: ICommandInfo): IReactiveCommand<T> { // Rx.Observable<boolean>
   let command = new UiCommandInternal<T>(name, action, options);
   let eh: GlobalErrorHandler = Container.instance.get(GlobalErrorHandler);
   command.thrownExceptions.subscribe(x => eh.handleUseCaseError(x, 'unhandled'));
 
   // TODO: Optimize?
   let f = (...args) => command.execute(...args);
-  let f2 = <ICommand<T>>f;
+  let f2 = <IReactiveCommand<T>>f;
   (<any>f2).command = command;
   f2.dispose = () => command.dispose.bind(command);
   Object.defineProperty(f, 'name', { get: () => command.name, set: (value) => command.name = value });
@@ -221,7 +221,7 @@ export var uiCommand2 = function <T>(name: string, action: IPromiseFunction<T>, 
   return f2;
 }
 
-export var uiCommandWithLogin2 = function <T>(name: string, action: IPromiseFunction<T>, options?: ICommandInfo): ICommand<T> {
+export var uiCommandWithLogin2 = function <T>(name: string, action: IPromiseFunction<T>, options?: ICommandInfo): IReactiveCommand<T> {
   let f = <any>uiCommand2(name, action, options);
   let act = f.command.action
   let toastr = <Toastr>Container.instance.get(Toastr);
@@ -235,7 +235,7 @@ export var uiCommandWithLogin2 = function <T>(name: string, action: IPromiseFunc
   return f;
 }
 
-interface ICommand<T> extends IDisposable, IPromiseFunction<T> {
+export interface IReactiveCommand<T> extends IDisposable, IPromiseFunction<T> {
   isExecuting: boolean;
   isExecutingObservable: Rx.Observable<boolean>;
   isVisible: boolean;
@@ -286,7 +286,7 @@ class UiCommandInternal<T> extends Base {
     try {
       return await this.action(...args);
     } catch (err) {
-      if (this.thrownExceptions.hasObservers) this.thrownExceptions.onNext(err);
+      if (this.thrownExceptions.observers.length > 0) this.thrownExceptions.next(err);
       else throw (err); // TODO: Unhandled exception handler!!
     } finally {
       this.isExecuting = false;

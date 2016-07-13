@@ -4,7 +4,7 @@ import {ViewModel, Query, IGame, ITab, IMenuItem,
   CollectionScope, IBreezeCollectionVersion, IBreezeCollectionVersionDependency, UiContext, CollectionHelper, UninstallContent,
   ReactiveList, FindModel, ActionType, BasketState, BasketType, ConnectionState, Debouncer, GameChanged, uiCommandWithLogin2, GameClientInfo, MessageDialog, Confirmation,
   IBreezeCollection, IRequireUser, IUserInfo, W6Context, Client, BasketService, CollectionDataService, Utils, requireUser, SelectTab,
-  breeze} from '../../../framework';
+  breeze, IReactiveCommand} from '../../../framework';
 import {Basket, GameBaskets} from '../../game-baskets';
 import {inject} from 'aurelia-framework';
 
@@ -13,10 +13,10 @@ export class Collection extends ContentViewModel<ICollection> {
   icon = "withSIX-icon-Nav-Collection";
   scopeIcon: string;
   typeScopeIcon: string;
-  delete: ICommand<void>;
-  launch2: ICommand<void>;
-  edit: ICommand<boolean>;
-  loadIntoPlaylist: ICommand<void>
+  delete: IReactiveCommand<void>;
+  launch2: IReactiveCommand<void>;
+  edit: IReactiveCommand<boolean>;
+  loadIntoPlaylist: IReactiveCommand<void>
   topMenuActions = []
 
   get statTitle() { return 'subscriber' }

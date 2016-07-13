@@ -152,11 +152,11 @@ export class App extends ViewModel {
       d(this.eventBus.subscribe(OpenSettings, this.openClientSettings));
       d(this.toProperty(this.observeEx(x => x.isRequesting)
         .combineLatest(this.observeEx(x => x.isNavigating), (api, router) => api || router)
-        .debounce(250), x => x.isApiBusy))
+        .debounceTime(250), x => x.isApiBusy))
       d(this.observeEx(x => x.currentRoute).subscribe(_ => this.signaler.signal('router-signal')))
       d(this.observeEx(x => x.isNavigating)
         .skip(1)
-        .where(x => !x)
+        .filter(x => !x)
         .subscribe(this.notifyAngularInternal));
 
       d(this.observeEx(x => x.overlayShown)
@@ -174,13 +174,13 @@ export class App extends ViewModel {
         .subscribe(state => {
           if (state.newState == ConnectionState.connected) this.infoReceived(this.client.clientInfo);
         }));
-      let userErrors = this.observeEx(x => x.userErrors).where(x => x != null);
+      let userErrors = this.observeEx(x => x.userErrors).filter(x => x != null);
       d(userErrors.subscribe(x => {
         // close all open dialogs
         this.dialogMap.forEach(x => { this.eventBus.publish("client.userErrorResolved", { id: x }); this.tools.removeEl(this.dialogMap, x); })
       }));
-      d(userErrors.selectMany(x => x)
-        .merge(this.clientWrapper.userErrorAdded.select(x => x.userError))
+      d(userErrors.flatMap(x => x)
+        .merge(this.clientWrapper.userErrorAdded.map(x => x.userError))
         .subscribe(x => { if (!this.dialogMap.asEnumerable().contains(x.id)) this.showUserErrorDialog(x) }));
     });
     // TODO: this adds accept application/json, and authorize header to EVERY request. we only want to do that to actualy JSON endpoints, and definitely not to CDN!

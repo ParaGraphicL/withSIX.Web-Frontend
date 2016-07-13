@@ -28,7 +28,6 @@
 /// <reference path="globals/aurelia-templating/index.d.ts" />
 /// <reference path="globals/aurelia-ui-virtualization/index.d.ts" />
 /// <reference path="globals/aurelia-validation/index.d.ts" />
-/// <reference path="globals/rx/index.d.ts" />
 /// <reference path="globals/toastr/index.d.ts" />
 /// <reference path="globals/withsix-sync-api/index.d.ts" />
 /// <reference path="modules/webpack/index.d.ts" />

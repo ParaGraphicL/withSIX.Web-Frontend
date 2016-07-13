@@ -3,6 +3,7 @@ import {ViewModel} from '../../services/viewmodel';
 import {UiContext} from '../../services/uicontext';
 import {CloseDropdowns} from '../../services/api';
 import {ReactiveList, ListFactory, uiCommand} from '../../services/reactive';
+import {IPromiseFunction} from '../../services/base';
 import 'contextMenu';
 
 // requires  adjustment to contextMenu.js for child element activation..
