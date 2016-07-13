@@ -156,19 +156,19 @@ export class ObserveAll<T> {
     });
     */
 
-    if (this.properties)
-      return Rx.Observable.merge(this.properties.map(p => this.observeProperty(x, p))).mergeAll();
+    if (this.properties) return Rx.Observable.merge(...this.properties.map(p => this.observeProperty(x, p)));
 
     let obs: Rx.Observable<IPropertyChange<T>>[] = [];
     this.properties = [];
     // Observes all properties... sucks impl??
     for (let i in x) {
+      // TODO: hasOwnProperty wouldnt allow inherited properties, not even from prototype?!
       if (x.hasOwnProperty(i)) {
         this.properties.push(i); // cache
         obs.push(this.observeProperty(x, i))
       }
     }
-    return Rx.Observable.merge(obs).mergeAll();
+    return Rx.Observable.merge(...obs);
   }
 
   // observeItemInternal(x: T, callback): IDisposable {
