@@ -99,9 +99,9 @@ export class Base implements IDisposable {
     if (obj == null) throw new Error("null obj");
     if (!property) throw new Error("null property");
     let b = bindingEngine.propertyObserver<T>(obj, property);
-    return Rx.Observable.create((observer) => {
-      observer.onNext(obj[property]);
-      return b.subscribe(x => observer.onNext(x));
+    return Rx.Observable.create((observer: Rx.Subject<T>) => {
+      observer.next(obj[property]);
+      return b.subscribe(x => observer.next(x));
     }).distinctUntilChanged();
   }
 
@@ -117,7 +117,7 @@ export class Base implements IDisposable {
   // }
   // observe = <T>(property) => Base.observe<T>(this, property);
   // static wrapSubscribable = <T>(subscribable: ISubscription<T>) =>
-  //   Rx.Observable.create<T>(observer => subscribable.subscribe(x => observer.onNext(x)).dispose)
+  //   Rx.Observable.create<T>((observer: Rx.Subject<T>) => subscribable.subscribe(x => observer.next(x)).dispose)
   //     .publish().refCount().distinctUntilChanged();
 
   dispose() { this.subscriptions.dispose(); }

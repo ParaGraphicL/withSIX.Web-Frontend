@@ -13,7 +13,7 @@ import {GlobalErrorHandler} from './legacy/logger';
 export class ObservableEventAggregator extends EventAggregator {
   observableFromEvent = <T>(evt: Function | string) => ObservableEventAggregator.observableFromEvent<T>(evt, this);
   static observableFromEvent = <T>(evt: Function | string, eventBus: EventAggregator): Rx.Observable<T> =>
-    Rx.Observable.create((observer) => eventBus.subscribe(evt, x => observer.onNext(x)))
+    Rx.Observable.create((observer: Rx.Subject<T>) => eventBus.subscribe(evt, x => observer.next(x)))
       .publish().refCount();
 }
 
@@ -260,28 +260,32 @@ export interface IReactiveCommand<T> extends IDisposable, IPromiseFunction<T> {
 // TODO: Explore ReactiveCommand from RxUi
 class ReactiveCommand<T> extends ReactiveBase {
   private _isExecuting: boolean;
-  get isExecuting() { return this.get(x => x.isExecuting); }
+  private _otherBusy: boolean;
+  private _isVisible: boolean;
+  get isExecuting() { return this._isExecuting; }
   set isExecuting(value: boolean) { this.set(x => x.isExecuting, value); }
-  get otherBusy() { return this.get(x => x.otherBusy); }
+  get otherBusy() { return this._otherBusy; }
   set otherBusy(value: boolean) { this.set(x => x.otherBusy, value); }
-  get isVisible() { return this.get(x => x.isVisible); }
+  get isVisible() { return this._isVisible; }
   set isVisible(value: boolean) { this.set(x => x.isVisible, value); }
 
   cls: string;
   icon: string;
   textCls: string;
   tooltip: string;
-  public get thrownExceptions(): Rx.Observable<Error> { return this.get(x => x.thrownExceptions).asObservable() }
-  public get isExecutingObservable() { return this.get(x => x.isExecutingObservable).asObservable() }
-  public get isVisibleObservable() { return this.get(x => x.isVisibleObservable).asObservable() }
-  public get canExecuteObservable() { return this.get(x => x.canExecuteObservable).asObservable() }
+  private _thrownExceptions = new Rx.Subject<Error>();
+  private _isExecutingObservable = new Rx.Subject<boolean>();
+  private _isVisibleObservable = new Rx.Subject<boolean>();
+  private _canExecuteObservable = new Rx.Subject<boolean>();
+  public get thrownExceptions(): Rx.Observable<Error> { return this._thrownExceptions.asObservable() }
+  public get isExecutingObservable() { return this._isExecutingObservable.asObservable() }
+  public get isVisibleObservable() { return this._isVisibleObservable.asObservable() }
+  public get canExecuteObservable() { return this._canExecuteObservable.asObservable() }
 
   constructor(public name: string, private action: IPromiseFunction<T>, options?: ICommandInfo) {
     super();
     if (action == null) throw new Error("action cant be null!");
     if (!options) return;
-    this.set(x => x.thrownExceptions, new Rx.Subject<Error>());
-    this.set(x => x.isExecutingObservable, this.whenAnyValue(x => x.isExecuting));
 
     this.cls = options.cls;
     this.icon = options.icon;
