@@ -1,5 +1,5 @@
 import {bindable} from 'aurelia-framework';
-import {Base, IDisposable} from '../../services/base';
+import {ReactiveBase, IDisposable} from '../../services/base';
 
 export class Finder {
   @bindable showTotalResults = false;
@@ -21,7 +21,7 @@ export interface IFindModel<T> {
   selectedItem?: T;
 }
 
-export class FindModel<T> extends Base implements IFindModel<T> {
+export class FindModel<T> extends ReactiveBase implements IFindModel<T> {
   results: T[] = [];
   searchItem = "";
   selectedItem: T = null;
