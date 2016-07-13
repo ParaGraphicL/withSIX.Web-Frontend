@@ -1,4 +1,4 @@
-import {IBreezeAWSUploadPolicy, UiContext, ViewModel, Mediator, DbQuery, Query, Command, VoidCommand, handlerFor, uiCommand2, bindingEngine, EditConfig, IDisposable} from '../../../../framework'
+import {IBreezeAWSUploadPolicy, UiContext, ViewModel, Mediator, DbQuery, Query, Command, VoidCommand, handlerFor, uiCommand2, bindingEngine, EditConfig, Rx} from '../../../../framework'
 import {ValidationGroup} from 'aurelia-validation';
 
 export interface IGroup {
@@ -36,7 +36,7 @@ export class Index extends ViewModel {
     });
   });
 
-  watch: IDisposable;
+  watch: Rx.Subscription;
 
   get avatarUrl() { return this.w6.url.processAssetVersion(this.group.avatarUrl, this.group.avatarUpdatedAt) }
   get backgroundUrl() { return this.w6.url.processAssetVersion(this.group.backgroundUrl, this.group.backgroundUpdatedAt) }
@@ -112,7 +112,7 @@ export class Index extends ViewModel {
   handleWatch = async (fnc: () => Promise<any>) => {
     // We have to suspend watching, because there's a delay
     // TODO: How to clear selected files?
-    if (this.watch) this.watch.dispose();
+    if (this.watch) this.watch.unsubscribe();
     try {
       await fnc();
     } finally {

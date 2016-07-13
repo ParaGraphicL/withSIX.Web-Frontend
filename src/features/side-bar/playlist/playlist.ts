@@ -1,7 +1,7 @@
 import {ViewModel, Query, DbQuery, handlerFor, IGame, ITab, IMenuItem, MenuItem, uiCommand2, VoidCommand, IReactiveCommand, IDisposable, Rx,
   CollectionScope, IBreezeCollectionVersion, IBreezeCollectionVersionDependency, BasketItemType, TypeScope, UiContext, CollectionHelper, Confirmation, MessageDialog,
   ReactiveList, IBasketItem, FindModel, ActionType, BasketState, BasketType, ConnectionState, Debouncer, GameChanged, uiCommandWithLogin2, GameClientInfo, UninstallContent,
-  IBreezeCollection, IRequireUser, IUserInfo, W6Context, Client, BasketService, CollectionDataService, DbClientQuery, Utils, requireUser, ICollection} from '../../../framework';
+  IBreezeCollection, IRequireUser, IUserInfo, W6Context, Client, BasketService, CollectionDataService, DbClientQuery, Utils, requireUser, ICollection, Base} from '../../../framework';
 import {CreateCollectionDialog} from '../../games/collections/create-collection-dialog';
 import {Basket, GameBaskets} from '../../game-baskets';
 import {inject} from 'aurelia-framework';
@@ -13,7 +13,7 @@ interface ICollectionsData {
 
 @inject(UiContext, BasketService, Client)
 export class Playlist extends ViewModel {
-  rxProperties: IDisposable;
+  rxProperties: Rx.Subscription;
   rxList: ReactiveList<IBasketItem>;
   model: ITab;
   menuItems: IMenuItem[] = [];
@@ -130,7 +130,7 @@ export class Playlist extends ViewModel {
         }));
       d(this.appEvents.gameChanged.subscribe(this.gameChanged));
       d(this.findModel = new FindModel(this.findCollections, (col: IPlaylistCollection) => this.selectCollection(col), e => e.name));
-      d(ViewModel.toProperty(this.observeEx(x => x.isCollection).map(x => x ? "Save as new collection" : "Save as collection"), x => x.name, this.saveBasket));
+      d(Base.toProperty(this.observeEx(x => x.isCollection).map(x => x ? "Save as new collection" : "Save as collection"), x => x.name, this.saveBasket));
       d(this.tools.disposableInterval(() => this.basketService.saveChanges(), 10 * 1000)); // TODO: what about unload of frame?
     });
 
@@ -238,7 +238,7 @@ export class Playlist extends ViewModel {
 
   disposeOld = () => {
     if (this.rxList) this.rxList.dispose();
-    if (this.rxProperties) this.rxProperties.dispose();
+    if (this.rxProperties) this.rxProperties.unsubscribe();
   }
 
   updateCollection(c: IPlaylistCollection, startVal = false) {
@@ -248,7 +248,7 @@ export class Playlist extends ViewModel {
       (<any>this.collection).url = `/p/${this.collection.gameSlug}/collections/${this.collection.id.toShortId()}/${this.collection.name.sluggifyEntityName()}`;
       this.rxList = this.listFactory.getList(this.basket.items);
       let listObs = Rx.Observable.merge(this.rxList.itemsAdded.map(x => true), this.rxList.itemsRemoved.map(x => true), this.rxList.itemChanged.map(x => x.propertyName == "constraint").take(1).map(x => true));
-      let objObs = ViewModel.observeEx(c, x => x.scope).skip(1).take(1).map(x => true);
+      let objObs = Base.observeEx(c, x => x.scope).skip(1).take(1).map(x => true);
       let obs = Rx.Observable.merge(listObs, objObs).startWith(startVal).take(2);
       listObs.subscribe(x => { this.tools.Debug.log("$$$ list val", x); });
       objObs.subscribe(x => { this.tools.Debug.log("$$$ obj val", x); });
