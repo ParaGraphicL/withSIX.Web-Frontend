@@ -130,7 +130,7 @@ export class Playlist extends ViewModel {
         }));
       d(this.appEvents.gameChanged.subscribe(this.gameChanged));
       d(this.findModel = new FindModel(this.findCollections, (col: IPlaylistCollection) => this.selectCollection(col), e => e.name));
-      d(Base.toProperty(this.observeEx(x => x.isCollection).map(x => x ? "Save as new collection" : "Save as collection"), x => x.name, this.saveBasket));
+      d(Playlist.bindObservableTo(this.whenAnyValue(x => x.isCollection).map(x => x ? "Save as new collection" : "Save as collection"), this.saveBasket, x => x.name));
       d(this.tools.disposableInterval(() => this.basketService.saveChanges(), 10 * 1000)); // TODO: what about unload of frame?
     });
 
