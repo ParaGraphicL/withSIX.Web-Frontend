@@ -87,6 +87,7 @@ export class ListFactory {
   // }
 }
 
+// TODO: Explore ReactiveArray from RxUi
 export class ReactiveList<T> extends Base implements IDisposable {
   items: T[];
 
@@ -110,8 +111,8 @@ export class ReactiveList<T> extends Base implements IDisposable {
             if (x.addedCount > 0) this.items.asEnumerable().skip(x.index).take(x.addedCount).toArray().forEach(x => added.push(x))// XXX:
             if (x.removed.length > 0) x.removed.forEach(x => removed.push(x));
           });
-          if (added.length > 0) this.itemsAdded.next(added);
-          if (removed.length > 0) this.itemsRemoved.next(removed);
+          if (added.length > 0) this._itemsAdded.next(added);
+          if (removed.length > 0) this._itemsRemoved.next(removed);
         });
       d(sub);
       d(this.itemsAdded.subscribe(evt => evt.filter(x => x != null).forEach(x => this.observeItem(x))));
@@ -121,21 +122,25 @@ export class ReactiveList<T> extends Base implements IDisposable {
   }
 
   observeItem = (x: T) => this.changedSubs.set(x, this.observeItemInternal(x));
-  observeItemInternal = (x: T) => this.allObservable.generateObservable(x).subscribe(evt => { try { this.itemChanged.next(evt) } catch (err) { this.tools.Debug.warn("uncaught err handling observable", err) } });
+  observeItemInternal = (x: T) => this.allObservable.generateObservable(x).subscribe(evt => { try { this._itemChanged.next(evt) } catch (err) { this.tools.Debug.warn("uncaught err handling observable", err) } });
 
   dispose() {
     this.subscriptions.dispose();
-    this.itemsAdded.unsubscribe();
-    this.itemsRemoved.unsubscribe();
-    this.itemChanged.unsubscribe();
+    this._itemsAdded.unsubscribe();
+    this._itemsRemoved.unsubscribe();
+    this._itemChanged.unsubscribe();
   }
 
   get modified() { return Rx.Observable.merge(this.itemsAdded.map(x => 0), this.itemsRemoved.map(x => 0), this.itemChanged.map(x => 0)) }
 
-  itemsAdded = new Rx.Subject<T[]>();
-  itemsRemoved = new Rx.Subject<T[]>();
-  itemChanged = new Rx.Subject<IPropertyChange<T>>();
-  changedSubs = new Map<T, Rx.Subscription>();
+  private _itemsAdded = new Rx.Subject<T[]>();
+  private _itemsRemoved = new Rx.Subject<T[]>();
+  private _itemChanged = new Rx.Subject<IPropertyChange<T>>();
+
+  public get itemsAdded() { return this._itemsAdded.asObservable(); }
+  public get itemsRemoved() { return this._itemsRemoved.asObservable(); }
+  public get itemChanged() { return this._itemChanged.asObservable(); }
+  private changedSubs = new Map<T, Rx.Subscription>();
 }
 
 export class ObserveAll<T> {
@@ -259,7 +264,8 @@ class UiCommandInternal<T> extends Base {
   icon: string;
   textCls: string;
   tooltip: string;
-  public thrownExceptions = new Rx.Subject<Error>();
+  private _thrownExceptions = new Rx.Subject<Error>();
+  public get thrownExceptions() { return this._thrownExceptions.asObservable() }
   public isExecutingObservable = this.observeEx(x => x.isExecuting);
   public isVisibleObservable = this.observeEx(x => x.isVisible);
   public canExecuteObservable = this.observeEx(x => x.canExecute);
@@ -286,7 +292,7 @@ class UiCommandInternal<T> extends Base {
     try {
       return await this.action(...args);
     } catch (err) {
-      if (this.thrownExceptions.observers.length > 0) this.thrownExceptions.next(err);
+      if (this._thrownExceptions.observers.length > 0) this._thrownExceptions.next(err);
       else throw (err); // TODO: Unhandled exception handler!!
     } finally {
       this.isExecuting = false;
