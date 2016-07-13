@@ -262,25 +262,23 @@ class ReactiveCommand<T> extends ReactiveBase {
   private _isExecuting: boolean;
   private _otherBusy: boolean;
   private _isVisible: boolean;
-  get isExecuting() { return this._isExecuting; }
-  set isExecuting(value: boolean) { this.set(x => x.isExecuting, value); }
-  get otherBusy() { return this._otherBusy; }
-  set otherBusy(value: boolean) { this.set(x => x.otherBusy, value); }
-  get isVisible() { return this._isVisible; }
-  set isVisible(value: boolean) { this.set(x => x.isVisible, value); }
+  private _thrownExceptions = new Rx.Subject<Error>();
+  private _isExecutingObservable = new Rx.Subject<boolean>();
+  private _isVisibleObservable = new Rx.Subject<boolean>();
+  private _canExecuteObservable = new Rx.Subject<boolean>();
+
+  public get isExecuting() { return this._isExecuting; }
+  public get otherBusy() { return this._otherBusy; }
+  public get isVisible() { return this._isVisible; }
+  public get thrownExceptions(): Rx.Observable<Error> { return this._thrownExceptions.asObservable() }
+  public get isExecutingObservable() { return this._isExecutingObservable.asObservable() }
+  public get isVisibleObservable() { return this._isVisibleObservable.asObservable() }
+  public get canExecuteObservable() { return this._canExecuteObservable.asObservable() }
 
   cls: string;
   icon: string;
   textCls: string;
   tooltip: string;
-  private _thrownExceptions = new Rx.Subject<Error>();
-  private _isExecutingObservable = new Rx.Subject<boolean>();
-  private _isVisibleObservable = new Rx.Subject<boolean>();
-  private _canExecuteObservable = new Rx.Subject<boolean>();
-  public get thrownExceptions(): Rx.Observable<Error> { return this._thrownExceptions.asObservable() }
-  public get isExecutingObservable() { return this._isExecutingObservable.asObservable() }
-  public get isVisibleObservable() { return this._isVisibleObservable.asObservable() }
-  public get canExecuteObservable() { return this._canExecuteObservable.asObservable() }
 
   constructor(public name: string, private action: IPromiseFunction<T>, options?: ICommandInfo) {
     super();
@@ -292,26 +290,25 @@ class ReactiveCommand<T> extends ReactiveBase {
     this.textCls = options.textCls;
     this.tooltip = options.tooltip;
 
-    if (options.canExecuteObservable) this.subscriptions.subd(d => d(options.canExecuteObservable.subscribe(x => this.otherBusy = !x)));
-    if (options.isVisibleObservable) this.subscriptions.subd(d => d(options.isVisibleObservable.subscribe(x => this.isVisible = x)));
+    if (options.canExecuteObservable) this.subscriptions.subd(d => d(options.canExecuteObservable.subscribe(x => this._otherBusy = !x)));
+    if (options.isVisibleObservable) this.subscriptions.subd(d => d(options.isVisibleObservable.subscribe(x => this._isVisible = x)));
   }
 
   public get canExecute() { return !this.isExecuting && !this.otherBusy; }
   public dispose() { this.subscriptions.dispose(); }
 
   public async execute(...args): Promise<T> {
-    this.isExecuting = true;
+    this._isExecuting = true;
     try {
       return await this.action(...args);
     } catch (err) {
-      if (this.get<Rx.Observable<Error>>(x => x.thrownExceptions).observers.length > 0) this.get<Rx.Observable<Error>>(x => x.thrownExceptions).next(err);
+      if (this._thrownExceptions.observers.length > 0) this._thrownExceptions.next(err);
       else throw (err); // TODO: Unhandled exception handler!!
     } finally {
-      this.isExecuting = false;
+      this._isExecuting = false;
     }
   }
 }
-
 
 export class EditConfig extends Base {
   enabled: boolean;
