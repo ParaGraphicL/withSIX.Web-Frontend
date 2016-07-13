@@ -1,8 +1,9 @@
-import {Base, Subscriptions, IDisposable, ISubscription, IPromiseFunction, bindingEngine} from './base';
+import {Base, ReactiveBase, Subscriptions, IDisposable, ISubscription, IPromiseFunction, bindingEngine} from './base';
 import {LegacyMediator, Mediator} from './mediator';
 import {W6} from './withSIX';
 import {Toastr} from './toastr';
 import * as Rx from 'rxjs/Rx';
+import * as RxUi from 'rxui';
 import {Container, inject, PropertyObserver} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {Validation, ValidationResult} from 'aurelia-validation';
@@ -88,7 +89,7 @@ export class ListFactory {
 }
 
 // TODO: Explore ReactiveArray from RxUi
-export class ReactiveList<T> extends Base implements IDisposable {
+export class ReactiveList<T> extends ReactiveBase implements IDisposable {
   items: T[];
 
   allObservable: ObserveAll<T>;
@@ -202,7 +203,7 @@ export var uiCommandWithLogin = function <T>(action: IPromiseFunction<T>, canExe
 }
 
 export var uiCommand2 = function <T>(name: string, action: IPromiseFunction<T>, options?: ICommandInfo): IReactiveCommand<T> { // Rx.Observable<boolean>
-  let command = new UiCommandInternal<T>(name, action, options);
+  let command = new ReactiveCommand<T>(name, action, options);
   let eh: GlobalErrorHandler = Container.instance.get(GlobalErrorHandler);
   command.thrownExceptions.subscribe(x => eh.handleUseCaseError(x, 'unhandled'));
 
@@ -256,7 +257,8 @@ export interface IReactiveCommand<T> extends IDisposable, IPromiseFunction<T> {
   execute(...args): Promise<T>;
 }
 
-class UiCommandInternal<T> extends Base {
+// TODO: Explore ReactiveCommand from RxUi
+class ReactiveCommand<T> extends ReactiveBase {
   isExecuting = false;
   otherBusy = false;
   isVisible = true;
@@ -266,9 +268,9 @@ class UiCommandInternal<T> extends Base {
   tooltip: string;
   private _thrownExceptions = new Rx.Subject<Error>();
   public get thrownExceptions() { return this._thrownExceptions.asObservable() }
-  public isExecutingObservable = this.observeEx(x => x.isExecuting);
-  public isVisibleObservable = this.observeEx(x => x.isVisible);
-  public canExecuteObservable = this.observeEx(x => x.canExecute);
+  public isExecutingObservable = this.whenAnyValue(x => x.isExecuting);
+  public isVisibleObservable = this.whenAnyValue(x => x.isVisible);
+  public canExecuteObservable = this.whenAnyValue(x => x.canExecute);
 
   constructor(public name: string, private action: IPromiseFunction<T>, options?: ICommandInfo) {
     super();

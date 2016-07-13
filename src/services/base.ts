@@ -1,5 +1,6 @@
 import {inject, Container, BindingEngine} from 'aurelia-framework';
 import * as Rx from 'rxjs/Rx';
+import * as RxUi from 'rxui';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {Tools} from './tools';
 
@@ -56,6 +57,12 @@ export class Subscriptions {
 
 export interface PropertyExpression<T, TProp> {
   (v: T): TProp;
+}
+
+export class ReactiveBase extends RxUi.ReactiveObject implements IDisposable {
+  public subscriptions = new Subscriptions();
+  get tools() { return Tools; }
+  dispose() { this.subscriptions.dispose(); }
 }
 
 export class Base implements IDisposable {
