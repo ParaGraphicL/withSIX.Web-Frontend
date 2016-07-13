@@ -259,23 +259,29 @@ export interface IReactiveCommand<T> extends IDisposable, IPromiseFunction<T> {
 
 // TODO: Explore ReactiveCommand from RxUi
 class ReactiveCommand<T> extends ReactiveBase {
-  isExecuting = false;
-  otherBusy = false;
-  isVisible = true;
+  private _isExecuting: boolean;
+  get isExecuting() { return this.get(x => x.isExecuting); }
+  set isExecuting(value: boolean) { this.set(x => x.isExecuting, value); }
+  get otherBusy() { return this.get(x => x.otherBusy); }
+  set otherBusy(value: boolean) { this.set(x => x.otherBusy, value); }
+  get isVisible() { return this.get(x => x.isVisible); }
+  set isVisible(value: boolean) { this.set(x => x.isVisible, value); }
+
   cls: string;
   icon: string;
   textCls: string;
   tooltip: string;
-  private _thrownExceptions = new Rx.Subject<Error>();
-  public get thrownExceptions() { return this._thrownExceptions.asObservable() }
-  public isExecutingObservable = this.whenAnyValue(x => x.isExecuting);
-  public isVisibleObservable = this.whenAnyValue(x => x.isVisible);
-  public canExecuteObservable = this.whenAnyValue(x => x.canExecute);
+  public get thrownExceptions(): Rx.Observable<Error> { return this.get(x => x.thrownExceptions).asObservable() }
+  public get isExecutingObservable() { return this.get(x => x.isExecutingObservable).asObservable() }
+  public get isVisibleObservable() { return this.get(x => x.isVisibleObservable).asObservable() }
+  public get canExecuteObservable() { return this.get(x => x.canExecuteObservable).asObservable() }
 
   constructor(public name: string, private action: IPromiseFunction<T>, options?: ICommandInfo) {
     super();
     if (action == null) throw new Error("action cant be null!");
     if (!options) return;
+    this.set(x => x.thrownExceptions, new Rx.Subject<Error>());
+    this.set(x => x.isExecutingObservable, this.whenAnyValue(x => x.isExecuting));
 
     this.cls = options.cls;
     this.icon = options.icon;
@@ -294,7 +300,7 @@ class ReactiveCommand<T> extends ReactiveBase {
     try {
       return await this.action(...args);
     } catch (err) {
-      if (this._thrownExceptions.observers.length > 0) this._thrownExceptions.next(err);
+      if (this.get<Rx.Observable<Error>>(x => x.thrownExceptions).observers.length > 0) this.get<Rx.Observable<Error>>(x => x.thrownExceptions).next(err);
       else throw (err); // TODO: Unhandled exception handler!!
     } finally {
       this.isExecuting = false;
