@@ -73,7 +73,7 @@ export class Base implements IDisposable {
   get tools() { return Tools; }
 
   observeEx = <T extends this, TProp>(propertyEx: (v: T) => TProp) => Base.observeEx(this, propertyEx);
-  static observeEx<T, TProp>(obj: T, propertyEx: (v: T) => TProp) { return Base.observe<TProp>(obj, this.getPropertyName(propertyEx)); }
+  static observeEx<T, TProp>(obj: T, propertyEx: (v: T) => TProp) { return Base.observe<TProp>(obj, this.getPropertyName(propertyEx), true); }
 
   static toProperty<T, TProp>(observer: Rx.Observable<TProp>, propertyEx: PropertyExpression<T, TProp>, ...objs: T[]): IDisposable {
     var propertyName = this.getPropertyName(propertyEx);
@@ -94,15 +94,14 @@ export class Base implements IDisposable {
   static delay = delay => new Promise((resolve, reject) => { setTimeout(() => resolve(), delay) });
 
   // deprecate in favor of observeEx variants
-  observe = <T>(property: string) => Base.observe<T>(this, property);
-  static observe<T>(obj, property: string): Rx.Observable<T> {
+  observe = <T>(property: string, triggerInitial: boolean) => Base.observe<T>(this, property, triggerInitial);
+  static observe<T>(obj, property: string, triggerInitial: boolean): Rx.Observable<T> {
     if (obj == null) throw new Error("null obj");
     if (!property) throw new Error("null property");
     let b = bindingEngine.propertyObserver<T>(obj, property);
-    return Rx.Observable.create((observer: Rx.Subject<T>) => {
-      observer.next(obj[property]);
-      return b.subscribe(x => observer.next(x));
-    }).distinctUntilChanged();
+    let o = Rx.Observable.create((observer: Rx.Subject<T>) => b.subscribe(x => observer.next(x)));
+    if (triggerInitial) return Rx.Observable.of(obj[property]).concat(o).distinctUntilChanged();
+    else return o.distinctUntilChanged();
   }
 
   // obsolete

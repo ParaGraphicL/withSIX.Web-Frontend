@@ -179,8 +179,7 @@ export class ObserveAll<T> {
   //   });
   // }
 
-  observeProperty = (x: T, p: string) => Base.observe<T>(x, p)
-    .skip(this.includeInitial ? 0 : 1)
+  observeProperty = (x: T, p: string) => Base.observe<T>(x, p, this.includeInitial)
     .map(evt => { return { item: x, propertyName: p, change: evt } })
 }
 
