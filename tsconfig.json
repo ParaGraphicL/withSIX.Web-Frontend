@@ -225,6 +225,7 @@
         "./src/services/lib.ts",
         "./src/services/mediator.ts",
         "./src/services/reactive.ts",
+        "./src/services/steam.ts",
         "./src/services/toastr.ts",
         "./src/services/tools.ts",
         "./src/services/uicontext.ts",
