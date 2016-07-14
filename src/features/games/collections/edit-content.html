@@ -3,7 +3,7 @@
       view-types.bind="availableViewTypes" custom-sort.bind="customSort"></filters>
 
   <card-view if.bind="filteredComponent.selectedViewType == 0" items.bind="filteredComponent.filteredItems" view-path="features/profile/content/" item-type.bind="itemType" index-offset.bind="1">
-    <template replace-part="prepend-items">
+    <template slot="prepend-items">
       <div class.bind="cardContainerCls">
         <div class="card ${cardCls} new-item">
           <header>ADD Mods</header>

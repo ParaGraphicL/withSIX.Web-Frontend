@@ -1,14 +1,14 @@
 import Linq from 'linq4es2015';
 
 export default class Utils {
-  static concatPromiseResults<T>(results: Enumerable<T>[]) {
-    var concated = Linq.empty<T>();
+  static flattenEnumerable<T>(results: Enumerable<T>[]) {
+    var concated = Linq.empty();
     results.forEach(x => concated = concated.concat(x));
     return concated;
   }
-  static concatPromiseResultsAry<T>(results: T[][]) {
-    var concated = Linq.empty<T>();
-    results.forEach(x => concated = concated.concat(x.asEnumerable()));
+  static flatten<T>(results: T[][]) {
+    let concated = [];
+    results.forEach(x => concated = concated.concat(x));
     return concated;
   }
 }

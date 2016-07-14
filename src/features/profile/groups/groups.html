@@ -1,7 +1,7 @@
 <template>
   <h2>Select group</h2>
   <card-view items.bind="groups" item-type="group" view-path="features/profile/groups/">
-    <template replace-part="prepend-items">
+    <template slot="prepend-items">
       <div class.bind="cardContainerCls">
       <div class="card ${cardCls} new-item">
         <div class="button">

@@ -67,8 +67,8 @@ export class ModsHelper {
 
   static getCompatibilityModsFor(id: string, otherId: string, tags: string[] = []) {
     if (id.toUpperCase() == this.arma3Id) {
-      if (tags.asEnumerable().any(x => this.objectCategories.asEnumerable().contains(x))) return [];
-      if (tags.asEnumerable().any(x => this.a3MpCategories.asEnumerable().contains(x))) return ["@cup_terrains_core"];
+      if (tags.some(x => this.objectCategories.some(x => x == x))) return [];
+      if (tags.some(x => this.a3MpCategories.some(x => x == x))) return ["@cup_terrains_core"];
       return ["@AllInArmaStandaloneLite"];
     }
     return [];

@@ -98,7 +98,7 @@ export class ReactiveList<T> extends ReactiveBase implements IDisposable {
 
     this.allObservable = new ObserveAll<T>(properties);
     this.items = items;
-    //if (this.items.asEnumerable().any(x => x == null)) this.tools.Debug.warn("Has null items", this.items);
+    //if (this.items.some(x => x == null)) this.tools.Debug.warn("Has null items", this.items);
     items.filter(x => x != null).forEach(this.observeItem);
     this.subscriptions.subd(d => {
       var sub = bindingEngine.collectionObserver(this.items)
@@ -109,7 +109,7 @@ export class ReactiveList<T> extends ReactiveBase implements IDisposable {
           var added: T[] = [];
           var removed: T[] = [];
           x.forEach(x => {
-            if (x.addedCount > 0) this.items.asEnumerable().skip(x.index).take(x.addedCount).toArray().forEach(x => added.push(x))// XXX:
+            if (x.addedCount > 0) this.items.slice(x.index).slice(0, x.addedCount).forEach(x => added.push(x))// XXX:
             if (x.removed.length > 0) x.removed.forEach(x => removed.push(x));
           });
           if (added.length > 0) this._itemsAdded.next(added);
@@ -260,7 +260,7 @@ export interface IReactiveCommand<T> extends IDisposable, IPromiseFunction<T> {
 class ReactiveCommand<T> extends ReactiveBase {
   private _isExecuting: boolean;
   private _otherBusy: boolean;
-  private _isVisible: boolean;
+  private _isVisible: boolean = true;
   private _thrownExceptions = new Rx.Subject<Error>();
   private _isExecutingObservable = new Rx.Subject<boolean>();
   private _isVisibleObservable = new Rx.Subject<boolean>();
@@ -289,8 +289,8 @@ class ReactiveCommand<T> extends ReactiveBase {
     this.textCls = options.textCls;
     this.tooltip = options.tooltip;
 
-    if (options.canExecuteObservable) this.subscriptions.subd(d => d(options.canExecuteObservable.subscribe(x => this._otherBusy = !x)));
-    if (options.isVisibleObservable) this.subscriptions.subd(d => d(options.isVisibleObservable.subscribe(x => this._isVisible = x)));
+    if (options.canExecuteObservable) this.subscriptions.subd(d => d(this.toProperty(options.canExecuteObservable.map(x => !x), x => x._otherBusy)));
+    if (options.isVisibleObservable) this.subscriptions.subd(d => d(this.toProperty(options.isVisibleObservable, x => x._isVisible)));
   }
 
   public get canExecute() { return !this.isExecuting && !this.otherBusy; }

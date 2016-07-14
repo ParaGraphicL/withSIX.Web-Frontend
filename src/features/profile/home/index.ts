@@ -69,7 +69,7 @@ export class Index extends ViewModel {
   updateAll = uiCommand2("Update all", async () => {
     var commands = Array.from(this.model.updates.values()).asEnumerable()
       .groupBy(x => x.gameId, x => x.id,
-      (key, elements) => new InstallContents(key, elements.asEnumerable().select(x => { return { id: x } }).toArray(), { text: "Available updates" }, true))
+      (key, elements) => new InstallContents(key, elements.map(x => { return { id: x } }), { text: "Available updates" }, true))
       .toArray();
     for (let i in commands)
       await commands[i].handle(this.mediator);

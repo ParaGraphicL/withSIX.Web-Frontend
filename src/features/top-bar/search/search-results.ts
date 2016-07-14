@@ -25,5 +25,5 @@ export class SearchResults {
   }
 
   get hasResults() { return this.results && this.results.length > 0 }
-  get anyResults() { return this.results.asEnumerable().any(x => x.value.length > 0); }
+  get anyResults() { return this.results.some(x => x.value.length > 0); }
 }

@@ -13,7 +13,7 @@ import {UiContext} from './uicontext';
 import {GlobalErrorHandler} from './legacy/logger';
 import {Tools} from './tools';
 import {W6} from './withSIX';
-import {Container} from 'aurelia-dependency-injection';
+import {Container} from 'aurelia-framework';
 export * from 'aurelia-mediator';
 
 @inject(W6, Toastr, Router, EventAggregator)

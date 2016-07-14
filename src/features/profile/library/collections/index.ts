@@ -69,34 +69,34 @@ class GetCollectionsHandler extends DbClientQuery<GetCollections, ICollectionsDa
     };
     // TODO: only if client connected get client info.. w6.miniClient.isConnected // but we dont wait for it so bad idea for now..
     // we also need to refresh then when the client is connected later?
-    var p = [
+    var p: Promise<ICollection[]>[] = [
       //this.getClientCollections(request)
     ];
 
     if (request.user.id) p.push(this.getSubscribedCollections(request, optionsTodo), this.getMyCollections(request, optionsTodo));
-		  var results = await Promise.all<Enumerable<ICollection>>(p)
-		  return { collections: Utils.concatPromiseResults(results).toArray() };
+		  var results = await Promise.all(p)
+		  return { collections: Utils.flatten(results) };
     // return GetCollectionsHandler.designTimeData(request);
   }
 
-		async getClientCollections(request: GetCollections): Promise<Enumerable<ICollection>> {
+		async getClientCollections(request: GetCollections): Promise<ICollection[]> {
     try {
       var r = await this.client.getGameCollections(request.id);
-      return r.collections.asEnumerable().select(x => { x.typeScope = TypeScope.Local; return x; });
+      return r.collections.map(x => { x.typeScope = TypeScope.Local; return x; });
     } catch (err) {
       this.tools.Debug.warn("Error while trying to get collections from client", err);
-      return [].asEnumerable();
+      return [];
     }
 		}
 
 		async getMyCollections(request: GetCollections, options) {
     var r = await this.collectionDataService.getCollectionsByMeByGame(request.id, options)
-    return r.asEnumerable().select(x => CollectionHelper.convertOnlineCollection(x, TypeScope.Published, this.w6));
+    return r.map(x => CollectionHelper.convertOnlineCollection(x, TypeScope.Published, this.w6));
 		}
 
 		async getSubscribedCollections(request: GetCollections, options) {
     var r = await this.collectionDataService.getMySubscribedCollections(request.id, options);
-			 return r.asEnumerable().select(x => CollectionHelper.convertOnlineCollection(x, TypeScope.Subscribed, this.w6));
+			 return r.map(x => CollectionHelper.convertOnlineCollection(x, TypeScope.Subscribed, this.w6));
 		}
 
 		static async designTimeData(request: GetCollections) {

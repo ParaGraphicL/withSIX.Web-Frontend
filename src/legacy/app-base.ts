@@ -7,7 +7,7 @@ import {IRootScope, ITagKey, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHa
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {HttpClient} from 'aurelia-fetch-client';
 import {ToastLogger, GlobalErrorHandler} from '../services/legacy/logger';
-import {Container} from 'aurelia-dependency-injection';
+import {Container} from 'aurelia-framework';
 
 import {BasketService} from '../services/basket-service';
 

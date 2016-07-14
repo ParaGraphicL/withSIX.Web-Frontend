@@ -158,7 +158,7 @@ export class Playlist extends ViewModel {
 
   findCollections = async (searchItem: string) => {
     await this.updateCollections();
-    return searchItem ? this.collections.asEnumerable().where(x => x.name && x.name.containsIgnoreCase(searchItem)).toArray() : this.collections
+    return searchItem ? this.collections.filter(x => x.name && x.name.containsIgnoreCase(searchItem)) : this.collections
   }
 
   toggleSearch = () => { this.isSearchOpen = !this.isSearchOpen; }
@@ -173,11 +173,9 @@ export class Playlist extends ViewModel {
       gameId: basket.gameId,
       version: "0.0.1",
       forkedCollectionId: basket.collectionId,
-      dependencies: basket.items.asEnumerable().where(x => x.packageName ? true : false).select(x => { return { dependency: x.packageName, constraint: x.constraint } }).toArray()
+      dependencies: basket.items.filter(x => x.packageName ? true : false).map(x => { return { dependency: x.packageName, constraint: x.constraint } })
     };
-    if (model.dependencies.length == 0)
-      throw new Error("There are no items in this playlist...");
-
+    if (model.dependencies.length == 0) throw new Error("There are no items in this playlist...");
     var result = await this.dialog.open({ viewModel: CreateCollectionDialog, model: { game: this.game, model: model } });
     if (result.wasCancelled) return;
     await this.unload();
@@ -485,7 +483,7 @@ class GetMyCollectionsHandler extends DbClientQuery<GetMyCollections, ICollectio
     };
     // TODO: only if client connected get client info.. w6.miniClient.isConnected // but we dont wait for it so bad idea for now..
     // we also need to refresh then when the client is connected later?
-    var p = [
+    var p: Promise<IPlaylistCollection[]>[] = [
       //this.getClientCollections(request)
     ];
 
@@ -493,14 +491,14 @@ class GetMyCollectionsHandler extends DbClientQuery<GetMyCollections, ICollectio
       p.push(this.getMyCollections(request, optionsTodo));
       if (request.includeSubscribed) p.push(this.getSubscribedCollections(request, optionsTodo));
     }
-    var results = await Promise.all<Enumerable<IPlaylistCollection>>(p)
-    return { collections: Utils.concatPromiseResults(results).toArray() };
+    var results = await Promise.all(p)
+    return { collections: Utils.flatten(results) };
     // return GetCollectionsHandler.designTimeData(request);
   }
 
   async getClientCollections(request: GetMyCollections) {
     var r = await this.client.getGameCollections(request.id);
-    return r.collections.asEnumerable().select(x => { x.typeScope = TypeScope.Local; return x; });
+    return r.collections.map(x => { x.typeScope = TypeScope.Local; return x; });
   }
 
   async getMyCollections(request: GetMyCollections, options) {
@@ -509,12 +507,12 @@ class GetMyCollectionsHandler extends DbClientQuery<GetMyCollections, ICollectio
     //   var c = r[i];
     //   await c.latestVersion.entityAspect.loadNavigationProperty("dependencies");
     // }
-    return r.asEnumerable().select(x => this.convertOnlineCollection(x, TypeScope.Published));
+    return r.map(x => this.convertOnlineCollection(x, TypeScope.Published));
   }
 
   async getSubscribedCollections(request: GetMyCollections, options) {
     var r = await this.collectionDataService.getMySubscribedCollections(request.id, options);
-    return r.asEnumerable().select(x => this.convertOnlineCollection(x, TypeScope.Subscribed));
+    return r.map(x => this.convertOnlineCollection(x, TypeScope.Subscribed));
   }
 
   convertOnlineCollection(collection: IBreezeCollection, type: TypeScope): IPlaylistCollection {

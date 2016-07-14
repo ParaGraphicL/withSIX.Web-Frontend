@@ -150,15 +150,15 @@ class GetCollectionHandler extends DbQuery<GetCollection, ICollectionData> {
       () => this.getEntityQueryFromShortId("Collection", request.collectionId)
         .withParameters({ id: this.tools.fromShortId(request.collectionId) }));
     var ver = await this.context.getCustom<IBreezeCollectionVersion>("collectionversions/" + col.latestVersionId);
-    var items = ver.dependencies.asEnumerable()
-      .select(x => {
+    var items = ver.dependencies
+      .map(x => {
         var dep = <IShowDependency>{ dependency: x.dependency, type: "dependency", id: x.id, gameId: col.gameId, constraint: x.constraint, isRequired: x.isRequired, availableVersions: (<any>x).availableVersions, name: x.name, version: (<any>x).latestStableVersion };
         var dx = (<any>x);
         if (dx.avatar)
           dep.image = this.w6.url.getContentAvatarUrl(dx.avatar, dx.avatarUpdatedAt);
         return dep;
-      }).toArray();
-    var server = ver.servers ? ver.servers.asEnumerable().firstOrDefault() : null;
+      });
+    var server = ver.servers ? ver.servers[0] : null;
     var s = server ? { address: server.address, password: server.password } : { address: "", password: "" };
 
     return { id: col.id, name: col.name, author: col.author, gameId: col.gameId, items: items, servers: [s], repositories: ver.repositories || "", scope: CollectionScope[col.scope], updatedAt: col.updatedAt, preferredClient: PreferredClient[col.preferredClient], groupId: col.groupId };

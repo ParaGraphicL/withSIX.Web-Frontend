@@ -33,14 +33,14 @@ export class Filters<T> extends ViewModel {
         this.typeaheadOptions.select(e);
       }
     }
-    this.selectedViewType = this.viewTypes.asEnumerable().firstOrDefault();
-    if (this.sort) this.sortOrder = this.sort.asEnumerable().firstOrDefault();
-    if (this.filters) this.enabledFilters = this.filters.asEnumerable().toArray();
+    this.selectedViewType = this.viewTypes[0];
+    if (this.sort) this.sortOrder = this.sort[0];
+    if (this.filters) this.enabledFilters = Array.from(this.filters);
 
     this.updateFilteredItems();
 
     // this.collectionObserver = bindingEngine.collectionObserver(this.items)
-    //   //.where(x => this.customHandler == null)
+    //   //.filter(x => this.customHandler == null)
     //   .subscribe(x => { if (!this.customHandler) this.initiateUpdate() })
 
     this.handleItemsChange(this.items);
@@ -89,7 +89,7 @@ export class Filters<T> extends ViewModel {
       this.filteredItems = r.items;
       this.customCount = r.inlineCount
     } else {
-      this.filteredItems = this.orderItems(this.filterItems()).toArray();
+      this.filteredItems = this.orderItems(this.filterItems());
     }
     this.tools.Debug.log("updatedFilteredItems", this.filteredItems.length);
   }
@@ -99,7 +99,7 @@ export class Filters<T> extends ViewModel {
     this.initiateUpdate();
   }
 
-  public orderItems(items: Enumerable<any>): Enumerable<any> {
+  public orderItems(items: any[]): any[] {
     if (!this.customSort && !this.sortOrder) return items;
 
     // TODO: Don't build these functions dynamically
@@ -115,13 +115,13 @@ export class Filters<T> extends ViewModel {
     });
     if (this.customSort != null) sortFunctions.unshift(this.customSort);
 
-    return items.toArray().sort((a, b) => {
+    return items.sort((a, b) => {
       for (var i in sortFunctions) {
         let r = sortFunctions[i](a, b);
         if (r) return r;
       }
       return 0;
-    }).asEnumerable();
+    });
 
     // TODO: Linq orderBy comes back with the wrong order, however we loose some stuff here now..
 
@@ -156,16 +156,16 @@ export class Filters<T> extends ViewModel {
     // return items;
   }
 
-  public filterItems(): Enumerable<any> {
-    var e = this.items.asEnumerable();
+  public filterItems(): any[] {
+    var e = this.items;
     var searchInput = this.searchInput && this.searchInput.trim();
     if (searchInput) {
-      e = e.where(x => this.searchFields.asEnumerable().any(v => x[v] && x[v].containsIgnoreCase(searchInput))).toArray().asEnumerable();
+      e = e.filter(x => this.searchFields.some(v => x[v] && x[v].containsIgnoreCase(searchInput)));
     }
-    if (this.filters && this.filters.asEnumerable().any()) {
-      e = e.where(x => this.enabledFilters.asEnumerable().any(f => f.filter(x)));
+    if (this.filters && this.filters.some(x => true)) {
+      e = e.filter(x => this.enabledFilters.some(f => f.filter(x)));
       if (this.enabledAndFilters.length > 0)
-        e = e.where(x => this.enabledAndFilters.asEnumerable().all(f => f.filter(x)));
+        e = e.filter(x => this.enabledAndFilters.every(f => f.filter(x)));
     }
     return e;
   }

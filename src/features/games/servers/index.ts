@@ -35,6 +35,6 @@ class GetServersQuery extends DbClientQuery<GetServers, IServers>  {
     await (<any>this.client).connection.promise(); // Puh todo
     let results = await this.client.hubs.server
       .getServers({ gameId: request.gameId });
-    return { addresses: results.addresses.asEnumerable().select(x => { return { address: x, gameId: request.gameId } }).toArray() };
+    return { addresses: results.addresses.map(x => { return { address: x, gameId: request.gameId } }) };
   }
 }

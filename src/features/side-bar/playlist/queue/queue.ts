@@ -26,7 +26,7 @@ export class Queue extends ViewModel {
   }
   findById(id: string) { return this.items.asEnumerable().first(x => x.id == id); }
 
-  get active() { return this.items.asEnumerable().where(x => !x.state).toArray().length; }  // todo; asEnumerable count! and reactive? // Array.from(this.items.values())
+  get active() { return this.items.filter(x => !x.state).length; }
 }
 
 //interface IItemData extends Map<string, IQueueItem> {}

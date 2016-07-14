@@ -202,7 +202,7 @@ export class W6Context {
     var fields = [];
     for (var i = 0; i < sortOptions.fields.length; i++) {
       var field = sortOptions.fields[i];
-      if (fields.asEnumerable().contains(field))
+      if (fields.some(x => x == field))
         continue;
       fields.push(field);
       if (field == 'author')

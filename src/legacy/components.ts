@@ -582,10 +582,10 @@ export module Components {
           var converter = new Markdown.Converter();
           return converter.makeHtml(input);
         })
-        .filter('commentfilter', () => (input: any[]) => !input ? input : input.asEnumerable().where(x => !x.replyToId).toArray())
+        .filter('commentfilter', () => (input: any[]) => !input ? input : input.filter(x => !x.replyToId))
         .filter('deletedfilter', () => (input: IBreezeModMediaItem[], mod: IBreezeMod) => {
           if (!input || input.length == 0 || mod == null) return [];
-          return input.asEnumerable().where(x => x.modId == mod.id && x.entityAspect.entityState.isDeleted()).toArray()
+          return input.filter(x => x.modId == mod.id && x.entityAspect.entityState.isDeleted())
         })
         .filter('unsafe', ['$sce', function($sce) { return $sce.trustAsHtml; }])
         .filter('monthName', [

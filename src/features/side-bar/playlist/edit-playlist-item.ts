@@ -45,11 +45,12 @@ class GetAvailableVersionsHandler extends DbQuery<GetAvailableVersions, IAvailab
     try {
       let data = await this.context.executeQuery<IBreezeMod>(query)
       let updates = data.results[0].updates;
-      versions = versions.asEnumerable().concat(updates.asEnumerable()
-        .where(x => x.currentState == ProcessingState[ProcessingState.Finished])
+      versions = versions.concat(updates
+        .filter(x => x.currentState == ProcessingState[ProcessingState.Finished])
+        .asEnumerable()
         .orderByDescending(x => x, ModsHelper.versionCompare)
-        .select(x => ModsHelper.getFullVersion(x)))
-        .toArray();
+        .toArray()
+        .map(x => ModsHelper.getFullVersion(x)));
     } catch (err) {
       this.tools.Debug.warn("failure to retrieve versions for mod ", request.id, err);
     }

@@ -12,7 +12,7 @@ exports.base = function() {
     comments: false,
     compact: false,
     code: true,
-    presets: [ 'es2015-loose', 'stage-3'],
+    presets: ['es2015-loose', 'stage-1'],
     plugins: [
       //'syntax-flow',
       'transform-decorators-legacy',
@@ -41,6 +41,6 @@ exports.system = function() {
 
 exports.es2015 = function() {
   var options = exports.base();
-  options.presets = ['stage-3'];
+  options.presets = ['stage-1'];
   return options;
 };

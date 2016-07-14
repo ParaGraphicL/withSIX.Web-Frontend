@@ -1,7 +1,7 @@
 import {HttpClient, HttpRequestMessage, HttpResponseMessage} from 'aurelia-http-client';
 import {HttpClient as FetchClient, json} from 'aurelia-fetch-client';
 import {EventAggregator} from 'aurelia-event-aggregator';
-import {inject, Container} from 'aurelia-dependency-injection';
+import {inject, Container} from 'aurelia-framework';
 
 import {EntityExtends, IUserInfo} from './dtos';
 import {W6Urls} from './withSIX';

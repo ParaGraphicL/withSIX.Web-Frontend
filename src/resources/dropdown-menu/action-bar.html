@@ -4,9 +4,9 @@
       <!-- This is basically the command button, but we don't use it because we want to be able to pass our own menu-item template -->
       <button if.one-time="!item.isSeparator" command.bind="item.action" class.bind="item.cls" class="anchor ${$parent.itemCls}" title="${item.tooltip ? item.tooltip : ''}" click.delegate="clicked($event)">
         <span>
-          <template replaceable part="menu-item">
+          <slot name="menu-item">
             <compose view="./dropdown-default-item.html"></compose>
-          </template>
+          </slot>
         </span>
         <span class="fa fa-spinner fa-spin" title.bind="item.name" if.bind="item.action.isExecuting && !noProcessing"></span>
       </button>

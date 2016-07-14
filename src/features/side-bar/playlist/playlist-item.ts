@@ -272,8 +272,8 @@ export class PlaylistItem extends ViewModel {
   get itemStateClass() { return this.basketService.getItemStateClassInternal(this.itemState); }
   get itemState() { return this.state ? this.calculateState(this.state.state, this.state.version, this.model.constraint) : null; }
   calculateState(state: ItemState, version: string, constraint: string) { return ContentHelper.getContentState(state, version, constraint); }
-  // .where(x => x.itemType != BasketItemType.Collection)
-  get dependencySize() { return this.localChain.asEnumerable().select(x => this.chain.get(x)).where(x => x != null).select(x => x.sizePacked).where(x => x != null).sum() }
+  // .filter(x => x.itemType != BasketItemType.Collection)
+  get dependencySize() { return this.localChain.map(x => this.chain.get(x)).filter(x => x != null).map(x => x.sizePacked).filter(x => x != null).asEnumerable().sum() }
 
   informAngular = () => this.appEvents.emitBasketChanged();
 
@@ -331,16 +331,16 @@ class GetCollectionDependenciesHandler extends DbQuery<GetCollectionDependencies
     let q = breeze.EntityQuery.from("CollectionVersions").where(new breeze.Predicate("id", breeze.FilterQueryOp.Equals, c.latestVersionId)).expand("dependencies");
     await this.context.executeQueryWithManager<IBreezeCollectionVersion>(manager, q);
     // TODO: How to handle 'non network mods'
-    let modDependencies = c.latestVersion.dependencies.asEnumerable().select(x => x.modDependencyId).where(x => x != null).toArray();
+    let modDependencies = c.latestVersion.dependencies.map(x => x.modDependencyId).filter(x => x != null);
     // if (request.gameId != request.currentGameId) {
     //   let compatibilityMods = ModsHelper.getCompatibilityModsFor(request.currentGameId, request.gameId);
     //   if (compatibilityMods.length > 0) {
     //     let compatibilityModIds = await ModHelper.getCompatibilityModIds(compatibilityMods, request.currentGameId, this.context);
-    //     compatibilityModIds.forEach(x => { if (!modDependencies.asEnumerable().contains(x)) modDependencies.push(x) });
+    //     compatibilityModIds.forEach(x => { if (!modDependencies.some(x => x == x)) modDependencies.push(x) });
     //   }
     // }
 
-    let dependencies = modDependencies.asEnumerable().where(x => !request.localChain.asEnumerable().contains(x)).select(x => x).toArray();
+    let dependencies = modDependencies.filter(x => !request.localChain.some(x => x == x)).map(x => x);
     if (dependencies.length == 0)
       return {
         dependencies: [],
@@ -352,7 +352,7 @@ class GetCollectionDependenciesHandler extends DbQuery<GetCollectionDependencies
         version: c.latestVersion.version
       };
 
-    let cachedIds = dependencies.asEnumerable().where(x => request.chain.has(x)).toArray();
+    let cachedIds = dependencies.filter(x => request.chain.has(x));
     let idsToFetch = dependencies.asEnumerable().except(cachedIds).toArray();
     let fetchedResults: IBasketItem[] = [];
 
@@ -363,11 +363,11 @@ class GetCollectionDependenciesHandler extends DbQuery<GetCollectionDependencies
         .where(<any>op)
         .select(desiredFields);
       let r = await this.context.executeQueryWithManager<IBreezeMod>(manager, query);
-      fetchedResults = r.results.asEnumerable().select(x => Helper.modToBasket(x)).toArray();
+      fetchedResults = r.results.map(x => Helper.modToBasket(x));
       fetchedResults.forEach(x => request.chain.set(x.id, x));
     }
 
-    let results = fetchedResults.asEnumerable().concat(cachedIds.asEnumerable().select(x => request.chain.get(x))).toArray();
+    let results = fetchedResults.concat(cachedIds.map(x => request.chain.get(x)));
     results.forEach(x => { request.localChain.push(x.id); });
     return {
       dependencies: results,
@@ -413,16 +413,16 @@ class GetModDependenciesHandler extends DbQuery<GetModDependencies, IResult> {
       name: request.packageName
     }
     let sizePacked = Math.abs(mod.sizePacked);
-    let modDependencies = mod.dependencies.asEnumerable().select(x => x.id).toArray();
+    let modDependencies = mod.dependencies.map(x => x.id);
     if (request.gameId != request.currentGameId) {
       let compatibilityMods = ModsHelper.getCompatibilityModsFor(request.currentGameId, request.gameId, mod.tags);
       if (compatibilityMods.length > 0) {
         let compatibilityModIds = await ModHelper.getCompatibilityModIds(compatibilityMods, request.currentGameId, this.context);
-        compatibilityModIds.forEach(x => { if (!modDependencies.asEnumerable().contains(x)) modDependencies.push(x) });
+        compatibilityModIds.forEach(x => { if (!modDependencies.some(x => x == x)) modDependencies.push(x) });
       }
     }
 
-    let dependencies = modDependencies.asEnumerable().where(x => !request.localChain.asEnumerable().contains(x)).select(x => x).toArray();
+    let dependencies = modDependencies.filter(x => !request.localChain.some(x => x == x)).map(x => x);
     if (dependencies.length == 0)
       return {
         dependencies: [],
@@ -435,7 +435,7 @@ class GetModDependenciesHandler extends DbQuery<GetModDependencies, IResult> {
         version: mod.latestStableVersion
       };
 
-    let cachedIds = dependencies.asEnumerable().where(x => request.chain.has(x)).toArray();
+    let cachedIds = dependencies.filter(x => request.chain.has(x));
     let idsToFetch = dependencies.asEnumerable().except(cachedIds).toArray();
     let fetchedResults: IBasketItem[] = [];
 
@@ -446,11 +446,11 @@ class GetModDependenciesHandler extends DbQuery<GetModDependencies, IResult> {
         .where(<any>op)
         .select(desiredFields);
       r = await this.context.executeQueryWithManager<IBreezeMod>(manager, query);
-      fetchedResults = r.results.asEnumerable().select(x => Helper.modToBasket(x)).toArray();
+      fetchedResults = r.results.map(x => Helper.modToBasket(x));
       fetchedResults.forEach(x => request.chain.set(x.id, x));
     }
 
-    let results = fetchedResults.asEnumerable().concat(cachedIds.asEnumerable().select(x => request.chain.get(x))).toArray();
+    let results = fetchedResults.concat(cachedIds.map(x => request.chain.get(x)));
     results.forEach(x => { request.localChain.push(x.id); });
     return {
       dependencies: results,

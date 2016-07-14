@@ -175,7 +175,11 @@
       <!-- <script src="/dist_legacy/misc.min.js"></script>
       <script src="/dist_legacy/app.min.js"></script> -->
 
-      <script src="bundle.js"></script>
+      <% if (webpackConfig.metadata.ENV === 'development') { %>
+        <!-- Webpack Dev Server reload -->
+        <script src="/webpack-dev-server.js"></script>
+        <% } %>
+
     </div>
   </div>
   <div app-view-segment="0" id="content"></div>

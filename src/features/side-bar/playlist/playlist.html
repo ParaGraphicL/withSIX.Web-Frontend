@@ -85,7 +85,7 @@
     </div>
     <hr />
     <finder-results model.bind="findModel" button-cls="ignore-close" text="" icon="withSIX-icon-Arrow-Left-Open" select-is-execute="true" show-total-results.bind="false" show-close.bind="false">
-      <template replace-part="item">
+      <template slot="item">
         <compose view-model="./collection-finder-result" model.bind="{model: item, findModel: model}"></compose>
       </template>
     </finder-results>
