@@ -6,7 +6,7 @@ import {ListFactory, uiCommand2, IReactiveCommand} from './reactive';
 import {Tools} from './tools';
 import {IBreezeErrorReason, IBreezeSaveError} from './legacy/misc';
 import {ContentHelper} from './helpers';
-import {InvalidShortIdException} from '../helpers/string';
+import {InvalidShortIdException} from '../helpers/utils/string';
 
 import * as Rx from 'rxjs/Rx';
 

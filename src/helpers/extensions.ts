@@ -1,11 +1,11 @@
-import {flatten, entries} from './utils/iterable'
-import {indexOfIgnoreCase, endsWithIgnoreCase, startsWithIgnoreCase, toUpperCaseFirst, toLowerCaseFirst, containsIgnoreCase, equalsIgnoreCase, truncate, sluggify, sluggifyEntityName} from './utils/string'
-import {defineProperties} from './utils/extenders'
+import {flatten, entries, removeEl} from './utils/iterable'
+import {indexOfIgnoreCase, endsWithIgnoreCase, startsWithIgnoreCase, toUpperCaseFirst, toLowerCaseFirst, containsIgnoreCase, equalsIgnoreCase, truncate, sluggify, sluggifyEntityName, toShortId, fromShortId} from './utils/string'
+import {defineFunctions} from './utils/extenders'
 import Linq from 'linq4es2015'
 
 Linq.setExtensions();
 
-defineProperties(String.prototype, {
+defineFunctions(String.prototype, {
   'indexOfIgnoreCase': indexOfIgnoreCase,
   'endsWithIgnoreCase': endsWithIgnoreCase,
   'startsWithIgnoreCase': startsWithIgnoreCase,
@@ -13,16 +13,17 @@ defineProperties(String.prototype, {
   'toLowerCaseFirst': toLowerCaseFirst,
   'containsIgnoreCase': containsIgnoreCase,
   'equalsIgnoreCase': equalsIgnoreCase,
-  'toShortId': Tools.toShortId,
-  'fromShortId': Tools.fromShortId,
+  'toShortId': toShortId,
+  'fromShortId': fromShortId,
   'sluggify': sluggify,
   'sluggifyEntityName': sluggifyEntityName,
   'truncate': truncate
 })
 
-defineProperties(Array.prototype, {
-   'flatten': flatten
+defineFunctions(Array.prototype, {
+   'flatten': flatten,
+   'removeEl': removeEl
 });
-defineProperties(Object.prototype, {
+defineFunctions(Object.prototype, {
    'entries': entries
 });

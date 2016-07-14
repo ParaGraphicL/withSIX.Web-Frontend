@@ -6,6 +6,10 @@
 // Little-endian systems are far more common.  Set le==true
 // when target system is little-endian (e.g., x86 machine).
 //
+
+var hexList = '0123456789abcdef';
+var b64List = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+
 export const guidToBase64 = (g, le) => {
   var s = g.replace(/[^0-9a-f]/ig, '').toLowerCase();
   if (s.length != 32) return '';
@@ -46,5 +50,5 @@ export const base64ToGuid = (g, le) => {
   return s;
 }
 
-export const base64ToShort(base64) => base64.substring(0, 22).replace(/\//g, "_").replace(/\+/g, "-");
-export const shortToBase64(shortBase64) => shortBase64.substring(0, 22).replace(/_/g, "/").replace(/\-/g, "+") + "==";
+export const base64ToShort = (base64) => base64.substring(0, 22).replace(/\//g, "_").replace(/\+/g, "-");
+export const shortToBase64 = (shortBase64) => shortBase64.substring(0, 22).replace(/_/g, "/").replace(/\-/g, "+") + "==";

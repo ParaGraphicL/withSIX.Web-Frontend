@@ -17,6 +17,8 @@ interface JQueryStatic {
 
 interface Array<T> {
   flatten: <T2>() => Array<T2>;
+  removeEl: (el: T) => void;
+  //removeRange: (...el: T[]) => void;
 }
 
 interface Object {

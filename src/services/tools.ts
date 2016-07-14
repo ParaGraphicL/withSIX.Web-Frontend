@@ -1,42 +1,17 @@
 import VersionCompare from 'version_compare';
 import {IDisposable} from './base';
-import {createError} from '../helpers/errors';
+import {createError} from '../helpers/utils/errors';
+import {toShortId as toS, fromShortId as fromS} from '../helpers/utils/string';
+import {removeEl as rEl} from '../helpers/utils/iterable';
 
 declare var URL;
 
 // TODO: Decompose
 export module Tools {
-  // todo; with inner ex
-
-  // class Exception extends ExtendableError {
-  //     public innerException: Error;
-  //     constructor(message?: string, innerException?: Error|string) {
-  //         super(message);
-  //         // if (typeof (<any>Error).captureStackTrace === 'function') {
-  //         //     //noinspection JSUnresolvedFunction
-  //         //     (<any>Error).captureStackTrace(this, arguments.callee);
-  //         // }
-  //         this.name = "Exception";
-  //         if (innerException) {
-  //             if (innerException instanceof Error) {
-  //                 this.innerException = innerException;
-  //                 this.message = message + ", innerException: " + this.innerException.message;
-  //             }
-  //             else if (typeof innerException === "string") {
-  //                 this.innerException = new Error(innerException);
-  //                 this.message = message + ", innerException: " + this.innerException.message;
-  //             }
-  //             else {
-  //                 // this.innerException = <any>innerException;
-  //                 // this.message = message + ", innerException: " + this.innerException;
-  //             }
-  //         }
-  //         else {
-  //             this.message = message;
-  //         }
-  //     }
-  // }
-  //
+  // for legacy purposes
+  export const toShortId = toS;
+  export const fromShortId = fromS;
+  export const removeEl = rEl;
 
   // TODO https://github.com/github/url-polyfill
   export function createUrl(url: string) {
@@ -168,8 +143,6 @@ export module Tools {
     return { dispose: () => clearInterval(id) }
   }
 
-  var hexList = '0123456789abcdef';
-  var b64List = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
   export var emptyGuid = '00000000-0000-0000-0000-000000000000';
 
   declare var escape;
@@ -188,6 +161,10 @@ export module Tools {
     let map = new Map<K, V>();
     ary.forEach(x => map.set(keyFunc(x), x));
     return map;
+  }
+
+  export function enumToMap<K, V>(ary: Enumerable<V>, keyFunc: (x: V) => K) {
+    return this.aryToMap(ary.toArray(), keyFunc); // todo use iterable instead..
   }
 
   export function getRandomIntInclusive(min, max) {
@@ -245,10 +222,6 @@ export module Tools {
 
   export function randomString(length) {
     return Math.round((Math.pow(36, length + 1) - Math.random() * Math.pow(36, length))).toString(36).slice(1);
-  }
-
-  export function enumToMap<K, V>(ary: Enumerable<V>, keyFunc: (x: V) => K) {
-    return this.aryToMap(ary.toArray(), keyFunc); // todo use iterable instead..
   }
 
   function jwtHelperInt() {
@@ -330,14 +303,7 @@ export module Tools {
 
   export function joinUri(parts: string[]): string { return parts.join("/"); }
 
-  export function removeEl<T>(ary: T[], el: T) {
-    var idx = ary.indexOf(el);
-    if (idx > -1) ary.splice(idx, 1);
-  }
-
-  export function handleOverrides(opts, overrideOpts) {
-    return $.extend(opts, overrideOpts);
-  }
+  export function handleOverrides(opts, overrideOpts) { return Object.assign(opts, overrideOpts) }
 
   export function mergeInto(obj1, obj2, allowed: string[]) {
     var e = allowed.asEnumerable();

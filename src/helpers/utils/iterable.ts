@@ -31,3 +31,8 @@ export function* entries<T>(obj: T) {
      yield [key, obj[key]];
    }
 }
+
+export const removeEl = <T>(ary: T[], el: T) => {
+  var idx = ary.indexOf(el);
+  if (idx > -1) ary.splice(idx, 1);
+}

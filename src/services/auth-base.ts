@@ -8,8 +8,9 @@ import {W6Urls} from './withSIX';
 import {Tools} from './tools';
 import {Toastr} from './toastr';
 import {LS} from './base';
+import {createError} from '../helpers/utils/errors';
 
-export var AbortError = Tools.createError('AbortError');
+export var AbortError = createError('AbortError');
 
 @inject(HttpClient, FetchClient, W6Urls, EventAggregator, LS)
 export class LoginBase {
