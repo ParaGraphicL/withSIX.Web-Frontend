@@ -15,6 +15,14 @@ interface JQueryStatic {
   validator: any;
 }
 
+interface Array<T> {
+  flatten: <T2>() => Array<T2>;
+}
+
+interface Object {
+  entries(): IterableIterator<any[]>;
+}
+
 interface String {
   endsWithIgnoreCase: (suffix) => boolean;
   startsWithIgnoreCase: (prefix) => boolean;
@@ -25,8 +33,8 @@ interface String {
   toLowerCaseFirst: () => string;
   sluggify: () => string;
   toShortId: () => string;
+  fromShortId: () => string;
   sluggifyEntityName: () => string;
-  format: (args: any[]) => string;
   truncate: (count: number) => string;
 }
 

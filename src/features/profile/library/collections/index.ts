@@ -1,5 +1,5 @@
 import {BaseGame} from '../../lib';
-import {ContentDeleted, CollectionHelper, IUserInfo, IBreezeCollection, W6Context, Client, CollectionDataService, UiContext, uiCommandWithLogin, Utils, IFilter, ISort, SortDirection, Query, DbClientQuery, handlerFor, IRequireUser, requireUser, IContent, TypeScope, ICollection, BasketService} from '../../../../framework';
+import {ContentDeleted, CollectionHelper, IUserInfo, IBreezeCollection, W6Context, Client, CollectionDataService, UiContext, uiCommandWithLogin, IFilter, ISort, SortDirection, Query, DbClientQuery, handlerFor, IRequireUser, requireUser, IContent, TypeScope, ICollection, BasketService} from '../../../../framework';
 import {Router} from 'aurelia-router';
 import {inject} from 'aurelia-framework';
 import {DialogService} from 'aurelia-dialog';
@@ -75,7 +75,7 @@ class GetCollectionsHandler extends DbClientQuery<GetCollections, ICollectionsDa
 
     if (request.user.id) p.push(this.getSubscribedCollections(request, optionsTodo), this.getMyCollections(request, optionsTodo));
 		  var results = await Promise.all(p)
-		  return { collections: Utils.flatten(results) };
+		  return { collections: results.flatten<ICollection>() };
     // return GetCollectionsHandler.designTimeData(request);
   }
 

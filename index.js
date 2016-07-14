@@ -30,3 +30,5 @@ import {
 initialize();
 
 require('whatwg-fetch'); // fetch polyfill
+
+import './src/helpers/extensions';

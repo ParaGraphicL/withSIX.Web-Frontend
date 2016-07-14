@@ -1,4 +1,4 @@
-import {W6Context, IBreezeMod, IUserInfo, Client, ModDataService, ISort, Query, DbClientQuery, handlerFor, requireUser, IRequireUser, Utils, IContent, TypeScope, BasketService,
+import {W6Context, IBreezeMod, IUserInfo, Client, ModDataService, ISort, Query, DbClientQuery, handlerFor, requireUser, IRequireUser, IContent, TypeScope, BasketService,
   ContentDeleted} from '../../../../framework';
 import {inject} from 'aurelia-framework';
 import {BaseGame, Mod} from '../../lib';
@@ -69,7 +69,7 @@ class GetModsHandler extends DbClientQuery<GetMods, IModsData> {
         .then(x => x.results.map(x => this.convertOnlineMods(x))));
     }
     let results = await Promise.all<IContent[]>(p);
-    return <IModsData>{ mods: Utils.flatten(results) };
+    return <IModsData>{ mods: results.flatten<IContent>() };
     // return GetModsHandler.designTimeData(request);
   }
 

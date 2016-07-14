@@ -1,73 +1,10 @@
-
 import VersionCompare from 'version_compare';
 import {IDisposable} from './base';
-
-String.prototype.indexOfIgnoreCase = function(prefix) {
-  return this.toLowerCase().indexOf(prefix.toLowerCase());
-};
-
-/*
-String.prototype.endsWith = function(suffix) {
-    return this.indexOf(suffix, this.length - suffix.length) !== -1;
-};
-*/
-
-/*
-String.prototype.startsWith = function(prefix) {
-    return this.indexOf(prefix) == 0;
-};
-*/
-
-String.prototype.endsWithIgnoreCase = function(suffix) {
-  return this.indexOfIgnoreCase(suffix, this.length - suffix.length) !== -1;
-};
-
-String.prototype.startsWithIgnoreCase = function(prefix) {
-  return this.indexOfIgnoreCase(prefix) == 0;
-};
-
-String.prototype.toUpperCaseFirst = function() {
-  return this.split(" ").map(i => i[0].toUpperCase() + i.substring(1)).join(" ");
-};
-String.prototype.toLowerCaseFirst = function() {
-  return this.split(" ").map(i => i[0].toLowerCase() + i.substring(1)).join(" ");
-};
-
-String.prototype.containsIgnoreCase = function(prefix) {
-  return this.indexOfIgnoreCase(prefix) > -1;
-};
-
-String.prototype.equalsIgnoreCase = function(prefix) {
-  return this.toLowerCase() == prefix.toLowerCase();
-};
-
-String.prototype.toShortId = function() {
-  return Tools.toShortId(this);
-};
-
-String.prototype.sluggify = function() {
-  return Tools.sluggify(this);
-};
-String.prototype.sluggifyEntityName = function() {
-  return Tools.sluggifyEntityName(this);
-};
-String.prototype.truncate = function(count: number) {
-  if (this.length <= count) return this;
-  return this.substring(0, count) + '..';
-}
-String.prototype.format = function() {
-  var s = this,
-    i = arguments.length;
-
-  while (i--) {
-    s = s.replace(new RegExp('\\{' + i + '\\}', 'gm'), arguments[i]);
-  }
-  return s;
-};
-
+import {createError} from '../helpers/errors';
 
 declare var URL;
 
+// TODO: Decompose
 export module Tools {
   // todo; with inner ex
 
@@ -117,46 +54,7 @@ export module Tools {
     return Tools.createUrl(url);
   }
 
-
-  export var createError = (name: string, proto = Error.prototype): ErrorConstructor => {
-    var f = function(message: string) {
-      Object.defineProperty(this, 'name', {
-        enumerable: false,
-        writable: false,
-        value: name
-      });
-      Object.defineProperty(this, 'message', {
-        enumerable: false,
-        writable: true,
-        value: message
-      });
-
-      if (Error.hasOwnProperty('captureStackTrace')) { // V8
-        (<any>Error).captureStackTrace(this, this.constructor);
-      } else {
-        Object.defineProperty(this, 'stack', {
-          enumerable: false,
-          writable: false,
-          value: (<any>(new Error(message))).stack
-        });
-      }
-    }
-    if (typeof Object.setPrototypeOf === 'function') {
-      Object.setPrototypeOf(f.prototype, proto);
-    } else {
-      f.prototype = Object.create(proto);
-    }
-    return <any>f;
-  }
-
-  export interface IRequestInfo<T> {
-    status: number;
-    statusText: string;
-    body: T;
-    headers?: Headers;
-  }
-
-  export var createHttpError = (name: string, proto = Error.prototype): HttpErrorConstructor<any> => {
+  export const createHttpError = (name: string, proto = Error.prototype): HttpErrorConstructor<any> => {
     var f = function(message: string, requestInfo: IRequestInfo<any>) {
       Object.defineProperty(this, 'name', {
         enumerable: false,
@@ -220,6 +118,15 @@ export module Tools {
     return <any>f;
   }
 
+
+  export interface IRequestInfo<T> {
+    status: number;
+    statusText: string;
+    body: T;
+    headers?: Headers;
+  }
+
+
   export interface HttpErrorConstructor<T extends ErrorResponseBody> {
     new (message: string, requestInfo: IRequestInfo<T>): IHttpException<T>;
   }
@@ -244,7 +151,6 @@ export module Tools {
   // TODO: ES6/TS valid exceptions
   export var RequireSslException = createError('RequireSslException');
   export var RequireNonSslException = createError('RequireNonSslException');
-  export var InvalidShortIdException = createError('InvalidShortIdException');
   export var HttpException = createHttpError('HttpException');
   export var NotFoundException = createHttpError('NotFoundException', HttpException.prototype);
   export var Forbidden = createHttpError("Forbidden", HttpException.prototype);
@@ -424,43 +330,6 @@ export module Tools {
 
   export function joinUri(parts: string[]): string { return parts.join("/"); }
 
-  const supportsDescriptors = true;
-  export function defineProperty(object, name, value, force) {
-    if (!force && name in object) { return; }
-    if (supportsDescriptors) {
-      Object.defineProperty(object, name, {
-        configurable: true,
-        enumerable: false,
-        writable: true,
-        value: value
-      });
-    } else {
-      object[name] = value;
-    }
-  };
-
-  // Define configurable, writable and non-enumerable props
-  // if they don’t exist.
-  export function defineProperties(object, map) {
-    Object.keys(map).forEach(name => {
-      var method = map[name];
-      defineProperty(object, name, method, false);
-    });
-  };
-
-
-  export function toShortId(id: string): string {
-    return base64ToShort(guidToBase64(id, true));
-  }
-
-  export function fromShortId(shortId: string): string {
-    try {
-      return base64ToGuid(shortToBase64(shortId), true);
-    } catch (err) {
-      throw new InvalidShortIdException(shortId + " is not a valid ShortID");
-    }
-  }
-
   export function removeEl<T>(ary: T[], el: T) {
     var idx = ary.indexOf(el);
     if (idx > -1) ary.splice(idx, 1);
@@ -529,96 +398,6 @@ export module Tools {
 
   export class KeyCodes {
     public static enter = 13;
-  }
-
-  // Convert GUID string to Base-64 in Javascript
-  // by Mark Seecof, 2012-03-31
-
-  // GUID string with four dashes is always MSB first,
-  // but base-64 GUID's vary by target-system endian-ness.
-  // Little-endian systems are far more common.  Set le==true
-  // when target system is little-endian (e.g., x86 machine).
-  //
-  function guidToBase64(g, le) {
-    var s = g.replace(/[^0-9a-f]/ig, '').toLowerCase();
-    if (s.length != 32) return '';
-    if (le)
-      s = s.slice(6, 8) + s.slice(4, 6) + s.slice(2, 4) + s.slice(0, 2) +
-        s.slice(10, 12) + s.slice(8, 10) +
-        s.slice(14, 16) + s.slice(12, 14) +
-        s.slice(16);
-    s += '0';
-
-    var a, p, q;
-    var r = '';
-    var i = 0;
-    while (i < 33) {
-      a = (hexList.indexOf(s.charAt(i++)) << 8) |
-        (hexList.indexOf(s.charAt(i++)) << 4) |
-        (hexList.indexOf(s.charAt(i++)));
-
-      p = a >> 6;
-      q = a & 63;
-
-      r += b64List.charAt(p) + b64List.charAt(q);
-    }
-    r += '==';
-
-    return r;
-  } // guid_to_base64()
-
-  function base64ToGuid(g, le) {
-    var UUIDjs: any = require('uuid-js');
-    var s = UUIDjs.fromBinary(atob(g)).toString();
-    if (le) {
-      s = s.replace(/[^0-9a-f]/ig, '').toLowerCase();
-      s = s.slice(6, 8) + s.slice(4, 6) + s.slice(2, 4) + s.slice(0, 2) + "-" +
-        s.slice(10, 12) + s.slice(8, 10) + "-" +
-        s.slice(14, 16) + s.slice(12, 14) + "-" + s.slice(16, 20) + "-" + s.slice(20);
-    }
-    return s;
-  }
-
-  function base64ToShort(base64) {
-    return base64.substring(0, 22).replace(/\//g, "_").replace(/\+/g, "-");
-  }
-
-  function shortToBase64(shortBase64) {
-    return shortBase64.substring(0, 22).replace(/_/g, "/").replace(/\-/g, "+") + "==";
-  }
-
-
-
-  var r = new RegExp("[^A-Za-z0-9-]+", "g");
-  var r2 = new RegExp("^[-]+");
-  var r3 = new RegExp("[-]+$");
-
-  // TODO: This is not as good as the C# version we use!
-  export function sluggify(str: string) {
-    return sluggifyEntityName(str.toLowerCase());
-  }
-
-  export function sluggifyEntityName(str: string) {
-    str = str.replace(r, match => {
-      switch (match) {
-        case "'":
-          {
-            return "";
-          }
-        case "+":
-          {
-            return "plus";
-          }
-        default:
-          {
-            return "-";
-          }
-      }
-    })
-      .trim();
-    str = str.replace(r2, "");
-    str = str.replace(r3, "");
-    return str;
   }
 
   export var debug = false;

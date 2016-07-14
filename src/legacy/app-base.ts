@@ -180,9 +180,9 @@ class AppModule extends Tk.Module {
             }
           };
           $rootScope.environment = w6.url.environment;
-          $rootScope.toShortId = (id) => Tools.toShortId(id);
-          $rootScope.sluggify = (str) => Tools.sluggify(str);
-          $rootScope.sluggifyEntityName = (str) => Tools.sluggifyEntityName(str);
+          $rootScope.toShortId = (id: string) => id.toShortId();
+          $rootScope.sluggify = (str: string) => str.sluggify();
+          $rootScope.sluggifyEntityName = (str: string) => str.sluggifyEntityName();
           $rootScope.dispatch = <T>(cq: string, data?) => legacyMediator.legacyRequest<T>(cq, data);
           $rootScope.request = <T>(cq, data?) => $rootScope.dispatch<T>(cq.$name, data);
           $rootScope.isInvalid = (field, ctrl) => {

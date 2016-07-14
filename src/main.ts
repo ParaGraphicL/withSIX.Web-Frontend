@@ -4,7 +4,6 @@ import {Router} from 'aurelia-router';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {HttpClient} from 'aurelia-http-client';
 import {HttpClient as FetchClient} from 'aurelia-fetch-client';
-import Linq from 'linq4es2015';
 import numeral from 'numbro';
 import breeze from 'breeze-client';
 
@@ -39,8 +38,6 @@ bootstrap(async (aurelia: Aurelia) => {
     var date = moment(source);
     return date.toDate();
   };
-
-    Linq.setExtensions();
 
   var site = "main";
   let w6Urls = createW6Urls(site);

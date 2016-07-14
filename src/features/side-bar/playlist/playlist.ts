@@ -1,7 +1,7 @@
 import {ViewModel, Query, DbQuery, handlerFor, IGame, ITab, IMenuItem, MenuItem, uiCommand2, VoidCommand, IReactiveCommand, IDisposable, Rx,
   CollectionScope, IBreezeCollectionVersion, IBreezeCollectionVersionDependency, BasketItemType, TypeScope, UiContext, CollectionHelper, Confirmation, MessageDialog,
   ReactiveList, IBasketItem, FindModel, ActionType, BasketState, BasketType, ConnectionState, Debouncer, GameChanged, uiCommandWithLogin2, GameClientInfo, UninstallContent,
-  IBreezeCollection, IRequireUser, IUserInfo, W6Context, Client, BasketService, CollectionDataService, DbClientQuery, Utils, requireUser, ICollection, Base} from '../../../framework';
+  IBreezeCollection, IRequireUser, IUserInfo, W6Context, Client, BasketService, CollectionDataService, DbClientQuery, requireUser, ICollection, Base} from '../../../framework';
 import {CreateCollectionDialog} from '../../games/collections/create-collection-dialog';
 import {Basket, GameBaskets} from '../../game-baskets';
 import {inject} from 'aurelia-framework';
@@ -492,7 +492,7 @@ class GetMyCollectionsHandler extends DbClientQuery<GetMyCollections, ICollectio
       if (request.includeSubscribed) p.push(this.getSubscribedCollections(request, optionsTodo));
     }
     var results = await Promise.all(p)
-    return { collections: Utils.flatten(results) };
+    return { collections: results.flatten<IPlaylistCollection>() };
     // return GetCollectionsHandler.designTimeData(request);
   }
 
