@@ -265,7 +265,7 @@ config.sassLoader = {
 
 
 
-config.resolve.alias = Object.assign({}, config.resolve, {
+config.resolve.alias = Object.assign({}, config.resolve.alias || {}, {
   "breeze": "breeze-client"
 })
 
