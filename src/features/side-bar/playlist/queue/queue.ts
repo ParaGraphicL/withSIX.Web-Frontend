@@ -38,7 +38,7 @@ export class GetQueueHandler extends DbClientQuery<GetQueue, QueueData> {
   async handle(request: GetQueue): Promise<QueueData> {
     return await this.client.getQueueInfo();
     //return GetQueueHandler.dtd();
-    //return this.tools.aryToMap(items, x => x.id);
+    //return items.toMap(x => x.id);
   }
 
   static dtd() {

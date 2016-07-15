@@ -96,7 +96,7 @@ class GetHomeHandler extends DbClientQuery<GetHome, IHomeData> {
     } = await this.client.getHome();
     return {
       updates: this.tools.enumToMap(home.updates.asEnumerable().orderByDescending(x => x.updatedVersion || ''), x => x.id),
-      games: this.tools.aryToMap(home.games, x => x.id),
+      games: home.games.toMap(x => x.id),
       newContent: this.tools.enumToMap(home.newContent.asEnumerable().orderByDescending(x => x.lastInstalled || ''), x => x.id),
       recent: this.tools.enumToMap(home.recent.asEnumerable().orderByDescending(x => x.lastUsed || ''), x => x.id)
     }

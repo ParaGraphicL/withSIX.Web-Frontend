@@ -2,7 +2,7 @@ import VersionCompare from 'version_compare';
 import {IDisposable} from './base';
 import {createError} from '../helpers/utils/errors';
 import {toShortId as toS, fromShortId as fromS} from '../helpers/utils/string';
-import {removeEl as rEl} from '../helpers/utils/iterable';
+import {removeEl as rEl, enumToMap as eToMap} from '../helpers/utils/iterable';
 
 declare var URL;
 
@@ -12,6 +12,7 @@ export module Tools {
   export const toShortId = toS;
   export const fromShortId = fromS;
   export const removeEl = rEl;
+  export const enumToMap = eToMap;
 
   // TODO https://github.com/github/url-polyfill
   export function createUrl(url: string) {
@@ -155,17 +156,6 @@ export module Tools {
 
   export var cleanupHash = (hash: string) => cleanup(hash, '#');
   export var cleanupSearch = (search: string) => cleanup(search, '?');
-
-  // we still use arrays over the wire, so that we dont waste bw..
-  export function aryToMap<K, V>(ary: V[], keyFunc: (x: V) => K) {
-    let map = new Map<K, V>();
-    ary.forEach(x => map.set(keyFunc(x), x));
-    return map;
-  }
-
-  export function enumToMap<K, V>(ary: Enumerable<V>, keyFunc: (x: V) => K) {
-    return this.aryToMap(ary.toArray(), keyFunc); // todo use iterable instead..
-  }
 
   export function getRandomIntInclusive(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;

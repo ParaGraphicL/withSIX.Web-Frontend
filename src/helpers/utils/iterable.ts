@@ -36,3 +36,12 @@ export const removeEl = <T>(ary: T[], el: T) => {
   var idx = ary.indexOf(el);
   if (idx > -1) ary.splice(idx, 1);
 }
+
+export const aryToMap = <K, V>(ary: V[], keyFunc: (x: V) => K) => {
+  let map = new Map<K, V>();
+  ary.forEach(x => map.set(keyFunc(x), x));
+  return map;
+}
+
+export const enumToMap<K, V> = (ary: Enumerable<V>, keyFunc: (x: V) => K) => 
+  this.aryToMap(ary.toArray(), keyFunc); // todo use iterable instead..
