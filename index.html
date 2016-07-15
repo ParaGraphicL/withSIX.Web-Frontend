@@ -5,6 +5,7 @@
   <link rel="stylesheet" href="/styles/lib.css">
   <link rel="stylesheet" href="/styles/fonts.css">
   <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ubuntu:500,400,300,300italic">
+
   <style>
     html,
     body {
@@ -145,6 +146,9 @@
     });
 
   </script>
+
+  <base href="<%- webpackConfig.metadata.baseUrl %>">
+  <!-- imported CSS are concatenated and added automatically -->
 </head>
 
 <body ng-controller="MainAppController as vm" data-status="{{ status }}">
