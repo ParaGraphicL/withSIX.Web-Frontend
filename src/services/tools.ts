@@ -3,6 +3,7 @@ import {IDisposable} from './base';
 import {createError} from '../helpers/utils/errors';
 import {toShortId as toS, fromShortId as fromS} from '../helpers/utils/string';
 import {removeEl as rEl, enumToMap as eToMap} from '../helpers/utils/iterable';
+import {isTokenExpired as isTExpired} from '../helpers/utils/jwt';
 
 declare var URL;
 
@@ -146,8 +147,6 @@ export module Tools {
 
   export var emptyGuid = '00000000-0000-0000-0000-000000000000';
 
-  declare var escape;
-
   var cleanup = (str: string, sign: string) => {
     if (str.endsWith("&")) str.substring(0, str.length - 1);
     if (str == sign) str = "";
@@ -214,66 +213,9 @@ export module Tools {
     return Math.round((Math.pow(36, length + 1) - Math.random() * Math.pow(36, length))).toString(36).slice(1);
   }
 
-  function jwtHelperInt() {
-
-    this.urlBase64Decode = function(str) {
-      var output = str.replace(/-/g, '+').replace(/_/g, '/');
-      switch (output.length % 4) {
-        case 0: { break; }
-        case 2: { output += '=='; break; }
-        case 3: { output += '='; break; }
-        default: {
-          throw 'Illegal base64url string!';
-        }
-      }
-      return decodeURIComponent(escape(atob(output))); //polyfill https://github.com/davidchambers/Base64.js
-    }
-
-
-    this.decodeToken = function(token) {
-      var parts = token.split('.');
-
-      if (parts.length !== 3) {
-        throw new Error('JWT must have 3 parts');
-      }
-
-      var decoded = this.urlBase64Decode(parts[1]);
-      if (!decoded) {
-        throw new Error('Cannot decode the token');
-      }
-
-      return angular.fromJson(decoded);
-    }
-
-    this.getTokenExpirationDate = function(token) {
-      var decoded = this.decodeToken(token);
-
-      if (typeof decoded.exp === "undefined") {
-        return null;
-      }
-
-      var d = new Date(0); // The 0 here is the key, which sets the date to the epoch
-      d.setUTCSeconds(decoded.exp);
-
-      return d;
-    };
-
-    this.isTokenExpired = function(token, offsetSeconds) {
-      var d = this.getTokenExpirationDate(token);
-      offsetSeconds = offsetSeconds || 0;
-      if (d === null) {
-        return false;
-      }
-
-      // Token expired?
-      return !(d.valueOf() > (new Date().valueOf() + (offsetSeconds * 1000)));
-    };
-  }
-  var jwtHelper = new jwtHelperInt();
-
   export function isTokenExpired(token) {
     try {
-      return jwtHelper.isTokenExpired(token);
+      return isTExpired(token);
     } catch (err) {
       Tools.Debug.error("Error validating token " + err);
       return true;
