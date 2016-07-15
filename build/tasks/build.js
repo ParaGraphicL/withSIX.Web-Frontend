@@ -135,8 +135,8 @@ gulp.task('build-html', function() {
 // https://www.npmjs.com/package/gulp-run-sequence
 gulp.task('build', function(callback) {
   return runSequence(
-    'clean', ['scripts', 'build-global-scss'], // 'build-scss',
-    ['build-other', 'build-misc'], // 'build-system', 'build-html', // 'build-css'
+    'clean', ['build-global-scss'], // 'build-scss',
+    ['build-other'], // 'build-system', 'build-html', // 'build-css'
     callback
   );
 });

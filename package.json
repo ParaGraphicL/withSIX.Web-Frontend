@@ -55,6 +55,7 @@
     "cross-env": "^2.0.0",
     "del": "^2.2.0",
     "eslint": "^2.5.3",
+    "extract-text-webpack-plugin": "^1.0.1",
     "grunt": "^0.4.5",
     "grunt-angular-templates": "^1.0.3",
     "grunt-bg-shell": "^2.3.3",
