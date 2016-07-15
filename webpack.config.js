@@ -112,7 +112,7 @@ switch (ENV) {
 
       require('@easy-webpack/config-fonts-and-images')(),
       require('@easy-webpack/config-global-bluebird')(),
-      require('@easy-webpack/config-global-jquery')(),
+      //require('@easy-webpack/config-global-jquery')(),
       require('@easy-webpack/config-global-regenerator')(),
       require('@easy-webpack/config-generate-index-html')
       ({
@@ -160,7 +160,7 @@ switch (ENV) {
 
       require('@easy-webpack/config-fonts-and-images')(),
       require('@easy-webpack/config-global-bluebird')(),
-      require('@easy-webpack/config-global-jquery')(),
+      //require('@easy-webpack/config-global-jquery')(),
       require('@easy-webpack/config-global-regenerator')(),
       require('@easy-webpack/config-generate-index-html')()
     );
@@ -199,7 +199,7 @@ switch (ENV) {
 
       require('@easy-webpack/config-fonts-and-images')(),
       require('@easy-webpack/config-global-bluebird')(),
-      require('@easy-webpack/config-global-jquery')(),
+      //require('@easy-webpack/config-global-jquery')(),
       require('@easy-webpack/config-global-regenerator')(),
       require('@easy-webpack/config-generate-index-html')
       ({
@@ -238,6 +238,9 @@ if (ENV === 'test') {
   );
 }
 
+config.externals = {
+  jquery: "jQuery"
+}
 config.module.loaders.push(...[
   /*{
     test: /\.json$/,
