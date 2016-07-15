@@ -8,6 +8,7 @@ import {W6Urls} from './withSIX';
 import {Tools} from './tools';
 import {Toastr} from './toastr';
 import {LS} from './base';
+import { buildUrl } from '../helpers/utils/url';
 import {createError} from '../helpers/utils/errors';
 
 export var AbortError = createError('AbortError');
@@ -118,7 +119,7 @@ export class LoginBase {
           request: async (request: HttpRequestMessage) => {
             if (!request) return;
             // TODO: better!
-            let parsedUrl = Tools.buildUrl(request.url);
+            let parsedUrl = buildUrl(request.url);
             if (!parsedUrl.pathname.endsWith('.md')) request.headers.add('Accept', 'application/json');
             if (this.shouldLog) Tools.Debug.log(`[HTTP] Requesting ${request.method} ${request.url}`, request);
             await handleAt(request);
@@ -149,7 +150,7 @@ export class LoginBase {
           request: async (request) => {
             if (!request) return request;
             // TODO: better!
-            let parsedUrl = Tools.buildUrl(request.url);
+            let parsedUrl = buildUrl(request.url);
             if (!parsedUrl.pathname.endsWith('.md')) request.headers.set('Accept', 'application/json');
             if (this.shouldLog) Tools.Debug.log(`[HTTP-FETCH] Requesting ${request.method} ${request.url}`, request);
             await handleAt(request);

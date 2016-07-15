@@ -12,7 +12,7 @@ import {bootAngular} from './legacy';
 import {Toastr, UiContext, Mediator, ErrorLoggingMediatorDecorator, InjectingMediatorDecorator, BasketService, Client,
   CollectionDataService, ModDataService, MissionDataService, PromiseCache,
   EntityExtends, IUserInfo, W6Context, ClientMissingHandler,
-  W6Urls, W6, Tools} from './services/lib';
+  W6Urls, W6, Tools, Environment} from './services/lib';
 import {ToastLogger, GlobalErrorHandler, LogAppender} from './services/legacy/logger';
 import {AbortError, LoginBase} from './services/auth-base';
 import {Api} from './services/api';
@@ -23,6 +23,22 @@ if (window.location.search.startsWith("?code=")) {
   window.localStorage.setItem('auth-hash', window.location.hash);
   throw new Error("Window was used for auth code handling");
 }
+
+
+
+function setupEnv() {
+  if (window.location.host.includes("withsix.com"))
+    Tools.setEnvironment(0);
+  else if (window.location.host.includes("staging.withsix.net"))
+    Tools.setEnvironment(1);
+  else if (window.location.host.includes("localhost"))
+    Tools.setEnvironment(2);
+  else
+    Tools.setEnvironment(3);
+}
+
+if (window && window.location) setupEnv();
+
 
 bootstrap(async (aurelia: Aurelia) => {
   Tools.Debug.log("AURELIA: configuring aurelia");
@@ -92,7 +108,7 @@ bootstrap(async (aurelia: Aurelia) => {
       .feature('resources')
       .feature('features');
 
-    if (Tools.getEnvironment() != Tools.Environment.Production) {
+    if (Tools.getEnvironment() != Environment.Production) {
       aurelia.use.developmentLogging();
       //LogManager.setLevel(Tools.getEnvironment() != Tools.Environment.Production ? LogManager.logLevel.debug : LogManager.logLevel.warn);
     }
@@ -103,9 +119,11 @@ bootstrap(async (aurelia: Aurelia) => {
     var env = Tools.getEnvironment();
     var domain = window.location.host;
     var envPiece = "";
-    if (env == Tools.Environment.Production)
+    if (env == Environment.Production) {
       domain = "withsix.com";
-    else if (env == Tools.Environment.Staging) {
+      domain = "local.withsix.net";
+      envPiece = "-dev";
+    } else if (env == Environment.Staging) {
       domain = "withsix.com";
       //domain = "staging.withsix.net";
       //envPiece = "-staging";
