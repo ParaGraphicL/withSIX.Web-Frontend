@@ -72,15 +72,6 @@ module.exports = function(grunt) {
             return "jspm install -y";
           return 'cd ..\\buildscripts && run_jspm.bat';
         }
-      },
-      bundle: {
-        command: 'gulp bundle'
-      },
-      prepare_release: {
-        command: 'gulp prepare-release'
-      },
-      prod: {
-        command: 'npm run build:prod'
       }
     },
 
@@ -350,13 +341,12 @@ module.exports = function(grunt) {
   });
 
   // For publishing
-  grunt.registerTask('buildallPublish', ['buildBase', 'uglify:bower', 'ngtemplates', 'buildApp']); // , 'shell:bundle'
+  grunt.registerTask('buildallPublish', ['buildBase', 'uglify:bower', 'ngtemplates', 'buildApp']);
   // For development
   grunt.registerTask('watchAll', ['buildall', 'bgShell:watchGulp', 'watch']);
   grunt.registerTask('metadata', ['shell:prepare', 'shell:build_metadata'])
     // General
   grunt.registerTask('buildall', ['buildBase', 'metadata']);
-  grunt.registerTask('buildBase', ['shell:bower', 'bower_concat', 'buildAurelia', 'uglify:libs'])
+  grunt.registerTask('buildBase', ['shell:bower', 'bower_concat', 'uglify:libs'])
   grunt.registerTask('buildApp', ['uglify:app']); // 'uglify:misc', 'uglify:admin'
-  grunt.registerTask('buildAurelia', ['shell:prepare_release', 'shell:prod']);
 }

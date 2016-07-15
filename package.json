@@ -93,7 +93,8 @@
   },
   "scripts": {
     "global-packages": "npm i -g grunt-cli bower gulp jspm jspm-bower-endpoint protractor karma typings",
-    "build-legacy": "gulp build-global-scss scripts && gulp build-other build-misc && grunt uglify:app uglify:misc",
+    "build-legacy": "gulp build-global-scss && gulp build-other build-misc && grunt uglify:app uglify:misc",
+    "dist": "npm run build:prod & gulp prepare-release && grunt buildallPublish",
     "start": "npm run server:dev:hmr",
     "prepublish": "npm run typings:install",
     "test": "cross-env NODE_ENV=test ./node_modules/karma/bin/karma start test/karma.conf.js",
