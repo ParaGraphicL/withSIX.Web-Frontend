@@ -2,12 +2,12 @@
   <conditional-title desired-title.bind="tooltip" condition.bind="tooltip">
     <button command.bind="command" type.bind="type" class.bind="cls" class="naked-button" show.bind="isVisible">
       <span>
-      <template replaceable part="content">
+      <slot>
         <span class="icon ${icon} ${name ? 'with-text' : ''}" if.bind="icon && (name || !command.isExecuting)"></span>
       <span class="text" class.bind="textCls" innerHTML.bind="name | text"></span>
-</template>
-</span>
-<span class="fa fa-spinner fa-spin" title.bind="name" if.bind="command.isExecuting && !noProcessing"></span>
-</button>
-</conditional-title>
+      </slot>
+      </span>
+      <span class="fa fa-spinner fa-spin" title.bind="name" if.bind="command.isExecuting && !noProcessing"></span>
+    </button>
+  </conditional-title>
 </template>

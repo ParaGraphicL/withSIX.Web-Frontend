@@ -12,7 +12,7 @@ export class General extends ViewModel {
     let r = await new GetGeneralSettings().handle(this.mediator);
     this.model = r;
     this.subscriptions.subd(d => {
-      d(this.toProperty(this.listFactory.getObserveAll(this.model).select(x => true), x => x.changed));
+      d(this.toProperty(this.listFactory.getObserveAll(this.model).map(x => true), x => x.changed));
     });
   }
 
@@ -46,12 +46,12 @@ export class General extends ViewModel {
 
   installExtension = uiCommand2("Install explorer folder synchronization", () => this.client.installExplorerExtension(), {
     tooltip: "This will allow you to start uploads directly from the Mod folder, using the right click menu",
-    isVisibleObservable: this.observeEx(x => x.isExtensionInstalled).select(x => !x)
+    isVisibleObservable: this.whenAnyValue(x => x.isExtensionInstalled).map(x => !x)
   });
 
   uninstallExtension = uiCommand2("Uninstall explorer folder synchronization", () => this.client.uninstallExplorerExtension(), {
     //tooltip: "This will allow you to start uploads directly from the Mod folder, using the right click menu",
-    isVisibleObservable: this.observeEx(x => x.isExtensionInstalled)
+    isVisibleObservable: this.whenAnyValue(x => x.isExtensionInstalled)
   });
 
 }

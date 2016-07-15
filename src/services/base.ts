@@ -1,5 +1,6 @@
 import {inject, Container, BindingEngine} from 'aurelia-framework';
-import * as Rx from 'rx';
+import * as Rx from 'rxjs/Rx';
+import * as RxUi from 'rxui';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {Tools} from './tools';
 
@@ -25,7 +26,7 @@ export interface IDisposable {
 }
 
 export interface LooseDisposable {
-  (fnc: IDisposable | Function): void
+  (fnc: IDisposable | Rx.Subscription | Function): void
 }
 
 export interface ISubscription<T> {
@@ -43,7 +44,7 @@ export interface IFunction<T> {
 export class Subscriptions {
   items = [];
 
-  subd = (func: (d: LooseDisposable) => void) => func((fnc: any) => this.items.push(fnc.dispose ? fnc.dispose.bind(fnc) : fnc));
+  subd = (func: (d: LooseDisposable) => void) => func((fnc: any) => this.items.push(fnc.dispose ? fnc.dispose.bind(fnc) : (fnc.unsubscribe ? fnc.unsubscribe.bind(fnc) : fnc)));
 
   dispose() { this.reset(); }
   reset() {
@@ -58,6 +59,28 @@ export interface PropertyExpression<T, TProp> {
   (v: T): TProp;
 }
 
+export class ReactiveBase extends RxUi.ReactiveObject implements IDisposable {
+  __overrideReactiveMode = true;
+  public subscriptions = new Subscriptions();
+  get tools() { return Tools; }
+  dispose() { this.subscriptions.dispose(); }
+  _pc;
+  get propertyChanged() { return this._pc; }
+  set propertyChanged(value) { this._pc = value; }
+  reactivePropertyChanged;
+  constructor() {
+    super();
+    let v = <any>this;
+    // TODO: Or remove property..
+    this.reactivePropertyChanged = super.propertyChanged;
+    this.propertyChanged = (name, newValue, oldValue) => {
+      v._propertyChanged.next(new RxUi.PropertyChangedEventArgs(this, name, newValue));
+    }
+  }
+  // TODO: deprecate in favor of calling whenAnyValue directly..
+  observeEx = <T extends this, TProp>(propertyEx: (v: T) => TProp) => this.whenAnyValue(propertyEx);
+}
+
 export class Base implements IDisposable {
   public subscriptions = new Subscriptions();
 
@@ -66,16 +89,16 @@ export class Base implements IDisposable {
   get tools() { return Tools; }
 
   observeEx = <T extends this, TProp>(propertyEx: (v: T) => TProp) => Base.observeEx(this, propertyEx);
-  static observeEx<T, TProp>(obj: T, propertyEx: (v: T) => TProp) { return Base.observe<TProp>(obj, this.getPropertyName(propertyEx)); }
+  static observeEx<T, TProp>(obj: T, propertyEx: (v: T) => TProp) { return Base.observe<TProp>(obj, this.getPropertyName(propertyEx), true); }
 
-  static toProperty<T, TProp>(observer: Rx.Observable<TProp>, propertyEx: PropertyExpression<T, TProp>, ...objs: T[]): IDisposable {
+  static bindObservableTo<T, TProp>(observer: Rx.Observable<TProp>, propertyEx: PropertyExpression<T, TProp>, ...objs: T[]): IDisposable {
     var propertyName = this.getPropertyName(propertyEx);
     let dsp = new Subscriptions();
     objs.forEach(obj => dsp.subd(d => observer.subscribe(x => obj[propertyName] = x)));
     return dsp;
   }
 
-  toProperty<T extends this, TProp>(observer: Rx.Observable<TProp>, propertyEx: PropertyExpression<T, TProp>) { return Base.toProperty(observer, propertyEx, this) }
+  toProperty<T extends this, TProp>(observer: Rx.Observable<TProp>, propertyEx: PropertyExpression<T, TProp>) { return Base.bindObservableTo(observer, propertyEx, this) }
 
   static getPropertyName<T, TProp>(propertyEx: PropertyExpression<T, TProp>) {
     var p = propertyEx.toString();
@@ -87,35 +110,29 @@ export class Base implements IDisposable {
   static delay = delay => new Promise((resolve, reject) => { setTimeout(() => resolve(), delay) });
 
   // deprecate in favor of observeEx variants
-  observe = <T>(property: string) => Base.observe<T>(this, property);
-  static observe<T>(obj, property: string) {
+  observe = <T>(property: string, triggerInitial: boolean) => Base.observe<T>(this, property, triggerInitial);
+  static observe<T>(obj, property: string, triggerInitial: boolean): Rx.Observable<T> {
     if (obj == null) throw new Error("null obj");
     if (!property) throw new Error("null property");
     let b = bindingEngine.propertyObserver<T>(obj, property);
-    return Rx.Observable.create<T>((observer) => {
-      observer.onNext(obj[property]);
-      return b.subscribe(x => observer.onNext(x));
-    }).distinctUntilChanged();
+    let o = Rx.Observable.create((observer: Rx.Subject<T>) => b.subscribe(x => observer.next(x)).dispose);
+    if (triggerInitial) return Rx.Observable.of(obj[property]).concat(o).distinctUntilChanged();
+    else return o.distinctUntilChanged();
   }
-
-  // obsolete
-  // static observe<T>(obj, property: string, handleInitial = true): ISubscription<T> {
-  //   let observer = bindingEngine.propertyObserver(obj, property);
-  //   return {
-  //     subscribe: (onNext: (value: T) => void) => {
-  //       if (handleInitial) onNext(obj[property]);
-  //       return observer.subscribe(onNext);
-  //     }
-  //   }
-  // }
-  // observe = <T>(property) => Base.observe<T>(this, property);
-  // static wrapSubscribable = <T>(subscribable: ISubscription<T>) =>
-  //   Rx.Observable.create<T>(observer => subscribable.subscribe(x => observer.onNext(x)).dispose)
-  //     .publish().refCount().distinctUntilChanged();
 
   dispose() { this.subscriptions.dispose(); }
 }
 
+RxUi.RxApp.globalViewBindingHelper = {
+  observeProp<T>(obj: Object, property: string, emitCurrentVal: boolean, callback: (args: RxUi.PropertyChangedEventArgs<T>) => void): Function {
+    //let s = Base.observe<T>(obj, property, emitCurrentVal).subscribe(x => callback(new RxUi.PropertyChangedEventArgs<T>(obj, property, x)));
+    //return () => s.unsubscribe();
+    let cb = x => callback(new RxUi.PropertyChangedEventArgs<T>(obj, property, x));
+    if (emitCurrentVal) cb(obj[property]);
+    let s = bindingEngine.propertyObserver<T>(obj, property).subscribe(cb);
+    return () => s.dispose();
+  }
+}
 
 interface ILS {
   on: (key: string, fn) => void;

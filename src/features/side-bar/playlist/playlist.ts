@@ -1,7 +1,7 @@
-import {ViewModel, Query, DbQuery, handlerFor, IGame, ITab, IMenuItem, MenuItem, uiCommand2, VoidCommand,
+import {ViewModel, Query, DbQuery, handlerFor, IGame, ITab, IMenuItem, MenuItem, uiCommand2, VoidCommand, IReactiveCommand, IDisposable, Rx,
   CollectionScope, IBreezeCollectionVersion, IBreezeCollectionVersionDependency, BasketItemType, TypeScope, UiContext, CollectionHelper, Confirmation, MessageDialog,
   ReactiveList, IBasketItem, FindModel, ActionType, BasketState, BasketType, ConnectionState, Debouncer, GameChanged, uiCommandWithLogin2, GameClientInfo, UninstallContent,
-  IBreezeCollection, IRequireUser, IUserInfo, W6Context, Client, BasketService, CollectionDataService, DbClientQuery, Utils, requireUser, ICollection} from '../../../framework';
+  IBreezeCollection, IRequireUser, IUserInfo, W6Context, Client, BasketService, CollectionDataService, DbClientQuery, requireUser, ICollection, Base} from '../../../framework';
 import {CreateCollectionDialog} from '../../games/collections/create-collection-dialog';
 import {Basket, GameBaskets} from '../../game-baskets';
 import {inject} from 'aurelia-framework';
@@ -13,7 +13,7 @@ interface ICollectionsData {
 
 @inject(UiContext, BasketService, Client)
 export class Playlist extends ViewModel {
-  rxProperties: IDisposable;
+  rxProperties: Rx.Subscription;
   rxList: ReactiveList<IBasketItem>;
   model: ITab;
   menuItems: IMenuItem[] = [];
@@ -72,31 +72,31 @@ export class Playlist extends ViewModel {
     this.subscriptions.subd(d => {
       d(this.action);
       d(this.saveBasket = uiCommandWithLogin2("Create Collection", this.saveBasketInternal, {
-        canExecuteObservable: this.observeEx(x => x.canSaveBasket),
-        isVisibleObservable: this.observeEx(x => x.canSaveBasket),
+        canExecuteObservable: this.whenAnyValue(x => x.canSaveBasket),
+        isVisibleObservable: this.whenAnyValue(x => x.canSaveBasket),
         cls: 'save-as-collection',
         icon: 'withSIX-icon-Hexagon-Cloud'
       }));
       d(this.saveBasket2 = uiCommandWithLogin2("Save as\nCollection", this.saveBasketInternal, {
-        canExecuteObservable: this.observeEx(x => x.canSaveBasket),
-        isVisibleObservable: this.observeEx(x => x.canSaveBasket),
+        canExecuteObservable: this.whenAnyValue(x => x.canSaveBasket),
+        isVisibleObservable: this.whenAnyValue(x => x.canSaveBasket),
         cls: 'save-as-collection',
         icon: 'withSIX-icon-Hexagon-Cloud'
       }));
       d(this.saveBasket3 = uiCommandWithLogin2("Save as \nCopy", this.saveAsNewCollectionInternal, {
-        canExecuteObservable: this.observeEx(x => x.canSaveBasket),
-        isVisibleObservable: this.observeEx(x => x.canSaveBasket),
+        canExecuteObservable: this.whenAnyValue(x => x.canSaveBasket),
+        isVisibleObservable: this.whenAnyValue(x => x.canSaveBasket),
         cls: 'save-as-collection',
         icon: 'withSIX-icon-Hexagon-Cloud',
         tooltip: 'This will create an identical copy of this collection that you can edit'
       }));
       d(this.disposeOld);
-      d(this.clearBasket = uiCommand2("Clear", this.unload, { icon: "icon withSIX-icon-Square-X", cls: "ignore-close", isVisibleObservable: this.observeEx(x => x.hasItems) }))
+      d(this.clearBasket = uiCommand2("Clear", this.unload, { icon: "icon withSIX-icon-Square-X", cls: "ignore-close", isVisibleObservable: this.whenAnyValue(x => x.hasItems) }))
       d(this.abort = uiCommand2("Cancel", async () => {
         await this.client.abort(this.activeBasket.model.gameId);
       }, {
-          isVisibleObservable: this.observeEx(x => x.isExecuting),
-          canExecuteObservable: this.observeEx(x => x.canAbort),
+          isVisibleObservable: this.whenAnyValue(x => x.isExecuting),
+          canExecuteObservable: this.whenAnyValue(x => x.canAbort),
           cls: "ignore-close abort-btn",
           icon: "icon withSIX-icon-X",
           textCls: "aurelia-hide"
@@ -115,8 +115,8 @@ export class Playlist extends ViewModel {
         this.collectionChanged = false;
       }, {
           cls: 'ok ignore-close',
-          canExecuteObservable: this.observeEx(x => x.hasItems),
-          isVisibleObservable: this.observeEx(x => x.collectionChanged).combineLatest(this.observeEx(x => x.isYourCollection), (x, y) => x && y)
+          canExecuteObservable: this.whenAnyValue(x => x.hasItems),
+          isVisibleObservable: this.whenAnyValue(x => x.collectionChanged).combineLatest(this.whenAnyValue(x => x.isYourCollection), (x, y) => x && y)
         }));
       d(this.undoCollection = uiCommand2("Cancel", async () => {
         await this.updateCollections();
@@ -126,11 +126,11 @@ export class Playlist extends ViewModel {
         this.updateCollection(col);
       }, {
           cls: 'cancel ignore-close',
-          isVisibleObservable: this.observeEx(x => x.collectionChanged)
+          isVisibleObservable: this.whenAnyValue(x => x.collectionChanged)
         }));
       d(this.appEvents.gameChanged.subscribe(this.gameChanged));
       d(this.findModel = new FindModel(this.findCollections, (col: IPlaylistCollection) => this.selectCollection(col), e => e.name));
-      d(ViewModel.toProperty(this.observeEx(x => x.isCollection).select(x => x ? "Save as new collection" : "Save as collection"), x => x.name, this.saveBasket));
+      d(Playlist.bindObservableTo(this.whenAnyValue(x => x.isCollection).map(x => x ? "Save as new collection" : "Save as collection"), this.saveBasket, x => x.name));
       d(this.tools.disposableInterval(() => this.basketService.saveChanges(), 10 * 1000)); // TODO: what about unload of frame?
     });
 
@@ -158,7 +158,7 @@ export class Playlist extends ViewModel {
 
   findCollections = async (searchItem: string) => {
     await this.updateCollections();
-    return searchItem ? this.collections.asEnumerable().where(x => x.name && x.name.containsIgnoreCase(searchItem)).toArray() : this.collections
+    return searchItem ? this.collections.filter(x => x.name && x.name.containsIgnoreCase(searchItem)) : this.collections
   }
 
   toggleSearch = () => { this.isSearchOpen = !this.isSearchOpen; }
@@ -173,11 +173,9 @@ export class Playlist extends ViewModel {
       gameId: basket.gameId,
       version: "0.0.1",
       forkedCollectionId: basket.collectionId,
-      dependencies: basket.items.asEnumerable().where(x => x.packageName ? true : false).select(x => { return { dependency: x.packageName, constraint: x.constraint } }).toArray()
+      dependencies: basket.items.filter(x => x.packageName ? true : false).map(x => { return { dependency: x.packageName, constraint: x.constraint } })
     };
-    if (model.dependencies.length == 0)
-      throw new Error("There are no items in this playlist...");
-
+    if (model.dependencies.length == 0) throw new Error("There are no items in this playlist...");
     var result = await this.dialog.open({ viewModel: CreateCollectionDialog, model: { game: this.game, model: model } });
     if (result.wasCancelled) return;
     await this.unload();
@@ -185,10 +183,10 @@ export class Playlist extends ViewModel {
 
   saveAsNewCollectionInternal = () => this.baskets.active.saveAsNewCollection();
 
-  saveBasket: ICommand<void>;
-  saveBasket2: ICommand<void>;
-  saveBasket3: ICommand<void>;
-  clearBasket: ICommand<void>;
+  saveBasket: IReactiveCommand<void>;
+  saveBasket2: IReactiveCommand<void>;
+  saveBasket3: IReactiveCommand<void>;
+  clearBasket: IReactiveCommand<void>;
 
   async getMyCollections() {
     var result = await new GetMyCollections(this.game.id, true).handle(this.mediator);
@@ -238,7 +236,7 @@ export class Playlist extends ViewModel {
 
   disposeOld = () => {
     if (this.rxList) this.rxList.dispose();
-    if (this.rxProperties) this.rxProperties.dispose();
+    if (this.rxProperties) this.rxProperties.unsubscribe();
   }
 
   updateCollection(c: IPlaylistCollection, startVal = false) {
@@ -247,8 +245,8 @@ export class Playlist extends ViewModel {
     if (c != null) {
       (<any>this.collection).url = `/p/${this.collection.gameSlug}/collections/${this.collection.id.toShortId()}/${this.collection.name.sluggifyEntityName()}`;
       this.rxList = this.listFactory.getList(this.basket.items);
-      let listObs = Rx.Observable.merge(this.rxList.itemsAdded.select(x => true), this.rxList.itemsRemoved.select(x => true), this.rxList.itemChanged.where(x => x.propertyName == "constraint").take(1).select(x => true));
-      let objObs = ViewModel.observeEx(c, x => x.scope).skip(1).take(1).select(x => true);
+      let listObs = Rx.Observable.merge(this.rxList.itemsAdded.map(x => true), this.rxList.itemsRemoved.map(x => true), this.rxList.itemChanged.map(x => x.propertyName == "constraint").take(1).map(x => true));
+      let objObs = Base.observeEx(c, x => x.scope).skip(1).take(1).map(x => true);
       let obs = Rx.Observable.merge(listObs, objObs).startWith(startVal).take(2);
       listObs.subscribe(x => { this.tools.Debug.log("$$$ list val", x); });
       objObs.subscribe(x => { this.tools.Debug.log("$$$ obj val", x); });
@@ -264,7 +262,7 @@ export class Playlist extends ViewModel {
   unloadCollection;
   saveCollection;
   undoCollection;
-  action = uiCommand2("Execute", () => this.executeBasket(this.activeBasket), { canExecuteObservable: this.observeEx(x => x.isNotLocked) });
+  action = uiCommand2("Execute", () => this.executeBasket(this.activeBasket), { canExecuteObservable: this.whenAnyValue(x => x.isNotLocked) });
 
   gameChanged = async (info: GameChanged) => {
     let equal = this.game.id == info.id;
@@ -485,7 +483,7 @@ class GetMyCollectionsHandler extends DbClientQuery<GetMyCollections, ICollectio
     };
     // TODO: only if client connected get client info.. w6.miniClient.isConnected // but we dont wait for it so bad idea for now..
     // we also need to refresh then when the client is connected later?
-    var p = [
+    var p: Promise<IPlaylistCollection[]>[] = [
       //this.getClientCollections(request)
     ];
 
@@ -493,14 +491,14 @@ class GetMyCollectionsHandler extends DbClientQuery<GetMyCollections, ICollectio
       p.push(this.getMyCollections(request, optionsTodo));
       if (request.includeSubscribed) p.push(this.getSubscribedCollections(request, optionsTodo));
     }
-    var results = await Promise.all<Enumerable<IPlaylistCollection>>(p)
-    return { collections: Utils.concatPromiseResults(results).toArray() };
+    var results = await Promise.all(p)
+    return { collections: results.flatten<IPlaylistCollection>() };
     // return GetCollectionsHandler.designTimeData(request);
   }
 
   async getClientCollections(request: GetMyCollections) {
     var r = await this.client.getGameCollections(request.id);
-    return r.collections.asEnumerable().select(x => { x.typeScope = TypeScope.Local; return x; });
+    return r.collections.map(x => { x.typeScope = TypeScope.Local; return x; });
   }
 
   async getMyCollections(request: GetMyCollections, options) {
@@ -509,12 +507,12 @@ class GetMyCollectionsHandler extends DbClientQuery<GetMyCollections, ICollectio
     //   var c = r[i];
     //   await c.latestVersion.entityAspect.loadNavigationProperty("dependencies");
     // }
-    return r.asEnumerable().select(x => this.convertOnlineCollection(x, TypeScope.Published));
+    return r.map(x => this.convertOnlineCollection(x, TypeScope.Published));
   }
 
   async getSubscribedCollections(request: GetMyCollections, options) {
     var r = await this.collectionDataService.getMySubscribedCollections(request.id, options);
-    return r.asEnumerable().select(x => this.convertOnlineCollection(x, TypeScope.Subscribed));
+    return r.map(x => this.convertOnlineCollection(x, TypeScope.Subscribed));
   }
 
   convertOnlineCollection(collection: IBreezeCollection, type: TypeScope): IPlaylistCollection {

@@ -1,4 +1,4 @@
-import {Base} from './base';
+import {ReactiveBase} from './base';
 import {Mediator, LegacyMediator} from './mediator';
 import {W6} from './withSIX';
 import {Tools} from './tools';
@@ -20,7 +20,7 @@ import {MessageDialog} from '../features/message-dialog'
 export {MessageDialog, Confirmation}
 
 @inject(W6)
-class FeatureToggles extends Base {
+class FeatureToggles extends ReactiveBase {
   constructor(private w6: W6) { super() }
 
   private isManager = this.w6.userInfo.isManager || this.w6.userInfo.isAdmin;
@@ -58,7 +58,7 @@ export class UiContext {
   constructor(public mediator: Mediator, public eventBus: EventAggregator, public legacyMediator: LegacyMediator, public toastr: Toastr, public w6: W6, public listFactory: ListFactory, public dialog: DialogService, public validator: Validation, public router: Router, public api: Api, public notifier: Notifier, public clientWrapper: ClientWrapper, public appEvents: AppEventsWrapper, public features: FeatureToggles, public assets: Assets) { }
 
   confirm = async (message: string, title = 'Please confirm'): Promise<boolean> => (await this.showMessageDialog(message, title, MessageDialog.YesNo)).output == "yes";
-  showMessageDialog = <T>(message: string, title = 'Please confirm', buttons = MessageDialog.Ok, confirmations: Confirmation[] = null): DialogResultT<string> => this.showMessageDialogInternal({ title, message, buttons, confirmations })
+  showMessageDialog = <T>(message: string, title = 'Please confirm', buttons = MessageDialog.Ok, confirmations: Confirmation[] = null): Promise<DialogResultT<string>> => this.showMessageDialogInternal({ title, message, buttons, confirmations })
   showMessageDialogInternal = <T>(model: MessageModel) => this.dialog.open({ viewModel: MessageDialog, model: model })
   navigateInternal = (url: string) => {
     let origin = location.origin;

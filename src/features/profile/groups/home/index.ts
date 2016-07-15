@@ -1,4 +1,4 @@
-import {IBreezeAWSUploadPolicy, UiContext, ViewModel, Mediator, DbQuery, Query, Command, VoidCommand, handlerFor, uiCommand2, bindingEngine, EditConfig, IDisposable} from '../../../../framework'
+import {IBreezeAWSUploadPolicy, UiContext, ViewModel, Mediator, DbQuery, Query, Command, VoidCommand, handlerFor, uiCommand2, bindingEngine, EditConfig, Rx} from '../../../../framework'
 import {ValidationGroup} from 'aurelia-validation';
 
 export interface IGroup {
@@ -36,12 +36,12 @@ export class Index extends ViewModel {
     });
   });
 
-  watch: IDisposable;
+  watch: Rx.Subscription;
 
   get avatarUrl() { return this.w6.url.processAssetVersion(this.group.avatarUrl, this.group.avatarUpdatedAt) }
   get backgroundUrl() { return this.w6.url.processAssetVersion(this.group.backgroundUrl, this.group.backgroundUpdatedAt) }
 
-  setupWatch = () => this.subscriptions.subd(d => d(this.watch = this.toProperty(this.listFactory.getObserveAll(this.group).select(x => true), x => x.changed)))
+  setupWatch = () => this.subscriptions.subd(d => d(this.watch = this.toProperty(this.listFactory.getObserveAll(this.group).map(x => true), x => x.changed)))
 
   async refreshGroup(id: string) {
     let group = await new GetGroup(id).handle(this.mediator);
@@ -112,7 +112,7 @@ export class Index extends ViewModel {
   handleWatch = async (fnc: () => Promise<any>) => {
     // We have to suspend watching, because there's a delay
     // TODO: How to clear selected files?
-    if (this.watch) this.watch.dispose();
+    if (this.watch) this.watch.unsubscribe();
     try {
       await fnc();
     } finally {
@@ -149,18 +149,18 @@ export class Index extends ViewModel {
     });
     this.changed = false;
     this.editConfig.close();
-  }, { cls: 'ok', canExecuteObservable: this.observeEx(x => x.changed) })
+  }, { cls: 'ok', canExecuteObservable: this.whenAnyValue(x => x.changed) })
 
   cancel = uiCommand2("Cancel", async () => {
     if (!(await this.confirm("Are you sure you want to discard your changes?"))) return;
     await this.handleWatch(async () => this.group = Object.assign({}, this.originalGroup));
     this.changed = false;
     this.editConfig.close();
-  }, { cls: 'cancel', canExecuteObservable: this.observeEx(x => x.changed) })
+  }, { cls: 'cancel', canExecuteObservable: this.whenAnyValue(x => x.changed) })
 
   close = uiCommand2("Close", async () => {
     this.editConfig.close();
-  }, { cls: 'default', canExecuteObservable: this.observeEx(x => x.unchanged) })
+  }, { cls: 'default', canExecuteObservable: this.whenAnyValue(x => x.unchanged) })
 }
 
 export class GetGroup extends Query<IGroup> { constructor(public id: string) { super(); } }

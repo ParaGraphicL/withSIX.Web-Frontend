@@ -177,7 +177,7 @@ export class HideShowIconValueConverter {
 
 @valueConverter('filterOnExisting')
 export class FilterOnExistingValueConverter {
-  toView = (items, key, haystack) => items.asEnumerable().where(x => !haystack.asEnumearble().contains(x[key]))
+  toView = (items, key, haystack) => items.filter(x => !haystack.asEnumearble().contains(x[key]))
 }
 
 @valueConverter('fileListToArray')

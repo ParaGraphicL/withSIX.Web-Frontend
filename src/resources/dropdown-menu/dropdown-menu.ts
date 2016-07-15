@@ -3,6 +3,7 @@ import {ViewModel} from '../../services/viewmodel';
 import {UiContext} from '../../services/uicontext';
 import {CloseDropdowns} from '../../services/api';
 import {ReactiveList, ListFactory, uiCommand} from '../../services/reactive';
+import {IPromiseFunction} from '../../services/base';
 import 'contextMenu';
 
 // requires  adjustment to contextMenu.js for child element activation..
@@ -56,7 +57,7 @@ export class DropdownMenu extends ViewModel {
       el.trigger(evt);
     });
   }
-  updateIsVisible() { this.isVisible = this.items.asEnumerable().any(x => x.isVisible); }
+  updateIsVisible() { this.isVisible = this.items.some(x => x.isVisible); }
 
   closeWithDelay() { if (this.open) setTimeout(() => this.close(), 0); }
   close() { if (this.open) (<any>this.menuTrgr).contextMenu('close', this.menu) }

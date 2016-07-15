@@ -1,17 +1,16 @@
 import {HttpClient, HttpRequestMessage, HttpResponseMessage} from 'aurelia-http-client';
 import {HttpClient as FetchClient, json} from 'aurelia-fetch-client';
 import {EventAggregator} from 'aurelia-event-aggregator';
-import {inject, Container} from 'aurelia-dependency-injection';
+import {inject, Container} from 'aurelia-framework';
 
 import {EntityExtends, IUserInfo} from './dtos';
 import {W6Urls} from './withSIX';
 import {Tools} from './tools';
 import {Toastr} from './toastr';
 import {LS} from './base';
+import {createError} from '../helpers/utils/errors';
 
-export var AbortError = Tools.createError('AbortError');
-
-declare var URL;
+export var AbortError = createError('AbortError');
 
 @inject(HttpClient, FetchClient, W6Urls, EventAggregator, LS)
 export class LoginBase {
@@ -109,21 +108,6 @@ export class LoginBase {
     let ag = Container.instance.get(EventAggregator);
     //http://stackoverflow.com/questions/9314730/display-browser-loading-indicator-like-when-a-postback-occurs-on-ajax-calls
 
-    let createUrl = (url) => {
-      try {
-        return new URL(url);
-      } catch (err) {
-        var parser = document.createElement('a');
-        parser.href = url;
-        return parser;
-      }
-    }
-
-    let buildUrl = (url) => {
-      if (url.startsWith("//")) return createUrl(window.location.protocol + url);
-      return createUrl(url);
-    }
-
     this.http.configure(config => {
       const handleAt = async (request: HttpRequestMessage, force = false) => {
         let at: string;
@@ -134,7 +118,7 @@ export class LoginBase {
           request: async (request: HttpRequestMessage) => {
             if (!request) return;
             // TODO: better!
-            let parsedUrl = buildUrl(request.url);
+            let parsedUrl = Tools.buildUrl(request.url);
             if (!parsedUrl.pathname.endsWith('.md')) request.headers.add('Accept', 'application/json');
             if (this.shouldLog) Tools.Debug.log(`[HTTP] Requesting ${request.method} ${request.url}`, request);
             await handleAt(request);
@@ -165,7 +149,7 @@ export class LoginBase {
           request: async (request) => {
             if (!request) return request;
             // TODO: better!
-            let parsedUrl = buildUrl(request.url);
+            let parsedUrl = Tools.buildUrl(request.url);
             if (!parsedUrl.pathname.endsWith('.md')) request.headers.set('Accept', 'application/json');
             if (this.shouldLog) Tools.Debug.log(`[HTTP-FETCH] Requesting ${request.method} ${request.url}`, request);
             await handleAt(request);

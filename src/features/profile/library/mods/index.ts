@@ -1,4 +1,4 @@
-import {W6Context, IBreezeMod, IUserInfo, Client, ModDataService, ISort, Query, DbClientQuery, handlerFor, requireUser, IRequireUser, Utils, IContent, TypeScope, BasketService,
+import {W6Context, IBreezeMod, IUserInfo, Client, ModDataService, ISort, Query, DbClientQuery, handlerFor, requireUser, IRequireUser, IContent, TypeScope, BasketService,
   ContentDeleted} from '../../../../framework';
 import {inject} from 'aurelia-framework';
 import {BaseGame, Mod} from '../../lib';
@@ -66,20 +66,20 @@ class GetModsHandler extends DbClientQuery<GetMods, IModsData> {
 
     if (request.user.slug) {
       p.push(this.modDataService.getAllModsByAuthor(request.user.slug, optionsTodo)
-        .then(x => x.results.asEnumerable().select(x => this.convertOnlineMods(x))));
+        .then(x => x.results.map(x => this.convertOnlineMods(x))));
     }
-    let results = await Promise.all<Enumerable<IContent>>(p);
-    return <IModsData>{ mods: Utils.concatPromiseResults(results).toArray() };
+    let results = await Promise.all<IContent[]>(p);
+    return <IModsData>{ mods: results.flatten<IContent>() };
     // return GetModsHandler.designTimeData(request);
   }
 
   async getClientMods(request: GetMods) {
     try {
       let x = await this.client.getGameMods(request.id);
-      return x.mods.asEnumerable();
+      return x.mods;
     } catch (err) {
       this.tools.Debug.warn("Error while trying to get mods from client", err);
-      return [].asEnumerable();
+      return [];
     }
   }
 

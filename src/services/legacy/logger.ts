@@ -92,7 +92,7 @@ export class GlobalErrorHandler {
   //handleAureliaError = (exception: Error, cause = 'Unknown') => this.handleErrorInternal(`[Aurelia]`, exception, cause, this.isSilence(exception))
   handleAngularError = (exception: Error, cause?: string) => { if (!this.isSilenceAngular(exception)) this.leLog(this.getErrorInfo(`[Angular]`, cause, exception)) }
   handleAngularActionError = (exception: Error, cause?: string) => { if (!this.isUserError(exception)) this.handleErrorInternal(`[Angular Action]`, exception, cause, this.isSilenceAngularAction(exception)) }
-  handleUseCaseError = (exception: Error, cause = 'Unknown') => { if (!this.isUserError(exception)) this.leLog(`[Aurelia UC ${cause}] ${exception}`, (<any>exception).stack) }
+  handleUseCaseError = (exception: Error, cause = 'Unknown') => { if (!this.isUserError(exception)) { this.handleErrorInternal('[Command]', exception, cause) } }
   handleLog = (loggerId, ...logParams: any[]) => this.leLog(`[Aurelia: ${loggerId}]`, ...logParams)
   handleWindowError = (message: string, source, line: number, column: number, error?: Error) => { if (!this.isSilenceWindow(message)) this.leLog(`[Window] ${message}`, source, line, column, error ? error.toString() : null, error ? (<any>error).stack : null) }
 
@@ -102,7 +102,7 @@ export class GlobalErrorHandler {
     let errorInfo = this.getErrorInfo(source, cause, exception);
     this.tryErrorLog(errorInfo);
     this.leLog(errorInfo, this.logStacktraces && exception.stack ? exception.stack : null);
-    if (!silent) return this.toastr.error(`${errorInfo}\nPlease report the issue.`, 'Unexpected error has occurred');
+    if (!silent) return this.toastr.error(`${errorInfo}\nWe were notified about the problem.`, 'Unexpected error has occurred');
   }
 
   private getErrorInfo(source, cause, exception) {

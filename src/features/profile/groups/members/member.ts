@@ -21,7 +21,7 @@ export class Member extends ViewModel {
       this.menu.push(new MenuItem(this.removeMember = uiCommand2("Remove", async () => {
         await new RemoveMember(this.model.group.id, this.model.id).handle(this.mediator);
         this.eventBus.publish(new GroupMemberRemoved(this.model.id));
-      }, { isVisibleObservable: this.observeEx(x => x.canRemove) })));
+      }, { isVisibleObservable: this.whenAnyValue(x => x.canRemove) })));
       this.subscriptions.subd(d => d(this.removeMember));
     }
   }

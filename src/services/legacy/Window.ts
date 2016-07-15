@@ -15,6 +15,17 @@ interface JQueryStatic {
   validator: any;
 }
 
+interface Array<T> {
+  flatten: <T2>() => Array<T2>;
+  removeEl: (el: T) => void;
+  toMap: <K>(keySelector: (x: T) => K) => Map<K, T>;
+  //removeRange: (...el: T[]) => void;
+}
+
+interface Object {
+  entries(): IterableIterator<any[]>;
+}
+
 interface String {
   endsWithIgnoreCase: (suffix) => boolean;
   startsWithIgnoreCase: (prefix) => boolean;
@@ -25,47 +36,14 @@ interface String {
   toLowerCaseFirst: () => string;
   sluggify: () => string;
   toShortId: () => string;
+  fromShortId: () => string;
   sluggifyEntityName: () => string;
-  format: (args: any[]) => string;
   truncate: (count: number) => string;
-}
-
-interface IPromiseFunction<T> {
-  (...args): Promise<T>
-}
-
-interface ICommandInfo {
-  canExecuteObservable?: Rx.Observable<boolean>;
-  isVisibleObservable?: Rx.Observable<boolean>;
-  icon?: string;
-  textCls?: string;
-  cls?: string;
-  tooltip?: string;
-}
-
-interface IDisposable {
-  dispose();
-}
-
-interface ICommand<T> extends IDisposable, IPromiseFunction<T> {
-  isExecuting: boolean;
-  isExecutingObservable: Rx.Observable<boolean>;
-  isVisible: boolean;
-  isVisibleObservable: Rx.Observable<boolean>;
-  name: string;
-  cls: string;
-  icon: string;
-  textCls: string;
-  tooltip: string;
-  canExecute: boolean;
-  canExecuteObservable: Rx.Observable<boolean>;
-  execute(...args): Promise<T>;
 }
 
 interface IApi {
   errorMsg(error): string[];
   openSettings(model?): void;
-  createCommand<T>(name: string, action: IPromiseFunction<T>, options?: ICommandInfo): ICommand<T>;
   createGameBasket(gameId, basketModel): any;
   getContentStateInitial(state: { state /*: MyApp.Components.ModInfo.ItemState */; version: string }, constraint?: string);//: MyApp.Components.ModInfo.ItemState;
   login(evt?): void;

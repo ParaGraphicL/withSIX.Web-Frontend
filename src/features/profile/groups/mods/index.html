@@ -2,7 +2,7 @@
   <compose view="../_header.html"></compose>
 
   <card-view items.bind="group.mods" view-path="features/profile/content/" item-type="mod">
-    <template replace-part="prepend-items">
+    <template slot="prepend-items">
       <div class.bind="cardContainerCls" if.bind="isAdmin">
         <div class="card ${cardCls} new-item">
           <header>ADD Mod</header>

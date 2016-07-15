@@ -36,7 +36,7 @@ class GetInstalledGamesHandler extends DbClientQuery<GetInstalledGames, Map<stri
     try {
       let d: { games: IGame[] } = await this.client.getGames();
       d.games.forEach(x => (<any>x).state = ItemState.Uptodate)
-      return this.tools.aryToMap(d.games, x => x.id);
+      return d.games.toMap(x => x.id);
     } catch (err) {
       return new Map<string, IGame>();
     }

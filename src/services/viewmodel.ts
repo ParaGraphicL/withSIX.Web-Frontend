@@ -1,4 +1,4 @@
-import {Base} from './base';
+import {ReactiveBase} from './base';
 import {Mediator, LegacyMediator, DbQuery} from './mediator';
 import {Toastr} from './toastr';
 import {ListFactory, ObservableEventAggregator, EventWrapper, uiCommand2} from './reactive';
@@ -19,7 +19,7 @@ import {UiContext} from './uicontext'
 import * as clipboard from 'clipboard-js';
 
 @inject(UiContext)
-export class ViewModel extends Base {
+export class ViewModel extends ReactiveBase {
   hasApi: boolean = (<any>window).api != null
   _router: Router;
   _changed = false;
@@ -40,7 +40,7 @@ export class ViewModel extends Base {
   // This works around the issue of routing for Angular while Aurelia is involved..angular
   // TODO: Better workaround than the rootscope apply?
   protected notifyAngular = () => {
-    if (this.isNavigating) this.observeEx(x => x.isNavigating).skip(1).where(x => !x).take(1).subscribe(this.notifyAngularInternal)
+    if (this.isNavigating) this.whenAnyValue(x => x.isNavigating).skip(1).map(x => !x).take(1).subscribe(this.notifyAngularInternal)
     else this.notifyAngularInternal();
   }
 
@@ -62,7 +62,7 @@ export class ViewModel extends Base {
       let $this = $((<any>e).backupTarget || e.currentTarget);
       // TODO: Only on a, not buttons?
       if (e.ctrlKey || e.altKey || e.shiftKey) return true;
-      if (!ignoreClasses.asEnumerable().any(x => $this.hasClass(x)))
+      if (!ignoreClasses.some(x => $this.hasClass(x)))
         setTimeout(() => close());
     });
   }
@@ -257,7 +257,7 @@ export class PaginatedViewModel<T> extends ViewModel {
   get totalPages() { return this.inlineCount / DbQuery.pageSize }
   get inlineCount() { return this.model.inlineCount }
   get page() { return this.model.page }
-  morePagesAvailable = this.observeEx(x => x.inlineCount).combineLatest(this.observeEx(x => x.page), (c, p) => p < this.totalPages);
+  morePagesAvailable = this.whenAnyValue(x => x.inlineCount).combineLatest(this.whenAnyValue(x => x.page), (c, p) => p < this.totalPages);
 
   addPage = async () => {
     if (!this.morePagesAvailable) return;

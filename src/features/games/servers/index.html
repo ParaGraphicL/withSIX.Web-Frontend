@@ -9,7 +9,7 @@
     </table> -->
     <div class="tile">
       <virtual-list items.bind="model.addresses">
-        <template replace-part="item-template">
+        <template slot="item-template">
           <compose view-model="./server-item" model.bind="item"></compose>
         </template>
       </virtual-list>

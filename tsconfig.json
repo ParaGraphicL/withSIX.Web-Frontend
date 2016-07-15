@@ -7,13 +7,26 @@
     "compilerOptions": {
         "target": "es6",
         "module": "es6",
-        "declaration": false,
+        "moduleResolution": "node",
         "noImplicitAny": false,
-        "removeComments": false,
         "noLib": true,
         "emitDecoratorMetadata": true,
-        "experimentalDecorators": true
+        "experimentalDecorators": true,
+        "sourceMap": true,
+        "allowJs": true
     },
+    "awesomeTypescriptLoaderOptions": {
+        "doTypeCheck": true,
+        "forkChecker": true,
+        "useBabel": true,
+        "useCache": true,
+        "babelOptions": {
+            "presets": [
+                "es2015-loose-native-modules"
+            ]
+        }
+    },
+    "exclude": [],
     "filesGlob": [
         "./src/**/*.ts",
         "./src_legacy/**/*.ts",
@@ -22,7 +35,6 @@
     ],
     "files": [
         "./src/app.ts",
-        "./src/bootstrap.ts",
         "./src/errors/403.ts",
         "./src/errors/404.ts",
         "./src/errors/500.ts",
@@ -159,6 +171,13 @@
         "./src/features/user-profile/content/mods/index.ts",
         "./src/features/user-profile/index.ts",
         "./src/framework.ts",
+        "./src/helpers/extensions.ts",
+        "./src/helpers/utils/base64.ts",
+        "./src/helpers/utils/errors.ts",
+        "./src/helpers/utils/extenders.ts",
+        "./src/helpers/utils/iterable.ts",
+        "./src/helpers/utils/jwt.ts",
+        "./src/helpers/utils/string.ts",
         "./src/legacy.ts",
         "./src/legacy/admin.ts",
         "./src/legacy/app-base.ts",
@@ -221,17 +240,16 @@
         "./src/services/legacy/logger.ts",
         "./src/services/legacy/misc.ts",
         "./src/services/legacy/tk.ts",
+        "./src/services/legacy/Window.ts",
         "./src/services/lib.ts",
         "./src/services/mediator.ts",
         "./src/services/reactive.ts",
         "./src/services/toastr.ts",
         "./src/services/tools.ts",
         "./src/services/uicontext.ts",
-        "./src/services/utils.ts",
         "./src/services/viewmodel.ts",
         "./src/services/w6context.ts",
         "./src/services/withSIX.ts",
-        "./src_legacy/misc/Window.ts",
         "./typings/custom/angular-local-storage/angular-local-storage.d.ts",
         "./typings/custom/angular-ui/angular-ui-router.d.ts",
         "./typings/custom/angular-ui/angular-ui-sortable.d.ts",
@@ -266,6 +284,5 @@
         "./typings/custom/typeahead/typeahead.d.ts",
         "./typings/custom/version_compare.d.ts",
         "./typings/index.d.ts"
-    ],
-    "exclude": []
+    ]
 }

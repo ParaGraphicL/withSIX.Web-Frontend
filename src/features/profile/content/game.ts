@@ -1,4 +1,4 @@
-import {MenuItem, ViewModel, uiCommand2, OpenFolder, ItemState, IMenuItem} from '../../../framework';
+import {MenuItem, ViewModel, uiCommand2, OpenFolder, ItemState, IMenuItem, IReactiveCommand} from '../../../framework';
 import {Query, DbClientQuery, handlerFor, VoidCommand, IGame, FolderType} from '../../../framework';
 import {Index as SettingsIndex} from '../../settings/index';
 
@@ -9,7 +9,7 @@ export class Game extends ViewModel {
   public model: IGame;
   icon = "withSIX-icon-Joystick";
   get itemStateClass() { return this.isInstalled ? 'uptodate' : 'notinstalled' };
-  openConfigFolder: ICommand<void>;
+  openConfigFolder: IReactiveCommand<void>;
 
   hasStats: boolean;
 
@@ -18,7 +18,7 @@ export class Game extends ViewModel {
   activate(model: IGame) {
     this.model = model;
     this.hasStats = (<any>model).collectionsCount != null;
-    let isInstalledObservable = this.observeEx(x => x.isInstalled);
+    let isInstalledObservable = this.whenAnyValue(x => x.isInstalled);
     this.subscriptions.subd(d => {
       d(this.launch = uiCommand2("Launch", () => new LaunchGame(this.model.id).handle(this.mediator), { icon: "icon withSIX-icon-Hexagon-Play", isVisibleObservable: isInstalledObservable }));
       d(this.openFolder = uiCommand2("Open folder", () => new OpenFolder(this.model.id).handle(this.mediator), { icon: 'icon withSIX-icon-Folder', isVisibleObservable: isInstalledObservable }));
@@ -44,8 +44,8 @@ export class Game extends ViewModel {
     if (this.openConfigFolder) this.topMenuActions.push(new MenuItem(this.openConfigFolder));
   }
 
-  launch: ICommand<void>;
-  openFolder: ICommand<void>;
+  launch: IReactiveCommand<void>;
+  openFolder: IReactiveCommand<void>;
   openStream = uiCommand2('Stream', async () => this.navigateInternal(`/p/${this.model.slug}`), { icon: 'icon withSIX-icon-Nav-Stream' });
   openLibrary = uiCommand2('Library', async () => this.navigateInternal(`/me/library/${this.model.slug}`), { icon: 'icon withSIX-icon-Nav-Collection' });
   openSettings = uiCommand2('Settings', async () => {

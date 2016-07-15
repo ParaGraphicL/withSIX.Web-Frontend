@@ -1,5 +1,5 @@
 import {inject} from 'aurelia-framework';
-import {IBasketItem, BasketItemType, IBreezeMod, ModsHelper, Helper, FolderType,
+import {IBasketItem, BasketItemType, IBreezeMod, ModsHelper, Helper, FolderType, IReactiveCommand,
   BasketService, UiContext, uiCommand2, ViewModel, Base, MenuItem, IMenuItem, GameClientInfo, uiCommand, Mediator, Query, DbQuery, DbClientQuery, handlerFor, VoidCommand, IContentState, ItemState,
   Abort, UninstallContent, OpenFolder, LaunchContent, InstallContent, UnFavoriteContent, FavoriteContent, IBreezeUser, ContentHelper,
   breeze, ModHelper, IBreezeCollection, IBreezeCollectionVersion} from '../../../framework';
@@ -48,17 +48,17 @@ export class PlaylistItem extends ViewModel {
 
   addToCollections;
 
-  diagnose: ICommand<void>;
-  edit: ICommand<void>;
-  removeFromBasket: ICommand<void>;
-  omni: ICommand<void>;
-  install: ICommand<void>;
-  uninstall: ICommand<void>;
-  update: ICommand<void>;
-  launch: ICommand<void>;
-  abort: ICommand<void>;
-  openFolder: ICommand<void>;
-  openConfigFolder: ICommand<void>;
+  diagnose: IReactiveCommand<void>;
+  edit: IReactiveCommand<void>;
+  removeFromBasket: IReactiveCommand<void>;
+  omni: IReactiveCommand<void>;
+  install: IReactiveCommand<void>;
+  uninstall: IReactiveCommand<void>;
+  update: IReactiveCommand<void>;
+  launch: IReactiveCommand<void>;
+  abort: IReactiveCommand<void>;
+  openFolder: IReactiveCommand<void>;
+  openConfigFolder: IReactiveCommand<void>;
   gameName: string;
 
   get isInstalled() { return this.itemState != ItemState.Incomplete };
@@ -117,9 +117,9 @@ export class PlaylistItem extends ViewModel {
 
     this.subscriptions.subd(d => {
       this.updateState();
-      this.isInstalledObservable = this.observeEx(x => x.isInstalled);
-      this.isNotInstalledObservable = this.observeEx(x => x.isNotInstalled);
-      this.canExecuteObservable = this.gameInfo.observeEx(x => x.canExecute).combineLatest(this.observeEx(x => x.isBusy), (can, busy) => can && !busy);
+      this.isInstalledObservable = this.whenAnyValue(x => x.isInstalled);
+      this.isNotInstalledObservable = this.whenAnyValue(x => x.isNotInstalled);
+      this.canExecuteObservable = this.gameInfo.observeEx(x => x.canExecute).combineLatest(this.whenAnyValue(x => x.isBusy), (can, busy) => can && !busy);
 
       d(this.eventBus.subscribe('refreshContentInfo-' + model.currentGameId, x => this.updateState()));
       d(this.eventBus.subscribe('contentInfoStateChange-' + this.model.id, x => this.updateState()));
@@ -127,7 +127,7 @@ export class PlaylistItem extends ViewModel {
       d(this.abort = uiCommand2("Cancel", async () => {
         await new Abort(this.model.gameId, this.model.id).handle(this.mediator);
       }, {
-          isVisibleObservable: this.observeEx(x => x.isActive),
+          isVisibleObservable: this.whenAnyValue(x => x.isActive),
           icon: "icon withSIX-icon-X"
         }));
       d(this.uninstall = uiCommand2("Uninstall", async () => {
@@ -151,14 +151,14 @@ export class PlaylistItem extends ViewModel {
         //this.emitGameChanged();
         await this.installInternal();
       }, {
-          isVisibleObservable: this.observeEx(x => x.isInstalled).select(x => !x).combineLatest(this.observeEx(x => x.hasUpdateAvailable).select(x => !x), (x, y) => x && y),
+          isVisibleObservable: this.whenAnyValue(x => x.isInstalled).map(x => !x).combineLatest(this.whenAnyValue(x => x.hasUpdateAvailable).map(x => !x), (x, y) => x && y),
           canExecuteObservable: this.canExecuteObservable,
           icon: "content-state-icon",
           textCls: "content-state-text" // TODO
         }));
 
       d(this.update = uiCommand2("Update", this.installInternal, {
-        isVisibleObservable: this.observeEx(x => x.hasUpdateAvailable),
+        isVisibleObservable: this.whenAnyValue(x => x.hasUpdateAvailable),
         canExecuteObservable: this.canExecuteObservable,
         icon: 'withSIX-icon-Hexagon-Upload2'
       }));
@@ -182,7 +182,7 @@ export class PlaylistItem extends ViewModel {
       if (this.isLoggedIn) {
         d(this.addToCollections = uiCommand2("Add to ...", async () => this.dialog.open({ viewModel: AddModsToCollections, model: { gameId: this.model.gameId, mods: [this.model] } }), { icon: 'withSIX-icon-Nav-Collection' }));
       }
-      d(this.observeEx(x => x.hasUpdateAvailable)
+      d(this.whenAnyValue(x => x.hasUpdateAvailable)
         .skip(1)
         .subscribe(x => {
           //this.install.name = x ? "Update" : "Install"
@@ -200,14 +200,14 @@ export class PlaylistItem extends ViewModel {
       d(this.edit = uiCommand2("Select Version", async () => {
         await this.dialogService.open({ viewModel: EditPlaylistItem, model: this.model });
         this.informAngular();
-      }, { icon: "icon withSIX-icon-Edit-Pencil", cls: "ignore-close", canExecuteObservable: this.observeEx(x => x.canEdit) }));
+      }, { icon: "icon withSIX-icon-Edit-Pencil", cls: "ignore-close", canExecuteObservable: this.whenAnyValue(x => x.canEdit) }));
 
       d(this.removeFromBasket = uiCommand2("Remove", async () => {
         this.basket.active.removeFromBasket(this.model);
         //this.basket.cloneBasket(this.basket.active);
         //this.informAngular();
         // TODO: This should require the dependency chain to be reset .. hm
-      }, { icon: "icon withSIX-icon-Square-X", canExecuteObservable: this.observeEx(x => x.canEdit) }));
+      }, { icon: "icon withSIX-icon-Square-X", canExecuteObservable: this.whenAnyValue(x => x.canEdit) }));
 
     });
 
@@ -272,8 +272,8 @@ export class PlaylistItem extends ViewModel {
   get itemStateClass() { return this.basketService.getItemStateClassInternal(this.itemState); }
   get itemState() { return this.state ? this.calculateState(this.state.state, this.state.version, this.model.constraint) : null; }
   calculateState(state: ItemState, version: string, constraint: string) { return ContentHelper.getContentState(state, version, constraint); }
-  // .where(x => x.itemType != BasketItemType.Collection)
-  get dependencySize() { return this.localChain.asEnumerable().select(x => this.chain.get(x)).where(x => x != null).select(x => x.sizePacked).where(x => x != null).sum() }
+  // .filter(x => x.itemType != BasketItemType.Collection)
+  get dependencySize() { return this.localChain.map(x => this.chain.get(x)).filter(x => x != null).map(x => x.sizePacked).filter(x => x != null).asEnumerable().sum() }
 
   informAngular = () => this.appEvents.emitBasketChanged();
 
@@ -331,16 +331,16 @@ class GetCollectionDependenciesHandler extends DbQuery<GetCollectionDependencies
     let q = breeze.EntityQuery.from("CollectionVersions").where(new breeze.Predicate("id", breeze.FilterQueryOp.Equals, c.latestVersionId)).expand("dependencies");
     await this.context.executeQueryWithManager<IBreezeCollectionVersion>(manager, q);
     // TODO: How to handle 'non network mods'
-    let modDependencies = c.latestVersion.dependencies.asEnumerable().select(x => x.modDependencyId).where(x => x != null).toArray();
+    let modDependencies = c.latestVersion.dependencies.map(x => x.modDependencyId).filter(x => x != null);
     // if (request.gameId != request.currentGameId) {
     //   let compatibilityMods = ModsHelper.getCompatibilityModsFor(request.currentGameId, request.gameId);
     //   if (compatibilityMods.length > 0) {
     //     let compatibilityModIds = await ModHelper.getCompatibilityModIds(compatibilityMods, request.currentGameId, this.context);
-    //     compatibilityModIds.forEach(x => { if (!modDependencies.asEnumerable().contains(x)) modDependencies.push(x) });
+    //     compatibilityModIds.forEach(x => { if (!modDependencies.some(x => x == x)) modDependencies.push(x) });
     //   }
     // }
 
-    let dependencies = modDependencies.asEnumerable().where(x => !request.localChain.asEnumerable().contains(x)).select(x => x).toArray();
+    let dependencies = modDependencies.filter(x => !request.localChain.some(x => x == x)).map(x => x);
     if (dependencies.length == 0)
       return {
         dependencies: [],
@@ -352,7 +352,7 @@ class GetCollectionDependenciesHandler extends DbQuery<GetCollectionDependencies
         version: c.latestVersion.version
       };
 
-    let cachedIds = dependencies.asEnumerable().where(x => request.chain.has(x)).toArray();
+    let cachedIds = dependencies.filter(x => request.chain.has(x));
     let idsToFetch = dependencies.asEnumerable().except(cachedIds).toArray();
     let fetchedResults: IBasketItem[] = [];
 
@@ -363,11 +363,11 @@ class GetCollectionDependenciesHandler extends DbQuery<GetCollectionDependencies
         .where(<any>op)
         .select(desiredFields);
       let r = await this.context.executeQueryWithManager<IBreezeMod>(manager, query);
-      fetchedResults = r.results.asEnumerable().select(x => Helper.modToBasket(x)).toArray();
+      fetchedResults = r.results.map(x => Helper.modToBasket(x));
       fetchedResults.forEach(x => request.chain.set(x.id, x));
     }
 
-    let results = fetchedResults.asEnumerable().concat(cachedIds.asEnumerable().select(x => request.chain.get(x))).toArray();
+    let results = fetchedResults.concat(cachedIds.map(x => request.chain.get(x)));
     results.forEach(x => { request.localChain.push(x.id); });
     return {
       dependencies: results,
@@ -413,16 +413,16 @@ class GetModDependenciesHandler extends DbQuery<GetModDependencies, IResult> {
       name: request.packageName
     }
     let sizePacked = Math.abs(mod.sizePacked);
-    let modDependencies = mod.dependencies.asEnumerable().select(x => x.id).toArray();
+    let modDependencies = mod.dependencies.map(x => x.id);
     if (request.gameId != request.currentGameId) {
       let compatibilityMods = ModsHelper.getCompatibilityModsFor(request.currentGameId, request.gameId, mod.tags);
       if (compatibilityMods.length > 0) {
         let compatibilityModIds = await ModHelper.getCompatibilityModIds(compatibilityMods, request.currentGameId, this.context);
-        compatibilityModIds.forEach(x => { if (!modDependencies.asEnumerable().contains(x)) modDependencies.push(x) });
+        compatibilityModIds.forEach(x => { if (!modDependencies.some(x => x == x)) modDependencies.push(x) });
       }
     }
 
-    let dependencies = modDependencies.asEnumerable().where(x => !request.localChain.asEnumerable().contains(x)).select(x => x).toArray();
+    let dependencies = modDependencies.filter(x => !request.localChain.some(x => x == x)).map(x => x);
     if (dependencies.length == 0)
       return {
         dependencies: [],
@@ -435,7 +435,7 @@ class GetModDependenciesHandler extends DbQuery<GetModDependencies, IResult> {
         version: mod.latestStableVersion
       };
 
-    let cachedIds = dependencies.asEnumerable().where(x => request.chain.has(x)).toArray();
+    let cachedIds = dependencies.filter(x => request.chain.has(x));
     let idsToFetch = dependencies.asEnumerable().except(cachedIds).toArray();
     let fetchedResults: IBasketItem[] = [];
 
@@ -446,11 +446,11 @@ class GetModDependenciesHandler extends DbQuery<GetModDependencies, IResult> {
         .where(<any>op)
         .select(desiredFields);
       r = await this.context.executeQueryWithManager<IBreezeMod>(manager, query);
-      fetchedResults = r.results.asEnumerable().select(x => Helper.modToBasket(x)).toArray();
+      fetchedResults = r.results.map(x => Helper.modToBasket(x));
       fetchedResults.forEach(x => request.chain.set(x.id, x));
     }
 
-    let results = fetchedResults.asEnumerable().concat(cachedIds.asEnumerable().select(x => request.chain.get(x))).toArray();
+    let results = fetchedResults.concat(cachedIds.map(x => request.chain.get(x)));
     results.forEach(x => { request.localChain.push(x.id); });
     return {
       dependencies: results,

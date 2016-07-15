@@ -25,9 +25,7 @@
 
       <div id="profile">
         <tab-view view-model.ref="tabView" id="top-right-tabs" orientation="top" tabs.bind="tabs" selected-tab.bind="selectedTab" render-view="">
-          <template replace-part="start">
-            <button class="login" click.delegate="login.login()" title="or register" if.bind="!isLoggedIn">Login</button>
-          </template>
+          <button class="login" click.delegate="login.login()" title="or register" if.bind="!isLoggedIn" slot="start">Login</button>
         </tab-view>
       </div>
     </div>

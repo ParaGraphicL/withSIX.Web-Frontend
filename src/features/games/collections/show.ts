@@ -1,7 +1,7 @@
 import {Router, RouterConfiguration} from 'aurelia-router';
 
 import {breeze, IBreezeMod, IBreezeCollectionVersion, IBreezeCollection, IBreezeModUpdate, ModsHelper, ProcessingState, IFindModel, FindModel, UiContext, Base, bindingEngine, uiCommand2, Subscriptions, ReactiveList, Debouncer, ObserveAll, ListFactory, ViewModel, ITypeahead, IFilter, ISort, Filters, ViewType, Mediator, Query, DbQuery, handlerFor, VoidCommand,
-  CollectionScope, PreferredClient, ICollectionData, IShowDependency, IServer} from '../../../framework';
+  CollectionScope, PreferredClient, ICollectionData, IShowDependency, IServer, Rx} from '../../../framework';
 import {inject} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {RemoveDependencyEvent} from '../../profile/lib';
@@ -80,7 +80,7 @@ export class Show extends ViewModel {
     //throw err;
     //}
   }, {
-      canExecuteObservable: this.observeEx(x => x.changed),
+      canExecuteObservable: this.whenAnyValue(x => x.changed),
       cls: "ok"
     }) // , this.changedObservable
 
@@ -89,7 +89,7 @@ export class Show extends ViewModel {
     this.changed = false;
     this.w6.collection.cancelFromAurelia();
   }, {
-      canExecuteObservable: this.observeEx(x => x.changed).combineLatest(this.save.isExecutingObservable, (x, y) => x && !y),
+      canExecuteObservable: this.whenAnyValue(x => x.changed).combineLatest(this.save.isExecutingObservable, (x, y) => x && !y),
       cls: "cancel"
     })
   // TODO: have to dispose the Multi?
@@ -101,13 +101,13 @@ export class Show extends ViewModel {
       this.w6.collection.disableEditModeFromAurelia();
     }
   }, {
-      isVisibleObservable: this.observeEx(x => x.editModeEnabled)
+      isVisibleObservable: this.whenAnyValue(x => x.editModeEnabled)
     })
 
   enableEditMode = uiCommand2("Open Editor", async () => {
     this.w6.collection.enableEditModeFromAurelia();
   }, {
-      isVisibleObservable: this.observeEx(x => x.editModeEnabled).select(x => !x)
+      isVisibleObservable: this.whenAnyValue(x => x.editModeEnabled).map(x => !x)
     });
 
   async resetup() {
@@ -125,9 +125,9 @@ export class Show extends ViewModel {
       d(this.rxList = this.listFactory.getList(this.items));
       d(this.rxList2 = this.listFactory.getList(this.servers));
       let obs = Rx.Observable.merge(
-        this.rxList.modified.select(x => true),
-        this.rxList2.modified.select(x => true),
-        this.listFactory.getObserveAll(this.model).select(x => true));
+        this.rxList.modified.map(x => true),
+        this.rxList2.modified.map(x => true),
+        this.listFactory.getObserveAll(this.model).map(x => true));
       d(this.toProperty(obs, x => x.changed))
     });
   }
@@ -135,7 +135,7 @@ export class Show extends ViewModel {
   refreshRepo = uiCommand2("Refresh Repo", async () => {
     await new RefreshRepo(this.model.id).handle(this.mediator);
     await this.resetup();
-  }, { canExecuteObservable: this.observeEx(x => x.changed).select(x => !x) }); // TODO: Monitor also this.model.repositories, but we have to swap when we refresh the model :S
+  }, { canExecuteObservable: this.whenAnyValue(x => x.changed).map(x => !x) }); // TODO: Monitor also this.model.repositories, but we have to swap when we refresh the model :S
 }
 
 class GetCollection extends Query<ICollectionData> {
@@ -150,15 +150,15 @@ class GetCollectionHandler extends DbQuery<GetCollection, ICollectionData> {
       () => this.getEntityQueryFromShortId("Collection", request.collectionId)
         .withParameters({ id: this.tools.fromShortId(request.collectionId) }));
     var ver = await this.context.getCustom<IBreezeCollectionVersion>("collectionversions/" + col.latestVersionId);
-    var items = ver.dependencies.asEnumerable()
-      .select(x => {
+    var items = ver.dependencies
+      .map(x => {
         var dep = <IShowDependency>{ dependency: x.dependency, type: "dependency", id: x.id, gameId: col.gameId, constraint: x.constraint, isRequired: x.isRequired, availableVersions: (<any>x).availableVersions, name: x.name, version: (<any>x).latestStableVersion };
         var dx = (<any>x);
         if (dx.avatar)
           dep.image = this.w6.url.getContentAvatarUrl(dx.avatar, dx.avatarUpdatedAt);
         return dep;
-      }).toArray();
-    var server = ver.servers ? ver.servers.asEnumerable().firstOrDefault() : null;
+      });
+    var server = ver.servers ? ver.servers[0] : null;
     var s = server ? { address: server.address, password: server.password } : { address: "", password: "" };
 
     return { id: col.id, name: col.name, author: col.author, gameId: col.gameId, items: items, servers: [s], repositories: ver.repositories || "", scope: CollectionScope[col.scope], updatedAt: col.updatedAt, preferredClient: PreferredClient[col.preferredClient], groupId: col.groupId };

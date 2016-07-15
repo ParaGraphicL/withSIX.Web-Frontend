@@ -19,7 +19,7 @@ export class Upload extends ViewModelWithModel<ITab> {
     icon: "icon withSIX-icon-Nav-Mod-Add"
   });
   uploadMission = uiCommandWithLogin2("New Mission", async () => this.navigateInternal(`/p/${this.w6.activeGame.slug}/missions/new`), {
-    isVisibleObservable: this.observeEx(x => x.gameSupportsMissions),
+    isVisibleObservable: this.whenAnyValue(x => x.gameSupportsMissions),
     icon: "icon withSIX-icon-Nav-Mission-Add"
   });
   createCollection = uiCommandWithLogin2("New Collection", () => this.dialog.open({ viewModel: CreateCollectionDialog, model: { game: this.w6.activeGame } }), {

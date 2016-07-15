@@ -12,7 +12,7 @@ export class FilteredBase<T> extends PaginatedViewModel<T> {
   params;
 
   async activate(params) {
-    this.filterInfo = { search: { input: null, fields: this.searchFields }, enabledFilters: [], sortOrder: this.sort.asEnumerable().firstOrDefault() }
+    this.filterInfo = { search: { input: null, fields: this.searchFields }, enabledFilters: [], sortOrder: this.sort[0] }
     await super.activate(params);
   }
 

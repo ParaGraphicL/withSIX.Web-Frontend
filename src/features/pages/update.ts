@@ -25,7 +25,7 @@ export class Update extends MainBase {
     });
 
     this.legacyMediator.legacyRequest<any[]>(GetBlogsQuery.$name, { team: false })
-      .then(x => this.model.blogPosts = x.asEnumerable().take(4).toArray());
+      .then(x => this.model.blogPosts = x.slice(0, 4));
   }
 
   get clientInfo() { return this.w6.miniClient.clientInfo; }
@@ -45,7 +45,7 @@ export class Update extends MainBase {
       this.model.isUpdating = false;
     }
   }, {
-      canExecuteObservable: this.observeEx(x => x.hasUpdates).combineLatest(this.observeEx(x => x.isConnected), (hasUpdates, isConnected) => hasUpdates && isConnected)
+      canExecuteObservable: this.whenAnyValue(x => x.hasUpdates).combineLatest(this.whenAnyValue(x => x.isConnected), (hasUpdates, isConnected) => hasUpdates && isConnected)
     })
 }
 

@@ -1,6 +1,6 @@
 import {bindable, inject} from 'aurelia-framework';
-import {Base} from '../services/base';
-export class ListView<T> extends Base {
+import {ReactiveBase} from '../services/base';
+export class ListView<T> extends ReactiveBase {
   @bindable view: string;
   @bindable viewPath: string;
   @bindable itemType: string;

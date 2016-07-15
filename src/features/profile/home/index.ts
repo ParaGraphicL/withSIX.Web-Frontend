@@ -69,7 +69,7 @@ export class Index extends ViewModel {
   updateAll = uiCommand2("Update all", async () => {
     var commands = Array.from(this.model.updates.values()).asEnumerable()
       .groupBy(x => x.gameId, x => x.id,
-      (key, elements) => new InstallContents(key, elements.asEnumerable().select(x => { return { id: x } }).toArray(), { text: "Available updates" }, true))
+      (key, elements) => new InstallContents(key, elements.map(x => { return { id: x } }), { text: "Available updates" }, true))
       .toArray();
     for (let i in commands)
       await commands[i].handle(this.mediator);
@@ -96,7 +96,7 @@ class GetHomeHandler extends DbClientQuery<GetHome, IHomeData> {
     } = await this.client.getHome();
     return {
       updates: this.tools.enumToMap(home.updates.asEnumerable().orderByDescending(x => x.updatedVersion || ''), x => x.id),
-      games: this.tools.aryToMap(home.games, x => x.id),
+      games: home.games.toMap(x => x.id),
       newContent: this.tools.enumToMap(home.newContent.asEnumerable().orderByDescending(x => x.lastInstalled || ''), x => x.id),
       recent: this.tools.enumToMap(home.recent.asEnumerable().orderByDescending(x => x.lastUsed || ''), x => x.id)
     }

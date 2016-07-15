@@ -1,10 +1,10 @@
 import {customAttribute, bindable, inject} from 'aurelia-framework';
-import {Base} from '../../services/base';
+import {ReactiveBase} from '../../services/base';
 import {ReactiveList, ListFactory} from '../../services/reactive';
 import {IMenuItem} from './dropdown-menu';
 
 @inject(ListFactory)
-export class ActionBar extends Base {
+export class ActionBar extends ReactiveBase {
   @bindable items: IMenuItem[];
   @bindable hideWhenEmpty = true;
   @bindable orientation = "horizontal";
@@ -24,5 +24,5 @@ export class ActionBar extends Base {
     this.updateIsVisible();
   }
   unbind() { this.subscriptions.dispose(); }
-  updateIsVisible() { this.isVisible = this.items.asEnumerable().any(x => x.isVisible); }
+  updateIsVisible() { this.isVisible = this.items.some(x => x.isVisible); }
 }

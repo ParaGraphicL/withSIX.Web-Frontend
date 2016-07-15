@@ -1,6 +1,6 @@
 import {inject} from 'aurelia-framework';
 import {IContentGuidSpec, BasketItemType, IBasketItem, BasketService, Base, GameClientInfo, uiCommand, uiCommand2, UiContext, MenuItem, ViewModel, Mediator, Query, DbQuery, DbClientQuery, handlerFor, VoidCommand, IContent, ItemState, IContentState,
-  RemoveRecent, Abort, UninstallContent, LaunchContent, OpenFolder, InstallContent, UnFavoriteContent, FavoriteContent, GameChanged, IMenuItem, FolderType, LaunchAction} from '../../../framework';
+  RemoveRecent, Abort, UninstallContent, LaunchContent, OpenFolder, InstallContent, UnFavoriteContent, FavoriteContent, GameChanged, IMenuItem, FolderType, LaunchAction, IReactiveCommand} from '../../../framework';
 import {Router} from 'aurelia-router';
 import {GameBaskets, Basket} from '../../game-baskets';
 import {AddModsToCollections} from '../../games/add-mods-to-collections';
@@ -18,18 +18,18 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
   isInstalledObservable;
   canExecuteObservable;
 
-  addToCollections: ICommand<any>;
-  openFolder: ICommand<void>;
-  diagnose: ICommand<void>;
-  install: ICommand<void>;
-  update: ICommand<void>;
-  omni: ICommand<void>;
-  uninstall: ICommand<void>;
-  launch: ICommand<void>;
-  abort: ICommand<void>;
-  removeRecent: ICommand<void>;
-  addToBasket: ICommand<void>;
-  openConfigFolder: ICommand<any>;
+  addToCollections: IReactiveCommand<any>;
+  openFolder: IReactiveCommand<void>;
+  diagnose: IReactiveCommand<void>;
+  install: IReactiveCommand<void>;
+  update: IReactiveCommand<void>;
+  omni: IReactiveCommand<void>;
+  uninstall: IReactiveCommand<void>;
+  launch: IReactiveCommand<void>;
+  abort: IReactiveCommand<void>;
+  removeRecent: IReactiveCommand<void>;
+  addToBasket: IReactiveCommand<void>;
+  openConfigFolder: IReactiveCommand<any>;
   state: IContentState = this.getDefaultState();
   bottomMenuActions = [];
   url: string;
@@ -110,32 +110,32 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
     //this.tools.Debug.log("Mod State: " + this.model.packageName, this.model.version, this.model.id, this.state);
     this.subscriptions.subd(d => {
       this.updateState();
-      this.isInstalledObservable = this.observeEx(x => x.isInstalled);
-      this.canExecuteObservable = this.gameInfo.observeEx(x => x.canExecute).combineLatest(this.observeEx(x => x.isBusy), (can, busy) => can && !busy);
+      this.isInstalledObservable = this.whenAnyValue(x => x.isInstalled);
+      this.canExecuteObservable = this.gameInfo.observeEx(x => x.canExecute).combineLatest(this.whenAnyValue(x => x.isBusy), (can, busy) => can && !busy);
 
       d(this.eventBus.subscribe('refreshContentInfo-' + this.model.gameId, x => this.updateState()))
       d(this.eventBus.subscribe('contentInfoStateChange-' + this.model.id, x => this.updateState()))
 
       d(this.addToBasket = uiCommand2("toggle in playlist", async () => this.basketService.addToBasket(this.model.gameId, this.toBasketInfo()), {
-        isVisibleObservable: this.observeEx(x => x.canAddToBasket)
+        isVisibleObservable: this.whenAnyValue(x => x.canAddToBasket)
       }));
 
       if ((<any>this.model).showRecent) {
         d(this.removeRecent = uiCommand2("Remove as Recent", () => new RemoveRecent(this.model.gameId, this.model.id).handle(this.mediator),
           {
             icon: 'withSIX-icon-Folder-Remove',
-            isVisibleObservable: this.observeEx(x => x.hasLastUsed),
+            isVisibleObservable: this.whenAnyValue(x => x.hasLastUsed),
             canExecuteObservable: this.canExecuteObservable
           }))
       }
 
       d(this.abort = uiCommand2("", () => new Abort(this.model.gameId, this.model.id).handle(this.mediator), {
-        isVisibleObservable: this.observeEx(x => x.isActive),
-        canExecuteObservable: this.observeEx(x => x.canAbort),
+        isVisibleObservable: this.whenAnyValue(x => x.isActive),
+        canExecuteObservable: this.whenAnyValue(x => x.canAbort),
         icon: "icon withSIX-icon-Hexagon-Pause", tooltip: "Pause"
       }));
       d(this.uninstall = uiCommand2("Uninstall", this.uninstallInternal, {
-        isVisibleObservable: this.observeEx(x => x.canBeUninstalled),
+        isVisibleObservable: this.whenAnyValue(x => x.canBeUninstalled),
         canExecuteObservable: this.canExecuteObservable,
         icon: "icon withSIX-icon-Square-X"
       }));
@@ -147,13 +147,13 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
       }));
 
       d(this.install = uiCommand2("Install", this.installInternal, {
-        isVisibleObservable: this.observeEx(x => x.isInstalled).select(x => !x).combineLatest(this.observeEx(x => x.hasUpdateAvailable).select(x => !x), (x, y) => x && y),
+        isVisibleObservable: this.whenAnyValue(x => x.isInstalled).map(x => !x).combineLatest(this.whenAnyValue(x => x.hasUpdateAvailable).map(x => !x), (x, y) => x && y),
         canExecuteObservable: this.canExecuteObservable,
         icon: 'withSIX-icon-Hexagon-Download2'
       }));
 
       d(this.update = uiCommand2("Update", this.installInternal, {
-        isVisibleObservable: this.observeEx(x => x.hasUpdateAvailable),
+        isVisibleObservable: this.whenAnyValue(x => x.hasUpdateAvailable),
         canExecuteObservable: this.canExecuteObservable,
         icon: 'withSIX-icon-Hexagon-Upload2'
       }));
@@ -169,7 +169,7 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
         canExecuteObservable: this.canExecuteObservable,
         icon: 'withSIX-icon-Tools'
       }));
-      d(this.observeEx(x => x.hasUpdateAvailable)
+      d(this.whenAnyValue(x => x.hasUpdateAvailable)
         .skip(1) // we need to first 'setupMenuItems'
         .subscribe(x => this.handleUpdateAvailable(x)));
 
@@ -233,7 +233,7 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
     this.subscriptions.subd(d => {
       this.topActions.push(new MenuItem(this.addToBasket, { name: "", icon: "content-basketable-icon", textCls: "content-basketable-text", cls: "content-basketable-button" }))
       this.topMenuActions.push(new MenuItem(this.addToBasket));
-      d(this.observeEx(x => x.isInBasket).subscribe(x => { this.addToBasket.name = this.basketableText; this.addToBasket.icon = this.basketableIcon }));
+      d(this.whenAnyValue(x => x.isInBasket).subscribe(x => { this.addToBasket.name = this.basketableText; this.addToBasket.icon = this.basketableIcon }));
       if (this.isLoggedIn) {
         d(this.addToCollections = uiCommand2("Add to ...", async () => this.dialog.open({ viewModel: AddModsToCollections, model: { gameId: this.model.gameId, mods: [this.model] } }), { icon: 'withSIX-icon-Nav-Collection' }));
         this.topMenuActions.push(new MenuItem(this.addToCollections));

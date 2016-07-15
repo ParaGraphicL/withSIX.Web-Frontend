@@ -1,143 +1,37 @@
-
 import VersionCompare from 'version_compare';
+import {IDisposable} from './base';
+import {createError} from '../helpers/utils/errors';
+import {toShortId as toS, fromShortId as fromS} from '../helpers/utils/string';
+import {removeEl as rEl, enumToMap as eToMap} from '../helpers/utils/iterable';
+import {isTokenExpired as isTExpired} from '../helpers/utils/jwt';
 
-String.prototype.indexOfIgnoreCase = function(prefix) {
-  return this.toLowerCase().indexOf(prefix.toLowerCase());
-};
+declare var URL;
 
-/*
-String.prototype.endsWith = function(suffix) {
-    return this.indexOf(suffix, this.length - suffix.length) !== -1;
-};
-*/
-
-/*
-String.prototype.startsWith = function(prefix) {
-    return this.indexOf(prefix) == 0;
-};
-*/
-
-String.prototype.endsWithIgnoreCase = function(suffix) {
-  return this.indexOfIgnoreCase(suffix, this.length - suffix.length) !== -1;
-};
-
-String.prototype.startsWithIgnoreCase = function(prefix) {
-  return this.indexOfIgnoreCase(prefix) == 0;
-};
-
-String.prototype.toUpperCaseFirst = function() {
-  return this.split(" ").map(i => i[0].toUpperCase() + i.substring(1)).join(" ");
-};
-String.prototype.toLowerCaseFirst = function() {
-  return this.split(" ").map(i => i[0].toLowerCase() + i.substring(1)).join(" ");
-};
-
-String.prototype.containsIgnoreCase = function(prefix) {
-  return this.indexOfIgnoreCase(prefix) > -1;
-};
-
-String.prototype.equalsIgnoreCase = function(prefix) {
-  return this.toLowerCase() == prefix.toLowerCase();
-};
-
-String.prototype.toShortId = function() {
-  return Tools.toShortId(this);
-};
-
-String.prototype.sluggify = function() {
-  return Tools.sluggify(this);
-};
-String.prototype.sluggifyEntityName = function() {
-  return Tools.sluggifyEntityName(this);
-};
-String.prototype.truncate = function(count: number) {
-  if (this.length <= count) return this;
-  return this.substring(0, count) + '..';
-}
-String.prototype.format = function() {
-  var s = this,
-    i = arguments.length;
-
-  while (i--) {
-    s = s.replace(new RegExp('\\{' + i + '\\}', 'gm'), arguments[i]);
-  }
-  return s;
-};
-
-
+// TODO: Decompose
 export module Tools {
-  // todo; with inner ex
+  // for legacy purposes
+  export const toShortId = toS;
+  export const fromShortId = fromS;
+  export const removeEl = rEl;
+  export const enumToMap = eToMap;
 
-  // class Exception extends ExtendableError {
-  //     public innerException: Error;
-  //     constructor(message?: string, innerException?: Error|string) {
-  //         super(message);
-  //         // if (typeof (<any>Error).captureStackTrace === 'function') {
-  //         //     //noinspection JSUnresolvedFunction
-  //         //     (<any>Error).captureStackTrace(this, arguments.callee);
-  //         // }
-  //         this.name = "Exception";
-  //         if (innerException) {
-  //             if (innerException instanceof Error) {
-  //                 this.innerException = innerException;
-  //                 this.message = message + ", innerException: " + this.innerException.message;
-  //             }
-  //             else if (typeof innerException === "string") {
-  //                 this.innerException = new Error(innerException);
-  //                 this.message = message + ", innerException: " + this.innerException.message;
-  //             }
-  //             else {
-  //                 // this.innerException = <any>innerException;
-  //                 // this.message = message + ", innerException: " + this.innerException;
-  //             }
-  //         }
-  //         else {
-  //             this.message = message;
-  //         }
-  //     }
-  // }
-  //
-
-
-  export var createError = (name: string, proto = Error.prototype): ErrorConstructor => {
-    var f = function(message: string) {
-      Object.defineProperty(this, 'name', {
-        enumerable: false,
-        writable: false,
-        value: name
-      });
-      Object.defineProperty(this, 'message', {
-        enumerable: false,
-        writable: true,
-        value: message
-      });
-
-      if (Error.hasOwnProperty('captureStackTrace')) { // V8
-        (<any>Error).captureStackTrace(this, this.constructor);
-      } else {
-        Object.defineProperty(this, 'stack', {
-          enumerable: false,
-          writable: false,
-          value: (<any>(new Error(message))).stack
-        });
-      }
+  // TODO https://github.com/github/url-polyfill
+  export function createUrl(url: string) {
+    try {
+      return new URL(url);
+    } catch (err) {
+      var parser = document.createElement('a');
+      parser.href = url;
+      return parser;
     }
-    if (typeof Object.setPrototypeOf === 'function') {
-      Object.setPrototypeOf(f.prototype, proto);
-    } else {
-      f.prototype = Object.create(proto);
-    }
-    return <any>f;
   }
 
-  export interface IRequestInfo<T> {
-    status: number;
-    statusText: string;
-    body: T;
-    headers?: Headers;
+  export function buildUrl(url: string) {
+    if (url.startsWith("//")) return Tools.createUrl(window.location.protocol + url);
+    return Tools.createUrl(url);
   }
 
-  export var createHttpError = (name: string, proto = Error.prototype): HttpErrorConstructor<any> => {
+  export const createHttpError = (name: string, proto = Error.prototype): HttpErrorConstructor<any> => {
     var f = function(message: string, requestInfo: IRequestInfo<any>) {
       Object.defineProperty(this, 'name', {
         enumerable: false,
@@ -201,6 +95,15 @@ export module Tools {
     return <any>f;
   }
 
+
+  export interface IRequestInfo<T> {
+    status: number;
+    statusText: string;
+    body: T;
+    headers?: Headers;
+  }
+
+
   export interface HttpErrorConstructor<T extends ErrorResponseBody> {
     new (message: string, requestInfo: IRequestInfo<T>): IHttpException<T>;
   }
@@ -225,7 +128,6 @@ export module Tools {
   // TODO: ES6/TS valid exceptions
   export var RequireSslException = createError('RequireSslException');
   export var RequireNonSslException = createError('RequireNonSslException');
-  export var InvalidShortIdException = createError('InvalidShortIdException');
   export var HttpException = createHttpError('HttpException');
   export var NotFoundException = createHttpError('NotFoundException', HttpException.prototype);
   export var Forbidden = createHttpError("Forbidden", HttpException.prototype);
@@ -243,11 +145,7 @@ export module Tools {
     return { dispose: () => clearInterval(id) }
   }
 
-  var hexList = '0123456789abcdef';
-  var b64List = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
   export var emptyGuid = '00000000-0000-0000-0000-000000000000';
-
-  declare var escape;
 
   var cleanup = (str: string, sign: string) => {
     if (str.endsWith("&")) str.substring(0, str.length - 1);
@@ -257,13 +155,6 @@ export module Tools {
 
   export var cleanupHash = (hash: string) => cleanup(hash, '#');
   export var cleanupSearch = (search: string) => cleanup(search, '?');
-
-  // we still use arrays over the wire, so that we dont waste bw..
-  export function aryToMap<K, V>(ary: V[], keyFunc: (x: V) => K) {
-    let map = new Map<K, V>();
-    ary.forEach(x => map.set(keyFunc(x), x));
-    return map;
-  }
 
   export function getRandomIntInclusive(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -322,70 +213,9 @@ export module Tools {
     return Math.round((Math.pow(36, length + 1) - Math.random() * Math.pow(36, length))).toString(36).slice(1);
   }
 
-  export function enumToMap<K, V>(ary: Enumerable<V>, keyFunc: (x: V) => K) {
-    return this.aryToMap(ary.toArray(), keyFunc); // todo use iterable instead..
-  }
-
-  function jwtHelperInt() {
-
-    this.urlBase64Decode = function(str) {
-      var output = str.replace(/-/g, '+').replace(/_/g, '/');
-      switch (output.length % 4) {
-        case 0: { break; }
-        case 2: { output += '=='; break; }
-        case 3: { output += '='; break; }
-        default: {
-          throw 'Illegal base64url string!';
-        }
-      }
-      return decodeURIComponent(escape(atob(output))); //polyfill https://github.com/davidchambers/Base64.js
-    }
-
-
-    this.decodeToken = function(token) {
-      var parts = token.split('.');
-
-      if (parts.length !== 3) {
-        throw new Error('JWT must have 3 parts');
-      }
-
-      var decoded = this.urlBase64Decode(parts[1]);
-      if (!decoded) {
-        throw new Error('Cannot decode the token');
-      }
-
-      return angular.fromJson(decoded);
-    }
-
-    this.getTokenExpirationDate = function(token) {
-      var decoded = this.decodeToken(token);
-
-      if (typeof decoded.exp === "undefined") {
-        return null;
-      }
-
-      var d = new Date(0); // The 0 here is the key, which sets the date to the epoch
-      d.setUTCSeconds(decoded.exp);
-
-      return d;
-    };
-
-    this.isTokenExpired = function(token, offsetSeconds) {
-      var d = this.getTokenExpirationDate(token);
-      offsetSeconds = offsetSeconds || 0;
-      if (d === null) {
-        return false;
-      }
-
-      // Token expired?
-      return !(d.valueOf() > (new Date().valueOf() + (offsetSeconds * 1000)));
-    };
-  }
-  var jwtHelper = new jwtHelperInt();
-
   export function isTokenExpired(token) {
     try {
-      return jwtHelper.isTokenExpired(token);
+      return isTExpired(token);
     } catch (err) {
       Tools.Debug.error("Error validating token " + err);
       return true;
@@ -405,51 +235,7 @@ export module Tools {
 
   export function joinUri(parts: string[]): string { return parts.join("/"); }
 
-  const supportsDescriptors = true;
-  export function defineProperty(object, name, value, force) {
-    if (!force && name in object) { return; }
-    if (supportsDescriptors) {
-      Object.defineProperty(object, name, {
-        configurable: true,
-        enumerable: false,
-        writable: true,
-        value: value
-      });
-    } else {
-      object[name] = value;
-    }
-  };
-
-  // Define configurable, writable and non-enumerable props
-  // if they don’t exist.
-  export function defineProperties(object, map) {
-    Object.keys(map).forEach(name => {
-      var method = map[name];
-      defineProperty(object, name, method, false);
-    });
-  };
-
-
-  export function toShortId(id: string): string {
-    return base64ToShort(guidToBase64(id, true));
-  }
-
-  export function fromShortId(shortId: string): string {
-    try {
-      return base64ToGuid(shortToBase64(shortId), true);
-    } catch (err) {
-      throw new InvalidShortIdException(shortId + " is not a valid ShortID");
-    }
-  }
-
-  export function removeEl<T>(ary: T[], el: T) {
-    var idx = ary.indexOf(el);
-    if (idx > -1) ary.splice(idx, 1);
-  }
-
-  export function handleOverrides(opts, overrideOpts) {
-    return $.extend(opts, overrideOpts);
-  }
+  export function handleOverrides(opts, overrideOpts) { return Object.assign(opts, overrideOpts) }
 
   export function mergeInto(obj1, obj2, allowed: string[]) {
     var e = allowed.asEnumerable();
@@ -510,96 +296,6 @@ export module Tools {
 
   export class KeyCodes {
     public static enter = 13;
-  }
-
-  // Convert GUID string to Base-64 in Javascript
-  // by Mark Seecof, 2012-03-31
-
-  // GUID string with four dashes is always MSB first,
-  // but base-64 GUID's vary by target-system endian-ness.
-  // Little-endian systems are far more common.  Set le==true
-  // when target system is little-endian (e.g., x86 machine).
-  //
-  function guidToBase64(g, le) {
-    var s = g.replace(/[^0-9a-f]/ig, '').toLowerCase();
-    if (s.length != 32) return '';
-    if (le)
-      s = s.slice(6, 8) + s.slice(4, 6) + s.slice(2, 4) + s.slice(0, 2) +
-        s.slice(10, 12) + s.slice(8, 10) +
-        s.slice(14, 16) + s.slice(12, 14) +
-        s.slice(16);
-    s += '0';
-
-    var a, p, q;
-    var r = '';
-    var i = 0;
-    while (i < 33) {
-      a = (hexList.indexOf(s.charAt(i++)) << 8) |
-        (hexList.indexOf(s.charAt(i++)) << 4) |
-        (hexList.indexOf(s.charAt(i++)));
-
-      p = a >> 6;
-      q = a & 63;
-
-      r += b64List.charAt(p) + b64List.charAt(q);
-    }
-    r += '==';
-
-    return r;
-  } // guid_to_base64()
-
-  function base64ToGuid(g, le) {
-    var UUIDjs: any = require('uuid-js');
-    var s = UUIDjs.fromBinary(atob(g)).toString();
-    if (le) {
-      s = s.replace(/[^0-9a-f]/ig, '').toLowerCase();
-      s = s.slice(6, 8) + s.slice(4, 6) + s.slice(2, 4) + s.slice(0, 2) + "-" +
-        s.slice(10, 12) + s.slice(8, 10) + "-" +
-        s.slice(14, 16) + s.slice(12, 14) + "-" + s.slice(16, 20) + "-" + s.slice(20);
-    }
-    return s;
-  }
-
-  function base64ToShort(base64) {
-    return base64.substring(0, 22).replace(/\//g, "_").replace(/\+/g, "-");
-  }
-
-  function shortToBase64(shortBase64) {
-    return shortBase64.substring(0, 22).replace(/_/g, "/").replace(/\-/g, "+") + "==";
-  }
-
-
-
-  var r = new RegExp("[^A-Za-z0-9-]+", "g");
-  var r2 = new RegExp("^[-]+");
-  var r3 = new RegExp("[-]+$");
-
-  // TODO: This is not as good as the C# version we use!
-  export function sluggify(str: string) {
-    return sluggifyEntityName(str.toLowerCase());
-  }
-
-  export function sluggifyEntityName(str: string) {
-    str = str.replace(r, match => {
-      switch (match) {
-        case "'":
-          {
-            return "";
-          }
-        case "+":
-          {
-            return "plus";
-          }
-        default:
-          {
-            return "-";
-          }
-      }
-    })
-      .trim();
-    str = str.replace(r2, "");
-    str = str.replace(r3, "");
-    return str;
   }
 
   export var debug = false;

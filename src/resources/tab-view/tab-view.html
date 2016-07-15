@@ -2,45 +2,45 @@
   <require from="./tab-view.scss"></require>
   <require from="./tab-view-items"></require>
 
-  <nav class="tab-strip ${orientation}" if.bind="orientation != 'bottom'">
+  <nav class="tab-strip ${orientation}">
     <div class="tab-component start">
-      <template replaceable part="start"></template>
+      <slot name="start"></slot>
       <tab-view-items tabs.bind="tabs" toggle-tab.bind="toggleTab" selected-tab.bind="selectedTab"></tab-view-items>
 
       <div class="line"></div>
     </div>
 
     <div class="tab-component middle">
-      <template replaceable part="middle"></template>
+      <slot name="middle"></slot>
       <tab-view-items tabs.bind="tabs" location="middle" toggle-tab.bind="toggleTab" selected-tab.bind="selectedTab"></tab-view-items>
     </div>
 
     <div class="tab-component end">
       <div class="line"></div>
       <tab-view-items tabs.bind="tabs" location="end" toggle-tab.bind="toggleTab" selected-tab.bind="selectedTab"></tab-view-items>
-      <template replaceable part="end"></template>
+      <slot name="end"></slot>
     </div>
   </nav>
 
   <compose if.bind="renderView" view="./tab-view-render.html"></compose>
-
+  <!--
   <nav class="tab-strip ${orientation}" if.bind="orientation == 'bottom'">
     <div class="tab-component start">
-      <template replaceable part="start"></template>
+      <slot name="start2"></slot>
       <tab-view-items tabs.bind="tabs" toggle-tab.bind="toggleTab" selected-tab.bind="selectedTab"></tab-view-items>
 
       <div class="line"></div>
     </div>
 
     <div class="tab-component middle">
-      <template replaceable part="middle"></template>
+      <slot name="middle"></slot>
       <tab-view-items tabs.bind="tabs" location="middle" toggle-tab.bind="toggleTab" selected-tab.bind="selectedTab"></tab-view-items>
     </div>
 
     <div class="tab-component end">
       <div class="line"></div>
       <tab-view-items tabs.bind="tabs" location="end" toggle-tab.bind="toggleTab" selected-tab.bind="selectedTab"></tab-view-items>
-      <template replaceable part="end"></template>
+      <slot name="end"></slot>
     </div>
-  </nav>
+  </nav> -->
 </template>

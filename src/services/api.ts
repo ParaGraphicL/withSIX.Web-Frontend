@@ -2,10 +2,13 @@ import {Base, LS} from './base';
 import {W6} from './withSIX';
 import {Mediator, LegacyMediator} from './mediator';
 import {Toastr} from './toastr';
-import {ListFactory, uiCommand2} from './reactive';
+import {ListFactory, uiCommand2, IReactiveCommand} from './reactive';
 import {Tools} from './tools';
 import {IBreezeErrorReason, IBreezeSaveError} from './legacy/misc';
 import {ContentHelper} from './helpers';
+import {InvalidShortIdException} from '../helpers/utils/string';
+
+import * as Rx from 'rxjs/Rx';
 
 import breeze from 'breeze-client';
 import {HttpClient} from 'aurelia-http-client';
@@ -88,7 +91,7 @@ export interface ITabNotification {
   href?: string;
   progress?: number;
   speed?: number;
-  command?: ICommand<any>;
+  command?: IReactiveCommand<any>;
   isPersistent?: boolean;
 }
 
@@ -97,15 +100,14 @@ export class Api {
   constructor(private client: Client, private eventBus: EventAggregator, private ls: LS) {
     // we could use debounce here, but then the menus don't close on the initiation of the scroll, but rather on the stop.
     // so throttle seems the better option
-    this.subj.throttle(1000).subscribe(x => this.eventBus.publish(new CloseDropdowns()));
+    this.subj.throttleTime(1000).subscribe(x => this.eventBus.publish(new CloseDropdowns()));
   }
   subj = new Rx.Subject();
   showOpenDialog(options: { defaultPath?: string, properties?}) { return this.client.hubs.client.browseFolderDialog(options); }
-  closeDropdowns = () => this.subj.onNext(null);
+  closeDropdowns = () => this.subj.next(null);
   refreshPlaylist = () => this.ls.set('w6.event', { name: 'refresh-playlist' });
   get tools() { return Tools }
   openSettings = (model?) => this.eventBus.publish(new OpenSettings());
-  createCommand = uiCommand2;
   getContentStateInitial = ContentHelper.getConstentStateInitial;
   logout;// = () => this.w6.logout();
   login; //= () => this.w6.openLoginDialog();
@@ -116,7 +118,7 @@ export class Api {
     } catch (err) { this.tools.Debug.warn("Err while converting error reason", err) }
 
     if (reason instanceof String) return [reason, 'Unknown error occurred'];
-    if (reason instanceof Tools.NotFoundException || reason instanceof Tools.InvalidShortIdException) return [reason.message, "404: The requested resource could not be found"];
+    if (reason instanceof Tools.NotFoundException || reason instanceof InvalidShortIdException) return [reason.message, "404: The requested resource could not be found"];
     if (reason instanceof Tools.HttpException) return this.handleHttpError(reason);
     if (reason instanceof Tools.RequireSslException) return [reason.message, "please wait until you are redirected", "Requires SSL"];
     if (reason instanceof Tools.RequireNonSslException) return [reason.message, "please wait until you are redirected", "Requires NO-SSL"];

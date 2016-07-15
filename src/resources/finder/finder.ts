@@ -1,5 +1,5 @@
 import {bindable} from 'aurelia-framework';
-import {Base, IDisposable} from '../../services/base';
+import {ReactiveBase, IDisposable} from '../../services/base';
 
 export class Finder {
   @bindable showTotalResults = false;
@@ -21,7 +21,7 @@ export interface IFindModel<T> {
   selectedItem?: T;
 }
 
-export class FindModel<T> extends Base implements IFindModel<T> {
+export class FindModel<T> extends ReactiveBase implements IFindModel<T> {
   results: T[] = [];
   searchItem = "";
   selectedItem: T = null;
@@ -31,9 +31,9 @@ export class FindModel<T> extends Base implements IFindModel<T> {
     super();
     this.subscriptions.subd(d => {
       // TODO: debounce and make sure old results dont overwrite new results
-      d(this.toProperty(this.observeEx(x => x.searchItem)
+      d(this.toProperty(this.whenAnyValue(x => x.searchItem)
         .skip(1)
-        .selectMany(async (x) => await this.finder(x))
+        .flatMap(async (x) => await this.finder(x))
         .concat(), x => x.results))
     })
   }

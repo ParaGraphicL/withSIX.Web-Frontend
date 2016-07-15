@@ -3,6 +3,9 @@ export * from 'withsix-sync-api';
 import breeze from 'breeze-client';
 export {breeze};
 
+import * as Rx from 'rxjs/Rx';
+export {Rx};
+
 //export * from './entity-extends';
 export * from './dtos';
 export * from './w6context';
@@ -16,8 +19,6 @@ export * from './viewmodel';
 // TODO: causes weird error: BindingEngine must implement parseText :S?!()*^&
 //export * from './auth-base';
 //export * from './auth';
-import Utils from './utils';
-export {Utils};
 
 export * from './tools';
 export * from './withSIX';

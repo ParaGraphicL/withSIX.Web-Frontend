@@ -7,9 +7,7 @@
 
           <div class="basket-content-omnibutton pull-right">
             <dropdown-menu class="hide-until-open" items.bind="menuItems" menu-cls="content-stateable content-state-${itemStateClass}" item-cls="ignore-close">
-              <template replace-part="header">
-                <span class="icon withSIX-icon-Share-Dots-V"></span>
-              </template>
+              <span class="icon withSIX-icon-Share-Dots-V" slot="header"></span>
             </dropdown-menu>
           </div>
 

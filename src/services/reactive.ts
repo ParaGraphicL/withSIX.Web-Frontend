@@ -1,8 +1,9 @@
-import {Base, Subscriptions, IDisposable, ISubscription, IPromiseFunction, bindingEngine} from './base';
+import {Base, ReactiveBase, Subscriptions, IDisposable, ISubscription, IPromiseFunction, bindingEngine} from './base';
 import {LegacyMediator, Mediator} from './mediator';
 import {W6} from './withSIX';
 import {Toastr} from './toastr';
-import * as Rx from 'rx';
+import * as Rx from 'rxjs/Rx';
+import * as RxUi from 'rxui';
 import {Container, inject, PropertyObserver} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {Validation, ValidationResult} from 'aurelia-validation';
@@ -11,8 +12,8 @@ import {GlobalErrorHandler} from './legacy/logger';
 
 export class ObservableEventAggregator extends EventAggregator {
   observableFromEvent = <T>(evt: Function | string) => ObservableEventAggregator.observableFromEvent<T>(evt, this);
-  static observableFromEvent = <T>(evt: Function | string, eventBus: EventAggregator) =>
-    Rx.Observable.create<T>((observer) => eventBus.subscribe(evt, x => observer.onNext(x)))
+  static observableFromEvent = <T>(evt: Function | string, eventBus: EventAggregator): Rx.Observable<T> =>
+    Rx.Observable.create((observer: Rx.Subject<T>) => eventBus.subscribe(evt, x => observer.next(x)))
       .publish().refCount();
 }
 
@@ -87,7 +88,8 @@ export class ListFactory {
   // }
 }
 
-export class ReactiveList<T> extends Base implements Rx.Disposable {
+// TODO: Explore ReactiveArray from RxUi
+export class ReactiveList<T> extends ReactiveBase implements IDisposable {
   items: T[];
 
   allObservable: ObserveAll<T>;
@@ -96,7 +98,7 @@ export class ReactiveList<T> extends Base implements Rx.Disposable {
 
     this.allObservable = new ObserveAll<T>(properties);
     this.items = items;
-    //if (this.items.asEnumerable().any(x => x == null)) this.tools.Debug.warn("Has null items", this.items);
+    //if (this.items.some(x => x == null)) this.tools.Debug.warn("Has null items", this.items);
     items.filter(x => x != null).forEach(this.observeItem);
     this.subscriptions.subd(d => {
       var sub = bindingEngine.collectionObserver(this.items)
@@ -107,35 +109,39 @@ export class ReactiveList<T> extends Base implements Rx.Disposable {
           var added: T[] = [];
           var removed: T[] = [];
           x.forEach(x => {
-            if (x.addedCount > 0) this.items.asEnumerable().skip(x.index).take(x.addedCount).toArray().forEach(x => added.push(x))// XXX:
+            if (x.addedCount > 0) this.items.slice(x.index).slice(0, x.addedCount).forEach(x => added.push(x))// XXX:
             if (x.removed.length > 0) x.removed.forEach(x => removed.push(x));
           });
-          if (added.length > 0) this.itemsAdded.onNext(added);
-          if (removed.length > 0) this.itemsRemoved.onNext(removed);
+          if (added.length > 0) this._itemsAdded.next(added);
+          if (removed.length > 0) this._itemsRemoved.next(removed);
         });
       d(sub);
       d(this.itemsAdded.subscribe(evt => evt.filter(x => x != null).forEach(x => this.observeItem(x))));
-      d(this.itemsRemoved.subscribe(evt => evt.filter(x => x != null).forEach(x => { this.changedSubs.get(x).dispose(); this.changedSubs.delete(x); })));
-      d(() => this.changedSubs.forEach((v, k) => { v.dispose(); this.changedSubs.delete(k) }));
+      d(this.itemsRemoved.subscribe(evt => evt.filter(x => x != null).forEach(x => { this.changedSubs.get(x).unsubscribe(); this.changedSubs.delete(x); })));
+      d(() => this.changedSubs.forEach((v, k) => { v.unsubscribe(); this.changedSubs.delete(k) }));
     });
   }
 
   observeItem = (x: T) => this.changedSubs.set(x, this.observeItemInternal(x));
-  observeItemInternal = (x: T) => this.allObservable.generateObservable(x).subscribe(evt => { try { this.itemChanged.onNext(evt) } catch (err) { this.tools.Debug.warn("uncaught err handling observable", err) } });
+  observeItemInternal = (x: T) => this.allObservable.generateObservable(x).subscribe(evt => { try { this._itemChanged.next(evt) } catch (err) { this.tools.Debug.warn("uncaught err handling observable", err) } });
 
   dispose() {
     this.subscriptions.dispose();
-    this.itemsAdded.dispose();
-    this.itemsRemoved.dispose();
-    this.itemChanged.dispose();
+    this._itemsAdded.unsubscribe();
+    this._itemsRemoved.unsubscribe();
+    this._itemChanged.unsubscribe();
   }
 
-  get modified() { return Rx.Observable.merge(this.itemsAdded.select(x => 0), this.itemsRemoved.select(x => 0), this.itemChanged.select(x => 0)) }
+  get modified() { return Rx.Observable.merge(this.itemsAdded.map(x => 0), this.itemsRemoved.map(x => 0), this.itemChanged.map(x => 0)) }
 
-  itemsAdded = new Rx.Subject<T[]>();
-  itemsRemoved = new Rx.Subject<T[]>();
-  itemChanged = new Rx.Subject<IPropertyChange<T>>();
-  changedSubs = new Map<T, IDisposable>();
+  private _itemsAdded = new Rx.Subject<T[]>();
+  private _itemsRemoved = new Rx.Subject<T[]>();
+  private _itemChanged = new Rx.Subject<IPropertyChange<T>>();
+
+  public get itemsAdded() { return this._itemsAdded.asObservable(); }
+  public get itemsRemoved() { return this._itemsRemoved.asObservable(); }
+  public get itemChanged() { return this._itemChanged.asObservable(); }
+  private changedSubs = new Map<T, Rx.Subscription>();
 }
 
 export class ObserveAll<T> {
@@ -150,19 +156,19 @@ export class ObserveAll<T> {
     });
     */
 
-    if (this.properties)
-      return Rx.Observable.merge(this.properties.map(p => this.observeProperty(x, p)));
+    if (this.properties) return Rx.Observable.merge(...this.properties.map(p => this.observeProperty(x, p)));
 
     let obs: Rx.Observable<IPropertyChange<T>>[] = [];
     this.properties = [];
     // Observes all properties... sucks impl??
     for (let i in x) {
+      // TODO: hasOwnProperty wouldnt allow inherited properties, not even from prototype?!
       if (x.hasOwnProperty(i)) {
         this.properties.push(i); // cache
         obs.push(this.observeProperty(x, i))
       }
     }
-    return Rx.Observable.merge(obs);
+    return Rx.Observable.merge(...obs);
   }
 
   // observeItemInternal(x: T, callback): IDisposable {
@@ -173,14 +179,13 @@ export class ObserveAll<T> {
   //   });
   // }
 
-  observeProperty = (x: T, p: string) => Base.observe<T>(x, p)
-    .skip(this.includeInitial ? 0 : 1)
-    .select(evt => { return { item: x, propertyName: p, change: evt } })
+  observeProperty = (x: T, p: string) => Base.observe<T>(x, p, this.includeInitial)
+    .map(evt => { return { item: x, propertyName: p, change: evt } })
 }
 
 export interface ICommandInfo {
-  canExecuteObservable?: ISubscription<boolean> | Rx.Observable<boolean>;
-  isVisibleObservable?: ISubscription<boolean> | Rx.Observable<boolean>;
+  canExecuteObservable?: Rx.Observable<boolean>;
+  isVisibleObservable?: Rx.Observable<boolean>;
   icon?: string;
   textCls?: string;
   cls?: string;
@@ -196,14 +201,14 @@ export var uiCommandWithLogin = function <T>(action: IPromiseFunction<T>, canExe
   return uiCommandWithLogin2(null, action, { canExecuteObservable: canExecuteObservable, isVisibleObservable: isVisibleObservable });
 }
 
-export var uiCommand2 = function <T>(name: string, action: IPromiseFunction<T>, options?: ICommandInfo): ICommand<T> { // Rx.Observable<boolean>
-  let command = new UiCommandInternal<T>(name, action, options);
+export var uiCommand2 = function <T>(name: string, action: IPromiseFunction<T>, options?: ICommandInfo): IReactiveCommand<T> { // Rx.Observable<boolean>
+  let command = new ReactiveCommand<T>(name, action, options);
   let eh: GlobalErrorHandler = Container.instance.get(GlobalErrorHandler);
   command.thrownExceptions.subscribe(x => eh.handleUseCaseError(x, 'unhandled'));
 
   // TODO: Optimize?
   let f = (...args) => command.execute(...args);
-  let f2 = <ICommand<T>>f;
+  let f2 = <IReactiveCommand<T>>f;
   (<any>f2).command = command;
   f2.dispose = () => command.dispose.bind(command);
   Object.defineProperty(f, 'name', { get: () => command.name, set: (value) => command.name = value });
@@ -221,7 +226,7 @@ export var uiCommand2 = function <T>(name: string, action: IPromiseFunction<T>, 
   return f2;
 }
 
-export var uiCommandWithLogin2 = function <T>(name: string, action: IPromiseFunction<T>, options?: ICommandInfo): ICommand<T> {
+export var uiCommandWithLogin2 = function <T>(name: string, action: IPromiseFunction<T>, options?: ICommandInfo): IReactiveCommand<T> {
   let f = <any>uiCommand2(name, action, options);
   let act = f.command.action
   let toastr = <Toastr>Container.instance.get(Toastr);
@@ -235,7 +240,7 @@ export var uiCommandWithLogin2 = function <T>(name: string, action: IPromiseFunc
   return f;
 }
 
-interface ICommand<T> extends IDisposable, IPromiseFunction<T> {
+export interface IReactiveCommand<T> extends IDisposable, IPromiseFunction<T> {
   isExecuting: boolean;
   isExecutingObservable: Rx.Observable<boolean>;
   isVisible: boolean;
@@ -251,18 +256,28 @@ interface ICommand<T> extends IDisposable, IPromiseFunction<T> {
   execute(...args): Promise<T>;
 }
 
-class UiCommandInternal<T> extends Base {
-  isExecuting = false;
-  otherBusy = false;
-  isVisible = true;
+// TODO: Explore ReactiveCommand from RxUi
+class ReactiveCommand<T> extends ReactiveBase {
+  private _isExecuting: boolean;
+  private _otherBusy: boolean;
+  private _isVisible: boolean = true;
+  private _thrownExceptions = new Rx.Subject<Error>();
+  private _isExecutingObservable = new Rx.Subject<boolean>();
+  private _isVisibleObservable = new Rx.Subject<boolean>();
+  private _canExecuteObservable = new Rx.Subject<boolean>();
+
+  public get isExecuting() { return this._isExecuting; }
+  public get otherBusy() { return this._otherBusy; }
+  public get isVisible() { return this._isVisible; }
+  public get thrownExceptions(): Rx.Observable<Error> { return this._thrownExceptions.asObservable() }
+  public get isExecutingObservable() { return this._isExecutingObservable.asObservable() }
+  public get isVisibleObservable() { return this._isVisibleObservable.asObservable() }
+  public get canExecuteObservable() { return this._canExecuteObservable.asObservable() }
+
   cls: string;
   icon: string;
   textCls: string;
   tooltip: string;
-  public thrownExceptions = new Rx.Subject<Error>();
-  public isExecutingObservable = this.observeEx(x => x.isExecuting);
-  public isVisibleObservable = this.observeEx(x => x.isVisible);
-  public canExecuteObservable = this.observeEx(x => x.canExecute);
 
   constructor(public name: string, private action: IPromiseFunction<T>, options?: ICommandInfo) {
     super();
@@ -274,28 +289,27 @@ class UiCommandInternal<T> extends Base {
     this.textCls = options.textCls;
     this.tooltip = options.tooltip;
 
-    if (options.canExecuteObservable) this.subscriptions.subd(d => d(options.canExecuteObservable.subscribe(x => this.otherBusy = !x)));
-    if (options.isVisibleObservable) this.subscriptions.subd(d => d(options.isVisibleObservable.subscribe(x => this.isVisible = x)));
+    if (options.canExecuteObservable) this.subscriptions.subd(d => d(this.toProperty(options.canExecuteObservable.map(x => !x), x => x._otherBusy)));
+    if (options.isVisibleObservable) this.subscriptions.subd(d => d(this.toProperty(options.isVisibleObservable, x => x._isVisible)));
   }
 
   public get canExecute() { return !this.isExecuting && !this.otherBusy; }
   public dispose() { this.subscriptions.dispose(); }
 
   public async execute(...args): Promise<T> {
-    this.isExecuting = true;
+    this._isExecuting = true;
     try {
       return await this.action(...args);
     } catch (err) {
-      if (this.thrownExceptions.hasObservers) this.thrownExceptions.onNext(err);
+      if (this._thrownExceptions.observers.length > 0) this._thrownExceptions.next(err);
       else throw (err); // TODO: Unhandled exception handler!!
     } finally {
-      this.isExecuting = false;
+      this._isExecuting = false;
     }
   }
 }
 
-
-export class EditConfig extends Base {
+export class EditConfig extends ReactiveBase {
   enabled: boolean;
   changed: boolean;
   constructor() {
@@ -309,6 +323,6 @@ export class EditConfig extends Base {
   get canEdit() { return !this.enabled; }
   get canClose() { return this.enabled; }
 
-  edit = uiCommand2("Edit", async () => this.enabled = true, { isVisibleObservable: this.observeEx(x => x.canEdit) });
-  close = uiCommand2("Close", async () => this.enabled = false, { canExecuteObservable: this.observeEx(x => x.canClose) });
+  edit = uiCommand2("Edit", async () => this.enabled = true, { isVisibleObservable: this.whenAnyValue(x => x.canEdit) });
+  close = uiCommand2("Close", async () => this.enabled = false, { canExecuteObservable: this.whenAnyValue(x => x.canClose) });
 }
