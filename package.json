@@ -160,7 +160,6 @@
     "contextMenu": "git+https://github.com/sickboy/contextMenu.js.git",
     "font-awesome": "^4.6.3",
     "isomorphic-fetch": "^2.2.1",
-    "jquery": "git+https://github.com/sickboy/jquery.git#2.1.4-workaround",
     "linq4es2015": "git+https://github.com/sickboy/linq4es2015.git",
     "local-storage": "^1.4.2",
     "ms-signalr-client": "^2.2.2",

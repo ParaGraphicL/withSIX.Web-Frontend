@@ -286,7 +286,7 @@ export module MyApp {
       }
 
       // Pop Out by colorbox
-      if ($(".popgroup").length > 0) $(".popgroup").colorbox({ rel: 'group2', transition: "fade" });
+      //if ($(".popgroup").length > 0) $(".popgroup").colorbox({ rel: 'group2', transition: "fade" });
 
       $('a[rel=external]').attr('target', '_blank');
 

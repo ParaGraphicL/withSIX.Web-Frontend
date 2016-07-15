@@ -231,6 +231,9 @@ module.exports = function(grunt) {
         },
         dependencies: {
           'angular': ['jquery'],
+          'angular-bootstrap': ['bootstrap-sass-xl'],
+          'angular-strap': ['bootstrap-sass-xl'],
+          'bootstrap-additions': ['bootstrap-sass-xl'],
           'typeahead.js': ['jquery'],
           'autofill-event': ['angular'],
           'signalr': ['jquery'],
