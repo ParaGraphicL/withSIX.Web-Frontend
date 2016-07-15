@@ -80,7 +80,7 @@ module.exports = function(grunt) {
         command: 'gulp prepare-release'
       },
       prod: {
-        command: 'npm run prod'
+        command: 'npm run build:prod'
       }
     },
 
