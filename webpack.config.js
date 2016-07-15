@@ -15,7 +15,7 @@ let config;
 
 // basic configuration:
 const title = 'withSIX';
-const baseUrl = '/';
+const baseUrl = '/dist';
 const rootDir = path.resolve();
 const srcDir = path.resolve('src');
 const outDir = path.resolve('dist');
