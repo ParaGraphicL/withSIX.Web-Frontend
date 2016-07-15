@@ -37,7 +37,7 @@ gulp.task('clean-misc', function() {
 gulp.task('clean', function(callback) {
   return runSequence(
     // 'unbundle',
-    ['clean-css', 'clean-system', 'clean-other', 'clean-misc'],
+    ['clean-css'],
     callback
   );
 });
