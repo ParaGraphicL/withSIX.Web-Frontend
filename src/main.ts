@@ -106,8 +106,9 @@ bootstrap(async (aurelia: Aurelia) => {
     if (env == Tools.Environment.Production)
       domain = "withsix.com";
     else if (env == Tools.Environment.Staging) {
-      domain = "staging.withsix.net";
-      envPiece = "-staging";
+      domain = "withsix.com";
+      //domain = "staging.withsix.net";
+      //envPiece = "-staging";
     } else {
       domain = "local.withsix.net";
       envPiece = "-dev";
