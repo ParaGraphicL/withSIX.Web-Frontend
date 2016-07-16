@@ -6,6 +6,7 @@ import {W6} from './withSIX';
 import {Toastr} from './toastr';
 import {inject} from 'aurelia-framework';
 import {PromiseCache} from 'withsix-sync-api';
+import {IRequestInfo} from '../helpers/utils/http-errors';
 
 import {BooleanResult} from './legacy/base';
 
@@ -568,7 +569,7 @@ export class W6Context {
 
   private registerEntityTypeCtor(store, ctor) { store.registerEntityTypeCtor(ctor.$name, ctor); }
 
-  handleResponseErrorStatus(requestInfo: Tools.IRequestInfo<any>, isLoggedIn: boolean) {
+  handleResponseErrorStatus(requestInfo: IRequestInfo<any>, isLoggedIn: boolean) {
     const {status} = requestInfo;
     if (status == 400) throw new Tools.ValidationError("Input not valid", requestInfo);
     if (status == 401) throw isLoggedIn ? new Tools.LoginNoLongerValid("The login is no longer valid, please retry after logging in again", requestInfo) : new Tools.RequiresLogin("The requested action requires you to be logged-in", requestInfo);
