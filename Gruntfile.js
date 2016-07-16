@@ -11,22 +11,6 @@ module.exports = function(grunt) {
         //spawn: false,
         interval: 2000
       },
-      // libs: {
-      //     files: 'src_legacy/vendor/**/*.js',
-      //     tasks: ['uglify:libs', 'shell:toast:libs']
-      // },
-      // bower_components: {
-      //     files: ['bower_components/**/*.js', 'bower.json'],
-      //     tasks: ['bower_concat', 'shell:toast:bower_components']
-      // },
-      // bower_views: {
-      //     files: 'bower_components/**/*.html',
-      //     tasks: ['ngtemplates:bower', 'bower_concat', 'shell:toast:bower_views']
-      // },
-      // bower: {
-      //     files: 'bower.json',
-      //     tasks: ['shell:bower', 'shell:toast:bower']
-      // },
       metadata: {
         files: [
           '../Libraries/SN.withSIX.UpdateBreeze.Library/bin/Release/SN.withSIX.UpdateBreeze.Library.dll'
@@ -38,17 +22,11 @@ module.exports = function(grunt) {
       _defaults: {
         bg: true
       },
-
       watchGulp: {
         cmd: 'gulp watch-only'
       }
     },
     shell: {
-      prepare: {
-        command: function() {
-          return 'gulp scripts build-system build-other'
-        }
-      },
       build_metadata: {
         // Target
         command: function() {
@@ -79,7 +57,7 @@ module.exports = function(grunt) {
       Components: {
         cwd: 'src_legacy/app',
         src: 'components/**/*.html',
-        dest: 'dist_legacy/app/components/template.js',
+        dest: 'legacy/app/components/template.js',
         options: {
           prefix: '/src_legacy/app',
           htmlmin: {
@@ -97,7 +75,7 @@ module.exports = function(grunt) {
       MyAppPlayTemplates: {
         cwd: 'src_legacy/app',
         src: 'play/**/*.html',
-        dest: 'dist_legacy/app/play/template.js',
+        dest: 'legacy/app/play/template.js',
         options: {
           prefix: '/src_legacy/app',
           htmlmin: {
@@ -115,7 +93,7 @@ module.exports = function(grunt) {
       MyAppConnectTemplates: {
         cwd: 'src_legacy/app',
         src: 'connect/**/*.html',
-        dest: 'dist_legacy/app/connect/template.js',
+        dest: 'legacy/app/connect/template.js',
         options: {
           prefix: '/src_legacy/app',
           htmlmin: {
@@ -133,7 +111,7 @@ module.exports = function(grunt) {
       MyAppAuthTemplates: {
         cwd: 'src_legacy/app',
         src: 'auth/**/*.html',
-        dest: 'dist_legacy/app/auth/template.js',
+        dest: 'legacy/app/auth/template.js',
         options: {
           prefix: '/src_legacy/app',
           htmlmin: {
@@ -151,7 +129,7 @@ module.exports = function(grunt) {
       MyAppMainTemplates: {
         cwd: 'src_legacy/app',
         src: 'main/**/*.html',
-        dest: 'dist_legacy/app/main/template.js',
+        dest: 'legacy/app/main/template.js',
         options: {
           prefix: '/src_legacy/app',
           htmlmin: {
@@ -169,7 +147,7 @@ module.exports = function(grunt) {
       MyAppKbTemplates: {
         cwd: 'src_legacy/app',
         src: 'kb/**/*.html',
-        dest: 'dist_legacy/app/kb/template.js',
+        dest: 'legacy/app/kb/template.js',
         options: {
           prefix: '/src_legacy/app',
           htmlmin: {
@@ -187,7 +165,7 @@ module.exports = function(grunt) {
       MyAppAdminTemplates: {
         cwd: 'src_legacy/app',
         src: 'admin/**/*.html',
-        dest: 'dist_legacy/app/admin/template.js',
+        dest: 'legacy/app/admin/template.js',
         options: {
           prefix: '/src_legacy/app',
           htmlmin: {
@@ -205,7 +183,7 @@ module.exports = function(grunt) {
       bower: {
         cwd: 'bower_components/angular-ui-bootstrap',
         src: 'template/**/*.html',
-        dest: 'dist_legacy/bower-template.js',
+        dest: 'legacy/bower-template.js',
         options: {
           module: 'ui.bootstrap.tabs'
         }
@@ -213,7 +191,7 @@ module.exports = function(grunt) {
     },
     bower_concat: {
       all: {
-        dest: 'dist_legacy/bower.js',
+        dest: 'legacy/bower.js',
         mainFiles: {
           'angular-ui': ['build/angular-ui.js'],
           'breezejs': ['breeze.debug.js', 'labs/breeze.angular.js', 'labs/breeze.metadata-helper.js', 'labs/breeze.directives.js', 'labs/breeze.getEntityGraph.js', 'labs/breeze.saveErrorExtensions.js'],
@@ -250,19 +228,6 @@ module.exports = function(grunt) {
         ]
       }
     },
-    // typescript: {
-    //     base: {
-    //         src: ['**/*.ts'],
-    //         //dest: 'where/you/want/your/js/files',
-    //         options: {
-    //             //module: 'amd', //or commonjs
-    //             target: 'es5', //or es3
-    //             //basePath: 'cdn',
-    //             sourceMap: false,
-    //             declaration: false,
-    //         }
-    //     }
-    // },
     uglify: {
       bower: {
         options: {
@@ -271,8 +236,8 @@ module.exports = function(grunt) {
           sourceMap: true
         },
         files: {
-          'dist_legacy/bower.min.js': [
-            'dist_legacy/bower.js', 'dist_legacy/bower-template.js'
+          'legacy/bower.min.js': [
+            'legacy/bower.js', 'legacy/bower-template.js'
           ]
         }
       },
@@ -283,9 +248,8 @@ module.exports = function(grunt) {
           sourceMap: true
         },
         files: {
-          'dist_legacy/vendor.min.js': [
-            'src_legacy/vendor/js/**/*.js' //,
-            //'node_modules/babel-polyfill/browser.js' // So that we may use the polyfill also throughout legacy code?
+          'legacy/vendor.min.js': [
+            'src_legacy/vendor/js/**/*.js'
           ]
         }
       },
@@ -296,47 +260,23 @@ module.exports = function(grunt) {
           sourceMap: true
         },
         files: {
-          // TODO: Unclusterf*ck
-          'dist_legacy/app.min.js': [
-            'dist_legacy/app/_base/**/*.js',
-            'dist_legacy/app/app.js',
-            'dist_legacy/app/*.js',
-            'dist_legacy/app/components/*.js',
-            'dist_legacy/app/components/**/*.js',
-            'dist_legacy/app/main/*.js',
-            'dist_legacy/app/main/**/*.js',
-            'dist_legacy/app/auth/*.js',
-            'dist_legacy/app/auth/**/*.js',
-            'dist_legacy/app/connect/*.js',
-            'dist_legacy/app/connect/**/*.js',
-            'dist_legacy/app/play/*.js',
-            'dist_legacy/app/play/**/*.js',
-            'dist_legacy/app/kb/*.js',
-            'dist_legacy/app/kb/**/*.js'
+          'legacy/app.min.js': [
+            'legacy/app/_base/**/*.js',
+            'legacy/app/app.js',
+            'legacy/app/*.js',
+            'legacy/app/components/*.js',
+            'legacy/app/components/**/*.js',
+            'legacy/app/main/*.js',
+            'legacy/app/main/**/*.js',
+            'legacy/app/auth/*.js',
+            'legacy/app/auth/**/*.js',
+            'legacy/app/connect/*.js',
+            'legacy/app/connect/**/*.js',
+            'legacy/app/play/*.js',
+            'legacy/app/play/**/*.js',
+            'legacy/app/kb/*.js',
+            'legacy/app/kb/**/*.js'
           ]
-        }
-      },
-      admin: {
-        options: {
-          mangle: true,
-          compress: {},
-          sourceMap: true
-        },
-        files: {
-          'dist_legacy/admin.min.js': [
-            'dist_legacy/app/admin/*.js',
-            'dist_legacy/app/admin/**/*.js'
-          ]
-        }
-      },
-      misc: {
-        options: {
-          mangle: true,
-          compress: {},
-          sourceMap: true
-        },
-        files: {
-          'dist_legacy/misc.min.js': ['dist_legacy/misc/*.js']
         }
       }
     }
@@ -346,9 +286,9 @@ module.exports = function(grunt) {
   grunt.registerTask('buildallPublish', ['buildBase', 'uglify:bower', 'ngtemplates', 'buildApp']);
   // For development
   grunt.registerTask('watchAll', ['buildall', 'bgShell:watchGulp', 'watch']);
-  grunt.registerTask('metadata', ['shell:prepare', 'shell:build_metadata'])
+  grunt.registerTask('metadata', ['shell:build_metadata'])
     // General
   grunt.registerTask('buildall', ['buildBase', 'metadata']);
   grunt.registerTask('buildBase', ['shell:bower', 'bower_concat', 'uglify:libs'])
-  grunt.registerTask('buildApp', ['uglify:app']); // 'uglify:misc', 'uglify:admin'
+  grunt.registerTask('buildApp', ['uglify:app']);
 }
