@@ -176,13 +176,13 @@
   <div app-view-segment="0" id="content"></div>
 
   <!-- REPL_HASH -->
-  <script src="/legacy/bower.min.js"></script>
-  <script src="/legacy/vendor.min.js"></script>
+  <script type="text/javascript" src="legacy/bower.min.js"></script>
+  <script type="text/javascript" src="legacy/vendor.min.js"></script>
   <!-- REPL_MAIN_JS -->
 
   <% if (webpackConfig.metadata.ENV === 'development') { %>
     <!-- Webpack Dev Server reload -->
-    <script src="/webpack-dev-server.js"></script>
+    <script type="text/javascript" src="webpack-dev-server.js"></script>
     <% } %>
 </body>
 

@@ -99,12 +99,15 @@ switch (ENV) {
 
       require('@easy-webpack/config-css')
       ({
-        filename: 'styles.css',
-
+        filename: '[name]-[contenthash].css',
         allChunks: !!ELECTRON,
         sourceMap: false
       }),
-      require('@easy-webpack/config-sass')(),
+      require('@easy-webpack/config-sass')({
+        filename: '[name]-[contenthash].css',
+        allChunks: !!ELECTRON,
+        sourceMap: false
+      }),
       require('@easy-webpack/config-json')(),
 
       require('@easy-webpack/config-fonts-and-images')(),
@@ -113,7 +116,7 @@ switch (ENV) {
       require('@easy-webpack/config-global-regenerator')(),
       require('@easy-webpack/config-generate-index-html')
       ({
-        minify: true
+        minify: true,
       }),
 
       require('@easy-webpack/config-uglify')
@@ -121,6 +124,7 @@ switch (ENV) {
         debug: false
       })
     );
+    config.metadata.cdnUrl = '/dist';
     break;
 
   case 'test':
@@ -145,11 +149,15 @@ switch (ENV) {
 
       require('@easy-webpack/config-css')
       ({
-        filename: 'styles.css',
+        filename: '[name]-[contenthash].css',
         allChunks: !!ELECTRON,
         sourceMap: false
       }),
-      require('@easy-webpack/config-sass')(),
+      require('@easy-webpack/config-sass')({
+        filename: '[name]-[contenthash].css',
+        allChunks: !!ELECTRON,
+        sourceMap: false
+      }),
       require('@easy-webpack/config-json')(),
 
       require('@easy-webpack/config-fonts-and-images')(),
@@ -181,11 +189,15 @@ switch (ENV) {
 
       require('@easy-webpack/config-css')
       ({
-        filename: 'styles.css',
+        filename: '[name].css',
         allChunks: !!ELECTRON,
-        sourceMap: false
+        sourceMap: true
       }),
-      require('@easy-webpack/config-sass')(),
+      require('@easy-webpack/config-sass')({
+        filename: '[name].css',
+        allChunks: !!ELECTRON,
+        sourceMap: true
+      }),
       require('@easy-webpack/config-json')(),
 
       require('@easy-webpack/config-fonts-and-images')(),
