@@ -2874,6 +2874,7 @@ export module Components.Dialogs {
     public execute = ['email', email => this.createDialog(ForgotPasswordDialogController, { email: email })];
   }
 
+  const terms = require("raw!../../docs/global/TermsOfService.md")
   export class OpenTermsDialogQuery extends DialogQueryBase {
     static $name = 'OpenTermsDialog';
     public execute = [
@@ -2881,7 +2882,7 @@ export module Components.Dialogs {
         templateUrl: '/src_legacy/app/components/dialogs/terms-dialog.html',
         size: 'lg',
         resolve: {
-          data: () => this.context.getMd("global/TermsOfService.md")
+          data: () => terms
         }
       })
     ];
