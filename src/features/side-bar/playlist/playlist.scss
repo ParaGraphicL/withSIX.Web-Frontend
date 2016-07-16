@@ -36,10 +36,6 @@ $status-total-width: $status-icon-width + $status-width;
   }
   //}
 }
-// workaround for utf8 issue, again
-.dummy-cls {
-  color: black;
-}
 .tab-header.playlist {
   $colorStart: $colorSixGray;
   $colorEnd: $colorSixGreen;

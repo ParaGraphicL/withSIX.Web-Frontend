@@ -1,6 +1,6 @@
-<template show.bind="showResults">
+<template>
   <require from="./finder.scss"></require>
-  <div class="finder-results">
+  <div class="finder-results" show.bind="showResults">
     <button class="pull-right naked-button ${buttonCls}" if.bind="showClose" click.delegate="close()">
       <span class="icon withSIX-icon-Window-Close"></span>
     </button>

@@ -1,5 +1,6 @@
 import {bindable} from 'aurelia-framework';
 import {IFindModel} from './finder';
+import './finder.scss';
 
 export class FinderResults {
   @bindable showTotalResults = true;
