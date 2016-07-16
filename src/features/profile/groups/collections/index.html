@@ -2,7 +2,7 @@
   <compose view="../_header.html"></compose>
 
   <card-view items.bind="group.collections" view-path="features/profile/content/" item-type="collection">
-    <template slot="prepend-items">
+    <slot-template slot="prepend-items">
       <div class.bind="cardContainerCls" if.bind="isAdmin">
         <div class="card ${cardCls} new-item">
           <header>ADD Collection</header>
@@ -10,6 +10,7 @@
             <command-button model.bind="create"></command-button>
           </div>
         </div>
-    </template>
+      </div>
+    </slot-template>
   </card-view>
 </template>

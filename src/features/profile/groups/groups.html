@@ -1,18 +1,18 @@
 <template>
   <h2>Select group</h2>
   <card-view items.bind="groups" item-type="group" view-path="features/profile/groups/">
-    <template slot="prepend-items">
+    <slot-template slot="prepend-items">
       <div class.bind="cardContainerCls">
-      <div class="card ${cardCls} new-item">
-        <div class="button">
-          <span class="new-icon withSIX-icon-Nav-Mission icon" au-target-id="4"></span>
-          <br />
-          <span class="new-title">New <b>Group</b></span>
-          <br />
-          <button click.delegate="createNewGroup()">Create</button>
+        <div class="card ${cardCls} new-item">
+          <div class="button">
+            <span class="new-icon withSIX-icon-Nav-Mission icon" au-target-id="4"></span>
+            <br />
+            <span class="new-title">New <b>Group</b></span>
+            <br />
+            <button click.delegate="createNewGroup()">Create</button>
+          </div>
         </div>
       </div>
-    </div>
-    </template>
+    </slot-template>
   </card-view>
 </template>
