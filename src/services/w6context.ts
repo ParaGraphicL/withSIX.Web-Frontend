@@ -6,6 +6,7 @@ import {W6} from './withSIX';
 import {Toastr} from './toastr';
 import {inject} from 'aurelia-framework';
 import {PromiseCache} from 'withsix-sync-api';
+import {IRequestInfo} from '../helpers/utils/http-errors';
 
 import {BooleanResult} from './legacy/base';
 
@@ -182,10 +183,6 @@ export class W6Context {
     }
   }
 
-  private handleOverrides(configOverrides) {
-    return Object.assign({ w6Request: true }, configOverrides);
-  }
-
   public getFormDataFromFiles(files) {
     var fd = new FormData();
     for (var i in files)
@@ -202,7 +199,7 @@ export class W6Context {
     var fields = [];
     for (var i = 0; i < sortOptions.fields.length; i++) {
       var field = sortOptions.fields[i];
-      if (fields.asEnumerable().contains(field))
+      if (fields.some(x => x == field))
         continue;
       fields.push(field);
       if (field == 'author')
@@ -572,7 +569,7 @@ export class W6Context {
 
   private registerEntityTypeCtor(store, ctor) { store.registerEntityTypeCtor(ctor.$name, ctor); }
 
-  handleResponseErrorStatus(requestInfo: Tools.IRequestInfo<any>, isLoggedIn: boolean) {
+  handleResponseErrorStatus(requestInfo: IRequestInfo<any>, isLoggedIn: boolean) {
     const {status} = requestInfo;
     if (status == 400) throw new Tools.ValidationError("Input not valid", requestInfo);
     if (status == 401) throw isLoggedIn ? new Tools.LoginNoLongerValid("The login is no longer valid, please retry after logging in again", requestInfo) : new Tools.RequiresLogin("The requested action requires you to be logged-in", requestInfo);

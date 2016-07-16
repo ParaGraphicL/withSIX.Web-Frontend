@@ -4,6 +4,7 @@ import { W6Context, IQueryResult } from './w6context'
 import { BasketService } from './basket-service';
 import { Toastr } from './toastr';
 import { Client } from 'withsix-sync-api';
+import { defineProperties } from '../helpers/utils/extenders';
 import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import {EventAggregator} from 'aurelia-event-aggregator';
@@ -13,7 +14,7 @@ import {UiContext} from './uicontext';
 import {GlobalErrorHandler} from './legacy/logger';
 import {Tools} from './tools';
 import {W6} from './withSIX';
-import {Container} from 'aurelia-dependency-injection';
+import {Container} from 'aurelia-framework';
 export * from 'aurelia-mediator';
 
 @inject(W6, Toastr, Router, EventAggregator)
@@ -117,7 +118,7 @@ export interface IRequireUser {
 
 export function requireUser() {
   return function(target) {
-    Tools.defineProperties(target.prototype, { $requireUser: true })
+    defineProperties(target.prototype, { $requireUser: true })
   };
 }
 

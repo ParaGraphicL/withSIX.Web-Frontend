@@ -9,6 +9,7 @@ export class FinderResults {
   @bindable selectIsExecute = false;
   @bindable buttonCls;
   @bindable showClose = true;
+  @bindable viewModel;
   get showResults() { return this.model.searchItem !== null }
 
   close() { this.model.searchItem = null; }

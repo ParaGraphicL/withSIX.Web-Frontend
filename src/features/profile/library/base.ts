@@ -26,7 +26,7 @@ export class BaseGame extends ViewModel {
     // this.typeahead = {
     //   display: x => x.packageName ? x.name + ' (' + x.packageName + ')' : x.name,
     //   substringMatcher: async (q) => this.items.asEnumerable()
-    //     .where(x => this.searchFields.asEnumerable().any(f => x[f] && x[f].containsIgnoreCase(q))).toArray(),
+    //     .filter(x => this.searchFields.some(f => x[f] && x[f].containsIgnoreCase(q))).toArray(),
     //   selector: x => x.name // uses display by default
     // }
   }

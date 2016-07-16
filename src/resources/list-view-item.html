@@ -1,8 +1,8 @@
 <template>
   <li>
-    <template replaceable part="item-template">
+    <slot name="item-template">
       <compose class="content-basketable" model.bind="item" view.bind="view" view-model="${$parent.viewPath}${item.type || $parent.itemType}"></compose>
-    </template>
+    </slot>
   </li>
   <li if.bind="w6.renderAds && showAds && $index == ads[0]">
     <ad-unit unit-id.bind="adUnitId1"></ad-unit>

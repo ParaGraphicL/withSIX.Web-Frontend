@@ -1,4 +1,5 @@
 *.log
+.awcache/
 node_modules/
 .sass-cache/
 /src/**/*.css
@@ -6,9 +7,9 @@ node_modules/
 /src/**/*.js
 /src/**/*.js.map
 /styles/*
-bower_components/
-dist/
-dist_legacy/
+/bower_components/
+/dist/
+/legacy/
 jspm_packages/
-typings/globals/
-typings/modules/
+/typings/globals/
+/typings/modules/

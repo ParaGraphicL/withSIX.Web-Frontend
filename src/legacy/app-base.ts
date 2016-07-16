@@ -7,7 +7,7 @@ import {IRootScope, ITagKey, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHa
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {HttpClient} from 'aurelia-fetch-client';
 import {ToastLogger, GlobalErrorHandler} from '../services/legacy/logger';
-import {Container} from 'aurelia-dependency-injection';
+import {Container} from 'aurelia-framework';
 
 import {BasketService} from '../services/basket-service';
 
@@ -47,7 +47,7 @@ class AppModule extends Tk.Module {
     'LocalStorageModule', 'ui.bootstrap',
     'ngCookies', 'ngAnimate', 'ngRoute', 'ngSanitize', 'remoteValidation',
     /* 'breeze.angular',  */
-    'angularMoment', 'angularSpinner', 'ngTagsInput', 'infinite-scroll', 'ngMap', 'ngDfp', 'angularFileUpload',
+    'angularMoment', 'angularSpinner', 'ngTagsInput', 'infinite-scroll', 'ngDfp', 'angularFileUpload',
     'ui.bootstrap.tpls', 'ui.bootstrap.tabs', 'dialogs.main', 'ui', 'xeditable', 'commangular', //'ngClipboard',
     'ui-rangeSlider', 'ngFileUpload2', 'checklist-model', 'route-segment', 'view-segment', 'mgcrea.ngStrap.datepicker', 'angular-redactor',
     'Components.BytesFilter', 'Components.Debounce', 'Components.Pagedown', 'Components.Fields',
@@ -57,7 +57,7 @@ class AppModule extends Tk.Module {
   ];
 
   static getModules() {
-    if (Tools.getEnvironment() != Tools.Environment.Production)
+    if (Tools.env !== Tools.Environment.Production)
       return AppModule.$modules;
 
     return AppModule.$modules.concat(['angulartics', 'angulartics.google.analytics']);
@@ -180,9 +180,9 @@ class AppModule extends Tk.Module {
             }
           };
           $rootScope.environment = w6.url.environment;
-          $rootScope.toShortId = (id) => Tools.toShortId(id);
-          $rootScope.sluggify = (str) => Tools.sluggify(str);
-          $rootScope.sluggifyEntityName = (str) => Tools.sluggifyEntityName(str);
+          $rootScope.toShortId = (id: string) => id.toShortId();
+          $rootScope.sluggify = (str: string) => str.sluggify();
+          $rootScope.sluggifyEntityName = (str: string) => str.sluggifyEntityName();
           $rootScope.dispatch = <T>(cq: string, data?) => legacyMediator.legacyRequest<T>(cq, data);
           $rootScope.request = <T>(cq, data?) => $rootScope.dispatch<T>(cq.$name, data);
           $rootScope.isInvalid = (field, ctrl) => {
@@ -226,7 +226,7 @@ class AppModule extends Tk.Module {
         }
       ]);
 
-    if (Tools.getEnvironment() == Tools.Environment.Production) {
+    if (Tools.env === Tools.Environment.Production) {
       this.app.config([
         '$analyticsProvider', $analyticsProvider => {
           $analyticsProvider.firstPageview(true); /* Records pages that don't use $state or $route */

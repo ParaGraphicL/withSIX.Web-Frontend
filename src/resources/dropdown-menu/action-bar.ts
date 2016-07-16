@@ -24,5 +24,5 @@ export class ActionBar extends ReactiveBase {
     this.updateIsVisible();
   }
   unbind() { this.subscriptions.dispose(); }
-  updateIsVisible() { this.isVisible = this.items.asEnumerable().any(x => x.isVisible); }
+  updateIsVisible() { this.isVisible = this.items.some(x => x.isVisible); }
 }

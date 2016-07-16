@@ -34,7 +34,7 @@ class GetGamesHandler extends DbClientQuery<GetGames, IGamesData> {
     try {
       let d: { games: IGame[] } = await this.client.getGames();
       d.games.forEach(x => (<any>x).state = ItemState.Uptodate)
-      return { games: this.tools.aryToMap(d.games, x => x.id) }
+      return { games: d.games.toMap(x => x.id) }
     } catch (err) {
       this.tools.Debug.warn(err);
       let ary: IGame[];
@@ -43,7 +43,7 @@ class GetGamesHandler extends DbClientQuery<GetGames, IGamesData> {
         r.games.forEach(x => (<any>x).state = ItemState.NotInstalled)
         ary = r.games;
       } else ary = [];
-      return { games: this.tools.aryToMap(ary, x => x.id) }
+      return { games: ary.toMap(x => x.id) }
     }
     // return GetGamesHandler.designTimeData(request);
   }

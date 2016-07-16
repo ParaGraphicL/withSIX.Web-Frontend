@@ -2,9 +2,8 @@
 <html six-ng-app="MyAppMain" ng-strict-di="true">
 
 <head>
-  <link rel="stylesheet" href="/styles/lib.css">
-  <link rel="stylesheet" href="/styles/fonts.css">
   <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ubuntu:500,400,300,300italic">
+
   <style>
     html,
     body {
@@ -20,7 +19,7 @@
     }
 
     #applicationLoader {
-      background-image: url('//withsix.azureedge.net/img/logo.png');
+      background-image: url('//withsix2.azureedge.net/img/logo.png');
       background-repeat: no-repeat;
       background-attachment: fixed;
       background-position: center;
@@ -145,6 +144,9 @@
     });
 
   </script>
+
+  <base href="<%- webpackConfig.metadata.baseUrl %>">
+  <!-- imported CSS are concatenated and added automatically -->
 </head>
 
 <body ng-controller="MainAppController as vm" data-status="{{ status }}">
@@ -168,17 +170,20 @@
           </div>
         </center>
       </div>
-
-      <!-- <script src="/dist_legacy/bower.min.js"></script> -->
-      <script src="/dist_legacy/bower.js"></script>
-      <script src="/dist_legacy/vendor.min.js"></script>
-      <!-- <script src="/dist_legacy/misc.min.js"></script>
-      <script src="/dist_legacy/app.min.js"></script> -->
-
-      <script src="bundle.js"></script>
     </div>
   </div>
+
   <div app-view-segment="0" id="content"></div>
+
+  <!-- REPL_HASH -->
+  <script type="text/javascript" src="legacy/bower.min.js"></script>
+  <script type="text/javascript" src="legacy/vendor.min.js"></script>
+  <!-- REPL_MAIN_JS -->
+
+  <% if (webpackConfig.metadata.ENV === 'development') { %>
+    <!-- Webpack Dev Server reload -->
+    <script type="text/javascript" src="/webpack-dev-server.js"></script>
+    <% } %>
 </body>
 
 </html>

@@ -57,7 +57,7 @@ export class DropdownMenu extends ViewModel {
       el.trigger(evt);
     });
   }
-  updateIsVisible() { this.isVisible = this.items.asEnumerable().any(x => x.isVisible); }
+  updateIsVisible() { this.isVisible = this.items.some(x => x.isVisible); }
 
   closeWithDelay() { if (this.open) setTimeout(() => this.close(), 0); }
   close() { if (this.open) (<any>this.menuTrgr).contextMenu('close', this.menu) }

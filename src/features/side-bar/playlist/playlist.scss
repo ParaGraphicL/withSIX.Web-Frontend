@@ -1,4 +1,4 @@
-@import "../../../templates/_v2.scss";
+@import "_v2";
 @import '_content';
 $barHeight: 40px;
 $basket-title-height: 40px;
@@ -35,10 +35,6 @@ $status-total-width: $status-icon-width + $status-width;
     }
   }
   //}
-}
-// workaround for utf8 issue, again
-.dummy-cls {
-  color: black;
 }
 .tab-header.playlist {
   $colorStart: $colorSixGray;
@@ -312,7 +308,9 @@ $status-total-width: $status-icon-width + $status-width;
       }
     }
     //min-height: $basket-content-height;
-    $space: 224px - $scrollBarSize;
+    $dropdown-button-width: 16px;
+    // includes margins
+    $space: 240px - $scrollBarSize;
     .basket-content {
       overflow: hidden;
       dropdown-menu {
@@ -432,9 +430,9 @@ $status-total-width: $status-icon-width + $status-width;
       .basket-content-title {
         overflow: hidden;
         $margin: 8px;
-        margin-left: 8px;
-        margin-right: 8px;
-        max-width: $space - ($margin * 2);
+        margin-left: $margin;
+        margin-right: $dropdown-button-width;
+        max-width: $space - $margin - $dropdown-button-width;
         font-size: $font-size-small;
         font-weight: $font-weight-medium;
         line-height: 1;

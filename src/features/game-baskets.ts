@@ -299,7 +299,7 @@ export class Basket extends ViewModelWithModel<IBasketCollection> {
       gameId: this.model.gameId,
       version: "0.0.1",
       forkedCollectionId: this.model.collectionId,
-      dependencies: this.model.items.asEnumerable().where(x => x.packageName ? true : false).select(x => { return { dependency: x.packageName, constraint: x.constraint } }).toArray()
+      dependencies: this.model.items.filter(x => x.packageName ? true : false).map(x => { return { dependency: x.packageName, constraint: x.constraint } })
     };
     var result = await this.dialog.open({ viewModel: CreateCollectionDialog, model: { game: { id: this.model.gameId }, model: model } });
     if (result.wasCancelled) return;

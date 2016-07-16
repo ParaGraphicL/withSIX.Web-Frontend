@@ -28,6 +28,7 @@ import {ModsHelper, Helper} from '../services/legacy/misc';
 import {ToastLogger} from '../services/legacy/logger';
 
 import {registerCommands, getFactory, skyscraperSlotSizes, rectangleSlotSizes, leaderboardSlotSizes} from './app-base';
+import {joinUri} from '../helpers/utils/url'
 
 
 export class ContentDownloads {
@@ -1755,7 +1756,7 @@ export module Play.Games {
     };
 
     private cancel = () => this.$modalInstance.close();
-    private reload = () => window.location.reload();
+    private reload = () => this.$scope.w6.reload();
 
     private ok = async () => {
       var data = this.$scope.model;
@@ -1764,14 +1765,14 @@ export module Play.Games {
           .then(result => {
             this.applyIfNeeded(() => {
               if (result.data.length == 1) {
-                var modId = Tools.toShortId(result.data[0]);
+                var modId = result.data[0].toShortId();
                 this.$modalInstance.close();
                 //var slug = <string>data.name.sluggifyEntityName();
-                this.$location.path(Tools.joinUri([this.$scope.url.play, this.model.slug, "collections", modId, "slug"])).search('landingrepo', 1);
+                this.$location.path(joinUri([this.$scope.url.play, this.model.slug, "collections", modId, "slug"])).search('landingrepo', 1);
               } else {
                 this.$scope.importResult = [];
                 for (var i = 0; i < result.data.length; i++) {
-                  this.$scope.importResult[i] = Tools.joinUri([this.$scope.url.play, this.model.slug, "collections", Tools.toShortId(result.data[i]), "slug"]);
+                  this.$scope.importResult[i] = joinUri([this.$scope.url.play, this.model.slug, "collections", result.data[i].toShortId(), "slug"]);
                 }
                 this.$scope.page = this.$newViewBaseFolder + 'add-collection-3.html';
               }
@@ -1781,10 +1782,10 @@ export module Play.Games {
       } else {
         await this.$scope.request<{ data: string }>(NewMultiImportedCollectionCommand, { data: data })
           .then(result => {
-            var modId = Tools.toShortId(result.data);
+            var modId = result.data.toShortId();
             this.$modalInstance.close();
             //var slug = <string>data.name.sluggifyEntityName();
-            this.$location.path(Tools.joinUri([this.$scope.url.play, this.model.slug, "collections", modId, "slug"])).search('landingrepo', 1);
+            this.$location.path(joinUri([this.$scope.url.play, this.model.slug, "collections", modId, "slug"])).search('landingrepo', 1);
           })
           .catch(this.httpFailed);
       }
@@ -2048,7 +2049,7 @@ export module Play.Games {
     }
 
     private cancel = () => this.$modalInstance.close();
-    private reload = () => window.location.reload();
+    private reload = () => this.$scope.w6.reload();
 
     get type() {
       if (this.$scope.model.info.type == "upload")
@@ -2096,10 +2097,10 @@ export module Play.Games {
       if (this.authorSubmission) data.author = "";
       await this.$scope.request<string>(NewModCommand, { data: data })
         .then(modId => {
-          let shortId = Tools.toShortId(modId);
+          let shortId = modId.toShortId();
           let slug = <string>data.name.sluggifyEntityName();
           this.$modalInstance.close();
-          let url = Tools.joinUri([this.$scope.url.play, this.model.slug, "mods", shortId, slug]);
+          let url = joinUri([this.$scope.url.play, this.model.slug, "mods", shortId, slug]);
           // workaround page load issue... weird!
           this.$scope.w6.navigate(url + "?landing=1");
           this.$location.path(url).search('landing', 1);
@@ -3183,8 +3184,8 @@ export module Play.Mods {
       }
     }
 
-    private cancel = () => { this.$modalInstance.close(); };
-    private reload = () => { window.location.reload(); };
+    private cancel = () => this.$modalInstance.close();
+    private reload = () => this.$scope.w6.reload();
     private showInformation = () => { this.$scope.stepOneInfo = true; };
 
     private ok = () => {
@@ -3835,7 +3836,7 @@ export module Play.Mods {
       let routeGameSlug = $routeParams.gameSlug.toLowerCase();
       let modGameSlug = model.game.slug.toLowerCase();
       if (routeGameSlug != modGameSlug && !(routeGameSlug == 'arma-3' && modGameSlug == 'arma-2')) {
-        forwardService.forward(Tools.joinUri([$scope.url.play, model.game.slug, "mods", Tools.toShortId(model.id), model.slug]));
+        forwardService.forward(joinUri([$scope.url.play, model.game.slug, "mods", model.id.toShortId(), model.slug]));
         return;
       }
 

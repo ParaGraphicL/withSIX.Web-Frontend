@@ -26,7 +26,7 @@ export class AddModsToCollections extends Dialog<IAddModsToCollections> {
   }
 
   ok = uiCommand2("Ok", async () => {
-    await new AddModsToCollectionsCommand(this.model.mods.asEnumerable().select(x => x.id).toArray(), this.selectedCollections.asEnumerable().select(x => x.id).toArray()).handle(this.mediator);
+    await new AddModsToCollectionsCommand(this.model.mods.map(x => x.id), this.selectedCollections.map(x => x.id)).handle(this.mediator);
     this.controller.ok(null);
   }, { cls: "ok" })
 
@@ -44,7 +44,7 @@ export class GetCollectionsHandler extends DbQuery<GetCollections, ICollectionsD
 
   async handle(request: GetCollections) {
     let r = await this.collectionDataService.getCollectionsByMeByGame(request.gameId, {});
-    if (request.groupId != null) r = r.asEnumerable().where(x => x.groupId == request.groupId).toArray()
+    if (request.groupId != null) r = r.filter(x => x.groupId == request.groupId)
     return { collections: r };
   }
 }

@@ -1,15 +1,14 @@
 <template>
   <compose view="../_header.html"></compose>
 
-  <card-view items.bind="group.collections" view-path="features/profile/content/" item-type="collection">
-    <template replace-part="prepend-items">
-      <div class.bind="cardContainerCls" if.bind="isAdmin">
-        <div class="card ${cardCls} new-item">
-          <header>ADD Collection</header>
-          <div class="add">
-            <command-button model.bind="create"></command-button>
-          </div>
+  <card-view card-view.ref="cv" items.bind="group.collections" view-path="features/profile/content/" item-type="collection">
+    <div class.bind="cv.cardContainerCls" if.bind="isAdmin" slot="prepend-items">
+      <div class="card ${cv.cardCls} new-item">
+        <header>ADD Collection</header>
+        <div class="add">
+          <command-button model.bind="create"></command-button>
         </div>
-    </template>
+      </div>
+    </div>
   </card-view>
 </template>

@@ -85,7 +85,7 @@ export class Permissions {
       var permissions = this.permissions[roles[i]];
       if (permissions) {
         var actions = permissions[resource];
-        if (actions && actions.asEnumerable().contains(action))
+        if (actions && actions.some(x => x == action))
           return true;
       }
     }
@@ -144,7 +144,7 @@ export module EntityExtends {
 
     get profileUrl() { return this._profileUrl || (this._profileUrl = this.slug ? BaseEntity.w6.url.getUserSlugUrl(this.slug) : null); }
 
-    isInRole(role: string): boolean { return this.roles.asEnumerable().contains(role) }
+    isInRole(role: string): boolean { return this.roles.some(x => x == role) }
     isInRoles(...roles: string[]): boolean;
     isInRoles(roles: string[]): boolean;
     isInRoles(...roles: any[]): boolean {

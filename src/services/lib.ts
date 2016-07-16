@@ -9,6 +9,7 @@ export {Rx};
 //export * from './entity-extends';
 export * from './dtos';
 export * from './w6context';
+export * from './env';
 
 export * from './legacy';
 export * from './base';
@@ -19,8 +20,6 @@ export * from './viewmodel';
 // TODO: causes weird error: BindingEngine must implement parseText :S?!()*^&
 //export * from './auth-base';
 //export * from './auth';
-import Utils from './utils';
-export {Utils};
 
 export * from './tools';
 export * from './withSIX';

@@ -83,7 +83,7 @@ export class EditContent extends ViewModel {
     if (this.timeout) { clearInterval(this.timeout); this.timeout = null; }
   }
 
-  containsDependency = (dependency: string) => this.items.asEnumerable().any(x => x.dependency.equalsIgnoreCase(dependency));
+  containsDependency = (dependency: string) => this.items.some(x => x.dependency.equalsIgnoreCase(dependency));
 
   add = (i: IFindDependency) => {
     let dependency = (i && i.packageName) || this.addContentModel.searchItem;
@@ -99,11 +99,12 @@ export class EditContent extends ViewModel {
       item.name = selectedContent.name;
       item.newlyAdded = this.addedId++;
       // TODO: Optimize: Only fetch the versions upon adding..
-      item.availableVersions = selectedContent.updates.asEnumerable()
-        .where(x => x.currentState == ProcessingState[ProcessingState.Finished])
+      item.availableVersions = selectedContent.updates
+        .filter(x => x.currentState == ProcessingState[ProcessingState.Finished])
+        .asEnumerable()
         .orderByDescending(x => x, ModsHelper.versionCompare)
-        .select(x => ModsHelper.getFullVersion(x))
-        .toArray();
+        .toArray()
+        .map(x => ModsHelper.getFullVersion(x));
     }
     this.items.unshift(item);
   }

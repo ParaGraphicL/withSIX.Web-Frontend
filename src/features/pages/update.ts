@@ -25,7 +25,7 @@ export class Update extends MainBase {
     });
 
     this.legacyMediator.legacyRequest<any[]>(GetBlogsQuery.$name, { team: false })
-      .then(x => this.model.blogPosts = x.asEnumerable().take(4).toArray());
+      .then(x => this.model.blogPosts = x.slice(0, 4));
   }
 
   get clientInfo() { return this.w6.miniClient.clientInfo; }

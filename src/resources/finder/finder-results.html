@@ -1,6 +1,6 @@
-<template show.bind="showResults">
+<template>
   <require from="./finder.scss"></require>
-  <div class="finder-results">
+  <div class="finder-results" show.bind="showResults">
     <button class="pull-right naked-button ${buttonCls}" if.bind="showClose" click.delegate="close()">
       <span class="icon withSIX-icon-Window-Close"></span>
     </button>
@@ -15,11 +15,10 @@
               <span class.bind="$parent.textCls" if.bind="$parent.text">${$parent.text}</span>
             </button>
             <div class="input-container ${item.selected ? 'included' : ''}" click.delegate="$parent.clicked(item)">
-              <template replaceable part="item">
-                <button class="text-button ${buttonCls}">
-                  <span innerHTML.bind="$parent.model.display(item) | highlight:model.searchItem"></span>
-                </button>
-              </template>
+              <button class="text-button ${buttonCls}" if.bind="!viewModel">
+                <span innerHTML.bind="$parent.model.display(item) | highlight:model.searchItem"></span>
+              </button>
+              <compose view-model.bind="viewModel" model.bind="{model: item, findModel: model}"></compose>
             </div>
           </li>
         </template>

@@ -48,21 +48,28 @@ export module MyApp {
     angular.bootstrap(document, [mod]);
   }
 
-  export function bootAngular(w6Urls: W6Urls) {
-    var promise = new Promise<void>((resolve, reject) => {
+  export async function bootAngular(w6Urls: W6Urls) {
+    await loadScript(w6Urls.getAssetUrl('legacy/app.min.js'));
+    await loadAngular("MyApp" || $('html').attr('six-ng-app'));
+  }
+
+  export function loadAngular(moduleName: string) {
+    return new Promise((r) => {
+      let myApplication = angular.module(moduleName);
+      angular.element(document).ready(() => {
+        loadApp(moduleName);
+        r();
+      });
+    })
+  }
+
+  export function loadScript(script: string) {
+    return new Promise<void>((resolve, reject) => {
       let scriptElement = document.createElement('script');
-      scriptElement.src = w6Urls.getAssetUrl('dist_legacy/app.min.js');
-      scriptElement.onload = () => {
-        let moduleName = "MyApp" || $('html').attr('six-ng-app');
-        let myApplication = angular.module(moduleName);
-        angular.element(document).ready(() => {
-          loadApp(moduleName);
-          resolve();
-        });
-      };
-      document.querySelector('head').appendChild(scriptElement);
+      scriptElement.src = script;
+      scriptElement.onload = () => resolve();
+      document.querySelector('body').appendChild(scriptElement);
     });
-    return promise;
   }
 
 
@@ -286,7 +293,7 @@ export module MyApp {
       }
 
       // Pop Out by colorbox
-      if ($(".popgroup").length > 0) $(".popgroup").colorbox({ rel: 'group2', transition: "fade" });
+      //if ($(".popgroup").length > 0) $(".popgroup").colorbox({ rel: 'group2', transition: "fade" });
 
       $('a[rel=external]').attr('target', '_blank');
 

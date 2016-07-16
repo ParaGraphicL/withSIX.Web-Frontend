@@ -1,6 +1,3 @@
-//import 'bootstrap';
-//import 'bootstrap/css/bootstrap.css!';
-
 import {inject, autoinject, Container, TaskQueue} from 'aurelia-framework';
 import {Router, RouterConfiguration, NavigationInstruction, Redirect} from 'aurelia-router';
 import {EventAggregator} from 'aurelia-event-aggregator';
@@ -20,9 +17,6 @@ import {RouteHandler, RestoreBasket, OpenCreateCollectionDialog, OpenAddModDialo
 import {Login} from './services/auth';
 import {LoginBase, LoginUpdated} from './services/auth-base';
 
-// workaround for dialogs not working
-import {Origin} from 'aurelia-metadata';
-
 import {CreateCollectionDialog} from './features/games/collections/create-collection-dialog';
 import {AddModsToCollections} from './features/games/add-mods-to-collections';
 import {EditPlaylistItem} from './features/side-bar/playlist/edit-playlist-item';
@@ -36,6 +30,8 @@ import {MessageDialog} from './features/message-dialog';
 import {Finalize} from './features/login/finalize';
 
 import {BindingSignaler} from 'aurelia-templating-resources';
+
+import {Origin} from 'aurelia-metadata';
 
 @inject(UiContext, HttpClient, Login, RouteHandler, TaskQueue, Client, BasketService, LS, ClientMissingHandler, BindingSignaler)
 export class App extends ViewModel {
@@ -85,22 +81,23 @@ export class App extends ViewModel {
     this.activateNg();
 
     var w = <any>window;
-    if (Tools.getEnvironment() >= Tools.Environment.Staging && w.api) {
+    if (Tools.env >= Tools.Environment.Staging && w.api) {
       var test = Container.instance.get(Test);
       w.test = test;
     }
 
-
     // workaround for dialogs not working
-    Origin.set(SettingsIndex, { moduleId: "features/settings/index", moduleMember: "Index" });
-    Origin.set(CreateCollectionDialog, { moduleId: "features/games/collections/create-collection-dialog", moduleMember: "CreateCollectionDialog" });
-    Origin.set(AddModsToCollections, { moduleId: "features/games/add-mods-to-collections", moduleMember: "AddModsToCollections" });
-    Origin.set(EditDependency, { moduleId: "features/profile/content/edit-dependency", moduleMember: "EditDependency" });
-    Origin.set(EditPlaylistItem, { moduleId: "features/side-bar/playlist/edit-playlist-item", moduleMember: "EditPlaylistItem" });
-    Origin.set(NewGroupDialog, { moduleId: "features/profile/groups/new-group-dialog", moduleMember: "NewGroupDialog" });
-    Origin.set(UserErrorDialog, { moduleId: "features/user-error-dialog", moduleMember: "UserErrorDialog" });
-    Origin.set(MessageDialog, { moduleId: "features/message-dialog", moduleMember: "MessageDialog" });
-    Origin.set(Finalize, { moduleId: "features/login/finalize", moduleMember: "Finalize" })
+Origin.set(SettingsIndex, { moduleId: "features/settings/index", moduleMember: "Index" });
+Origin.set(CreateCollectionDialog, { moduleId: "features/games/collections/create-collection-dialog", moduleMember: "CreateCollectionDialog" });
+Origin.set(AddModsToCollections, { moduleId: "features/games/add-mods-to-collections", moduleMember: "AddModsToCollections" });
+Origin.set(EditDependency, { moduleId: "features/profile/content/edit-dependency", moduleMember: "EditDependency" });
+Origin.set(EditPlaylistItem, { moduleId: "features/side-bar/playlist/edit-playlist-item", moduleMember: "EditPlaylistItem" });
+Origin.set(NewGroupDialog, { moduleId: "features/profile/groups/new-group-dialog", moduleMember: "NewGroupDialog" });
+Origin.set(UserErrorDialog, { moduleId: "features/user-error-dialog", moduleMember: "UserErrorDialog" });
+Origin.set(MessageDialog, { moduleId: "features/message-dialog", moduleMember: "MessageDialog" });
+Origin.set(Finalize, { moduleId: "features/login/finalize", moduleMember: "Finalize" })
+
+
 
     let isSync = window.location.search.includes('sync=1') ? true : false;
     if (isSync) { this.w6.updateSettings(x => x.hasSync = true); }
@@ -181,7 +178,7 @@ export class App extends ViewModel {
       }));
       d(userErrors.flatMap(x => x)
         .merge(this.clientWrapper.userErrorAdded.map(x => x.userError))
-        .subscribe(x => { if (!this.dialogMap.asEnumerable().contains(x.id)) this.showUserErrorDialog(x) }));
+        .subscribe(x => { if (!this.dialogMap.some(x => x == x.id)) this.showUserErrorDialog(x) }));
     });
     // TODO: this adds accept application/json, and authorize header to EVERY request. we only want to do that to actualy JSON endpoints, and definitely not to CDN!
     //this.httpClientConfig.configure();
@@ -245,7 +242,7 @@ export class App extends ViewModel {
     switch (name) {
       case 'content-deleted': { this.eventBus.publish(new ContentDeleted(data.gameId, data.id)); break; }
       case 'login': { if (!this.w6.userInfo) this.login.handleUserUpgrade(); break; }
-      case 'logout': { if (this.w6.userInfo) window.location.reload(); break; }
+      case 'logout': { if (this.w6.userInfo) this.w6.reload(); break; }
       case 'refresh-playlist': { this.basketService.refresh(); this.sideBar.refreshPlaylist(); }
     }
   }
@@ -328,7 +325,7 @@ export class App extends ViewModel {
     }
   }
 
-  refresh() { window.location.reload(); }
+  refresh() { this.w6.reload() }
 
   newAppVersionAvailable: boolean;
 
@@ -502,11 +499,11 @@ class AuthorizeStep {
 class SslStep extends AuthorizeStep {
   constructor(private routeHandler: RouteHandler, private w6: W6, login: Login, taskQueue: TaskQueue) { super(login, taskQueue); }
   run(routingContext: NavigationInstruction, next) {
-    var matches = routingContext.getAllInstructions().asEnumerable().select(x => this.routeHandler.getRouteMatch(x.fragment)).where(x => x != null).toArray();
+    var matches = routingContext.getAllInstructions().map(x => this.routeHandler.getRouteMatch(x.fragment)).filter(x => x != null);
     if (matches.length == 0) return next();
 
     let isLoggedIn = this.w6.userInfo.id ? true : false;
-    if (!isLoggedIn && matches.asEnumerable().any(x => x.auth)) {
+    if (!isLoggedIn && matches.some(x => x.auth)) {
       // We only do this here because we have also non Aurelia routes with auth requirements..
       setTimeout(() => {
         //var lastInstruction = routingContext.nextInstructions.asEnumerable().last();
@@ -526,7 +523,7 @@ class SslStep extends AuthorizeStep {
     let isHttps = window.location.protocol == "https:";
     let isPremium = this.w6.userInfo.isPremium;
     if (isHttps) {
-      if (!isPremium && matches.asEnumerable().all(x => !x.ssl)) {
+      if (!isPremium && matches.every(x => !x.ssl)) {
         // Problem: We don't know if we got redirected for premium purposes, or because of required SSL, so hm
         if (this.w6.redirected && !isLoggedIn) {
           setTimeout(() => {
@@ -541,7 +538,7 @@ class SslStep extends AuthorizeStep {
         return next.cancel(this.getRedirect(LoginBase.toHttp(isLoggedIn)));
       }
     } else {
-      let requiresSsl = matches.asEnumerable().any(x => x.ssl);
+      let requiresSsl = matches.some(x => x.ssl);
       if (isPremium || requiresSsl) {
         this.tools.Debug.log("$$$ SslStep: Using non-SSL, but is premium or page requires SSL. Switching to SSL", isPremium);
         return next.cancel(this.getRedirect(LoginBase.toHttps(isLoggedIn)));

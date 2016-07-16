@@ -44,7 +44,7 @@ export class ModHelper {
     // TODO: cache. or use id's in Helper, or cache the link between slug+game -> id??
     let q = new breeze.EntityQuery(jsonQuery).select(["id"]);
     let results = await context.queryLocallyOrServerWhenNoResults<IBreezeMod>(q);
-    return results.asEnumerable().select(x => x.id).toArray()
+    return results.map(x => x.id)
   }
 
   public static convertOnlineMod(x: IBreezeMod, game: { id: string; slug: string }, w6: W6) {

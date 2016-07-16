@@ -6,6 +6,8 @@ import {ListFactory, uiCommand2, IReactiveCommand} from './reactive';
 import {Tools} from './tools';
 import {IBreezeErrorReason, IBreezeSaveError} from './legacy/misc';
 import {ContentHelper} from './helpers';
+import {InvalidShortIdException} from '../helpers/utils/string';
+import {IHttpException, ErrorResponseBody} from '../helpers/utils/http-errors';
 
 import * as Rx from 'rxjs/Rx';
 
@@ -117,7 +119,7 @@ export class Api {
     } catch (err) { this.tools.Debug.warn("Err while converting error reason", err) }
 
     if (reason instanceof String) return [reason, 'Unknown error occurred'];
-    if (reason instanceof Tools.NotFoundException || reason instanceof Tools.InvalidShortIdException) return [reason.message, "404: The requested resource could not be found"];
+    if (reason instanceof Tools.NotFoundException || reason instanceof InvalidShortIdException) return [reason.message, "404: The requested resource could not be found"];
     if (reason instanceof Tools.HttpException) return this.handleHttpError(reason);
     if (reason instanceof Tools.RequireSslException) return [reason.message, "please wait until you are redirected", "Requires SSL"];
     if (reason instanceof Tools.RequireNonSslException) return [reason.message, "please wait until you are redirected", "Requires NO-SSL"];
@@ -145,7 +147,7 @@ export class Api {
     }
   }
 
-  handleHttpError(r: Tools.IHttpException<Tools.ErrorResponseBody>) {
+  handleHttpError(r: IHttpException<ErrorResponseBody>) {
     Tools.Debug.error('ERROR during request, Request ID: ' + r.headers['withSIX-RequestID'], r);
     let message = r.body && r.body.message || '';
     if (r instanceof Tools.ValidationError && r.modelState) angular.forEach(r.modelState, (v, k) => message += "\n" + v);

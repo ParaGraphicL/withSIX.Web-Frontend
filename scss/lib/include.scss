@@ -1,16 +1,15 @@
 @import "bootstrap"; // ../../../cdn/bower_components/bootstrap-sass-xl/assets/stylesheets/bootstrap
-@import "../../../bower_components/toastr/toastr.scss";
-@import "../../../bower_components/angular-ui/build/angular-ui";
-@import "../../../bower_components/ng-tags-input/ng-tags-input"; // what about .bootstrap?
-@import "../../../bower_components/select2/dist/css/select2"; //@import "../../../bower_components/breezejs/labs/breeze.directives";
-@import "../../../bower_components/angular-xeditable/dist/css/xeditable";
-@import "../../../bower_components/angular-rangeslider/angular.rangeSlider";
-@import "../../../bower_components/bootstrap-additions/dist/bootstrap-additions";
-@import "../../../bower_components/nvd3/nv.d3";
-@import "../../vendor/css/typeaheadjs";
-@import "../../vendor/css/breeze.directives";
-@import "../../vendor/css/redactor";
-@import "./colorbox";
+@import "../../bower_components/toastr/toastr.scss";
+@import "../../bower_components/angular-ui/build/angular-ui";
+@import "../../bower_components/ng-tags-input/ng-tags-input"; // what about .bootstrap?
+@import "../../bower_components/select2/dist/css/select2"; //@import "../../../bower_components/breezejs/labs/breeze.directives";
+@import "../../bower_components/angular-xeditable/dist/css/xeditable";
+@import "../../bower_components/angular-rangeslider/angular.rangeSlider";
+@import "../../bower_components/bootstrap-additions/dist/bootstrap-additions";
+@import "../../bower_components/nvd3/nv.d3";
+@import "../../src_legacy/vendor/css/typeaheadjs";
+@import "../../src_legacy/vendor/css/breeze.directives";
+@import "../../src_legacy/vendor/css/redactor";
 @import "./flags16";
 @import "./flags32";
 @import "./mdd-styles";

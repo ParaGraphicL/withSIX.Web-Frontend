@@ -584,10 +584,10 @@ export module Connect.Me {
       $scope.save = form => {
         if ($scope.model.emailConfirmed)
           return this.requestAndProcessResponse(SaveMeSettingsCredentialsCommand, { data: $scope.model })
-            .then((result) => $window.location.reload());
+            .then((result) => this.$scope.w6.reload());
         else
           return this.requestAndProcessResponse(SaveMeSettingsEmailCredentialsCommand, { data: $scope.model })
-            .then((result) => $window.location.reload());
+            .then((result) => this.$scope.w6.reload());
       };
 
       // TODO: Second controller
@@ -1088,7 +1088,7 @@ export module Connect.Wall {
     usersQuerySucceeded = (data) => {
       this.$scope.contacts = data.results;
     }; // TODO: Convert to CDNUrl (currently AzureCDN)
-    placeHolderAvatar = "//withsix.azureedge.net/img/avatar/noava_48.jpg";
+    placeHolderAvatar = "//withsix2.azureedge.net/img/avatar/noava_48.jpg";
 
     getPlaceHolderComment() {
       return {

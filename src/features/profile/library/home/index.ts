@@ -150,7 +150,7 @@ export class Index extends BaseGame {
   ]
 
   updatedToBasketInfo() {
-    return Array.from(this.updates.values()).asEnumerable().select(x => this.toBasketInfo(x)).toArray();
+    return Array.from(this.updates.values()).map(x => this.toBasketInfo(x));
   }
 
   toBasketInfo(content: IContent): IBasketItem {

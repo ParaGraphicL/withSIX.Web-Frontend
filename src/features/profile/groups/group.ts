@@ -25,8 +25,8 @@ export class Group extends ViewModel {
 
   activate(model) {
     this.model = model;
-    this.shortId = this.tools.toShortId(model.id);
-    this.slug = this.tools.sluggifyEntityName(model.name);
+    this.shortId = model.id.toShortId();
+    this.slug = model.name.sluggifyEntityName();
     this.subscriptions.subd(d => {
       d(this.deleteGroup);
       d(this.leaveGroup);

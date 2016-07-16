@@ -582,10 +582,10 @@ export module Components {
           var converter = new Markdown.Converter();
           return converter.makeHtml(input);
         })
-        .filter('commentfilter', () => (input: any[]) => !input ? input : input.asEnumerable().where(x => !x.replyToId).toArray())
+        .filter('commentfilter', () => (input: any[]) => !input ? input : input.filter(x => !x.replyToId))
         .filter('deletedfilter', () => (input: IBreezeModMediaItem[], mod: IBreezeMod) => {
           if (!input || input.length == 0 || mod == null) return [];
-          return input.asEnumerable().where(x => x.modId == mod.id && x.entityAspect.entityState.isDeleted()).toArray()
+          return input.filter(x => x.modId == mod.id && x.entityAspect.entityState.isDeleted())
         })
         .filter('unsafe', ['$sce', function($sce) { return $sce.trustAsHtml; }])
         .filter('monthName', [
@@ -2874,6 +2874,7 @@ export module Components.Dialogs {
     public execute = ['email', email => this.createDialog(ForgotPasswordDialogController, { email: email })];
   }
 
+  const terms = require("raw!../../docs/global/TermsOfService.md")
   export class OpenTermsDialogQuery extends DialogQueryBase {
     static $name = 'OpenTermsDialog';
     public execute = [
@@ -2881,7 +2882,7 @@ export module Components.Dialogs {
         templateUrl: '/src_legacy/app/components/dialogs/terms-dialog.html',
         size: 'lg',
         resolve: {
-          data: () => this.context.getMd("global/TermsOfService.md")
+          data: () => terms
         }
       })
     ];

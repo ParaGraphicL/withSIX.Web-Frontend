@@ -51,7 +51,6 @@ enum ContentTypes {
 export class GetStreamHandler extends DbQuery<GetStream, IStream> {
   async handle(request: GetStream) {
     let r = await this.context.getCustom<{ contentItems: any[] }>("games/" + request.gameSlug + "/stream?streamType=" + request.streamType);
-    console.log("$$$", r)
     r.contentItems.forEach(x => x.type = this.getType(x));
     return r;
   }

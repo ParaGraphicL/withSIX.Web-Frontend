@@ -1,5 +1,5 @@
 import {inject} from 'aurelia-framework';
-import {ViewModel, handlerFor, Query, VoidCommand, DbClientQuery, IGameSettingsEntry, IGameSettings} from '../../../framework';
+import {ViewModel, handlerFor, Query, VoidCommand, DbClientQuery, IGameSettingsEntry, IGameSettings, uiCommand2} from '../../../framework';
 
 export abstract class GameSettingsVM<T extends IGameSettingsBase> extends ViewModel {
   model: T;
@@ -35,8 +35,8 @@ export abstract class GameSettingsVM<T extends IGameSettingsBase> extends ViewMo
   async browseGameDirectory() { let x = await this.browseDir(this.model.gameDirectory); x ? this.model.gameDirectory = x : null }
   async browseRepoDirectory() { let x = await this.browseDir(this.model.repoDirectory); x ? this.model.repoDirectory = x : null }
   openStartupParameters() { alert("TODO"); }
+  ok = uiCommand2("Save", async () => { await this.save(); this.eventBus.publish("closeSettingsDialogOk"); }, { cls: 'ok'});
   async save() { await new SaveGameSettings<T>(this.gameId, this.model).handle(this.mediator); this.changed = false; }
-  async ok() { await this.save(); this.eventBus.publish("closeSettingsDialogOk") }
   cancel() { this.canceled = true; this.eventBus.publish("closeSettingsDialogCancel") }
 }
 

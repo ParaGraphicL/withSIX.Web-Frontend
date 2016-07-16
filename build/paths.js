@@ -5,7 +5,7 @@ var appRoot = publicRoot + 'src/';
 var appOutRoot = publicRoot + 'dist/';
 
 var legacyRoot = publicRoot + 'src_legacy/';
-var legacyOutRoot = publicRoot + 'dist_legacy/';
+var legacyOutRoot = publicRoot + 'legacy/';
 var otherMiscRoot = legacyRoot + 'misc/';
 var otherAppRoot = legacyRoot + 'app/';
 
@@ -26,12 +26,13 @@ module.exports = {
   scssGlobalWatch: legacyRoot + 'scss/**/*.scss',
   additionalPaths: [
     otherAppRoot + '**/*.html', otherAppRoot + '**/*.js', publicRoot + 'styles/**/*.css',
-    legacyOutRoot + 'vendor/**/*.js', publicRoot + 'data/**/*.json'],
+    legacyOutRoot + 'vendor/**/*.js', publicRoot + 'data/**/*.json'
+  ],
   output: appOutRoot,
   stylesOut: publicRoot + 'styles/',
   otherOutput: legacyOutRoot + 'app/',
   otherMiscOutput: legacyOutRoot + 'misc/',
-  doc:'./doc',
+  doc: './doc',
   e2eSpecsSrc: 'test/e2e/src/*.js',
   e2eSpecsDist: 'test/e2e/dist/'
 };

@@ -15,17 +15,15 @@
 			<div class="col-md-8">
 				<h3 class="row-header">Your games</h3>
 				<card-view class="your-games" items-map.bind="model.games" show-ads.bind="false" no-clearfix.one-time="true" card-columns.one-time="[2,2,2,2]" card-cls="content-basketable" view-path="features/profile/content/" item-type="game-box" class="games">
-					<template replace-part="additional-items">
-						<div class="col-sm-6 card-container">
-							<div class="card">
-								<div class="img">
-									<a href="/me/library">
-										<span class="imageholder au-target" back-img.bind="image" au-target-id="186" style="background-image: url(http://i.imgur.com/JkMOiIw.png);"></span>
-									</a>
-								</div>
+					<div class="col-sm-6 card-container" slot="additional-items">
+						<div class="card">
+							<div class="img">
+								<a href="/me/library">
+									<span class="imageholder au-target" back-img.bind="image" au-target-id="186" style="background-image: url(http://i.imgur.com/JkMOiIw.png);"></span>
+								</a>
 							</div>
 						</div>
-					</template>
+					</div>
 				</card-view>
 
 				<div if.bind="clientEnabled">
