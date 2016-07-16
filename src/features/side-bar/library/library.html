@@ -9,12 +9,7 @@
 
   <hr />
 
-  <action-bar class="main header-items" orientation="vertical" items.bind="topBarItems">
-    <slot-template slot="menu-item">
-      <span class="count ${item.count > 0 ? 'positive' : 'negative'} pull-right">${item.count == null ? '?' : item.count}</span>
-      <compose view="resources/dropdown-menu/dropdown-default-item.html"></compose>
-    </slot-template>
-  </action-bar>
+  <action-bar class="main header-items" orientation="vertical" items.bind="topBarItems"></action-bar>
 
   <hr />
 
