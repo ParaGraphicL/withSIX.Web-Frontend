@@ -32,18 +32,3 @@ import {
 initialize();
 
 require('whatwg-fetch'); // fetch polyfill
-
-import './src/helpers/extensions';
-import {
-  EnvironmentHost,
-  Environment
-} from './src/services/env';
-
-function getEnv(host) {
-  if (host.includes("staging.withsix.com")) return Environment.Staging
-  else if (host.includes("withsix.com")) return Environment.Production
-  else if (host.includes("localhost")) return Environment.Local;
-  else return Environment.Local2;
-}
-
-if (window && window.location) EnvironmentHost.setEnvironment(getEnv(window.location.host));
