@@ -25,10 +25,10 @@ if (window.location.search.startsWith("?code=")) {
 }
 
 function setupEnv() {
- if (window.location.host.includes("staging.withsix.com"))
-    Tools.setEnvironment(0);
-  else if (window.location.host.includes("withsix.com"))
+  if (window.location.host.includes("staging.withsix.com"))
     Tools.setEnvironment(1);
+  else if (window.location.host.includes("withsix.com"))
+    Tools.setEnvironment(0);
   else if (window.location.host.includes("localhost"))
     Tools.setEnvironment(2);
   else
