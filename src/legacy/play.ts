@@ -1756,7 +1756,7 @@ export module Play.Games {
     };
 
     private cancel = () => this.$modalInstance.close();
-    private reload = () => window.location.reload();
+    private reload = () => this.$scope.w6.reload();
 
     private ok = async () => {
       var data = this.$scope.model;
@@ -2049,7 +2049,7 @@ export module Play.Games {
     }
 
     private cancel = () => this.$modalInstance.close();
-    private reload = () => window.location.reload();
+    private reload = () => this.$scope.w6.reload();
 
     get type() {
       if (this.$scope.model.info.type == "upload")
@@ -3184,8 +3184,8 @@ export module Play.Mods {
       }
     }
 
-    private cancel = () => { this.$modalInstance.close(); };
-    private reload = () => { window.location.reload(); };
+    private cancel = () => this.$modalInstance.close();
+    private reload = () => this.$scope.w6.reload();
     private showInformation = () => { this.$scope.stepOneInfo = true; };
 
     private ok = () => {

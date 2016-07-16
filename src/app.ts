@@ -242,7 +242,7 @@ Origin.set(Finalize, { moduleId: "features/login/finalize", moduleMember: "Final
     switch (name) {
       case 'content-deleted': { this.eventBus.publish(new ContentDeleted(data.gameId, data.id)); break; }
       case 'login': { if (!this.w6.userInfo) this.login.handleUserUpgrade(); break; }
-      case 'logout': { if (this.w6.userInfo) window.location.reload(); break; }
+      case 'logout': { if (this.w6.userInfo) this.w6.reload(); break; }
       case 'refresh-playlist': { this.basketService.refresh(); this.sideBar.refreshPlaylist(); }
     }
   }
@@ -325,7 +325,7 @@ Origin.set(Finalize, { moduleId: "features/login/finalize", moduleMember: "Final
     }
   }
 
-  refresh() { window.location.reload(); }
+  refresh() { this.w6.reload() }
 
   newAppVersionAvailable: boolean;
 
