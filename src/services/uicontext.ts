@@ -25,7 +25,7 @@ class FeatureToggles extends ReactiveBase {
 
   private isManager = this.w6.userInfo.isManager || this.w6.userInfo.isAdmin;
   private syncFeatures = !this.w6.isClient;
-  private isTestEnvironment = this.Tools.env != this.tools.Environment.Production;
+  private isTestEnvironment = this.tools.env != this.tools.Environment.Production;
   private testingFlag = window.location.search.includes('testmode=1');
   private groupTestingFlag = window.location.search.includes('testgroupmode=1') || (!window.location.search.includes('testgroupmode=0') && this.isManager);
   private get clientInfo() { return this.w6.miniClient.clientInfo }
