@@ -1,6 +1,6 @@
 // TODO: CDN Urls for fonts, and scss images etc...
 $cacheBuster: 70;
-$cdn: '//withsix.azureedge.net';
+$cdn: '//withsix2.azureedge.net';
 @import "env.scss";
 @mixin conditional($allowed...) {
    @each $i in $allowed{

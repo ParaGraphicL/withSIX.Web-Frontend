@@ -1088,7 +1088,7 @@ export module Connect.Wall {
     usersQuerySucceeded = (data) => {
       this.$scope.contacts = data.results;
     }; // TODO: Convert to CDNUrl (currently AzureCDN)
-    placeHolderAvatar = "//withsix.azureedge.net/img/avatar/noava_48.jpg";
+    placeHolderAvatar = "//withsix2.azureedge.net/img/avatar/noava_48.jpg";
 
     getPlaceHolderComment() {
       return {
