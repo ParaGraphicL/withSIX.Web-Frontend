@@ -1,3 +1,5 @@
+import '../helpers/extensions'
+
 export enum Environment {
   Production,
   Staging,
@@ -302,3 +304,12 @@ export module DebugInner {
     run: (environment: Environment, action: () => void) => void;
   }
 }
+
+function getEnv(host) {
+  if (host.includes("staging.withsix.com")) return Environment.Staging
+  else if (host.includes("withsix.com")) return Environment.Production
+  else if (host.includes("localhost")) return Environment.Local;
+  else return Environment.Local2;
+}
+
+if (window && window.location) EnvironmentHost.setEnvironment(getEnv(window.location.host));
