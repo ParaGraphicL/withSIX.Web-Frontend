@@ -32,6 +32,8 @@ export function* entries<T>(obj: T) {
    }
 }
 
+export const includes = <T>(ary: T[], el: T) => ary.some(x => x === el);
+
 export const removeEl = <T>(ary: T[], el: T) => {
   var idx = ary.indexOf(el);
   if (idx > -1) ary.splice(idx, 1);
@@ -43,5 +45,5 @@ export const aryToMap = <K, V>(ary: V[], keyFunc: (x: V) => K) => {
   return map;
 }
 
-export const enumToMap = <K, V> (ary: Enumerable<V>, keyFunc: (x: V) => K) => 
+export const enumToMap = <K, V> (ary: Enumerable<V>, keyFunc: (x: V) => K) =>
   this.aryToMap(ary.toArray(), keyFunc); // todo use iterable instead..

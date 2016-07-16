@@ -219,7 +219,6 @@ module.exports = function(grunt) {
           'breezejs': ['breeze.debug.js', 'labs/breeze.angular.js', 'labs/breeze.metadata-helper.js', 'labs/breeze.directives.js', 'labs/breeze.getEntityGraph.js', 'labs/breeze.saveErrorExtensions.js'],
           'ng-tags-input': ['ng-tags-input.js'],
           'angular-ui-bootstrap': ['src/tabs/tabs.js'],
-          'ngmap': [''],
           'allmighty-autocomplete': ['script/autocomplete.js'],
           'ng-flags': ['src/directives/ng-flags.js'],
           'angular-rangeslider': ['angular.rangeSlider.js'],

@@ -47,7 +47,7 @@ class AppModule extends Tk.Module {
     'LocalStorageModule', 'ui.bootstrap',
     'ngCookies', 'ngAnimate', 'ngRoute', 'ngSanitize', 'remoteValidation',
     /* 'breeze.angular',  */
-    'angularMoment', 'angularSpinner', 'ngTagsInput', 'infinite-scroll', 'ngMap', 'ngDfp', 'angularFileUpload',
+    'angularMoment', 'angularSpinner', 'ngTagsInput', 'infinite-scroll', 'ngDfp', 'angularFileUpload',
     'ui.bootstrap.tpls', 'ui.bootstrap.tabs', 'dialogs.main', 'ui', 'xeditable', 'commangular', //'ngClipboard',
     'ui-rangeSlider', 'ngFileUpload2', 'checklist-model', 'route-segment', 'view-segment', 'mgcrea.ngStrap.datepicker', 'angular-redactor',
     'Components.BytesFilter', 'Components.Debounce', 'Components.Pagedown', 'Components.Fields',

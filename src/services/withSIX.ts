@@ -86,13 +86,11 @@ export class W6Urls {
   private fromSsl(host) { return host.replace(":9001", ":9000"); }
 
   private setupDomain() {
-    this.currentSite = "//" + window.location.host;
-    var host = this.domain;
-    if (window.location.port && window.location.port != "80" && window.location.port != "443")
-      host = host + ":" + window.location.port;
-
-    // TODO: localhost port variations or better go domains??
+    var host = window.location.host;
+    this.currentSite = "//" + host;
     this.url = "//" + host;
+    if (window.location.port && window.location.port != "80" && window.location.port != "443") host = host + ":" + window.location.port;
+
     this.urlSsl = "https:" + this.toSsl(this.url);
     this.urlNonSsl = "http:" + this.fromSsl(this.url);
     this.main = "";
@@ -102,19 +100,11 @@ export class W6Urls {
 
     var auth = "//auth." + this.domain;
     this.authSsl = "https:" + this.toSsl(auth);
-
-    var apiPrefix = "auth.";
-    var api = "//" + apiPrefix + this.domain;
-    this.api = "https:" + this.toSsl(api) + "/api";
-
-    var wsPrefix = this.environment == this.tools.Environment.Staging ? "api." : "api2.";
-    var ws = "//" + wsPrefix + this.domain;
-    this.ws = "https:" + this.toSsl(ws) + "/signalr";
+    this.api = this.authSsl + "/api";
+    this.ws = this.authSsl + "/signalr";
 
     this.cdn = this.url;
-    if (window.assetHash && window.assetHash["cdn"])
-      this.cdn = window.assetHash["cdn"];
-
+    if (window.assetHash && window.assetHash["cdn"]) this.cdn = window.assetHash["cdn"];
   }
 
   public getUserUrl = (user: any): string => { return this.getUserSlugUrl(user.slug); };

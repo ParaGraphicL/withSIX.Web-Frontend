@@ -182,10 +182,6 @@ export class W6Context {
     }
   }
 
-  private handleOverrides(configOverrides) {
-    return Object.assign({ w6Request: true }, configOverrides);
-  }
-
   public getFormDataFromFiles(files) {
     var fd = new FormData();
     for (var i in files)
