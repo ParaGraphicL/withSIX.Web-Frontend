@@ -5,11 +5,9 @@
     <require from="./playlist/playlist.scss"></require>
 
     <tab-view tab-view.ref="tabView" tabs.bind="tabs" selected-tab.bind="selectedTab" render-view="">
-      <slot-template slot="middle">
-        <div id="quick-actions" if.bind="quickActionsEnabled">
-          <compose view-model="./quick-actions/quick-actions"></compose>
-        </div>
-      </slot-template>
+      <div id="quick-actions" if.bind="quickActionsEnabled" slot="middle">
+        <compose view-model="./quick-actions/quick-actions"></compose>
+      </div>
       <div id="client-logo" slot="end">
         <button command.bind="openClientSettings">
           <!-- div or it won't spin -->
