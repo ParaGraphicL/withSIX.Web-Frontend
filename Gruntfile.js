@@ -233,7 +233,7 @@ module.exports = function(grunt) {
         options: {
           mangle: true,
           compress: false, // d3 incompatibility
-          sourceMap: true
+          sourceMap: false
         },
         files: {
           'legacy/bower.min.js': [
@@ -245,7 +245,7 @@ module.exports = function(grunt) {
         options: {
           mangle: true,
           compress: false, // d3 incompatibility
-          sourceMap: true
+          sourceMap: false
         },
         files: {
           'legacy/vendor.min.js': [
@@ -257,7 +257,7 @@ module.exports = function(grunt) {
         options: {
           mangle: true,
           compress: {},
-          sourceMap: true
+          sourceMap: false
         },
         files: {
           'legacy/app.min.js': [

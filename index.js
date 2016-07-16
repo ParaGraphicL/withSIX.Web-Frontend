@@ -1,10 +1,12 @@
 // we want font-awesome to load as soon as possible to show the fa-spinner
 //import './styles/styles.css';
 //import 'bootstrap';
-//import 'bootstrap/css/bootstrap.css!';
+//import 'bootstrap/css/bootstrap.css';
 import 'font-awesome/css/font-awesome.css';
 import './scss/fonts.scss';
 import './scss/lib.scss';
+import './scss/main.scss';
+import './scss/legacy.scss';
 
 //var Promise = require('bluebird'); // Promise polyfill for IE11
 import * as Bluebird from 'bluebird';

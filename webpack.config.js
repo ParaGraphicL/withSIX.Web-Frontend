@@ -15,7 +15,7 @@ let config;
 
 // basic configuration:
 const title = 'withSIX';
-const baseUrl = '/dist';
+const baseUrl = '/';
 const rootDir = path.resolve();
 const srcDir = path.resolve('src');
 const outDir = path.resolve('dist');
@@ -100,14 +100,11 @@ switch (ENV) {
       require('@easy-webpack/config-css')
       ({
         filename: 'styles.css',
-        extractText: false, // TODO!
 
         allChunks: !!ELECTRON,
         sourceMap: false
       }),
-      require('@easy-webpack/config-sass')({
-        extractText: false // TODO
-      }),
+      require('@easy-webpack/config-sass')(),
       require('@easy-webpack/config-json')(),
 
       require('@easy-webpack/config-fonts-and-images')(),
@@ -149,13 +146,10 @@ switch (ENV) {
       require('@easy-webpack/config-css')
       ({
         filename: 'styles.css',
-        extractText: false, // TODO!
         allChunks: !!ELECTRON,
         sourceMap: false
       }),
-      require('@easy-webpack/config-sass')({
-        extractText: false // TODO
-      }),
+      require('@easy-webpack/config-sass')(),
       require('@easy-webpack/config-json')(),
 
       require('@easy-webpack/config-fonts-and-images')(),
@@ -188,13 +182,10 @@ switch (ENV) {
       require('@easy-webpack/config-css')
       ({
         filename: 'styles.css',
-        extractText: false, // TODO!
         allChunks: !!ELECTRON,
         sourceMap: false
       }),
-      require('@easy-webpack/config-sass')({
-        extractText: false // TODO
-      }),
+      require('@easy-webpack/config-sass')(),
       require('@easy-webpack/config-json')(),
 
       require('@easy-webpack/config-fonts-and-images')(),

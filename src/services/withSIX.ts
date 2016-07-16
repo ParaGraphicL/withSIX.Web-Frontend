@@ -150,7 +150,7 @@ export class W6Urls {
   // TODO: Convert to CDNUrl (currently AzureCDN)
   private getGravatarUrl(model: IAvatarInfo, size?) {
     return "//www.gravatar.com/avatar/" + model.emailMd5 +
-      "?size=" + size + "&amp;d=%2f%2fwithsix.azureedge.net%2fimg%2favatar%2fnoava_" + size + ".jpg";
+      "?size=" + size + "&amp;d=%2f%2fwithsix2.azureedge.net%2fimg%2favatar%2fnoava_" + size + ".jpg";
   }
 
   // TODO: Date.parse seems to be inaccurate...
