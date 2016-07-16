@@ -21,7 +21,7 @@ gulp.task('build-global-scss', function() {
       sourceMap: true,
       sourceMapEmbed: false,
       outputStyle: 'compressed',
-      includePaths: ['src_legacy/scss/inc', 'bower_components/compass-mixins/lib', 'bower_components/bootstrap-sass-xl/assets/stylesheets']
+      includePaths: ['scss/inc', 'bower_components/compass-mixins/lib', 'bower_components/bootstrap-sass-xl/assets/stylesheets']
     }).on('error', sass.logError))
     .pipe(sourcemaps.write('./'))
     .pipe(gulp.dest(paths.stylesOut));

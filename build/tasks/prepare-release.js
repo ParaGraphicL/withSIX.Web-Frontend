@@ -33,7 +33,7 @@ gulp.task('changelog', function(callback) {
 // calls the listed sequence of tasks in order
 gulp.task('prepare-release', function(callback) {
   return runSequence(
-    'build',
+    //'build',
     //    'lint',
     'bump-version',
     'changelog',
