@@ -56,7 +56,7 @@ export class ToastLogger {
 
 //const LE = <any>require('le_js/product/le.min');
 declare var LE: { init; error; log; info; warn; debug; trace };
-LE.init(Tools.getEnvironment() == Tools.Environment.Production ? '3a2f5219-696a-4498-92b5-0fe5307f8103' : '79397c51-5b4d-4a47-8ef5-4fce44cdea00');
+LE.init(Tools.env === Tools.Environment.Production ? '3a2f5219-696a-4498-92b5-0fe5307f8103' : '79397c51-5b4d-4a47-8ef5-4fce44cdea00');
 
 // TODO: https://github.com/aurelia/framework/issues/174
 // https://www.npmjs.com/package/aurelia-rollbar
