@@ -24,12 +24,10 @@ if (window.location.search.startsWith("?code=")) {
   throw new Error("Window was used for auth code handling");
 }
 
-
-
 function setupEnv() {
-  if (window.location.host.includes("withsix.com"))
+ if (window.location.host.includes("staging.withsix.com"))
     Tools.setEnvironment(0);
-  else if (window.location.host.includes("staging.withsix.net"))
+  else if (window.location.host.includes("withsix.com"))
     Tools.setEnvironment(1);
   else if (window.location.host.includes("localhost"))
     Tools.setEnvironment(2);
@@ -38,7 +36,6 @@ function setupEnv() {
 }
 
 if (window && window.location) setupEnv();
-
 
 bootstrap(async (aurelia: Aurelia) => {
   Tools.Debug.log("AURELIA: configuring aurelia");
