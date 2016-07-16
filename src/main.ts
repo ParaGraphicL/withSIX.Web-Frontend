@@ -24,19 +24,6 @@ if (window.location.search.startsWith("?code=")) {
   throw new Error("Window was used for auth code handling");
 }
 
-function setupEnv() {
-  if (window.location.host.includes("staging.withsix.com"))
-    Tools.setEnvironment(Tools.Environment.Staging);
-  else if (window.location.host.includes("withsix.com"))
-    Tools.setEnvironment(Tools.Environment.Production);
-  else if (window.location.host.includes("localhost"))
-    Tools.setEnvironment(Tools.Environment.Local);
-  else
-    Tools.setEnvironment(Tools.Environment.Local2);
-}
-
-if (window && window.location) setupEnv();
-
 bootstrap(async (aurelia: Aurelia) => {
   Tools.Debug.log("AURELIA: configuring aurelia");
 
@@ -93,7 +80,7 @@ bootstrap(async (aurelia: Aurelia) => {
       //.plugin('aurelia-animator-velocity')
       .plugin('aurelia-validation')
       .plugin('aurelia-computed', { // install the plugin
-        //enableLogging: Tools.getEnvironment() != Tools.Environment.Production // enable debug logging to see aurelia-computed's observability messages.
+        //enableLogging: Tools.env != Tools.Environment.Production // enable debug logging to see aurelia-computed's observability messages.
       })
       .plugin('aurelia-dialog', config => {
         config.useDefaults();
@@ -105,15 +92,15 @@ bootstrap(async (aurelia: Aurelia) => {
       .feature('resources')
       .feature('features');
 
-    if (Tools.getEnvironment() != Environment.Production) {
+    if (Tools.env != Environment.Production) {
       aurelia.use.developmentLogging();
-      //LogManager.setLevel(Tools.getEnvironment() != Tools.Environment.Production ? LogManager.logLevel.debug : LogManager.logLevel.warn);
+      //LogManager.setLevel(Tools.env != Tools.Environment.Production ? LogManager.logLevel.debug : LogManager.logLevel.warn);
     }
     if (useRouter) aurelia.use.router();
   }
 
   function createW6Urls(site: string) {
-    var env = Tools.getEnvironment();
+    var env = Tools.env;
     var domain = window.location.host;
     var envPiece = "";
     if (env == Environment.Production) {
@@ -130,7 +117,7 @@ bootstrap(async (aurelia: Aurelia) => {
     var uc = "withsix-usercontent";
 
     return new W6Urls({
-      environment: Tools.getEnvironment(),
+      environment: Tools.env,
       domain: domain,
       site: site,
       cdn: "",

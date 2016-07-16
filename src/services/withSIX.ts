@@ -80,7 +80,7 @@ export class W6Urls {
 
   get tools() { return Tools }
 
-  environment = Tools.getEnvironment();
+  environment = Tools.env;
 
   private toSsl(host) { return host.replace(":9000", ":9001"); }
   private fromSsl(host) { return host.replace(":9001", ":9000"); }

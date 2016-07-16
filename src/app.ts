@@ -81,7 +81,7 @@ export class App extends ViewModel {
     this.activateNg();
 
     var w = <any>window;
-    if (Tools.getEnvironment() >= Tools.Environment.Staging && w.api) {
+    if (Tools.env >= Tools.Environment.Staging && w.api) {
       var test = Container.instance.get(Test);
       w.test = test;
     }

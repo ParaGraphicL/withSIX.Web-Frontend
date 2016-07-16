@@ -18,6 +18,9 @@ export module Tools {
   export const cleanupHash = cHash;
   export const cleanupSearch = cSearch;
   export const Environment = Env;
+  export var Debug = EnvironmentHost.debug;
+  export var debug = false;
+  export var env = EnvironmentHost.env;
 
   export const createHttpError = (name: string, proto = Error.prototype): HttpErrorConstructor<any> => {
     var f = function(message: string, requestInfo: IRequestInfo<any>) {
@@ -257,15 +260,4 @@ export module Tools {
   export class KeyCodes {
     public static enter = 13;
   }
-
-
-  export var Debug: DebugInner.IDebug = new DebugBase();
-  export var debug = false;
-
-  export var getEnvironment = (): Environment => EnvironmentHost.env;
-  export var setEnvironment = (env: Environment) => {
-    EnvironmentHost.env = env;
-    debug = env == Environment.Local || env == Environment.Local2;
-    Debug.setLoggingLevel(env == Environment.Production ? LogLevel.info : LogLevel.debug);
-  };
 }
