@@ -57,7 +57,7 @@ class AppModule extends Tk.Module {
   ];
 
   static getModules() {
-    if (Tools.getEnvironment() != Tools.Environment.Production)
+    if (Tools.env !== Tools.Environment.Production)
       return AppModule.$modules;
 
     return AppModule.$modules.concat(['angulartics', 'angulartics.google.analytics']);
@@ -226,7 +226,7 @@ class AppModule extends Tk.Module {
         }
       ]);
 
-    if (Tools.getEnvironment() == Tools.Environment.Production) {
+    if (Tools.env === Tools.Environment.Production) {
       this.app.config([
         '$analyticsProvider', $analyticsProvider => {
           $analyticsProvider.firstPageview(true); /* Records pages that don't use $state or $route */
