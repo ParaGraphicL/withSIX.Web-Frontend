@@ -21,15 +21,10 @@ export class EnvironmentHost {
   public static env: Environment = Environment.Production;
 }
 
-
 export class _DebugBase {
-  public setLoggingLevel = (logLevel: LogLevel) => {
-    _DebugBase._logLevel = logLevel;
-  };
-  public getLoggingLevel = () => {
-    return _DebugBase._logLevel;
-  };
-  static _logLevel: LogLevel = LogLevel.debug;
+  public setLoggingLevel = (logLevel: LogLevel) => _DebugBase._logLevel = logLevel;
+  public getLoggingLevel = () => _DebugBase._logLevel;
+  static _logLevel: LogLevel = LogLevel.info;
 
   objectName: string = null;
 
