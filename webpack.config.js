@@ -257,7 +257,7 @@ config.module.loaders.push(...[
 ])
 
 config.sassLoader = {
-  includePaths: ['src_legacy/scss/inc',
+  includePaths: ['scss/inc',
     'bower_components/compass-mixins/lib',
     'bower_components/bootstrap-sass-xl/assets/stylesheets'
   ]

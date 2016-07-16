@@ -45,5 +45,4 @@ export const aryToMap = <K, V>(ary: V[], keyFunc: (x: V) => K) => {
   return map;
 }
 
-export const enumToMap = <K, V> (ary: Enumerable<V>, keyFunc: (x: V) => K) =>
-  this.aryToMap(ary.toArray(), keyFunc); // todo use iterable instead..
+export const enumToMap = <K, V> (ary: Enumerable<V>, keyFunc: (x: V) => K) => aryToMap(ary.toArray(), keyFunc); // todo use iterable instead..
