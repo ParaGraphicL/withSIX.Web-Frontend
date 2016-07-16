@@ -11,22 +11,6 @@ module.exports = function(grunt) {
         //spawn: false,
         interval: 2000
       },
-      // libs: {
-      //     files: 'src_legacy/vendor/**/*.js',
-      //     tasks: ['uglify:libs', 'shell:toast:libs']
-      // },
-      // bower_components: {
-      //     files: ['bower_components/**/*.js', 'bower.json'],
-      //     tasks: ['bower_concat', 'shell:toast:bower_components']
-      // },
-      // bower_views: {
-      //     files: 'bower_components/**/*.html',
-      //     tasks: ['ngtemplates:bower', 'bower_concat', 'shell:toast:bower_views']
-      // },
-      // bower: {
-      //     files: 'bower.json',
-      //     tasks: ['shell:bower', 'shell:toast:bower']
-      // },
       metadata: {
         files: [
           '../Libraries/SN.withSIX.UpdateBreeze.Library/bin/Release/SN.withSIX.UpdateBreeze.Library.dll'
@@ -38,17 +22,11 @@ module.exports = function(grunt) {
       _defaults: {
         bg: true
       },
-
       watchGulp: {
         cmd: 'gulp watch-only'
       }
     },
     shell: {
-      prepare: {
-        command: function() {
-          return 'gulp scripts build-system build-other'
-        }
-      },
       build_metadata: {
         // Target
         command: function() {
@@ -250,19 +228,6 @@ module.exports = function(grunt) {
         ]
       }
     },
-    // typescript: {
-    //     base: {
-    //         src: ['**/*.ts'],
-    //         //dest: 'where/you/want/your/js/files',
-    //         options: {
-    //             //module: 'amd', //or commonjs
-    //             target: 'es5', //or es3
-    //             //basePath: 'cdn',
-    //             sourceMap: false,
-    //             declaration: false,
-    //         }
-    //     }
-    // },
     uglify: {
       bower: {
         options: {
@@ -284,8 +249,7 @@ module.exports = function(grunt) {
         },
         files: {
           'dist_legacy/vendor.min.js': [
-            'src_legacy/vendor/js/**/*.js' //,
-            //'node_modules/babel-polyfill/browser.js' // So that we may use the polyfill also throughout legacy code?
+            'src_legacy/vendor/js/**/*.js'
           ]
         }
       },
@@ -296,7 +260,6 @@ module.exports = function(grunt) {
           sourceMap: true
         },
         files: {
-          // TODO: Unclusterf*ck
           'dist_legacy/app.min.js': [
             'dist_legacy/app/_base/**/*.js',
             'dist_legacy/app/app.js',
@@ -315,29 +278,6 @@ module.exports = function(grunt) {
             'dist_legacy/app/kb/**/*.js'
           ]
         }
-      },
-      admin: {
-        options: {
-          mangle: true,
-          compress: {},
-          sourceMap: true
-        },
-        files: {
-          'dist_legacy/admin.min.js': [
-            'dist_legacy/app/admin/*.js',
-            'dist_legacy/app/admin/**/*.js'
-          ]
-        }
-      },
-      misc: {
-        options: {
-          mangle: true,
-          compress: {},
-          sourceMap: true
-        },
-        files: {
-          'dist_legacy/misc.min.js': ['dist_legacy/misc/*.js']
-        }
       }
     }
   });
@@ -346,9 +286,9 @@ module.exports = function(grunt) {
   grunt.registerTask('buildallPublish', ['buildBase', 'uglify:bower', 'ngtemplates', 'buildApp']);
   // For development
   grunt.registerTask('watchAll', ['buildall', 'bgShell:watchGulp', 'watch']);
-  grunt.registerTask('metadata', ['shell:prepare', 'shell:build_metadata'])
+  grunt.registerTask('metadata', ['shell:build_metadata'])
     // General
   grunt.registerTask('buildall', ['buildBase', 'metadata']);
   grunt.registerTask('buildBase', ['shell:bower', 'bower_concat', 'uglify:libs'])
-  grunt.registerTask('buildApp', ['uglify:app']); // 'uglify:misc', 'uglify:admin'
+  grunt.registerTask('buildApp', ['uglify:app']);
 }
