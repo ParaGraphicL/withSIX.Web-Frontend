@@ -19,11 +19,16 @@ export enum LogLevel {
 
 export class EnvironmentHost {
   public static env: Environment = Environment.Production;
+  private static set = false;
   public static setEnvironment = (env: Environment) => {
+    if (EnvironmentHost.set) throw new Error("The environment has already been configured");
     EnvironmentHost.env = env;
-    EnvironmentHost.debug.setLoggingLevel(env == Environment.Production ? LogLevel.info : LogLevel.debug);
+    let debug = new DebugBase();
+    debug.setLoggingLevel(env == Environment.Production ? LogLevel.info : LogLevel.debug);
+    EnvironmentHost.debug = debug;
+    EnvironmentHost.set = true;
   };
-  public static debug: DebugInner.IDebug = new DebugBase();
+  public static debug: DebugInner.IDebug
 }
 
 export class _DebugBase {
