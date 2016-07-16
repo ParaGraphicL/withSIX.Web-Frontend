@@ -2,14 +2,12 @@
   <compose view="../_header.html"></compose>
 
   <card-view items.bind="group.mods" view-path="features/profile/content/" item-type="mod">
-    <template slot="prepend-items">
-      <div class.bind="cardContainerCls" if.bind="isAdmin">
-        <div class="card ${cardCls} new-item">
-          <header>ADD Mod</header>
-          <div class="add">
-            <command-button model.bind="create"></command-button>
-          </div>
+    <div class.bind="cv.cardContainerCls" if.bind="isAdmin" card-view.ref="cv">
+      <div class="card ${cv.cardCls} new-item">
+        <header>ADD Mod</header>
+        <div class="add">
+          <command-button model.bind="create"></command-button>
         </div>
-    </template>
+      </div>
   </card-view>
 </template>

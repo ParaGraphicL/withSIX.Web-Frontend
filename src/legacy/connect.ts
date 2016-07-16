@@ -584,10 +584,10 @@ export module Connect.Me {
       $scope.save = form => {
         if ($scope.model.emailConfirmed)
           return this.requestAndProcessResponse(SaveMeSettingsCredentialsCommand, { data: $scope.model })
-            .then((result) => $window.location.reload());
+            .then((result) => this.$scope.w6.reload());
         else
           return this.requestAndProcessResponse(SaveMeSettingsEmailCredentialsCommand, { data: $scope.model })
-            .then((result) => $window.location.reload());
+            .then((result) => this.$scope.w6.reload());
       };
 
       // TODO: Second controller

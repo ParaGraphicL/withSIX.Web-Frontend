@@ -33,6 +33,7 @@ export class Library extends ViewModelWithModel<ITab> {
     let openCollections = new MenuItem(this.openCollections);
     this.topBarItems.push(openCollections);
     let openUpdates = new MenuItem(this.openUpdates);
+    openMods.count = null; openMissions.count = null; openUpdates.count = null; // so that we display ? in the ui
     this.topBarItems.push(openUpdates);
 
     this.subscriptions.subd(d => {

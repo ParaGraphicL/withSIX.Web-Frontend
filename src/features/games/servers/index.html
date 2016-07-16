@@ -9,9 +9,9 @@
     </table> -->
     <div class="tile">
       <virtual-list items.bind="model.addresses">
-        <template slot="item-template">
+        <slot-template slot="item-template">
           <compose view-model="./server-item" model.bind="item"></compose>
-        </template>
+        </slot-template>
       </virtual-list>
     </div>
   </div>

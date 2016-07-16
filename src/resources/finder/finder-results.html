@@ -15,11 +15,10 @@
               <span class.bind="$parent.textCls" if.bind="$parent.text">${$parent.text}</span>
             </button>
             <div class="input-container ${item.selected ? 'included' : ''}" click.delegate="$parent.clicked(item)">
-              <slot name="item">
-                <button class="text-button ${buttonCls}">
-                  <span innerHTML.bind="$parent.model.display(item) | highlight:model.searchItem"></span>
-                </button>
-              </slot>
+              <button class="text-button ${buttonCls}" if.bind="!viewModel">
+                <span innerHTML.bind="$parent.model.display(item) | highlight:model.searchItem"></span>
+              </button>
+              <compose view-model.bind="viewModel" model.bind="{model: item, findModel: model}"></compose>
             </div>
           </li>
         </template>

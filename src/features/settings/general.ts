@@ -36,10 +36,9 @@ export class General extends ViewModel {
     await super.deactivate();
   }
 
-  async save() { await new SaveGeneralSettings(this.model).handle(this.mediator) }
+  async save() { await new SaveGeneralSettings(this.model).handle(this.mediator);  this.changed = false;  }
 
-  // TODO: command
-  async ok() { await this.save(); this.eventBus.publish("closeSettingsDialogOk"); this.changed = false; }
+  ok = uiCommand2("Save", async () => { await this.save(); this.eventBus.publish("closeSettingsDialogOk") }, { cls: 'ok'});
   cancel() { this.canceled = true; this.eventBus.publish("closeSettingsDialogCancel") }
 
   get isExtensionInstalled() { return this.w6.miniClient.clientInfo && this.w6.miniClient.clientInfo.extensionInstalled }
