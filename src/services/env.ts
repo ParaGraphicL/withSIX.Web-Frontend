@@ -19,6 +19,11 @@ export enum LogLevel {
 
 export class EnvironmentHost {
   public static env: Environment = Environment.Production;
+  public static setEnvironment = (env: Environment) => {
+    EnvironmentHost.env = env;
+    EnvironmentHost.debug.setLoggingLevel(env == Environment.Production ? LogLevel.info : LogLevel.debug);
+  };
+  public static debug: DebugInner.IDebug = new DebugBase();
 }
 
 export class _DebugBase {

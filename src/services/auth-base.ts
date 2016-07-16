@@ -15,7 +15,7 @@ export var AbortError = createError('AbortError');
 
 @inject(HttpClient, FetchClient, W6Urls, EventAggregator, LS)
 export class LoginBase {
-  shouldLog = (Tools.getEnvironment() > Tools.Environment.Production);
+  shouldLog = (Tools.env > Tools.Environment.Production);
 
   get tools() { return Tools; }
   static refreshToken = 'aurelia_refreshToken';
