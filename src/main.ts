@@ -26,13 +26,13 @@ if (window.location.search.startsWith("?code=")) {
 
 function setupEnv() {
   if (window.location.host.includes("staging.withsix.com"))
-    Tools.setEnvironment(1);
+    Tools.setEnvironment(Tools.Environment.Staging);
   else if (window.location.host.includes("withsix.com"))
-    Tools.setEnvironment(0);
+    Tools.setEnvironment(Tools.Environment.Production);
   else if (window.location.host.includes("localhost"))
-    Tools.setEnvironment(2);
+    Tools.setEnvironment(Tools.Environment.Local);
   else
-    Tools.setEnvironment(3);
+    Tools.setEnvironment(Tools.Environment.Local2);
 }
 
 if (window && window.location) setupEnv();
