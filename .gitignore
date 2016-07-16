@@ -9,7 +9,7 @@ node_modules/
 /styles/*
 bower_components/
 dist/
-dist_legacy/
+legacy/
 jspm_packages/
 typings/globals/
 typings/modules/

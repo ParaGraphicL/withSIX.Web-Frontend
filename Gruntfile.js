@@ -57,7 +57,7 @@ module.exports = function(grunt) {
       Components: {
         cwd: 'src_legacy/app',
         src: 'components/**/*.html',
-        dest: 'dist_legacy/app/components/template.js',
+        dest: 'legacy/app/components/template.js',
         options: {
           prefix: '/src_legacy/app',
           htmlmin: {
@@ -75,7 +75,7 @@ module.exports = function(grunt) {
       MyAppPlayTemplates: {
         cwd: 'src_legacy/app',
         src: 'play/**/*.html',
-        dest: 'dist_legacy/app/play/template.js',
+        dest: 'legacy/app/play/template.js',
         options: {
           prefix: '/src_legacy/app',
           htmlmin: {
@@ -93,7 +93,7 @@ module.exports = function(grunt) {
       MyAppConnectTemplates: {
         cwd: 'src_legacy/app',
         src: 'connect/**/*.html',
-        dest: 'dist_legacy/app/connect/template.js',
+        dest: 'legacy/app/connect/template.js',
         options: {
           prefix: '/src_legacy/app',
           htmlmin: {
@@ -111,7 +111,7 @@ module.exports = function(grunt) {
       MyAppAuthTemplates: {
         cwd: 'src_legacy/app',
         src: 'auth/**/*.html',
-        dest: 'dist_legacy/app/auth/template.js',
+        dest: 'legacy/app/auth/template.js',
         options: {
           prefix: '/src_legacy/app',
           htmlmin: {
@@ -129,7 +129,7 @@ module.exports = function(grunt) {
       MyAppMainTemplates: {
         cwd: 'src_legacy/app',
         src: 'main/**/*.html',
-        dest: 'dist_legacy/app/main/template.js',
+        dest: 'legacy/app/main/template.js',
         options: {
           prefix: '/src_legacy/app',
           htmlmin: {
@@ -147,7 +147,7 @@ module.exports = function(grunt) {
       MyAppKbTemplates: {
         cwd: 'src_legacy/app',
         src: 'kb/**/*.html',
-        dest: 'dist_legacy/app/kb/template.js',
+        dest: 'legacy/app/kb/template.js',
         options: {
           prefix: '/src_legacy/app',
           htmlmin: {
@@ -165,7 +165,7 @@ module.exports = function(grunt) {
       MyAppAdminTemplates: {
         cwd: 'src_legacy/app',
         src: 'admin/**/*.html',
-        dest: 'dist_legacy/app/admin/template.js',
+        dest: 'legacy/app/admin/template.js',
         options: {
           prefix: '/src_legacy/app',
           htmlmin: {
@@ -183,7 +183,7 @@ module.exports = function(grunt) {
       bower: {
         cwd: 'bower_components/angular-ui-bootstrap',
         src: 'template/**/*.html',
-        dest: 'dist_legacy/bower-template.js',
+        dest: 'legacy/bower-template.js',
         options: {
           module: 'ui.bootstrap.tabs'
         }
@@ -191,7 +191,7 @@ module.exports = function(grunt) {
     },
     bower_concat: {
       all: {
-        dest: 'dist_legacy/bower.js',
+        dest: 'legacy/bower.js',
         mainFiles: {
           'angular-ui': ['build/angular-ui.js'],
           'breezejs': ['breeze.debug.js', 'labs/breeze.angular.js', 'labs/breeze.metadata-helper.js', 'labs/breeze.directives.js', 'labs/breeze.getEntityGraph.js', 'labs/breeze.saveErrorExtensions.js'],
@@ -236,8 +236,8 @@ module.exports = function(grunt) {
           sourceMap: true
         },
         files: {
-          'dist_legacy/bower.min.js': [
-            'dist_legacy/bower.js', 'dist_legacy/bower-template.js'
+          'legacy/bower.min.js': [
+            'legacy/bower.js', 'legacy/bower-template.js'
           ]
         }
       },
@@ -248,7 +248,7 @@ module.exports = function(grunt) {
           sourceMap: true
         },
         files: {
-          'dist_legacy/vendor.min.js': [
+          'legacy/vendor.min.js': [
             'src_legacy/vendor/js/**/*.js'
           ]
         }
@@ -260,22 +260,22 @@ module.exports = function(grunt) {
           sourceMap: true
         },
         files: {
-          'dist_legacy/app.min.js': [
-            'dist_legacy/app/_base/**/*.js',
-            'dist_legacy/app/app.js',
-            'dist_legacy/app/*.js',
-            'dist_legacy/app/components/*.js',
-            'dist_legacy/app/components/**/*.js',
-            'dist_legacy/app/main/*.js',
-            'dist_legacy/app/main/**/*.js',
-            'dist_legacy/app/auth/*.js',
-            'dist_legacy/app/auth/**/*.js',
-            'dist_legacy/app/connect/*.js',
-            'dist_legacy/app/connect/**/*.js',
-            'dist_legacy/app/play/*.js',
-            'dist_legacy/app/play/**/*.js',
-            'dist_legacy/app/kb/*.js',
-            'dist_legacy/app/kb/**/*.js'
+          'legacy/app.min.js': [
+            'legacy/app/_base/**/*.js',
+            'legacy/app/app.js',
+            'legacy/app/*.js',
+            'legacy/app/components/*.js',
+            'legacy/app/components/**/*.js',
+            'legacy/app/main/*.js',
+            'legacy/app/main/**/*.js',
+            'legacy/app/auth/*.js',
+            'legacy/app/auth/**/*.js',
+            'legacy/app/connect/*.js',
+            'legacy/app/connect/**/*.js',
+            'legacy/app/play/*.js',
+            'legacy/app/play/**/*.js',
+            'legacy/app/kb/*.js',
+            'legacy/app/kb/**/*.js'
           ]
         }
       }

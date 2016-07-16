@@ -49,7 +49,7 @@ export module MyApp {
   }
 
   export async function bootAngular(w6Urls: W6Urls) {
-    await loadScript(w6Urls.getAssetUrl('dist_legacy/app.min.js'));
+    await loadScript(w6Urls.getAssetUrl('legacy/app.min.js'));
     await loadAngular("MyApp" || $('html').attr('six-ng-app'));
   }
 
