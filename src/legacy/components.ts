@@ -24,6 +24,11 @@ declare var accounting;
 declare var Modernizr: ModernizrStatic;
 declare var Fingerprint;
 
+interface SxAureliaScope extends ng.IScope {
+  sxViewModel: string
+  sxModel
+}
+
 export module Components {
   class ComponentsModule extends Tk.Module {
     static $name = "ComponentsModule";
@@ -143,7 +148,7 @@ export module Components {
                 sxViewModel: '=',
                 sxModel: '=',
               },
-              link: (scope: ng.IScope, element, iAttrs) => {
+              link: (scope: SxAureliaScope, element, iAttrs) => {
                 let el = element[0];
                 window.w6Cheat.api.render({ model: scope.sxModel, viewModel: scope.sxViewModel, targetElement: el })
                 .then(x => scope.$on('$destroy', () => x.dispose()));

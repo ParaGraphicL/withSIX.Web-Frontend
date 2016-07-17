@@ -51,7 +51,7 @@ interface IApi {
   login(evt?): void;
   navigate(url: string): void;
   logout(): void;
-  open(settings: ISettings): Promise<{dispose: () => void}>
+  render(settings: ISettings): Promise<{dispose: () => void}>
 }
 
 interface ISettings { model?; view?; viewModel?; targetElement}
