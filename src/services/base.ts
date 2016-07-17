@@ -100,8 +100,12 @@ export class Base implements IDisposable {
   }
 
   public static observeCollection<T>(col: T[]): Rx.Observable<any> {
-    return Rx.Observable.create((observer: Rx.Subject<any>) => bindingEngine.collectionObserver(col).subscribe(x => { if (x.length > 0) observer.next(x) }).dispose)
-      .skip(1);
+    return Rx.Observable.create((observer: Rx.Subject<any>) =>
+      bindingEngine.collectionObserver(col)
+      .subscribe(x => {
+        // don't care if there are no changes
+        if (x.length > 0) observer.next(x)
+      }).dispose);
   }
 
   dispose() { this.subscriptions.dispose(); }

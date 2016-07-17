@@ -116,7 +116,7 @@ export class Filters<T> extends ViewModel {
     });
     if (this.customSort != null) sortFunctions.unshift(this.customSort);
 
-    return items.sort((a, b) => {
+    return Array.from(items).sort((a, b) => {
       for (var i in sortFunctions) {
         let r = sortFunctions[i](a, b);
         if (r) return r;
