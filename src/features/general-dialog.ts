@@ -1,5 +1,6 @@
 export class GeneralDialog {
-  model;
+  model; viewModel;
+  
   activate(model) {
     this.model = model.model;
     this.viewModel = model.viewModel;
