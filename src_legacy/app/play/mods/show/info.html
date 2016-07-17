@@ -79,7 +79,7 @@
           </div>
           <div>
             <sx-comments ng-if="model.comments" comments="model.comments" can-manage="editConfig.canManage() || editConfig.canEdit()" add-comment="addComment(comment)" delete-comment="deleteComment(comment)" save-comment="saveComment(comment)" report-comment="reportComment(comment)"
-            like-comment="likeComment(comment)" unlike-comment="unlikeComment(comment)" like-states="commentLikeStates">
+                like-comment="likeComment(comment)" unlike-comment="unlikeComment(comment)" like-states="commentLikeStates">
               <div name="comments-info">
                 <i>
                                 For questions and support about {{model.displayName}} visit the
@@ -147,7 +147,7 @@
         <div class="mod-statistics-inner">
           <div>
             <nvd3-line-chart data="exampleData" height="80" id="statisticsChart" margin="{left:0,top:0,bottom:0,right:0}" margin2="{left:0,top:0,bottom:0,right:0}" tooltips="true" interactive="true" isarea="false" useinteractiveguideline="true" showlegend="true"
-            legendradiobuttonmode="false" xaxistickformat="xAxisTickFormat()">
+                legendradiobuttonmode="false" xaxistickformat="xAxisTickFormat()">
             </nvd3-line-chart>
           </div>
         </div>
@@ -193,6 +193,10 @@
           </button>
         </div>
       </div>
+    </div>
+
+    <div ng-if="features.steam">
+      <button ng-click="openSteamInfo()">Show steam info</button>
     </div>
 
     <div ng-if="w6.renderAds" class="tile">
