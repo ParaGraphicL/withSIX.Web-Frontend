@@ -4,13 +4,14 @@ import {W6, W6Urls, globalRedactorOptions} from '../services/withSIX';
 import {Tools} from '../services/tools';
 import {W6Context, IQueryResult} from '../services/w6context';
 import {Tk} from '../services/legacy/tk'
-import {IRootScope, ITagKey, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHaveModel, DialogQueryBase, ICreateComment, ICQWM, IModel, DbCommandBase, DbQueryBase, BaseController, BaseQueryController,
-  IMenuItem, ModelDialogControllerBase, DialogControllerBase, Result, BooleanResult} from '../services/legacy/base'
+
 import {EventAggregator} from 'aurelia-event-aggregator';
 
 import {Mediator} from 'aurelia-mediator';
 import {Client} from 'withsix-sync-api';
 
+import {IRootScope, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHaveModel, DialogQueryBase, DbCommandBase, DbQueryBase, BaseController, BaseQueryController } from './app-base'
+import {ITagKey, ICreateComment, ICQWM, IModel, IMenuItem} from '../services/legacy/base'
 import {registerCommands, registerCQ, registerController, getFactory} from './app-base';
 import {CollectionDataService, ModDataService, MissionDataService} from '../services/legacy/data-services';
 import {ToastLogger} from '../services/legacy/logger';
@@ -31,47 +32,46 @@ export module MyApp {
   export var authSet = false;
   var initialCompleted = false;
 
+  var appLoaded = false;
+export function isAppLoaded() {
+  return appLoaded;
+}
+
+export function loadApp(mod) {
+  if (appLoaded)
+    return;
+  appLoaded = true;
+  Tools.Debug.log("bootstrapping angular module", mod);
+  angular.bootstrap(document, [mod]);
+}
+
+export async function bootAngular(w6Urls: W6Urls) {
+  await loadScript(w6Urls.getAssetUrl('legacy/app.min.js'));
+  await loadAngular("MyApp" || $('html').attr('six-ng-app'));
+}
+
+export function loadAngular(moduleName: string) {
+  return new Promise((r) => {
+    let myApplication = angular.module(moduleName);
+    angular.element(document).ready(() => {
+      loadApp(moduleName);
+      r();
+    });
+  })
+}
+
+export function loadScript(script: string) {
+  return new Promise<void>((resolve, reject) => {
+    let scriptElement = document.createElement('script');
+    scriptElement.src = script;
+    scriptElement.onload = () => resolve();
+    document.querySelector('body').appendChild(scriptElement);
+  });
+}
+
   export function setup(setupInfo) {
     var rootModule = new RootModule(setupInfo);
   }
-
-  var appLoaded = false;
-  export function isAppLoaded() {
-    return appLoaded;
-  }
-
-  export function loadApp(mod) {
-    if (appLoaded)
-      return;
-    appLoaded = true;
-    Tools.Debug.log("bootstrapping angular module", mod);
-    angular.bootstrap(document, [mod]);
-  }
-
-  export async function bootAngular(w6Urls: W6Urls) {
-    await loadScript(w6Urls.getAssetUrl('legacy/app.min.js'));
-    await loadAngular("MyApp" || $('html').attr('six-ng-app'));
-  }
-
-  export function loadAngular(moduleName: string) {
-    return new Promise((r) => {
-      let myApplication = angular.module(moduleName);
-      angular.element(document).ready(() => {
-        loadApp(moduleName);
-        r();
-      });
-    })
-  }
-
-  export function loadScript(script: string) {
-    return new Promise<void>((resolve, reject) => {
-      let scriptElement = document.createElement('script');
-      scriptElement.src = script;
-      scriptElement.onload = () => resolve();
-      document.querySelector('body').appendChild(scriptElement);
-    });
-  }
-
 
   export class MyAppModule extends Tk.Module {
     static $name = "AppModule";
