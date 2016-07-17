@@ -28,3 +28,5 @@ import {
 // the reason is that Webpack resolves all the imports immediately, as the chunks are loaded
 // Some modules use {DOM} from 'aurelia-pal' and expect it to already be initialized.
 initialize();
+
+require('./src/main');
