@@ -4634,18 +4634,6 @@ export module Play.Mods {
     dropdown: Object[];
   }
 
-  export interface IModInfoScope extends IEditableModScope, IHandleCommentsScope<IBreezeModComment> {
-    openClaimDialog: () => any;
-    exampleData: { key: string; values: number[][] }[];
-    xAxisTickFormat: () => (d) => string;
-    addDependency: (data, hide) => boolean;
-    removeDependency: (data) => void;
-    getCurrentDependencies: () => Array<ITagKey>;
-    getDependencies: (query) => any;
-    addLink: (link) => void;
-    newLink: { title: string; path: string };
-  }
-
   export class ModEditBaseController extends BaseController {
     constructor(public $scope: IEditableModScope, logger, $q, public $timeout) {
       super($scope, logger, $q);
@@ -4734,6 +4722,19 @@ export module Play.Mods {
     }
   }
 
+  export interface IModInfoScope extends IEditableModScope, IHandleCommentsScope<IBreezeModComment> {
+    openClaimDialog: () => any;
+    exampleData: { key: string; values: number[][] }[];
+    xAxisTickFormat: () => (d) => string;
+    addDependency: (data, hide) => boolean;
+    removeDependency: (data) => void;
+    getCurrentDependencies: () => Array<ITagKey>;
+    getDependencies: (query) => any;
+    addLink: (link) => void;
+    newLink: { title: string; path: string };
+    openSteamInfo: () => void;
+  }
+
   export class ModInfoController extends ModEditBaseController {
     static $name = "ModInfoController";
     static $inject = ['$scope', 'logger', '$q', '$timeout', '$routeParams'];
@@ -4743,6 +4744,10 @@ export module Play.Mods {
 
       this.entityManager = $scope.model.entityAspect.entityManager;
       this.setupComments($scope.model);
+
+      let steamId = '';
+
+      $scope.openSteamInfo = () => window.w6Cheat.api.openGeneralDialog({ model: { id: $scope.model.id, name: $scope.model.name, steamId }, viewModel: "features/games/mods/steam-info" })
 
       $scope.addLink = () => {
         BreezeEntityGraph.ModMediaItem.createEntity({

@@ -16,9 +16,12 @@ import {inject} from 'aurelia-framework';
 
 //import {HttpClient as HttpClient} from 'aurelia-http-client';
 
-declare var require;
-var BBCodeParser = require('bbcode-parser');
-var parser = new BBCodeParser(BBCodeParser.defaultTags());
+import {BBTag} from './bbcode/bbTag';
+import {BBCodeParser} from './bbcode/bbCodeParser';
+
+var bbTags = [BBTag.createSimpleTag("h1"), BBTag.createSimpleTag("h2"), BBTag.createSimpleTag("h3")];
+// url is broken atm, or at least doesnt seem to support [url=...]
+var parser = new BBCodeParser(bbTags.concat(BBCodeParser.defaultTags().filter(x => x.tagName !== 'url')));
 
 interface IW6Mod {
   name: string; packageName: string; id: string; modversion: string; publishers: { id: string, type: Publisher }[]
@@ -31,7 +34,7 @@ export class SteamService {
   get parser() { return parser }
 
   async getW6Mods() {
-    let addr = "/mods.json" // "http://proxy.withsix.net/api2/api/v2/mods.json"
+    let addr = "http://proxy.withsix.net/api2/api/v2/mods.json";
     let r = await this.http.fetch(addr, { method: 'GET' });
     if (!r.ok) throw r;
     let mods = this.w6.convertToClient<IW6Mod[]>(await r.json());
@@ -45,7 +48,7 @@ export class SteamService {
         packageName: x.packageName,
         version: x.modversion
       }
-    })
+    }).toMap(x => x.id);
 
     //    let steamInfo = await this.getSteamInfo(...data.map(x => x.steamId));
     //steamInfo.forEach((x, i) => data[i].steamInfo = x);
@@ -68,7 +71,6 @@ export class SteamService {
 
 
     let r = await this.http.fetch(filesUrl, { method: 'POST', body: str, headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
-    console.log("response", r);
     if (!r.ok) throw r;
     let info = await r.json();
     return info.response.publishedfiledetails;
