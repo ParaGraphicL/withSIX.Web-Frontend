@@ -4745,10 +4745,6 @@ export module Play.Mods {
       this.entityManager = $scope.model.entityAspect.entityManager;
       this.setupComments($scope.model);
 
-      let steamId = '';
-
-      $scope.openSteamInfo = () => window.w6Cheat.api.openGeneralDialog({ model: { id: $scope.model.id, name: $scope.model.name, steamId }, viewModel: "features/games/mods/steam-info" })
-
       $scope.addLink = () => {
         BreezeEntityGraph.ModMediaItem.createEntity({
           title: $scope.newLink.title,
@@ -4769,12 +4765,7 @@ export module Play.Mods {
       this.setupDependencyAutoComplete();
 
       this.setupTitle("model.name", "Info - {0} (" + $scope.model.packageName + ") - " + $scope.model.game.name);
-      if (this.$scope.features.steam) {
-          // todo; convert to a custom el or attr
-        setTimeout(() =>
-          window.w6Cheat.api.render({ model: { id: $scope.model.id, name: $scope.model.name, steamId }, viewModel: "features/games/mods/steam-info", targetElement: $('#steam-render')[0] })
-        , 1000);
-      }
+      (<any>$scope).steamInfo = { id: $scope.model.id, name: $scope.model.name }
     }
 
     private setupComments(mod: IBreezeMod) {

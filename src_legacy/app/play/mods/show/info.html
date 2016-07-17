@@ -77,6 +77,7 @@
               </button>
             </div>
           </div>
+          <sx-aurelia ng-if="features.steam" sx-view-model="'features/games/mods/steam-info'" sx-model="steamInfo"></sx-aurelia>
           <div>
             <sx-comments ng-if="model.comments" comments="model.comments" can-manage="editConfig.canManage() || editConfig.canEdit()" add-comment="addComment(comment)" delete-comment="deleteComment(comment)" save-comment="saveComment(comment)" report-comment="reportComment(comment)"
                 like-comment="likeComment(comment)" unlike-comment="unlikeComment(comment)" like-states="commentLikeStates">
@@ -193,10 +194,6 @@
           </button>
         </div>
       </div>
-    </div>
-
-    <div ng-if="features.steam" id="steam-render" class="tile">
-      <button ng-click="openSteamInfo()">Show steam info</button>
     </div>
 
     <div ng-if="w6.renderAds" class="tile">

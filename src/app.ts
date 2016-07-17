@@ -208,11 +208,6 @@ Origin.set(Finalize, { moduleId: "features/login/finalize", moduleMember: "Final
         x.remindedFinalize = true;
       })
     }
-
-    setTimeout(() => {
-      let rs: RenderService = Container.instance.get(RenderService);
-      rs.open({viewModel: CreateCollectionDialog, model: { game: this.w6.activeGame }, targetElement: $('body')[0]})
-    }, 5000)
   }
 
   redirectToError(statusCode: number) { return this.router.navigate(`/errors/${statusCode}?resource=${encodeURIComponent(window.location.href)}#initial=1`) }

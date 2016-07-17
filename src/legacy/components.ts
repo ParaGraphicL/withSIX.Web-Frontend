@@ -135,7 +135,23 @@ export module Components {
 
             }
           };
-        }).
+        })
+        .directive('sxAurelia', [
+          () => {
+            return {
+              scope: {
+                sxViewModel: '=',
+                sxModel: '=',
+              },
+              link: (scope: ng.IScope, element, iAttrs) => {
+                let el = element[0];
+                window.w6Cheat.api.render({ model: scope.sxModel, viewModel: scope.sxViewModel, targetElement: el })
+                .then(x => scope.$on('$destroy', () => x.dispose()));
+              }
+            }
+          }
+        ])
+        .
         directive('sxAdsense', [
           '$window', '$compile', 'adsense', ($window, $compile, adsense) => {
             return {
