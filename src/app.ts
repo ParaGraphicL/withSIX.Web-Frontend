@@ -17,6 +17,8 @@ import {RouteHandler, RestoreBasket, OpenCreateCollectionDialog, OpenAddModDialo
 import {Login} from './services/auth';
 import {LoginBase, LoginUpdated} from './services/auth-base';
 
+import {RenderService} from './services/renderer/render-service';
+
 import {CreateCollectionDialog} from './features/games/collections/create-collection-dialog';
 import {AddModsToCollections} from './features/games/add-mods-to-collections';
 import {EditPlaylistItem} from './features/side-bar/playlist/edit-playlist-item';
@@ -56,6 +58,9 @@ export class App extends ViewModel {
     this.w6.api.openGeneralDialog = (model: { model; viewModel: string }) => {
          return this.dialog.open({ viewModel: "features/general-dialog", model: model });
       }
+
+    let rs: RenderService = Container.instance.get(RenderService);
+    this.w6.api.render = (options) => rs.open(options);
 
     this.w6.api.createGameBasket = (gameId, basketModel) => {
       var gm = Container.instance.get(GameBaskets);
@@ -203,6 +208,11 @@ Origin.set(Finalize, { moduleId: "features/login/finalize", moduleMember: "Final
         x.remindedFinalize = true;
       })
     }
+
+    setTimeout(() => {
+      let rs: RenderService = Container.instance.get(RenderService);
+      rs.open({viewModel: CreateCollectionDialog, model: { game: this.w6.activeGame }, targetElement: $('body')[0]})
+    }, 5000)
   }
 
   redirectToError(statusCode: number) { return this.router.navigate(`/errors/${statusCode}?resource=${encodeURIComponent(window.location.href)}#initial=1`) }

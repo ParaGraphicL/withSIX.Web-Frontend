@@ -254,6 +254,8 @@
         "./src/services/lib.ts",
         "./src/services/mediator.ts",
         "./src/services/reactive.ts",
+        "./src/services/renderer/lifecycle.ts",
+        "./src/services/renderer/render-service.ts",
         "./src/services/steam.ts",
         "./src/services/toastr.ts",
         "./src/services/tools.ts",

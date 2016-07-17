@@ -1,4 +1,4 @@
-import {Base, LS} from './base';
+import {Base, LS, IDisposable} from './base';
 import {W6} from './withSIX';
 import {Mediator, LegacyMediator} from './mediator';
 import {Toastr} from './toastr';
@@ -109,6 +109,7 @@ export class Api {
   get tools() { return Tools }
   openSettings = (model?) => this.eventBus.publish(new OpenSettings());
   getContentStateInitial = ContentHelper.getConstentStateInitial;
+  render: (options) => Promise<IDisposable>;
   logout;// = () => this.w6.logout();
   login; //= () => this.w6.openLoginDialog();
   navigate; // = (url) => this.w6.navigate(url);
