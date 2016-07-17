@@ -53,6 +53,10 @@ export class App extends ViewModel {
     this.w6.openLoginDialog = evt => { if (evt) evt.preventDefault(); return this.login.login(); }
     this.w6.logout = () => this.logout();
     setInterval(() => signaler.signal('timeago'), 60 * 1000);
+    this.w6.api.openGeneralDialog = (model: { model; viewModel: string }) => {
+         return this.dialog.open({ viewModel: "features/general-dialog", model: model });
+      }
+
     this.w6.api.createGameBasket = (gameId, basketModel) => {
       var gm = Container.instance.get(GameBaskets);
       gm.activate(gameId, basketModel);

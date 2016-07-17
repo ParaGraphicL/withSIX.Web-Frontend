@@ -15,7 +15,6 @@ import breeze from 'breeze-client';
 import {HttpClient} from 'aurelia-http-client';
 import {Client} from 'withsix-sync-api';
 import {EventAggregator} from 'aurelia-event-aggregator';
-import {DialogService, DialogController} from 'aurelia-dialog';
 import {inject, Container} from 'aurelia-framework';
 import {Validation, ValidationResult} from 'aurelia-validation';
 import {Router} from 'aurelia-router';
@@ -96,9 +95,9 @@ export interface ITabNotification {
   isPersistent?: boolean;
 }
 
-@inject(Client, EventAggregator, LS, DialogService)
+@inject(Client, EventAggregator, LS)
 export class Api {
-  constructor(private client: Client, private eventBus: EventAggregator, private ls: LS, private dialog: DialogService) {
+  constructor(private client: Client, private eventBus: EventAggregator, private ls: LS) {
     // we could use debounce here, but then the menus don't close on the initiation of the scroll, but rather on the stop.
     // so throttle seems the better option
     this.subj.throttleTime(1000).subscribe(x => this.eventBus.publish(new CloseDropdowns()));
@@ -128,9 +127,7 @@ export class Api {
     return [reason, 'Unknown error'];
   }
 
-  openGeneralDialog(model: { model; viewModel: string }) {
-    return this.dialog.open({ viewModel: "features/general-dialog", model: model });
-  }
+   openGeneralDialog: (model: { model; viewModel: string }) => Promise<any>;
 
   handleBreezeSaveError(r: IBreezeSaveError) {
     if (r.entityErrors.length == 0) return this.handleBreezeErrorResponse(<any>r);
