@@ -1,5 +1,5 @@
 import {bindable, inject} from 'aurelia-framework';
-import {ViewModel, bindingEngine, ReactiveList, ListFactory, IFilterInfo, SortDirection, IFilter, ISort, Tools} from '../services/lib';
+import {ViewModel, bindingEngine, ReactiveList, ListFactory, IFilterInfo, SortDirection, IFilter, ISort, Tools,  Rx} from '../services/lib';
 
 export class Filters<T> extends ViewModel {
   @bindable items: T[] = [];
@@ -22,7 +22,7 @@ export class Filters<T> extends ViewModel {
   viewTypeEnum = ViewType;
 
   typeaheadSelect: (e: T) => void;
-  collectionObserver;
+  collectionObserver: Rx.Subscription;
 
   bind(bindingContext) {
     // to workaround aurelia not picking up the changed selection..
@@ -39,7 +39,7 @@ export class Filters<T> extends ViewModel {
 
     this.updateFilteredItems();
 
-    // this.collectionObserver = bindingEngine.collectionObserver(this.items)
+    // this.collectionObserver = Base.observeCollection(this.items)
     //   //.filter(x => this.customHandler == null)
     //   .subscribe(x => { if (!this.customHandler) this.initiateUpdate() })
 
@@ -52,8 +52,8 @@ export class Filters<T> extends ViewModel {
       d(this.whenAnyValue(x => x.sortOrder)
         .skip(1)
         .subscribe(x => this.initiateUpdate()));
-      d(() => this.collectionObserver ? this.collectionObserver.dispose() : null);
-      d(bindingEngine.collectionObserver(this.enabledFilters)
+      d(() => this.collectionObserver ? this.collectionObserver.unsubscribe() : null);
+      d(ViewModel.observeCollection(this.enabledFilters)
         .subscribe(x => this.initiateUpdate()));
     });
   }
@@ -65,9 +65,10 @@ export class Filters<T> extends ViewModel {
 
   handleItemsChange(value) {
     let old = this.collectionObserver;
-    this.collectionObserver = value ? bindingEngine.collectionObserver(value)
-      .subscribe(x => { if (!this.customHandler) this.initiateUpdate() }) : null;
-    if (old) old.dispose();
+    this.collectionObserver = value
+      ? ViewModel.observeCollection(value).subscribe(x => { if (!this.customHandler) this.initiateUpdate() })
+      : null;
+    if (old) old.unsubscribe();
   }
 
   unbind() { this.subscriptions.dispose(); }
@@ -115,7 +116,7 @@ export class Filters<T> extends ViewModel {
     });
     if (this.customSort != null) sortFunctions.unshift(this.customSort);
 
-    return items.sort((a, b) => {
+    return Array.from(items).sort((a, b) => {
       for (var i in sortFunctions) {
         let r = sortFunctions[i](a, b);
         if (r) return r;

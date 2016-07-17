@@ -2,13 +2,12 @@
 //import './styles/styles.css';
 //import 'bootstrap';
 //import 'bootstrap/css/bootstrap.css';
+import 'whatwg-fetch'; // fetch polyfill
 import 'font-awesome/css/font-awesome.css';
 import './scss/fonts.scss';
 import './scss/lib.scss';
 import './scss/main.scss';
 import './scss/legacy.scss';
-
-//var Promise = require('bluebird'); // Promise polyfill for IE11
 import * as Bluebird from 'bluebird';
 Bluebird.config({
   //// Enable long stack traces
@@ -20,9 +19,6 @@ Bluebird.config({
   // Enable warnings
   warnings: false
 });
-var Promise = Bluebird;
-
-
 import 'aurelia-polyfills';
 import {
   initialize
@@ -33,4 +29,4 @@ import {
 // Some modules use {DOM} from 'aurelia-pal' and expect it to already be initialized.
 initialize();
 
-require('whatwg-fetch'); // fetch polyfill
+require('./src/main');

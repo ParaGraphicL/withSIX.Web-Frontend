@@ -97,7 +97,7 @@
     "build-legacy": "gulp build-global-scss && gulp build-other build-misc && grunt uglify:app uglify:misc",
     "dist": "npm run build:prod & gulp prepare-release && grunt buildallPublish",
     "start": "npm run server:dev:hmr",
-    "prepublish": "npm run typings:install",
+    "prepublish": "",
     "test": "cross-env NODE_ENV=test ./node_modules/karma/bin/karma start test/karma.conf.js",
     "webdriver:update": "cross-env ./node_modules/.bin/webdriver-manager update",
     "webdriver:start": "cross-env ./node_modules/.bin/webdriver-manager start",

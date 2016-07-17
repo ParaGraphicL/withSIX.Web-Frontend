@@ -101,7 +101,7 @@ export class ReactiveList<T> extends ReactiveBase implements IDisposable {
     //if (this.items.some(x => x == null)) this.tools.Debug.warn("Has null items", this.items);
     items.filter(x => x != null).forEach(this.observeItem);
     this.subscriptions.subd(d => {
-      var sub = bindingEngine.collectionObserver(this.items)
+      var sub = Base.observeCollection(this.items)
         .subscribe(x => {
           // TODO: Make item observation optional..
           if (x.length == 0) return;
@@ -270,9 +270,9 @@ class ReactiveCommand<T> extends ReactiveBase {
   public get otherBusy() { return this._otherBusy; }
   public get isVisible() { return this._isVisible; }
   public get thrownExceptions(): Rx.Observable<Error> { return this._thrownExceptions.asObservable() }
-  public get isExecutingObservable() { return this._isExecutingObservable.asObservable() }
-  public get isVisibleObservable() { return this._isVisibleObservable.asObservable() }
-  public get canExecuteObservable() { return this._canExecuteObservable.asObservable() }
+  public get isExecutingObservable() { return this._isExecutingObservable.asObservable().startWith(this.isExecuting) }
+  public get isVisibleObservable() { return this._isVisibleObservable.asObservable().startWith(this.isVisible) }
+  public get canExecuteObservable() { return this._canExecuteObservable.asObservable().startWith(this.canExecute) }
 
   cls: string;
   icon: string;
@@ -282,6 +282,14 @@ class ReactiveCommand<T> extends ReactiveBase {
   constructor(public name: string, private action: IPromiseFunction<T>, options?: ICommandInfo) {
     super();
     if (action == null) throw new Error("action cant be null!");
+
+    // TODO: The other way around?
+    this.subscriptions.subd(d => {
+      d(this.whenAnyValue(x => x.isExecuting).subscribe(x => this._isExecutingObservable.next(x)))
+      d(this.whenAnyValue(x => x.canExecute).subscribe(x => this._canExecuteObservable.next(x)))
+      d(this.whenAnyValue(x => x.isVisible).subscribe(x => this._isVisibleObservable.next(x)))
+    });
+
     if (!options) return;
 
     this.cls = options.cls;
