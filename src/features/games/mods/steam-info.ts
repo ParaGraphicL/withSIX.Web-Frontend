@@ -21,8 +21,6 @@ export class SteamInfo extends ViewModel {
       this.model.steamId = info.id;
       //this.url = `http://withsix.com/p/Arma-3/mods/${model.id.toShortId()}/${model.name.sluggify()}`;
       this.steamUrl = `https://steamcommunity.com/sharedfiles/filedetails/${this.model.steamId}`;
-
-      console.log("$$$ WTF!!", this.steam.parser, this.steam.parser.parseString(this.model.steamInfo.description), this.model.steamInfo.description)
     }
   }
 }
