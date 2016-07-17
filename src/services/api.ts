@@ -7,6 +7,7 @@ import {Tools} from './tools';
 import {IBreezeErrorReason, IBreezeSaveError} from './legacy/misc';
 import {ContentHelper} from './helpers';
 import {InvalidShortIdException} from '../helpers/utils/string';
+import {IHttpException, ErrorResponseBody} from '../helpers/utils/http-errors';
 
 import * as Rx from 'rxjs/Rx';
 
@@ -146,7 +147,7 @@ export class Api {
     }
   }
 
-  handleHttpError(r: Tools.IHttpException<Tools.ErrorResponseBody>) {
+  handleHttpError(r: IHttpException<ErrorResponseBody>) {
     Tools.Debug.error('ERROR during request, Request ID: ' + r.headers['withSIX-RequestID'], r);
     let message = r.body && r.body.message || '';
     if (r instanceof Tools.ValidationError && r.modelState) angular.forEach(r.modelState, (v, k) => message += "\n" + v);

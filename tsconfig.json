@@ -175,6 +175,7 @@
         "./src/helpers/utils/base64.ts",
         "./src/helpers/utils/errors.ts",
         "./src/helpers/utils/extenders.ts",
+        "./src/helpers/utils/http-errors.ts",
         "./src/helpers/utils/iterable.ts",
         "./src/helpers/utils/jwt.ts",
         "./src/helpers/utils/string.ts",
