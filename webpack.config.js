@@ -66,8 +66,8 @@ const coreBundles = {
 const baseConfig = {
   entry: {
     'app': ['./src/main'],
-    'aurelia-bootstrap': ['./index'].concat(coreBundles.bootstrap),
-    'aurelia': coreBundles.aurelia.filter(pkg => coreBundles.bootstrap.indexOf(pkg) === -1)
+    'aurelia-bootstrap': ['./index'].concat(coreBundles.bootstrap).concat(coreBundles.aurelia)
+      //'aurelia': coreBundles.aurelia.filter(pkg => coreBundles.bootstrap.indexOf(pkg) === -1)
   },
   output: {
     path: outDir,
@@ -124,7 +124,6 @@ switch (ENV) {
         debug: false
       })
     );
-    config.metadata.cdnUrl = '/dist';
     break;
 
   case 'test':
