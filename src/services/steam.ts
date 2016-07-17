@@ -29,16 +29,21 @@ interface IW6Mod {
 
 @inject(FetchClient, W6)
 export class SteamService {
+  private w6Mods;
   constructor(private http: FetchClient, private w6: W6) { }
 
   get parser() { return parser }
 
   async getW6Mods() {
-    let addr = "http://proxy.withsix.net/api2/api/v2/mods.json";
-    let r = await this.http.fetch(addr, { method: 'GET' });
-    if (!r.ok) throw r;
-    let mods = this.w6.convertToClient<IW6Mod[]>(await r.json());
-    let steamMods = mods.filter(x => x.publishers && x.publishers.some(x => x.type == Publisher.Steam));
+    // todo; cache differently
+    if (!this.w6Mods) {
+      let addr = "http://proxy.withsix.net/api2/api/v2/mods.json";
+      let r = await this.http.fetch(addr, { method: 'GET' });
+      if (!r.ok) throw r;
+      let mods = this.w6.convertToClient<IW6Mod[]>(await r.json());
+      this.w6Mods = mods;
+    }
+    let steamMods = this.w6Mods.filter(x => x.publishers && x.publishers.some(x => x.type == Publisher.Steam));
     let data = steamMods.map(x => {
       return {
         id: x.id,
