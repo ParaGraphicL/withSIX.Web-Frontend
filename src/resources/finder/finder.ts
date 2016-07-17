@@ -32,9 +32,9 @@ export class FindModel<T> extends ReactiveBase implements IFindModel<T> {
     this.subscriptions.subd(d => {
       // TODO: debounce and make sure old results dont overwrite new results
       d(this.toProperty(this.whenAnyValue(x => x.searchItem)
-        .skip(1)
-        .flatMap(async (x) => await this.finder(x))
-        .concat(), x => x.results))
+              .skip(1)
+              .flatMap(async (x) => await this.finder(x))
+              .concat(), x => x.results))
     })
   }
 }

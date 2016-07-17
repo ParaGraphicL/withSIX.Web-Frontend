@@ -59,28 +59,6 @@ export interface PropertyExpression<T, TProp> {
   (v: T): TProp;
 }
 
-export class ReactiveBase extends RxUi.ReactiveObject implements IDisposable {
-  __overrideReactiveMode = true;
-  public subscriptions = new Subscriptions();
-  get tools() { return Tools; }
-  dispose() { this.subscriptions.dispose(); }
-  _pc;
-  get propertyChanged() { return this._pc; }
-  set propertyChanged(value) { this._pc = value; }
-  reactivePropertyChanged;
-  constructor() {
-    super();
-    let v = <any>this;
-    // TODO: Or remove property..
-    this.reactivePropertyChanged = super.propertyChanged;
-    this.propertyChanged = (name, newValue, oldValue) => {
-      v._propertyChanged.next(new RxUi.PropertyChangedEventArgs(this, name, newValue));
-    }
-  }
-  // TODO: deprecate in favor of calling whenAnyValue directly..
-  observeEx = <T extends this, TProp>(propertyEx: (v: T) => TProp) => this.whenAnyValue(propertyEx);
-}
-
 export class Base implements IDisposable {
   public subscriptions = new Subscriptions();
 
@@ -120,8 +98,38 @@ export class Base implements IDisposable {
     else return o.distinctUntilChanged();
   }
 
+  public static observeCollection<T>(col: T[]): Rx.Observable<any> {
+    return Rx.Observable.create((observer: Rx.Subject<any>) => bindingEngine.collectionObserver(col).subscribe(x => { if (x.length > 0) observer.next(x) }).dispose)
+      .skip(1);
+  }
+
   dispose() { this.subscriptions.dispose(); }
 }
+
+
+export class ReactiveBase extends RxUi.ReactiveObject implements IDisposable {
+  __overrideReactiveMode = true;
+  public subscriptions = new Subscriptions();
+  public static observeCollection = Base.observeCollection;
+  get tools() { return Tools; }
+  dispose() { this.subscriptions.dispose(); }
+  _pc;
+  get propertyChanged() { return this._pc; }
+  set propertyChanged(value) { this._pc = value; }
+  reactivePropertyChanged;
+  constructor() {
+    super();
+    let v = <any>this;
+    // TODO: Or remove property..
+    this.reactivePropertyChanged = super.propertyChanged;
+    this.propertyChanged = (name, newValue, oldValue) => {
+      v._propertyChanged.next(new RxUi.PropertyChangedEventArgs(this, name, newValue));
+    }
+  }
+  // TODO: deprecate in favor of calling whenAnyValue directly..
+  observeEx = <T extends this, TProp>(propertyEx: (v: T) => TProp) => this.whenAnyValue(propertyEx);
+}
+
 
 RxUi.RxApp.globalViewBindingHelper = {
   observeProp<T>(obj: Object, property: string, emitCurrentVal: boolean, callback: (args: RxUi.PropertyChangedEventArgs<T>) => void): Function {
