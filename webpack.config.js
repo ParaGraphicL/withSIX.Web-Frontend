@@ -65,9 +65,9 @@ const coreBundles = {
 
 const baseConfig = {
   entry: {
-    'app': ['./src/main'],
-    'aurelia-bootstrap': ['./index'].concat(coreBundles.bootstrap).concat(coreBundles.aurelia)
-      //'aurelia': coreBundles.aurelia.filter(pkg => coreBundles.bootstrap.indexOf(pkg) === -1)
+    'app': ['./index'],
+    //'aurelia-bootstrap': ['./index'].concat(coreBundles.bootstrap).concat(coreBundles.aurelia)
+    //'aurelia': coreBundles.aurelia.filter(pkg => coreBundles.bootstrap.indexOf(pkg) === -1)
   },
   output: {
     path: outDir,
@@ -222,16 +222,17 @@ if (ELECTRON) {
   );
 }
 
-if (ENV !== 'test' && !ELECTRON) {
-  config = generateConfig(
-    config,
-    require('@easy-webpack/config-common-chunks-simple')
-    ({
-      appChunkName: 'app',
-      firstChunk: 'aurelia-bootstrap'
-    })
-  );
-}
+// if (ENV !== 'test' && !ELECTRON) {
+//   config = generateConfig(
+//     config,
+//     require('@easy-webpack/config-common-chunks-simple')
+//     ({
+//       appChunkName: 'app',
+//       firstChunk: 'aurelia-bootstrap'
+//     })
+//   );
+// }
+
 
 if (ENV === 'test') {
   config = generateConfig(
