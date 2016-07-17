@@ -52,16 +52,23 @@ export class LoginBase {
       return true;
     } catch (err) {
       this.tools.Debug.error("[HTTP] Error trying to use refresh token", err);
+      // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/7528873/
       if (err instanceof Response) {
         let r: Response = err;
         if (r.status == 401) {
-          this.tools.Debug.error("[HTTP] 401, refreshtoken probably invalid", err);
+          this.tools.Debug.warn("[HTTP] 401, refreshtoken probably invalid", err);
           window.localStorage.removeItem(LoginBase.refreshToken);
           return false;
         }
+        this.tools.Debug.warn("Received unexpected response trying to use the refreshtoken: " + err.status, err);
+      } else {
+        this.tools.Debug.warn("Received unexpected error trying to use the refreshtoken, removing the refreshtoken and falling back gracefully. Possibly browser bug (edge)", err);
+        window.localStorage.removeItem(LoginBase.refreshToken);
+        return false;
       }
       // TODO: Wait for X amount of delay, then see if we actually have a valid refresh token (other tab)
-      throw err;
+      //throw err;
+      return false;
     }
   }
 
