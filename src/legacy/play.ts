@@ -4769,6 +4769,12 @@ export module Play.Mods {
       this.setupDependencyAutoComplete();
 
       this.setupTitle("model.name", "Info - {0} (" + $scope.model.packageName + ") - " + $scope.model.game.name);
+      if (this.$scope.features.steam) {
+          // todo; convert to a custom el or attr
+        setTimeout(() =>
+          window.w6Cheat.api.render({ model: { id: $scope.model.id, name: $scope.model.name, steamId }, viewModel: "features/games/mods/steam-info", targetElement: $('#steam-render')[0] })
+        , 1000);
+      }
     }
 
     private setupComments(mod: IBreezeMod) {
