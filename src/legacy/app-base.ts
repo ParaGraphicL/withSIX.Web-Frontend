@@ -1,13 +1,14 @@
 import {W6, W6Urls, globalRedactorOptions} from '../services/withSIX';
+import {FeatureToggles} from '../services/features';
 import {Tools} from '../services/tools';
 import {W6Context, IQueryResult} from '../services/w6context';
 import {Tk} from '../services/legacy/tk'
-import {IRootScope, ITagKey, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHaveModel, DialogQueryBase, ICreateComment, ICQWM, IModel, DbCommandBase, DbQueryBase, BaseController, BaseQueryController,
-  IMenuItem} from '../services/legacy/base'
+import {ITagKey, ICreateComment, ICQWM, IModel, IMenuItem} from '../services/legacy/base'
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {HttpClient} from 'aurelia-fetch-client';
 import {ToastLogger, GlobalErrorHandler} from '../services/legacy/logger';
 import {Container} from 'aurelia-framework';
+import breeze from 'breeze-client';
 
 import {BasketService} from '../services/basket-service';
 
@@ -38,6 +39,351 @@ export var leaderboardSlotSizes = [
   [[800, 400], [[728, 90], [468, 60], [234, 60], [125, 125]]],
   [[0, 0], [[125, 125]]]
 ];
+
+
+
+export interface IMicrodata {
+  title: string;
+  description: string;
+  image?: string;
+  keywords?: string;
+  currentPage?: string;
+}
+
+export interface IPageInfo {
+  title: string;
+}
+
+export interface IRootScope extends ng.IRootScopeService {
+  vm;
+  canceler: ng.IDeferred<{}>;
+  dispatch<T>(evt: string, pars?: Object): Promise<T>;
+  request<T>(evt, pars?: Object): Promise<T>;
+  features: FeatureToggles;
+  environment; //: Tools.Environment;
+  loading: boolean;
+  w6: W6;
+  url: W6Urls;
+  toShortId: (id) => string;
+  sluggify: (str) => string;
+  Modernizr;
+  sluggifyEntityName: (str) => string;
+  isInvalid: (field, ctrl) => any;
+  blurred: (fieldName, ctrl) => boolean;
+  ready: () => void;
+  startLoading: () => void;
+  status: string;
+  loadingStatus: {
+    outstanding: number;
+    increment(): void;
+    decrement(): void;
+  };
+  microdata: IMicrodata;
+  setMicrodata: (microdata: IMicrodata) => void;
+  setPageInfo: (pageInfo: IPageInfo) => void;
+  defaultImage: string;
+  breadcrumbs: Object[];
+  pageInfo: { title: string };
+  openLoginDialog: (evt?: any) => void;
+  logout: () => any;
+  downloadsHandled: boolean;
+  handleDownloads: () => any;
+  initialLoad: boolean;
+}
+
+
+export interface IBaseScope extends IRootScope {
+  title: string;
+  subtitle: string;
+  first: boolean;
+  destroyed: boolean;
+  menuItems: IMenuItem[];
+  response;
+}
+
+
+
+export class DbQueryBase extends Tk.QueryBase {
+  static $inject = ['dbContext'];
+
+  constructor(public context: W6Context) {
+    super();
+  }
+
+  public findBySlug = <T extends breeze.Entity>(type: string, slug: string, requestName: string) => this.processSingleResult<T>(this.context.executeQuery<T>(breeze.EntityQuery.from(type)
+    .where("slug", breeze.FilterQueryOp.Equals, slug)
+    .top(1), requestName));
+
+  public executeKeyQuery = <T extends breeze.Entity>(query: () => breeze.EntityQuery): Promise<T> => this.processSingleResult<T>(this.context.executeKeyQuery<T>(query));
+
+  processSingleResult = async <T extends breeze.Entity>(promise: Promise<IQueryResult<T>>) => {
+    let result: IQueryResult<T>;
+    try {
+      result = await promise;
+    } catch (failure) {
+      let t = new Tools.NotFoundException("The server responded with 404", { status: 404, statusText: 'NotFound', body: {} });
+      if (failure.status == 404) throw t;
+      else throw failure;
+    }
+    if (result.results.length == 0) throw new Tools.NotFoundException("There were no results returned from the server", { status: 404, statusText: 'NotFound', body: {} });
+    return result.results[0];
+  }
+
+  public getEntityQueryFromShortId(type: string, id: string): breeze.EntityQuery {
+    Tools.Debug.log("getting " + type + " by shortId: " + id);
+    return breeze.EntityQuery
+      .fromEntityKey(this.context.getEntityKeyFromShortId(type, id));
+  }
+
+  public getEntityQuery(type: string, id: string): breeze.EntityQuery {
+    Tools.Debug.log("getting " + type + " by id: " + id);
+    return breeze.EntityQuery
+      .fromEntityKey(this.context.getEntityKey(type, id));
+  }
+}
+
+export class DbCommandBase extends Tk.CommandBase {
+  static $inject = ['dbContext'];
+
+  constructor(public context: W6Context) {
+    super();
+  }
+
+  public buildErrorResponse = reason => {
+    if (!reason || !reason.data) {
+      return {
+        message: "Unknown error",
+        errors: {},
+        httpFailed: this.context.w6.api.errorMsg(reason)
+      };
+    }
+    return {
+      message: !reason.data ? "Unknown error" : reason.data.message,
+      errors: reason.data.modelState,
+      httpFailed: this.context.w6.api.errorMsg(reason)
+    };
+  };
+  public respondSuccess = message => {
+    return { success: true, message: message };
+  };
+  public respondError = <T>(reason) => {
+    var response = this.buildErrorResponse(reason);
+    /*
+    if (reason.data && reason.data.modelState) {
+        if (reason.data.modelState["activation"]) {
+            response.notActivated = true;
+        }
+    }
+    */
+    return Promise.reject<T>(response);
+  };
+}
+
+// dialogs actually wraps $modal but adds some cool features on top like built-in error, warning, confirmation, wait etc dialogs
+export class DialogQueryBase extends DbQueryBase {
+  static $inject = ['$modal', 'dialogs', 'dbContext'];
+
+  constructor(private $modal, public dialogs, context: W6Context) { super(context); }
+
+  // Use to have full control over the ui.bootstrap dialog implementation - has resolve support for one or multiple promises
+  public openDialog(controller, config?) { return DialogQueryBase.openDialog(this.$modal, controller, config); }
+
+  // Use to build on dialog-service built-in functionality
+  // - lacks resolve support so requires manual labour if you want to use 1 or multiple ($q.all) promises before initiating the controller..in that case better use openDialog
+  public createDialog(controller, data?, overrideOpts?) { return DialogQueryBase.createDialog(this.dialogs, controller, controller.$view, data, overrideOpts); }
+
+  static createDialog(dialogs, controller, template?, data?, overrideOpts?) {
+    var opts = Object.assign({ windowClass: 'dialogs-withSix', copy: false }, overrideOpts);
+
+    Tools.Debug.log('createDialog', { controller: controller, template: template, data: data }, opts);
+
+    var dialog = dialogs.create(template || controller.$view, controller, data, opts);
+
+    Tools.Debug.log(dialog);
+
+    return dialog;
+  }
+
+  static openDialog($modal, controller, config?) {
+    var cfg = Object.assign(this.getConfig(controller), config);
+    Tools.Debug.log('openDialog', cfg);
+
+    return $modal.open(cfg);
+  }
+
+  static getConfig(controller) {
+    return {
+      templateUrl: controller.$view,
+      controller: controller,
+      windowClass: 'dialogs-withSix'
+    };
+  }
+}
+
+export class BaseController extends Tk.Controller {
+  static $inject = ['$scope', 'logger', '$q'];
+
+  constructor(public $scope: IBaseScope, public logger /*: Components.Logger.ToastLogger */, public $q: ng.IQService) {
+    super($scope);
+    $scope.$on('$destroy', () => $scope.destroyed = true);
+  }
+
+  applyIfNeeded = (func?) => this.applyIfNeededOnScope(func, this.$scope);
+  applyIfNeededOnScope = (func, scope: ng.IScope) => scope.$evalAsync(func);
+
+  public setupDefaultTitle() {
+    var titleParts = [];
+    var first = false;
+    window.location.pathname.trim().split('/').reverse().forEach(x => {
+      x = x.replace(/-/g, ' ').trim();
+      if (!x) return;
+
+      if (!first) {
+        x = x.toUpperCaseFirst();
+        first = true;
+      }
+
+      titleParts.push(x);
+    });
+    titleParts.push(this.$scope.url.siteTitle);
+    this.$scope.setPageInfo({ title: titleParts.join(" - ") });
+  }
+
+  public setupTitle = (scopeWatch: string, template?: string) => {
+    if (!template) template = "{0}";
+
+    var siteSuffix = this.$scope.url.siteTitle;
+    this.$scope.$watch(scopeWatch, (newValue: string, oldValue: string, scope) => {
+      this.$scope.setPageInfo({ title: template.replace("{0}", newValue) + " - " + siteSuffix });
+    });
+  };
+  public getImage = (img: string, updatedAt: Date): string => {
+    if (!img || img == "")
+      return this.$scope.url.cdn + "/img/noimage.png";
+    return Tools.uriHasProtocol(img) ? img : this.$scope.url.getUsercontentUrl(img, updatedAt);
+  };
+  subscriptionQuerySucceeded = (result, d) => {
+    for (var v in result.data)
+      d[result.data[v]] = true;
+  }
+
+  public requestAndProcessResponse = async <T>(command, data?) => {
+    this.$scope.response = undefined;
+    try {
+      let r = await this.$scope.request<T>(command, data);
+      this.applyIfNeeded(() => this.successResponse(r));
+      return r;
+    } catch (err) {
+      this.applyIfNeeded(() => this.errorResponse(err));
+      err.__wsprocessed = true;
+      throw err;
+    }
+  }
+
+  private successResponse = (r) => {
+    Tools.Debug.log("success response");
+    this.$scope.response = r;
+    this.logger.success(r.message, "Action completed");
+    return r;
+  }
+
+  private errorResponse = (result) => {
+    this.$scope.response = result;
+    var httpFailed = result.httpFailed;
+    this.logger.error(httpFailed[1], httpFailed[0]);
+  }
+  // TODO: Make this available on the root $scope ??
+  public requestAndProcessCommand = <T>(command, pars?, message?) => this.processCommand<T>(() => this.$scope.request<T>(command, pars), message);
+  private processCommand = async <T>(q: () => Promise<T>, message?): Promise<T> => {
+    try {
+      let result = await q();
+      this.logger.success(message || "Saved", "Action completed");
+      return result;
+    } catch (reason) {
+      this.httpFailed(reason);
+      reason.__wsprocessed = true;
+      throw reason;
+    }
+  }
+  public breezeQueryFailed2 = (reason) => {
+    this.logger.error(reason.message, "Query failed");
+    this.$scope.first = true;
+  };
+  public breezeQueryFailed = (reason) => {
+    this.breezeQueryFailed2(reason);
+    return <any>null;
+  }
+  protected httpFailed = (reason) => {
+    this.$scope.first = true;
+    Tools.Debug.log("Reason:", reason);
+    var msg = this.$scope.w6.api.errorMsg(reason);
+    this.logger.error(msg[0], msg[1]);
+  };
+
+  public forward = (url, $window: ng.IWindowService, $location: ng.ILocationService) => this.forwardFull($location.protocol() + ":" + url);
+  public forwardFull(fullUrl) {
+    Tools.Debug.log("changing URL: " + fullUrl);
+    return this.$scope.w6.navigate(fullUrl);
+  }
+
+  public processNames = (results: { name: string }[]) => results.map(x => { return { text: x.name, key: x.name } });
+  public processNamesWithPrefix = (results: { name: string }[], prefix: string) => results.map(x => { return { text: prefix + x.name, key: prefix + x.name } });
+
+  public getMenuItems(items: IMenuItem[], mainSegment: string, parentIsDefault?: boolean): IMenuItem[] {
+    var menuItems = [];
+    items.forEach(item => {
+      var main = item.mainSegment || item.mainSegment == "" ? item.mainSegment : mainSegment;
+      var fullSegment = main && main != "" ? main + "." + item.segment : item.segment;
+      var segment = item.isDefault ? main : fullSegment; // This will make menu links link to the parent where this page is default
+      var menuItem = Object.assign({}, item);
+      menuItem.segment = segment;
+      menuItem.fullSegment = fullSegment;
+      menuItem.cls = item.cls;
+      if (item.isRight) menuItem.cls = item.cls ? item.cls + ' right' : 'right';
+      menuItems.push(menuItem);
+    });
+    return menuItems;
+  }
+}
+
+export interface IBaseScopeT<TModel> extends IBaseScope, IHaveModel<TModel> {
+}
+
+export class BaseQueryController<TModel> extends BaseController {
+  static $inject = ['$scope', 'logger', '$q', 'model'];
+
+  constructor(public $scope: IBaseScopeT<TModel>, public logger, $q, model: TModel) {
+    super($scope, logger, $q);
+
+    $scope.model = model;
+  }
+}
+
+export interface IHaveModel<TModel> {
+  model: TModel;
+}
+
+export class DialogControllerBase extends BaseController {
+  static $inject = ['$scope', 'logger', '$modalInstance', '$q'];
+
+  constructor($scope, logger, public $modalInstance, $q) {
+    super($scope, logger, $q);
+
+    $scope.$close = () => {
+      $modalInstance.close();
+    };
+  }
+}
+
+export class ModelDialogControllerBase<TModel> extends DialogControllerBase {
+  static $inject = ['$scope', 'logger', '$modalInstance', '$q', 'model'];
+
+  constructor($scope, logger, public $modalInstance, $q, model: TModel) {
+    super($scope, logger, $modalInstance, $q);
+    $scope.model = model;
+  }
+}
+
 
 
 class AppModule extends Tk.Module {
@@ -78,6 +424,7 @@ class AppModule extends Tk.Module {
       .factory('aur.legacyMediator', () => Container.instance.get(LegacyMediator))
       .factory('aur.eventBus', () => Container.instance.get(EventAggregator))
       .factory('aur.client', () => Container.instance.get(Client))
+      .factory('aur.features', () => Container.instance.get(FeatureToggles))
       .factory("$exceptionHandler", ['errorHandler', (eh: GlobalErrorHandler) => (exception, cause) => eh.handleAngularError(exception, cause)])
       .config(['redactorOptions', redactorOptions => angular.copy(globalRedactorOptions, redactorOptions)])
       .config([
@@ -132,7 +479,7 @@ class AppModule extends Tk.Module {
         }
       ])
       .run([
-        '$rootScope', 'w6', '$timeout', 'aur.legacyMediator', ($rootScope: IRootScope, w6: W6, $timeout, legacyMediator: LegacyMediator) => {
+        '$rootScope', 'w6', '$timeout', 'aur.legacyMediator', 'aur.features', ($rootScope: IRootScope, w6: W6, $timeout, legacyMediator: LegacyMediator, features: FeatureToggles) => {
 
 
           // TODO: No Dom manipulation in controllers..
@@ -147,6 +494,7 @@ class AppModule extends Tk.Module {
             }
           }
           $rootScope.w6 = w6;
+          $rootScope.features = features;
 
           $rootScope.pageInfo = { title: document.title };
           $rootScope.setPageInfo = pageInfo => {

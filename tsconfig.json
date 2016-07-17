@@ -235,6 +235,7 @@
         "./src/services/dtos.ts",
         "./src/services/entity-extends.ts",
         "./src/services/env.ts",
+        "./src/services/features.ts",
         "./src/services/helpers.ts",
         "./src/services/legacy.ts",
         "./src/services/legacy/base.ts",

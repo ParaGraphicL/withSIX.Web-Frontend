@@ -7,9 +7,6 @@ import {Toastr} from './toastr';
 import {inject} from 'aurelia-framework';
 import {PromiseCache} from 'withsix-sync-api';
 import {IRequestInfo} from '../helpers/utils/http-errors';
-
-import {BooleanResult} from './legacy/base';
-
 import {HttpClient, json} from 'aurelia-fetch-client';
 
 const metadata = require('../../data/metadata.json');
@@ -25,6 +22,14 @@ export interface IAWSUploadPolicy {
   EncryptedPolicy: string;
   CallbackUrl: string;
 }
+
+export interface Result<T> {
+  result: T;
+}
+
+export interface BooleanResult extends Result<boolean> {
+}
+
 
 
 export interface IQueryResult<T extends breeze.Entity> extends breeze.QueryResult {
