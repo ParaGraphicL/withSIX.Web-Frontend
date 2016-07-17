@@ -94,6 +94,7 @@ export class Base implements IDisposable {
     if (!property) throw new Error("null property");
     let b = bindingEngine.propertyObserver<T>(obj, property);
     let o = Rx.Observable.create((observer: Rx.Subject<T>) => b.subscribe(x => observer.next(x)).dispose);
+    // TODO: Why not just startWith?
     if (triggerInitial) return Rx.Observable.of(obj[property]).concat(o).distinctUntilChanged();
     else return o.distinctUntilChanged();
   }

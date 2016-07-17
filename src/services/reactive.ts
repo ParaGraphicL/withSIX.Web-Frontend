@@ -270,9 +270,9 @@ class ReactiveCommand<T> extends ReactiveBase {
   public get otherBusy() { return this._otherBusy; }
   public get isVisible() { return this._isVisible; }
   public get thrownExceptions(): Rx.Observable<Error> { return this._thrownExceptions.asObservable() }
-  public get isExecutingObservable() { return this._isExecutingObservable.asObservable() }
-  public get isVisibleObservable() { return this._isVisibleObservable.asObservable() }
-  public get canExecuteObservable() { return this._canExecuteObservable.asObservable() }
+  public get isExecutingObservable() { return this._isExecutingObservable.asObservable().startWith(this.isExecuting) }
+  public get isVisibleObservable() { return this._isVisibleObservable.asObservable().startWith(this.isVisible) }
+  public get canExecuteObservable() { return this._canExecuteObservable.asObservable().startWith(this.canExecute) }
 
   cls: string;
   icon: string;
