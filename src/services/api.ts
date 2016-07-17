@@ -96,9 +96,9 @@ export interface ITabNotification {
   isPersistent?: boolean;
 }
 
-@inject(Client, EventAggregator, LS)
+@inject(Client, EventAggregator, LS, DialogService)
 export class Api {
-  constructor(private client: Client, private eventBus: EventAggregator, private ls: LS) {
+  constructor(private client: Client, private eventBus: EventAggregator, private ls: LS, private dialog: DialogService) {
     // we could use debounce here, but then the menus don't close on the initiation of the scroll, but rather on the stop.
     // so throttle seems the better option
     this.subj.throttleTime(1000).subscribe(x => this.eventBus.publish(new CloseDropdowns()));
@@ -126,6 +126,10 @@ export class Api {
     if (reason.entityErrors && reason.entityErrors.length > 0) return this.handleBreezeSaveError(reason);
     if (reason.httpResponse != null) return this.handleBreezeErrorResponse(reason);
     return [reason, 'Unknown error'];
+  }
+
+  openGeneralDialog(model: { model; viewModel: string }) {
+    return this.dialog.open({ viewModel: "features/general-dialog", model: model });
   }
 
   handleBreezeSaveError(r: IBreezeSaveError) {

@@ -45,6 +45,7 @@ interface String {
 interface IApi {
   errorMsg(error): string[];
   openSettings(model?): void;
+  openGeneralDialog(model: { model; viewModel: string }): Promise<any>;
   createGameBasket(gameId, basketModel): any;
   getContentStateInitial(state: { state /*: MyApp.Components.ModInfo.ItemState */; version: string }, constraint?: string);//: MyApp.Components.ModInfo.ItemState;
   login(evt?): void;
