@@ -625,6 +625,8 @@ export module Main.Changelog {
   registerCQ(GetMiniChangelogQuery);
 }
 
+const premiumTerms = <string><any>require("raw!../../docs/global/TermsOfServicesPremium.md");
+
 export module Main.Premium {
   export class OpenPremiumTermsDialogQuery extends DialogQueryBase {
     static $inject = ['$modal', 'dialogs', 'dbContext', 'w6'];
@@ -637,19 +639,10 @@ export module Main.Premium {
         templateUrl: '/src_legacy/app/main/premium/premium-terms-dialog.html',
         size: 'lg',
         resolve: {
-          data: () => this.context.getCustom(this.w6.url.cdn + "/docs/global/TermsOfServicesPremium.md")
+          data: () => premiumTerms
         }
       })
     ];
-  }
-
-  export class GetPremiumLegalQuery extends DbQueryBase {
-    static $name = 'GetPremumLegal';
-    static $inject = ['dbContext', 'w6'];
-    constructor(dbContext: W6Context, private w6: W6) {
-      super(dbContext);
-    }
-    public execute = [() => this.context.getCustom(this.w6.url.cdn + "/docs/global/TermsOfServicesPremium.md")];
   }
 
   export class GetPremiumQuery extends DbQueryBase {
