@@ -3,6 +3,7 @@ import {Mediator, LegacyMediator} from './mediator';
 import {W6} from './withSIX';
 import {Tools} from './tools';
 import {Toastr} from './toastr';
+import {FeatureToggles} from './features';
 import {ListFactory, ObservableEventAggregator, EventWrapper} from './reactive';
 
 import {Client} from 'withsix-sync-api';
@@ -19,31 +20,6 @@ import {MessageDialog} from '../features/message-dialog'
 
 export {MessageDialog, Confirmation}
 
-@inject(W6)
-class FeatureToggles extends ReactiveBase {
-  constructor(private w6: W6) { super() }
-
-  private isManager = this.w6.userInfo.isManager || this.w6.userInfo.isAdmin;
-  private syncFeatures = !this.w6.isClient;
-  private isTestEnvironment = this.tools.env != this.tools.Environment.Production;
-  private testingFlag = window.location.search.includes('testmode=1');
-  private groupTestingFlag = window.location.search.includes('testgroupmode=1') || (!window.location.search.includes('testgroupmode=0') && this.isManager);
-  private get clientInfo() { return this.w6.miniClient.clientInfo }
-  private get isPrereleaseClient() { return this.clientInfo && this.clientInfo.version.includes('-') }
-  loggedIn = this.w6.userInfo.id != null;
-
-  get managerFeatures() { return this.w6.userInfo.isManager || this.adminFeatures }
-  get adminFeatures() { return this.w6.userInfo.isAdmin }
-  get clientAutostart() { return !this.isTestEnvironment }
-  get servers() { return this.isTestEnvironment }
-  get groups() { return this.groupTestingFlag }
-  get notifications() { return this.isManager }
-  get library() { return this.syncFeatures }
-  get quickActions() { return this.isTestEnvironment }
-  get uiVirtualization() { return this.testingFlag }
-  get collectionsInCollections() { return this.isTestEnvironment }
-  get beta1_3() { return this.isPrereleaseClient }
-}
 
 @inject(W6)
 export class Assets {

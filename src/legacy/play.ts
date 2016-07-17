@@ -12,10 +12,10 @@ import {RestoreBasket, OpenCreateCollectionDialog, OpenAddModDialog, OpenAddMods
 import {ForkCollection} from '../features/profile/content/collection';
 import {W6, W6Urls, globalRedactorOptions} from '../services/withSIX';
 import {Tools} from '../services/tools';
-import {W6Context, IQueryResult} from '../services/w6context';
+import {W6Context, IQueryResult, BooleanResult, Result} from '../services/w6context';
 import {Tk} from '../services/legacy/tk'
-import {IRootScope, ITagKey, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHaveModel, DialogQueryBase, ICreateComment, ICQWM, IModel, DbCommandBase, DbQueryBase, BaseController, BaseQueryController,
-  IMenuItem, ModelDialogControllerBase, DialogControllerBase, Result, BooleanResult, IHandleCommentsScope} from '../services/legacy/base'
+import {IRootScope, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHaveModel, DialogQueryBase, DbCommandBase, DbQueryBase, BaseController, BaseQueryController, DialogControllerBase, ModelDialogControllerBase } from './app-base'
+import {ITagKey, ICreateComment, ICQWM, IModel, IMenuItem, IHandleCommentsScope} from '../services/legacy/base'
 import {EventAggregator} from 'aurelia-event-aggregator';
 
 import {Mediator} from 'aurelia-mediator';

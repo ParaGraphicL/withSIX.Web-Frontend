@@ -13,7 +13,9 @@ import {IBreezeMod, IBreezeUser, IBreezeCollection, IBreezeMission, IBreezeColle
   IBreezeModMediaItem, IUserInfo, Resource, Permission, Role,
   EntityExtends, BreezeEntityGraph, _IntDefs} from '../services/dtos';
 
-import {DialogControllerBase, IRootScope, DbCommandBase, DbQueryBase, DialogQueryBase, _Indexer, BooleanResult} from '../services/legacy/base';
+import {IRootScope, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHaveModel, DialogQueryBase, DialogControllerBase, DbCommandBase, DbQueryBase, BaseController, BaseQueryController } from './app-base'
+import {ITagKey, ICreateComment, ICQWM, IModel, IMenuItem} from '../services/legacy/base'
+
 import {IBaskets, IBasketItem} from '../services/legacy/baskets';
 import {FileSize} from '../services/legacy/misc';
 
