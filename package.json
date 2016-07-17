@@ -80,7 +80,6 @@
     "merge2": "^1.0.1",
     "node-sass": "^3.7.0",
     "ntypescript": "^1.201607050909.1",
-    "raw-loader": "^0.5.1",
     "require-dir": "^0.3.0",
     "run-sequence": "^1.1.5",
     "ts-babel-node-extendable": "^1.0.1",
