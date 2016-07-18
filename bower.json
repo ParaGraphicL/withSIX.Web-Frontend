@@ -16,18 +16,18 @@
   ],
   "dependencies": {
     "accounting": "~0.3.2",
-    "angular": "~> 1.4.11",
-    "angular-animate": "~> 1.4.11",
+    "angular": "~> 1.5.7",
+    "angular-animate": "~> 1.5.7",
     "angular-bootstrap": "~0.13.3",
-    "angular-cookies": "~> 1.4.11",
+    "angular-cookies": "~> 1.5.7",
     "angular-dialog-service": "~5.1.2",
     "angular-local-storage": "~0.2.1",
     "angular-moment": "",
     "angular-rangeslider": "~0.0.7",
     "angular-redactor": "git://github.com/sxmcrow/angular-redactor#9ef3054c054cb7d21d71b09cb1881fc91c8edafc",
-    "angular-route": "~> 1.4.11",
+    "angular-route": "~> 1.5.7",
     "angular-route-segment": "~1.5.0",
-    "angular-sanitize": "~> 1.4.11",
+    "angular-sanitize": "~> 1.5.7",
     "angular-spinner": "",
     "angular-strap": "~2.3.1",
     "angular-truncate": "*",
@@ -53,12 +53,13 @@
     "ngInfiniteScroll": "git://github.com/sickboy/ngInfiniteScroll#1757d0786df1365f1190b783fd0688cc5a878946",
     "sb-ng-dfp": "0.5.1.4",
     "select2": "",
-    "toastr": ""
+    "toastr": "",
+    "ng-multi-transclude": "^0.1.5"
   },
   "resolutions": {
-    "angular": "~> 1.4.11",
+    "angular": "~> 1.5.7",
     "d3": "~3.4.1",
     "angular-bootstrap": "~0.13.3",
-    "angular-sanitize": "~> 1.4.11"
+    "angular-sanitize": "~> 1.5.7"
   }
 }
