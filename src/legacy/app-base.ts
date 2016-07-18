@@ -448,7 +448,8 @@ class AppModule extends Tk.Module {
 
             return function(scope, element) {
               element.on('click', function(event) {
-                if (element[0].disabled) return;
+                let el = element[0];
+                if (el.disabled) return;
                 var result, d;
                 try {
                   result = fn(scope, { $event: event });
@@ -460,10 +461,11 @@ class AppModule extends Tk.Module {
                 let isPromise = result != null && typeof result.then == 'function';
                 if (!isPromise) return;
 
-                element[0].disabled = true;
+                el.disabled = true;
 
-                function enable() { scope.$evalAsync(() => element[0].disabled = false); }
-                result.then(enable, x => {
+                let p: Promise<any> = result;
+                function enable() { el.disabled = false; }
+                p.then(enable, x => {
                   enable();
                   if (!x.__wsprocessed) errorHandler.handleAngularActionError(x);
                 });
