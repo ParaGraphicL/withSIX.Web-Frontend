@@ -481,12 +481,6 @@ export module Play {
                 templateUrl: '/src_legacy/app/play/gameSubLayout.html',
                 resolve: setupQuery(Games.GetGameQuery)
               }).within();
-
-            /*
-                                    game.segment('test', {
-                                            templateUrl: '/src_legacy/app/play/shared/_content-header-new.html'
-                                        });
-            */
             game.
               segment('stream', {
                 default: true

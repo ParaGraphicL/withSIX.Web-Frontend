@@ -124,7 +124,7 @@
       </div>
     </div>
 
-    <div name="content-header-download-outer">
+    <div name="content-header-download">
       <div ng-if="model.modVersion != null && !model.group" class="action download content-state-c-bgd">
         <sx-aurelia ng-if="w6.enableBasket" sx-view-model="'features/profile/content/mod'" sx-view="'features/profile/content/_action.html'" sx-model="auModel"></sx-aurelia>
         <div ng-if="!w6.enableBasket" ng-class="{'processing-button': model.modVersion == null, 'add-to-button-override': model.group != null}">

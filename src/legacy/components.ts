@@ -638,7 +638,7 @@ export module Components {
   export function registerController(controller) { app.app.controller(controller.$name, controller); }
 
   var app = new ComponentsModule();
-
+  // deprecated
   class MultiTranscludeDirectiveController {
     static $inject = ['$scope', '$element', '$attrs', '$transclude'];
 
