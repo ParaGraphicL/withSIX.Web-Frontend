@@ -125,22 +125,20 @@
     </div>
 
     <div name="content-header-download-outer">
-      <div class="action download content-state-c-bgd" ng-class="{'processing-button': model.modVersion == null, 'add-to-button-override': model.group != null}">
-        <div ng-if="model.modVersion != null">
-          <div ng-if="!model.group">
-            <button ng-if="!w6.enableBasket" ng-click="(callToAction() && $event.stopPropagation())" class="anchor calltoactionBase btn-block" type="button" ng-disabled="processing || (clientInfo.globalLock || clientInfo.gameLock)" http-progress="content.installContent"
-                http-processing="processing" http-pending="Installing..." http-success="Installed!" http-error="Failed...">
-              <span class="icon withSIX-icon-Download" title="Download"></span>
-              <span class="text">Download</span>
-            </button>
-            <sx-aurelia ng-if="w6.enableBasket" sx-view-model="'features/profile/content/mod'" sx-view="'features/profile/content/_action.html'" sx-model="auModel"></sx-aurelia>
-          </div>
+      <div ng-if="model.modVersion != null && !model.group">
+        <sx-aurelia ng-if="w6.enableBasket" sx-view-model="'features/profile/content/mod'" sx-view="'features/profile/content/_action.html'" sx-model="auModel"></sx-aurelia>
+        <div ng-if="!w6.enableBasket" class="action download content-state-c-bgd" ng-class="{'processing-button': model.modVersion == null, 'add-to-button-override': model.group != null}">
+          <button ng-click="(callToAction() && $event.stopPropagation())" class="anchor calltoactionBase btn-block" type="button" ng-disabled="processing || (clientInfo.globalLock || clientInfo.gameLock)" http-progress="content.installContent" http-processing="processing"
+              http-pending="Installing..." http-success="Installed!" http-error="Failed...">
+            <span class="icon withSIX-icon-Download" title="Download"></span>
+            <span class="text">Download</span>
+          </button>
         </div>
-        <button ng-if="model.modVersion == null" disabled class="anchor calltoactionBase btn-block" type="button">
-          <span class="icon withSIX-icon-Synq-Upload" title="Processing"></span>
-          <span class="text">Processing</span>
-        </button>
       </div>
+      <button ng-if="model.modVersion == null" disabled class="anchor calltoactionBase btn-block" type="button">
+        <span class="icon withSIX-icon-Synq-Upload" title="Processing"></span>
+        <span class="text">Processing</span>
+      </button>
     </div>
   </div>
 
