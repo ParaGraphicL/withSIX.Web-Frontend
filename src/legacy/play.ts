@@ -4753,6 +4753,7 @@ export module Play.Mods {
     addLink: (link) => void;
     newLink: { title: string; path: string };
     openSteamInfo: () => void;
+    forumUrl?: string; steamInfo;
   }
 
   export class ModInfoController extends ModEditBaseController {
@@ -4785,7 +4786,11 @@ export module Play.Mods {
       this.setupDependencyAutoComplete();
 
       this.setupTitle("model.name", "Info - {0} (" + $scope.model.packageName + ") - " + $scope.model.game.name);
-      (<any>$scope).steamInfo = { id: $scope.model.id, name: $scope.model.name }
+      $scope.steamInfo = { id: $scope.model.id, name: $scope.model.name }
+      let hp = $scope.model.homepageUrl;
+      if (hp.startsWith("http://forums.bistudio.com/") || hp.startsWith("https://forums.bistudio.com/")) {
+        $scope.forumUrl = hp;
+      }
     }
 
     private setupComments(mod: IBreezeMod) {

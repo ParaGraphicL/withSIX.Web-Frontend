@@ -77,7 +77,8 @@
               </button>
             </div>
           </div>
-          <sx-aurelia ng-if="features.steam" sx-view-model="'features/games/mods/steam-info'" sx-model="steamInfo"></sx-aurelia>
+          <sx-aurelia ng-if="features.steam && steamInfo" sx-view-model="'features/games/mods/steam-info'" sx-model="steamInfo"></sx-aurelia>
+          <sx-aurelia ng-if="features.steam && forumUrl" sx-view-model="'features/games/mods/ipb-info'" sx-model="forumUrl"></sx-aurelia>
           <div>
             <sx-comments ng-if="model.comments" comments="model.comments" can-manage="editConfig.canManage() || editConfig.canEdit()" add-comment="addComment(comment)" delete-comment="deleteComment(comment)" save-comment="saveComment(comment)" report-comment="reportComment(comment)"
                 like-comment="likeComment(comment)" unlike-comment="unlikeComment(comment)" like-states="commentLikeStates">
