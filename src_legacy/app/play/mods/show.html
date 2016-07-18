@@ -1,5 +1,5 @@
 <div itemscope itemtype="http://schema.org/CreativeWork" ng-class="{'editing': editConfig.isEditing}" class="not-editing">
-  <div sx-content-header ng-class="{'content-stateable': w6.enableBasket, 'in-basket': isInBasket()}" class="content-basketable {{getItemClass(model)}}">
+  <div sx-content-header ng-class="{'content-stateable': w6.enableBasket, 'in-basket': isInBasket()}" class="sx-content-header content-basketable {{getItemClass(model)}}">
     <span name="content-title-name" class="editable-half">
       <span ng-if="model.group" class="icon withSIX-icon-Lock"></span>
 
@@ -127,21 +127,13 @@
     <div name="content-header-download-outer">
       <div class="action download content-state-c-bgd" ng-class="{'processing-button': model.modVersion == null, 'add-to-button-override': model.group != null}">
         <div ng-if="model.modVersion != null">
-          <button ng-if="model.group" ng-click="addToCollections(model) && $event.stopPropagation()" type="button" class="anchor calltoactionBase btn-block">
-            <span class="text">Add to ...</span>
-          </button>
           <div ng-if="!model.group">
             <button ng-if="!w6.enableBasket" ng-click="(callToAction() && $event.stopPropagation())" class="anchor calltoactionBase btn-block" type="button" ng-disabled="processing || (clientInfo.globalLock || clientInfo.gameLock)" http-progress="content.installContent"
                 http-processing="processing" http-pending="Installing..." http-success="Installed!" http-error="Failed...">
               <span class="icon withSIX-icon-Download" title="Download"></span>
               <span class="text">Download</span>
             </button>
-            <button ng-if="w6.enableBasket" ng-click="directDownload(model) && $event.stopPropagation()" class="anchor calltoactionBase btn-block" type="button" ng-disabled="processing || (clientInfo.globalLock || clientInfo.gameLock)" http-progress="content.installContent"
-                http-processing="processing" http-pending="Installing..." http-success="Installed!" http-error="Failed...">
-              <span class="icon content-state-icon" title="Download"></span>
-              <span class="text"><span class="content-state-text"></span></span>
-              <button ng-if="isActive(model)" ng-click="abort(model)">Pause</button>
-            </button>
+            <sx-aurelia ng-if="w6.enableBasket" sx-view-model="'features/profile/content/mod'" sx-view="'features/profile/content/_action.html'" sx-model="auModel"></sx-aurelia>
           </div>
         </div>
         <button ng-if="model.modVersion == null" disabled class="anchor calltoactionBase btn-block" type="button">

@@ -1,6 +1,6 @@
 <div itemscope itemtype="http://schema.org/CreativeWork" ng-class="{'editing': editConfig.isEditing}" class="not-editing">
 
-  <div sx-content-header>
+  <div sx-content-header class="sx-content-header">
     <span name="content-title-name" class="editable-half">
             <span ng-class="{'edit-border-blue edit-field': editConfig.canManage()}"
                   sx-editable-text="model.name" buttons="no" can-edit="editConfig.isEditing && editConfig.canManage()"
@@ -43,6 +43,7 @@
         <span class="icon withSIX-icon-Download" title="Download"></span>
         <span class="text">Download</span>
       </button>
+      <!-- <sx-aurelia sx-view-model="'features/profile/content/mission'" sx-view="'features/profile/content/_action.html'" sx-model="auModel"></sx-aurelia> -->
     </div>
 
     <div name="content-header-logo">

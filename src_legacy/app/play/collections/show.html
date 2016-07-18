@@ -1,5 +1,5 @@
 <div itemscope itemtype="http://schema.org/CreativeWork" ng-class="{'has-servers': model.latestVersion.hasServers, 'editing': editConfig.isEditing}" class="not-editing">
-  <div sx-content-header ng-class="{'content-stateable': w6.enableBasket}" class="content-basketable {{getItemClass(model)}}">
+  <div sx-content-header ng-class="{'content-stateable': w6.enableBasket}" class="sx-content-header content-basketable {{getItemClass(model)}}">
     <span name="content-title-name" class="editable-half">
             <span ng-class="{'edit-border-blue edit-field': editConfig.canManage()}"
                   sx-editable-text="model.name" buttons="no" can-edit="editConfig.isEditing && editConfig.canManage()" blur-saves>
@@ -75,17 +75,7 @@
     </div>
     <div name="content-header-download-outer">
       <div ng-if="w6.enableBasket" class="action download content-state-c-bgd">
-        <!--
-                <button class="content-basketable-button" ng-click="addToBasket(model) && $event.stopPropagation()"
-                        type="button">
-                            <span class="content-basketable-icon"></span><span class="content-basketable-text"></span>
-                        </button>
-        -->
-        <button class="anchor btn-block calltoactionBase" type="button" ng-click="tryDirectDownloadCollection() && $event.stopPropagation()" ng-disabled="processing || (clientInfo.globalLock || clientInfo.gameLock)" http-progress="content.installCollection" http-processing="processing"
-            http-pending="Installing..." http-success="Installed!" http-error="Failed...">
-          <span class="icon content-state-icon" title="Download"></span>
-          <span class="text"><span class="content-state-text"></span></span>
-        </button>
+        <sx-aurelia sx-view-model="'features/profile/content/collection'" sx-view="'features/profile/content/_action.html'" sx-model="auModel"></sx-aurelia>
       </div>
       <div ng-if="!w6.enableBasket">
         <div ng-if="!w6.userInfo.id" class="action download">

@@ -55,6 +55,22 @@ $downloadButtonHeight: 74px;
     span.imageholder {
       display: block;
     }
+    .bottom-bar {
+      action-bar {
+        &.pull-left {
+          float: none !important;
+        }
+        li,
+        ul {
+          display: block;
+        }
+        button {
+          background-color: inherit;
+          width: 100%;
+          height: 74px;
+        }
+      }
+    }
     div.title {
       background-color: white;
       padding: 32px;
