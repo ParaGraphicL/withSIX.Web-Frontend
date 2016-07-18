@@ -1,5 +1,5 @@
 <sx-info-page>
-  <div name="main">
+  <sx-info-main>
     <div class="tile">
       <section>
 
@@ -55,7 +55,7 @@
               </li>
               <li ng-repeat="item in model.mediaItems | filter:{type: 'Link'}" class="no-tween-out">
                 <sx-edit-list-item>
-                  <div name="list-text">
+                  <div>
                     <span class="fa fa-chevron-right" style="font-size: 14px"></span> &nbsp;&nbsp;
                     <a ng-href="{{item.path}}" rel="external" class="barebone bold" target="_blank">{{item.title}}</a>
                   </div>
@@ -63,7 +63,7 @@
               </li>
               <li ng-repeat="item in model.entityAspect.entityManager.getChanges('ModMediaItem') | deletedfilter: model" class="no-tween-out">
                 <sx-edit-list-item>
-                  <div name="list-text">
+                  <div>
                     <span class="fa fa-chevron-right" style="font-size: 14px"></span>&nbsp;&nbsp;
                     <a ng-href="{{item.path}}" rel="external" class="barebone bold" target="_blank">{{item.title}}</a>
                   </div>
@@ -77,10 +77,12 @@
               </button>
             </div>
           </div>
+          <sx-aurelia ng-if="features.steam && steamInfo" sx-view-model="'features/games/mods/steam-info'" sx-model="steamInfo"></sx-aurelia>
+          <sx-aurelia ng-if="features.steam && forumUrl" sx-view-model="'features/games/mods/ipb-info'" sx-model="forumUrl"></sx-aurelia>
           <div>
             <sx-comments ng-if="model.comments" comments="model.comments" can-manage="editConfig.canManage() || editConfig.canEdit()" add-comment="addComment(comment)" delete-comment="deleteComment(comment)" save-comment="saveComment(comment)" report-comment="reportComment(comment)"
-            like-comment="likeComment(comment)" unlike-comment="unlikeComment(comment)" like-states="commentLikeStates">
-              <div name="comments-info">
+                like-comment="likeComment(comment)" unlike-comment="unlikeComment(comment)" like-states="commentLikeStates">
+              <sx-comments-info>
                 <i>
                                 For questions and support about {{model.displayName}} visit the
                                 <span ng-if="model.homepageUrl"><a ng-href="{{model.homepageUrl}}">mod homepage</a></span>
@@ -88,14 +90,14 @@
                             </i>
                 <br/>
                 <br/>
-              </div>
+              </sx-comments-info>
             </sx-comments>
           </div>
         </article>
       </section>
     </div>
-  </div>
-  <div name="right">
+  </sx-info-main>
+  <sx-info-right>
     <div ng-include="'/src_legacy/app/play/mods/_edit-side-pane.html'"></div>
     <div ng-if="w6.renderAds" class="tile">
       <div data-ng-dfp-ad-container>
@@ -147,7 +149,7 @@
         <div class="mod-statistics-inner">
           <div>
             <nvd3-line-chart data="exampleData" height="80" id="statisticsChart" margin="{left:0,top:0,bottom:0,right:0}" margin2="{left:0,top:0,bottom:0,right:0}" tooltips="true" interactive="true" isarea="false" useinteractiveguideline="true" showlegend="true"
-            legendradiobuttonmode="false" xaxistickformat="xAxisTickFormat()">
+                legendradiobuttonmode="false" xaxistickformat="xAxisTickFormat()">
             </nvd3-line-chart>
           </div>
         </div>
@@ -166,12 +168,12 @@
           </li>
           <li ng-repeat="item in model.dependencies" class="no-tween-out" style="padding-left: 0">
             <sx-edit-list-item-no-modify ng-if="editConfig.isEditing">
-              <div name="list-text">
+              <div>
                 <a ng-href="{{::url.play + '/' + item.gameSlug + '/mods/' + toShortId(item.id) + '/' + item.slug}}" class="barebone bold">{{::item.name}}</a>
               </div>
             </sx-edit-list-item-no-modify>
             <div ng-if="!editConfig.isEditing">
-              <div name="list-text">
+              <div>
                 <a ng-href="{{::url.play + '/' + item.gameSlug + '/mods/' + toShortId(item.id) + '/' + item.slug}}" class="barebone bold">{{::item.name}}</a>
               </div>
             </div>
@@ -179,7 +181,7 @@
 
           <li ng-repeat="item in model.entityAspect.entityManager.getChanges('ModDependency') | deletedfilter: model" class="no-tween-out" style="padding-left: 0">
             <sx-edit-list-item-no-modify>
-              <div name="list-text">
+              <div>
                 <button rel="external" class="anchor bold" target="_blank">{{::item.name}}</button>
               </div>
             </sx-edit-list-item-no-modify>
@@ -202,5 +204,5 @@
         </div>
       </div>
     </div>
-  </div>
+  </sx-info-right>
 </sx-info-page>

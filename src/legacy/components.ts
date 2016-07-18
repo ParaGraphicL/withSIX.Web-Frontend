@@ -24,6 +24,12 @@ declare var accounting;
 declare var Modernizr: ModernizrStatic;
 declare var Fingerprint;
 
+interface SxAureliaScope extends ng.IScope {
+  sxViewModel: string
+  sxView: string;
+  sxModel
+}
+
 export module Components {
   class ComponentsModule extends Tk.Module {
     static $name = "ComponentsModule";
@@ -135,7 +141,24 @@ export module Components {
 
             }
           };
-        }).
+        })
+        .directive('sxAurelia', [
+          () => {
+            return {
+              scope: {
+                sxViewModel: '=',
+                sxModel: '=',
+                sxView: '='
+              },
+              link: (scope: SxAureliaScope, element, iAttrs) => {
+                let el = element[0];
+                window.w6Cheat.api.render({ model: scope.sxModel, viewModel: scope.sxViewModel, view: scope.sxView, targetElement: el })
+                .then(x => scope.$on('$destroy', () => x.dispose()));
+              }
+            }
+          }
+        ])
+        .
         directive('sxAdsense', [
           '$window', '$compile', 'adsense', ($window, $compile, adsense) => {
             return {
@@ -224,7 +247,16 @@ export module Components {
         directive('sxContentHeader', () => {
           return {
             restrict: 'A',
-            transclude: true,
+            transclude: {
+              'name': '?sxHeaderName',
+              'author': '?sxHeaderAuthor',
+              'download': '?sxHeaderDownload',
+              'info': '?sxHeaderInfo',
+              'logo': '?sxHeaderLogo',
+              'report': '?sxHeaderReport',
+              'type': '?sxHeaderType',
+              'tags': '?sxHeaderTags'
+            },
             templateUrl: '/src_legacy/app/play/shared/_content-header-new.html'
           };
         }).
@@ -245,36 +277,17 @@ export module Components {
         directive('sxInfoPage', () => {
           return {
             restrict: 'E',
-            transclude: true,
+            transclude: {
+              'main': '?sxInfoMain',
+              'tile': '?sxInfoTile',
+              'section': '?sxInfoSection',
+              'box': '?sxInfoBox',
+              'right': '?sxInfoRight'
+            },
             templateUrl: '/src_legacy/app/play/shared/_info-page.html'
           };
         }).
-        directive('sxMultiTransclude', () => {
-          return {
-            controller: MultiTranscludeDirectiveController,
-
-            link: ($scope, $element, $attrs, controller: MultiTranscludeDirectiveController) => {
-              var attrs = <any>$attrs;
-              var selector = '[name=' + attrs.sxMultiTransclude + ']';
-              var attach = clone => {
-                var $part = clone.find(selector).addBack(selector);
-                if ($part.length != 0) {
-                  $element.html('');
-                  $element.append($part);
-                }
-              };
-
-              if (controller.$transclude.$$element) {
-                attach(controller.$transclude.$$element);
-              } else {
-                controller.$transclude(clone => {
-                  controller.$transclude.$$element = clone;
-                  attach(clone);
-                });
-              }
-            }
-          };
-        }).directive("sxLateTemplate", [
+          directive("sxLateTemplate", [
           '$templateCache', '$compile', '$timeout', '$parse', '$http', '$q', ($templateCache, $compile, $timeout, $parse, $http: ng.IHttpService, $q: ng.IQService) => {
             function getTemplate(keyOrUrl: string) {
               var data = $templateCache.get(keyOrUrl);
@@ -609,7 +622,7 @@ export module Components {
   export function registerController(controller) { app.app.controller(controller.$name, controller); }
 
   var app = new ComponentsModule();
-
+  // deprecated
   class MultiTranscludeDirectiveController {
     static $inject = ['$scope', '$element', '$attrs', '$transclude'];
 
@@ -2786,7 +2799,9 @@ export module Components.Comments {
 
     controller = CommentSectionDirectiveController;
     templateUrl = CommentSectionDirectiveController.viewBase + '/index.html';
-    transclude = true;
+    transclude = {
+      info: '?sxCommentsInfo'
+    };
     restrict = 'E';
     scope = {
       comments: '=',

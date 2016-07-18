@@ -49,6 +49,30 @@ $downloadButtonHeight: 74px;
     margin-left: auto;
     margin-right: auto;
     background-color: white;
+    .hide-until-open {
+      display: block;
+    }
+    span.imageholder {
+      display: block;
+    }
+    .bottom-bar {
+      action-bar {
+        &.pull-left {
+          float: none !important;
+        }
+        ul {
+          display: block;
+        }
+        button {
+          background-color: inherit;
+          height: 74px;
+          padding: 8px;
+          span.icon {
+            display: inline-block; // fixes pushing down the busy indicator
+          }
+        }
+      }
+    }
     div.title {
       background-color: white;
       padding: 32px;

@@ -1,4 +1,4 @@
-import {Base, LS} from './base';
+import {Base, LS, IDisposable} from './base';
 import {W6} from './withSIX';
 import {Mediator, LegacyMediator} from './mediator';
 import {Toastr} from './toastr';
@@ -15,7 +15,6 @@ import breeze from 'breeze-client';
 import {HttpClient} from 'aurelia-http-client';
 import {Client} from 'withsix-sync-api';
 import {EventAggregator} from 'aurelia-event-aggregator';
-import {DialogService, DialogController} from 'aurelia-dialog';
 import {inject, Container} from 'aurelia-framework';
 import {Validation, ValidationResult} from 'aurelia-validation';
 import {Router} from 'aurelia-router';
@@ -110,6 +109,7 @@ export class Api {
   get tools() { return Tools }
   openSettings = (model?) => this.eventBus.publish(new OpenSettings());
   getContentStateInitial = ContentHelper.getConstentStateInitial;
+  render: (options) => Promise<IDisposable>;
   logout;// = () => this.w6.logout();
   login; //= () => this.w6.openLoginDialog();
   navigate; // = (url) => this.w6.navigate(url);
@@ -127,6 +127,8 @@ export class Api {
     if (reason.httpResponse != null) return this.handleBreezeErrorResponse(reason);
     return [reason, 'Unknown error'];
   }
+
+   openGeneralDialog: (model: { model; viewModel: string }) => Promise<any>;
 
   handleBreezeSaveError(r: IBreezeSaveError) {
     if (r.entityErrors.length == 0) return this.handleBreezeErrorResponse(<any>r);

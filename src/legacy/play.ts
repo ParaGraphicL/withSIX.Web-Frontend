@@ -7,6 +7,7 @@ import {IBreezeMod, IBreezeUser, IBreezeCollection, IBreezeMission, IBreezeColle
   EntityExtends, BreezeEntityGraph, _IntDefs} from '../services/dtos';
 
 import {LegacyMediator} from '../services/mediator';
+import {ModHelper, CollectionHelper, MissionHelper} from '../services/helpers';
 
 import {RestoreBasket, OpenCreateCollectionDialog, OpenAddModDialog, OpenAddModsToCollectionsDialog} from '../services/api';
 import {ForkCollection} from '../features/profile/content/collection';
@@ -137,6 +138,7 @@ export interface IContentScopeT<TModel> extends IContentScope, IHaveModel<TModel
   editConfig?: IEditConfiguration<TModel>;
   trustedDescriptionFullHtml: string;
   callToAction: () => void;
+  auModel;
 }
 
 
@@ -236,7 +238,10 @@ export class ContentModelController<TModel extends breeze.Entity> extends Conten
     $scope.$on('$destroy', () => $('body').removeClass('game-profile'));
     $('body').removeClass('game-profile');
     $('body').addClass('game-profile');
+    this.updateAuModel();
   }
+
+  protected updateAuModel() {}
 
   public getContentAvatarUrl(avatar: string, updatedAt?: Date): string {
     if (!avatar || avatar == "")
@@ -476,12 +481,6 @@ export module Play {
                 templateUrl: '/src_legacy/app/play/gameSubLayout.html',
                 resolve: setupQuery(Games.GetGameQuery)
               }).within();
-
-            /*
-                                    game.segment('test', {
-                                            templateUrl: '/src_legacy/app/play/shared/_content-header-new.html'
-                                        });
-            */
             game.
               segment('stream', {
                 default: true
@@ -897,6 +896,12 @@ export module Play.Collections {
         this.forking = false;
       }
     }
+
+    protected updateAuModel() {
+      // todo; call when going out of edit mode etc ?
+      this.$scope.auModel = CollectionHelper.convertOnlineCollection(this.$scope.model, 1, this.$scope.w6);
+    }
+
 
     // workaround for angular vs aurelia
 
@@ -2892,6 +2897,11 @@ export module Play.Missions {
       }
     }
 
+    protected updateAuModel() {
+      // todo; call when going out of edit mode etc ?
+      this.$scope.auModel = MissionHelper.convertOnlineMission(this.$scope.model, this.$scope.w6.activeGame, this.$scope.w6);
+    }
+
 
     unfollow() {
       return this.requestAndProcessResponse(UnfollowMissionCommand, { model: this.$scope.model })
@@ -3911,6 +3921,11 @@ export module Play.Mods {
       }
     }
 
+    protected updateAuModel() {
+      // todo; call when going out of edit mode etc ?
+      this.$scope.auModel = ModHelper.convertOnlineMod(this.$scope.model, this.$scope.w6.activeGame, this.$scope.w6);
+    }
+
     private modImageFile: File;
     private tempModImagePath: string;
 
@@ -3975,7 +3990,6 @@ export module Play.Mods {
         });
         return allowed;
       })();
-
 
       this.setupEditConfig({
         canEdit: () => this.$scope.model.author.id == this.$scope.w6.userInfo.id || inManageGroup,
@@ -4634,18 +4648,6 @@ export module Play.Mods {
     dropdown: Object[];
   }
 
-  export interface IModInfoScope extends IEditableModScope, IHandleCommentsScope<IBreezeModComment> {
-    openClaimDialog: () => any;
-    exampleData: { key: string; values: number[][] }[];
-    xAxisTickFormat: () => (d) => string;
-    addDependency: (data, hide) => boolean;
-    removeDependency: (data) => void;
-    getCurrentDependencies: () => Array<ITagKey>;
-    getDependencies: (query) => any;
-    addLink: (link) => void;
-    newLink: { title: string; path: string };
-  }
-
   export class ModEditBaseController extends BaseController {
     constructor(public $scope: IEditableModScope, logger, $q, public $timeout) {
       super($scope, logger, $q);
@@ -4734,6 +4736,20 @@ export module Play.Mods {
     }
   }
 
+  export interface IModInfoScope extends IEditableModScope, IHandleCommentsScope<IBreezeModComment> {
+    openClaimDialog: () => any;
+    exampleData: { key: string; values: number[][] }[];
+    xAxisTickFormat: () => (d) => string;
+    addDependency: (data, hide) => boolean;
+    removeDependency: (data) => void;
+    getCurrentDependencies: () => Array<ITagKey>;
+    getDependencies: (query) => any;
+    addLink: (link) => void;
+    newLink: { title: string; path: string };
+    openSteamInfo: () => void;
+    forumUrl?: string; steamInfo;
+  }
+
   export class ModInfoController extends ModEditBaseController {
     static $name = "ModInfoController";
     static $inject = ['$scope', 'logger', '$q', '$timeout', '$routeParams'];
@@ -4764,6 +4780,11 @@ export module Play.Mods {
       this.setupDependencyAutoComplete();
 
       this.setupTitle("model.name", "Info - {0} (" + $scope.model.packageName + ") - " + $scope.model.game.name);
+      $scope.steamInfo = { id: $scope.model.id, name: $scope.model.name }
+      let hp = $scope.model.homepageUrl;
+      if (hp.startsWith("http://forums.bistudio.com/") || hp.startsWith("https://forums.bistudio.com/")) {
+        $scope.forumUrl = hp;
+      }
     }
 
     private setupComments(mod: IBreezeMod) {

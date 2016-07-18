@@ -17,6 +17,8 @@ import {RouteHandler, RestoreBasket, OpenCreateCollectionDialog, OpenAddModDialo
 import {Login} from './services/auth';
 import {LoginBase, LoginUpdated} from './services/auth-base';
 
+import {RenderService} from './services/renderer/render-service';
+
 import {CreateCollectionDialog} from './features/games/collections/create-collection-dialog';
 import {AddModsToCollections} from './features/games/add-mods-to-collections';
 import {EditPlaylistItem} from './features/side-bar/playlist/edit-playlist-item';
@@ -53,6 +55,13 @@ export class App extends ViewModel {
     this.w6.openLoginDialog = evt => { if (evt) evt.preventDefault(); return this.login.login(); }
     this.w6.logout = () => this.logout();
     setInterval(() => signaler.signal('timeago'), 60 * 1000);
+    this.w6.api.openGeneralDialog = (model: { model; viewModel: string }) => {
+         return this.dialog.open({ viewModel: "features/general-dialog", model: model });
+      }
+
+    let rs: RenderService = Container.instance.get(RenderService);
+    this.w6.api.render = (options) => rs.open(options);
+
     this.w6.api.createGameBasket = (gameId, basketModel) => {
       var gm = Container.instance.get(GameBaskets);
       gm.activate(gameId, basketModel);
