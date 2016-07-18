@@ -26,6 +26,7 @@ declare var Fingerprint;
 
 interface SxAureliaScope extends ng.IScope {
   sxViewModel: string
+  sxView: string;
   sxModel
 }
 
@@ -147,10 +148,11 @@ export module Components {
               scope: {
                 sxViewModel: '=',
                 sxModel: '=',
+                sxView: '='
               },
               link: (scope: SxAureliaScope, element, iAttrs) => {
                 let el = element[0];
-                window.w6Cheat.api.render({ model: scope.sxModel, viewModel: scope.sxViewModel, targetElement: el })
+                window.w6Cheat.api.render({ model: scope.sxModel, viewModel: scope.sxViewModel, view: scope.sxView, targetElement: el })
                 .then(x => scope.$on('$destroy', () => x.dispose()));
               }
             }
