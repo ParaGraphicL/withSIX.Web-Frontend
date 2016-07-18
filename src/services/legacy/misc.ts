@@ -81,7 +81,7 @@ export class ModsHelper {
 export class Helper {
   static modToBasket(mod: IBreezeMod, gameId?: string): IBasketItem {
     return {
-      id: mod.id, name: mod.name, gameId: mod.gameId || gameId, itemType: BasketItemType.Mod, packageName: mod.packageName,
+      id: mod.id, name: mod.name, gameId: gameId || mod.gameId, itemType: BasketItemType.Mod, packageName: mod.packageName,
       image: mod.avatar ? W6.instance.url.getUsercontentUrl2(mod.avatar, mod.avatarUpdatedAt) : ((<any>mod).image ? (<any>mod).image : null),
       author: mod.author && mod.author.id != W6.instance.w6OBot ? mod.author.displayName : mod.authorText, sizePacked: mod.sizePacked
     }
