@@ -55,7 +55,7 @@
               </li>
               <li ng-repeat="item in model.mediaItems | filter:{type: 'Link'}" class="no-tween-out">
                 <sx-edit-list-item>
-                  <div name="list-text">
+                  <div>
                     <span class="fa fa-chevron-right" style="font-size: 14px"></span> &nbsp;&nbsp;
                     <a ng-href="{{item.path}}" rel="external" class="barebone bold" target="_blank">{{item.title}}</a>
                   </div>
@@ -63,7 +63,7 @@
               </li>
               <li ng-repeat="item in model.entityAspect.entityManager.getChanges('ModMediaItem') | deletedfilter: model" class="no-tween-out">
                 <sx-edit-list-item>
-                  <div name="list-text">
+                  <div>
                     <span class="fa fa-chevron-right" style="font-size: 14px"></span>&nbsp;&nbsp;
                     <a ng-href="{{item.path}}" rel="external" class="barebone bold" target="_blank">{{item.title}}</a>
                   </div>
@@ -168,12 +168,12 @@
           </li>
           <li ng-repeat="item in model.dependencies" class="no-tween-out" style="padding-left: 0">
             <sx-edit-list-item-no-modify ng-if="editConfig.isEditing">
-              <div name="list-text">
+              <div>
                 <a ng-href="{{::url.play + '/' + item.gameSlug + '/mods/' + toShortId(item.id) + '/' + item.slug}}" class="barebone bold">{{::item.name}}</a>
               </div>
             </sx-edit-list-item-no-modify>
             <div ng-if="!editConfig.isEditing">
-              <div name="list-text">
+              <div>
                 <a ng-href="{{::url.play + '/' + item.gameSlug + '/mods/' + toShortId(item.id) + '/' + item.slug}}" class="barebone bold">{{::item.name}}</a>
               </div>
             </div>
@@ -181,7 +181,7 @@
 
           <li ng-repeat="item in model.entityAspect.entityManager.getChanges('ModDependency') | deletedfilter: model" class="no-tween-out" style="padding-left: 0">
             <sx-edit-list-item-no-modify>
-              <div name="list-text">
+              <div>
                 <button rel="external" class="anchor bold" target="_blank">{{::item.name}}</button>
               </div>
             </sx-edit-list-item-no-modify>
