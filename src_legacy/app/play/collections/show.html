@@ -42,7 +42,7 @@
     </span>
 
     <div name="content-header-logo">
-      <sx-aurelia ng-if="!editConfig.isEditing" sx-view-model="'features/profile/content/collection'" sx-view="'features/profile/content/_logo.html'" sx-model="auModel"></sx-aurelia>
+      <sx-aurelia ng-if="!editConfig.isEditing" sx-view-model="'features/profile/content/collection'" sx-view="'features/profile/content/_logo2.html'" sx-model="auModel"></sx-aurelia>
 
       <div ng-if="editingConfig.isEditing" ngf-drop2="" ngf-drag-over-class="{accept:'drag-over', reject:'dragover-err', delay:100}" ngf-change="fileDropped($files, $event, $rejectedFiles)" ngf-accept="accept($file, $event)" data-multiple="false">
         <!-- ngf-accept="image/*"-->
