@@ -1,19 +1,17 @@
 <div itemscope itemtype="http://schema.org/CreativeWork" ng-class="{'editing': editConfig.isEditing}" class="not-editing">
 
   <div sx-content-header class="sx-content-header">
-    <span name="content-title-name" class="editable-half">
-            <span ng-class="{'edit-border-blue edit-field': editConfig.canManage()}"
-                  sx-editable-text="model.name" buttons="no" can-edit="editConfig.isEditing && editConfig.canManage()"
-                  blur-saves>
+    <sx-header-name class="editable-half">
+      <span ng-class="{'edit-border-blue edit-field': editConfig.canManage()}" sx-editable-text="model.name" buttons="no" can-edit="editConfig.isEditing && editConfig.canManage()" blur-saves>
                 {{model.name | characters:54 :true}}<span style="display: inline-flex; vertical-align: top"><span ng-if="editConfig.isEdited('name')" class="withSIX-icon-Alert" style="color: red; font-size: 20px;"></span></span>
-    </span>
-    </span>
+      </span>
+    </sx-header-name>
 
-    <span name="content-type">
-            <a ng-href="{{header.contentRootUrl}}">
-                <span class="withSIX-icon-Nav-Mission"></span> Mission
-    </a>
-    </span>
+    <sx-header-type>
+      <a ng-href="{{header.contentRootUrl}}">
+        <span class="withSIX-icon-Nav-Mission"></span> Mission
+      </a>
+    </sx-header-type>
 
     <div name="follow-info">
       {{model.followersCount | amount}} followers.
@@ -28,7 +26,7 @@
       </button>
     </div>
 
-    <div name="content-header-info">
+    <sx-header-info>
       <ul>
         <li>
           <span class="main" itemprop="version" title="v{{model.latestVersion.version}}">v{{model.latestVersion.version}}</span> <span itemprop="dateModified">{{model.latestVersion.releasedOn | date:"dd MMM 'yy"}}</span></li>
@@ -36,9 +34,9 @@
         <li>
           <span class="main">{{model.followersCount | amount}}</span> <span>followers</span></li>
       </ul>
-    </div>
+    </sx-header-info>
 
-    <div name="content-header-download">
+    <sx-header-download>
       <div class="action download">
         <button ng-click="callToAction()" class="anchor calltoactionBase btn-block">
           <span class="icon withSIX-icon-Download" title="Download"></span>
@@ -46,11 +44,11 @@
         </button>
         <!-- <sx-aurelia sx-view-model="'features/profile/content/mission'" sx-view="'features/profile/content/_action.html'" sx-model="auModel"></sx-aurelia> -->
       </div>
-    </div>
+    </sx-header-download>
 
-    <div name="content-header-logo">
+    <sx-header-logo>
       <sx-aurelia sx-view-model="'features/profile/content/mission'" sx-view="'features/profile/content/_logo2.html'" sx-model="auModel"></sx-aurelia>
-    </div>
+    </sx-header-logo>
   </div>
 
   <div id="mission-contents" app-view-segment="2"></div>

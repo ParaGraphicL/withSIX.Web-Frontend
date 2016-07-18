@@ -12,8 +12,8 @@
                   <div class="title">
                     <h1 class="pagetitle" itemprop="name headline">
                       <span ng-if="model.group" class="icon withSIX-icon-Lock"></span>
-                      <span class="title" sx-multi-transclude="content-title-name">{{header.title}}</span>
-                      <span class="author" sx-multi-transclude="content-title-author"
+                      <span class="title" ng-transclude="name">{{header.title}}</span>
+                      <span class="author" ng-transclude="author"
                             itemprop="author" itemscope itemtype="http://schema.org/Person">
                           <span ng-if="model.group">
                             by group:&nbsp;<a ng-href="/me/groups/{{model.group.id.toShortId()}}/{{model.group.slug}}" rel="author"
@@ -31,13 +31,13 @@
                   </h1>
                   </div>
                   <div class="bottom">
-                    <div class="col-md-4 col-sm-2 no-horizontal-padding" sx-multi-transclude="content-header-download">
+                    <div class="col-md-4 col-sm-2 no-horizontal-padding" ng-transclude="download">
                     </div>
-                    <div class="content-info col-md-8 col-sm-10" sx-multi-transclude="content-header-info"></div>
+                    <div class="content-info col-md-8 col-sm-10" ng-transclude="info"></div>
                   </div>
                 </div>
               </div>
-              <div class="logo" sx-multi-transclude="content-header-logo">
+              <div class="logo" ng-transclude="logo">
                 <div itemprop="image" class="imageholder" ng-style="{'background-image': ('url('+ header.getAvatar(w6.imageSizes.smallRectangle.w, w6.imageSizes.smallRectangle.h) +')'), position: 'relative'}">
                 </div>
               </div>
@@ -46,8 +46,8 @@
             <div class="info-panel combo">
               <div class="title">
                 <h1 class="pagetitle" itemprop="name headline">
-                  <span class="title" sx-multi-transclude="content-title-name">{{header.title}}</span>
-                  <span class="author" sx-multi-transclude="content-title-author"
+                  <span class="title" ng-transclude=="name">{{header.title}}</span>
+                  <span class="author" ="author"
                         itemprop="author" itemscope itemtype="http://schema.org/Person">
                       <span ng-if="model.author">by&nbsp;<a ng-href="{{model.author.profileUrl}}" rel="author">{{model.author.displayName}}</a></span>
                   </span>
@@ -55,47 +55,49 @@
               </div>
               <div class="bottom">
                 <div class="left">
-                  <div sx-multi-transclude="content-header-download">
+                  <div ng-transclude="download">
                   </div>
-                  <div class="content-info" sx-multi-transclude="content-header-info"></div>
+                  <div class="content-info" ng-transclude="info"></div>
                 </div>
-                <div class="logo" sx-multi-transclude="content-header-logo">
+                <div class="logo" ng-transclude="logo">
                   <img ng-src="{{header.getAvatar(w6.imageSizes.smallRectangle.w, w6.imageSizes.smallRectangle.h)}}" alt="logo" itemprop="image" />
                 </div>
               </div>
             </div>
 
             <div class="info-panel vertical">
-              <div class="logo" sx-multi-transclude="content-header-logo">
+              <div class="logo" ng-transclude="logo">
                 <img ng-src="{{header.getAvatar(w6.imageSizes.smallRectangle.w, w6.imageSizes.smallRectangle.h)}}" alt="logo" itemprop="image" />
               </div>
               <div class="title">
                 <h1 class="pagetitle" itemprop="name headline">
-                    <span class="title" sx-multi-transclude="content-title-name">{{header.title}}</span>
-                    <span class="author" sx-multi-transclude="content-title-author"
+                    <span class="title" ng-transclude="name">{{header.title}}</span>
+                    <span class="author" ng-transclude="author"
                           itemprop="author" itemscope itemtype="http://schema.org/Person">
                         <span ng-if="model.author">by&nbsp;<a ng-href="{{model.author.profileUrl}}" rel="author">{{model.author.displayName}}</a></span>
                     </span>
                 </h1>
               </div>
               <div class="bottom">
-                <div class="no-horizontal-padding" sx-multi-transclude="content-header-download">
+                <div class="no-horizontal-padding" ng-transclude="download">
                 </div>
-                <div class="content-info" sx-multi-transclude="content-header-info"></div>
+                <div class="content-info" ng-transclude="info"></div>
               </div>
             </div>
 
             <div class="bottom tagbar">
-              <div class="right pull-right" sx-multi-transclude="content-report">
-                <button class="anchor flag" title="report" name="content-report" ng-click="reportContent()">
-                  <i class="fa fa-flag"></i>
-                </button>
+              <div class="right pull-right" ng-transclude="report">
+                <sx-header-report>
+                  <button class="anchor flag" title="report" ng-click="reportContent()">
+                    <i class="fa fa-flag"></i>
+                  </button>
+                </sx-header-report>
               </div>
 
               <div class="left tag-bar">
-                <span class="content-type" sx-multi-transclude="content-type" itemprop="genre"></span>
+                <span class="content-type" ng-transclude="type" itemprop="genre"></span>
 
-                <span class="tags" sx-multi-transclude="content-tags" itemprop="keywords">
+                <span class="tags" ng-transclude="tags" itemprop="keywords">
                   <span ng-repeat="tag in header.tags" class="tag" style="margin-left: 4px">
                       {{::tag}}
                   </span>

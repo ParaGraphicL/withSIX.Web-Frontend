@@ -1,42 +1,42 @@
 <div itemscope itemtype="http://schema.org/CreativeWork" ng-class="{'editing': editConfig.isEditing}" class="not-editing">
   <div sx-content-header ng-class="{'content-stateable': w6.enableBasket, 'in-basket': isInBasket()}" class="sx-content-header content-basketable {{getItemClass(model)}}">
-    <span name="content-title-name" class="editable-half">
+    <sx-header-name class="editable-half">
       <span ng-if="model.group" class="icon withSIX-icon-Lock"></span>
 
-    <div ng-if="!vm.isForActiveGame" class="alternative-game" title="This content was made for ARMA 2">
-      <img ng-src="{{w6.url.cdn}}/img/play.withSIX/games/Arma-2/arma2-blck.png" />
-    </div>
-    <span ng-class="{'edit-border-blue edit-field': editConfig.canManage()}" title="{{model.name}} ({{model.packageName}})" sx-editable-text="model.name" buttons="no" can-edit="editConfig.isEditing" blur-saves>
+      <div ng-if="!vm.isForActiveGame" class="alternative-game" title="This content was made for ARMA 2">
+        <img ng-src="{{w6.url.cdn}}/img/play.withSIX/games/Arma-2/arma2-blck.png" />
+      </div>
+      <span ng-class="{'edit-border-blue edit-field': editConfig.canManage()}" title="{{model.name}} ({{model.packageName}})" sx-editable-text="model.name" buttons="no" can-edit="editConfig.isEditing" blur-saves>
                   <span ng-if="model.group" class="icon withSIX-icon-Lock" title="This is a private mod"></span> {{model.name | characters:54 :true}}<span style="display: inline-flex; vertical-align: top"><span ng-if="editConfig.isEdited('name')" class="withSIX-icon-Alert" style="color: red; font-size: 20px;"></span></span>
-    </span>
-    </span>
+      </span>
+    </sx-header-name>
 
-    <span name="content-title-author">
-          <span ng-if="model.group">
+    <sx-header-author>
+      <span ng-if="model.group">
             by group:&nbsp;<a ng-href="/me/groups/{{model.group.id.toShortId()}}/{{model.group.slug}}" rel="author"
                         itemprop="author" itemscope itemtype="http://schema.org/Person"
                         title="{{model.group.name}}">{{model.group.name | characters: 20 :true}}</a>
           </span>
-    <span ng-if="!model.group">
+      <span ng-if="!model.group">
             <span ng-if="model.author.slug != 'withSIX-o-bot'">
                 by&nbsp;<a ng-href="{{model.author.profileUrl}}" rel="author"
                             itemprop="author" itemscope itemtype="http://schema.org/Person"
                             title="{{model.author.displayName}}">{{model.author.displayName | characters: 20 :true}}</a>
             </span>
-    <span ng-if="model.author.slug == 'withSIX-o-bot'">
+      <span ng-if="model.author.slug == 'withSIX-o-bot'">
                 by<span style="padding-bottom: 6px; padding-top: 13px;"
                         class="edit-border-blue edit-field" sx-editable-text="model.authorText" buttons="no" blur-saves can-edit="editConfig.isEditing"
                         itemprop="author" itemscope itemtype="http://schema.org/Person"
                         title="{{model.authorText||'No Author'}}">{{model.authorText||'No Author' | characters:20 :true}}</span>
-    </span>
-    <span ng-if="false && editConfig.isEditing && editConfig.canManage()">
+      </span>
+      <span ng-if="false && editConfig.isEditing && editConfig.canManage()">
                 <span class="btn btn-sx-more edit-author-settings-button" data-placement="bottom" bs-dropdown="authorDropdown" data-html="true" data-container="body"
                       sx-author-top>
                     <strong>...</strong>
                 </span>
-    </span>
-    </span>
-    </span>
+      </span>
+      </span>
+    </sx-header-author>
 
     <div name="follow-info">
       {{model.stat.install | amount}} Installs.
@@ -51,32 +51,32 @@
       </button>
     </div>
 
-    <span name="content-type">
-            <a ng-href="{{header.contentRootUrl}}">
-                <span class="withSIX-icon-Nav-Mod"></span> Mod
-    </a>
-    </span>
+    <sx-header-type>
+      <a ng-href="{{header.contentRootUrl}}">
+        <span class="withSIX-icon-Nav-Mod"></span> Mod
+      </a>
+    </sx-header-type>
 
-    <span name="content-tags">
-            <span style="display: inline-flex; vertical-align: middle"><span ng-if="editConfig.isEdited('tags')" class="withSIX-icon-Alert" style="color: red; font-size: 20px;"></span></span>
-    <span ng-repeat="tag in header.tags" class="tag" style="margin-left: 4px" itemprop="keywords">
+    <sx-header-tags>
+      <span style="display: inline-flex; vertical-align: middle"><span ng-if="editConfig.isEdited('tags')" class="withSIX-icon-Alert" style="color: red; font-size: 20px;"></span></span>
+      <span ng-repeat="tag in header.tags" class="tag" style="margin-left: 4px" itemprop="keywords">
                 <a ng-href="{{header.contentRootUrl}}/category/{{sluggifyEntityName(tag)}}">{{tag}}</a>
                 <span ng-if="editConfig.isEditing">
                     &nbsp;
                     <a href="#" ng-click="removeTag(tag)">
                         <span class="withSIX-icon-X" style="color: red; font-size: 10px;"></span>
-    </a>
-    </span>
-    </span>
-    <span ng-if="header.tags.length != 0">&nbsp;&nbsp;</span>
-    <span ng-if="header.tags.length == 0" style="color: gray; font-style: italic">No Tags&nbsp;&nbsp;</span>
-    <a id="addModTag" ng-if="editConfig.isEditing" href="#" editable-tag-auto-complete="temporaryTag" inline on-tag-added="addTag($data)" buttons="no" style="color: green;" tags="getCurrentTags()" source="getCategories($query)" placeholder="add a category"
-        add-from-autocomplete-only="true" display-property="key" can-edit="editConfig.isEditing" min-length="0" load-on-focus="true" load-on-empty="true" max-results-to-show="32">
-      <span class="withSIX-icon-Add" style="color: green; font-size: 10px;"></span>
-    </a>
-    </span>
+      </a>
+      </span>
+      </span>
+      <span ng-if="header.tags.length != 0">&nbsp;&nbsp;</span>
+      <span ng-if="header.tags.length == 0" style="color: gray; font-style: italic">No Tags&nbsp;&nbsp;</span>
+      <a id="addModTag" ng-if="editConfig.isEditing" href="#" editable-tag-auto-complete="temporaryTag" inline on-tag-added="addTag($data)" buttons="no" style="color: green;" tags="getCurrentTags()" source="getCategories($query)" placeholder="add a category"
+          add-from-autocomplete-only="true" display-property="key" can-edit="editConfig.isEditing" min-length="0" load-on-focus="true" load-on-empty="true" max-results-to-show="32">
+        <span class="withSIX-icon-Add" style="color: green; font-size: 10px;"></span>
+      </a>
+    </sx-header-tags>
 
-    <div name="content-header-logo">
+    <sx-header-logo>
       <sx-aurelia ng-if="!editConfig.isEditing" sx-view-model="'features/profile/content/mod'" sx-view="'features/profile/content/_logo2.html'" sx-model="auModel"></sx-aurelia>
       <div ng-if="editConfig.isEditing" ngf-drop2="" ngf-drag-over-class="{accept:'drag-over', reject:'dragover-err', delay:100}" ngf-change="fileDropped($files, $event, $rejectedFiles)" ngf-accept="accept($file, $event)" data-multiple="false">
         <!-- ngf-accept="image/*"-->
@@ -109,9 +109,9 @@
           <div class="clearfix"></div>
         </div>
       </div>
-    </div>
+    </sx-header-logo>
 
-    <div name="content-header-info">
+    <sx-header-info>
       <ul ng-if="model.modVersion != null">
         <li>
           <span class="main" itemprop="version" title="{{formatVersion()}} {{model.latestStableVersion && model.latestStableVersion != model.modVersion ? 'newer dev version: ' + model.modVersion : ''}}">{{formatVersion()}}</span> <span itemprop="dateModified">{{model.updatedAt | date:"dd MMM 'yy"}}</span></li>
@@ -122,9 +122,9 @@
       <div ng-if="model.modVersion == null">
         <span class="main">Waiting on Network</span><span class="tiny">Please be patient</span>
       </div>
-    </div>
+    </sx-header-info>
 
-    <div name="content-header-download">
+    <sx-header-download>
       <div ng-if="model.modVersion != null && !model.group" class="action download content-state-c-bgd">
         <sx-aurelia ng-if="w6.enableBasket" sx-view-model="'features/profile/content/mod'" sx-view="'features/profile/content/_action.html'" sx-model="auModel"></sx-aurelia>
         <div ng-if="!w6.enableBasket" ng-class="{'processing-button': model.modVersion == null, 'add-to-button-override': model.group != null}">
@@ -139,7 +139,7 @@
         <span class="icon withSIX-icon-Synq-Upload" title="Processing"></span>
         <span class="text">Processing</span>
       </button>
-    </div>
+    </sx-header-download>
   </div>
 
   <div id="mod-contents" app-view-segment="2"></div>

@@ -247,7 +247,16 @@ export module Components {
         directive('sxContentHeader', () => {
           return {
             restrict: 'A',
-            transclude: true,
+            transclude: {
+              'name': '?sxHeaderName',
+              'author': '?sxHeaderAuthor',
+              'download': '?sxHeaderDownload',
+              'info': '?sxHeaderInfo',
+              'logo': '?sxHeaderLogo',
+              'report': '?sxHeaderReport',
+              'type': '?sxHeaderType',
+              'tags': '?sxHeaderTags'
+            },
             templateUrl: '/src_legacy/app/play/shared/_content-header-new.html'
           };
         }).
@@ -278,32 +287,7 @@ export module Components {
             templateUrl: '/src_legacy/app/play/shared/_info-page.html'
           };
         }).
-        directive('sxMultiTransclude', () => {
-          return {
-            controller: MultiTranscludeDirectiveController,
-
-            link: ($scope, $element, $attrs, controller: MultiTranscludeDirectiveController) => {
-              var attrs = <any>$attrs;
-              var selector = '[name=' + attrs.sxMultiTransclude + ']';
-              var attach = clone => {
-                var $part = clone.find(selector).addBack(selector);
-                if ($part.length != 0) {
-                  $element.html('');
-                  $element.append($part);
-                }
-              };
-
-              if (controller.$transclude.$$element) {
-                attach(controller.$transclude.$$element);
-              } else {
-                controller.$transclude(clone => {
-                  controller.$transclude.$$element = clone;
-                  attach(clone);
-                });
-              }
-            }
-          };
-        }).directive("sxLateTemplate", [
+          directive("sxLateTemplate", [
           '$templateCache', '$compile', '$timeout', '$parse', '$http', '$q', ($templateCache, $compile, $timeout, $parse, $http: ng.IHttpService, $q: ng.IQService) => {
             function getTemplate(keyOrUrl: string) {
               var data = $templateCache.get(keyOrUrl);
