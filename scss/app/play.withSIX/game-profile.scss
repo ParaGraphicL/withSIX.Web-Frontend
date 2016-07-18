@@ -67,6 +67,9 @@ $downloadButtonHeight: 74px;
           background-color: inherit;
           height: 74px;
           padding: 8px;
+          span.icon {
+            display: inline-block; // fixes pushing down the busy indicator
+          }
         }
       }
     }
