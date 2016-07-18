@@ -90,7 +90,7 @@ export class GlobalErrorHandler {
   ];
 
   //handleAureliaError = (exception: Error, cause = 'Unknown') => this.handleErrorInternal(`[Aurelia]`, exception, cause, this.isSilence(exception))
-  handleAngularError = (exception: Error, cause?: string) => { if (!this.isSilenceAngular(exception)) this.leLog(this.getErrorInfo(`[Angular]`, cause, exception)) }
+  handleAngularError = (exception: Error, cause?: string) => { if (!this.isSilenceAngular(exception)) { let info = this.getErrorInfo(`[Angular]`, cause, exception); this.tryErrorLog(info); this.leLog(info) } }
   handleAngularActionError = (exception: Error, cause?: string) => { if (!this.isUserError(exception)) this.handleErrorInternal(`[Angular Action]`, exception, cause, this.isSilenceAngularAction(exception)) }
   handleUseCaseError = (exception: Error, cause = 'Unknown') => { if (!this.isUserError(exception)) { this.handleErrorInternal('[Command]', exception, cause) } }
   handleLog = (loggerId, ...logParams: any[]) => this.leLog(`[Aurelia: ${loggerId}]`, ...logParams)

@@ -1,10 +1,3 @@
-import {Tk} from './tk';
-import {W6Context, IQueryResult} from '../w6context';
-import breeze from 'breeze-client';
-import {Tools} from '../tools';
-import {W6, W6Urls} from '../withSIX';
-import {Mediator} from 'aurelia-mediator';
-
 export interface _Indexer<TModel> {
   [name: string]: TModel;
 }

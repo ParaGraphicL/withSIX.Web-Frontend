@@ -1,0 +1,6 @@
+<template>
+  <div class="bottom-bar content-state-c-bgd content-state-c-bgd-drkb details-overlay-footer">
+    <action-bar class="pull-left" items.bind="bottomActions"></action-bar>
+    <dropdown-menu class="pull-left new-style share-caret hide-until-open" icon="caret" if.bind="bottomMenuActions && bottomMenuActions.length > 0" items.bind="bottomMenuActions"></dropdown-menu>
+  </div>
+</template>

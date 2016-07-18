@@ -15,10 +15,12 @@ export class DropdownMenu extends ViewModel {
   @bindable header: string;
   @bindable icon: string = "withSIX-icon-Share-Dots-V";
   @bindable textCls: string;
-  @bindable direction: string = "down";
+  @bindable direction: string = "auto";
   @bindable hideWhenEmpty = true;
   @bindable menuCls: string;
   @bindable itemCls: string;
+  @bindable horAdjust: number;
+  @bindable verAdjust: number;
   isVisible: boolean;
   menu: Element;
   menuButton: Element;
@@ -42,7 +44,7 @@ export class DropdownMenu extends ViewModel {
     this.menuTrgr = $(this.menuButton);
     this.menuEl = $(this.menu);
     (<any>this.menuTrgr).contextMenu('popup', this.menuEl, { // 'menu' (is more menu styled)
-      displayAround: 'trigger',
+      displayAround: 'trigger', position: this.direction, horAdjust: this.horAdjust, verAdjust: this.verAdjust,
       // On open, let's rid ourselves from any parent styling/behavior, and restore once we close
       onOpen: () => { this.menuEl.appendTo('body'); this.open = true; },
       onClose: () => { this.menuEl.appendTo(this.element); this.open = false; }
