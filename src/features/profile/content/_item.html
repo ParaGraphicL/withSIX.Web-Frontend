@@ -5,24 +5,7 @@
       <conditional-title desired-title="${state.progress | progress} @ ${state.speed | speed:'B':false}" condition.bind="state && (state.progress || state.speed)">
         <div class="basket-content-progess-bar content-state-progress-width content-state-progress-c-bgd">&nbsp;</div>
 
-        <div class="img">
-          <action-bar class="pull-left basketable-action" items.bind="topActions"></action-bar>
-          <dropdown-menu class="basketable-dropdown new-style hide-until-open" menu-cls="content-stateable content-state-${itemStateClass}" if.bind="topMenuActions && topMenuActions.length > 0" items.bind="topMenuActions"></dropdown-menu>
-          <a href="${w6.url.play}/${path}" if.bind="path">
-            <span class="imagecontent imageholder" back-img.bind="defaultBackUrl">
-            <span class="imageholder" back-img.bind="defaultAssetUrl">
-              <span class="imageholder" back-img.bind="image"></span>
-            </span>
-            </span>
-          </a>
-          <span if.bind="!path">
-            <span class="imagecontent imageholder" back-img.bind="defaultBackUrl">
-            <span class="imageholder" back-img.bind="defaultAssetUrl">
-              <span class="imageholder" back-img.bind="image"></span>
-          </span>
-          </span>
-          </span>
-        </div>
+        <compose view="./_logo.html"></compose>
 
         <div class="info">
           <div class="tiny">

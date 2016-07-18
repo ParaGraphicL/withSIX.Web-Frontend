@@ -7,6 +7,7 @@ import {IBreezeMod, IBreezeUser, IBreezeCollection, IBreezeMission, IBreezeColle
   EntityExtends, BreezeEntityGraph, _IntDefs} from '../services/dtos';
 
 import {LegacyMediator} from '../services/mediator';
+import {ModHelper} from '../services/helpers';
 
 import {RestoreBasket, OpenCreateCollectionDialog, OpenAddModDialog, OpenAddModsToCollectionsDialog} from '../services/api';
 import {ForkCollection} from '../features/profile/content/collection';
@@ -137,6 +138,7 @@ export interface IContentScopeT<TModel> extends IContentScope, IHaveModel<TModel
   editConfig?: IEditConfiguration<TModel>;
   trustedDescriptionFullHtml: string;
   callToAction: () => void;
+  auModel;
 }
 
 
@@ -3859,6 +3861,7 @@ export module Play.Mods {
           this.follow();
       };
       $scope.types = [];
+      $scope.auModel = ModHelper.convertOnlineMod($scope.model, $scope.w6.activeGame, $scope.w6);
       this.setupEditing();
       this.setupCategoriesAutoComplete();
       this.setupHelp();
