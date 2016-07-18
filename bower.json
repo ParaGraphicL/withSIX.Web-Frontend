@@ -53,8 +53,7 @@
     "ngInfiniteScroll": "git://github.com/sickboy/ngInfiniteScroll#1757d0786df1365f1190b783fd0688cc5a878946",
     "sb-ng-dfp": "0.5.1.4",
     "select2": "",
-    "toastr": "",
-    "ng-multi-transclude": "^0.1.5"
+    "toastr": ""
   },
   "resolutions": {
     "angular": "~> 1.5.7",
