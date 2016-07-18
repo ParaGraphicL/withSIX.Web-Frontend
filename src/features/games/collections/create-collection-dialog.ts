@@ -51,6 +51,8 @@ export class CreateCollectionDialog extends Dialog<ICollectionModel> {
     this.validation = this.validator.on(this)
       .ensure('model.name')
       .isNotEmpty()
+      .hasMinLength(3)
+      .hasMaxLength(150)
       .passes(debouncer, 250)
       .withMessage("you already own a collection with this name");
   }
