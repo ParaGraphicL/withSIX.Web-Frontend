@@ -1,5 +1,5 @@
 <sx-info-page>
-  <div name="main">
+  <sx-info-main>
     <div class="tile">
       <section>
 
@@ -27,7 +27,7 @@
 
           <div>
             <sx-comments ng-if="model.comments" comments="model.comments" can-manage="editConfig.canManage() || editConfig.canEdit()" add-comment="addComment(comment)" delete-comment="deleteComment(comment)" save-comment="saveComment(comment)" report-comment="reportComment(comment)"
-            like-comment="likeComment(comment)" unlike-comment="unlikeComment(comment)" like-states="commentLikeStates">
+                like-comment="likeComment(comment)" unlike-comment="unlikeComment(comment)" like-states="commentLikeStates">
               <div name="comments-info">
                 <br/>
                 <br/>
@@ -37,8 +37,8 @@
         </article>
       </section>
     </div>
-  </div>
-  <div name="right">
+  </sx-info-main>
+  <sx-info-right>
     <div ng-include="'/src_legacy/app/play/collections/_edit-side-pane.html'"></div>
     <div ng-if="w6.renderAds" class="tile">
       <div data-ng-dfp-ad-container ng-if="w6.renderAds">
@@ -78,5 +78,5 @@
         </div>
       </div>
     </div>
-  </div>
+  </sx-info-right>
 </sx-info-page>

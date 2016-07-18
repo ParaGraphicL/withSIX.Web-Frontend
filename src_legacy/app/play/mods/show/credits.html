@@ -1,55 +1,51 @@
 <sx-info-page>
-    <div name="main-section" class="credits">
-        <article>
-            <div class="box">
-                <h3>Credits</h3>
-                <p>This mod just wouldn't be possible without these awesome people!</p>
-                <div class="row">
-                    <div class="col-md-4" collapse="!editConfig.isEditing">
-                        <button class="btn btn-primary" ng-click="addGroup();">New Group</button>
-                    </div>
-                </div>
+  <sx-info-section class="credits">
+    <article>
+      <div class="box">
+        <h3>Credits</h3>
+        <p>This mod just wouldn't be possible without these awesome people!</p>
+        <div class="row">
+          <div class="col-md-4" collapse="!editConfig.isEditing">
+            <button class="btn btn-primary" ng-click="addGroup();">New Group</button>
+          </div>
+        </div>
 
 
-                <div id="{{item.id}}" class="row" ng-repeat="item in model.userGroups" collapse="!(!(item.hidden || (item.users.length == 0 && item.description)) || editConfig.isEditing)">
-                    <div class="col-md-12">
-                        <p class="group-header">
-                            <span id="{{item.id + '-title'}}" e-placeholder="Group Name" class="edit-border-blue edit-field"
-                      sx-editable-text="item.name" buttons="no" can-edit="editConfig.isEditing" blur-saves>{{item.name||'Group Name'}}</span>
-                            <span ng-if="editConfig.isEditing" data-title="Settings" bs-tooltip>
+        <div id="{{item.id}}" class="row" ng-repeat="item in model.userGroups" collapse="!(!(item.hidden || (item.users.length == 0 && item.description)) || editConfig.isEditing)">
+          <div class="col-md-12">
+            <p class="group-header">
+              <span id="{{item.id + '-title'}}" e-placeholder="Group Name" class="edit-border-blue edit-field" sx-editable-text="item.name" buttons="no" can-edit="editConfig.isEditing" blur-saves>{{item.name||'Group Name'}}</span>
+              <span ng-if="editConfig.isEditing" data-title="Settings" bs-tooltip>
                     <button class="btn btn-sx-manage-link"
                             bs-popover data-animation="am-flip-x" data-placement="bottom-left" data-auto-close="1"
                             data-template="/src_legacy/app/play/mods/popovers/manage-credits-popover.html">
                         <strong><span class="withSIX-icon-Settings" style="font-size: 14px;"></span></strong>
-                    </button>
-                </span>
-                            <span ng-if="editConfig.isEditing">
+              </button>
+              </span>
+              <span ng-if="editConfig.isEditing">
                     <button class="btn btn-sx-manage-link"
                             bs-popover data-animation="am-flip-x" data-placement="bottom-left" data-auto-close="1"
                             data-template="/src_legacy/app/play/mods/popovers/add-user-credits-popover.html">
                         <strong>Add User</strong>
                     </button>
                 </span>
-                        </p>
-                    </div>
-                    <div class="col-md-12">
-                        <div ng-if="item.description || editConfig.isEditing" class="editable-full" style="margin-top: -45px;">
-                            <div class="edit-border-blue edit-field-med contentrender"
-                                 sx-editable-text="item.description"
-                                 buttons="no" blur-saves can-edit="editConfig.isEditing">{{item.description||'No short description'}}</div>
-                        </div>
-                    </div>
+            </p>
+          </div>
+          <div class="col-md-12">
+            <div ng-if="item.description || editConfig.isEditing" class="editable-full" style="margin-top: -45px;">
+              <div class="edit-border-blue edit-field-med contentrender" sx-editable-text="item.description" buttons="no" blur-saves can-edit="editConfig.isEditing">{{item.description||'No short description'}}</div>
+            </div>
+          </div>
 
-                    <div class="col deletable-card" ng-repeat="user in item.users">
-                        <sx-account-card account="user.account"></sx-account-card>
-                        <button class="btn delete-card" ng-click="user.entityAspect.setDeleted();"
-                                ng-if="editConfig.isEditing" data-title="Remove User" bs-tooltip>
-                            <span class="withSIX-icon-X" style="color: red; font-size: 14px; vertical-align: middle;"></span>
-                        </button>
-                    </div>
-                </div>
+          <div class="col deletable-card" ng-repeat="user in item.users">
+            <sx-account-card account="user.account"></sx-account-card>
+            <button class="btn delete-card" ng-click="user.entityAspect.setDeleted();" ng-if="editConfig.isEditing" data-title="Remove User" bs-tooltip>
+              <span class="withSIX-icon-X" style="color: red; font-size: 14px; vertical-align: middle;"></span>
+            </button>
+          </div>
+        </div>
 
-                <!--<div ng-if="editConfig.isEditing">
+        <!--<div ng-if="editConfig.isEditing">
                     <div class="row">
                         <div class="col-md-12">
                             <p class="group-header">
@@ -80,27 +76,27 @@
                         </div>
                     </div>
                 </div>-->
-            </div>
-        </article>
+      </div>
+    </article>
+  </sx-info-section>
+
+  <sx-info-right>
+    <div ng-include="'/src_legacy/app/play/mods/_edit-side-pane.html'"></div>
+
+    <div ng-if="w6.renderAds" class="tile">
+      <div data-ng-dfp-ad-container>
+        <div class="add-container" style="display: block !important">
+          <div class="add" ng-dfp-ad="angular-ad-sky"></div>
+        </div>
+      </div>
     </div>
 
-    <div name="right">
-        <div ng-include="'/src_legacy/app/play/mods/_edit-side-pane.html'"></div>
-
-        <div ng-if="w6.renderAds" class="tile">
-            <div data-ng-dfp-ad-container>
-                <div class="add-container" style="display: block !important">
-                    <div class="add" ng-dfp-ad="angular-ad-sky"></div>
-                </div>
-            </div>
+    <div ng-if="w6.renderAds" class="tile">
+      <div data-ng-dfp-ad-container>
+        <div class="add-container" style="display: block !important">
+          <div class="add" ng-dfp-ad="angular-ad2"></div>
         </div>
-
-        <div ng-if="w6.renderAds" class="tile">
-            <div data-ng-dfp-ad-container>
-                <div class="add-container" style="display: block !important">
-                    <div class="add" ng-dfp-ad="angular-ad2"></div>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
+  </sx-info-right>
 </sx-info-page>

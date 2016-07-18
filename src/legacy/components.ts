@@ -268,7 +268,13 @@ export module Components {
         directive('sxInfoPage', () => {
           return {
             restrict: 'E',
-            transclude: true,
+            transclude: {
+              'main': '?sxInfoMain',
+              'tile': '?sxInfoTile',
+              'section': '?sxInfoSection',
+              'box': '?sxInfoBox',
+              'right': '?sxInfoRight'
+            },
             templateUrl: '/src_legacy/app/play/shared/_info-page.html'
           };
         }).
