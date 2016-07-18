@@ -57,12 +57,13 @@ export class RenderService {
 
   handleElementRemoved(controller: IController) {
     invokeLifecycle(controller.viewModel, 'deactivate', undefined)
-    .then(() => { controller.controller.unbind(); });
+    .then(() => { controller.slot.detached(); controller.controller.unbind(); });
   }
 
   render(dialogController: IController) {
     let anchor = dialogController.slot.anchor;
     dialogController.settings.targetElement.appendChild(anchor);
+    dialogController.slot.attached();
     return { dispose: () => this.handleElementRemoved(dialogController) }
   }
 }
