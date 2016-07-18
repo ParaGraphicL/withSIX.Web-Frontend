@@ -2815,7 +2815,9 @@ export module Components.Comments {
 
     controller = CommentSectionDirectiveController;
     templateUrl = CommentSectionDirectiveController.viewBase + '/index.html';
-    transclude = true;
+    transclude = {
+      info: '?sxCommentsInfo'
+    };
     restrict = 'E';
     scope = {
       comments: '=',

@@ -82,7 +82,7 @@
           <div>
             <sx-comments ng-if="model.comments" comments="model.comments" can-manage="editConfig.canManage() || editConfig.canEdit()" add-comment="addComment(comment)" delete-comment="deleteComment(comment)" save-comment="saveComment(comment)" report-comment="reportComment(comment)"
                 like-comment="likeComment(comment)" unlike-comment="unlikeComment(comment)" like-states="commentLikeStates">
-              <div name="comments-info">
+              <sx-comments-info>
                 <i>
                                 For questions and support about {{model.displayName}} visit the
                                 <span ng-if="model.homepageUrl"><a ng-href="{{model.homepageUrl}}">mod homepage</a></span>
@@ -90,7 +90,7 @@
                             </i>
                 <br/>
                 <br/>
-              </div>
+              </sx-comments-info>
             </sx-comments>
           </div>
         </article>
