@@ -44,6 +44,7 @@ globalRedactorOptions.plugins = ['bufferbuttons', 'image', 'video', 'table', 'fu
 
 export class W6Urls {
   imageCdn = "https://withsix-img.azureedge.net";
+  static proxy = 'https://proxy.withsix.com'
   urlNonSsl: string;
   constructor(urls) {
     Object.assign(this, urls);

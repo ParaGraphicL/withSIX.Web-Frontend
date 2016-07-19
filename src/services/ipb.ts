@@ -1,5 +1,5 @@
 
-import {W6} from './withSIX';
+import {W6, W6Urls} from './withSIX';
 import {HttpClient as FetchClient} from 'aurelia-fetch-client';
 import {inject} from 'aurelia-framework';
 
@@ -12,7 +12,7 @@ export class IpboardService {
   constructor(private http: FetchClient) {}
 
   async getPost(url: string): Promise<Post> {
-    let x = await this.http.fetch(url.replace(/https?:\/\/forums.bistudio.com\//, 'http://proxy.withsix.net/api3/'));
+    let x = await this.http.fetch(url.replace(/https?:\/\/forums.bistudio.com\//, `${W6Urls.proxy}/api3/`));
     var doc = $(await x.text());
     var firstPost = doc.find("div#ips_Posts").first().find("div").first();
     var bodyEl = firstPost.find("div.post.entry-content").first();
