@@ -1,35 +1,28 @@
-﻿//The type of a token
+import {BBTag} from './bbTag';
+
+//The type of a token
 export enum TokenType { Text, StartTag, EndTag }
 
 //Represents a token
 export class Token {
-  constructor(public tokenType: TokenType, public content: string, public tagAttributes?: Array<string>, public tagStr?: string) {
+  constructor(public tokenType: TokenType, public content: string, public tagAttributes?: Array<string>, public tagStr?: string) { }
 
-  }
-
-  //String representation of the token
   toString() {
     return this.content + " (" + TokenType[this.tokenType] + ")";
   }
 
-  //Check for equality
   equals(token: Token) {
     return this.tokenType == token.tokenType && this.content == token.content;
   }
 }
 
-//Creates a new text token
-function textToken(content: string) {
-  return new Token(TokenType.Text, content);
-}
+const createTextToken = (content: string) => new Token(TokenType.Text, content);
 
-var chars = "a-zA-Z0-9\\.\\-_:;/\\*";
-var attrNameChars = `[${chars}]`;
-//var attrNameChars = "\\w";
-var attrValueChars = `[${chars}\\?\\&]`;
+const chars = "a-zA-Z0-9\\.\\-_:;/\\*";
+const attrNameChars = `[${chars}]`; // attrNameChars = "\\w";
+const attrValueChars = `[${chars}\\?\\&]`;
 
-//Creates a new tag token
-function tagToken(match) {
+const createTagToken = (match: RegExpExecArray) => {
   if (match[1] == undefined) { //Start tag
     var tagName = match[2].toLowerCase();
     var attributes = new Array<string>();
@@ -67,8 +60,6 @@ function asTextToken(token: Token) {
   }
 }
 
-import {BBTag} from './bbTag';
-
 //Represents a tokenizer
 export class Tokenizer {
   tagMap: { [key: string]: BBTag }
@@ -100,7 +91,7 @@ export class Tokenizer {
         if (noNesting) {
           if (currentToken.tokenType == TokenType.EndTag && currentToken.content == noNestingTag) {
             noNesting = false;
-            newTokens.push(textToken(noNestedTagContent));
+            newTokens.push(createTextToken(noNestedTagContent));
           } else {
             asTextToken(currentToken);
             noNestedTagContent += currentToken.content;
@@ -136,17 +127,17 @@ export class Tokenizer {
       var delta = match.index - lastIndex;
 
       if (delta > 0) {
-        tokens.push(textToken(str.substr(lastIndex, delta)));
+        tokens.push(createTextToken(str.substr(lastIndex, delta)));
       }
 
-      tokens.push(tagToken(match));
+      tokens.push(createTagToken(match));
       lastIndex = tagPattern.lastIndex;
     }
 
     var delta = str.length - lastIndex;
 
     if (delta > 0) {
-      tokens.push(textToken(str.substr(lastIndex, delta)));
+      tokens.push(createTextToken(str.substr(lastIndex, delta)));
     }
 
     return tokens;

@@ -1,30 +1,6 @@
-//Indicates if the first string ends with the second str
-function endsWith(str: string, endStr: string) {
-  if (str.length == 0) {
-    return false;
-  }
-
-  if (endStr.length > str.length) {
-    return false;
-  }
-
-  var inStrEnd = str.substr(str.length - endStr.length, endStr.length);
-  return endStr == inStrEnd;
-}
-
-//Indicates if the first string starts with the second string
-function startsWith(str: string, startStr: string) {
-  if (str.length == 0) {
-    return false;
-  }
-
-  if (startStr.length > str.length) {
-    return false;
-  }
-
-  var inStrStart = str.substr(0, startStr.length);
-  return startStr == inStrStart;
-}
+import {Tokenizer, TokenType} from './tokenizer';
+import {BBTag} from './bbTag';
+import {BBCodeParseTree, TreeType} from './bbCodeParseTree';
 
 var tagsToReplace = {
   '&': '&amp;',
@@ -32,28 +8,17 @@ var tagsToReplace = {
   '>': '&gt;'
 };
 
-//Escapes the given html
-function escapeHTML(html) {
-  return html.replace(/[&<>]/g, function(tag) {
-    return tagsToReplace[tag] || tag;
-  });
-}
+const escapeHTML = (html) =>
+  html.replace(/[&<>]/g, (tag: string) => tagsToReplace[tag] || tag);
 
-import {Tokenizer, TokenType} from './tokenizer';
-import {BBTag} from './bbTag';
-import {BBCodeParseTree, TreeType} from './bbCodeParseTree';
-
-//Represents a BB code parser
 export class BBCodeParser {
-  //Creates a new parser with the given tags
   tagMap: { [key: string]: BBTag }
-  //Creates a new tokenizer with the given tags
+  //Creates a new parser with the given tags
   constructor(private bbTags: Array<BBTag>) {
     this.tagMap = {}
     bbTags.forEach(x => this.tagMap[x.tagName] = x);
   }
 
-  //Parses the given string
   public parseString(content: string, stripTags = false, insertLineBreak = true, escapingHtml = true) {
     //Create the parse tree
     var parseTree = BBCodeParseTree.buildTree(content, this.bbTags);
@@ -67,7 +32,6 @@ export class BBCodeParser {
     return this.treeToHtml(parseTree.subTrees, insertLineBreak, escapingHtml, stripTags);
   }
 
-  //Converts the given subtrees into html
   private treeToHtml(subTrees: Array<BBCodeParseTree>, insertLineBreak: boolean, escapingHtml: boolean, stripTags = false) {
     var htmlString = "";
     var suppressLineBreak = false;
@@ -105,7 +69,6 @@ export class BBCodeParser {
     return htmlString;
   }
 
-  //Returns the default tags
   public static defaultTags(): Array<BBTag> {
     var bbTags = new Array<BBTag>();
 
@@ -124,7 +87,7 @@ export class BBCodeParser {
         link = escapeHTML(attr["url"]);
       }
 
-      if (!startsWith(link, "http://") && !startsWith(link, "https://")) {
+      if (!link.startsWith("http://") && !link.startsWith("https://")) {
         link = "http://" + link;
       }
 
@@ -144,14 +107,5 @@ export class BBCodeParser {
 
   public static escapeHTML(content: string) {
     return escapeHTML(content);
-  }
-
-  public static startsWith(str:
-    string, startStr: string) {
-    return startsWith(str, startStr);
-  }
-
-  public static endsWith(str: string, endStr: string) {
-    return endsWith(str, endStr);
   }
 }

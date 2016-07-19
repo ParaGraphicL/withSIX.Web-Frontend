@@ -1,10 +1,8 @@
-﻿//The types of the trees
-export enum TreeType { Root, Text, Tag }
-
 import {BBTag} from './bbTag';
 import {Token, Tokenizer, TokenType} from './tokenizer';
 
-//Represents a parse tree
+export enum TreeType { Root, Text, Tag }
+
 export class BBCodeParseTree {
   isClosed: boolean;
   //Creates a new parse tree
@@ -12,7 +10,6 @@ export class BBCodeParseTree {
     this.subTrees = new Array<BBCodeParseTree>();
   }
 
-  //Indicates if the current tree is valid
   isValid() {
     //An tree without subtrees is valid
     if (this.subTrees.length == 0) {
@@ -34,7 +31,6 @@ export class BBCodeParseTree {
     return TreeType[this.treeType] + " - " + this.content;
   }
 
-  //Builds a parse tree from the given string
   public static buildTree(str: string, bbTags: Array<BBTag>) {
     //Get the tokens
     var tokenizer = new Tokenizer(bbTags);
@@ -48,7 +44,6 @@ export class BBCodeParseTree {
       tokens.reverse());
   }
 
-  //Builds a tree from the given tokens
   private static buildTreeFromTokens(rootTree: BBCodeParseTree, tokens: Array<Token>, currentTag = ""): BBCodeParseTree {
     //The root root is invalid, return null
     if (rootTree == null) {
