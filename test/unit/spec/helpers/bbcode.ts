@@ -8,5 +8,6 @@ describe("parse bbcode", () => {
     var parser =  new BBCodeParser(bbTags.concat(BBCodeParser.defaultTags()));
     parser.parseString("[url=\"http://withsix.com\"]lalal[/url]").should.equal('<a href="http://withsix.com" target="_blank">lalal</a>')
     parser.parseString("[url=http://withsix.com]lalal[/url]").should.equal('<a href="http://withsix.com" target="_blank">lalal</a>')
+    parser.parseString("[url=\"http://withsix.com\"]lalal[/URL]").should.equal('<a href="http://withsix.com" target="_blank">lalal</a>')
   })
 })
