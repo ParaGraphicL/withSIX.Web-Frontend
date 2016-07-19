@@ -1,7 +1,5 @@
-﻿//Represents a BB tag
-export class BBTag {
+﻿export class BBTag {
   public noEndTag: boolean;
-  //Creates a new BB tag
   constructor(
     public tagName: string, //The name of the tag
     public insertLineBreaks: boolean, //Indicates if line breaks are inserted inside the tag content
@@ -14,14 +12,12 @@ export class BBTag {
     }
   }
 
-  //Creates a new simple tag
   public static createSimpleTag(tagName: string, insertLineBreaks: boolean = true, targetTagName = undefined) {
     return targetTagName
       ? new BBTag(tagName, insertLineBreaks, false, false, (tag: BBTag, content: string, attr: Array<string>) => `<${targetTagName}>${content}</${targetTagName}>`)
       : new BBTag(tagName, insertLineBreaks, false, false);
   }
 
-  //Creates a tag with the given generator
   public static createTag(tagName: string, markupGenerator: (tag: BBTag, content: string, attr: Array<string>) => string, insertLineBreaks: boolean = true) {
     return new BBTag(tagName, insertLineBreaks, false, false, markupGenerator);
   }

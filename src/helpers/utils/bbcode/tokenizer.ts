@@ -1,9 +1,7 @@
 import {BBTag} from './bbTag';
 
-//The type of a token
 export enum TokenType { Text, StartTag, EndTag }
 
-//Represents a token
 export class Token {
   constructor(public tokenType: TokenType, public content: string, public tagAttributes?: Array<string>, public tagStr?: string) { }
 
@@ -45,7 +43,6 @@ const createTagToken = (match: RegExpExecArray) => {
   }
 }
 
-//Converts the given token to a text token
 function asTextToken(token: Token) {
   if (token.tokenType == TokenType.StartTag) {
     token.content = token.tagStr;
@@ -60,16 +57,13 @@ function asTextToken(token: Token) {
   }
 }
 
-//Represents a tokenizer
 export class Tokenizer {
   tagMap: { [key: string]: BBTag }
-  //Creates a new tokenizer with the given tags
   constructor(private bbTags: Array<BBTag>) {
     this.tagMap = {}
     bbTags.forEach(x => this.tagMap[x.tagName] = x);
   }
 
-  //Tokenizes the given string
   tokenizeString(str: string) {
     var tokens = this.getTokens(str);
     var newTokens = new Array<Token>();
@@ -114,7 +108,6 @@ export class Tokenizer {
     return newTokens;
   }
 
-  //Gets the tokens from the given string
   getTokens(str: string) {
     var pattern = "\\[(\/[\\w\\*]*)\\]|\\[([\\w\\*]*)+(=\"?" + attrValueChars + "*\"?)?( " + attrNameChars + "+=\"?" + attrValueChars + "*\"?)*\\]";
     var tagPattern = new RegExp(pattern, "g");

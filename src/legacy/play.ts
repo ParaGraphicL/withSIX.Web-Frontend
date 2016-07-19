@@ -241,7 +241,7 @@ export class ContentModelController<TModel extends breeze.Entity> extends Conten
     this.updateAuModel();
   }
 
-  protected updateAuModel() {}
+  protected updateAuModel() { }
 
   public getContentAvatarUrl(avatar: string, updatedAt?: Date): string {
     if (!avatar || avatar == "")
@@ -4745,7 +4745,7 @@ export module Play.Mods {
     addLink: (link) => void;
     newLink: { title: string; path: string };
     openSteamInfo: () => void;
-    forumUrl?: string; steamInfo;
+    forumUrl?: string; steamInfo; gitHubRepo?: string;
   }
 
   export class ModInfoController extends ModEditBaseController {
@@ -4779,6 +4779,7 @@ export module Play.Mods {
 
       this.setupTitle("model.name", "Info - {0} (" + $scope.model.packageName + ") - " + $scope.model.game.name);
       $scope.steamInfo = { id: $scope.model.id, name: $scope.model.name }
+      $scope.gitHubRepo = 'CBATeam/CBA_A3';
       let hp = $scope.model.homepageUrl;
       if (hp.startsWith("http://forums.bistudio.com/") || hp.startsWith("https://forums.bistudio.com/")) {
         $scope.forumUrl = hp;
