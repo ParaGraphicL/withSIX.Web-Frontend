@@ -1,13 +1,13 @@
 //import {customAttribute, bindable} from 'aurelia-framework';
 import {inject, autoinject} from 'aurelia-framework';
-import {UiContext} from '../services/uicontext';
+import {W6} from '../services/withSIX';
 
-@inject(UiContext)
+@inject(W6)
 export class UsertitleValueConverter {
-  constructor(private ui: UiContext) {
+  constructor(private w6: W6) {
   }
 
   toView(title: string) {
-    return title ? `${this.ui.w6.userTitling()} ${title}` : this.ui.w6.userTitling();
+    return title ? `${this.w6.userTitling()} ${title}` : this.w6.userTitling();
   }
 }

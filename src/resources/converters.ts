@@ -1,4 +1,4 @@
-import {inject, autoinject, customAttribute, valueConverter, Container} from 'aurelia-framework';
+import {customAttribute, valueConverter} from 'aurelia-framework';
 import numeral from 'numbro';
 
 enum FileSize {
