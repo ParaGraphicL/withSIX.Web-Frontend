@@ -202,21 +202,20 @@ module.exports = function(grunt) {
           'angular-rangeslider': ['angular.rangeSlider.js'],
           'angular_progress': ['compiled/angular_progress.js'],
           'angular-rx': ['dist/rx.angular.js'],
+		  'jquery-migrate': ['jquery-migrate.min.js'],
           'rxjs': ['dist/rx.all.js'],
           'underscore.string': ['lib/underscore.string.js'],
           'redactor': ['redactor/redactor.js']
         },
         dependencies: {
-          'angular': ['jquery'],
+          'angular': ['jquery-migrate'],
           'angular-bootstrap': ['bootstrap-sass-xl'],
           'angular-strap': ['bootstrap-sass-xl'],
           'bootstrap-additions': ['bootstrap-sass-xl'],
-          'typeahead.js': ['jquery'],
+          'typeahead.js': ['jquery-migrate'],
           'autofill-event': ['angular'],
-          'signalr': ['jquery'],
-          'jquery-colorbox': ['jquery'],
-          'jquery-cookie': ['jquery'],
-          'jquery-timeago': ['jquery']
+          'signalr': ['jquery-migrate'],
+	  'jquery-migrate': ['jquery']
         },
         exclude: [
           'bootstrap',
