@@ -93,7 +93,7 @@ export class BBCodeParser {
                 var content = this.treeToHtml(currentTree.subTrees, bbTag.insertLineBreaks, escapingHtml, stripTags);
 
                 //Check if to strip the tags
-                if (!stripTags) {
+                if (currentTree.isClosed && !stripTags) {
                     htmlString += bbTag.markupGenerator(bbTag, content, currentTree.attributes);
                 } else {
                     htmlString += content;

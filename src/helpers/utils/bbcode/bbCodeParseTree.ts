@@ -6,6 +6,7 @@ import {Token, Tokenizer, TokenType} from './tokenizer';
 
 //Represents a parse tree
 export class BBCodeParseTree {
+    isClosed: boolean;
     //Creates a new parse tree
     constructor(public treeType: TreeType, public content: string, public attributes?: Array<string>, public subTrees?: Array<BBCodeParseTree>) {
         this.subTrees = new Array<BBCodeParseTree>();
@@ -72,7 +73,7 @@ export class BBCodeParseTree {
         }
 
         //Create a new tag tree and find its subtrees
-        if (currentToken.tokenType == TokenType.StartTag) {
+        if (currentToken.tokenType === TokenType.StartTag) {
             var tagName = currentToken.content;
             rootTree.subTrees.push(
                 BBCodeParseTree.buildTreeFromTokens(
@@ -85,21 +86,19 @@ export class BBCodeParseTree {
         }
 
         //Check if its the correct end tag
-        if (currentToken.tokenType == TokenType.EndTag) {
+        if (currentToken.tokenType === TokenType.EndTag) {
             var tagName = currentToken.content;
 
             if (tagName === currentTag) {
+                rootTree.isClosed = true;
                 return rootTree;
-            }
-            else {
-                return null;
             }
         }
 
         //If we got no more tokens, and we have opened an tag but not closed it, return null
-        if (tokens.length == 0) {
-            if (currentTag != "") {
-                return null;
+        if (tokens.length === 0) {
+            if (currentTag !== "") {
+                return rootTree;
             }
         }
 
