@@ -171,6 +171,7 @@
     "numbro": "^1.7.1",
     "rxjs": "^5.0.0-beta.10",
     "rxui": "git+https://github.com/sickboy/RxUI.git",
+    "sanitize-html": "^1.12.0",
     "typeahead.js": "git+https://github.com/twitter/typeahead.js.git",
     "uuid-js": "^0.7.5",
     "version_compare": "0.0.3",
