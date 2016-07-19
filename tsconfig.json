@@ -13,7 +13,7 @@
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "sourceMap": true,
-        "allowJs": true
+        "allowJs": false
     },
     "awesomeTypescriptLoaderOptions": {
         "doTypeCheck": true,
@@ -31,7 +31,8 @@
         "./src/**/*.ts",
         "./src_legacy/**/*.ts",
         "./typings/custom/**/*.d.ts",
-        "./typings/index.d.ts"
+        "./typings/index.d.ts",
+        "./test/**/*.ts"
     ],
     "files": [
         "./src/app.ts",
@@ -298,6 +299,11 @@
         "./typings/custom/signalr/signalr.d.ts",
         "./typings/custom/typeahead/typeahead.d.ts",
         "./typings/custom/version_compare.d.ts",
-        "./typings/index.d.ts"
+        "./typings/index.d.ts",
+        "./test/typings/chai.d.ts",
+        "./test/typings/mocha.d.ts",
+        "./test/unit/spec/helpers/bbcode.ts",
+        "./test/unit/spec/resources/converters.ts",
+        "./test/unit/spec/support/global.spec.ts"
     ]
 }

@@ -17,7 +17,6 @@ import {IRootScope, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHaveModel, 
 import {ITagKey, ICreateComment, ICQWM, IModel, IMenuItem} from '../services/legacy/base'
 
 import {IBaskets, IBasketItem} from '../services/legacy/baskets';
-import {FileSize} from '../services/legacy/misc';
 
 declare var commangular;
 declare var accounting;

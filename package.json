@@ -86,6 +86,7 @@
     "raw-loader": "^0.5.1",
     "require-dir": "^0.3.0",
     "run-sequence": "^1.1.5",
+    "ts-babel-node": "^1.0.0",
     "ts-babel-node-extendable": "^1.0.1",
     "ts-node": "^0.9.3",
     "typescript": "^2.0.0",
