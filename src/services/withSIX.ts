@@ -338,11 +338,11 @@ export class W6Ads {
     this.appendHtml(container, img);
   };
   appendHtml = (container, img) => {
-    container.html('<a href="' + this.url.urlSsl + '/gopremium?ref=0"><img src="http:' + this.url.cdn + '/img/noa/' + img + "?v=" + this.url.cacheBuster + '" alt="no ads" /></a>');
+    container.html('<a href="' + this.url.urlSsl + '/gopremium?ref=0"><img src="' + this.url.cdn + '/img/noa/' + img + "?v=" + this.url.cacheBuster + '" alt="no ads" /></a>');
     /*
             container.empty();
             setTimeout(() => {
-                container.append('<a href="' + this.url.urlSsl + '/gopremium?ref=0"><img src="http:' + this.url.cdn + '/img/noa/' + img + "?v=" + this.url.cacheBuster + '" alt="no ads" /></a>');
+                container.append('<a href="' + this.url.urlSsl + '/gopremium?ref=0"><img src="' + this.url.cdn + '/img/noa/' + img + "?v=" + this.url.cacheBuster + '" alt="no ads" /></a>');
             }, 200);
     */
   };
