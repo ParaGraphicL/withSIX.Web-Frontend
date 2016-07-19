@@ -63,36 +63,49 @@ export class BBCodeParseTree {
         }
 
         //Remove the first token
-        var currentToken = tokens.pop();
+        var currentToken = tokens[tokens.length - 1];
+
+        // currentTag.doesntRequireClose
+        let doesntRequireClose = currentTag === "*";
 
         //Add the text token as a text parse tree
-        if (currentToken.tokenType == TokenType.Text) {
+        if (currentToken.tokenType === TokenType.Text) {
             rootTree.subTrees.push(new BBCodeParseTree(
                 TreeType.Text,
                 currentToken.content));
-        }
-
+            tokens.pop();
         //Create a new tag tree and find its subtrees
-        if (currentToken.tokenType === TokenType.StartTag) {
-            var tagName = currentToken.content;
-            rootTree.subTrees.push(
-                BBCodeParseTree.buildTreeFromTokens(
-                    new BBCodeParseTree(
-                        TreeType.Tag,
-                        tagName,
-                        currentToken.tagAttributes),
-                    tokens,
-                    tagName));
-        }
-
+        } else if (currentToken.tokenType === TokenType.StartTag) {
+          var tagName = currentToken.content;
+          if (doesntRequireClose) {
+            // leave the token..
+            rootTree.isClosed = true;
+            return rootTree;
+          }
+          tokens.pop();
+          rootTree.subTrees.push(
+              BBCodeParseTree.buildTreeFromTokens(
+                  new BBCodeParseTree(
+                      TreeType.Tag,
+                      tagName,
+                      currentToken.tagAttributes),
+                  tokens,
+                  tagName));
         //Check if its the correct end tag
-        if (currentToken.tokenType === TokenType.EndTag) {
+        } else if (currentToken.tokenType === TokenType.EndTag) {
             var tagName = currentToken.content;
+            if (doesntRequireClose) {
+              rootTree.isClosed = true;
+              return rootTree;
+            }
 
+            tokens.pop();
             if (tagName === currentTag) {
                 rootTree.isClosed = true;
                 return rootTree;
             }
+        } else {
+          throw new Error("Unknown token type");
         }
 
         //If we got no more tokens, and we have opened an tag but not closed it, return null

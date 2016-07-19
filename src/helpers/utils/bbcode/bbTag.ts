@@ -1,5 +1,6 @@
 ﻿//Represents a BB tag
 export class BBTag {
+  public noEndTag: boolean;
     //Creates a new BB tag
     constructor(
         public tagName: string, //The name of the tag

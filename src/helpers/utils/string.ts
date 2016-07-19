@@ -23,7 +23,13 @@ export const sanitizeHtml = (html: string, overrides?) => sanitizeHtmlLib(html, 
 import {BBTag} from './bbcode/bbTag';
 import {BBCodeParser} from './bbcode/bbCodeParser';
 
-var bbTags = [BBTag.createSimpleTag("h1"), BBTag.createSimpleTag("h2"), BBTag.createSimpleTag("h3")];
+var li = new BBTag("*", true, false, false, (tag, content, attr) => {
+  return `<li>${content}</li>`;
+}); li.noEndTag = true;
+var bbTags = [BBTag.createSimpleTag("h1"), BBTag.createSimpleTag("h2"), BBTag.createSimpleTag("h3"),
+  new BBTag("list", true, false, false, (tag, content, attr) => {
+    return `<ul>${content}</ul>`;
+}), li];
 var parser =  new BBCodeParser(bbTags.concat(BBCodeParser.defaultTags()));
 export const parseBBCode = (bbCode: string) => sanitizeHtml(parser.parseString(bbCode));
 
