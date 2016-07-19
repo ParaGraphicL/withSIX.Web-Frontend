@@ -4070,9 +4070,7 @@ export module Play.Mods {
 
       this.$scope.getCurrentChange = getCurrentChange;
 
-      this.$scope.isUploading = () => {
-        return isUploading(getCurrentChange());
-      };
+      this.$scope.isUploading = () => isUploading(getCurrentChange());
 
       this.$scope.requiresApproval = (update: IBreezeModUpdate): boolean => {
         if (update == null)
