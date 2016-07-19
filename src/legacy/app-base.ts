@@ -560,8 +560,7 @@ class AppModule extends Tk.Module {
 
           $sceDelegateProvider.resourceUrlWhitelist([
             'self',
-            'http:' + w6.url.cdn + '/**',
-            'https:' + w6.url.cdn + '/**',
+            w6.url.cdn + '/**',
             'http:' + w6.url.url + '/**',
             w6.url.urlSsl + '/**',
             //'http:' + w6.url.play + '/**',
