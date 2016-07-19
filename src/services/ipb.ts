@@ -1,5 +1,6 @@
 
 import {W6, W6Urls} from './withSIX';
+import {sanitizeHtml} from '../helpers/utils/string';
 import {HttpClient as FetchClient} from 'aurelia-fetch-client';
 import {inject} from 'aurelia-framework';
 
@@ -19,13 +20,14 @@ export class IpboardService {
     var domain = "https://forums.bistudio.com";
     $.each(bodyEl.find('a'), function(i, v) {
       var href = $(v).attr('href');
-      if (href.match(/^\/[^\/]/)) $(v).attr('href', domain + href);
+      if (href && href.match(/^\/[^\/]/)) $(v).attr('href', domain + href);
+      $(v).attr('target', '_blank');
     });
     $.each(bodyEl.find('img'), function(i, v) {
       var href = $(v).attr('src');
       if (href.match(/^\/[^\/]/)) $(v).attr('src', domain + href);
     });
-    var body = bodyEl.html();
+    var body = sanitizeHtml(bodyEl.html());
     var authorInfo = firstPost.find(".author_info").first();
     var userName = authorInfo.find(".post-member-title").first().find("span").first().text();
     var posted = firstPost.find(".published").first();

@@ -9,7 +9,7 @@ export class SteamInfo extends ViewModel {
   model;
   url: string;
   steamUrl: string;
-  parseText = (t) => t ? this.steam.parser.parseString(t) : t // .replace(/(\r\n)|\n/g, "<br />")
+  parseText = (t) => t ? this.steam.parseBB(t) : t // .replace(/(\r\n)|\n/g, "<br />")
 
   getDate = (t) => new Date(t * 1000)
 

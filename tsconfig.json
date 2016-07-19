@@ -13,7 +13,7 @@
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "sourceMap": true,
-        "allowJs": true
+        "allowJs": false
     },
     "awesomeTypescriptLoaderOptions": {
         "doTypeCheck": true,
@@ -31,7 +31,8 @@
         "./src/**/*.ts",
         "./src_legacy/**/*.ts",
         "./typings/custom/**/*.d.ts",
-        "./typings/index.d.ts"
+        "./typings/index.d.ts",
+        "./test/**/*.ts"
     ],
     "files": [
         "./src/app.ts",
@@ -176,6 +177,10 @@
         "./src/framework.ts",
         "./src/helpers/extensions.ts",
         "./src/helpers/utils/base64.ts",
+        "./src/helpers/utils/bbcode/bbCodeParser.ts",
+        "./src/helpers/utils/bbcode/bbCodeParseTree.ts",
+        "./src/helpers/utils/bbcode/bbTag.ts",
+        "./src/helpers/utils/bbcode/tokenizer.ts",
         "./src/helpers/utils/errors.ts",
         "./src/helpers/utils/extenders.ts",
         "./src/helpers/utils/http-errors.ts",
@@ -234,10 +239,6 @@
         "./src/services/auth.ts",
         "./src/services/base.ts",
         "./src/services/basket-service.ts",
-        "./src/services/bbcode/bbCodeParser.ts",
-        "./src/services/bbcode/bbCodeParseTree.ts",
-        "./src/services/bbcode/bbTag.ts",
-        "./src/services/bbcode/tokenizer.ts",
         "./src/services/client-wrapper.ts",
         "./src/services/dtos.ts",
         "./src/services/entity-extends.ts",
@@ -298,6 +299,11 @@
         "./typings/custom/signalr/signalr.d.ts",
         "./typings/custom/typeahead/typeahead.d.ts",
         "./typings/custom/version_compare.d.ts",
-        "./typings/index.d.ts"
+        "./typings/index.d.ts",
+        "./test/typings/chai.d.ts",
+        "./test/typings/mocha.d.ts",
+        "./test/unit/spec/helpers/bbcode.ts",
+        "./test/unit/spec/resources/converters.ts",
+        "./test/unit/spec/support/global.spec.ts"
     ]
 }

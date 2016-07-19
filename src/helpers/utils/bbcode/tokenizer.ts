@@ -32,24 +32,24 @@ var attrValueChars = attrNameChars;
 //Creates a new tag token
 function tagToken(match) {
     if (match[1] == undefined) { //Start tag
-        var tagName = match[2];
+        var tagName = match[2].toLowerCase();
         var attributes = new Array<string>();
-        var attrPattern = new RegExp("(" + attrNameChars + "+)?=\"(" + attrValueChars + "*)\"", "g");
+        var attrPattern = new RegExp("(" + attrNameChars + "+)?=\"?(" + attrValueChars + "*)\"?", "g");
 
         var attrStr = match[0].substr(1 + tagName.length, match[0].length - 2 - tagName.length);
 
         var attrMatch;
         while (attrMatch = attrPattern.exec(attrStr)) {
             if (attrMatch[1] == undefined) { //The tag attribute
-                attributes[tagName] = attrMatch[2];
+                attributes[tagName] = attrMatch[2].toLowerCase();
             } else { //Normal attribute
-                attributes[attrMatch[1]] = attrMatch[2];
+                attributes[attrMatch[1].toLowerCase()] = attrMatch[2];
             }
         }
 
         return new Token(TokenType.StartTag, tagName, attributes, match[0]);
     } else { //End tag
-        return new Token(TokenType.EndTag, match[1].substr(1, match[1].length - 1));
+        return new Token(TokenType.EndTag, match[1].substr(1, match[1].length - 1).toLowerCase());
     }
 }
 
@@ -126,7 +126,7 @@ export class Tokenizer {
 
     //Gets the tokens from the given string
     getTokens(str: string) {
-        var pattern = "\\[(\/\\w*)\\]|\\[(\\w*)+(=\"" + attrValueChars + "*\")?( " + attrNameChars + "+=\"" + attrValueChars + "*\")*\\]";
+        var pattern = "\\[(\/\\w*)\\]|\\[(\\w*)+(=\"?" + attrValueChars + "*\"?)?( " + attrNameChars + "+=\"?" + attrValueChars + "*\"?)*\\]";
         var tagPattern = new RegExp(pattern, "g");
         var tokens = new Array<Token>();
 

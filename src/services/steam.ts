@@ -14,14 +14,9 @@ import {W6, W6Urls} from './withSIX';
 import {HttpClient as FetchClient} from 'aurelia-fetch-client';
 import {inject} from 'aurelia-framework';
 
+import {parseBBCode} from '../helpers/utils/string';
+
 //import {HttpClient as HttpClient} from 'aurelia-http-client';
-
-import {BBTag} from './bbcode/bbTag';
-import {BBCodeParser} from './bbcode/bbCodeParser';
-
-var bbTags = [BBTag.createSimpleTag("h1"), BBTag.createSimpleTag("h2"), BBTag.createSimpleTag("h3")];
-// url is broken atm, or at least doesnt seem to support [url=...]
-var parser = new BBCodeParser(bbTags.concat(BBCodeParser.defaultTags().filter(x => x.tagName !== 'url')));
 
 interface IW6Mod {
   name: string; packageName: string; id: string; modversion: string; publishers: { id: string, type: Publisher }[]
@@ -32,7 +27,7 @@ export class SteamService {
   private w6Mods;
   constructor(private http: FetchClient, private w6: W6) { }
 
-  get parser() { return parser }
+  parseBB(bbCode: string) { return parseBBCode(bbCode) }
 
   async getW6Mods() {
     // todo; cache differently

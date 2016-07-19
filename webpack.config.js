@@ -108,7 +108,9 @@ switch (ENV) {
         allChunks: !!ELECTRON,
         sourceMap: false
       }),
-      require('@easy-webpack/config-json')(),
+      require('@easy-webpack/config-json')({
+        exclude: []
+      }),
 
       require('@easy-webpack/config-fonts-and-images')(),
       require('@easy-webpack/config-global-bluebird')(),
@@ -157,7 +159,9 @@ switch (ENV) {
         allChunks: !!ELECTRON,
         sourceMap: false
       }),
-      require('@easy-webpack/config-json')(),
+      require('@easy-webpack/config-json')({
+        exclude: []
+      }),
 
       require('@easy-webpack/config-fonts-and-images')(),
       require('@easy-webpack/config-global-bluebird')(),
@@ -197,7 +201,9 @@ switch (ENV) {
         allChunks: !!ELECTRON,
         sourceMap: true
       }),
-      require('@easy-webpack/config-json')(),
+      require('@easy-webpack/config-json')({
+        exclude: []
+      }),
 
       require('@easy-webpack/config-fonts-and-images')(),
       require('@easy-webpack/config-global-bluebird')(),

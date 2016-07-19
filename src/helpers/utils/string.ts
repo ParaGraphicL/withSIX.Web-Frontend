@@ -10,6 +10,23 @@ export const containsIgnoreCase = (str: string, prefix: string) => str.toLowerCa
 export const equalsIgnoreCase = (str: string, other: string) => str.toLowerCase() === other.toLowerCase()
 export const truncate = (str: string, count: number) => { if (str.length <= count) return str; return str.substring(0, count) + '..' }
 
+interface Sanitizer {
+  (html: string, overrides?): string;
+  defaults: {allowedTags: string[]}
+}
+const sanitizeHtmlLib: Sanitizer = <any>require('sanitize-html');
+
+export const sanitizeHtml = (html: string, overrides?) => sanitizeHtmlLib(html, Object.assign({}, {
+  allowedTags: sanitizeHtmlLib.defaults.allowedTags.concat([ 'img' ])
+}, overrides))
+
+import {BBTag} from './bbcode/bbTag';
+import {BBCodeParser} from './bbcode/bbCodeParser';
+
+var bbTags = [BBTag.createSimpleTag("h1"), BBTag.createSimpleTag("h2"), BBTag.createSimpleTag("h3")];
+var parser =  new BBCodeParser(bbTags.concat(BBCodeParser.defaultTags()));
+export const parseBBCode = (bbCode: string) => sanitizeHtml(parser.parseString(bbCode));
+
 // TODO: This is not as good as the C# version we use!
 export const sluggify = (str: string) => sluggifyEntityName(str.toLowerCase());
 export const sluggifyEntityName = (str: string) => {

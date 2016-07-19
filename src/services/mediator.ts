@@ -10,7 +10,6 @@ import {Router} from 'aurelia-router';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {Validation, ValidationResult} from 'aurelia-validation';
 import {Mediator, IMediator, IRequest, IRequestHandler} from 'aurelia-mediator';
-import {UiContext} from './uicontext';
 import {GlobalErrorHandler} from './legacy/logger';
 import {Tools} from './tools';
 import {W6} from './withSIX';
@@ -126,15 +125,12 @@ let ls = <{ on: (key: string, fn) => void; set: (key: string, value) => void }><
 
 @inject(W6Context)
 export class DbQuery<TRequest, TResponse> implements IRequestHandler<TRequest, TResponse> {
-  protected ui: UiContext;
   static pageSize = 12;
 
   get tools() { return Tools; }
 
   // TODO: Move the w6context!!
-  constructor(protected context: W6Context) {
-    this.ui = Container.instance.get(UiContext);
-  }
+  constructor(protected context: W6Context) {}
   handle(request: TRequest): Promise<TResponse> { throw "must implement handle method"; }
 
   protected get w6(): W6 { return <any>this.context.w6; }

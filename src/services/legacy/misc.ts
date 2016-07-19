@@ -4,18 +4,6 @@ import {Tools} from '../tools';
 import {W6} from '../withSIX';
 import breeze from 'breeze-client';
 
-export enum FileSize {
-  B,
-  KB,
-  MB,
-  GB,
-  TB,
-  PB,
-  EB,
-  ZB,
-  YB
-}
-
 export interface IBreezeSaveError {
   entityErrors: breeze.EntityError[];
   httpResponse: IHttpResponse<breeze.Entity[]>;
