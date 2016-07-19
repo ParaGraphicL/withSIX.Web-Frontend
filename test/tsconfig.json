@@ -12,7 +12,7 @@
         "noLib": true,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
-        "sourceMap": true,
+        "sourceMap": false,
         "allowJs": false
     },
     "awesomeTypescriptLoaderOptions": {
