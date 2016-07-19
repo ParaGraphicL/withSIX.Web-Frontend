@@ -24,8 +24,7 @@ import {BBTag} from './bbcode/bbTag';
 import {BBCodeParser} from './bbcode/bbCodeParser';
 
 var bbTags = [BBTag.createSimpleTag("h1"), BBTag.createSimpleTag("h2"), BBTag.createSimpleTag("h3")];
-// url is broken atm, or at least doesnt seem to support [url=...]
-var parser =  new BBCodeParser(bbTags.concat(BBCodeParser.defaultTags().filter(x => x.tagName !== 'url')));
+var parser =  new BBCodeParser(bbTags.concat(BBCodeParser.defaultTags()));
 export const parseBBCode = (bbCode: string) => sanitizeHtml(parser.parseString(bbCode));
 
 // TODO: This is not as good as the C# version we use!

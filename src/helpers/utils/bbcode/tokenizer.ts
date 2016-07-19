@@ -34,7 +34,7 @@ function tagToken(match) {
     if (match[1] == undefined) { //Start tag
         var tagName = match[2];
         var attributes = new Array<string>();
-        var attrPattern = new RegExp("(" + attrNameChars + "+)?=\"(" + attrValueChars + "*)\"", "g");
+        var attrPattern = new RegExp("(" + attrNameChars + "+)?=\"?(" + attrValueChars + "*)\"?", "g");
 
         var attrStr = match[0].substr(1 + tagName.length, match[0].length - 2 - tagName.length);
 
@@ -126,7 +126,7 @@ export class Tokenizer {
 
     //Gets the tokens from the given string
     getTokens(str: string) {
-        var pattern = "\\[(\/\\w*)\\]|\\[(\\w*)+(=\"" + attrValueChars + "*\")?( " + attrNameChars + "+=\"" + attrValueChars + "*\")*\\]";
+        var pattern = "\\[(\/\\w*)\\]|\\[(\\w*)+(=\"?" + attrValueChars + "*\"?)?( " + attrNameChars + "+=\"?" + attrValueChars + "*\"?)*\\]";
         var tagPattern = new RegExp(pattern, "g");
         var tokens = new Array<Token>();
 
