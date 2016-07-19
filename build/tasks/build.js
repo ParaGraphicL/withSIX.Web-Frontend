@@ -12,9 +12,7 @@ var notify = require('gulp-notify');
 
 var gulp = require('gulp');
 
-var tsProject = ts.createProject(paths.realRoot + 'tsconfig.json', {
-  typescript: require('ntypescript')
-});
+var tsProject = ts.createProject(paths.realRoot + 'tsconfig.json');
 gulp.task('scripts', function() {
   var tsResult = tsProject.src() //tsProject.src() // instead of gulp.src(...)
     .pipe(sourcemaps.init())
