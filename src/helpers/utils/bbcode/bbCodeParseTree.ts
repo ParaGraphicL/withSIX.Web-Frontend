@@ -5,7 +5,6 @@ export enum TreeType { Root, Text, Tag }
 
 export class BBCodeParseTree {
   isClosed: boolean;
-  //Creates a new parse tree
   constructor(public treeType: TreeType, public content: string, public attributes?: Array<string>, public subTrees?: Array<BBCodeParseTree>) {
     this.subTrees = new Array<BBCodeParseTree>();
   }
@@ -26,7 +25,6 @@ export class BBCodeParseTree {
     return true;
   }
 
-  //String representation of the tree
   toString() {
     return TreeType[this.treeType] + " - " + this.content;
   }
