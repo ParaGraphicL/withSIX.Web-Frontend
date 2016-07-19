@@ -17,9 +17,17 @@ describe("parse bbcode", () => {
     parser.parseString("[url=\"http://withsix.com\"]lalal[/url]")
       .should.equal('<a href="http://withsix.com" target="_blank">lalal</a>')
   })
-  it ("should handle incomplete tags", () => {
-    parser.parseString("[h1]Advanced Combat Environment 3 (ACE3)[/h1] [URL=http://www.ace3mod.com][url]http://ace3mod.com/img/ace3-logo-black_600.png[/url]")
-      .should.equal('<h1>Advanced Combat Environment 3 (ACE3)</h1> <a href="http://ace3mod.com/img/ace3-logo-black_600.png" target="_blank">http://ace3mod.com/img/ace3-logo-black_600.png</a>')
-      //.should.equal('<h1>Advanced Combat Environment 3 (ACE3)</h1> [URL=http://www.ace3mod.com]<a href="http://ace3mod.com/img/ace3-logo-black_600.png" target="_blank">http://ace3mod.com/img/ace3-logo-black_600.png</a>')
+  describe("should handle incomplete tags", () => {
+    // TODO: It should still add the invalid bbcode for display?
+    it("handles missing end tag", () => {
+      parser.parseString("[h1]Advanced Combat Environment 3 (ACE3)[/h1] [URL=http://www.ace3mod.com][url]http://ace3mod.com/img/ace3-logo-black_600.png[/url]")
+        .should.equal('<h1>Advanced Combat Environment 3 (ACE3)</h1> <a href="http://ace3mod.com/img/ace3-logo-black_600.png" target="_blank">http://ace3mod.com/img/ace3-logo-black_600.png</a>')
+        //.should.equal('<h1>Advanced Combat Environment 3 (ACE3)</h1> [URL=http://www.ace3mod.com]<a href="http://ace3mod.com/img/ace3-logo-black_600.png" target="_blank">http://ace3mod.com/img/ace3-logo-black_600.png</a>')
+    })
+
+    it("handles missing start tag", () => {
+      parser.parseString("[h1]Advanced Combat Environment 3 (ACE3)[/h1] [/url][url]http://ace3mod.com/img/ace3-logo-black_600.png[/url]")
+        .should.equal('<h1>Advanced Combat Environment 3 (ACE3)</h1> <a href="http://ace3mod.com/img/ace3-logo-black_600.png" target="_blank">http://ace3mod.com/img/ace3-logo-black_600.png</a>')
+    })
   })
 })
