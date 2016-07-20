@@ -1,10 +1,7 @@
 import {Base, uiCommand2, VoidCommand, DbClientQuery, handlerFor} from '../../framework';
 import {MainBase} from './index';
 
-import {Main} from '../../legacy/app';
-
-import GetMiniChangelogQuery = Main.Changelog.GetMiniChangelogQuery;
-import GetBlogsQuery = Main.Blog.GetBlogsQuery;
+import {GetMiniChangelogQuery, GetBlogsQuery} from '../../legacy/main';
 
 export class Update extends MainBase {
   changelog: string;

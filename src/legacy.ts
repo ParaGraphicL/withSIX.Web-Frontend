@@ -1,8 +1,6 @@
 
 import {W6} from './services/withSIX';
-import {MyApp} from './legacy/app';
-import legacySetup = MyApp.setup;
-import legacyBootAngular = MyApp.bootAngular;
+import { setup as legacySetup, bootAngular as legacyBootAngular } from './legacy/app';
 
 export async function bootAngular(w6: W6) {
   legacySetup({

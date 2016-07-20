@@ -25,7 +25,7 @@ export class HtmlParser {
   }
 
   handleRelativeUrl = (url: string, baseUrl: string) =>
-    !url.match(/^(\/\/)|(https?):\/\//) //url.match(/^((\.)?\/[^\/]/)
+    !url.match(/^(\/\/)|(https?:\/)\//) //url.match(/^((\.)?\/[^\/]/)
       ? this.combineUrls(baseUrl, url)
       : null;
 
