@@ -17,6 +17,7 @@ import {W6Context, IQueryResult, BooleanResult, Result} from '../services/w6cont
 import {Tk} from '../services/legacy/tk'
 import {IRootScope, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHaveModel, DialogQueryBase, DbCommandBase, DbQueryBase, BaseController, BaseQueryController, DialogControllerBase, ModelDialogControllerBase } from './app-base'
 import {ITagKey, ICreateComment, ICQWM, IModel, IMenuItem, IHandleCommentsScope} from '../services/legacy/base'
+import { Publisher } from '../services/apis/lib';
 import {EventAggregator} from 'aurelia-event-aggregator';
 
 import {Mediator} from 'aurelia-mediator';
@@ -548,9 +549,6 @@ export module Play {
                 resolve: getModFileResolve('changelog'),
               }).segment('settings', {
                 templateUrl: '/src_legacy/app/play/mods/show/settings.html',
-              }).segment('blog', {
-                controller: 'ModBlogController',
-                templateUrl: '/src_legacy/app/play/mods/show/blog.html',
               });
 
             game.
@@ -4745,7 +4743,7 @@ export module Play.Mods {
     addLink: (link) => void;
     newLink: { title: string; path: string };
     openSteamInfo: () => void;
-    forumUrl?: string; steamInfo; gitHubRepo?: string;
+    forumUrl?: string; steamInfo; gitHubRepo?: string; armaholicUrl?: string
   }
 
   export class ModInfoController extends ModEditBaseController {
@@ -4778,11 +4776,33 @@ export module Play.Mods {
       this.setupDependencyAutoComplete();
 
       this.setupTitle("model.name", "Info - {0} (" + $scope.model.packageName + ") - " + $scope.model.game.name);
-      $scope.steamInfo = { id: $scope.model.id, name: $scope.model.name }
-      $scope.gitHubRepo = 'CBATeam/CBA_A3';
-      let hp = $scope.model.homepageUrl;
-      if (hp.startsWith("http://forums.bistudio.com/") || hp.startsWith("https://forums.bistudio.com/")) {
-        $scope.forumUrl = hp;
+      if (this.$scope.features.steam)
+        this.handleApis();
+    }
+
+    handleApis() {
+      this.$scope.model.publishers.forEach(x => {
+        switch (x.publisherType) {
+          case Publisher[Publisher.Armaholic]:
+            this.$scope.armaholicUrl = `https://forums.bistudio.com/topic/${x.publisherId}-mod`;
+            break;
+          case Publisher[Publisher.BiForums]:
+            this.$scope.forumUrl = `http://www.armaholic.com/page.php?id=${x.publisherId}`;
+            break;
+          case Publisher[Publisher.Steam]:
+            this.$scope.steamInfo = { id: this.$scope.model.id, name: this.$scope.model.name, steamId: x.publisherId }
+            break;
+          case Publisher[Publisher.GitHub]:
+            this.$scope.gitHubRepo = x.publisherId;
+            break;
+        }
+      })
+
+      if (!this.$scope.forumUrl) {
+        let hp = this.$scope.model.homepageUrl;
+        if (hp.startsWith("http://forums.bistudio.com/") || hp.startsWith("https://forums.bistudio.com/")) {
+          this.$scope.forumUrl = hp;
+        }
       }
     }
 
@@ -4979,48 +4999,6 @@ export module Play.Mods {
   }
 
   registerController(ModCreditsController);
-
-  export interface IModBlogScope extends IEditableModScope {
-    createBlogPost: boolean;
-    createBlogSection: () => void;
-    newBlogPost: _IntDefs.__opt_WallPost;
-    save: (any) => void;
-  }
-
-  export class ModBlogController extends ModEditBaseController {
-    static $inject = ['$scope', 'logger', '$q', '$timeout'];
-    static $name = "ModBlogController";
-
-    constructor($scope: IModBlogScope, logger, $q, $timeout) {
-      super($scope, logger, $q, $timeout);
-      Tools.Debug.log("Scope: ", $scope);
-      $scope.createBlogPost = false;
-      $scope.model.entityModule = BreezeEntityGraph.ModEntityModule.createEntity();
-
-      $scope.createBlogSection = async () => {
-        if ($scope.model.entityModule.wall != null)
-          return;
-
-        $scope.model.entityModule.wall = BreezeEntityGraph.Wall.createEntity({
-          entityModule: $scope.model.entityModule
-        });
-        await $scope.editConfig.saveChanges($scope.model.entityModule.wall);
-      };
-
-      $scope.save = (a) => {
-        Tools.Debug.log(a);
-        $scope.model.entityModule.wall.posts.push(BreezeEntityGraph.WallPost.createEntity({
-          //title: a.title.$modelValue,
-          content: a.content.$modelValue
-        }));
-        $scope.createBlogPost = false;
-        this.applyIfNeeded();
-      };
-      this.setupTitle("model.name", "Blog - {0} (" + $scope.model.packageName + ") - " + $scope.model.game.name);
-    }
-  }
-
-  registerController(ModBlogController);
 
   export class ModRelatedController extends BaseController {
     static $name = "ModRelatedController";

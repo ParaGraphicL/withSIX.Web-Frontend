@@ -1,20 +1,9 @@
-export enum Publisher {
-  // Publishing systems
-  Steam,
-  Armaholic,
-  GitHub,
-
-  // Forums
-  BiForums = 10000,
-  GtaForums,
-  ArmaholicForum
-}
-
-import {W6, W6Urls} from './withSIX';
+import {W6, W6Urls} from '../withSIX';
 import {HttpClient as FetchClient} from 'aurelia-fetch-client';
 import {inject} from 'aurelia-framework';
 
-import {parseBBCode} from '../helpers/utils/string';
+import { Publisher } from './w6';
+import {parseBBCode} from '../../helpers/utils/string';
 
 //import {HttpClient as HttpClient} from 'aurelia-http-client';
 

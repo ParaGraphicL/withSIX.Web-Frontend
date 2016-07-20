@@ -2,13 +2,12 @@ import {ViewModel, GitHub, Query, DbQuery, W6Context, handlerFor, UiContext, Pos
 import {inject} from 'aurelia-framework';
 
 export class GitHubInfo extends ViewModel {
-  //model: { id: string; name: string; steamId?: string}
   model;
-  gitUrl: string;
+  repo: string;
 
-  async activate(gitUrl: string) {
-    this.gitUrl = gitUrl;
-    this.model = await new GetGitHubInfo(gitUrl).handle(this.mediator);
+  async activate(repo: string) {
+    this.repo = repo;
+    this.model = await new GetGitHubInfo(repo).handle(this.mediator);
   }
 }
 

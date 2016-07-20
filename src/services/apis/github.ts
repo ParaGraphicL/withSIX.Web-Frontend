@@ -1,4 +1,4 @@
-import { W6Context } from './w6context';
+import { W6Context } from '../w6context';
 import { inject } from 'aurelia-framework';
 
 
