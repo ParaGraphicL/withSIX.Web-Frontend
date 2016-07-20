@@ -4784,10 +4784,10 @@ export module Play.Mods {
       this.$scope.model.publishers.forEach(x => {
         switch (x.publisherType) {
           case Publisher[Publisher.Armaholic]:
-            this.$scope.armaholicUrl = `https://forums.bistudio.com/topic/${x.publisherId}-mod`;
+            this.$scope.armaholicUrl = `http://www.armaholic.com/page.php?id=${x.publisherId}`;
             break;
           case Publisher[Publisher.BiForums]:
-            this.$scope.forumUrl = `http://www.armaholic.com/page.php?id=${x.publisherId}`;
+            this.$scope.forumUrl = `https://forums.bistudio.com/topic/${x.publisherId}-mod`;
             break;
           case Publisher[Publisher.Steam]:
             this.$scope.steamInfo = { id: this.$scope.model.id, name: this.$scope.model.name, steamId: x.publisherId }
