@@ -25,9 +25,15 @@ export class HtmlParser {
   }
 
   handleRelativeUrl = (url: string, baseUrl: string) =>
-    url.match(/^(\.)?\/[^\/]/)
-      ? baseUrl + (url.startsWith(".") ? url.substring(1) : url)
+    !url.match(/^(\/\/)|(https?):\/\//) //url.match(/^((\.)?\/[^\/]/)
+      ? this.combineUrls(baseUrl, url)
       : null;
+
+  combineUrls = (baseUrl: string, url: string) => {
+    if (url.startsWith(".")) url = url.substring(1);
+    if (url.startsWith("/")) url = url.substring(1);
+    return baseUrl + url;
+  }
 
   quote = (html: string) => this.surround('blockquote', html);
   surround = (tag: string, html: string) => `<${tag}>${html}</${tag}>`;
