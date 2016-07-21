@@ -17,7 +17,12 @@ interface Sanitizer {
 const sanitizeHtmlLib: Sanitizer = <any>require('sanitize-html');
 
 export const sanitizeHtml = (html: string, overrides?) => sanitizeHtmlLib(html, Object.assign({}, {
-  allowedTags: sanitizeHtmlLib.defaults.allowedTags.concat(['img'])
+  allowedTags: sanitizeHtmlLib.defaults.allowedTags.concat(['img', 'iframe']),
+  exclusiveFilter: function(frame) {
+    return frame.tag === 'iframe'
+      && (!frame.src
+        || !(frame.src.startsWith("https://youtube.com/") || frame.src.startsWith("http://youtube.com/") || frame.src.startsWith("//youtube.com/") || frame.startsWith('https://youtu.be/')));
+  }
 }, overrides))
 
 import {BBTag} from './bbcode/bbTag';

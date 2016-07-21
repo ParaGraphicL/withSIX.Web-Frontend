@@ -99,16 +99,29 @@ export class Base implements IDisposable {
     else return o.distinctUntilChanged();
   }
 
-  public static observeCollection<T>(col: T[]): Rx.Observable<any> {
+  public static getChanges<T>(x: ChangeNotification<T>[], source: T[]) {
+    var added: T[] = [];
+    var removed: T[] = [];
+    x.forEach(x => {
+      if (x.addedCount > 0) added.push(...source.slice(x.index).slice(0, x.addedCount)) // XXX:
+      if (x.removed.length > 0) removed.push(...x.removed);
+    });
+    return { added, removed };
+  }
+
+  public static observeCollection<T>(col: T[]): Rx.Observable<ChangeNotification<T>[]> {
     return Rx.Observable.create((observer: Rx.Subject<any>) =>
       bindingEngine.collectionObserver(col)
-      .subscribe(x => {
-        // don't care if there are no changes
-        if (x.length > 0) observer.next(x)
-      }).dispose);
+        .subscribe(x => {
+          if (x.length > 0) observer.next(x)
+        }).dispose);
   }
 
   dispose() { this.subscriptions.dispose(); }
+}
+
+interface ChangeNotification<T> {
+  addedCount: number; index: number; removed: T[]
 }
 
 

@@ -2,6 +2,8 @@ import {W6, W6Urls} from '../withSIX';
 import {HttpClient as FetchClient} from 'aurelia-fetch-client';
 import {inject} from 'aurelia-framework';
 
+import { HtmlParser } from './parser';
+
 import { Publisher } from './w6';
 import {parseBBCode} from '../../helpers/utils/string';
 
@@ -11,10 +13,10 @@ interface IW6Mod {
   name: string; packageName: string; id: string; modversion: string; publishers: { id: string, type: Publisher }[]
 }
 
-@inject(FetchClient, W6)
+@inject(FetchClient, W6, HtmlParser)
 export class SteamService {
   private w6Mods;
-  constructor(private http: FetchClient, private w6: W6) { }
+  constructor(private http: FetchClient, private w6: W6, private parser: HtmlParser) { }
 
   parseBB(bbCode: string) { return parseBBCode(bbCode) }
 
@@ -62,7 +64,18 @@ export class SteamService {
     let r = await this.http.fetch(filesUrl, { method: 'POST', body: str, headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
     if (!r.ok) throw r;
     let info = await r.json();
-    return info.response.publishedfiledetails;
+    let mods = info.response.publishedfiledetails;
+    mods.forEach(x => {
+      if (x.description) {
+        x.description = this.parseBB(x.description)
+        let p = this.parser.toJquery(x.description);
+        x.images = p.extractImages(p.find(x => x));
+      } else {
+        x.images = [];
+      }
+    })
+
+    return mods;
   }
 
   async getSteamFiles(gameId: number) {

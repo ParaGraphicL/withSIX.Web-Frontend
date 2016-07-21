@@ -1,4 +1,4 @@
-import {ViewModel, GitHub, Query, DbQuery, W6Context, handlerFor, UiContext, Post} from '../../../framework';
+import {ViewModel, GitHub, Query, DbQuery, W6Context, handlerFor, UiContext, Post} from '../../../../framework';
 import {inject} from 'aurelia-framework';
 
 export class GitHubInfo extends ViewModel {
@@ -6,8 +6,10 @@ export class GitHubInfo extends ViewModel {
   repo: string;
 
   async activate(repo: string) {
-    this.repo = repo;
-    this.model = await new GetGitHubInfo(repo).handle(this.mediator);
+    try {
+      this.repo = repo;
+      this.model = await new GetGitHubInfo(repo).handle(this.mediator);
+    } catch (ex) { }
   }
 }
 

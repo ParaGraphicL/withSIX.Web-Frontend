@@ -1,12 +1,14 @@
 <sx-info-page>
   <sx-info-main>
+    <sx-aurelia ng-if="features.steam" id="gallery" sx-view-model="'features/games/mods/mod-gallery'" sx-model="model.descriptionFull"></sx-aurelia>
+
     <div class="tile">
       <section>
-
         <article>
           <div class="box">
             <h3>
-                        <span id="modDescription">Description</span></h3>
+              <span id="modDescription">Description</span>
+            </h3>
 
             <div class="editable-full">
               <span ng-if="editConfig.isEdited('descriptionFull')" class="withSIX-icon-Alert pull-right" style="color: red; font-size: 20px;"></span>
@@ -77,10 +79,7 @@
               </button>
             </div>
           </div>
-          <sx-aurelia ng-if="features.steam && steamInfo" sx-view-model="'features/games/mods/steam-info'" sx-model="steamInfo"></sx-aurelia>
-          <sx-aurelia ng-if="features.steam && forumUrl" sx-view-model="'features/games/mods/bif-info'" sx-model="forumUrl"></sx-aurelia>
-          <sx-aurelia ng-if="features.steam && gitHubRepo" sx-view-model="'features/games/mods/github-info'" sx-model="gitHubRepo"></sx-aurelia>
-          <sx-aurelia ng-if="features.steam && armaholicUrl" sx-view-model="'features/games/mods/armaholic-info'" sx-model="armaholicUrl"></sx-aurelia>
+          <sx-aurelia ng-if="features.steam" sx-view-model="'features/games/mods/external/index'" sx-model="externalInfo"></sx-aurelia>
           <div>
             <sx-comments ng-if="model.comments" comments="model.comments" can-manage="editConfig.canManage() || editConfig.canEdit()" add-comment="addComment(comment)" delete-comment="deleteComment(comment)" save-comment="saveComment(comment)" report-comment="reportComment(comment)"
                 like-comment="likeComment(comment)" unlike-comment="unlikeComment(comment)" like-states="commentLikeStates">

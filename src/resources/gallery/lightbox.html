@@ -1,0 +1,8 @@
+<template>
+  <div class="image-gallery lightbox" click.delegate="clicked($event)">
+    <a repeat.for="image of items" href.bind="image.href" target="_blank" title.bind="image.title">
+      <div class="imageholder" back-img.bind="image.thumbnail || image.poster">
+      </div>
+    </a>
+  </div>
+</template>

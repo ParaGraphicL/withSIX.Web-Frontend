@@ -16,8 +16,9 @@ export class Seditio {
     // var posted = firstPost.find(".published").first();
     // var dateTime = posted.attr('title');
     // var title = p.find(doc => doc.find("h1.ipsType_pagetitle").first()).text();
+    var images = p.extractImages(bodyEl);
     return {
-      body
+      body, images
     }
   }
 }

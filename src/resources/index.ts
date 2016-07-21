@@ -13,6 +13,7 @@ export function configure(config: FrameworkConfiguration) {
   config.globalResources('./card-clearfix');
   config.globalResources('./command-button');
   config.globalResources('./optional-link');
+  config.globalResources('./gallery');
 
   config.globalResources('./loading-composer');
 
@@ -58,5 +59,6 @@ export * from './ad-links';
 export * from './markdown';
 export * from './usertitle';
 export * from './time-ago';
+export * from './gallery';
 export * from './filters';
 export * from './tab-view/tab-view';

@@ -1629,7 +1629,7 @@ export interface IModInfoScope extends IEditableModScope, IHandleCommentsScope<I
   addLink: (link) => void;
   newLink: { title: string; path: string };
   openSteamInfo: () => void;
-  forumUrl?: string; steamInfo; gitHubRepo?: string; armaholicUrl?: string
+  externalInfo: { forumUrl?: string; steamInfo; gitHubRepo?: string; armaholicUrl?: string }
 }
 
 export class ModInfoController extends ModEditBaseController {
@@ -1667,29 +1667,31 @@ export class ModInfoController extends ModEditBaseController {
   }
 
   handleApis() {
+    let externalInfo = <any>{};
     this.$scope.model.publishers.forEach(x => {
       switch (x.publisherType) {
         case Publisher[Publisher.Armaholic]:
-          this.$scope.armaholicUrl = `http://www.armaholic.com/page.php?id=${x.publisherId}`;
+          externalInfo.armaholicUrl = `http://www.armaholic.com/page.php?id=${x.publisherId}`;
           break;
         case Publisher[Publisher.BiForums]:
-          this.$scope.forumUrl = `https://forums.bistudio.com/topic/${x.publisherId}-mod`;
+          externalInfo.forumUrl = `https://forums.bistudio.com/topic/${x.publisherId}-mod`;
           break;
         case Publisher[Publisher.Steam]:
-          this.$scope.steamInfo = { id: this.$scope.model.id, name: this.$scope.model.name, steamId: x.publisherId }
+          externalInfo.steamInfo = { id: this.$scope.model.id, name: this.$scope.model.name, steamId: x.publisherId }
           break;
         case Publisher[Publisher.GitHub]:
-          this.$scope.gitHubRepo = x.publisherId;
+          externalInfo.gitHubRepo = x.publisherId;
           break;
       }
     })
 
-    if (!this.$scope.forumUrl) {
+    if (!externalInfo.forumUrl) {
       let hp = this.$scope.model.homepageUrl;
       if (hp.startsWith("http://forums.bistudio.com/") || hp.startsWith("https://forums.bistudio.com/")) {
-        this.$scope.forumUrl = hp;
+        externalInfo.forumUrl = hp;
       }
     }
+    this.$scope.externalInfo = externalInfo;
   }
 
   private setupComments(mod: IBreezeMod) {

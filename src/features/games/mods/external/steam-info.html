@@ -10,7 +10,7 @@
       <ul>
         <li repeat.for="t of model.steamInfo.tags">${t.tag}</li>
       </ul>
-      <p>description: <span innerHTML.bind="parseText(model.steamInfo.description)"></span></p>
+      <p>description: <span innerHTML.bind="model.steamInfo.description"></span></p>
     </div>
     <i>Information is provided by <a href="https://steampowered.com" target="_blank">Steam</a>, a Valve corporation product</i>
   </div>
