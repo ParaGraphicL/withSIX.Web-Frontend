@@ -310,7 +310,7 @@ $status-total-width: $status-icon-width + $status-width;
     //min-height: $basket-content-height;
     $dropdown-button-width: 16px;
     // includes margins
-    $space: 240px - $scrollBarSize;
+    $space: 236px - $scrollBarSize;
     $margin: 8px;
     $margin-right: 4px;
     $title-space: $space - $margin - $margin-right - $dropdown-button-width;
@@ -480,7 +480,7 @@ $status-total-width: $status-icon-width + $status-width;
     $borderColor: $colorSixMediumGray;
     .dependencies {
       .basket-content-title {
-        $title-space: $title-space - 28px;
+        $title-space: $title-space - 26px;
         max-width: $title-space;
       }
       header {
