@@ -7,12 +7,14 @@ export class ModGallery extends ViewModel {
 
   galleryItems: GalleryItem[];
 
-  activate(model: string) {
-    if (model) {
-      let jq = this.parser.toJquery(`<div>${model}</div>`);
-      this.galleryItems = jq.extractImages(jq.find(x => x));
-    } else
-      this.galleryItems = [];
+  activate(model: { description?: string, avatar?: string }) {
+    this.galleryItems = [];
+    if (model.avatar) this.galleryItems.push({ href: model.avatar, thumbnail: model.avatar, title: 'Logo' });
+    if (model.description) {
+      let jq = this.parser.toJquery(`<div>${model.description}</div>`);
+      this.galleryItems.push(...jq.extractImages(jq.find(x => x)));
+    }
+
     this.subscriptions.subd(d => {
       d(this.observableFromEvent<UpdateGallery>(UpdateGallery)
         .subscribe(this.addGalleryItems))
