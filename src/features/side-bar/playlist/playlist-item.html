@@ -48,7 +48,7 @@
       </conditional-title>
 
       <div class="dependencies" if.bind="dependencies.length > 0">
-        <header if.bind="level == 0">
+        <header if.bind="level === 0">
           <div class="inner">
             <button class="pull-right text-button ignore-close" click.delegate="showDependencies = !showDependencies">
               ${showDependencies | hideShowText }

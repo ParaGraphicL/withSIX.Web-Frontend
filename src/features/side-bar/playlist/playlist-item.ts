@@ -89,6 +89,7 @@ export class PlaylistItem extends ViewModel {
     this.isDependency = model.isDependency;
     if (this.level === 0 || !this.chain.has(this.model.id))
       this.chain.set(this.model.id, this.model);
+    if (this.level !== 0) this.showDependencies = true;
     this.basket = this.basketService.getGameBaskets(model.currentGameId);
     this.url = this.getBasketItemUrl();
 
@@ -98,19 +99,24 @@ export class PlaylistItem extends ViewModel {
 
     try {
       // TODO: WHy use such complicated things when we have an id already??
-      let data = this.model.itemType == BasketItemType.Mod ? await new GetModDependencies(this.model.packageName, this.model.gameId, this.localChain, this.chain, this.currentGameId, this.model.id).handle(this.mediator)
-        : await new GetCollectionDependencies(this.model.gameId, this.model.id, this.localChain, this.chain, this.currentGameId).handle(this.mediator);
-      this.dependencies = data.dependencies;
-      this.model.name = data.name;
-      this.model.sizePacked = data.sizePacked;
-      this.model.author = data.authorText || data.author.displayName;
-      this.model.image = data.avatar ? this.w6.url.getUsercontentUrl2(data.avatar, data.avatarUpdatedAt) : null;
-      (<any>this.model).version = data.version;
+      if (this.model.id) {
+        let data = this.model.itemType == BasketItemType.Mod ? await new GetModDependencies(this.model.packageName, this.model.gameId, this.localChain, this.chain, this.currentGameId, this.model.id).handle(this.mediator)
+          : await new GetCollectionDependencies(this.model.gameId, this.model.id, this.localChain, this.chain, this.currentGameId).handle(this.mediator);
+        this.dependencies = data.dependencies;
+        this.model.name = data.name;
+        this.model.sizePacked = data.sizePacked;
+        this.model.author = data.authorText || data.author.displayName;
+        this.model.image = data.avatar ? this.w6.url.getUsercontentUrl2(data.avatar, data.avatarUpdatedAt) : null;
+        (<any>this.model).version = data.version;
+      } else {
+        this.dependencies = [];
+        this.model.sizePacked = 0;
+      }
     } catch (err) {
       this.tools.Debug.error("Error while trying to retrieve dependencies for " + this.model.id, err);
     }
 
-    if (this.model.itemType != BasketItemType.Collection) this.stat.sizePacked = this.stat.sizePacked + this.model.sizePacked;
+    if (this.model.itemType !== BasketItemType.Collection) this.stat.sizePacked = this.stat.sizePacked + this.model.sizePacked;
     this.image = this.model.image || this.w6.url.getAssetUrl('img/noimage.png');
 
     this.gameName = (this.isForActiveGame ? this.w6.activeGame.slug : 'Arma-2').replace("-", " "); //(this.model.originalGameSlug || this.model.gameSlug).replace("-", " ");
@@ -332,6 +338,15 @@ class GetCollectionDependenciesHandler extends DbQuery<GetCollectionDependencies
     await this.context.executeQueryWithManager<IBreezeCollectionVersion>(manager, q);
     // TODO: How to handle 'non network mods'
     let modDependencies = c.latestVersion.dependencies.map(x => x.modDependencyId).filter(x => x != null);
+    let nonNetworkDependencies = c.latestVersion.dependencies.filter(x => !x.modDependencyId).map(x => {
+      return <IBasketItem>{
+        packageName: x.dependency,
+        name: x.dependency,
+        gameId: request.gameId
+      }
+    });
+
+    nonNetworkDependencies.forEach(x => request.localChain.push(x.packageName));
     // if (request.gameId != request.currentGameId) {
     //   let compatibilityMods = ModsHelper.getCompatibilityModsFor(request.currentGameId, request.gameId);
     //   if (compatibilityMods.length > 0) {
@@ -340,10 +355,10 @@ class GetCollectionDependenciesHandler extends DbQuery<GetCollectionDependencies
     //   }
     // }
 
-    let dependencies = modDependencies.filter(x => !request.localChain.some(x => x == x)).map(x => x);
-    if (dependencies.length == 0)
+    let dependencies = modDependencies.filter(d => !request.localChain.some(x => x === d));
+    if (dependencies.length === 0)
       return {
-        dependencies: [],
+        dependencies: nonNetworkDependencies,
         sizePacked: sizePacked,
         avatar: c.avatar,
         avatarUpdatedAt: c.avatarUpdatedAt,
@@ -370,15 +385,16 @@ class GetCollectionDependenciesHandler extends DbQuery<GetCollectionDependencies
           .where(<any>op)
           .select(desiredFields);
         let r = await this.context.executeQueryWithManager<IBreezeMod>(manager, query);
-        fetchedResults = r.results.map(x => Helper.modToBasket(x));
-        fetchedResults.forEach(x => request.chain.set(x.id, x));
+        let results = r.results.map(x => Helper.modToBasket(x));
+        results.forEach(x => request.chain.set(x.id, x));
+        fetchedResults = fetchedResults.concat(results);
       }
     }
 
     let results = fetchedResults.concat(cachedIds.map(x => request.chain.get(x)));
     results.forEach(x => { request.localChain.push(x.id); });
     return {
-      dependencies: results,
+      dependencies: results.concat(nonNetworkDependencies),
       sizePacked: sizePacked,
       avatar: c.avatar,
       avatarUpdatedAt: c.avatarUpdatedAt,
