@@ -8,7 +8,8 @@ import {inject, Container} from 'aurelia-framework';
 import {
   Base, LS, Notifier, Toastr, uiCommand2, ViewModel, ViewModelWithModel, SelectTab,
   BasketType, IBasketModel, IBasketItem, BasketState, IBasketCollection, W6Context,
-  SubscribeCollection, InstallContent, InstallContents, LaunchContents, LaunchContent, ContentHelper, Action
+  SubscribeCollection, InstallContent, InstallContents, LaunchContents, LaunchContent, ContentHelper, Action,
+  BasketItemType, DependencyType
 } from '../framework';
 import {Client, ConnectionState, IContentState, ItemState, IContentStateChange, IContentStatusChange, IClientInfo, StateChanged, IContentGuidSpec, IContentsBase, IContentBase} from 'withsix-sync-api';
 
@@ -299,13 +300,24 @@ export class Basket extends ViewModelWithModel<IBasketCollection> {
       gameId: this.model.gameId,
       version: "0.0.1",
       forkedCollectionId: this.model.collectionId,
-      dependencies: this.model.items.filter(x => x.packageName ? true : false).map(x => { return { dependency: x.packageName, constraint: x.constraint } })
+      dependencies: this.model.items.map(this.basketItemToDependency)
     };
     var result = await this.dialog.open({ viewModel: CreateCollectionDialog, model: { game: { id: this.model.gameId }, model: model } });
     if (result.wasCancelled) return;
     var id = result.output;
     await new LoadCollectionIntoBasket(id).handle(this.mediator);
     this.eventBus.publish(new SelectTab('playlist'));
+  }
+
+  basketItemToDependency = (x: IBasketItem) => {
+    let dep: { dependency: string; dependencyType?: DependencyType; constraint?: string; collectionDependencyId?: string; modDependencyId?: string } = { dependency: x.packageName || x.id, constraint: x.constraint };
+    if (x.itemType === BasketItemType.Collection) {
+      if (x.id === null) throw new Error("Collection id cannot be null");
+      dep.collectionDependencyId = x.id
+      dep.dependencyType = DependencyType.Collection
+    }
+    if (x.itemType === BasketItemType.Mod && x.id) dep.modDependencyId = x.id;
+    return dep;
   }
 
   // deprecated

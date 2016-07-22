@@ -1,7 +1,7 @@
 import {ViewModel, Query, DbQuery, handlerFor, IGame, ITab, IMenuItem, MenuItem, uiCommand2, VoidCommand, IReactiveCommand, IDisposable, Rx,
   CollectionScope, IBreezeCollectionVersion, IBreezeCollectionVersionDependency, BasketItemType, TypeScope, UiContext, CollectionHelper, Confirmation, MessageDialog,
   ReactiveList, IBasketItem, FindModel, ActionType, BasketState, BasketType, ConnectionState, Debouncer, GameChanged, uiCommandWithLogin2, GameClientInfo, UninstallContent,
-  IBreezeCollection, IRequireUser, IUserInfo, W6Context, Client, BasketService, CollectionDataService, DbClientQuery, requireUser, ICollection, Base} from '../../../framework';
+  IBreezeCollection, IRequireUser, IUserInfo, W6Context, Client, BasketService, CollectionDataService, DbClientQuery, requireUser, ICollection, Base, DependencyType} from '../../../framework';
 import {CreateCollectionDialog} from '../../games/collections/create-collection-dialog';
 import {Basket, GameBaskets} from '../../game-baskets';
 import {inject} from 'aurelia-framework';
@@ -9,11 +9,6 @@ import {DeleteCollection, ForkCollection, LoadCollectionIntoBasket, GetDependenc
 
 interface ICollectionsData {
   collections: IPlaylistCollection[];
-}
-
-enum DependencyType {
-  Package,
-  Collection
 }
 
 @inject(UiContext, BasketService, Client)
@@ -180,23 +175,12 @@ export class Playlist extends ViewModel {
       forkedCollectionId: basket.collectionId,
       dependencies: basket.items
         .filter(x => !!x.packageName || x.itemType === BasketItemType.Collection)
-        .map(this.basketItemToDependency)
+        .map(this.baskets.active.basketItemToDependency)
     };
     if (model.dependencies.length == 0) throw new Error("There are no items in this playlist...");
     var result = await this.dialog.open({ viewModel: CreateCollectionDialog, model: { game: this.game, model: model } });
     if (result.wasCancelled) return;
     await this.unload();
-  }
-
-  basketItemToDependency = (x: IBasketItem) => {
-    let dep: { dependency: string; dependencyType?: DependencyType; constraint?: string; collectionDependencyId?: string; modDependencyId?: string } = { dependency: x.packageName || x.id, constraint: x.constraint };
-    if (x.itemType === BasketItemType.Collection) {
-      if (x.id === null) throw new Error("Collection id cannot be null");
-      dep.collectionDependencyId = x.id
-      dep.dependencyType = DependencyType.Collection
-    }
-    if (x.itemType === BasketItemType.Mod && x.id) dep.modDependencyId = x.id;
-    return dep;
   }
 
   saveAsNewCollectionInternal = () => this.baskets.active.saveAsNewCollection();
