@@ -1,4 +1,5 @@
 import { sanitizeHtml, parseBBCode } from '../../helpers/utils/string';
+import { createUrlSafe, Url } from '../../helpers/utils/url';
 import { HttpClient as FetchClient } from 'aurelia-fetch-client';
 import { inject } from 'aurelia-framework';
 
@@ -50,9 +51,7 @@ export class HtmlParser {
   quote = (html: string) => this.surround('blockquote', html);
   surround = (tag: string, html: string) => `<${tag}>${html}</${tag}>`;
 
-  static shouldIncludeImage = (i: Media) => {
-    return !i.href || (!HtmlParser.filterHref(i.href));
-  }
+  static shouldIncludeImage = (i: Media) => !i.href || (!HtmlParser.filterHref(i.href));
 
   static filterHref(href: string) {
     return href.includes('emoticon')
@@ -64,8 +63,16 @@ export class HtmlParser {
     return (i.href && i.href === x.href)
       || (i.thumbnail && i.thumbnail === x.thumbnail)
       || (i.youtube && i.youtube === x.youtube)
-      || (i.vimeo && i.vimeo === x.vimeo);
-    // TODO: compare the filename..
+      || (i.vimeo && i.vimeo === x.vimeo)
+      || (i.href && x.href && HtmlParser.fileNameMatch(createUrlSafe(i.href), createUrlSafe(x.href)));
+  }
+  static fileNameMatch = (x: Url, i: Url) => {
+    const rxFn = /\.\w+$/
+    if (!i.pathname.match(rxFn) || !x.pathname.match(rxFn)) return false;
+    const rx = /\/([^\/]+)$/;
+    let xfn = x.pathname.match(rx)[1];
+    let ifn = i.pathname.match(rx)[1];
+    return xfn === ifn;
   }
 }
 
