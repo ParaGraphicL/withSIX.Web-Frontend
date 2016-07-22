@@ -6,7 +6,7 @@ export abstract class BaseError extends ViewModel {
   resource: string;
   activate(param) {
     this.resource = param.resource;
-    this.el = $('<meta name="prerender-status-code" content="' + this.code + '">');
+    this.el = $(`<meta name="prerender-status-code" content="${this.code}">`);
     $('head').append(this.el);
     window.prerenderReady = true;
     let hash = window.location.hash;

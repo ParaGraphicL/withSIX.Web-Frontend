@@ -116,8 +116,7 @@ export class W6Context {
   // TODO: We should check for the latest commit or tag on github, every minute or so, and then use that commit SHA
   public async getDocMd(subPath, addTag = false) {
     var path = 'docs/' + subPath;
-    var latestCommit = await this.getLatestCommit(path);
-    return await this.getText('https://cdn.rawgit.com/SIXNetworks/withsix-docs/' + latestCommit + '/' + path)
+    return await this.getText('https://raw.githubusercontent.com/SIXNetworks/withsix-docs/master/' + path);
   }
 
   async getLatestCommit(path, repo = 'SIXNetworks/withsix-docs') {
