@@ -4,6 +4,8 @@ import { inject } from 'aurelia-framework';
 
 export { parseBBCode }
 
+interface Media { href: string; title: string; thumbnail?: string, youtube?: string, vimeo?: string, poster?: string; type?: string; }
+
 export class HtmlParser {
   toJquery(text: string, baseUrl?: string, transformer?) {
     return new Parser($(this.createDocument(text, "imported html")), baseUrl, this)
@@ -48,8 +50,14 @@ export class HtmlParser {
   quote = (html: string) => this.surround('blockquote', html);
   surround = (tag: string, html: string) => `<${tag}>${html}</${tag}>`;
 
-  static shouldIncludeImage = (i) => {
-    return true;
+  static shouldIncludeImage = (i: Media) => {
+    return !i.href || (!HtmlParser.filterHref(i.href));
+  }
+
+  static filterHref(href: string) {
+    return href.includes('emoticon')
+      || href.includes('//forums.bistudio.com/')
+      || href.includes('//www.armaholic.com/images/pfs/')
   }
 
   static compareImage = (x, i) => {
@@ -73,7 +81,7 @@ export class Parser {
     return sanitizeHtml(el.html());
   }
   extractImages(el: JQuery) {
-    let images: { href: string; title: string; thumbnail?: string, youtube?: string, vimeo?: string, poster?: string; type?: string; }[] = [];
+    let images: Media[] = [];
     let handledImages = [];
     el.find("iframe").each((i, x) => {
       let el = $(x);
