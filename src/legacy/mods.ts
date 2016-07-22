@@ -1630,6 +1630,7 @@ export interface IModInfoScope extends IEditableModScope, IHandleCommentsScope<I
   newLink: { title: string; path: string };
   openSteamInfo: () => void;
   externalInfo: { forumUrl?: string; steamInfo; gitHubRepo?: string; armaholicUrl?: string }
+  galleryInfo: { description?: string; avatar?: string }
 }
 
 export class ModInfoController extends ModEditBaseController {
@@ -1657,6 +1658,10 @@ export class ModInfoController extends ModEditBaseController {
       title: "",
       path: ""
     };
+    $scope.galleryInfo = {
+      description: $scope.model.descriptionFull,
+      avatar: $scope.header.getAvatar($scope.w6.imageSizes.bigRectangle.w, $scope.w6.imageSizes.bigRectangle.h)
+    }
     this.setupClaiming();
     this.setupStatistics();
     this.setupDependencyAutoComplete();
