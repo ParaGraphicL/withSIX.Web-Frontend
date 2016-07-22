@@ -310,7 +310,10 @@ $status-total-width: $status-icon-width + $status-width;
     //min-height: $basket-content-height;
     $dropdown-button-width: 16px;
     // includes margins
-    $space: 240px - $scrollBarSize;
+    $space: 236px - $scrollBarSize;
+    $margin: 8px;
+    $margin-right: 4px;
+    $title-space: $space - $margin - $margin-right - $dropdown-button-width;
     .basket-content {
       overflow: hidden;
       dropdown-menu {
@@ -429,10 +432,9 @@ $status-total-width: $status-icon-width + $status-width;
       }
       .basket-content-title {
         overflow: hidden;
-        $margin: 8px;
         margin-left: $margin;
-        margin-right: $dropdown-button-width;
-        max-width: $space - $margin - $dropdown-button-width;
+        margin-right: $margin-right;
+        max-width: $title-space;
         font-size: $font-size-small;
         font-weight: $font-weight-medium;
         line-height: 1;
@@ -478,8 +480,8 @@ $status-total-width: $status-icon-width + $status-width;
     $borderColor: $colorSixMediumGray;
     .dependencies {
       .basket-content-title {
-        $space: $space - 44px;
-        max-width: $space;
+        $title-space: $title-space - 26px;
+        max-width: $title-space;
       }
       header {
         color: $colorSixLightGray;

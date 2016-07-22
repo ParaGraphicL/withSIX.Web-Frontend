@@ -1,7 +1,7 @@
 import {ViewModel, Query, DbQuery, handlerFor, IGame, ITab, IMenuItem, MenuItem, uiCommand2, VoidCommand, IReactiveCommand, IDisposable, Rx,
   CollectionScope, IBreezeCollectionVersion, IBreezeCollectionVersionDependency, BasketItemType, TypeScope, UiContext, CollectionHelper, Confirmation, MessageDialog,
   ReactiveList, IBasketItem, FindModel, ActionType, BasketState, BasketType, ConnectionState, Debouncer, GameChanged, uiCommandWithLogin2, GameClientInfo, UninstallContent,
-  IBreezeCollection, IRequireUser, IUserInfo, W6Context, Client, BasketService, CollectionDataService, DbClientQuery, requireUser, ICollection, Base} from '../../../framework';
+  IBreezeCollection, IRequireUser, IUserInfo, W6Context, Client, BasketService, CollectionDataService, DbClientQuery, requireUser, ICollection, Base, DependencyType} from '../../../framework';
 import {CreateCollectionDialog} from '../../games/collections/create-collection-dialog';
 import {Basket, GameBaskets} from '../../game-baskets';
 import {inject} from 'aurelia-framework';
@@ -173,7 +173,9 @@ export class Playlist extends ViewModel {
       gameId: basket.gameId,
       version: "0.0.1",
       forkedCollectionId: basket.collectionId,
-      dependencies: basket.items.filter(x => x.packageName ? true : false).map(x => { return { dependency: x.packageName, constraint: x.constraint } })
+      dependencies: basket.items
+        .filter(x => !!x.packageName || x.itemType === BasketItemType.Collection)
+        .map(this.baskets.active.basketItemToDependency)
     };
     if (model.dependencies.length == 0) throw new Error("There are no items in this playlist...");
     var result = await this.dialog.open({ viewModel: CreateCollectionDialog, model: { game: this.game, model: model } });
