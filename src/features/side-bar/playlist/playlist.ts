@@ -11,6 +11,11 @@ interface ICollectionsData {
   collections: IPlaylistCollection[];
 }
 
+enum DependencyType {
+  Package,
+  Collection
+}
+
 @inject(UiContext, BasketService, Client)
 export class Playlist extends ViewModel {
   rxProperties: Rx.Subscription;
@@ -173,12 +178,25 @@ export class Playlist extends ViewModel {
       gameId: basket.gameId,
       version: "0.0.1",
       forkedCollectionId: basket.collectionId,
-      dependencies: basket.items.filter(x => x.packageName ? true : false).map(x => { return { dependency: x.packageName, constraint: x.constraint } })
+      dependencies: basket.items
+        .filter(x => !!x.packageName || x.itemType === BasketItemType.Collection)
+        .map(this.basketItemToDependency)
     };
     if (model.dependencies.length == 0) throw new Error("There are no items in this playlist...");
     var result = await this.dialog.open({ viewModel: CreateCollectionDialog, model: { game: this.game, model: model } });
     if (result.wasCancelled) return;
     await this.unload();
+  }
+
+  basketItemToDependency = (x: IBasketItem) => {
+    let dep: { dependency: string; dependencyType?: DependencyType; constraint?: string; collectionDependencyId?: string; modDependencyId?: string } = { dependency: x.packageName || x.id, constraint: x.constraint };
+    if (x.itemType === BasketItemType.Collection) {
+      if (x.id === null) throw new Error("Collection id cannot be null");
+      dep.collectionDependencyId = x.id
+      dep.dependencyType = DependencyType.Collection
+    }
+    if (x.itemType === BasketItemType.Mod && x.id) dep.modDependencyId = x.id;
+    return dep;
   }
 
   saveAsNewCollectionInternal = () => this.baskets.active.saveAsNewCollection();
