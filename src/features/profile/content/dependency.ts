@@ -20,7 +20,7 @@ export class Dependency extends ViewModel {
   activate(model: IShowDependency) {
     this.model = model;
     this.type = 'mod'; // todo; col.
-    if (this.model.id) this.url = `/p/${this.w6.activeGame.slug}/${this.type}s/${this.model.id.toShortId()}/${this.model.name.sluggifyEntityName()}`;
+    if (this.model.id) this.url = `/p/${this.w6.activeGame.slug}/${this.type}s/${this.model.id.toShortId()}/${this.model.name ? this.model.name.sluggifyEntityName() : 'mod'}`;
 
     this.subscriptions.subd(d => {
       d(this.changeVersion);
