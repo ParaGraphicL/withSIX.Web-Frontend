@@ -354,17 +354,25 @@ class GetCollectionDependenciesHandler extends DbQuery<GetCollectionDependencies
 
     let cachedIds = dependencies.filter(x => request.chain.has(x));
     let idsToFetch = dependencies.asEnumerable().except(cachedIds).toArray();
+
     let fetchedResults: IBasketItem[] = [];
 
     let desiredFields = ["id", "name", "packageName", "author", "authorText", "gameId", "avatar", "avatarUpdatedAt", "sizePacked"];
     if (idsToFetch.length > 0) {
-      let op = { id: { in: idsToFetch } };
-      query = breeze.EntityQuery.from("Mods")
-        .where(<any>op)
-        .select(desiredFields);
-      let r = await this.context.executeQueryWithManager<IBreezeMod>(manager, query);
-      fetchedResults = r.results.map(x => Helper.modToBasket(x));
-      fetchedResults.forEach(x => request.chain.set(x.id, x));
+      var groupSize = 10;
+      var groups = idsToFetch.map((item, index) => {
+        return index % groupSize === 0 ? idsToFetch.slice(index, index + groupSize) : null;
+      }).filter(x => x != null);
+
+      for (var g of groups) {
+        let op = { id: { in: g } };
+        query = breeze.EntityQuery.from("Mods")
+          .where(<any>op)
+          .select(desiredFields);
+        let r = await this.context.executeQueryWithManager<IBreezeMod>(manager, query);
+        fetchedResults = r.results.map(x => Helper.modToBasket(x));
+        fetchedResults.forEach(x => request.chain.set(x.id, x));
+      }
     }
 
     let results = fetchedResults.concat(cachedIds.map(x => request.chain.get(x)));
