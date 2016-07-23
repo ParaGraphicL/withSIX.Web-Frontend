@@ -112,7 +112,7 @@ $status-total-width: $status-icon-width + $status-width;
     font-weight: $font-weight-medium;
     .collection-name {
       color: white;
-      @include limit-lines(1);
+      @include limit-lines(1, $font-size-magic);
     }
     .collection-author {
       font-size: $font-size-micro;
