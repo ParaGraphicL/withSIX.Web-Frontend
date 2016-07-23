@@ -266,6 +266,9 @@ export class Basket extends ViewModelWithModel<IBasketCollection> {
       return;
     if (this.model.basketType == BasketType.SingleItem && this.model.items.length !== 0)
       throw new Error("The basket is of SingleItem type, but more than one item was tried to be added!");
+
+    if (item.itemType === BasketItemType.Collection && this.model.collectionId === item.id)
+      throw new Error("Trying to add a collection to itself...");
     this.model.items.push(item);
     this.model.changed = true;
     this.content.set(item.id, item);
