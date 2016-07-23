@@ -2,7 +2,7 @@ import {W6, W6Urls} from '../withSIX';
 import {HttpClient as FetchClient} from 'aurelia-fetch-client';
 import {inject} from 'aurelia-framework';
 
-import { HtmlParser } from './parser';
+import { HtmlParser, HtmlFetcher } from './parser';
 
 import { Publisher } from './w6';
 import {parseBBCode} from '../../helpers/utils/string';
@@ -13,10 +13,10 @@ interface IW6Mod {
   name: string; packageName: string; id: string; modversion: string; publishers: { id: string, type: Publisher }[]
 }
 
-@inject(FetchClient, W6, HtmlParser)
+@inject(FetchClient, W6, HtmlParser, HtmlFetcher)
 export class SteamService {
   private w6Mods;
-  constructor(private http: FetchClient, private w6: W6, private parser: HtmlParser) { }
+  constructor(private http: FetchClient, private w6: W6, private parser: HtmlParser, private fetcher: HtmlFetcher) { }
 
   parseBB(bbCode: string) { return parseBBCode(bbCode) }
 
@@ -47,7 +47,8 @@ export class SteamService {
   }
 
   async getSteamInfo(...contentIds: (string | number)[]) {
-    let filesUrl = `${W6Urls.proxy}/api/ISteamRemoteStorage/GetPublishedFileDetails/v1/`;
+    let filesUrl = `${W6Urls.proxy}/api/ISteamRemoteStorage/GetPublishedFileDetails/v1/`
+    let galleryUrl = `${W6Urls.proxy}/api6/sharedfiles/filedetails/`
 
     let q = {
       itemcount: contentIds.length,
@@ -74,6 +75,11 @@ export class SteamService {
         x.images = [];
       }
     })
+
+    for (var m of mods) {
+      let r = await this.fetcher.fetch(`${galleryUrl}${m.publishedfileid}`)
+      m.images.push(...r.extractImages(r.find(d => d.find('#highlight_strip').first())))
+    }
 
     return mods;
   }
