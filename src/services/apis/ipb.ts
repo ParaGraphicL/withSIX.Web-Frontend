@@ -17,12 +17,13 @@ export class IpboardService {
     var dateTime = posted.attr('title');
     var title = p.find(doc => doc.find("h1.ipsType_pagetitle").first()).text();
     var images = p.extractImages(bodyEl);
+    var interestingLinks = p.extractInterestingLinks(bodyEl);
     return {
-      body, userName, dateTime, title, images
+      body, userName, dateTime, title, images, interestingLinks
     }
   }
 }
 
 interface Post {
-  body: string; userName: string; dateTime: string; title: string;
+  body: string; userName: string; dateTime: string; title: string; images: string[]; interestingLinks?: {}
 }

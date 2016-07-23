@@ -1,18 +1,34 @@
-import { GalleryItem, ViewModel, HtmlParser, UiContext } from '../../../framework';
-import { inject } from 'aurelia-framework';
+import { GalleryItem, ViewModel, HtmlParser, UiContext, Imgur } from '../../../framework';
+import { inject, Container } from 'aurelia-framework';
+import { EventAggregator } from 'aurelia-event-aggregator';
 
-@inject(HtmlParser, UiContext)
+@inject(HtmlParser, UiContext, Imgur)
 export class ModGallery extends ViewModel {
-  constructor(private parser: HtmlParser, ui) { super(ui) }
+  constructor(private parser: HtmlParser, ui, private imgur: Imgur) { super(ui) }
 
   galleryItems: GalleryItem[];
 
-  activate(model: { description?: string, avatar?: string }) {
+  static handleImgurGalleries = (il) => {
+    if (il && il.imgurGalleries) {
+      setTimeout(async () => {
+        let images = [];
+        for (var x of il.imgurGalleries)
+          images.push(...(await Container.instance.get(Imgur).getImages(x)));
+        if (images.length > 0)
+          Container.instance.get(EventAggregator).publish(new UpdateGallery(images));
+      })
+    }
+  }
+
+  async activate(model: { description?: string, avatar?: string }) {
     this.galleryItems = [];
     if (model.avatar) this.galleryItems.push({ href: model.avatar, thumbnail: model.avatar, title: 'Logo' });
     if (model.description) {
       let jq = this.parser.toJquery(`<div>${model.description}</div>`);
-      this.galleryItems.push(...jq.extractImages(jq.find(x => x)));
+      let d = jq.find(x => x);
+      this.galleryItems.push(...jq.extractImages(d));
+      let il = jq.extractInterestingLinks(d);
+      ModGallery.handleImgurGalleries(il);
     }
 
     this.subscriptions.subd(d => {

@@ -87,6 +87,26 @@ export class Parser {
   toHtml(el?: JQuery) {
     return sanitizeHtml(el.html());
   }
+
+  extractInterestingLinks(el: JQuery) {
+    let interestingLinks = <{ imgurGalleries?: string[] }>{};
+    el.find("a").each((i, x) => {
+      let el = $(x);
+      let link = el.attr('href');
+      if (link) {
+        if (link.startsWith('http://imgur.com/a/')
+          || link.startsWith('https://imgur.com/a/')
+          || link.startsWith('http://imgur.com/gallery/')
+          || link.startsWith('https://imgur.com/gallery/')) {
+          if (!interestingLinks.imgurGalleries)
+            interestingLinks.imgurGalleries = [];
+          if (!interestingLinks.imgurGalleries.includes(link)) interestingLinks.imgurGalleries.push(link);
+        }
+      }
+    });
+    return interestingLinks;
+  }
+
   extractImages(el: JQuery) {
     let images: Media[] = [];
     let handledImages = [];

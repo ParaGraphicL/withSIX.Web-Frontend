@@ -1,7 +1,7 @@
 import {ViewModel, IpboardService, Query, DbQuery, W6Context, handlerFor, UiContext, Post, W6Urls} from '../../../../framework';
 import {inject} from 'aurelia-framework';
 
-import { UpdateGallery } from '../mod-gallery';
+import { UpdateGallery, ModGallery } from '../mod-gallery';
 
 export class BifInfo extends ViewModel {
   //model: { id: string; name: string; steamId?: string}
@@ -15,6 +15,7 @@ export class BifInfo extends ViewModel {
     try {
       this.model = await new GetIpbInfo(forumUrl).handle(this.mediator);
       if (this.model.images.length > 0) this.eventBus.publish(new UpdateGallery(this.model.images));
+      ModGallery.handleImgurGalleries(this.model.interestingLinks);
     } catch (ex) { }
   }
 }
