@@ -76,7 +76,8 @@ export class Collection extends ContentViewModel<ICollection> {
 
   toBasketInfo(): IBasketItem {
     return {
-      id: this.model.id, packageName: this.model.packageName,
+      id: this.model.id,
+      packageName: this.model.packageName,
       gameId: this.model.gameId,
       itemType: BasketItemType.Collection,
       author: this.model.author,
@@ -147,7 +148,7 @@ class GetDependenciesHandler extends DbQuery<GetDependencies, IBreezeCollectionV
   async handle(request: GetDependencies) {
     var query = breeze.EntityQuery.from("CollectionVersions").expand(["dependencies"])
       .where("id", breeze.FilterQueryOp.Equals, request.id)
-      .select(["dependencies"])
+      //.select(["dependencies"]) // TODO: This doesn't work because of the limitations in our current setup
       .withParameters({ myPage: true });
     let r = await this.context.executeQuery<IBreezeCollectionVersion>(query);
     return r.results[0].dependencies;

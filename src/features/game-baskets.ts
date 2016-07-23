@@ -316,8 +316,9 @@ export class Basket extends ViewModelWithModel<IBasketCollection> {
     let dep: { dependency: string; dependencyType?: DependencyType; constraint?: string; collectionDependencyId?: string; modDependencyId?: string } = { dependency: x.packageName || x.id, constraint: x.constraint };
     if (x.itemType === BasketItemType.Collection) {
       if (x.id === null) throw new Error("Collection id cannot be null");
-      dep.collectionDependencyId = x.id
-      dep.dependencyType = DependencyType.Collection
+      dep.collectionDependencyId = x.id;
+      dep.dependencyType = DependencyType.Collection;
+      dep.dependency = x.id;
     }
     if (x.itemType === BasketItemType.Mod && x.id) dep.modDependencyId = x.id;
     return dep;
