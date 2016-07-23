@@ -247,6 +247,7 @@
         "./src/resources/usertitle.ts",
         "./src/services/api.ts",
         "./src/services/apis/github.ts",
+        "./src/services/apis/imgur.ts",
         "./src/services/apis/ipb.ts",
         "./src/services/apis/lib.ts",
         "./src/services/apis/parser.ts",

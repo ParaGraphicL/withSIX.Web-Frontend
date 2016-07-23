@@ -70,9 +70,12 @@ export class SteamService {
       if (x.description) {
         x.description = this.parseBB(x.description)
         let p = this.parser.toJquery(x.description);
-        x.images = p.extractImages(p.find(x => x));
+        let bodyEl = p.find(x => x);
+        x.images = p.extractImages(bodyEl);
+        x.interestingLinks = p.extractInterestingLinks(bodyEl);
       } else {
         x.images = [];
+        x.interestingLinks = {}
       }
     })
 
