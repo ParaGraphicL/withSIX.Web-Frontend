@@ -2,7 +2,7 @@ import {inject} from 'aurelia-framework';
 import {IBasketItem, BasketItemType, IBreezeMod, ModsHelper, Helper, FolderType, IReactiveCommand,
   BasketService, UiContext, uiCommand2, ViewModel, Base, MenuItem, IMenuItem, GameClientInfo, uiCommand, Mediator, Query, DbQuery, DbClientQuery, handlerFor, VoidCommand, IContentState, ItemState,
   Abort, UninstallContent, OpenFolder, LaunchContent, InstallContent, UnFavoriteContent, FavoriteContent, IBreezeUser, ContentHelper,
-  breeze, ModHelper, IBreezeCollection, IBreezeCollectionVersion} from '../../../framework';
+  breeze, ModHelper, IBreezeCollection, IBreezeCollectionVersion, Rx} from '../../../framework';
 import {GameBaskets, Basket} from '../../game-baskets';
 import {DialogService} from 'aurelia-dialog';
 import {EditPlaylistItem} from './edit-playlist-item';
@@ -60,6 +60,7 @@ export class PlaylistItem extends ViewModel {
   openFolder: IReactiveCommand<void>;
   openConfigFolder: IReactiveCommand<void>;
   gameName: string;
+  itemType: string;
 
   get isInstalled() { return this.itemState != ItemState.Incomplete };
   get hasUpdateAvailable() { return this.isInstalled && this.itemState == ItemState.UpdateAvailable }
@@ -96,6 +97,8 @@ export class PlaylistItem extends ViewModel {
     this.gameInfo = await this.basketService.getGameInfo(model.currentGameId); // hack
 
     this.isForActiveGame = this.model.gameId == model.currentGameId;
+
+    this.itemType = this.model.itemType === BasketItemType.Collection ? 'mod' : 'dependency';
 
     try {
       // TODO: WHy use such complicated things when we have an id already??
@@ -206,7 +209,12 @@ export class PlaylistItem extends ViewModel {
       d(this.edit = uiCommand2("Select Version", async () => {
         await this.dialogService.open({ viewModel: EditPlaylistItem, model: this.model });
         this.informAngular();
-      }, { icon: "icon withSIX-icon-Edit-Pencil", cls: "ignore-close", canExecuteObservable: this.whenAnyValue(x => x.canEdit) }));
+      }, {
+          icon: "icon withSIX-icon-Edit-Pencil", cls: "ignore-close",
+          canExecuteObservable: this.whenAnyValue(x => x.canEdit),
+          // TODO: If available versions ?
+          isVisibleObservable: Rx.Observable.from<boolean>([this.model.itemType !== BasketItemType.Collection])
+        }));
 
       d(this.removeFromBasket = uiCommand2("Remove", async () => {
         this.basket.active.removeFromBasket(this.model);

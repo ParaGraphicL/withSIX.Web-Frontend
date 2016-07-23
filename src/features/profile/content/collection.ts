@@ -21,7 +21,7 @@ export class Collection extends ContentViewModel<ICollection> {
 
   get statTitle() { return 'subscriber' }
 
-  get canAddToBasket() { return super.canAddToBasket && this.baskets.active.model.collectionId !== this.model.id; }
+  get canAddToBasket() { return this.activeGameId === this.model.gameId && this.baskets.active.model.collectionId !== this.model.id; }
 
   async activate(model: ICollection) {
     await super.activate(model);

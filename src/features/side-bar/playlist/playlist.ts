@@ -138,7 +138,7 @@ export class Playlist extends ViewModel {
     this.menuItems.push(new MenuItem(this.clearBasket));
 
     if (this.basket.collectionId) {
-      let c = this.collections.asEnumerable().firstOrDefault(x => x.id == this.basket.collectionId);
+      let c = this.collections.asEnumerable().firstOrDefault(x => x.id === this.basket.collectionId);
       if (c) this.updateCollection(c, this.collectionChanged);
       else this.basket.collectionId = null;
     }
@@ -181,6 +181,7 @@ export class Playlist extends ViewModel {
     var result = await this.dialog.open({ viewModel: CreateCollectionDialog, model: { game: this.game, model: model } });
     if (result.wasCancelled) return;
     await this.unload();
+    await new LoadCollectionIntoBasket(result.output).handle(this.mediator)
   }
 
   saveAsNewCollectionInternal = () => this.baskets.active.saveAsNewCollection();
@@ -247,13 +248,10 @@ export class Playlist extends ViewModel {
     if (c != null) {
       (<any>this.collection).url = `/p/${this.collection.gameSlug}/collections/${this.collection.id.toShortId()}/${this.collection.name.sluggifyEntityName()}`;
       this.rxList = this.listFactory.getList(this.basket.items);
-      let listObs = Rx.Observable.merge(this.rxList.itemsAdded.map(x => true), this.rxList.itemsRemoved.map(x => true), this.rxList.itemChanged.map(x => x.propertyName == "constraint").take(1).map(x => true));
+      let listObs = Rx.Observable.merge(this.rxList.itemsAdded.map(x => true), this.rxList.itemsRemoved.map(x => true), this.rxList.itemChanged.filter(x => x.propertyName == "constraint").take(1).map(x => true));
       let objObs = Base.observeEx(c, x => x.scope).skip(1).take(1).map(x => true);
       let obs = Rx.Observable.merge(listObs, objObs).startWith(startVal).take(2);
-      listObs.subscribe(x => { this.tools.Debug.log("$$$ list val", x); });
-      objObs.subscribe(x => { this.tools.Debug.log("$$$ obj val", x); });
-      obs.subscribe(x => { this.tools.Debug.log("$$$ merged val", x); });
-      this.rxProperties = this.toProperty(obs, x => x.collectionChanged)
+      this.rxProperties = this.toProperty(obs, x => x.collectionChanged);
     } else {
       this.collectionChanged = false;
     }

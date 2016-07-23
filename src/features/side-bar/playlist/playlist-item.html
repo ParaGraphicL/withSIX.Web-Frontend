@@ -54,7 +54,7 @@
               ${showDependencies | hideShowText }
               <span class="icon ${showDependencies | hideShowIcon}"></span>
             </button>
-            <span class="text">${localChain.length | pluralize:'dependency'}.</span>
+            <span class="text">${localChain.length | pluralize:itemType}.</span>
             <span><span innerHTML.bind="dependencySize | size"></span> total</span>
           </div>
         </header>
