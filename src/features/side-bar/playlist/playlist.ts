@@ -110,7 +110,9 @@ export class Playlist extends ViewModel {
         await new Save({
           id: this.collection.id,
           scope: this.collection.scope,
-          dependencies: this.basket.items.map(x => { return { dependency: x.packageName, constraint: x.constraint } })
+          dependencies: this.basket.items
+            .filter(x => !!x.packageName || x.itemType === BasketItemType.Collection)
+            .map(this.baskets.active.basketItemToDependency)
         }).handle(this.mediator);
         this.collectionChanged = false;
       }, {
@@ -118,16 +120,10 @@ export class Playlist extends ViewModel {
           canExecuteObservable: this.whenAnyValue(x => x.hasItems),
           isVisibleObservable: this.whenAnyValue(x => x.collectionChanged).combineLatest(this.whenAnyValue(x => x.isYourCollection), (x, y) => x && y)
         }));
-      d(this.undoCollection = uiCommand2("Cancel", async () => {
-        await this.updateCollections();
-        this.disposeOld();
-        let col = this.collections.asEnumerable().first(x => x.id == this.collection.id);
-        await this.loadCollectionVersion(col.latestVersionId, col.gameId);
-        this.updateCollection(col);
-      }, {
-          cls: 'cancel ignore-close',
-          isVisibleObservable: this.whenAnyValue(x => x.collectionChanged)
-        }));
+      d(this.undoCollection = uiCommand2("Cancel", this.undoCollectionInternal, {
+        cls: 'cancel ignore-close',
+        isVisibleObservable: this.whenAnyValue(x => x.collectionChanged)
+      }));
       d(this.appEvents.gameChanged.subscribe(this.gameChanged));
       d(this.findModel = new FindModel(this.findCollections, (col: IPlaylistCollection) => this.selectCollection(col), e => e.name));
       d(Playlist.bindObservableTo(this.whenAnyValue(x => x.isCollection).map(x => x ? "Save as new collection" : "Save as collection"), this.saveBasket, x => x.name));
@@ -154,6 +150,14 @@ export class Playlist extends ViewModel {
       this.updateCollection(null);
       this.basketService.performTransaction(this.newBasket);
     }
+  }
+
+  undoCollectionInternal = async () => {
+    await this.updateCollections();
+    this.disposeOld();
+    let col = this.collections.asEnumerable().first(x => x.id === this.collection.id);
+    await this.loadCollectionVersion(col.latestVersionId, col.gameId);
+    this.updateCollection(col);
   }
 
   findCollections = async (searchItem: string) => {
@@ -265,7 +269,7 @@ export class Playlist extends ViewModel {
   action = uiCommand2("Execute", () => this.executeBasket(this.activeBasket), { canExecuteObservable: this.whenAnyValue(x => x.isNotLocked) });
 
   gameChanged = async (info: GameChanged) => {
-    let equal = this.game.id == info.id;
+    let equal = this.game.id === info.id;
     this.tools.Debug.log("$$$ ClientBar Game Changed: ", info, equal);
     if (equal) return;
     // TODO: All this data should actually change at once!
