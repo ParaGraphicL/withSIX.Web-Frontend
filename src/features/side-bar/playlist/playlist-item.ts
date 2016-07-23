@@ -60,6 +60,7 @@ export class PlaylistItem extends ViewModel {
   openFolder: IReactiveCommand<void>;
   openConfigFolder: IReactiveCommand<void>;
   gameName: string;
+  itemType: string;
 
   get isInstalled() { return this.itemState != ItemState.Incomplete };
   get hasUpdateAvailable() { return this.isInstalled && this.itemState == ItemState.UpdateAvailable }
@@ -96,6 +97,8 @@ export class PlaylistItem extends ViewModel {
     this.gameInfo = await this.basketService.getGameInfo(model.currentGameId); // hack
 
     this.isForActiveGame = this.model.gameId == model.currentGameId;
+
+    this.itemType = this.model.itemType === BasketItemType.Collection ? 'mod' : 'dependency';
 
     try {
       // TODO: WHy use such complicated things when we have an id already??
