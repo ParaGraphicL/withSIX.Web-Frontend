@@ -108,7 +108,11 @@ export class Parser {
         let iel = $(ix);
         let linkImage = this.isImage(link) ? link : null;
         let imgSrc = iel.attr('src') || linkImage;
-        if (imgSrc) images.push({ href: linkImage ? linkImage : imgSrc, title: linkTitle || iel.attr('alt') || iel.attr('title'), thumbnail: imgSrc })
+        if (imgSrc) {
+          let vid = this.tryImageVideo(imgSrc);
+          if (vid) images.push(vid)
+          else images.push({ href: linkImage ? linkImage : imgSrc, title: linkTitle || iel.attr('alt') || iel.attr('title'), thumbnail: imgSrc })
+        }
         handledImages.push(iel);
       })
 
@@ -131,13 +135,34 @@ export class Parser {
       if (handledImages.includes(x)) return;
       let el = $(x);
       let imgSrc = el.attr('src');
-      if (imgSrc) images.push({ href: imgSrc, title: el.attr('title') || el.attr('alt'), thumbnail: imgSrc })
+      if (imgSrc) {
+        let vid = this.tryImageVideo(imgSrc);
+        if (vid) images.push(vid)
+        else images.push({ href: imgSrc, title: el.attr('title') || el.attr('alt'), thumbnail: imgSrc })
+      }
       handledImages.push(x);
     })
     let newImages = [];
     images.forEach(x => { if (HtmlParser.shouldIncludeImage(x) && !newImages.some(i => HtmlParser.compareImage(x, i))) newImages.push(x) });
     return newImages;
   }
+
+  tryImageVideo = (imgSrc: string) => {
+    let rx = /img\.youtube\.com\/vi\/([^\/]+)/
+    let m;
+    if (m = imgSrc.match(rx)) {
+      let id = m[1];
+      return {
+        href: `https://youtube.com/embed/${id}`,
+        title: 'Video',
+        type: 'text/html',
+        youtube: id,
+        poster: `https://img.youtube.com/vi/${id}/maxresdefault.jpg`
+      }
+    }
+    return null;
+  }
+
   tryVideo = (src: string) => {
     if (!src) return null;
     let m;
