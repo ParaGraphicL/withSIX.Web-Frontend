@@ -181,6 +181,7 @@ export class Playlist extends ViewModel {
     var result = await this.dialog.open({ viewModel: CreateCollectionDialog, model: { game: this.game, model: model } });
     if (result.wasCancelled) return;
     await this.unload();
+    await new LoadCollectionIntoBasket(result.output).handle(this.mediator)
   }
 
   saveAsNewCollectionInternal = () => this.baskets.active.saveAsNewCollection();
