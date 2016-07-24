@@ -1,5 +1,10 @@
 <template>
   <div class="external-info contentrender">
+    <ul>
+      <li repeat.for="il of interestingLinks">
+        <a href.bind="il.url">${il.url}</a>
+      </li>
+    </ul>
     <compose if.bind="model.forumUrl" view-model="./bif-info" model.bind="model.forumUrl"></compose>
     <compose if.bind="model.steamInfo" view-model="./steam-info" model.bind="model.steamInfo"></compose>
     <compose if.bind="model.armaholicUrl" view-model="./armaholic-info" model.bind="model.armaholicUrl"></compose>
