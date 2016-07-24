@@ -76,6 +76,9 @@ export class HtmlParser {
   }
 }
 
+export abstract class InterestingLink { constructor(public url: string) { } }
+export class ImgurGallery extends InterestingLink { }
+
 export class Parser {
   constructor(private doc: JQuery, private baseUrl: string, private p: HtmlParser) { }
 
@@ -89,37 +92,41 @@ export class Parser {
   }
 
   extractInterestingLinks(el: JQuery) {
-    let interestingLinks = <{ imgurGalleries?: string[] }>{};
+    let interestingLinks: InterestingLink[] = [];
     el.find("a").each((i, x) => {
       let el = $(x);
       let link = el.attr('href');
       if (link) {
-        if (link.startsWith('http://imgur.com/a/')
-          || link.startsWith('https://imgur.com/a/')
-          || link.startsWith('http://imgur.com/gallery/')
-          || link.startsWith('https://imgur.com/gallery/')) {
-          if (!interestingLinks.imgurGalleries)
-            interestingLinks.imgurGalleries = [];
-          if (!interestingLinks.imgurGalleries.includes(link)) interestingLinks.imgurGalleries.push(link);
-        }
+        let r: InterestingLink;
+        if ((r = this.determineInterestingLink(link)) && !interestingLinks.some(x => x.url === r.url))
+          interestingLinks.push(r);
       }
     });
     return interestingLinks;
   }
 
-  extractImages(el: JQuery) {
+  determineInterestingLink(url: string): InterestingLink {
+    if (url.startsWith('http://imgur.com/a/')
+      || url.startsWith('https://imgur.com/a/')
+      || url.startsWith('http://imgur.com/gallery/')
+      || url.startsWith('https://imgur.com/gallery/'))
+      return new ImgurGallery(url);
+
+    return null;
+  }
+
+  extractImages(root: JQuery) {
     let images: Media[] = [];
     let handledImages = [];
-    el.find("iframe").each((i, x) => {
-      let el = $(x);
-      let src = el.attr('src');
+    root.find("iframe").each((i, x) => {
+      let src = $(x).attr('src');
 
       let video = this.tryVideo(src);
       if (video) images.push(video);
       // TODO: Vimeo
     })
 
-    el.find("a").each((i, x) => {
+    root.find("a").each((i, x) => {
       let el = $(x);
       let link = el.attr('href');
       let linkTitle = el.attr('title');
@@ -151,7 +158,7 @@ export class Parser {
       }
     })
 
-    el.find("img").each((i, x) => {
+    root.find("img").each((i, x) => {
       if (handledImages.includes(x)) return;
       let el = $(x);
       let imgSrc = el.attr('src');
