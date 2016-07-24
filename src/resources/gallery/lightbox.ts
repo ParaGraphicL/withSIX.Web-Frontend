@@ -9,4 +9,8 @@ export class Lightbox extends ViewModel {
     var options = { index: image, event: $event };
     new blueimpGallery(Array.from(this.items), options);
   }
+
+  isVideo(image: GalleryItem) {
+    return image.type && (image.type === 'text/html' || image.type.startsWith('video/'));
+  }
 }
