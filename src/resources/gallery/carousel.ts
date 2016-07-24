@@ -22,7 +22,6 @@ export class Carousel extends ViewModel {
   attached() {
     this.carousel = $(this.el).find('.carousel')[0];
     this.hasAttached = true;
-    console.log("$$$$ gallery attached", this.el, this.carousel);
     if (this.items) this.handleGallery(this.items);
     this.subscriptions.subd(d => {
       d(this.cleanup);
@@ -36,8 +35,7 @@ export class Carousel extends ViewModel {
   }
 
   cleanup = () => {
-    console.log("$$$$ cleaning up", this);
-    if (this.gallery) { console.log("$$$$ cleaning up gallery", this); this.gallery.close(); this.gallery = null }
+    if (this.gallery) { this.gallery.close(); this.gallery = null }
     if (this.obs) { this.obs.unsubscribe(); this.obs = null }
   }
 
