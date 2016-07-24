@@ -18,6 +18,7 @@ export interface GalleryItem {
   title?: string;
   href: string;
   thumbnail?: string;
+  type?: string;
 }
 
 export class Gallery {
