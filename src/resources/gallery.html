@@ -1,5 +1,8 @@
 <template>
   <require from="./gallery.scss"></require>
-  <compose view="./gallery/carousel.html"></compose>
-  <compose view="./gallery/lightbox.html"></compose>
+  <require from="./gallery/carousel"></require>
+  <require from="./gallery/lightbox"></require>
+
+  <carousel items.bind="items"></carousel>
+  <lightbox items.bind="items"></lightbox>
 </template>

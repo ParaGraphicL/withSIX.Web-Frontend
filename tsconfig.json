@@ -226,6 +226,8 @@
         "./src/resources/finder/finder-results.ts",
         "./src/resources/finder/finder.ts",
         "./src/resources/gallery.ts",
+        "./src/resources/gallery/carousel.ts",
+        "./src/resources/gallery/lightbox.ts",
         "./src/resources/index.ts",
         "./src/resources/infinite-scroll.ts",
         "./src/resources/labs.ts",
