@@ -33,10 +33,8 @@ export class Gallery extends ViewModel {
     super(ui);
   }
 
-  clicked = $event => {
-    var target = event.target || event.srcElement,
-      link = (<any>target).src || $(target).hasClass('imageholder') ? (<any>target).parentNode : target,
-      options = { index: link, event: $event };
+  clicked = (image: GalleryItem, $event) => {
+    var options = { index: image, event: $event };
     blueimpGallery(this.items, options);
   }
 
