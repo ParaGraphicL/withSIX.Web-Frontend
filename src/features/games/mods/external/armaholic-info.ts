@@ -1,7 +1,7 @@
 import {ViewModel, Seditio, Query, DbQuery, W6Context, handlerFor, UiContext, W6Urls} from '../../../../framework';
 import {inject} from 'aurelia-framework';
 
-import { UpdateGallery, ModGallery } from '../mod-gallery';
+import { UpdateGallery, UpdateInterestingLinks } from '../mod-gallery';
 
 export class ArmaholicInfo extends ViewModel {
   model;
@@ -14,7 +14,7 @@ export class ArmaholicInfo extends ViewModel {
     try {
       this.model = await new GetArmaholicInfo(url).handle(this.mediator);
       if (this.model.images.length > 0) this.eventBus.publish(new UpdateGallery(this.model.images));
-      ModGallery.handleImgurGalleries(this.model.interestingLinks);
+      this.eventBus.publish(new UpdateInterestingLinks(this.model.interestingLinks));
     } catch (ex) { }
   }
 }
