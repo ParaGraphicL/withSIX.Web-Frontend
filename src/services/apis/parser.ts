@@ -78,6 +78,8 @@ export class HtmlParser {
 
 export abstract class InterestingLink { constructor(public url: string) { } }
 export class ImgurGallery extends InterestingLink { }
+export class SocialMedia extends InterestingLink { }
+export class ForumUrl extends InterestingLink { }
 
 export class Parser {
   constructor(private doc: JQuery, private baseUrl: string, private p: HtmlParser) { }
@@ -111,6 +113,16 @@ export class Parser {
       || url.startsWith('http://imgur.com/gallery/')
       || url.startsWith('https://imgur.com/gallery/'))
       return new ImgurGallery(url);
+
+    if (url.startsWith('https://facebook.com/')
+      || url.startsWith('https://www.facebook.com/')
+      || url.startsWith('https://plus.google.com/')
+      || url.startsWith('https://twitter.com/'))
+      return new SocialMedia(url);
+
+    if (url.startsWith('https://forums.bistudio.com/')
+      || url.startsWith('http://www.armaholic.com/forums.php'))
+      return new ForumUrl(url);
 
     return null;
   }
