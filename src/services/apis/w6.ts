@@ -7,5 +7,6 @@ export enum Publisher {
   // Forums
   BiForums = 10000,
   GtaForums,
-  ArmaholicForum
+  ArmaholicForum,
+  BiForumsClassic
 }
