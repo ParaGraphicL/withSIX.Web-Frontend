@@ -1682,7 +1682,8 @@ export class ModInfoController extends ModEditBaseController {
           externalInfo.forumUrl = `https://forums.bistudio.com/topic/${x.publisherId}-mod`;
           break;
         case Publisher[Publisher.BiForumsClassic]:
-          externalInfo.forumUrl = `http://forums.bistudio.com/showthread.php?${x.publisherId}-mod`;
+          // Modern url takes precedence
+          if (!externalInfo.forumUrl) externalInfo.forumUrl = `http://forums.bistudio.com/showthread.php?${x.publisherId}-mod`;
           break;
         case Publisher[Publisher.Steam]:
           externalInfo.steamInfo = { id: this.$scope.model.id, name: this.$scope.model.name, steamId: x.publisherId }
