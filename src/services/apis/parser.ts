@@ -200,7 +200,7 @@ export class Parser {
         title: 'Video',
         type: 'text/html',
         youtube: id,
-        poster: `https://img.youtube.com/vi/${id}/maxresdefault.jpg`
+        poster: imgSrc //|| `https://img.youtube.com/vi/${id}/default.jpg`
       }
     }
     return null;
@@ -216,7 +216,7 @@ export class Parser {
         title: 'Video',
         type: 'text/html',
         youtube: id,
-        poster: `https://img.youtube.com/vi/${id}/maxresdefault.jpg`
+        poster: `https://img.youtube.com/vi/${id}/default.jpg` // maxresdefault just doesnt always exist! http://stackoverflow.com/questions/34763547/youtube-maxresdefault-thumbnails
       };
     }
     return null;
