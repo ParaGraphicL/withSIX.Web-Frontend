@@ -38,7 +38,7 @@ export class HtmlParser {
   }
 
   handleRelativeUrl = (url: string, baseUrl: string) =>
-    !url.match(/^(\/\/)|(https?:\/)\//) //url.match(/^((\.)?\/[^\/]/)
+    !url.match(/^(\/\/)|(https?:\/)\//) //url.match(/^((\.)?\/[^\/\?#\s]/)
       ? this.combineUrls(baseUrl, url)
       : null;
 
@@ -69,7 +69,7 @@ export class HtmlParser {
   static fileNameMatch = (x: Url, i: Url) => {
     const rxFn = /\.\w+$/
     if (!i.pathname.match(rxFn) || !x.pathname.match(rxFn)) return false;
-    const rx = /\/([^\/]+)$/;
+    const rx = /\/([^\/\?#\s]+)$/;
     let xfn = x.pathname.match(rx)[1];
     let ifn = i.pathname.match(rx)[1];
     return xfn === ifn;
@@ -187,7 +187,7 @@ export class Parser {
   }
 
   tryImageVideo = (imgSrc: string) => {
-    let rx = /img\.youtube\.com\/vi\/([^\/]+)/
+    let rx = /img\.youtube\.com\/vi\/([^\/\?#\s]+)/
     let m;
     if (m = imgSrc.match(rx)) {
       let id = m[1];
@@ -205,7 +205,7 @@ export class Parser {
   tryVideo = (src: string) => {
     if (!src) return null;
     let m;
-    if ((src.includes('youtube.com/embed/') || src.includes('youtu.be/embed/')) && (m = src.match(/embed\/([^\/]+)/))) {
+    if ((src.includes('youtube.com/embed/') || src.includes('youtu.be/embed/')) && (m = src.match(/embed\/([^\/\?#\s]+)/))) {
       let id = m[1];
       return {
         href: src,
