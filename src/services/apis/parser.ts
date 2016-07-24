@@ -124,6 +124,10 @@ export class Parser {
       || url.startsWith('http://www.armaholic.com/forums.php'))
       return new ForumUrl(url);
 
+    if (url.startsWith('http://www.youtube.com/playlist')
+      || url.startsWith('https://www.youtube.com/playlist'))
+      return new ForumUrl(url); // TODO
+
     return null;
   }
 
