@@ -51,7 +51,7 @@ export class Carousel extends ViewModel {
 
   setupGallery(items: GalleryItem[]) {
     if (this.gallery) { this.gallery.close(); this.gallery = null }
-    this.gallery = blueimpGallery(items, {
+    this.gallery = new blueimpGallery(Array.from(items), {
       container: this.carousel,
       carousel: true
     });

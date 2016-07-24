@@ -7,6 +7,6 @@ export class Lightbox extends ViewModel {
   @bindable items: GalleryItem[];
   clicked = (image: GalleryItem, $event) => {
     var options = { index: image, event: $event };
-    blueimpGallery(this.items, options);
+    new blueimpGallery(Array.from(this.items), options);
   }
 }
