@@ -190,7 +190,7 @@ export class Parser {
     return newImages;
   }
 
-  rxInterpolation = /(.*)\/\?interpolation=/
+  rxInterpolation = /(.*\/)\?interpolation=/
 
   growImage = (url: string) => {
     let m = url.match(this.rxInterpolation);
