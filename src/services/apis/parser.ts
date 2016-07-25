@@ -193,14 +193,14 @@ export class Parser {
   rxInterpolation = /(.*)\/\?interpolation=/
 
   growImage = (url: string) => {
-    let m = this.rxInterpolation.match(url);
+    let m = url.match(this.rxInterpolation);
     return m ? m[1] : url;
   }
 
+  rxImageVideo = /img\.youtube\.com\/vi\/([^\/\?#\s]+)/
   tryImageVideo = (imgSrc: string) => {
-    let rx = /img\.youtube\.com\/vi\/([^\/\?#\s]+)/
     let m;
-    if (m = imgSrc.match(rx)) {
+    if (m = imgSrc.match(this.rxImageVideo)) {
       let id = m[1];
       return {
         href: `https://youtube.com/embed/${id}`,
