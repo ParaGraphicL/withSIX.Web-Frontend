@@ -156,7 +156,7 @@ export class Parser {
           if (vid) images.push(vid)
           else images.push({ href: linkImage ? linkImage : imgSrc, title: linkTitle || iel.attr('alt') || iel.attr('title'), thumbnail: imgSrc })
         }
-        handledImages.push(iel);
+        handledImages.push(ix);
       })
 
       if (link) {
@@ -223,7 +223,9 @@ export class Parser {
   }
   isImage = (url: string) => {
     // TODO: improve
-    return url && [".png", ".gif", ".jpg"].some(x => url.endsWith(x));
+    const imageExt = [".png", ".gif", ".jpg"];
+    let safeUrl = createUrlSafe(url);
+    return url && imageExt.some(x => url.endsWith(x)) || imageExt.some(x => safeUrl.pathname.endsWith(x));
   }
 }
 
