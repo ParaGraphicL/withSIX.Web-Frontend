@@ -154,7 +154,7 @@ export class Parser {
         if (imgSrc) {
           let vid = this.tryImageVideo(imgSrc);
           if (vid) images.push(vid)
-          else images.push({ href: linkImage ? linkImage : imgSrc, title: linkTitle || iel.attr('alt') || iel.attr('title'), thumbnail: imgSrc })
+          else images.push({ href: this.growImage(linkImage ? linkImage : imgSrc), title: linkTitle || iel.attr('alt') || iel.attr('title'), thumbnail: imgSrc })
         }
         handledImages.push(ix);
       })
@@ -181,13 +181,20 @@ export class Parser {
       if (imgSrc) {
         let vid = this.tryImageVideo(imgSrc);
         if (vid) images.push(vid)
-        else images.push({ href: imgSrc, title: el.attr('title') || el.attr('alt'), thumbnail: imgSrc })
+        else images.push({ href: this.growImage(imgSrc), title: el.attr('title') || el.attr('alt'), thumbnail: imgSrc })
       }
       handledImages.push(x);
     })
     let newImages = [];
     images.forEach(x => { if (HtmlParser.shouldIncludeImage(x) && !newImages.some(i => HtmlParser.compareImage(x, i))) newImages.push(x) });
     return newImages;
+  }
+
+  rxInterpolation = /(.*)\/\?interpolation=/
+
+  growImage = (url: string) => {
+    let m = this.rxInterpolation.match(url);
+    return m ? m[1] : url;
   }
 
   tryImageVideo = (imgSrc: string) => {
