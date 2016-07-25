@@ -78,3 +78,12 @@ export const fromShortId = (shortId: string): string => {
 }
 
 export const InvalidShortIdException = createError('InvalidShortIdException');
+
+//const RFC4122 = <any>require('rfc4122');
+//let rfc4122 = new RFC4122();
+const v5 = (namespace: string, name: string) => window['dart-uuid'](namespace, name);
+const steamAppId = "c8cc0001-526a-11e6-beb8-9e71128cae77";
+const steamContentId = "c8cc0002-526a-11e6-beb8-9e71128cae77";
+
+export const createSteamAppGuid = (appId: number) => v5(steamAppId, appId.toString())
+export const createSteamContentGuid = (contentId: number) => v5(steamContentId, contentId.toString())
