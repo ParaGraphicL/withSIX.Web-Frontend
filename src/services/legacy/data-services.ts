@@ -106,7 +106,7 @@ export class CollectionDataService extends W6ContextWrapper {
   // can't be used due to virtual properties
   private getDesiredFields = (query) => query.select(["id", "name", "gameId", "game", "groupId", "group", "slug", "avatar", "avatarUpdatedAt", "tags", "description", "author", "size", "sizePacked", "subscribersCount", "modsCount"]);
 
-  private query(query, options): Promise<IQueryResult<IBreezeCollection>> {
+  query(query, options): Promise<IQueryResult<IBreezeCollection>> {
     if (options.filter) {
       var requiresDependencies = options.filter.text && options.filter.text != '' && options.filter.text.containsIgnoreCase('mod:');
       if (requiresDependencies) {
