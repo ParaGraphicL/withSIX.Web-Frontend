@@ -19,22 +19,26 @@ export interface IFindModel<T> {
   results: T[];
   searchItem?: string;
   selectedItem?: T;
+  hasResults: boolean;
 }
 
 export class FindModel<T> extends ReactiveBase implements IFindModel<T> {
   results: T[] = [];
-  searchItem = "";
+  searchItem = null;
   selectedItem: T = null;
   showButton = true;
+  hasResults = false;
   //display = (item: T) => item.toString();
   constructor(public finder: (searchItem: string) => Promise<T[]>, public execute: (item: T) => Promise<any> | void, public display = (item: T) => item.toString()) {
     super();
     this.subscriptions.subd(d => {
       // TODO: debounce and make sure old results dont overwrite new results
       d(this.toProperty(this.whenAnyValue(x => x.searchItem)
-              .skip(1)
-              .flatMap(async (x) => await this.finder(x))
-              .concat(), x => x.results))
+        .skip(1)
+        .flatMap(async (x) => await this.finder(x))
+        .concat(), x => x.results));
+      d(this.toProperty(this.whenAnyValue(x => x.results.length)
+        .map(x => x > 0), x => x.hasResults));
     })
   }
 }

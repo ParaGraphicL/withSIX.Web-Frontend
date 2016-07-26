@@ -1,7 +1,8 @@
 import {ViewModel, Query, DbQuery, handlerFor, IGame, ITab, IMenuItem, MenuItem, uiCommand2, VoidCommand, IReactiveCommand, IDisposable, Rx,
   CollectionScope, IBreezeCollectionVersion, IBreezeCollectionVersionDependency, BasketItemType, TypeScope, UiContext, CollectionHelper, Confirmation, MessageDialog,
   ReactiveList, IBasketItem, FindModel, ActionType, BasketState, BasketType, ConnectionState, Debouncer, GameChanged, uiCommandWithLogin2, GameClientInfo, UninstallContent,
-  IBreezeCollection, IRequireUser, IUserInfo, W6Context, Client, BasketService, CollectionDataService, DbClientQuery, requireUser, ICollection, Base, DependencyType} from '../../../framework';
+  IBreezeCollection, IRequireUser, IUserInfo, W6Context, Client, BasketService, CollectionDataService, DbClientQuery, requireUser, ICollection, Base, DependencyType,
+  breeze} from '../../../framework';
 import {CreateCollectionDialog} from '../../games/collections/create-collection-dialog';
 import {Basket, GameBaskets} from '../../game-baskets';
 import {inject} from 'aurelia-framework';
@@ -134,15 +135,17 @@ export class Playlist extends ViewModel {
     this.menuItems.push(new MenuItem(this.clearBasket));
 
     if (this.basket.collectionId) {
-      let c = this.collections.asEnumerable().firstOrDefault(x => x.id === this.basket.collectionId);
+      let c = await new GetMyCollection(this.basket.collectionId).handle(this.mediator);
       if (c) this.updateCollection(c, this.collectionChanged);
       else this.basket.collectionId = null;
     }
   }
+
   deactivate() {
     super.deactivate();
     this.basketService.saveChanges();
   }
+
   newBasket = () => this.baskets.replaceBasket()
   deleteBasket = () => this.basketService.performTransaction(() => this.baskets.deleteBasket(this.baskets.active));
   unload = async () => {
@@ -153,11 +156,10 @@ export class Playlist extends ViewModel {
   }
 
   undoCollectionInternal = async () => {
-    await this.updateCollections();
     this.disposeOld();
-    let col = this.collections.asEnumerable().first(x => x.id === this.collection.id);
-    await this.loadCollectionVersion(col.latestVersionId, col.gameId);
-    this.updateCollection(col);
+    this.collection = await new GetMyCollection(this.basket.collectionId).handle(this.mediator);
+    await this.loadCollectionVersion(this.collection.latestVersionId, this.collection.gameId);
+    this.updateCollection(this.collection);
   }
 
   findCollections = async (searchItem: string) => {
@@ -165,7 +167,10 @@ export class Playlist extends ViewModel {
     return searchItem ? this.collections.filter(x => x.name && x.name.containsIgnoreCase(searchItem)) : this.collections
   }
 
-  toggleSearch = () => { this.isSearchOpen = !this.isSearchOpen; }
+  toggleSearch = () => {
+    this.isSearchOpen = !this.isSearchOpen;
+    if (this.isSearchOpen && !this.findModel.searchItem) this.findModel.searchItem = '';
+  }
   closeSearch = () => { this.isSearchOpen = false; }
 
   saveBasketInternal = async () => {
@@ -278,10 +283,7 @@ export class Playlist extends ViewModel {
     this.game.slug = info.slug;
     this.collections = [];
     //this.gameInfo = null;
-    if (this.game.id) {
-      this.gameInfo = await this.basketService.getGameInfo(this.game.id);
-      await this.updateCollections();
-    }
+    if (this.game.id) this.gameInfo = await this.basketService.getGameInfo(this.game.id);
     this.baskets = this.game.id ? this.basketService.getGameBaskets(this.game.id) : null;
   }
 
@@ -463,6 +465,44 @@ interface ICollectionModel {
 //   constructor(name: string, action: () => Promise<any>, private bar: ClientBar, options?) { super(name, action, () => bar.model && bar.model.active.model.isTemporary, options); }
 // }
 
+@requireUser()
+export class GetMyCollection extends Query<IPlaylistCollection> {
+  constructor(public id: string) { super(); }
+}
+
+@handlerFor(GetMyCollection)
+@inject(W6Context, Client, BasketService, CollectionDataService)
+class GetMyCollectionHandler extends DbClientQuery<GetMyCollection, IPlaylistCollection> {
+  constructor(dbContext, client, bs: BasketService, private collectionDataService: CollectionDataService) {
+    super(dbContext, client, bs);
+  }
+  public async handle(request: GetMyCollection): Promise<IPlaylistCollection> {
+    var optionsTodo = {};
+    var x = await this.getMyCollection(request.id, optionsTodo);
+    if (x.length === 0) return null;
+    return this.convertOnlineCollection(x[0], TypeScope.Published);
+  }
+
+  public async getMyCollection(collectionId, options): Promise<IBreezeCollection[]> {
+    var query = breeze.EntityQuery.from("Collections").expand(["latestVersion"].concat(options.expand || []))
+      .where("id", breeze.FilterQueryOp.Equals, collectionId)
+      .withParameters({ myPage: true });
+    var r = await this.collectionDataService.query(query, options);
+    return r.results;
+  }
+
+  convertOnlineCollection(collection: IBreezeCollection, type: TypeScope): IPlaylistCollection {
+    return Object.assign({}, CollectionHelper.convertOnlineCollection(collection, type, this.w6), {
+      modsCount: collection.modsCount,
+      subscribersCount: collection.subscribersCount,
+      scope: CollectionScope[collection.scope],
+      size: collection.size,
+      latestVersionId: collection.latestVersion.id
+    });
+  }
+
+}
+
 
 @requireUser()
 export class GetMyCollections extends Query<ICollectionsData> implements IRequireUser {
@@ -477,14 +517,7 @@ class GetMyCollectionsHandler extends DbClientQuery<GetMyCollections, ICollectio
     super(dbContext, client, bs);
   }
   public async handle(request: GetMyCollections): Promise<ICollectionsData> {
-    var optionsTodo = {
-      /*                    filter: {},
-                          sort: {
-                              fields: [],
-                              directions: []
-                          },
-                          pagination: {}*/
-    };
+    var optionsTodo = {};
     // TODO: only if client connected get client info.. w6.miniClient.isConnected // but we dont wait for it so bad idea for now..
     // we also need to refresh then when the client is connected later?
     var p: Promise<IPlaylistCollection[]>[] = [
