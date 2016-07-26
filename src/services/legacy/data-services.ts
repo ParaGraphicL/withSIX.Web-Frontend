@@ -43,6 +43,11 @@ abstract class W6ContextWrapper {
 
     return query;
   }
+
+  protected applyExpandOptionally(q: breeze.EntityQuery, options) {
+    if (options.expand) return q.expand(options.expand)
+    return q;
+  }
 }
 
 // DEPRECATED: Convert to Queries/Commands
@@ -65,7 +70,7 @@ export class CollectionDataService extends W6ContextWrapper {
         'id': { in: ids }
       }
     }
-    var query = new breeze.EntityQuery(jsonQuery).expand(["latestVersion"].concat(options.expand || []));
+    var query = new breeze.EntityQuery(jsonQuery);
     return this.query(query, options);
   }
 
@@ -79,7 +84,7 @@ export class CollectionDataService extends W6ContextWrapper {
   public getCollectionsByMe(options): Promise<IQueryResult<IBreezeCollection>> {
     var userSlug = this.context.w6.userInfo.slug;
     Tools.Debug.log("getting collections by me: " + userSlug + ", " + options);
-    var query = breeze.EntityQuery.from("Collections").expand(["latestVersion"].concat(options.expand || []))
+    var query = breeze.EntityQuery.from("Collections")
       .where("author.slug", breeze.FilterQueryOp.Equals, userSlug)
       .withParameters({ myPage: true });
     return this.query(query, options);
@@ -88,7 +93,7 @@ export class CollectionDataService extends W6ContextWrapper {
   public async getCollectionsByMeByGame(gameId, options): Promise<IBreezeCollection[]> {
     var userSlug = this.context.w6.userInfo.slug;
     Tools.Debug.log("getting collections by me: " + userSlug + ", " + options);
-    var query = breeze.EntityQuery.from("Collections").expand(["latestVersion"].concat(options.expand || []))
+    var query = breeze.EntityQuery.from("Collections")
       .where("author.slug", breeze.FilterQueryOp.Equals, userSlug)
       .where("gameId", breeze.FilterQueryOp.Equals, gameId)
       .withParameters({ myPage: true });
@@ -104,7 +109,7 @@ export class CollectionDataService extends W6ContextWrapper {
   }
 
   // can't be used due to virtual properties
-  private getDesiredFields = (query) => query.select(["id", "name", "gameId", "game", "groupId", "group", "slug", "avatar", "avatarUpdatedAt", "tags", "description", "author", "size", "sizePacked", "subscribersCount", "modsCount"]);
+  private getDesiredFields = (query) => query.select(["id", "name", "gameId", "game", "groupId", "group", "slug", "avatar", "avatarUpdatedAt", "tags", "description", "author", "size", "sizePacked", "subscribersCount", "modsCount", "latestVersionId"]);
 
   query(query, options): Promise<IQueryResult<IBreezeCollection>> {
     if (options.filter) {
@@ -114,7 +119,9 @@ export class CollectionDataService extends W6ContextWrapper {
           // This is currently unsupported either by Breeze, EF, OData, or AutoMapper
           throw new Error("Cannot search for mods while sorted by author, please choose a different sorting option, or don't search for a mod");
         }
-        query = query.expand(["dependencies"]);
+        query = query.expand(["dependencies"].concat(options.expand || []));
+      } else {
+        query = this.applyExpandOptionally(query, options);
       }
 
       query = this.applyFiltering(query, options.filter, true)
@@ -283,7 +290,7 @@ export class MissionDataService extends W6ContextWrapper {
 
   // can't be used due to virtual properties
   private getDesiredFields(query) {
-    return query.select(["id", "name", "slug", "avatar", "avatarUpdatedAt", "tags", "description", "authorId", "author", "gameId", "game", "size", "sizePacked", "followersCount", "modsCount"]);
+    return query.select(["id", "name", "slug", "avatar", "avatarUpdatedAt", "tags", "description", "authorId", "author", "gameId", "game", "size", "sizePacked", "followersCount", "modsCount", "latestVersionId"]);
   }
 
   public getFollowedMissionIds(gameSlug: string) {

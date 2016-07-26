@@ -1048,6 +1048,25 @@
 			}]
 		},
 		{
+			"name": "latestStableVersion",
+			"dataType": "String",
+			"validators": [{
+				"name": "string"
+			}]
+		},
+		{
+			"name": "hasServers",
+			"dataType": "Boolean",
+			"isNullable": false,
+			"defaultValue": false,
+			"validators": [{
+				"name": "required"
+			},
+			{
+				"name": "bool"
+			}]
+		},
+		{
 			"name": "forkedCollectionId",
 			"dataType": "Guid",
 			"validators": [{
@@ -5322,6 +5341,13 @@
 			},
 			{
 				"name": "guid"
+			}]
+		},
+		{
+			"name": "latestStableVersion",
+			"dataType": "String",
+			"validators": [{
+				"name": "string"
 			}]
 		},
 		{

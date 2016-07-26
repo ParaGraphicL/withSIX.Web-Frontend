@@ -43,13 +43,6 @@ export class GetMissionQuery extends DbQueryBase {
       () => this.getEntityQueryFromShortId("Mission", missionId)
         .withParameters({ id: Tools.fromShortId(missionId) })
         .expand(['features', 'mediaItems']))
-    /*
-                    .then(r => {
-                        // currently loading asynchronously and without error handling...
-                        r.entityAspect.loadNavigationProperty("latestVersion");
-                        return r;
-                    })
-    */
   ];
 }
 
