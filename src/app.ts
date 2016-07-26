@@ -10,10 +10,6 @@ import {UiContext, ViewModel, Dialog, Mediator, Command, DbQuery, handlerFor, Me
   IUserErrorAdded, IUserErrorResolved, IUserError, GameChanged, CloseTabs, IBreezeErrorReason, ContentHelper, W6,
   IMiniClientInfo, Tools} from './framework';
 
-import {createSteamAppGuid} from './helpers/utils/string';
-console.log(`Stellaris: ${createSteamAppGuid(281990)}`);
-console.log(`Starbound: ${createSteamAppGuid(211820)}`);
-
 import {GameBaskets} from './features/game-baskets';
 
 import {RouteHandler, RestoreBasket, OpenCreateCollectionDialog, OpenAddModDialog, OpenAddModsToCollectionsDialog, OpenSettings, Test} from './services/api';
