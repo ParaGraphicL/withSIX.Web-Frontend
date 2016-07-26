@@ -84,7 +84,7 @@ export class CollectionDataService extends W6ContextWrapper {
   public getCollectionsByMe(options): Promise<IQueryResult<IBreezeCollection>> {
     var userSlug = this.context.w6.userInfo.slug;
     Tools.Debug.log("getting collections by me: " + userSlug + ", " + options);
-    var query = breeze.EntityQuery.from("Collections").expand(options.expand || [])
+    var query = breeze.EntityQuery.from("Collections")
       .where("author.slug", breeze.FilterQueryOp.Equals, userSlug)
       .withParameters({ myPage: true });
     return this.query(query, options);
@@ -93,7 +93,7 @@ export class CollectionDataService extends W6ContextWrapper {
   public async getCollectionsByMeByGame(gameId, options): Promise<IBreezeCollection[]> {
     var userSlug = this.context.w6.userInfo.slug;
     Tools.Debug.log("getting collections by me: " + userSlug + ", " + options);
-    var query = breeze.EntityQuery.from("Collections").expand(options.expand || [])
+    var query = breeze.EntityQuery.from("Collections")
       .where("author.slug", breeze.FilterQueryOp.Equals, userSlug)
       .where("gameId", breeze.FilterQueryOp.Equals, gameId)
       .withParameters({ myPage: true });
