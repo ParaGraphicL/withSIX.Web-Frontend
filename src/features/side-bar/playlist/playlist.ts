@@ -483,8 +483,13 @@ class GetMyCollectionHandler extends DbClientQuery<GetMyCollection, IPlaylistCol
     return this.convertOnlineCollection(x[0], TypeScope.Published);
   }
 
+  private applyExpandOptionally(q: breeze.EntityQuery, options) {
+    if (options.expand) return q.expand(options.expand)
+    return q;
+  }
+
   public async getMyCollection(collectionId, options): Promise<IBreezeCollection[]> {
-    var query = breeze.EntityQuery.from("Collections").expand(options.expand || [])
+    var query = this.applyExpandOptionally(breeze.EntityQuery.from("Collections"), options)
       .where("id", breeze.FilterQueryOp.Equals, collectionId)
       .withParameters({ myPage: true });
     var r = await this.collectionDataService.query(query, options);

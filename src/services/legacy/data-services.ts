@@ -43,6 +43,11 @@ abstract class W6ContextWrapper {
 
     return query;
   }
+
+  protected applyExpandOptionally(q: breeze.EntityQuery, options) {
+    if (options.expand) return q.expand(options.expand)
+    return q;
+  }
 }
 
 // DEPRECATED: Convert to Queries/Commands
@@ -65,7 +70,7 @@ export class CollectionDataService extends W6ContextWrapper {
         'id': { in: ids }
       }
     }
-    var query = new breeze.EntityQuery(jsonQuery).expand(options.expand || []);
+    var query = new breeze.EntityQuery(jsonQuery);
     return this.query(query, options);
   }
 
@@ -114,7 +119,9 @@ export class CollectionDataService extends W6ContextWrapper {
           // This is currently unsupported either by Breeze, EF, OData, or AutoMapper
           throw new Error("Cannot search for mods while sorted by author, please choose a different sorting option, or don't search for a mod");
         }
-        query = query.expand(["dependencies"]);
+        query = query.expand(["dependencies"].concat(options.expand || []));
+      } else {
+        query = this.applyExpandOptionally(query, options);
       }
 
       query = this.applyFiltering(query, options.filter, true)
