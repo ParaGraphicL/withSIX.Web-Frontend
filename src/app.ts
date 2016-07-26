@@ -10,6 +10,10 @@ import {UiContext, ViewModel, Dialog, Mediator, Command, DbQuery, handlerFor, Me
   IUserErrorAdded, IUserErrorResolved, IUserError, GameChanged, CloseTabs, IBreezeErrorReason, ContentHelper, W6,
   IMiniClientInfo, Tools} from './framework';
 
+import {createSteamAppGuid} from './helpers/utils/string';
+console.log(`Stellaris: ${createSteamAppGuid(281990)}`);
+console.log(`Starbound: ${createSteamAppGuid(211820)}`);
+
 import {GameBaskets} from './features/game-baskets';
 
 import {RouteHandler, RestoreBasket, OpenCreateCollectionDialog, OpenAddModDialog, OpenAddModsToCollectionsDialog, OpenSettings, Test} from './services/api';
@@ -56,8 +60,8 @@ export class App extends ViewModel {
     this.w6.logout = () => this.logout();
     setInterval(() => signaler.signal('timeago'), 60 * 1000);
     this.w6.api.openGeneralDialog = (model: { model; viewModel: string }) => {
-         return this.dialog.open({ viewModel: "features/general-dialog", model: model });
-      }
+      return this.dialog.open({ viewModel: "features/general-dialog", model: model });
+    }
 
     let rs: RenderService = Container.instance.get(RenderService);
     this.w6.api.render = (options) => rs.open(options);
@@ -96,15 +100,15 @@ export class App extends ViewModel {
     }
 
     // workaround for dialogs not working
-Origin.set(SettingsIndex, { moduleId: "features/settings/index", moduleMember: "Index" });
-Origin.set(CreateCollectionDialog, { moduleId: "features/games/collections/create-collection-dialog", moduleMember: "CreateCollectionDialog" });
-Origin.set(AddModsToCollections, { moduleId: "features/games/add-mods-to-collections", moduleMember: "AddModsToCollections" });
-Origin.set(EditDependency, { moduleId: "features/profile/content/edit-dependency", moduleMember: "EditDependency" });
-Origin.set(EditPlaylistItem, { moduleId: "features/side-bar/playlist/edit-playlist-item", moduleMember: "EditPlaylistItem" });
-Origin.set(NewGroupDialog, { moduleId: "features/profile/groups/new-group-dialog", moduleMember: "NewGroupDialog" });
-Origin.set(UserErrorDialog, { moduleId: "features/user-error-dialog", moduleMember: "UserErrorDialog" });
-Origin.set(MessageDialog, { moduleId: "features/message-dialog", moduleMember: "MessageDialog" });
-Origin.set(Finalize, { moduleId: "features/login/finalize", moduleMember: "Finalize" })
+    Origin.set(SettingsIndex, { moduleId: "features/settings/index", moduleMember: "Index" });
+    Origin.set(CreateCollectionDialog, { moduleId: "features/games/collections/create-collection-dialog", moduleMember: "CreateCollectionDialog" });
+    Origin.set(AddModsToCollections, { moduleId: "features/games/add-mods-to-collections", moduleMember: "AddModsToCollections" });
+    Origin.set(EditDependency, { moduleId: "features/profile/content/edit-dependency", moduleMember: "EditDependency" });
+    Origin.set(EditPlaylistItem, { moduleId: "features/side-bar/playlist/edit-playlist-item", moduleMember: "EditPlaylistItem" });
+    Origin.set(NewGroupDialog, { moduleId: "features/profile/groups/new-group-dialog", moduleMember: "NewGroupDialog" });
+    Origin.set(UserErrorDialog, { moduleId: "features/user-error-dialog", moduleMember: "UserErrorDialog" });
+    Origin.set(MessageDialog, { moduleId: "features/message-dialog", moduleMember: "MessageDialog" });
+    Origin.set(Finalize, { moduleId: "features/login/finalize", moduleMember: "Finalize" })
 
 
 
