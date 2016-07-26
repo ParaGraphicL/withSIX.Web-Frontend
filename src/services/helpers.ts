@@ -104,8 +104,8 @@ export class CollectionHelper {
       gameSlug: collection.game.slug,
       sizePacked: collection.sizePacked,
       type: "collection",
-      version: collection.latestVersion.version,
-      hasServers: collection.latestVersion.hasServers,
+      version: collection.latestStableVersion,
+      hasServers: collection.hasServers,
       subscribers: collection.subscribersCount
     }
   }

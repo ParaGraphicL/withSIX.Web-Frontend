@@ -484,7 +484,7 @@ class GetMyCollectionHandler extends DbClientQuery<GetMyCollection, IPlaylistCol
   }
 
   public async getMyCollection(collectionId, options): Promise<IBreezeCollection[]> {
-    var query = breeze.EntityQuery.from("Collections").expand(["latestVersion"].concat(options.expand || []))
+    var query = breeze.EntityQuery.from("Collections").expand(options.expand || [])
       .where("id", breeze.FilterQueryOp.Equals, collectionId)
       .withParameters({ myPage: true });
     var r = await this.collectionDataService.query(query, options);
@@ -497,7 +497,7 @@ class GetMyCollectionHandler extends DbClientQuery<GetMyCollection, IPlaylistCol
       subscribersCount: collection.subscribersCount,
       scope: CollectionScope[collection.scope],
       size: collection.size,
-      latestVersionId: collection.latestVersion.id
+      latestVersionId: collection.latestVersionId
     });
   }
 
@@ -558,7 +558,7 @@ class GetMyCollectionsHandler extends DbClientQuery<GetMyCollections, ICollectio
       subscribersCount: collection.subscribersCount,
       scope: CollectionScope[collection.scope],
       size: collection.size,
-      latestVersionId: collection.latestVersion.id
+      latestVersionId: collection.latestVersionId
     });
   }
 }
