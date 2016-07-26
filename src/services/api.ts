@@ -118,6 +118,8 @@ export class Api {
       this.tools.Debug.log("$$$ err reason", JSON.stringify(reason));
     } catch (err) { this.tools.Debug.warn("Err while converting error reason", err) }
 
+    if (!reason) { this.tools.Debug.error("undefined/null error, fix!"); return [reason, 'Unknown error']; }
+
     if (reason instanceof String) return [reason, 'Unknown error occurred'];
     if (reason instanceof Tools.NotFoundException || reason instanceof InvalidShortIdException) return [reason.message, "404: The requested resource could not be found"];
     if (reason instanceof Tools.HttpException) return this.handleHttpError(reason);
@@ -128,7 +130,7 @@ export class Api {
     return [reason, 'Unknown error'];
   }
 
-   openGeneralDialog: (model: { model; viewModel: string }) => Promise<any>;
+  openGeneralDialog: (model: { model; viewModel: string }) => Promise<any>;
 
   handleBreezeSaveError(r: IBreezeSaveError) {
     if (r.entityErrors.length == 0) return this.handleBreezeErrorResponse(<any>r);
