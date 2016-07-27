@@ -343,8 +343,8 @@ class GetCollectionDependenciesHandler extends DbQuery<GetCollectionDependencies
     let sizePacked = Math.abs(c.sizePacked);
     let q = breeze.EntityQuery.from("CollectionVersions")
       .where(new breeze.Predicate("id", breeze.FilterQueryOp.Equals, c.latestVersionId))
-      .expand("dependencies")
-      .select(["dependencies"]);
+      .expand("dependencies");
+    //.select(["dependencies"]); // doesnt work because of our current limitations in setup
     let versions = await this.context.executeQueryWithManager<IBreezeCollectionVersion>(manager, q);
     let latest = versions.results[0];
     // TODO: How to handle 'non network mods'

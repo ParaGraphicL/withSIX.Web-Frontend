@@ -169,7 +169,12 @@ export class Playlist extends ViewModel {
 
   toggleSearch = () => {
     this.isSearchOpen = !this.isSearchOpen;
-    if (this.isSearchOpen && !this.findModel.searchItem) this.findModel.searchItem = '';
+    if (this.isSearchOpen) {
+      let si = this.findModel.searchItem || '';
+      // workaround refreshing... TODO should just make a proper refresh
+      this.findModel.searchItem = null;
+      this.findModel.searchItem = si;
+    }
   }
   closeSearch = () => { this.isSearchOpen = false; }
 
