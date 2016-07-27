@@ -11,6 +11,7 @@ export class UserErrorDialog extends Dialog<IUserError> {
     });
 
     if (model.type.endsWith("UsernamePasswordUserError")) this.inputView = "./username-password-input.html";
+    if (model.type.endsWith("InputUserError")) this.inputView = "./general-input.html";
   }
   handle(c: IRecoveryOption) {
     new ResolveUserError(this.model.id, c.commandName, this.model.data).handle(this.mediator);
