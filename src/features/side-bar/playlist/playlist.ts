@@ -107,20 +107,11 @@ export class Playlist extends ViewModel {
         cls: 'ignore-close text-button',
         tooltip: 'Unload collection'
       }));
-      d(this.saveCollection = uiCommand2("Save", async () => {
-        await new Save({
-          id: this.collection.id,
-          scope: this.collection.scope,
-          dependencies: this.basket.items
-            .filter(x => !!x.packageName || x.itemType === BasketItemType.Collection)
-            .map(this.baskets.active.basketItemToDependency)
-        }).handle(this.mediator);
-        this.collectionChanged = false;
-      }, {
-          cls: 'ok ignore-close',
-          canExecuteObservable: this.whenAnyValue(x => x.hasItems),
-          isVisibleObservable: this.whenAnyValue(x => x.collectionChanged).combineLatest(this.whenAnyValue(x => x.isYourCollection), (x, y) => x && y)
-        }));
+      d(this.saveCollection = uiCommand2("Save", this.saveChangesInternal, {
+        cls: 'ok ignore-close',
+        canExecuteObservable: this.whenAnyValue(x => x.hasItems),
+        isVisibleObservable: this.whenAnyValue(x => x.collectionChanged).combineLatest(this.whenAnyValue(x => x.isYourCollection), (x, y) => x && y)
+      }));
       d(this.undoCollection = uiCommand2("Cancel", this.undoCollectionInternal, {
         cls: 'cancel ignore-close',
         isVisibleObservable: this.whenAnyValue(x => x.collectionChanged)
@@ -153,6 +144,17 @@ export class Playlist extends ViewModel {
       this.updateCollection(null);
       this.basketService.performTransaction(this.newBasket);
     }
+  }
+
+  saveChangesInternal = async () => {
+    await new Save({
+      id: this.collection.id,
+      scope: this.collection.scope,
+      dependencies: this.basket.items
+        .filter(x => !!x.packageName || x.itemType === BasketItemType.Collection)
+        .map(this.baskets.active.basketItemToDependency)
+    }).handle(this.mediator);
+    this.resetSignal.next(false);
   }
 
   undoCollectionInternal = async () => {
@@ -256,18 +258,23 @@ export class Playlist extends ViewModel {
     if (this.rxProperties) this.rxProperties.unsubscribe();
   }
 
+  resetSignal = new Rx.Subject<boolean>();
+
   updateCollection(c: IPlaylistCollection, startVal = false) {
     this.disposeOld();
     this.collection = c;
     if (c != null) {
       (<any>this.collection).url = `/p/${this.collection.gameSlug}/collections/${this.collection.id.toShortId()}/${this.collection.name.sluggifyEntityName()}`;
       this.rxList = this.listFactory.getList(this.basket.items);
-      let listObs = Rx.Observable.merge(this.rxList.itemsAdded.map(x => true), this.rxList.itemsRemoved.map(x => true), this.rxList.itemChanged.filter(x => x.propertyName == "constraint").take(1).map(x => true));
-      let objObs = Base.observeEx(c, x => x.scope).skip(1).take(1).map(x => true);
-      let obs = Rx.Observable.merge(listObs, objObs).startWith(startVal).take(2);
+      let listObs = Rx.Observable.merge(
+        this.rxList.itemsAdded.map(x => true),
+        this.rxList.itemsRemoved.map(x => true),
+        this.rxList.itemChanged.filter(x => x.propertyName === "constraint").map(x => true));
+      let objObs = Base.observeEx(c, x => x.scope).skip(1).map(x => true);
+      let obs = Rx.Observable.merge(listObs, objObs, this.resetSignal).startWith(startVal);
       this.rxProperties = this.toProperty(obs, x => x.collectionChanged);
     } else {
-      this.collectionChanged = false;
+      this.collectionChanged = false; // this.reset...
     }
     this.setupCollectionMenu();
   }
