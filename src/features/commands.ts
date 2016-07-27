@@ -124,8 +124,10 @@ class InstallContentHandler extends ClientQuery<InstallContent, void> {
     this.basketService.lastActiveItem = request.content.id;
     //this.raiseDownloadNotification(request.force ? 'Diagnosing' : 'Installing', null, request.noteInfo);
     //try {
-    if (request.content.isOnlineCollection)
+    if (request.content.isOnlineCollection) {
+      if (this.w6.isLoggedIn) await this.context.postCustom("collections/" + request.content.id + "/subscribe");
       await this.client.installCollection(request);
+    }
     else
       await this.client.installContent(request);
     //this.context.eventBus.publish(new ContentInstalled(request.gameId, request.content.id));
