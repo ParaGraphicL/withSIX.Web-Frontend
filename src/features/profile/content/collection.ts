@@ -197,7 +197,7 @@ class LoadCollectionIntoBasketHandler extends DbClientQuery<LoadCollectionIntoBa
       .where("id", breeze.FilterQueryOp.Equals, request.id)
       //.select(["dependencies"]) // TODO: This doesn't work because of the limitations in our current setup
       .withParameters({ myPage: true });
-    let r = await this.context.executeQuery<IBreezeCollectionVersion>(query);
+    let r = await this.context.executeQueryWithNewManager<IBreezeCollectionVersion>(query);
     return r.results[0].dependencies;
   }
 
