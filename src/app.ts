@@ -197,7 +197,7 @@ export class App extends ViewModel {
     $('body').attr('style', '');
 
     this.version = this.w6.url.getAssetHashed("version");
-    this.checkVersion();
+    if (this.version) this.checkVersion();
     this.newVersionInterval = setInterval(() => this.checkVersion(), 10 * 60 * 1000);
 
     this.ls.on('w6.event', (v, old, url) => this.raiseCrossEvent(v.name, v.data));
