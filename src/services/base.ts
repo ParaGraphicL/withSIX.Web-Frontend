@@ -72,7 +72,8 @@ export class Base implements IDisposable {
   static bindObservableTo<T, TProp>(observer: Rx.Observable<TProp>, propertyEx: PropertyExpression<T, TProp>, ...objs: T[]): IDisposable {
     var propertyName = this.getPropertyName(propertyEx);
     let dsp = new Subscriptions();
-    objs.forEach(obj => dsp.subd(d => observer.subscribe(x => obj[propertyName] = x)));
+    let obs = observer.distinctUntilChanged();
+    objs.forEach(obj => dsp.subd(d => obs.subscribe(x => obj[propertyName] = x)));
     return dsp;
   }
 
