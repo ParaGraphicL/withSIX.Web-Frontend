@@ -71,6 +71,7 @@ export class Playlist extends ViewModel {
     this.model = model;
 
     this.subscriptions.subd(d => {
+      d(this.resetSignal.unsubscribe);
       d(this.action);
       d(this.saveBasket = uiCommandWithLogin2("Create Collection", this.saveBasketInternal, {
         canExecuteObservable: this.whenAnyValue(x => x.canSaveBasket),
