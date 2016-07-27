@@ -196,6 +196,7 @@ export class App extends ViewModel {
     if (this.w6.enableBasket) this.client.getInfo(); // instead of connection.promise();
     $('body').attr('style', '');
 
+    this.version = this.w6.url.getAssetHashed("version");
     this.checkVersion();
     this.newVersionInterval = setInterval(() => this.checkVersion(), 10 * 60 * 1000);
 
@@ -324,13 +325,11 @@ export class App extends ViewModel {
   }
 
   async checkVersion() {
-    let version = await this.http.get(this.w6.url.cdn + "/volatile/version.json");
+    let version = await this.http.get(this.w6.url.cdn + "/volatile/version2.json");
     let newVersion = version.content.version;
-    if (this.version && this.version != newVersion) {
+    if (this.version != newVersion) {
       this.newAppVersionAvailable = true;
       clearInterval(this.newVersionInterval);
-    } else {
-      this.version = newVersion; // todo; get the current version embedded..
     }
   }
 
