@@ -329,8 +329,8 @@ class GetCollectionDependenciesHandler extends DbQuery<GetCollectionDependencies
     let query = breeze.EntityQuery.from("Collections")
       .where(new breeze.Predicate("id", breeze.FilterQueryOp.Equals, request.id))
       //.withParameters({collectionId: request.id})
-      .expand(["author", "latestVersion"])
-      .select(["latestVersionId", "latestVersion", "sizePacked", "author", "avatarUpdatedAt", "avatar", "name", "latestStableVersion"]);
+      .expand(["author"])
+      .select(["latestVersionId", "sizePacked", "author", "avatarUpdatedAt", "avatar", "name", "latestStableVersion"]);
     // TODO:
     //.where(request.chain, NOT, breeze.FilterQueryOp.Contains, "id");
 
