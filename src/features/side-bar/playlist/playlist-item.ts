@@ -330,7 +330,7 @@ class GetCollectionDependenciesHandler extends DbQuery<GetCollectionDependencies
       .where(new breeze.Predicate("id", breeze.FilterQueryOp.Equals, request.id))
       //.withParameters({collectionId: request.id})
       .expand(["author", "latestVersion"])
-      .select(["latestVersionId", "latestVersion", "sizePacked", "author", "avatarUpdatedAt", "avatar", "name"]);
+      .select(["latestVersionId", "latestVersion", "sizePacked", "author", "avatarUpdatedAt", "avatar", "name", "latestStableVersion"]);
     // TODO:
     //.where(request.chain, NOT, breeze.FilterQueryOp.Contains, "id");
 
@@ -341,12 +341,15 @@ class GetCollectionDependenciesHandler extends DbQuery<GetCollectionDependencies
     let c = r.results[0];
     if (!c) return {}
     let sizePacked = Math.abs(c.sizePacked);
-    //await c.latestVersion.entityAspect.loadNavigationProperty("dependencies");
-    let q = breeze.EntityQuery.from("CollectionVersions").where(new breeze.Predicate("id", breeze.FilterQueryOp.Equals, c.latestVersionId)).expand("dependencies");
-    await this.context.executeQueryWithManager<IBreezeCollectionVersion>(manager, q);
+    let q = breeze.EntityQuery.from("CollectionVersions")
+      .where(new breeze.Predicate("id", breeze.FilterQueryOp.Equals, c.latestVersionId))
+      .expand("dependencies")
+      .select(["dependencies"]);
+    let versions = await this.context.executeQueryWithManager<IBreezeCollectionVersion>(manager, q);
+    let latest = versions.results[0];
     // TODO: How to handle 'non network mods'
-    let modDependencies = c.latestVersion.dependencies.map(x => x.modDependencyId).filter(x => x != null);
-    let nonNetworkDependencies = c.latestVersion.dependencies.filter(x => !x.modDependencyId).map(x => {
+    let modDependencies = latest.dependencies.map(x => x.modDependencyId).filter(x => x != null);
+    let nonNetworkDependencies = latest.dependencies.filter(x => !x.modDependencyId).map(x => {
       return <IBasketItem>{
         packageName: x.dependency,
         name: x.dependency,
@@ -372,7 +375,7 @@ class GetCollectionDependenciesHandler extends DbQuery<GetCollectionDependencies
         avatarUpdatedAt: c.avatarUpdatedAt,
         author: c.author,
         name: c.name,
-        version: c.latestVersion.version
+        version: c.latestStableVersion
       };
 
     let cachedIds = dependencies.filter(x => request.chain.has(x));
@@ -408,7 +411,7 @@ class GetCollectionDependenciesHandler extends DbQuery<GetCollectionDependencies
       avatarUpdatedAt: c.avatarUpdatedAt,
       author: c.author,
       name: c.name,
-      version: c.latestVersion.version
+      version: c.latestStableVersion
     };
 
   }
