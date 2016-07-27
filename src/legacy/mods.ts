@@ -1696,7 +1696,7 @@ export class ModInfoController extends ModEditBaseController {
 
     if (!externalInfo.forumUrl) {
       let hp = this.$scope.model.homepageUrl;
-      if (hp.startsWith("http://forums.bistudio.com/") || hp.startsWith("https://forums.bistudio.com/")) {
+      if (hp && (hp.startsWith("http://forums.bistudio.com/") || hp.startsWith("https://forums.bistudio.com/"))) {
         externalInfo.forumUrl = hp;
       }
     }
