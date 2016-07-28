@@ -91,17 +91,18 @@ export class LoginBase {
   setHeaders() {
     this.ls.on(LoginBase.key, (v, old, url) => {
       if (this.interval) clearInterval(this.interval);
-      if (!v) if (this.p) { this.refreshing = null; this.p.resolve(); this.p = null; return; }
-      this.refreshDate = JSON.parse(v);
       if (!this.refreshing) {
         this.refreshing = new Promise((resolve, reject) => {
           this.p = { resolve, reject };
         });
       }
+      if (!v) { if (this.p) { this.refreshing = null; this.p.resolve(); this.p = null; }; return }
+
+      this.refreshDate = JSON.parse(v);
       if (this.p) {
         this.interval = setInterval(() => {
           let currentDate = new Date();
-          if ((currentDate.getTime() - this.refreshDate.getTime()) > (5 * 1000)) {
+          if (!this.refreshDate || (currentDate.getTime() - this.refreshDate.getTime()) > (5 * 1000)) {
             // probably done (tab closed or ?)
             clearInterval(this.interval);
             this.refreshing = null
