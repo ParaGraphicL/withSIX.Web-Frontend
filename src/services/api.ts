@@ -96,11 +96,15 @@ export interface ITabNotification {
 }
 
 @inject(Client, EventAggregator, LS)
-export class Api {
+export class Api extends Base {
   constructor(private client: Client, private eventBus: EventAggregator, private ls: LS) {
+    super();
     // we could use debounce here, but then the menus don't close on the initiation of the scroll, but rather on the stop.
     // so throttle seems the better option
     this.subj.throttleTime(1000).subscribe(x => this.eventBus.publish(new CloseDropdowns()));
+    this.subscriptions.subd(d => {
+      d(this.subj.unsubscribe);
+    })
   }
   subj = new Rx.Subject();
   showOpenDialog(options: { defaultPath?: string, properties?}) { return this.client.hubs.client.browseFolderDialog(options); }
