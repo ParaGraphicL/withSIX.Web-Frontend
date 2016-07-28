@@ -36,6 +36,7 @@
     ],
     "files": [
         "./src/app.ts",
+        "./src/bootstrap.ts",
         "./src/errors/403.ts",
         "./src/errors/404.ts",
         "./src/errors/500.ts",

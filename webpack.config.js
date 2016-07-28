@@ -22,6 +22,7 @@ const outDir = path.resolve('dist');
 
 const coreBundles = {
   bootstrap: [
+    'aurelia-bootstrapper-webpack',
     'aurelia-polyfills',
     'aurelia-pal',
     'aurelia-pal-browser',
@@ -58,16 +59,16 @@ const coreBundles = {
     'aurelia-mediator',
     'aurelia-fetch-client',
     'aurelia-validation',
-    'aurelia-ui-virtualization',
+    //'aurelia-ui-virtualization',
     'withsix-sync-api'
   ]
 }
 
 const baseConfig = {
   entry: {
-    'app': ['./index'],
-    //'aurelia-bootstrap': ['./index'].concat(coreBundles.bootstrap).concat(coreBundles.aurelia)
-    //'aurelia': coreBundles.aurelia.filter(pkg => coreBundles.bootstrap.indexOf(pkg) === -1)
+    'app': [ /* auto filled? */ ],
+    'aurelia-bootstrap': coreBundles.bootstrap,
+    'aurelia': coreBundles.aurelia.filter(pkg => coreBundles.bootstrap.indexOf(pkg) === -1)
   },
   output: {
     path: outDir,
@@ -120,7 +121,11 @@ switch (ENV) {
       ({
         minify: true,
       }),
-
+      require('@easy-webpack/config-common-chunks-simple')
+      ({
+        appChunkName: 'app',
+        firstChunk: 'aurelia-bootstrap'
+      }),
       require('@easy-webpack/config-uglify')
       ({
         debug: false
@@ -212,6 +217,11 @@ switch (ENV) {
       require('@easy-webpack/config-generate-index-html')
       ({
         minify: false
+      }),
+      require('@easy-webpack/config-common-chunks-simple')
+      ({
+        appChunkName: 'app',
+        firstChunk: 'aurelia-bootstrap'
       })
     );
     break;
@@ -227,18 +237,6 @@ if (ELECTRON) {
     require('@easy-webpack/config-electron-main')() : require('@easy-webpack/config-electron-renderer')()
   );
 }
-
-// if (ENV !== 'test' && !ELECTRON) {
-//   config = generateConfig(
-//     config,
-//     require('@easy-webpack/config-common-chunks-simple')
-//     ({
-//       appChunkName: 'app',
-//       firstChunk: 'aurelia-bootstrap'
-//     })
-//   );
-// }
-
 
 if (ENV === 'test') {
   config = generateConfig(
