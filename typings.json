@@ -1,7 +1,6 @@
 {
   "globalDependencies": {
-    "toastr": "registry:dt/toastr#2.1.1+20160510010435",
-    "whatwg-fetch": "registry:dt/whatwg-fetch#0.0.0+20160524142046"
+    "toastr": "registry:dt/toastr#2.1.1+20160510010435"
   },
   "dependencies": {
     "bluebird": "registry:npm/bluebird#3.3.4+20160622205516"

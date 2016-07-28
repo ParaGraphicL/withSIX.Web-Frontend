@@ -103,7 +103,7 @@ export class Api extends Base {
     // so throttle seems the better option
     this.subj.throttleTime(1000).subscribe(x => this.eventBus.publish(new CloseDropdowns()));
     this.subscriptions.subd(d => {
-      d(this.subj.unsubscribe);
+      d(() => this.subj.unsubscribe());
     })
   }
   subj = new Rx.Subject();
