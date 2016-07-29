@@ -141,7 +141,7 @@
         "./src/features/settings/games/arma-2.ts",
         "./src/features/settings/games/arma-3.ts",
         "./src/features/settings/games/base.ts",
-        "./src/features/settings/games/gta-5.ts",
+        "./src/features/settings/games/general.ts",
         "./src/features/settings/games/rv.ts",
         "./src/features/settings/general.ts",
         "./src/features/settings/index.ts",
