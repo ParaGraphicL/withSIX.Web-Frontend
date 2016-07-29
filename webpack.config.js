@@ -65,11 +65,6 @@ const coreBundles = {
 }
 
 const baseConfig = {
-  entry: {
-    'app': [ /* auto filled? */ ],
-    'aurelia-bootstrap': coreBundles.bootstrap,
-    'aurelia': coreBundles.aurelia.filter(pkg => coreBundles.bootstrap.indexOf(pkg) === -1)
-  },
   output: {
     path: outDir,
   }
@@ -80,8 +75,12 @@ const baseConfig = {
 switch (ENV) {
   case 'production':
     config = generateConfig(
-      baseConfig,
-
+      baseConfig, {
+        entry: {
+          // workaround .call of undefined
+          'app': coreBundles.aurelia.concat(['./src/main']),
+        }
+      },
       require('@easy-webpack/config-env-production')
       ({
         compress: true
@@ -135,8 +134,13 @@ switch (ENV) {
 
   case 'test':
     config = generateConfig(
-      baseConfig,
-
+      baseConfig, {
+        entry: {
+          'app': [ /* auto filled? */ ],
+          'aurelia-bootstrap': coreBundles.bootstrap,
+          'aurelia': coreBundles.aurelia.filter(pkg => coreBundles.bootstrap.indexOf(pkg) === -1)
+        }
+      },
       require('@easy-webpack/config-env-development')
       ({
         devtool: 'inline-source-map'
@@ -180,8 +184,13 @@ switch (ENV) {
   case 'development':
     process.env.NODE_ENV = 'development';
     config = generateConfig(
-      baseConfig,
-
+      baseConfig, {
+        entry: {
+          'app': [ /* auto-filled */ ],
+          'aurelia-bootstrap': coreBundles.bootstrap,
+          'aurelia': coreBundles.aurelia.filter(pkg => coreBundles.bootstrap.indexOf(pkg) === -1)
+        }
+      },
       require('@easy-webpack/config-env-development')(),
 
       require('@easy-webpack/config-aurelia')
@@ -217,12 +226,13 @@ switch (ENV) {
       require('@easy-webpack/config-generate-index-html')
       ({
         minify: false
-      }),
-      require('@easy-webpack/config-common-chunks-simple')
-      ({
-        appChunkName: 'app',
-        firstChunk: 'aurelia-bootstrap'
       })
+      /*,
+           require('@easy-webpack/config-common-chunks-simple')
+           ({
+             appChunkName: 'app',
+             firstChunk: 'aurelia-bootstrap'
+           })*/
     );
     break;
 }
