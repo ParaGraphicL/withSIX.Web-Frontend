@@ -190,10 +190,7 @@
         "aurelia-validation/validate-custom-attribute",
         "aurelia-ui-virtualization/virtual-repeat-next",
         "contextMenu/contextMenu.css",
-        "templates/v2.html",
-        "features/settings/*.html",
-        "features/settings/games/*",
-        "features/profile/content/*"
+        "templates/v2.html"
       ]
     }
   }
