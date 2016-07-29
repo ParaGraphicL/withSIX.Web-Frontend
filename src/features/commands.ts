@@ -1,4 +1,4 @@
-import {  handlerFor, VoidCommand, DbClientQuery, DbQuery, Mediator, W6Context, Client, BasketService, Notifier, uiCommand2, IContentGuidSpec } from '../services/lib';
+import { Tools, handlerFor, VoidCommand, DbClientQuery, DbQuery, Mediator, W6Context, Client, BasketService, Notifier, uiCommand2, IContentGuidSpec } from '../services/lib';
 import { inject } from 'aurelia-framework';
 
 // TODO: Consider to move the download notifications to the Client api
@@ -125,7 +125,16 @@ class InstallContentHandler extends ClientQuery<InstallContent, void> {
     //this.raiseDownloadNotification(request.force ? 'Diagnosing' : 'Installing', null, request.noteInfo);
     //try {
     if (request.content.isOnlineCollection) {
-      if (this.w6.isLoggedIn) await this.context.postCustom("collections/" + request.content.id + "/subscribe");
+      if (this.w6.isLoggedIn) {
+        // TODO: Don't subscribe when it's our own..
+        try {
+          await this.context.postCustom("collections/" + request.content.id + "/subscribe");
+        } catch (err) {
+          if (err instanceof Tools.HttpException) {
+            if (err.status !== 400) throw err;
+          }
+        }
+      }
       await this.client.installCollection(request);
     }
     else
