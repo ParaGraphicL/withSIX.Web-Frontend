@@ -19,7 +19,7 @@
     "url": "http://github.com/aurelia/skeleton-navigation"
   },
   "devDependencies": {
-    "@easy-webpack/config-aurelia": "^2.0.1",
+    "@easy-webpack/config-aurelia": "^2.2.0",
     "@easy-webpack/config-babel": "^2.0.1",
     "@easy-webpack/config-common-chunks-simple": "^2.0.1",
     "@easy-webpack/config-css": "^2.3.2",
@@ -28,8 +28,8 @@
     "@easy-webpack/config-external-source-maps": "^2.0.1",
     "@easy-webpack/config-fonts-and-images": "^1.2.1",
     "@easy-webpack/config-generate-index-html": "^2.0.1",
-    "@easy-webpack/config-global-bluebird": "^1.2.0",
-    "@easy-webpack/config-global-jquery": "^1.2.0",
+    "@easy-webpack/config-global-bluebird": "^1.3.2",
+    "@easy-webpack/config-global-jquery": "^1.3.2",
     "@easy-webpack/config-global-regenerator": "^1.2.0",
     "@easy-webpack/config-html": "^2.0.1",
     "@easy-webpack/config-json": "^2.0.1",
@@ -99,7 +99,7 @@
   "scripts": {
     "global-packages": "npm i -g grunt-cli bower gulp jspm jspm-bower-endpoint protractor karma typings",
     "build-legacy": "gulp build-global-scss && gulp build-other build-misc && grunt uglify:app uglify:misc",
-    "dist": "npm run build:prod & gulp prepare-release && grunt buildallPublish",
+    "dist": "npm run build:prod && gulp prepare-release && grunt buildallPublish",
     "start": "npm run server:dev:hmr",
     "mocha": "mocha --compilers ts:./test/register test/unit/spec/support",
     "prepublish": "",
@@ -136,7 +136,6 @@
     "typings:install": "cross-env ./node_modules/.bin/typings install"
   },
   "dependencies": {
-    "@easy-webpack/config-aurelia": "^2.0.2",
     "aurelia-animator-css": "^1.0.0",
     "aurelia-auth": "git+https://github.com/sickboy/aurelia-auth.git",
     "aurelia-bootstrapper-webpack": "^1.0.0",
@@ -173,7 +172,7 @@
     "isomorphic-fetch": "^2.2.1",
     "linq4es2015": "git+https://github.com/sickboy/linq4es2015.git",
     "local-storage": "^1.4.2",
-    "ms-signalr-client": "^2.2.4",
+    "ms-signalr-client": "^2.2.5",
     "numbro": "^1.9.2",
     "rxjs": "^5.0.0-beta.10",
     "rxui": "git+https://github.com/sickboy/RxUI.git",
@@ -191,10 +190,7 @@
         "aurelia-validation/validate-custom-attribute",
         "aurelia-ui-virtualization/virtual-repeat-next",
         "contextMenu/contextMenu.css",
-        "templates/v2.html",
-        "features/settings/*.html",
-        "features/settings/games/*",
-        "features/profile/content/*"
+        "templates/v2.html"
       ]
     }
   }
