@@ -2,10 +2,17 @@
   <div class="container-fluid" infinite-scroll.bind="loadMore">
     <h1 class="pagetitle">${w6.activeGame.slug.replace("-", "").toUpperCaseFirst()} Mods</h1>
     <filters custom-handler.bind="handleFilter" filters.ref="filteredComponent" search-input-placeholder.bind="searchInputPlaceholder" typeahead-options.bind="typeahead" items.bind="model.items" filters.bind="filters" search-fields.bind="searchFields" sort.bind="sort"
-        view-types.bind="availableViewTypes"></filters>
+        view-types.bind="availableViewTypes">
+      <div if.bind="features.isTestEnvironment" class="tags">
+        Tags
+        <button click.trigger="selectTag()" show.bind="selectedTag">Clear</button>
+        <ul>
+          <li repeat.for="t of tags" click.trigger="selectTag(t)">${t.tagId}</li>
+        </ul>
+      </div>
+    </filters>
 
-    <card-view items.bind="model.items" show-ads.one-time="true"
-view-path="features/profile/content/" item-type="mod"></card-view>
+    <card-view items.bind="model.items" show-ads.one-time="true" view-path="features/profile/content/" item-type="mod"></card-view>
 
     <command-button model.bind="loadMore"></command-button>
   </div>
