@@ -1,5 +1,5 @@
 import {IBasketItem, BasketItemType, GameClientInfo, UiContext, uiCommand2, uiCommandWithLogin2, ViewModel, MenuItem, IMenuItem, Query, DbQuery, DbClientQuery, handlerFor, VoidCommand, IContent, TypeScope, ItemState, IContentStateChange, IContentStatusChange, IContentState, BasketService,
-  InstallContents, ContentDeleted} from '../../../../framework';
+  InstallContents, ContentDeleted, breeze, IBreezeMod} from '../../../../framework';
 import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import {EventAggregator} from 'aurelia-event-aggregator';
@@ -183,8 +183,45 @@ class GetGameHomeHandler extends DbClientQuery<GetGameHome, IHomeData> {
     //return GetHomeHandler.designTimeData(request);
     var r: IHomeData = await this.client.getGameHome(request.id);
     r.recent.forEach(x => x.showRecent = true)
+
+    // TODO: Collections
+    var allMods = r.newContent.concat(r.recent).concat(r.updates);
+
+    var onlineModsInfo = await this.getOnlineModsInfo(allMods.map(x => x.id));
+    allMods.forEach(x => {
+      if (onlineModsInfo.has(x.id)) {
+        var oi = onlineModsInfo.get(x.id);
+        this.augmentModInfo(oi, x);
+      }
+    });
+
     return r;
   }
+
+  augmentModInfo(x: IBreezeMod, mod) {
+    Object.assign(mod, {
+      image: this.w6.url.getContentAvatarUrl(x.avatar, x.avatarUpdatedAt),
+      size: x.size,
+      sizePacked: x.sizePacked,
+      stat: x.stat,
+      author: x.authorText || x.author.displayName,
+      authorSlug: x.author ? x.author.slug : null,
+    })
+  }
+
+  async getOnlineModsInfo(ids: string[]) {
+    var jsonQuery = {
+      from: 'Mods',
+      where: {
+        'id': { in: [...new Set(ids)] }
+      }
+    }
+    var query = new breeze.EntityQuery(jsonQuery)
+      .select(['avatar', 'avatarUpdatedAt', 'size', 'sizePacked', 'author', 'authorText']);
+    var r = await this.context.executeQuery<IBreezeMod>(query);
+    return r.results.toMap(x => x.id);
+  }
+
 
   static async designTimeData(request: GetGameHome) {
     return {
