@@ -218,7 +218,7 @@ class GetGameHomeHandler extends DbClientQuery<GetGameHome, IHomeData> {
       }
     }
     var query = new breeze.EntityQuery(jsonQuery)
-      .select(['avatar', 'avatarUpdatedAt', 'size', 'sizePacked', 'author', 'authorText']);
+      .select(['id', 'avatar', 'avatarUpdatedAt', 'size', 'sizePacked', 'author', 'authorText']);
     var r = await this.context.executeQuery<IBreezeMod>(query);
     return r.results.toMap(x => x.id);
   }
