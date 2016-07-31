@@ -9,7 +9,7 @@ export class Index extends FilteredBase<IMod> {
 
   async activate(params) {
     this.tags = await new GetGameTags(params.gameSlug || this.w6.activeGame.slug).handle(this.mediator);
-    this.tagsModel = new FindModel<IGameTag>(async (q) => q ? this.tags.filter(x => x.tagId.toLowerCase().includes(q.toLowerCase())) : this.tags, this.selectTag, x => x.tagId)
+    this.tagsModel = new FindModel<IGameTag>(async (q) => q ? this.tags.filter(x => x.tagId.toLowerCase().includes(q.toLowerCase())) : this.tags, this.selectTag, x => `${x.tagId} (${x.contentCount})`)
     this.tagsModel.searchItem = '';
     if (params.tag) {
       this.selectedTag = this.tags.filter(x => x.tagId.toLowerCase() === params.tag.toLowerCase())[0];
