@@ -22,7 +22,6 @@
           placeholder.bind="searchInputPlaceholder"></input>
       <input if.bind="!typeaheadOptions" style="position: relative;" class="form-control" type="text" value.bind="searchInput" placeholder.bind="searchInputPlaceholder"></input>
     </div>
-    <!-- <div class="clearfix"></div> -->
 
     <div class="show-filter" if.bind="filters && filters.length > 0">
       <span class="show-title">Show:</span>
@@ -36,5 +35,7 @@
         </div>
       </div>
     </div>
+    <div class="clearfix"></div>
+    <slot></slot>
   </div>
 </template>

@@ -63,7 +63,7 @@ export class PlaylistItem extends ViewModel {
   itemType: string;
 
   get isInstalled() { return this.itemState != ItemState.Incomplete };
-  get hasUpdateAvailable() { return this.isInstalled && this.itemState == ItemState.UpdateAvailable }
+  get hasUpdateAvailable() { return this.isInstalled && this.itemState === ItemState.UpdateAvailable }
   // Is really 'not uptodate'
   get isNotInstalled() { return !this.isInstalled || this.itemState != ItemState.Uptodate };
 

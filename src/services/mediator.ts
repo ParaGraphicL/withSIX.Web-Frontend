@@ -130,7 +130,7 @@ export class DbQuery<TRequest, TResponse> implements IRequestHandler<TRequest, T
   get tools() { return Tools; }
 
   // TODO: Move the w6context!!
-  constructor(protected context: W6Context) {}
+  constructor(protected context: W6Context) { }
   handle(request: TRequest): Promise<TResponse> { throw "must implement handle method"; }
 
   protected get w6(): W6 { return <any>this.context.w6; }
@@ -185,6 +185,7 @@ export class DbQuery<TRequest, TResponse> implements IRequestHandler<TRequest, T
     };
     // f.enabledFilters // TODO
     if (f.sortOrder) query = f.sortOrder.direction == SortDirection.Desc ? query.orderByDesc(f.sortOrder.name) : query.orderBy(f.sortOrder.name);
+    if (f.tags) query = query.withParameters({ tag: f.tags[0] });
     return query;
   }
   public handlePaginationQuery(query: breeze.EntityQuery, page: number) {
@@ -217,7 +218,7 @@ export interface IFilter<T> {
   filter: (item: T) => boolean;
 }
 
-export interface IFilterInfo<T> { search: { input: string, fields: string[] }, sortOrder: ISort<T>, enabledFilters: IFilter<T>[] }
+export interface IFilterInfo<T> { search: { input: string, fields: string[] }, sortOrder: ISort<T>, enabledFilters: IFilter<T>[], tags?: string[] }
 
 
 @inject(W6Context, Client, BasketService)

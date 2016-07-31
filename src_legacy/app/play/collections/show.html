@@ -21,7 +21,7 @@
     <sx-header-tags>
       <span style="display: inline-flex; vertical-align: middle"><span ng-if="editConfig.isEdited('tags')" class="withSIX-icon-Alert" style="color: red; font-size: 20px;"></span></span>
       <span ng-repeat="tag in header.tags" class="tag" style="margin-left: 4px" itemprop="keywords">
-                <a ng-href="{{header.contentRootUrl}}/category/{{sluggifyEntityName(tag)}}">{{tag}}</a>
+                <a ng-href="{{header.contentRootUrl}}/?tag={{tag}}">{{tag}}</a>
                 <span ng-if="editConfig.isEditing">
                     &nbsp;
                     <a href="#" ng-click="removeTag(tag)">

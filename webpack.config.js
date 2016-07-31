@@ -136,10 +136,14 @@ switch (ENV) {
     config = generateConfig(
       baseConfig, {
         entry: {
-          'app': [ /* auto filled? */ ],
-          'aurelia-bootstrap': coreBundles.bootstrap,
-          'aurelia': coreBundles.aurelia.filter(pkg => coreBundles.bootstrap.indexOf(pkg) === -1)
+          // workaround .call of undefined
+          'app': coreBundles.aurelia.concat(['./src/main']),
         }
+        // entry: {
+        //   'app': [ /* auto filled? */ ],
+        //   'aurelia-bootstrap': coreBundles.bootstrap,
+        //   'aurelia': coreBundles.aurelia.filter(pkg => coreBundles.bootstrap.indexOf(pkg) === -1)
+        // }
       },
       require('@easy-webpack/config-env-development')
       ({
@@ -186,10 +190,15 @@ switch (ENV) {
     config = generateConfig(
       baseConfig, {
         entry: {
-          'app': [ /* auto-filled */ ],
-          'aurelia-bootstrap': coreBundles.bootstrap,
-          'aurelia': coreBundles.aurelia.filter(pkg => coreBundles.bootstrap.indexOf(pkg) === -1)
+          // workaround .call of undefined
+          'app': coreBundles.aurelia.concat(['./src/main']),
         }
+
+        // entry: {
+        //   'app': [ /* auto-filled */ ],
+        //   'aurelia-bootstrap': coreBundles.bootstrap,
+        //   'aurelia': coreBundles.aurelia.filter(pkg => coreBundles.bootstrap.indexOf(pkg) === -1)
+        // }
       },
       require('@easy-webpack/config-env-development')(),
 
@@ -240,7 +249,7 @@ switch (ENV) {
 if (ELECTRON) {
   config = generateConfig(
     config, {
-      entry: ['./index', './src/main']
+      entry: ['./src/main']
     },
     require('@easy-webpack/config-electron')(),
     ELECTRON == 'main' ?
