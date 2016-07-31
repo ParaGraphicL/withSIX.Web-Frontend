@@ -7,7 +7,7 @@
         Tags: ${selectedTag.tagId}
         <button click.trigger="selectTag()" show.bind="selectedTag">Clear</button>
         <ul>
-          <li repeat.for="t of tags" click.trigger="selectTag(t)">${t.tagId}</li>
+          <li repeat.for="t of tags" click.trigger="selectTag(t)">${t.tagId} (${t.contentCount})</li>
         </ul>
       </div>
     </filters>
