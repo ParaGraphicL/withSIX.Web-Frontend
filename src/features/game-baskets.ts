@@ -220,7 +220,7 @@ export class Basket extends ViewModelWithModel<IBasketCollection> {
       var rItem = clientInfo.content[item.id];
 
       var state = ContentHelper.getConstentStateInitial(rItem, item.constraint);
-      if (state == ItemState.UpdateAvailable) return BasketState.Update;
+      if (state === ItemState.UpdateAvailable) return BasketState.Update;
     }
 
     return BasketState.Launch;
