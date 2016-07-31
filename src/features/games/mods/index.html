@@ -4,7 +4,7 @@
     <filters custom-handler.bind="handleFilter" filters.ref="filteredComponent" search-input-placeholder.bind="searchInputPlaceholder" typeahead-options.bind="typeahead" items.bind="model.items" filters.bind="filters" search-fields.bind="searchFields" sort.bind="sort"
         view-types.bind="availableViewTypes">
       <div if.bind="features.isTestEnvironment" class="tags">
-        Tags
+        Tags: ${selectedTag.tagId}
         <button click.trigger="selectTag()" show.bind="selectedTag">Clear</button>
         <ul>
           <li repeat.for="t of tags" click.trigger="selectTag(t)">${t.tagId}</li>

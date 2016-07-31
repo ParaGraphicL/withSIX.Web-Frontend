@@ -7,11 +7,11 @@ export class Index extends FilteredBase<IMod> {
   tags: IGameTag[];
 
   async activate(params) {
-    await super.activate(params);
     this.tags = await new GetGameTags(params.gameSlug || this.w6.activeGame.slug).handle(this.mediator);
     if (params.tag) {
-      this.selectedTag = this.tags.filter(x => x.tagId === params.tag)[0];
+      this.selectedTag = this.tags.filter(x => x.tagId.toLowerCase() === params.tag.toLowerCase())[0];
     }
+    await super.activate(params);
   }
 
   selectedTag: IGameTag;
