@@ -126,10 +126,11 @@ class GetHomeHandler extends DbClientQuery<GetHome, IHomeData> {
   }
 
   async getOnlineModsInfo(ids: string[]) {
+    let uIds = Array.from(new Set(ids));
     var jsonQuery = {
       from: 'Mods',
       where: {
-        'id': { in: [...new Set(ids)] }
+        'id': { in: uIds }
       }
     }
     var query = new breeze.EntityQuery(jsonQuery)
