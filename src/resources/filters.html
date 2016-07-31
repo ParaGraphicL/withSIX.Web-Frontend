@@ -2,7 +2,7 @@
   <div class="filters-area">
     <div class="pull-right">
       Displaying
-      <span show.bind="filteredItems.length != totalCount">${filteredItems.length} /</span> ${totalCount} results
+      <span show.bind="filteredItems.length != totalCount">${filteredItems.length} /</span> <span title.bind="totalCount">${totalCount | amount} results</span>
       <span if.bind="sort.length > 0">
           <select class="filter-sort" id="select-sort" name="select-sort" value.bind="sortOrder">
             <option repeat.for="item of sort" model.bind="item">Sort by ${item.title || item.name.toUpperCaseFirst()}</option>
