@@ -4,7 +4,7 @@
     <filters custom-handler.bind="handleFilter" filters.ref="filteredComponent" search-input-placeholder.bind="searchInputPlaceholder" typeahead-options.bind="typeahead" items.bind="model.items" filters.bind="filters" search-fields.bind="searchFields" sort.bind="sort"
         view-types.bind="availableViewTypes">
       <div if.bind="features.isTestEnvironment" class="tags">
-        Tags: ${selectedTag.tagId}
+        tags (WIP): ${selectedTag.tagId}
         <button click.trigger="selectTag()" show.bind="selectedTag">Clear</button>
         <finder placeholder="type a tag" model.bind="tagsModel"></finder>
         <finder-results model.bind="tagsModel" select-is-execute="true" show-total-results.bind="false"></finder-results>
