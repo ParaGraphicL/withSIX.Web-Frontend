@@ -543,19 +543,14 @@ export class GetModTagsQueryByUser extends DbQueryBase {
 
 registerCQ(GetModTagsQueryByUser);
 
+interface IGameTag { tagId: string, contentCount: number }
 export class GetCategoriesQuery extends DbQueryBase {
   static $name = "GetCategories";
 
   public execute = [
-    'query', (name) => {
-      Tools.Debug.log("getting mod tags, " + name);
-      var query = breeze.EntityQuery.from("ModTags")
-        .where(new breeze.Predicate("toLower(name)", breeze.FilterQueryOp.Contains, name.toLowerCase()))
-        .orderBy("name")
-        .select(["name"])
-        .take(24);
-      return this.context.executeQuery(query)
-        .then((data) => data.results);
+    'query', 'gameSlug', (name: string, gameSlug: string) => {
+      Tools.Debug.log("getting mod tags, " + name + gameSlug);
+      return this.context.getCustom<IGameTag[]>(`games/${gameSlug}/tags?query=` + name);
     }
   ];
 }
@@ -1236,8 +1231,8 @@ export class ModController extends ContentModelController<IBreezeMod> {
       }
       $scope.header.tags = $scope.model.tags;
     };
-    $scope.getCategories = (query) => this.$scope.request<{ name }[]>(GetCategoriesQuery, { query: query })
-      .then((d) => this.processNames(d))
+    $scope.getCategories = (query) => this.$scope.request<IGameTag[]>(GetCategoriesQuery, { query: query, gameSlug: this.$scope.game.slug })
+      .then((d) => this.processNames(d.map(x => { return {name: x.tagId} } )))
       .catch(this.breezeQueryFailed);
   }
 
