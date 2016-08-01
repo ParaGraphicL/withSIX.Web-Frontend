@@ -180,11 +180,10 @@ export class CollectionDataService extends W6ContextWrapper {
     var info = <any>W6Context.searchInfo(filterText, false, this.filterPrefixes);
 
     var pred = this.context.getNameQuery(info.name);
-    var pred2 = this.context.getTagsQuery(info.tag);
-    var pred3 = this.context.getAuthorQuery(info.user);
-    var pred4 = this.getDependenciesQuery(info.mod);
+    var pred2 = this.context.getAuthorQuery(info.user);
+    var pred3 = this.getDependenciesQuery(info.mod);
 
-    return this.context.buildPreds(query, [pred, pred2, pred3, pred4]);
+    return this.context.buildPreds(query, [pred, pred2, pred3]);
   }
 
   getCollectionTagsByAuthor(userSlug, name: string) {
@@ -210,10 +209,9 @@ export class MissionDataService extends W6ContextWrapper {
     var info = <any>W6Context.searchInfo(filterText, false, this.filterPrefixes);
 
     var pred = this.context.getNameQuery(info.name);
-    var pred2 = this.context.getTagsQuery(info.tag);
-    var pred3 = this.context.getAuthorQuery(info.user);
+    var pred2 = this.context.getAuthorQuery(info.user);
 
-    return this.context.buildPreds(query, [pred, pred2, pred3]);
+    return this.context.buildPreds(query, [pred, pred2]);
   }
 
   public getMissionsByGame(gameSlug, name) {
@@ -381,26 +379,15 @@ export class ModDataService extends W6ContextWrapper {
     return this.context.executeQueryT<IBreezeMod>(query);
   }
 
-  public getTagsQuery(split): breeze.Predicate {
-    var pred: breeze.Predicate;
-    for (var v in split) {
-      var p = this.searchTags(breeze, split[v]);
-      pred = pred == null ? p : pred.and(p);
-    }
-
-    return pred;
-  }
-
   public queryText(query, filterText, inclAuthor) {
     if (filterText == "")
       return query;
 
     var info = <any>W6Context.searchInfo(filterText, false, this.context.filterPrefixes);
     var pred = this.getNameQuery(info.name);
-    var pred2 = this.getTagsQuery(info.tag);
-    var pred3 = this.getAuthorQuery(info.user);
+    var pred2 = this.getAuthorQuery(info.user);
 
-    return this.context.buildPreds(query, [pred, pred2, pred3]);
+    return this.context.buildPreds(query, [pred, pred2]);
   }
 
   public getNameQuery(split: string[]): breeze.Predicate {
@@ -425,6 +412,6 @@ export class ModDataService extends W6ContextWrapper {
 
   // TODO: EMTags
   private searchTags(breeze, lc): breeze.Predicate {
-    return breeze.Predicate.create("categories", "any", "name", breeze.FilterQueryOp.Contains, lc);
+    return breeze.Predicate.create("eMTags", "any", "tagStr", breeze.FilterQueryOp.Contains, lc);
   }
 }
