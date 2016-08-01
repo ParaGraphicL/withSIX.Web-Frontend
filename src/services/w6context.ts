@@ -299,10 +299,6 @@ export class W6Context {
     return pred;
   }
 
-  public getTagsQuery(split): breeze.Predicate {
-    return this.findInField(split, ["tagsInternal"], undefined);
-  }
-
   public getAuthorQuery(split: string[]): breeze.Predicate {
     return this.findInField(split, ["author.displayName"], undefined);
   }
