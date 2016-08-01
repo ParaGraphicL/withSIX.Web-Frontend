@@ -434,7 +434,7 @@ class GetModDependenciesHandler extends DbQuery<GetModDependencies, IResult> {
       : new breeze.Predicate("packageName", breeze.FilterQueryOp.Equals, request.packageName).and(new breeze.Predicate("gameId", breeze.FilterQueryOp.Equals, request.gameId))
     let query = breeze.EntityQuery.from("Mods")
       .where(predicate)
-      .expand(["dependencies", "categories", "author"])
+      .expand(["dependencies", "author"])
       .select(["dependencies", "sizePacked", "tags", "authorText", "author", "avatarUpdatedAt", "avatar", "name", "latestStableVersion"]);
     // TODO:
     //.where(request.chain, NOT, breeze.FilterQueryOp.Contains, "id");

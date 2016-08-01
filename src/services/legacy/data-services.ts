@@ -304,8 +304,7 @@ export class ModDataService extends W6ContextWrapper {
   public getModsInCollection(collectionId, options): Promise<IQueryResult<IBreezeMod>> {
     Tools.Debug.log("getting mods in collection: " + collectionId);
     var query = breeze.EntityQuery.from("ModsInCollection")
-      .withParameters({ collectionId: collectionId })
-      .expand(["categories"]);
+      .withParameters({ collectionId: collectionId });
 
     if (options.filter)
       query = this.applyFiltering(query, options.filter, true);
@@ -327,7 +326,6 @@ export class ModDataService extends W6ContextWrapper {
 
     var query = breeze.EntityQuery.from("ModsInCollection")
       .withParameters({ collectionId: collectionId })
-      .expand(["categories"])
       .where(new breeze.Predicate("toLower(packageName)", op, key)
         .or(new breeze.Predicate("toLower(name)", op, key)))
       .orderBy("packageName")
@@ -344,7 +342,7 @@ export class ModDataService extends W6ContextWrapper {
         'gameId': { in: gameIds }
       }
     }
-    var query = new breeze.EntityQuery(jsonQuery).expand(["categories"]);
+    var query = new breeze.EntityQuery(jsonQuery);
 
     if (options.filter)
       query = this.applyFiltering(query, options.filter, true);
@@ -425,6 +423,7 @@ export class ModDataService extends W6ContextWrapper {
     return this.context.get('FollowedMods', { gameSlug: gameSlug });
   }
 
+  // TODO: EMTags
   private searchTags(breeze, lc): breeze.Predicate {
     return breeze.Predicate.create("categories", "any", "name", breeze.FilterQueryOp.Contains, lc);
   }
