@@ -550,7 +550,7 @@ export class GetCategoriesQuery extends DbQueryBase {
   public execute = [
     'query', 'gameSlug', (name: string, gameSlug: string) => {
       Tools.Debug.log("getting mod tags, " + name + gameSlug);
-      return this.context.getCustom<IGameTag[]>(`games/${gameSlug}/tags?query=` + name);
+      return this.context.getCustom<IGameTag[]>(`games/${gameSlug}/tags${name ? `?query=${name}` : ''}`);
     }
   ];
 }
