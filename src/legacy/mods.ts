@@ -1208,12 +1208,14 @@ export class ModController extends ContentModelController<IBreezeMod> {
     };
 
     $scope.addTag = (data) => {
-      var index = $scope.model.tags.indexOf(data.key);
-      if (index == -1) {
-        saveOriginalTags();
-        $scope.model.tags.push(data.key);
-      }
-      $scope.header.tags = $scope.model.tags;
+      this.applyIfNeeded(() => {
+        var index = $scope.model.tags.indexOf(data.key);
+        if (index == -1) {
+          saveOriginalTags();
+          $scope.model.tags.push(data.key);
+        }
+        $scope.header.tags = $scope.model.tags;
+      });
       return true;
     };
     $scope.getCurrentTags = () => {
@@ -1224,15 +1226,17 @@ export class ModController extends ContentModelController<IBreezeMod> {
       return list;
     };
     $scope.removeTag = (data) => {
-      var index = $scope.model.tags.indexOf(data);
-      if (index > -1) {
-        saveOriginalTags();
-        $scope.model.tags.splice(index, 1);
-      }
-      $scope.header.tags = $scope.model.tags;
+      this.applyIfNeeded(() => {
+        var index = $scope.model.tags.indexOf(data);
+        if (index > -1) {
+          saveOriginalTags();
+          $scope.model.tags.splice(index, 1);
+        }
+        $scope.header.tags = $scope.model.tags;
+      });
     };
     $scope.getCategories = (query) => this.$scope.request<IGameTag[]>(GetCategoriesQuery, { query: query, gameSlug: this.$scope.game.slug })
-      .then((d) => this.processNames(d.map(x => { return {name: x.tagId} } )))
+      .then((d) => this.processNames(d.map(x => { return { name: x.tagId } })))
       .catch(this.breezeQueryFailed);
   }
 
