@@ -18,7 +18,7 @@ class GetModsHandler extends DbQuery<GetMods, IPaginated<IModInContent>> {
   async handle(request: GetMods) {
     var query = breeze.EntityQuery.from("ModsInCollection")
       .withParameters({ collectionId: request.collectionId })
-      .expand(["categories", "stat"]);
+      .expand(["stat"]);
     query = this.handleFilterQuery(query, request.filterInfo);
     if (!request.filterInfo.sortOrder || request.filterInfo.sortOrder.name != 'name') query = query.orderBy("name")
     query = this.handlePaginationQuery(query, request.page)
