@@ -1,5 +1,5 @@
 import breeze from 'breeze-client';
-import { IUserInfo } from './dtos';
+import { IUserInfo, IBreezeMod } from './dtos';
 import { W6Context, IQueryResult } from './w6context'
 import { BasketService } from './basket-service';
 import { Toastr } from './toastr';
@@ -53,7 +53,7 @@ export class ClientMissingHandler {
   addClientIframe() {
     var i = document.createElement('iframe');
     i.style.display = 'none';
-    i.onload = function() { i.parentNode.removeChild(i); };
+    i.onload = function () { i.parentNode.removeChild(i); };
     i.src = 'syncws://?launch=1';
     document.body.appendChild(i);
   }
@@ -116,7 +116,7 @@ export interface IRequireUser {
 }
 
 export function requireUser() {
-  return function(target) {
+  return function (target) {
     defineProperties(target.prototype, { $requireUser: true })
   };
 }
@@ -192,6 +192,44 @@ export class DbQuery<TRequest, TResponse> implements IRequestHandler<TRequest, T
     return query.skip(((page - 1) * DbQuery.pageSize))
       .take(DbQuery.pageSize)
       .inlineCount(true);
+  }
+
+  protected async handleModAugments(allMods: any[]) {
+    if (allMods.length > 0) {
+      var onlineModsInfo = await this.getOnlineModsInfo(allMods.map(x => x.id));
+      allMods.forEach(x => {
+        if (onlineModsInfo.has(x.id)) {
+          var oi = onlineModsInfo.get(x.id);
+          this.augmentModInfo(oi, x);
+        }
+      });
+    }
+  }
+
+
+  private augmentModInfo(x: IBreezeMod, mod) {
+    Object.assign(mod, {
+      image: this.w6.url.getContentAvatarUrl(x.avatar, x.avatarUpdatedAt),
+      size: x.size,
+      sizePacked: x.sizePacked,
+      stat: x.stat,
+      author: x.authorText || x.author.displayName,
+      authorSlug: x.author ? x.author.slug : null,
+    })
+  }
+
+  private async getOnlineModsInfo(ids: string[]) {
+    let uIds = Array.from(new Set(ids));
+    var jsonQuery = {
+      from: 'Mods',
+      where: {
+        'id': { in: uIds }
+      }
+    }
+    var query = new breeze.EntityQuery(jsonQuery)
+      .select(['id', 'avatar', 'avatarUpdatedAt', 'size', 'sizePacked', 'author', 'authorText']);
+    var r = await this.context.executeQuery<IBreezeMod>(query);
+    return r.results.toMap(x => x.id);
   }
 }
 
