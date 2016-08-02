@@ -1,5 +1,5 @@
 import {W6Context, IBreezeMod, IUserInfo, Client, ModDataService, ISort, Query, DbClientQuery, handlerFor, requireUser, IRequireUser, IContent, TypeScope, BasketService,
-  ContentDeleted} from '../../../../framework';
+  ContentDeleted, breeze} from '../../../../framework';
 import {inject} from 'aurelia-framework';
 import {BaseGame, Mod} from '../../lib';
 
@@ -61,11 +61,14 @@ class GetModsHandler extends DbClientQuery<GetMods, IModsData> {
     // TODO: only if client connected get client info.. w6.miniClient.isConnected // but we dont wait for it so bad idea for now..
     // we also need to refresh then when the client is connected later?
     var p = [
-      this.getClientMods(request)
+      this.getClientMods(request).then(async (x) => {
+        await this.handleModAugments(x);
+        return x;
+      })
     ];
 
     if (request.user.slug) {
-      p.push(this.modDataService.getAllModsByAuthor(request.user.slug, optionsTodo)
+      p.push(this.modDataService.getAllModsByAuthorAndGame(request.user.slug, request.id, optionsTodo)
         .then(x => x.results.map(x => this.convertOnlineMods(x))));
     }
     let results = await Promise.all<IContent[]>(p);

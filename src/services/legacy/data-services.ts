@@ -359,6 +359,27 @@ export class ModDataService extends W6ContextWrapper {
 
   private getDesiredFields = query => query.select(ModHelper.interestingFields);
 
+    public getAllModsByAuthorAndGame(authorSlug: string, gameId: string, options): Promise<IQueryResult<IBreezeMod>> {
+    Tools.Debug.log("getting mods by author: " + authorSlug);
+    var query = breeze.EntityQuery.from("Mods")
+      .where("author.slug", breeze.FilterQueryOp.Equals, authorSlug)
+      .where("gameId", breeze.FilterQueryOp.Equals, gameId);
+
+    if (options.filter)
+      query = this.applyFiltering(query, options.filter, true);
+
+    if (query == null)
+      throw new Error("invalid query");
+
+    if (options.sort && options.sort.fields.length > 0)
+      query = query.orderBy(this.context.generateOrderable(options.sort));
+
+    if (options.pagination)
+      query = this.context.applyPaging(query, options.pagination);
+    query = this.getDesiredFields(query);
+    return this.context.executeQueryT<IBreezeMod>(query);
+  }
+
   public getAllModsByAuthor(authorSlug: string, options): Promise<IQueryResult<IBreezeMod>> {
     Tools.Debug.log("getting mods by author: " + authorSlug);
     var query = breeze.EntityQuery.from("Mods")

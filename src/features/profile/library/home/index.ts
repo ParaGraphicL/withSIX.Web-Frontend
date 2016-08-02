@@ -186,43 +186,10 @@ class GetGameHomeHandler extends DbClientQuery<GetGameHome, IHomeData> {
 
     // TODO: Collections
     var allMods = r.newContent.concat(r.recent).concat(r.updates);
-
-    var onlineModsInfo = await this.getOnlineModsInfo(allMods.map(x => x.id));
-    allMods.forEach(x => {
-      if (onlineModsInfo.has(x.id)) {
-        var oi = onlineModsInfo.get(x.id);
-        this.augmentModInfo(oi, x);
-      }
-    });
+    await this.handleModAugments(allMods);
 
     return r;
   }
-
-  augmentModInfo(x: IBreezeMod, mod) {
-    Object.assign(mod, {
-      image: this.w6.url.getContentAvatarUrl(x.avatar, x.avatarUpdatedAt),
-      size: x.size,
-      sizePacked: x.sizePacked,
-      stat: x.stat,
-      author: x.authorText || x.author.displayName,
-      authorSlug: x.author ? x.author.slug : null,
-    })
-  }
-
-  async getOnlineModsInfo(ids: string[]) {
-    let uIds = Array.from(new Set(ids));
-    var jsonQuery = {
-      from: 'Mods',
-      where: {
-        'id': { in: uIds }
-      }
-    }
-    var query = new breeze.EntityQuery(jsonQuery)
-      .select(['id', 'avatar', 'avatarUpdatedAt', 'size', 'sizePacked', 'author', 'authorText']);
-    var r = await this.context.executeQuery<IBreezeMod>(query);
-    return r.results.toMap(x => x.id);
-  }
-
 
   static async designTimeData(request: GetGameHome) {
     return {
