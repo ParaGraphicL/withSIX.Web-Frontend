@@ -61,16 +61,51 @@ class GetModsHandler extends DbClientQuery<GetMods, IModsData> {
     // TODO: only if client connected get client info.. w6.miniClient.isConnected // but we dont wait for it so bad idea for now..
     // we also need to refresh then when the client is connected later?
     var p = [
-      this.getClientMods(request)
+      this.getClientMods(request).then(async (x) => {
+        var onlineModsInfo = await this.getOnlineModsInfo(x.map(x => x.id));
+        x.forEach(x => {
+          if (onlineModsInfo.has(x.id)) {
+            var oi = onlineModsInfo.get(x.id);
+            this.augmentModInfo(oi, x);
+          }
+        })
+        return x;
+      })
     ];
 
     if (request.user.slug) {
-      p.push(this.modDataService.getAllModsByAuthor(request.user.slug, optionsTodo)
+      p.push(this.modDataService.getAllModsByAuthorAndGame(request.user.slug, request.id, optionsTodo)
         .then(x => x.results.map(x => this.convertOnlineMods(x))));
     }
     let results = await Promise.all<IContent[]>(p);
     return <IModsData>{ mods: results.flatten<IContent>() };
     // return GetModsHandler.designTimeData(request);
+  }
+
+
+  augmentModInfo(x: IBreezeMod, mod) {
+    Object.assign(mod, {
+      image: this.w6.url.getContentAvatarUrl(x.avatar, x.avatarUpdatedAt),
+      size: x.size,
+      sizePacked: x.sizePacked,
+      stat: x.stat,
+      author: x.authorText || x.author.displayName,
+      authorSlug: x.author ? x.author.slug : null,
+    })
+  }
+
+  async getOnlineModsInfo(ids: string[]) {
+    let uIds = Array.from(new Set(ids));
+    var jsonQuery = {
+      from: 'Mods',
+      where: {
+        'id': { in: uIds }
+      }
+    }
+    var query = new breeze.EntityQuery(jsonQuery)
+      .select(['id', 'avatar', 'avatarUpdatedAt', 'size', 'sizePacked', 'author', 'authorText']);
+    var r = await this.context.executeQuery<IBreezeMod>(query);
+    return r.results.toMap(x => x.id);
   }
 
   async getClientMods(request: GetMods) {
