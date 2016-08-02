@@ -27,6 +27,7 @@ interface Array<T> {
   removeEl: (el: T) => void;
   toMap: <K>(keySelector: (x: T) => K) => Map<K, T>;
   includes: (el: T) => boolean;
+  move: (fromIdx: number, toIdx: number) => void;
   //removeRange: (...el: T[]) => void;
 }
 
