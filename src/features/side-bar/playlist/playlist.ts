@@ -65,6 +65,16 @@ export class Playlist extends ViewModel {
   get locked() { return this.lockBasket || this.gameInfo.isLocked; }
   get canSaveBasket() { return this.baskets.active && this.baskets.active.model.items.length > 0 }
 
+  moveUp(item) {
+    let idx = this.basketItems.indexOf(item);
+    this.basketItems.move(idx, idx - 1);
+  }
+
+  moveDown(item) {
+    let idx = this.basketItems.indexOf(item);
+    this.basketItems.move(idx, idx + 1);
+  }
+
   async activate(model) {
     if (this.model === model) return;
     if (this.w6.activeGame.id) await this.gameChanged(this.w6.activeGame);
