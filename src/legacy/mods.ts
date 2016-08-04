@@ -1699,7 +1699,7 @@ export class ModInfoController extends ModEditBaseController {
         externalInfo.forumUrl = hp;
       }
     }
-    externalInfo.description = this.$scope.model.description;
+    externalInfo.description = this.$scope.model.descriptionFull;
     this.$scope.externalInfo = externalInfo;
   }
 
