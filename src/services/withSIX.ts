@@ -550,7 +550,7 @@ export class W6 {
       if (convertPropertyNames) angular.forEach(obj, (v, p) => newObj[converter.serverPropertyNameToClient(p)] = this.convertToClient(v, convertPropertyNames));
       else angular.forEach(obj, (v, p) => newObj[p] = this.convertToClient(v, convertPropertyNames));
       return <T>newObj;
-    } else if (obj instanceof String) {
+    } else if (typeof(obj) === 'string' || obj instanceof String) {
       if (this.iso8601RegEx.test(obj)) return <T><any>breeze.DataType.parseDateFromServer(obj);
     }
 
