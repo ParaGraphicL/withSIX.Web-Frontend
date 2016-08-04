@@ -161,7 +161,7 @@ export class Parser {
       || url.startsWith('https://www.youtube.com/playlist'))
       return new ForumUrl(url, images); // TODO
 
-    if (url.includes('patreon.com/') || url.includes('paypal.com/') || url.includes('wmtransfer.com/'))
+    if (url.includes('patreon.com/') || url.includes('paypal.com/') || url.includes('wmtransfer.com/') || url.includes('webmoney.ru'))
       return new DonationUrl(url, images);
 
     if (url.includes('creativecommons.org/') || url.includes('www.bistudio.com/license'))
