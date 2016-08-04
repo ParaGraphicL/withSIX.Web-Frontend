@@ -97,6 +97,7 @@ export abstract class InterestingLink { constructor(public url: string) { } }
 export class ImgurGallery extends InterestingLink { }
 export class SocialMedia extends InterestingLink { }
 export class ForumUrl extends InterestingLink { }
+export class DonationUrl extends InterestingLink { }
 
 export class Parser {
   constructor(private doc: JQuery, private baseUrl: string, private p: HtmlParser) { }
@@ -144,6 +145,9 @@ export class Parser {
     if (url.startsWith('http://www.youtube.com/playlist')
       || url.startsWith('https://www.youtube.com/playlist'))
       return new ForumUrl(url); // TODO
+
+    if (url.includes('patreon.com/') || url.includes('paypal.com/') || url.includes('wmtransfer.com/'))
+      return new DonationUrl(url);
 
     return null;
   }
