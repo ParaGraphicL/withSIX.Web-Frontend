@@ -1628,7 +1628,7 @@ export interface IModInfoScope extends IEditableModScope, IHandleCommentsScope<I
   addLink: (link) => void;
   newLink: { title: string; path: string };
   openSteamInfo: () => void;
-  externalInfo: { forumUrl?: string; steamInfo; gitHubRepo?: string; armaholicUrl?: string }
+  externalInfo: { forumUrl?: string; steamInfo; gitHubRepo?: string; armaholicUrl?: string; description?: string; }
   galleryInfo: { description?: string; avatar?: string }
 }
 
@@ -1699,6 +1699,7 @@ export class ModInfoController extends ModEditBaseController {
         externalInfo.forumUrl = hp;
       }
     }
+    externalInfo.description = this.$scope.model.description;
     this.$scope.externalInfo = externalInfo;
   }
 
