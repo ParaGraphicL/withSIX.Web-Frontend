@@ -33,11 +33,10 @@ export class ModGallery extends ViewModel {
   }
 
   addInterestingLinks = async (il: InterestingLink[]) => {
-    let todo = il.filter(x => !this.interestingLinks.some(i => i.url === x.url));
+    let todo = il.filter(x => (x instanceof ImgurGallery) && !this.interestingLinks.some(i => i.url === x.url));
     if (todo.length > 0) {
       this.interestingLinks.push(...todo);
-      let galTodo = todo.filter(x => x instanceof ImgurGallery);
-      if (galTodo.length > 0) await Promise.all(galTodo.map(async (x) => this.addGalleryItems(await this.imgur.getImages(x.url))));
+      await Promise.all(todo.map(async (x) => this.addGalleryItems(await this.imgur.getImages(x.url))));
     }
   }
 }
