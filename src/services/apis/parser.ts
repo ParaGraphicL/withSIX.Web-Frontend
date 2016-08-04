@@ -93,11 +93,13 @@ export class HtmlParser {
   }
 }
 
-export abstract class InterestingLink { constructor(public url: string) { } }
+// TODO: Pickup Publishers
+export abstract class InterestingLink { constructor(public url: string, public images: string[]) { } }
 export class ImgurGallery extends InterestingLink { }
 export class SocialMedia extends InterestingLink { }
 export class ForumUrl extends InterestingLink { }
 export class DonationUrl extends InterestingLink { }
+export class LicenseUrl extends InterestingLink { }
 
 export class Parser {
   constructor(private doc: JQuery, private baseUrl: string, private p: HtmlParser) { }
@@ -116,38 +118,47 @@ export class Parser {
     el.find("a").each((i, x) => {
       let el = $(x);
       let link = el.attr('href');
+      let images = [];
+      el.find("img").each((i, x) => {
+        let iel = $(x);
+        let src = iel.attr('src');
+        if (src) images.push(src);
+      })
       if (link) {
         let r: InterestingLink;
-        if ((r = this.determineInterestingLink(link)) && !interestingLinks.some(x => x.url === r.url))
+        if ((r = this.determineInterestingLink(link, images)) && !interestingLinks.some(x => x.url === r.url))
           interestingLinks.push(r);
       }
     });
     return interestingLinks;
   }
 
-  determineInterestingLink(url: string): InterestingLink {
+  determineInterestingLink(url: string, images: string[]): InterestingLink {
     if (url.startsWith('http://imgur.com/a/')
       || url.startsWith('https://imgur.com/a/')
       || url.startsWith('http://imgur.com/gallery/')
       || url.startsWith('https://imgur.com/gallery/'))
-      return new ImgurGallery(url);
+      return new ImgurGallery(url, images);
 
     if (url.startsWith('https://facebook.com/')
       || url.startsWith('https://www.facebook.com/')
       || url.startsWith('https://plus.google.com/')
       || url.startsWith('https://twitter.com/'))
-      return new SocialMedia(url);
+      return new SocialMedia(url, images);
 
     if (url.startsWith('https://forums.bistudio.com/')
       || url.startsWith('http://www.armaholic.com/forums.php'))
-      return new ForumUrl(url);
+      return new ForumUrl(url, images);
 
     if (url.startsWith('http://www.youtube.com/playlist')
       || url.startsWith('https://www.youtube.com/playlist'))
-      return new ForumUrl(url); // TODO
+      return new ForumUrl(url, images); // TODO
 
     if (url.includes('patreon.com/') || url.includes('paypal.com/') || url.includes('wmtransfer.com/'))
-      return new DonationUrl(url);
+      return new DonationUrl(url, images);
+
+    if (url.includes('creativecommons.org/') || url.includes('www.bistudio.com/license'))
+      return new LicenseUrl(url, images);
 
     return null;
   }

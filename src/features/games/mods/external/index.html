@@ -2,7 +2,10 @@
   <div class="external-info contentrender">
     <ul>
       <li repeat.for="il of interestingLinks">
-        <a href.bind="il.url">${il.url}</a>
+        <a href.bind="il.url" class="interesting-link">
+          <img src.bind="il.images[0]" show.bind="il.images.length > 0"></img>
+          <span show.bind="!il.images || il.images.length === 0">${il.url}</span>
+        </a>
       </li>
     </ul>
     <compose if.bind="model.forumUrl" view-model="./bif-info" model.bind="model.forumUrl"></compose>
