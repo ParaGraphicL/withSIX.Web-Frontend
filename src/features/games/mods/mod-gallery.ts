@@ -10,7 +10,7 @@ export class ModGallery extends ViewModel {
   interestingLinks: InterestingLink[] = [];
 
   async activate(model: { description?: string, avatar?: string }) {
-    if (model.avatar) this.galleryItems.push({ href: model.avatar, thumbnail: model.avatar, title: 'Logo' });
+    //if (model.avatar) this.galleryItems.push({ href: model.avatar, thumbnail: model.avatar, title: 'Logo' });
     if (model.description) {
       let jq = this.parser.toJquery(`<div>${model.description}</div>`);
       let d = jq.find(x => x);

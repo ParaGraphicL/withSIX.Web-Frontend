@@ -31,6 +31,7 @@ export async function configure(aurelia: Aurelia) {
   require('breeze-client-labs/breeze.saveErrorExtensions');
   breeze.NamingConvention.camelCase.setAsDefault();
   breeze.DataType.parseDateFromServer = function(source) {
+    //if (source instanceof String && !source.endsWith("Z")) source = source + "Z"
     var date = moment(source);
     return date.toDate();
   };

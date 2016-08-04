@@ -53,10 +53,26 @@ export class HtmlParser {
 
   static shouldIncludeImage = (i: Media) => !i.href || (!HtmlParser.filterHref(i.href));
 
+  static shouldFilterHref = [
+    '/logos/banner-420x120.png',
+
+    'emoticon',
+
+    '//forums.bistudio.com/',
+    '//www.bistudio.com/assets/img/licenses',
+
+    'armaholic.com/images/pfs/',
+    'armaholic.com/datas/users/news_download',
+    'armaholic.com/skins/',
+
+    '//button.moddb.com/',
+
+    '//paypalobjects.com/',
+    '//i.creativecommons.org/'
+  ]
+
   static filterHref(href: string) {
-    return href.includes('emoticon')
-      || href.includes('//forums.bistudio.com/')
-      || href.includes('//www.armaholic.com/images/pfs/')
+    return this.shouldFilterHref.some(x => href.includes(x));
   }
 
   static compareImage = (x, i) => {
