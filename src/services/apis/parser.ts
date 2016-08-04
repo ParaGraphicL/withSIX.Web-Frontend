@@ -5,7 +5,7 @@ import { inject } from 'aurelia-framework';
 
 export { parseBBCode }
 
-interface Media { href: string; title: string; thumbnail?: string, youtube?: string, vimeo?: string, poster?: string; type?: string; }
+interface Media { href: string; title: string; thumbnail?: string, youtube?: string, vimeo?: string, poster?: string; type?: string; originalLink?: string }
 
 export class HtmlParser {
   toJquery(text: string, baseUrl?: string, transformer?) {
@@ -51,7 +51,7 @@ export class HtmlParser {
   quote = (html: string) => this.surround('blockquote', html);
   surround = (tag: string, html: string) => `<${tag}>${html}</${tag}>`;
 
-  static shouldIncludeImage = (i: Media) => !i.href || (!HtmlParser.filterHref(i.href));
+  static shouldIncludeImage = (i: Media) => !i.href || (!HtmlParser.filterHref(i.href) && (!i.originalLink || !HtmlParser.filterHref(i.originalLink)));
 
   static shouldFilterHref = [
     '/logos/banner-420x120.png',
@@ -70,12 +70,11 @@ export class HtmlParser {
 
     'wmtransfer.com/',
     'paypalobjects.com/',
-    'creativecommons.org/'
+    'creativecommons.org/',
+    'patreon.com/'
   ]
 
-  static filterHref(href: string) {
-    return this.shouldFilterHref.some(x => href.includes(x));
-  }
+  static filterHref(href: string) { return this.shouldFilterHref.some(x => href.includes(x)); }
 
   static compareImage = (x, i) => {
     return (i.href && i.href === x.href)
@@ -172,7 +171,7 @@ export class Parser {
         if (imgSrc) {
           let vid = this.tryImageVideo(imgSrc);
           if (vid) images.push(vid)
-          else images.push({ href: this.growImage(linkImage ? linkImage : imgSrc), title: linkTitle || iel.attr('alt') || iel.attr('title'), thumbnail: imgSrc })
+          else images.push({ href: this.growImage(linkImage ? linkImage : imgSrc), title: linkTitle || iel.attr('alt') || iel.attr('title'), thumbnail: imgSrc, originalLink: link })
         }
         handledImages.push(ix);
       })
