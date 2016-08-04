@@ -1,6 +1,8 @@
 import { ViewModel, InterestingLink, HtmlParser, UiContext } from '../../../../framework';
 import { UpdateInterestingLinks } from '../mod-gallery';
 
+import { inject } from 'aurelia-framework';
+
 @inject(HtmlParser, UiContext)
 export class Index extends ViewModel {
   constructor(private parser: HtmlParser, ui) { super(ui) }
