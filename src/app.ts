@@ -141,6 +141,7 @@ export class App extends ViewModel {
       }
       */
       d(this.eventBus.subscribe('router:navigation:error', async (x) => {
+        // TODO: This seems to be a fatal error... Must refresh completely to fix!
         if (!x.result || !x.result.output) return this.redirectToError(500);
         let err: Error = x.result.output;
         if (err instanceof Tools.NotFoundException) return this.redirectToError(404);

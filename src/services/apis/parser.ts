@@ -60,6 +60,7 @@ export class HtmlParser {
 
     '//forums.bistudio.com/',
     '//www.bistudio.com/assets/img/licenses',
+    '//www.bistudio.com/license',
 
     'armaholic.com/images/pfs/',
     'armaholic.com/datas/users/news_download',
@@ -67,8 +68,9 @@ export class HtmlParser {
 
     '//button.moddb.com/',
 
-    '//paypalobjects.com/',
-    '//i.creativecommons.org/'
+    'wmtransfer.com/',
+    'paypalobjects.com/',
+    'creativecommons.org/'
   ]
 
   static filterHref(href: string) {
