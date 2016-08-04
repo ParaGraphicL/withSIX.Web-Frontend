@@ -94,8 +94,15 @@ export class HtmlParser {
 }
 
 // TODO: Pickup Publishers
-export abstract class InterestingLink { constructor(public url: string, public images: string[]) { } }
-export class ImgurGallery extends InterestingLink { }
+export abstract class InterestingLink {
+  displayImage: string; 
+  constructor(public url: string, public images: string[]) {
+    if (images && images.length > 0) this.displayImage = images[0];
+ }
+}
+export class ImgurGallery extends InterestingLink {
+  constructor(url, images) { super(url, images); this.displayImage = null }
+}
 export class SocialMedia extends InterestingLink { }
 export class ForumUrl extends InterestingLink { }
 export class DonationUrl extends InterestingLink { }
