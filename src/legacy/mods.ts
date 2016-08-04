@@ -848,7 +848,7 @@ export class ModController extends ContentModelController<IBreezeMod> {
     this.$scope.changeAuthorCheck = (scope: any): boolean => {
       if (!scope.newAuthor)
         return true;
-      if ((typeof scope.newAuthor == 'string' || scope.newAuthor instanceof String))
+      if ((typeof scope.newAuthor === 'string' || scope.newAuthor instanceof String))
         return true;
       return false;
     };
@@ -1888,7 +1888,7 @@ export class ModCreditsController extends ModEditBaseController {
   userCheck = (user: any): boolean => {
     if (!user)
       return false;
-    if ((typeof user == 'string' || user instanceof String))
+    if ((typeof user === 'string' || user instanceof String))
       return false;
     return true;
   };
