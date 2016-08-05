@@ -14,6 +14,15 @@ import 'blueimp-gallery/css/blueimp-gallery-video.css'
 
 import { bindable, inject } from 'aurelia-framework';
 
+export var defaultOptions = {
+   youTubeClickToPlay: false,
+   vimeoClickToPlay: false,
+  //  youTubePlayerVars: {
+  //   playsinline: 1,
+  //   allowfullscreen: 0
+  //  }
+}
+
 export interface GalleryItem {
   title?: string;
   href: string;

@@ -57,7 +57,11 @@ export class W6Urls {
 
     this.contentCdn = "//" + this.buckets["withsix-usercontent"];
     this.docsCdn = "//withsix-cdn.azureedge.net";
+    this.img = {
+      play: this.getAssetUrl('img/play-icon.png')
+    }
   }
+  img;
 
   getCurrentPageWithoutHash() { return window.location.protocol + '//' + window.location.host + window.location.pathname + window.location.search; }
 
@@ -121,7 +125,7 @@ export class W6Urls {
     var hashed = this.getAssetHashed(asset);
     return this.cdn + '/' + (hashed || asset);
   }
-  getAssetHashed(asset) { return window.assetHash && window.assetHash[asset] };
+  private getAssetHashed(asset) { return window.assetHash && window.assetHash[asset] };
 
   public getUsercontentUrl(asset: string, updatedAt?: Date) {
     asset = this.processAssetVersion(asset, updatedAt);
