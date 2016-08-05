@@ -35,9 +35,11 @@ export class Carousel extends ViewModel {
   }
 
   cleanup = () => {
-    if (this.gallery) { this.gallery.close(); this.gallery = null }
+    if (this.gallery) this.close();
     if (this.obs) { this.obs.unsubscribe(); this.obs = null }
   }
+
+  close = () => { this.gallery.close(); this.gallery = null }
 
   handleGallery(items: GalleryItem[]) {
     this.setupGallery(items);
@@ -50,7 +52,7 @@ export class Carousel extends ViewModel {
   }
 
   setupGallery(items: GalleryItem[]) {
-    if (this.gallery) { this.gallery.close(); this.gallery = null }
+    if (this.gallery) this.close();
     this.gallery = new blueimpGallery(Array.from(items), Object.assign({}, defaultOptions, {
       container: this.carousel,
       carousel: true
