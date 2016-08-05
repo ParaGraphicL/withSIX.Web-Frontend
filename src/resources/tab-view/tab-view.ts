@@ -30,10 +30,12 @@ export class TabView<T extends ITab> extends ViewModel {
   @bindable tabs: T[] = [];
   @bindable renderView = true;
   @bindable({ defaultBindingMode: bindingMode.twoWay }) selectedTab: T;
-  toggleTab = (tab: T) => {
+  toggleTab = (tab: T, $evt) => {
+    if ($evt) $evt.stopPropagation();
     this.eventBus.publish(new CloseTabs(this));
     if (tab && tab.disabled && tab.disabledAction) tab.disabledAction();
     else this.selectedTab = this.selectedTab === tab ? null : tab;
+    return false;
   }
   close = ($event) => {
     if ($event.ctrlKey || $event.altKey || $event.shiftKey) return true;

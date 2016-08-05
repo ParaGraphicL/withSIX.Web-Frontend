@@ -318,3 +318,11 @@
     transform: rotate(40deg);
   }
 }
+
+img.source {
+  position: absolute;
+  bottom: 64px;
+  max-height: 32px;
+  max-width: 32px;
+  right: 32px;
+}

@@ -10,6 +10,11 @@ $bg: $barBackgroundColor;
   background-color: $bg;
   color: $barColor;
   word-wrap: break-word;
+  bar {
+    display: block;
+    width: $headerSize;
+    height: 100%;
+  }
   // -webkit-filter: drop-shadow(0px 0px 8px rgba(28, 28, 28, 0.75));
   // filter:drop-shadow(0px 0px 8px rgba(28, 28, 28, 0.75));
   // &.active {

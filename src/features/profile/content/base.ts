@@ -33,6 +33,7 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
   state: IContentState = this.getDefaultState();
   bottomMenuActions = [];
   url: string;
+  source?: {img: string; text: string};
 
   isForActiveGame: boolean;
   launchMenuItem: MenuItem<any>;
@@ -106,6 +107,10 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
     this.isForActiveGame = !this.model.originalGameId || this.model.originalGameId == this.model.gameId;
 
     this.url = '/p/' + this.getPath();
+
+    if (this.image && this.image.includes('steamusercontent.com')) {
+      this.source = { img: this.w6.url.img.steam, text: 'Steam' }
+    }
 
     //this.tools.Debug.log("Mod State: " + this.model.packageName, this.model.version, this.model.id, this.state);
     this.subscriptions.subd(d => {
