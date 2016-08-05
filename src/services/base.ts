@@ -100,10 +100,10 @@ export class Base implements IDisposable {
     else return o.distinctUntilChanged();
   }
 
-  public static getChanges<T>(x: ChangeNotification<T>[], source: T[]) {
+  public static getChanges<T>(evt: ChangeNotification<T>[], source: T[]) {
     var added: T[] = [];
     var removed: T[] = [];
-    x.forEach(x => {
+    evt.forEach(x => {
       if (x.addedCount > 0) added.push(...source.slice(x.index).slice(0, x.addedCount)) // XXX:
       if (x.removed.length > 0) removed.push(...x.removed);
     });
