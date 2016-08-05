@@ -246,7 +246,7 @@ export class Parser {
         title: 'Video',
         type: 'text/html',
         youtube: id,
-        poster: imgSrc //|| `https://img.youtube.com/vi/${id}/0.jpg`
+        poster: `https://img.youtube.com/vi/${id}/0.jpg`
       }
     }
     return null;
