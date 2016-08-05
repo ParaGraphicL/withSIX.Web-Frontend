@@ -58,7 +58,7 @@ export class W6Urls {
     this.contentCdn = "//" + this.buckets["withsix-usercontent"];
     this.docsCdn = "//withsix-cdn.azureedge.net";
     this.img = {
-      play: this.getAssetUrl('img/play-button-overlay-sm.png')
+      play: this.getAssetUrl('img/play-icon.png')
     }
   }
   img;

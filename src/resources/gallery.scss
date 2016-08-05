@@ -6,8 +6,8 @@
     .video {
       img {
         position: absolute;
-        height: 48px;
-        width: 48px;
+        max-height: 48px;
+        max-width: 48px;
         margin-left: 16px;
         margin-top: 16px;
       }
