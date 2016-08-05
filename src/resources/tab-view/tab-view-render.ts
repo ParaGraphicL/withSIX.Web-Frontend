@@ -17,8 +17,8 @@ export class TabViewRender extends ViewModel {
   bind() {
     this.subscriptions.subd(d => {
       d(this.whenAnyValue(x => x.selectedTab).filter(x => x !== null).subscribe(x => this.lastActiveTab = x));
-      d(this.whenAnyValue(x => x.selectedTab).filter(x => x === null).throttleTime(1000).filter(x => this.selectedTab == null).subscribe(x => this.lastActiveTab = null));
-      d(this.whenAnyValue(x => x.selectedTab).throttleTime(100).subscribe(x => this.tabStatus = x ? 'active' : 'inactive'));
+      d(this.whenAnyValue(x => x.selectedTab).filter(x => x === null).delay(1000).filter(x => this.selectedTab == null).subscribe(x => this.lastActiveTab = null));
+      d(this.whenAnyValue(x => x.selectedTab).delay(100).subscribe(x => this.tabStatus = x ? 'active' : 'inactive'));
     })
     ViewModel.setupDelegateEl(this.el, () => this.selectedTab = null);
   }
