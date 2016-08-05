@@ -197,8 +197,7 @@ export class App extends ViewModel {
     if (this.w6.enableBasket) this.client.getInfo(); // instead of connection.promise();
     $('body').attr('style', '');
 
-    this.version = this.w6.url.getAssetHashed("version");
-    if (this.version) this.checkVersion();
+    if (this.w6.url.version) this.checkVersion();
     this.newVersionInterval = setInterval(() => this.checkVersion(), 10 * 60 * 1000);
 
     this.ls.on('w6.event', (v, old, url) => this.raiseCrossEvent(v.name, v.data));
@@ -292,8 +291,6 @@ export class App extends ViewModel {
     return null;
   }
 
-  version: string;
-
   get classes() { return `${this.w6.renderAds ? null : 'no-adds'} ${this.w6.miniClient.isConnected ? 'client-active' : null} ${this.w6.miniClient.isConnected && this.gameInfo.isLocked ? 'client-busy' : null} ${this.isApiBusy ? 'api-busy' : ''} ${this.w6.userInfo.id ? 'logged-in' : null}` }
 
   isApiBusy = false;
@@ -328,7 +325,7 @@ export class App extends ViewModel {
   async checkVersion() {
     let version = await this.http.get(this.w6.url.cdn + "/volatile/version2.json");
     let newVersion = version.content.version;
-    if (this.version != newVersion) {
+    if (this.w6.url.version != newVersion) {
       this.newAppVersionAvailable = true;
       clearInterval(this.newVersionInterval);
     }
