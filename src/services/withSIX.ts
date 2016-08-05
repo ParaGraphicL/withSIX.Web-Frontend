@@ -60,8 +60,10 @@ export class W6Urls {
     this.img = {
       play: this.getAssetUrl('img/play-icon.png')
     }
+    this.version = this.getAssetHashed("version");
   }
   img;
+  version: string;
 
   getCurrentPageWithoutHash() { return window.location.protocol + '//' + window.location.host + window.location.pathname + window.location.search; }
 
