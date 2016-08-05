@@ -1,9 +1,9 @@
 <template>
   <div class="image-gallery lightbox">
-    <a repeat.for="image of items" href.bind="image.href" target="_blank" title.bind="image.title" click.delegate="clicked(image, $event)">
+    <a repeat.for="image of items" href.bind="image.href" target="_blank" title.bind="image.title || ''" click.delegate="clicked(image, $event)">
       <div class="imageholder" back-img.bind="image.thumbnail || image.poster">
         <div class="video" if.bind="isVideo(image)">
-          <img src="http://cliparts.co/cliparts/pT5/8xK/pT58xKE7c.png" />
+          <img src.one-time="$parent.w6.url.img.play" />
         </div>
       </div>
     </a>

@@ -5,7 +5,7 @@
 const blueimpGallery = <any>require('blueimp-gallery');
 import { bindable, inject } from 'aurelia-framework';
 import { Rx, Base, ViewModel, UiContext } from '../../services/lib';
-import { GalleryItem } from '../gallery';
+import { GalleryItem, defaultOptions } from '../gallery';
 
 @inject(Element, UiContext)
 export class Carousel extends ViewModel {
@@ -51,9 +51,9 @@ export class Carousel extends ViewModel {
 
   setupGallery(items: GalleryItem[]) {
     if (this.gallery) { this.gallery.close(); this.gallery = null }
-    this.gallery = new blueimpGallery(Array.from(items), {
+    this.gallery = new blueimpGallery(Array.from(items), Object.assign({}, defaultOptions, {
       container: this.carousel,
       carousel: true
-    });
+    }));
   }
 }
