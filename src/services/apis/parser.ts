@@ -98,14 +98,22 @@ export abstract class InterestingLink {
   displayImage: string; 
   constructor(public url: string, public images: string[] = []) {
     if (images && images.length > 0) this.displayImage = images[0];
+    if (!this.displayImage) this.displayImage = this.getDisplayImage();
  }
+ protected getDisplayImage() { return null; }
 }
 export class ImgurGallery extends InterestingLink {
   constructor(url, images) { super(url, images); this.displayImage = null }
 }
 export class SocialMedia extends InterestingLink { }
 export class ForumUrl extends InterestingLink { }
-export class DonationUrl extends InterestingLink { }
+export class DonationUrl extends InterestingLink { 
+  protected getDisplayImage() {
+    if (this.url.includes('//patreon.com/')) return 'https://s3.amazonaws.com/patreon_public_assets/toolbox/patreon_logo.png';
+    else if (this.url.includes('//paypal.com/')) return 'https://www.paypalobjects.com/webstatic/mktg/logo-center/PP_Acceptance_Marks_for_LogoCenter_266x142.png';
+    return super.getDisplayImage();
+  }
+}
 export class LicenseUrl extends InterestingLink { }
 
 export class Parser {
