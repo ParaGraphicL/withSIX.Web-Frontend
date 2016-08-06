@@ -255,7 +255,9 @@ export class Parser {
   tryVideo = (src: string) => {
     if (!src) return null;
     let m;
-    if ((src.includes('youtube.com/embed/') || src.includes('youtu.be/embed/')) && (m = src.match(/embed\/([^\/\?#\s]+)/))) {
+    if (
+      (src.includes('youtube.com/embed/') || src.includes('youtu.be/embed/') || src.includes('youtube-nocookie.com/embed/'))
+        && (m = src.match(/embed\/([^\/\?#\s]+)/))) {
       let id = m[1];
       return {
         href: src,

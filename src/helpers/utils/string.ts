@@ -21,7 +21,15 @@ export const sanitizeHtml = (html: string, overrides?) => sanitizeHtmlLib(html, 
   exclusiveFilter: function(frame) {
     return frame.tag === 'iframe'
       && (!frame.src
-        || !(frame.src.startsWith("https://youtube.com/") || frame.src.startsWith("http://youtube.com/") || frame.src.startsWith("//youtube.com/") || frame.startsWith('https://youtu.be/')));
+        || !(frame.src.startsWith("https://youtube.com/") ||
+        frame.src.startsWith("http://youtube.com/") ||
+        frame.src.startsWith("//youtube.com/") ||
+        frame.src.startsWith("https://www.youtube-nocookie.com/") ||
+        frame.src.startsWith("http://www.youtube-nocookie.com/") ||
+        frame.src.startsWith("//www.youtube-nocookie.com/") ||
+        frame.startsWith('http://youtu.be/') ||
+        frame.startsWith('//youtu.be/') ||
+        frame.startsWith('https://youtu.be/')));
   }
 }, overrides))
 
