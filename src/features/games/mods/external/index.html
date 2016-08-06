@@ -3,7 +3,7 @@
     <ul>
       <li repeat.for="il of interestingLinks">
         <a href.bind="il.url" class="interesting-link">
-          <img src.bind="il.displayImage" show.bind="il.displayImage"></img>
+          <img src.bind="il.displayImage" if.bind="il.displayImage"></img>
           <span show.bind="!il.displayImage">${il.url}</span>
         </a>
       </li>
