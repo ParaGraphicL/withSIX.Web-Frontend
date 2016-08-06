@@ -46,14 +46,15 @@ export class Carousel extends ViewModel {
     this.obs = Base.observeCollection(items)
       .subscribe(x => {
         const { added, removed } = Base.getChanges(x, items);
-        if (removed.length > 0) this.setupGallery(items);
+        if (added.length === 0 && removed.length === 0) return;
+        if (removed.length > 0 || !this.gallery) this.setupGallery(items);
         else this.gallery.add(added);
       });
   }
 
   setupGallery(items: GalleryItem[]) {
     if (this.gallery) this.close();
-    this.gallery = new blueimpGallery(Array.from(items), Object.assign({}, defaultOptions, {
+    if (items.length > 0) this.gallery = new blueimpGallery(Array.from(items), Object.assign({}, defaultOptions, {
       container: this.carousel,
       carousel: true
     }));
