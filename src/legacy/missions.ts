@@ -563,7 +563,7 @@ export class UploadNewmissionController extends BaseController {
           case '---':
             break;
           default:
-            window.location = $(this).val();
+            window.location.href = $(this).val();
         }
       });
 

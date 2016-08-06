@@ -4,7 +4,6 @@ declare var googletag: any;
 declare var Markdown: any;
 
 // Workaround aurelia fetch
-interface BufferSource {}
 interface URLSearchParams {}
 
 // Rxui
