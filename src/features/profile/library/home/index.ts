@@ -1,5 +1,5 @@
 import {IBasketItem, BasketItemType, GameClientInfo, UiContext, uiCommand2, uiCommandWithLogin2, ViewModel, MenuItem, IMenuItem, Query, DbQuery, DbClientQuery, handlerFor, VoidCommand, IContent, TypeScope, ItemState, IContentStateChange, IContentStatusChange, IContentState, BasketService,
-  InstallContents, ContentDeleted, breeze, IBreezeMod} from '../../../../framework';
+  InstallContents, ContentDeleted, breeze, IBreezeMod, IGameData} from '../../../../framework';
 import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import {EventAggregator} from 'aurelia-event-aggregator';
@@ -166,23 +166,16 @@ export class Index extends BaseGame {
   }
 }
 
-export interface IHomeData {
-  updates: any[];
-  newContent: any[];
-  recent: any[];
-  installedMissionsCount: number;
-  installedModsCount: number;
-}
-export class GetGameHome extends Query<IHomeData> {
+export class GetGameHome extends Query<IGameData> {
   constructor(public id: string) { super() }
 }
 
 @handlerFor(GetGameHome)
-class GetGameHomeHandler extends DbClientQuery<GetGameHome, IHomeData> {
-  public async handle(request: GetGameHome): Promise<IHomeData> {
+class GetGameHomeHandler extends DbClientQuery<GetGameHome, IGameData> {
+  public async handle(request: GetGameHome): Promise<IGameData> {
     //return GetHomeHandler.designTimeData(request);
-    var r: IHomeData = await this.client.getGameHome(request.id);
-    r.recent.forEach(x => x.showRecent = true)
+    var r = await this.client.getGameHome(request.id);
+    r.recent.forEach(x => (<any>x).showRecent = true)
 
     // TODO: Collections
     var allMods = r.newContent.concat(r.recent).concat(r.updates);
