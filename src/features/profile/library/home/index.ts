@@ -1,5 +1,5 @@
 import {IBasketItem, BasketItemType, GameClientInfo, UiContext, uiCommand2, uiCommandWithLogin2, ViewModel, MenuItem, IMenuItem, Query, DbQuery, DbClientQuery, handlerFor, VoidCommand, IContent, TypeScope, ItemState, IContentStateChange, IContentStatusChange, IContentState, BasketService,
-  InstallContents, ContentDeleted, breeze, IBreezeMod, IGameData} from '../../../../framework';
+  InstallContents, ContentDeleted, breeze, IBreezeMod, IGameHome} from '../../../../framework';
 import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import {EventAggregator} from 'aurelia-event-aggregator';
@@ -166,13 +166,13 @@ export class Index extends BaseGame {
   }
 }
 
-export class GetGameHome extends Query<IGameData> {
+export class GetGameHome extends Query<IGameHome> {
   constructor(public id: string) { super() }
 }
 
 @handlerFor(GetGameHome)
-class GetGameHomeHandler extends DbClientQuery<GetGameHome, IGameData> {
-  public async handle(request: GetGameHome): Promise<IGameData> {
+class GetGameHomeHandler extends DbClientQuery<GetGameHome, IGameHome> {
+  public async handle(request: GetGameHome): Promise<IGameHome> {
     //return GetHomeHandler.designTimeData(request);
     var r = await this.client.getGameHome(request.id);
     r.recent.forEach(x => (<any>x).showRecent = true)

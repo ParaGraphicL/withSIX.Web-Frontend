@@ -1,6 +1,9 @@
-import {ViewModelWithModel, VoidCommand, DbClientQuery, handlerFor, IGame, IMenuItem, MenuItem, uiCommand2} from '../../../framework';
-import {GetGameHome, IHomeData} from '../../profile/library/home/index';
-import {IHomeD} from './library';
+import {
+  ViewModelWithModel, VoidCommand, DbClientQuery, handlerFor, IGame, IMenuItem, MenuItem, uiCommand2,
+  IGameHome
+} from '../../../framework';
+import { GetGameHome } from '../../profile/library/home/index';
+import { IHomeD } from './library';
 
 export class Recent extends ViewModelWithModel<IHomeD> {
   menuItems: IMenuItem[] = [];
@@ -9,7 +12,7 @@ export class Recent extends ViewModelWithModel<IHomeD> {
     if (this.model === model) return;
     super.activate(model);
 
-    let home: IHomeData = { recent: [], updates: [], newContent: [], installedMissionsCount: null, installedModsCount: null };
+    let home: IGameHome = { recent: [], updates: [], newContent: [], installedMissionsCount: null, installedModsCount: null };
 
     try {
       home = await new GetGameHome(this.w6.activeGame.id).handle(this.mediator);
