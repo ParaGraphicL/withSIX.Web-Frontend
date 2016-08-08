@@ -18,6 +18,8 @@ export class Index extends BaseGame {
       .then(x => this.items = x.items);
   }
 
+  createNew() { this.navigateInternal(`${this.w6.url.play}/${this.game.slug}/missions/new`); }
+
   contentDeleted = (evt: ContentDeleted) => {
     let deleteIfHas = (list: any[], id: string) => {
       var item = list.asEnumerable().firstOrDefault(x => x.id == id);
