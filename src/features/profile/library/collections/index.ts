@@ -25,7 +25,7 @@ export class Index extends BaseGame {
     this.subscriptions.subd(d => {
       d(this.eventBus.subscribe(ContentDeleted, this.contentDeleted));
     })
-    this.items = r.collections;
+    this.items = r.items;
   }
 
   createNew = uiCommandWithLogin(async () => {
@@ -42,7 +42,7 @@ export class Index extends BaseGame {
 }
 
 interface ICollectionsData {
-  collections: ICollection[];
+  items: ICollection[];
 }
 
 @requireUser()
@@ -75,14 +75,16 @@ class GetCollectionsHandler extends DbClientQuery<GetCollections, ICollectionsDa
 
     if (request.user.id) p.push(this.getSubscribedCollections(request, optionsTodo), this.getMyCollections(request, optionsTodo));
 		  var results = await Promise.all(p)
-		  return { collections: results.flatten<ICollection>() };
+		  return { items: results.flatten<ICollection>() };
     // return GetCollectionsHandler.designTimeData(request);
   }
 
 		async getClientCollections(request: GetCollections): Promise<ICollection[]> {
     try {
       var r = await this.client.getGameCollections(request.id);
-      return r.collections.map(x => { x.typeScope = TypeScope.Local; return x; });
+      let items = (<any>r).items || r.collections;
+      items.forEach(x => x.typeScope = TypeScope.Local);
+      return items;
     } catch (err) {
       this.tools.Debug.warn("Error while trying to get collections from client", err);
       return [];

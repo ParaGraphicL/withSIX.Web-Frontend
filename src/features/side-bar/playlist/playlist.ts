@@ -520,7 +520,7 @@ class GetMyCollectionHandler extends DbClientQuery<GetMyCollection, IPlaylistCol
   }
 
   convertOnlineCollection(collection: IBreezeCollection, type: TypeScope): IPlaylistCollection {
-    return Object.assign({}, CollectionHelper.convertOnlineCollection(collection, type, this.w6), {
+    return Object.assign(<IPlaylistCollection>{}, CollectionHelper.convertOnlineCollection(collection, type, this.w6), {
       modsCount: collection.modsCount,
       subscribersCount: collection.subscribersCount,
       scope: CollectionScope[collection.scope],
@@ -581,7 +581,7 @@ class GetMyCollectionsHandler extends DbClientQuery<GetMyCollections, ICollectio
   }
 
   convertOnlineCollection(collection: IBreezeCollection, type: TypeScope): IPlaylistCollection {
-    return Object.assign({}, CollectionHelper.convertOnlineCollection(collection, type, this.w6), {
+    return Object.assign(<IPlaylistCollection>{}, CollectionHelper.convertOnlineCollection(collection, type, this.w6), {
       modsCount: collection.modsCount,
       subscribersCount: collection.subscribersCount,
       scope: CollectionScope[collection.scope],

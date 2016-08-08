@@ -39,7 +39,8 @@ export interface IQueryResult<T extends breeze.Entity> extends breeze.QueryResul
 export interface IHttpPromise<T> extends Promise<ng.IHttpPromiseCallbackArg<T>> {
   success(callback: ng.IHttpPromiseCallback<T>): IHttpPromise<T>;
   error(callback: ng.IHttpPromiseCallback<any>): IHttpPromise<T>;
-  then<TResult>(successCallback: (response: ng.IHttpPromiseCallbackArg<T>) => Promise<TResult> | TResult, errorCallback?: (response: ng.IHttpPromiseCallbackArg<any>) => any): Promise<TResult>;
+  //then<TResult>(successCallback: (response: ng.IHttpPromiseCallbackArg<T>) => Promise<TResult> | TResult, errorCallback?: (response: ng.IHttpPromiseCallbackArg<any>) => any): Promise<TResult>;
+  //then<TResult1, TResult2>(onfulfilled: (value: ng.IHttpPromiseCallbackArg<T>) => TResult1 | PromiseLike<TResult1>, onrejected: (reason: ng.IHttpPromiseCallbackArg<any>) => TResult2 | PromiseLike<TResult2>): Promise<TResult1 | TResult2>;
 }
 
 export interface IRequestShortcutConfig extends ng.IRequestShortcutConfig {
