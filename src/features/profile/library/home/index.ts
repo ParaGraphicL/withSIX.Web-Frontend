@@ -18,6 +18,8 @@ export class Index extends BaseGame {
   basket: any;
   gameInfo: GameClientInfo;
 
+  get hasUpdates() { return this.updates && this.updates.length > 0 }
+
   constructor(ui: UiContext, private basketService: BasketService) { super(ui); }
 
   openGameSettings() {
@@ -142,16 +144,14 @@ export class Index extends BaseGame {
   addMod = uiCommandWithLogin2("Mod", async () => this.legacyMediator.openAddModDialog(this.game.slug), { icon: "icon withSIX-icon-Nav-Mod" })
   addMission = uiCommandWithLogin2("Mission", async () => this.navigateInternal(this.w6.url.play + '/' + this.game.slug + '/missions/new'), { icon: "icon withSIX-icon-Nav-Mission" });
   addCollection = uiCommandWithLogin2("Collection", async () => this.dialog.open({ viewModel: CreateCollectionDialog, model: { game: this.game } }), { icon: "icon withSIX-icon-Nav-Collection" })
-  updateAll = uiCommand2("Update all", () => new InstallContents(this.game.id, Array.from(this.updates.values()).map(x => { return { id: x.id } }), { text: "Available updates" }).handle(this.mediator), { cls: "warn", icon: 'withSIX-icon-Hexagon-Upload2' });
+  updateAll = uiCommand2("Update all", () => new InstallContents(this.game.id, this.updates.map(x => { return { id: x.id } }), { text: "Available updates" }).handle(this.mediator), { cls: "warn", icon: 'withSIX-icon-Hexagon-Upload2', isVisibleObservable: this.observeEx(x => x.clientEnabled), canExecuteObservable: this.observeEx(x => x.hasUpdates) });
   addContentMenu: IMenuItem[] = [
     new MenuItem(this.addCollection),
     new MenuItem(this.addMod),
     new MenuItem(this.addMission)
   ]
 
-  updatedToBasketInfo() {
-    return Array.from(this.updates.values()).map(x => this.toBasketInfo(x));
-  }
+  updatedToBasketInfo() { return this.updates.map(x => this.toBasketInfo(x)); }
 
   toBasketInfo(content: IContent): IBasketItem {
     return {
