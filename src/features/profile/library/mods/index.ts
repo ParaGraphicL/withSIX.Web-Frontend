@@ -1,4 +1,4 @@
-import {W6Context, IBreezeMod, IUserInfo, Client, ModDataService, ISort, Query, DbClientQuery, handlerFor, requireUser, IRequireUser, IContent, TypeScope, BasketService,
+import {W6Context, IBreezeMod, IUserInfo, Client, ModDataService, IModsData, ISort, Query, DbClientQuery, handlerFor, requireUser, IRequireUser, IContent, TypeScope, BasketService,
   ContentDeleted, breeze} from '../../../../framework';
 import {inject} from 'aurelia-framework';
 import {BaseGame, Mod} from '../../lib';
@@ -31,20 +31,6 @@ export class Index extends BaseGame {
   createNew() { return this.legacyMediator.openAddModDialog(this.game.slug); }
 }
 
-interface IModsData {
-  items: IContent[];
-}
-
-interface IPageModel {
-  page: number;
-  totalPages: number;
-  pageSize: number;
-}
-
-interface IPageModelT<T> extends IPageModel {
-  items: T[];
-}
-
 @requireUser()
 class GetMods extends Query<IModsData> implements IRequireUser {
   constructor(public id: string) { super() }
@@ -70,10 +56,13 @@ class GetModsHandler extends DbClientQuery<GetMods, IModsData> {
 
     // TODO: only if client connected get client info.. w6.miniClient.isConnected // but we dont wait for it so bad idea for now..
     // we also need to refresh then when the client is connected later?
+    var page, pageSize, totalPages;
     var p = [
       this.getClientMods(request).then(async (x) => {
-        await this.handleModAugments(x);
-        return x;
+        page = x.page;
+        totalPages = x.totalPages;
+        pageSize = x.pageSize;
+        return x.items;
       })
     ];
 
@@ -82,17 +71,18 @@ class GetModsHandler extends DbClientQuery<GetMods, IModsData> {
         .then(x => x.results.map(x => this.convertOnlineMods(x))));
     }
     let results = await Promise.all<IContent[]>(p);
-    return { items: results.flatten<IContent>() };
+    return { items: results.flatten<IContent>(), page, totalPages, pageSize };
     // return GetModsHandler.designTimeData(request);
   }
 
   async getClientMods(request: GetMods) {
     try {
-      let x = await this.client.getGameMods(request.id);
-      return (<any>x).items || x.mods;
+      let x = await this.client.getGameMods(request);
+      await this.handleModAugments(x.items);
+      return x;
     } catch (err) {
       this.tools.Debug.warn("Error while trying to get mods from client", err);
-      return [];
+      return {items: [], page: 1, pageSize: 24, totalPages: 1}
     }
   }
 

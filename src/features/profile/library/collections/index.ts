@@ -81,10 +81,9 @@ class GetCollectionsHandler extends DbClientQuery<GetCollections, ICollectionsDa
 
 		async getClientCollections(request: GetCollections): Promise<ICollection[]> {
     try {
-      var r = await this.client.getGameCollections(request.id);
-      let items = (<any>r).items || r.collections;
-      items.forEach(x => x.typeScope = TypeScope.Local);
-      return items;
+      var r = await this.client.getGameCollections(request);
+      r.items.forEach(x => x.typeScope = TypeScope.Local);
+      return r.items;
     } catch (err) {
       this.tools.Debug.warn("Error while trying to get collections from client", err);
       return [];
