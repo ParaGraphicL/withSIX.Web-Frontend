@@ -562,8 +562,8 @@ class GetMyCollectionsHandler extends DbClientQuery<GetMyCollections, ICollectio
   }
 
   async getClientCollections(request: GetMyCollections) {
-    var r = await this.client.getGameCollections(request.id);
-    return r.collections.map(x => { x.typeScope = TypeScope.Local; return x; });
+    var r = await this.client.getGameCollections(request);
+    return r.items.map(x => { x.typeScope = TypeScope.Local; return x; });
   }
 
   async getMyCollections(request: GetMyCollections, options) {
