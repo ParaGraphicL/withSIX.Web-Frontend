@@ -1,5 +1,5 @@
 import {inject} from 'aurelia-framework';
-import {Query, DbClientQuery, handlerFor, ISort, IMissionsData, IContent, IMission, TypeScope, ContentDeleted} from '../../../../framework';
+import {Query, DbClientQuery, handlerFor, ISort, IContent, IMission, TypeScope, ContentDeleted} from '../../../../framework';
 import {BaseGame} from '../../lib';
 
 export class Index extends BaseGame {
@@ -15,7 +15,7 @@ export class Index extends BaseGame {
     })
     // TODO
     return new GetMissions(this.game.id).handle(this.mediator)
-      .then(x => this.items = x.missions);
+      .then(x => this.items = x.items);
   }
 
   contentDeleted = (evt: ContentDeleted) => {
@@ -27,6 +27,9 @@ export class Index extends BaseGame {
   }
 }
 
+interface IMissionsData {
+   items: IMission[];
+}
 
 class GetMissions extends Query<IMissionsData> {
   constructor(public id: string) { super() }
@@ -37,10 +40,11 @@ class GetMissionsHandler extends DbClientQuery<GetMissions, IMissionsData> {
   // TODO: Merge all data from client, and web queries etc... :S
   public async handle(request: GetMissions): Promise<IMissionsData> {
     try {
-      return await this.client.getGameMissions(request.id);
+      let r = await this.client.getGameMissions(request.id)
+      return { items: (<any>r).items || r.missions };
     } catch (err) {
       this.tools.Debug.warn("Error while trying to get collections from client", err);
-      return { missions: [] };
+      return { items: [] };
     }
     // return GetMissionsHandler.designTimeData(request);
   }

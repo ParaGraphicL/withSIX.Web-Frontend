@@ -17,7 +17,7 @@ export class Index extends BaseGame {
     this.subscriptions.subd(d => {
       d(this.eventBus.subscribe(ContentDeleted, this.contentDeleted));
     })
-    this.items = r.mods;
+    this.items = r.items;
   }
 
   contentDeleted = (evt: ContentDeleted) => {
@@ -32,7 +32,17 @@ export class Index extends BaseGame {
 }
 
 interface IModsData {
-  mods: IContent[];
+  items: IContent[];
+}
+
+interface IPageModel {
+  page: number;
+  totalPages: number;
+  pageSize: number;
+}
+
+interface IPageModelT<T> extends IPageModel {
+  items: T[];
 }
 
 @requireUser()
@@ -48,7 +58,7 @@ class GetModsHandler extends DbClientQuery<GetMods, IModsData> {
     super(dbContext, modInfoService, bs);
   }
 
-  public async handle(request: GetMods) {
+  public async handle(request: GetMods): Promise<IModsData> {
     var optionsTodo = {
       /*                    filter: {},
                           sort: {
@@ -72,14 +82,14 @@ class GetModsHandler extends DbClientQuery<GetMods, IModsData> {
         .then(x => x.results.map(x => this.convertOnlineMods(x))));
     }
     let results = await Promise.all<IContent[]>(p);
-    return <IModsData>{ mods: results.flatten<IContent>() };
+    return { items: results.flatten<IContent>() };
     // return GetModsHandler.designTimeData(request);
   }
 
   async getClientMods(request: GetMods) {
     try {
       let x = await this.client.getGameMods(request.id);
-      return x.mods;
+      return (<any>x).items || x.mods;
     } catch (err) {
       this.tools.Debug.warn("Error while trying to get mods from client", err);
       return [];
