@@ -1,14 +1,30 @@
 declare var URL;
 
+export interface Url extends HTMLAnchorElement { }
+
 // TODO https://github.com/github/url-polyfill
 export const createUrl = (url: string) => {
   try {
-    return new URL(url);
+    return <Url>new URL(url);
   } catch (err) {
     var parser = document.createElement('a');
     parser.href = url;
-    return parser;
+    return <Url><any>parser;
   }
+}
+
+export const createUrlSafe = (urlWithOrWithoutScheme: string) => createUrl(safeUrl(urlWithOrWithoutScheme));
+const safeUrl = (urlWithOrWithoutScheme: string) => {
+  if (urlWithOrWithoutScheme.startsWith("//"))
+    return (window.location.protocol + urlWithOrWithoutScheme);
+
+  if (urlWithOrWithoutScheme.startsWith("/"))
+    return (location.origin + urlWithOrWithoutScheme);
+
+  if (urlWithOrWithoutScheme.match(/^\w+:\/\//))
+    return (urlWithOrWithoutScheme);
+
+  return (location.origin + '/' + urlWithOrWithoutScheme);
 }
 
 export const buildUrl = (url: string) => {

@@ -1,5 +1,6 @@
 import Linq from 'linq4es2015';
 
+
 export const flatten = <T>([first, ...rest]): T[] => {
   if (first === undefined)
     return [];
@@ -46,3 +47,19 @@ export const aryToMap = <K, V>(ary: V[], keyFunc: (x: V) => K) => {
 }
 
 export const enumToMap = <K, V> (ary: Enumerable<V>, keyFunc: (x: V) => K) => aryToMap(ary.toArray(), keyFunc); // todo use iterable instead..
+
+export const move = (ar: any[], old_index: number, new_index: number) => {
+    while (old_index < 0) {
+        old_index += ar.length;
+    }
+    while (new_index < 0) {
+        new_index += ar.length;
+    }
+    if (new_index >= ar.length) {
+        var k = new_index - ar.length;
+        while ((k--) + 1) {
+            ar.push(undefined);
+        }
+    }
+    ar.splice(new_index, 0, ar.splice(old_index, 1)[0]);
+}

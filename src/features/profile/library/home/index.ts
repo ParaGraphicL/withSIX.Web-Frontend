@@ -1,5 +1,5 @@
 import {IBasketItem, BasketItemType, GameClientInfo, UiContext, uiCommand2, uiCommandWithLogin2, ViewModel, MenuItem, IMenuItem, Query, DbQuery, DbClientQuery, handlerFor, VoidCommand, IContent, TypeScope, ItemState, IContentStateChange, IContentStatusChange, IContentState, BasketService,
-  InstallContents, ContentDeleted} from '../../../../framework';
+  InstallContents, ContentDeleted, breeze, IBreezeMod, IGameHome} from '../../../../framework';
 import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import {EventAggregator} from 'aurelia-event-aggregator';
@@ -17,6 +17,8 @@ export class Index extends BaseGame {
   recent: IContent[];
   basket: any;
   gameInfo: GameClientInfo;
+
+  get hasUpdates() { return this.updates && this.updates.length > 0 }
 
   constructor(ui: UiContext, private basketService: BasketService) { super(ui); }
 
@@ -142,16 +144,14 @@ export class Index extends BaseGame {
   addMod = uiCommandWithLogin2("Mod", async () => this.legacyMediator.openAddModDialog(this.game.slug), { icon: "icon withSIX-icon-Nav-Mod" })
   addMission = uiCommandWithLogin2("Mission", async () => this.navigateInternal(this.w6.url.play + '/' + this.game.slug + '/missions/new'), { icon: "icon withSIX-icon-Nav-Mission" });
   addCollection = uiCommandWithLogin2("Collection", async () => this.dialog.open({ viewModel: CreateCollectionDialog, model: { game: this.game } }), { icon: "icon withSIX-icon-Nav-Collection" })
-  updateAll = uiCommand2("Update all", () => new InstallContents(this.game.id, Array.from(this.updates.values()).map(x => { return { id: x.id } }), { text: "Available updates" }).handle(this.mediator), { cls: "warn", icon: 'withSIX-icon-Hexagon-Upload2' });
+  updateAll = uiCommand2("Update all", () => new InstallContents(this.game.id, this.updates.map(x => { return { id: x.id } }), { text: "Available updates" }).handle(this.mediator), { cls: "warn", icon: 'withSIX-icon-Hexagon-Upload2', isVisibleObservable: this.observeEx(x => x.clientEnabled), canExecuteObservable: this.observeEx(x => x.hasUpdates) });
   addContentMenu: IMenuItem[] = [
     new MenuItem(this.addCollection),
     new MenuItem(this.addMod),
     new MenuItem(this.addMission)
   ]
 
-  updatedToBasketInfo() {
-    return Array.from(this.updates.values()).map(x => this.toBasketInfo(x));
-  }
+  updatedToBasketInfo() { return this.updates.map(x => this.toBasketInfo(x)); }
 
   toBasketInfo(content: IContent): IBasketItem {
     return {
@@ -166,23 +166,21 @@ export class Index extends BaseGame {
   }
 }
 
-export interface IHomeData {
-  updates: any[];
-  newContent: any[];
-  recent: any[];
-  installedMissionsCount: number;
-  installedModsCount: number;
-}
-export class GetGameHome extends Query<IHomeData> {
+export class GetGameHome extends Query<IGameHome> {
   constructor(public id: string) { super() }
 }
 
 @handlerFor(GetGameHome)
-class GetGameHomeHandler extends DbClientQuery<GetGameHome, IHomeData> {
-  public async handle(request: GetGameHome): Promise<IHomeData> {
+class GetGameHomeHandler extends DbClientQuery<GetGameHome, IGameHome> {
+  public async handle(request: GetGameHome): Promise<IGameHome> {
     //return GetHomeHandler.designTimeData(request);
-    var r: IHomeData = await this.client.getGameHome(request.id);
-    r.recent.forEach(x => x.showRecent = true)
+    var r = await this.client.getGameHome(request.id);
+    r.recent.forEach(x => (<any>x).showRecent = true)
+
+    // TODO: Collections
+    var allMods = r.newContent.concat(r.recent).concat(r.updates);
+    await this.handleModAugments(allMods);
+
     return r;
   }
 

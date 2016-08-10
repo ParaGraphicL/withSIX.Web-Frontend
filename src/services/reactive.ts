@@ -104,14 +104,7 @@ export class ReactiveList<T> extends ReactiveBase implements IDisposable {
       var sub = Base.observeCollection(this.items)
         .subscribe(x => {
           // TODO: Make item observation optional..
-          if (x.length == 0) return;
-
-          var added: T[] = [];
-          var removed: T[] = [];
-          x.forEach(x => {
-            if (x.addedCount > 0) this.items.slice(x.index).slice(0, x.addedCount).forEach(x => added.push(x))// XXX:
-            if (x.removed.length > 0) x.removed.forEach(x => removed.push(x));
-          });
+          const { added, removed } = Base.getChanges(x, this.items);
           if (added.length > 0) this._itemsAdded.next(added);
           if (removed.length > 0) this._itemsRemoved.next(removed);
         });

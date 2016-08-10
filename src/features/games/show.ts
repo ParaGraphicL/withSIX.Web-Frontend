@@ -15,6 +15,7 @@ export class Show extends ViewModel {
           `mods/:id/:slug/:something`,
           `mods/:id/:slug/:something/:somethingelse`,
 
+          `missions/new`,
           `missions/:id`,
           `missions/:id/:slug`,
           `missions/:id/:slug/:something`,

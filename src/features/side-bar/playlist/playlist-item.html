@@ -48,13 +48,13 @@
       </conditional-title>
 
       <div class="dependencies" if.bind="dependencies.length > 0">
-        <header if.bind="level == 0">
+        <header if.bind="level === 0">
           <div class="inner">
             <button class="pull-right text-button ignore-close" click.delegate="showDependencies = !showDependencies">
               ${showDependencies | hideShowText }
               <span class="icon ${showDependencies | hideShowIcon}"></span>
             </button>
-            <span class="text">${localChain.length | pluralize:'dependency'}.</span>
+            <span class="text">${localChain.length | pluralize:itemType}.</span>
             <span><span innerHTML.bind="dependencySize | size"></span> total</span>
           </div>
         </header>

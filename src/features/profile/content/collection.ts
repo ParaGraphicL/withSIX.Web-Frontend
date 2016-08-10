@@ -4,7 +4,7 @@ import {ViewModel, Query, IGame, ITab, IMenuItem,
   CollectionScope, IBreezeCollectionVersion, IBreezeCollectionVersionDependency, UiContext, CollectionHelper, UninstallContent,
   ReactiveList, FindModel, ActionType, BasketState, BasketType, ConnectionState, Debouncer, GameChanged, uiCommandWithLogin2, GameClientInfo, MessageDialog, Confirmation,
   IBreezeCollection, IRequireUser, IUserInfo, W6Context, Client, BasketService, CollectionDataService, requireUser, SelectTab,
-  breeze, IReactiveCommand} from '../../../framework';
+  breeze, IReactiveCommand, DependencyType} from '../../../framework';
 import {Basket, GameBaskets} from '../../game-baskets';
 import {inject} from 'aurelia-framework';
 
@@ -20,6 +20,8 @@ export class Collection extends ContentViewModel<ICollection> {
   topMenuActions = []
 
   get statTitle() { return 'subscriber' }
+
+  get canAddToBasket() { return this.activeGameId === this.model.gameId && this.baskets.active.model.collectionId !== this.model.id; }
 
   async activate(model: ICollection) {
     await super.activate(model);
@@ -74,7 +76,8 @@ export class Collection extends ContentViewModel<ICollection> {
 
   toBasketInfo(): IBasketItem {
     return {
-      id: this.model.id, packageName: this.model.packageName,
+      id: this.model.id,
+      packageName: this.model.packageName,
       gameId: this.model.gameId,
       itemType: BasketItemType.Collection,
       author: this.model.author,
@@ -145,7 +148,7 @@ class GetDependenciesHandler extends DbQuery<GetDependencies, IBreezeCollectionV
   async handle(request: GetDependencies) {
     var query = breeze.EntityQuery.from("CollectionVersions").expand(["dependencies"])
       .where("id", breeze.FilterQueryOp.Equals, request.id)
-      .select(["dependencies"])
+      //.select(["dependencies"]) // TODO: This doesn't work because of the limitations in our current setup
       .withParameters({ myPage: true });
     let r = await this.context.executeQuery<IBreezeCollectionVersion>(query);
     return r.results[0].dependencies;
@@ -162,14 +165,6 @@ class LoadCollectionIntoBasketHandler extends DbClientQuery<LoadCollectionIntoBa
   constructor(dbContext, client, bs: BasketService, private collectionDataService: CollectionDataService) {
     super(dbContext, client, bs);
   }
-  async getDependencies(request: GetDependencies) {
-    var query = breeze.EntityQuery.from("CollectionVersions").expand(["dependencies"])
-      .where("id", breeze.FilterQueryOp.Equals, request.id)
-      .select(["dependencies"])
-      .withParameters({ myPage: true });
-    let r = await this.context.executeQuery<IBreezeCollectionVersion>(query);
-    return r.results[0].dependencies;
-  }
 
   async handle(request: LoadCollectionIntoBasket) {
     let r = await this.collectionDataService.getCollectionsByIds([request.id], {});
@@ -179,20 +174,31 @@ class LoadCollectionIntoBasketHandler extends DbClientQuery<LoadCollectionIntoBa
     baskets.replaceBasket();
     let basket = baskets.active;
     basket.model.isTemporary = ((col.author && col.author.id) || col.authorId) != this.w6.userInfo.id;
-    basket.replaceItems(dependencies.map(x => {
+    let basketDeps = dependencies.map(x => {
       return {
         name: x.dependency,
         packageName: x.dependency,
         constraint: x.constraint,
-        id: x.modDependencyId,
-        itemType: BasketItemType.Mod,
+        id: x.modDependencyId || x.collectionDependencyId,
+        itemType: x.dependencyType === DependencyType[DependencyType.Collection] ? BasketItemType.Collection : BasketItemType.Mod,
         gameId: col.gameId,
         image: null,
         author: null,
         sizePacked: null
       }
-    }));
+    });
+    basket.replaceItems(basketDeps);
     basket.model.collectionId = col.id;
     basket.model.name = col.name;
   }
+
+  async getDependencies(request: GetDependencies) {
+    var query = breeze.EntityQuery.from("CollectionVersions").expand(["dependencies"])
+      .where("id", breeze.FilterQueryOp.Equals, request.id)
+      //.select(["dependencies"]) // TODO: This doesn't work because of the limitations in our current setup
+      .withParameters({ myPage: true });
+    let r = await this.context.executeQueryWithNewManager<IBreezeCollectionVersion>(query);
+    return r.results[0].dependencies;
+  }
+
 }

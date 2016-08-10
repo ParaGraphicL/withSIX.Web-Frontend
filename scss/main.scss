@@ -979,6 +979,8 @@ a.back {
   overflow: hidden;
   img {
     @include img-responsive;
+    max-width: 480px;
+    max-height: 360px;
   }
   a {
     word-break: break-word;

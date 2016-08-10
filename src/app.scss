@@ -26,7 +26,7 @@ virtual-list {
 }
 filters {
   .filters-area {
-    height: 92px;
+    //height: 92px;
     button,
     input,
     select {
@@ -54,6 +54,12 @@ filters {
     //   padding: 20.5px 19px;
     //   margin-right: 7px;
     // }
+    .tags {
+      ul {
+        max-height: 96px;
+        overflow-y: scroll;
+      }
+    }
   }
 }
 .message-dialog {

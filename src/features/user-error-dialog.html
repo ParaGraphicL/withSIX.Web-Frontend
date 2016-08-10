@@ -13,5 +13,6 @@
       <template repeat.for="c of model.recoveryOptions">
         <button click.delegate="handle(c)" class="${c.commandName.toLowerCase()}">${c.commandName}</button>
       </template>
+      <button if.bind="!model.recoveryOptions || model.recoveryOptions.length === 0" click.trigger="controller.close()">Cancel</button>
     </ai-dialog-footer>
   </ai-dialog>

@@ -22,6 +22,7 @@ const outDir = path.resolve('dist');
 
 const coreBundles = {
   bootstrap: [
+    'aurelia-bootstrapper-webpack',
     'aurelia-polyfills',
     'aurelia-pal',
     'aurelia-pal-browser',
@@ -58,17 +59,12 @@ const coreBundles = {
     'aurelia-mediator',
     'aurelia-fetch-client',
     'aurelia-validation',
-    'aurelia-ui-virtualization',
+    //'aurelia-ui-virtualization',
     'withsix-sync-api'
   ]
 }
 
 const baseConfig = {
-  entry: {
-    'app': ['./index'],
-    //'aurelia-bootstrap': ['./index'].concat(coreBundles.bootstrap).concat(coreBundles.aurelia)
-    //'aurelia': coreBundles.aurelia.filter(pkg => coreBundles.bootstrap.indexOf(pkg) === -1)
-  },
   output: {
     path: outDir,
   }
@@ -79,8 +75,12 @@ const baseConfig = {
 switch (ENV) {
   case 'production':
     config = generateConfig(
-      baseConfig,
-
+      baseConfig, {
+        entry: {
+          // workaround .call of undefined
+          'app': coreBundles.aurelia.concat(['./src/main']),
+        }
+      },
       require('@easy-webpack/config-env-production')
       ({
         compress: true
@@ -120,7 +120,11 @@ switch (ENV) {
       ({
         minify: true,
       }),
-
+      require('@easy-webpack/config-common-chunks-simple')
+      ({
+        appChunkName: 'app',
+        firstChunk: 'aurelia-bootstrap'
+      }),
       require('@easy-webpack/config-uglify')
       ({
         debug: false
@@ -130,8 +134,17 @@ switch (ENV) {
 
   case 'test':
     config = generateConfig(
-      baseConfig,
-
+      baseConfig, {
+        entry: {
+          // workaround .call of undefined
+          'app': coreBundles.aurelia.concat(['./src/main']),
+        }
+        // entry: {
+        //   'app': [ /* auto filled? */ ],
+        //   'aurelia-bootstrap': coreBundles.bootstrap,
+        //   'aurelia': coreBundles.aurelia.filter(pkg => coreBundles.bootstrap.indexOf(pkg) === -1)
+        // }
+      },
       require('@easy-webpack/config-env-development')
       ({
         devtool: 'inline-source-map'
@@ -175,8 +188,18 @@ switch (ENV) {
   case 'development':
     process.env.NODE_ENV = 'development';
     config = generateConfig(
-      baseConfig,
+      baseConfig, {
+        entry: {
+          // workaround .call of undefined
+          'app': coreBundles.aurelia.concat(['./src/main']),
+        }
 
+        // entry: {
+        //   'app': [ /* auto-filled */ ],
+        //   'aurelia-bootstrap': coreBundles.bootstrap,
+        //   'aurelia': coreBundles.aurelia.filter(pkg => coreBundles.bootstrap.indexOf(pkg) === -1)
+        // }
+      },
       require('@easy-webpack/config-env-development')(),
 
       require('@easy-webpack/config-aurelia')
@@ -213,6 +236,12 @@ switch (ENV) {
       ({
         minify: false
       })
+      /*,
+           require('@easy-webpack/config-common-chunks-simple')
+           ({
+             appChunkName: 'app',
+             firstChunk: 'aurelia-bootstrap'
+           })*/
     );
     break;
 }
@@ -220,25 +249,13 @@ switch (ENV) {
 if (ELECTRON) {
   config = generateConfig(
     config, {
-      entry: ['./index', './src/main']
+      entry: ['./src/main']
     },
     require('@easy-webpack/config-electron')(),
     ELECTRON == 'main' ?
     require('@easy-webpack/config-electron-main')() : require('@easy-webpack/config-electron-renderer')()
   );
 }
-
-// if (ENV !== 'test' && !ELECTRON) {
-//   config = generateConfig(
-//     config,
-//     require('@easy-webpack/config-common-chunks-simple')
-//     ({
-//       appChunkName: 'app',
-//       firstChunk: 'aurelia-bootstrap'
-//     })
-//   );
-// }
-
 
 if (ENV === 'test') {
   config = generateConfig(

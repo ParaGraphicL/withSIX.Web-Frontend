@@ -22,7 +22,7 @@ class GetCollectionsHandler extends DbQuery<GetCollections, IPaginated<ICollecti
         'author.slug': { in: [request.authorSlug] }
       }
     }
-    var query = new breeze.EntityQuery(jsonQuery).expand(["stat", "latestVersion"]);
+    var query = new breeze.EntityQuery(jsonQuery).expand(["stat"]);
     query = this.handleFilterQuery(query, request.filterInfo);
     if (!request.filterInfo.sortOrder || request.filterInfo.sortOrder.name != 'name') query = query.orderBy("name")
     query = this.handlePaginationQuery(query, request.page);

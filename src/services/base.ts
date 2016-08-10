@@ -72,7 +72,8 @@ export class Base implements IDisposable {
   static bindObservableTo<T, TProp>(observer: Rx.Observable<TProp>, propertyEx: PropertyExpression<T, TProp>, ...objs: T[]): IDisposable {
     var propertyName = this.getPropertyName(propertyEx);
     let dsp = new Subscriptions();
-    objs.forEach(obj => dsp.subd(d => observer.subscribe(x => obj[propertyName] = x)));
+    let obs = observer.distinctUntilChanged();
+    objs.forEach(obj => dsp.subd(d => obs.subscribe(x => obj[propertyName] = x)));
     return dsp;
   }
 
@@ -99,16 +100,29 @@ export class Base implements IDisposable {
     else return o.distinctUntilChanged();
   }
 
-  public static observeCollection<T>(col: T[]): Rx.Observable<any> {
+  public static getChanges<T>(evt: ChangeNotification<T>[], source: T[]) {
+    var added: T[] = [];
+    var removed: T[] = [];
+    evt.forEach(x => {
+      if (x.addedCount > 0) added.push(...source.slice(x.index).slice(0, x.addedCount)) // XXX:
+      if (x.removed.length > 0) removed.push(...x.removed);
+    });
+    return { added, removed };
+  }
+
+  public static observeCollection<T>(col: T[]): Rx.Observable<ChangeNotification<T>[]> {
     return Rx.Observable.create((observer: Rx.Subject<any>) =>
       bindingEngine.collectionObserver(col)
-      .subscribe(x => {
-        // don't care if there are no changes
-        if (x.length > 0) observer.next(x)
-      }).dispose);
+        .subscribe(x => {
+          if (x.length > 0) observer.next(x)
+        }).dispose);
   }
 
   dispose() { this.subscriptions.dispose(); }
+}
+
+interface ChangeNotification<T> {
+  addedCount: number; index: number; removed: T[]
 }
 
 

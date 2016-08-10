@@ -57,7 +57,14 @@ export class W6Urls {
 
     this.contentCdn = "//" + this.buckets["withsix-usercontent"];
     this.docsCdn = "//withsix-cdn.azureedge.net";
+    this.img = {
+      play: this.getAssetUrl('img/play-icon.png'),
+      steam: this.getAssetUrl('img/steam-512.gif'),
+    }
+    this.version = this.getAssetHashed("version");
   }
+  img;
+  version: string;
 
   getCurrentPageWithoutHash() { return window.location.protocol + '//' + window.location.host + window.location.pathname + window.location.search; }
 
@@ -121,7 +128,7 @@ export class W6Urls {
     var hashed = this.getAssetHashed(asset);
     return this.cdn + '/' + (hashed || asset);
   }
-  getAssetHashed(asset) { return window.assetHash && window.assetHash[asset] };
+  private getAssetHashed(asset) { return window.assetHash && window.assetHash[asset] };
 
   public getUsercontentUrl(asset: string, updatedAt?: Date) {
     asset = this.processAssetVersion(asset, updatedAt);
@@ -550,12 +557,8 @@ export class W6 {
       if (convertPropertyNames) angular.forEach(obj, (v, p) => newObj[converter.serverPropertyNameToClient(p)] = this.convertToClient(v, convertPropertyNames));
       else angular.forEach(obj, (v, p) => newObj[p] = this.convertToClient(v, convertPropertyNames));
       return <T>newObj;
-    } else if (typeof obj == "string") {
-      if (this.iso8601RegEx.test(obj)) {
-        return <T><any>breeze.DataType.parseDateFromServer(obj);
-        // if (!obj.endsWith("Z")) obj = obj + "Z";
-        // return new Date(obj);
-      }
+    } else if (typeof(obj) === 'string' || obj instanceof String) {
+      if (this.iso8601RegEx.test(obj)) return <T><any>breeze.DataType.parseDateFromServer(obj);
     }
 
     return <T>obj;

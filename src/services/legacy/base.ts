@@ -40,6 +40,7 @@ export interface IMenuItem {
   header: string;
   segment: string;
   mainSegment?: string;
+  fullSegment?: string;
   cls?: string;
   icon?: string;
   isRight?: boolean;

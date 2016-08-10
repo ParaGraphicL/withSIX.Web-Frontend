@@ -13,10 +13,18 @@ import {Router} from 'aurelia-router';
 
 import {Api, Notifier, CloseDialogs} from './api';
 import {ClientWrapper, AppEventsWrapper} from './client-wrapper';
+import {InlineViewStrategy} from 'aurelia-framework';
 
 import {UiContext} from './uicontext'
 
 import * as clipboard from 'clipboard-js';
+
+var errorMap = new Map<number, string>();
+
+
+errorMap.set(500, <string><any>require('../errors/500.html'));
+errorMap.set(404, <string><any>require('../errors/404.html'));
+errorMap.set(403, <string><any>require('../errors/403.html'));
 
 @inject(UiContext)
 export class ViewModel extends ReactiveBase {
@@ -133,8 +141,41 @@ export class ViewModel extends ReactiveBase {
   protected alert(message, title = "Alert") { return this.toastr.warning(message, title); }
   protected openChanges() { this.alert("You have outstanding changes, please save or cancel them first", "Outstanding changes"); }
 
-  getViewStrategy: () => string;
-  protected accessDenied() { this.getViewStrategy = () => '/dist/errors/403.html'; }
+  getViewStrategy;
+  protected accessDenied() { this.setErrorView('403') }
+  setErrorView = (template: string) => this.getViewStrategy = () => new InlineViewStrategy(template) // () => `/dist/errors/${err}.html`
+
+  _configured = false;
+
+  getErrorTemplate = (errCode, err: Error) => {
+    return `<template>Error ${errCode} ${err}</template>`
+  }
+
+  async handleActivation(act: () => Promise<void>) {
+    try {
+      await act();
+    } catch (err) {
+        if (err instanceof Tools.NotFoundException) return this.setErrorView(errorMap.get(404));
+        if (err instanceof Tools.Forbidden) return this.setErrorView(errorMap.get(403));
+        if (err instanceof Tools.RequiresLogin || err instanceof Tools.LoginNoLongerValid) {
+          await this.w6.openLoginDialog();
+          return this.setErrorView(errorMap.get(403))
+        }
+        return this.setErrorView(errorMap.get(500));
+    }
+  }
+
+  protected canActivate() {
+    if (!this._configured) {
+      let that = <any>this;
+      var fnc;
+      if (fnc = that.activate) {
+        that.activate = (...args) => this.handleActivation(() => fnc.apply(this, args));
+      }
+      this._configured = true;
+    }
+    return true;
+  }
 
   protected async handleAccessDenied(p: () => Promise<any>) {
     try {

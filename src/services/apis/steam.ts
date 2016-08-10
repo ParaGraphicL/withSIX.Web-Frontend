@@ -1,20 +1,11 @@
-export enum Publisher {
-  // Publishing systems
-  Steam,
-  Armaholic,
-  GitHub,
-
-  // Forums
-  BiForums = 10000,
-  GtaForums,
-  ArmaholicForum
-}
-
-import {W6, W6Urls} from './withSIX';
+import {W6, W6Urls} from '../withSIX';
 import {HttpClient as FetchClient} from 'aurelia-fetch-client';
 import {inject} from 'aurelia-framework';
 
-import {parseBBCode} from '../helpers/utils/string';
+import { HtmlParser, HtmlFetcher } from './parser';
+
+import { Publisher } from './w6';
+import {parseBBCode} from '../../helpers/utils/string';
 
 //import {HttpClient as HttpClient} from 'aurelia-http-client';
 
@@ -22,10 +13,10 @@ interface IW6Mod {
   name: string; packageName: string; id: string; modversion: string; publishers: { id: string, type: Publisher }[]
 }
 
-@inject(FetchClient, W6)
+@inject(FetchClient, W6, HtmlParser, HtmlFetcher)
 export class SteamService {
   private w6Mods;
-  constructor(private http: FetchClient, private w6: W6) { }
+  constructor(private http: FetchClient, private w6: W6, private parser: HtmlParser, private fetcher: HtmlFetcher) { }
 
   parseBB(bbCode: string) { return parseBBCode(bbCode) }
 
@@ -56,7 +47,8 @@ export class SteamService {
   }
 
   async getSteamInfo(...contentIds: (string | number)[]) {
-    let filesUrl = `${W6Urls.proxy}/api/ISteamRemoteStorage/GetPublishedFileDetails/v1/`;
+    let filesUrl = `${W6Urls.proxy}/api/ISteamRemoteStorage/GetPublishedFileDetails/v1/`
+    let galleryUrl = `${W6Urls.proxy}/api6/sharedfiles/filedetails/`
 
     let q = {
       itemcount: contentIds.length,
@@ -73,7 +65,26 @@ export class SteamService {
     let r = await this.http.fetch(filesUrl, { method: 'POST', body: str, headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
     if (!r.ok) throw r;
     let info = await r.json();
-    return info.response.publishedfiledetails;
+    let mods = info.response.publishedfiledetails;
+    mods.forEach(x => {
+      if (x.description) {
+        x.description = this.parseBB(x.description)
+        let p = this.parser.toJquery(x.description);
+        let bodyEl = p.find(x => x);
+        x.images = p.extractImages(bodyEl);
+        x.interestingLinks = p.extractInterestingLinks(bodyEl);
+      } else {
+        x.images = [];
+        x.interestingLinks = {}
+      }
+    })
+
+    for (var m of mods) {
+      let r = await this.fetcher.fetch(`${galleryUrl}${m.publishedfileid}`)
+      m.images.push(...r.extractImages(r.find(d => d.find('#highlight_strip').first())))
+    }
+
+    return mods;
   }
 
   async getSteamFiles(gameId: number) {
