@@ -4,7 +4,7 @@
     <conditional-title condition.bind="model.details != null" desired-title.bind="model.details">
       <a href.bind="model.href" class="text-link" if.bind="model.href" click.trigger="visit()">
         <div class="row1">
-          <span class="title" show.bind="model.title">${model.title.truncate(12)}</span>
+          <span class="title" show.bind="model.title">${model.title}</span>
           <span class="progress-title" show.bind="model.progress != null">${model.progress | progress} <span show.bind="model.speed != null">@ ${model.speed | speed:'B':false}</span></span>
         </div>
         <div class="row2">
