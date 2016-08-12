@@ -1059,7 +1059,7 @@ export class ModController extends ContentModelController<IBreezeMod> {
 
   requiresApproval = (state: ProcessingState) => state === ProcessingState.RequiresApproval || state === ProcessingState.RequiresApprovalUploadFinished;
 
-  getLatestChange = () => this.$scope.model.updates.asEnumerable().orderByDescending(x => x.created).firstOrDefault()
+  getLatestChange = () => this.$scope.model.updates.asEnumerable().orderByDescending(x => x.lastUpdate).firstOrDefault()
 
   showUploadBanner() {
     var $scope = this.$scope;
