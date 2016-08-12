@@ -6,6 +6,8 @@ import {IBreezeMod, IBreezeUser, IBreezeCollection, IBreezeMission, IBreezeColle
   IBreezeModMediaItem, IUserInfo, Resource, Permission, Role,
   EntityExtends, BreezeEntityGraph, _IntDefs} from '../services/dtos';
 
+import { ProcessingState } from '../services/basket-service';
+
 import {LegacyMediator} from '../services/mediator';
 import {ModHelper, CollectionHelper, MissionHelper} from '../services/helpers';
 
@@ -660,48 +662,6 @@ export interface IModScope extends IContentScopeT<IBreezeMod> {
   isInBasket: () => boolean;
 }
 
-enum ProcessingState {
-  //General,
-  RequiresApprovalUploadFinished = -5,
-  ManagerAbandoned = -4,
-  RequiresApproval = -3,
-  UserCancelled = -2,
-  UnknownFailure = -1,
-  Uninitialized = 0,
-  Initializing = 1,
-  Finished = 2,
-  Yanked = 3,
-
-  //ProcessingQueue
-  QueuedForProcessing = 50,
-
-  //Downloading
-  AddingToDownloadService = 100,
-  DownloadServiceUnavailible = 101,
-  LinkUnavailible = 102,
-  WaitingForDownloadStart = 110,
-  Downloading = 120,
-  DownloadingFailed = 121,
-  Downloaded = 199,
-
-  //Extraction
-  Extracting = 200,
-  ExtractFailed = 201,
-  Extracted = 299,
-
-  //RestructureTool
-  Restructuring = 300,
-  RestructureFailed = 301,
-  RestructureWaitingOnAdmin = 310,
-
-  //Network
-  PreparingNetwork = 400,
-  PreparingNetworkFailed = 401,
-  Syncing = 410,
-  SyncFailed = 411,
-  SignalFailed = 420
-}
-
 export function getEnum<TEnum>(enu: TEnum, name: string): number {
   return enu[name];
 }
@@ -918,6 +878,7 @@ export class ModController extends ContentModelController<IBreezeMod> {
         case ProcessingState.RestructureFailed:
         case ProcessingState.PreparingNetworkFailed:
         case ProcessingState.SyncFailed:
+        case ProcessingState.NoChangesFound:
         case ProcessingState.UnknownFailure:
         case ProcessingState.Finished:
         case ProcessingState.Yanked:
