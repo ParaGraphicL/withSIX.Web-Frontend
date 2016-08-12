@@ -3,11 +3,11 @@ import {ViewModel, ITab, UiContext} from '../../framework';
 
 @inject(Element, UiContext)
 export class TabViewRender extends ViewModel {
-  @bindable({ defaultBindingMode: bindingMode.twoWay }) selectedTab: ITab;
+  @bindable({ defaultBindingMode: bindingMode.twoWay }) selectedTab: ITab = null;
   @bindable({ defaultBindingMode: bindingMode.twoWay }) closeOnClick = true;
   @bindable close;
   tabStatus: string;
-  lastActiveTab: ITab;
+  lastActiveTab: ITab = null;
 
   get isDropdown() { return this.lastActiveTab && this.lastActiveTab.type == 'dropdown' }
   get isTab() { return this.lastActiveTab && this.lastActiveTab.type != 'dropdown' }
@@ -16,8 +16,8 @@ export class TabViewRender extends ViewModel {
 
   bind() {
     this.subscriptions.subd(d => {
-      d(this.whenAnyValue(x => x.selectedTab).filter(x => x != null).subscribe(x => this.lastActiveTab = x));
-      d(this.whenAnyValue(x => x.selectedTab).filter(x => x == null).delay(1000).map(x => this.selectedTab == null).subscribe(x => this.lastActiveTab = null));
+      d(this.whenAnyValue(x => x.selectedTab).filter(x => x !== null).subscribe(x => this.lastActiveTab = x));
+      d(this.whenAnyValue(x => x.selectedTab).filter(x => x === null).delay(1000).filter(x => this.selectedTab == null).subscribe(x => this.lastActiveTab = null));
       d(this.whenAnyValue(x => x.selectedTab).delay(100).subscribe(x => this.tabStatus = x ? 'active' : 'inactive'));
     })
     ViewModel.setupDelegateEl(this.el, () => this.selectedTab = null);

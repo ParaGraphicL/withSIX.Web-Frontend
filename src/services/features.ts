@@ -4,11 +4,12 @@ import {inject} from 'aurelia-framework';
 
 @inject(W6)
 export class FeatureToggles {
-  constructor(private w6: W6) {}
+  constructor(private w6: W6) { }
 
   private isManager = this.w6.userInfo.isManager || this.w6.userInfo.isAdmin;
   private syncFeatures = !this.w6.isClient;
   private isTestEnvironment = EnvironmentHost.env != Environment.Production;
+  private isPreviewEnvironment = window.location.hostname === 'preview.withsix.com';
   private testingFlag = window.location.search.includes('testmode=1');
   private groupTestingFlag = window.location.search.includes('testgroupmode=1') || (!window.location.search.includes('testgroupmode=0') && this.isManager);
   private get clientInfo() { return this.w6.miniClient.clientInfo }
@@ -24,7 +25,5 @@ export class FeatureToggles {
   get library() { return this.syncFeatures }
   get quickActions() { return this.isTestEnvironment }
   get uiVirtualization() { return this.testingFlag }
-  get collectionsInCollections() { return this.isTestEnvironment }
-  get beta1_3() { return this.isPrereleaseClient }
   get steam() { return this.isTestEnvironment }
 }

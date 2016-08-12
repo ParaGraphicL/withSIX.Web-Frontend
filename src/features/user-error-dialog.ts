@@ -6,15 +6,19 @@ export class UserErrorDialog extends Dialog<IUserError> {
     super.activate(model);
     this.subscriptions.subd(d => {
       d(this.clientWrapper.userErrorResolved
-        .filter(x => x.id == this.model.id)
-        .subscribe(x => this.controller.close(false, null)));
+        .filter(x => x.id === this.model.id)
+        .subscribe(x => this.controller.close(false, this.model.recoveryOptions.filter(r => r.recoveryResult === x.result)[0])));
     });
 
     if (model.type.endsWith("UsernamePasswordUserError")) this.inputView = "./username-password-input.html";
+    if (model.type.endsWith("InputUserError")) this.inputView = "./general-input.html";
   }
   handle(c: IRecoveryOption) {
-    new ResolveUserError(this.model.id, c.commandName, this.model.data).handle(this.mediator);
-    this.controller.close(true, c);
+    try {
+      new ResolveUserError(this.model.id, c.commandName, this.model.data).handle(this.mediator);
+    } finally {
+      this.controller.close(true, c);
+    }
   }
 }
 

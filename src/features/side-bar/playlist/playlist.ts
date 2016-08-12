@@ -1,7 +1,8 @@
 import {ViewModel, Query, DbQuery, handlerFor, IGame, ITab, IMenuItem, MenuItem, uiCommand2, VoidCommand, IReactiveCommand, IDisposable, Rx,
   CollectionScope, IBreezeCollectionVersion, IBreezeCollectionVersionDependency, BasketItemType, TypeScope, UiContext, CollectionHelper, Confirmation, MessageDialog,
   ReactiveList, IBasketItem, FindModel, ActionType, BasketState, BasketType, ConnectionState, Debouncer, GameChanged, uiCommandWithLogin2, GameClientInfo, UninstallContent,
-  IBreezeCollection, IRequireUser, IUserInfo, W6Context, Client, BasketService, CollectionDataService, DbClientQuery, requireUser, ICollection, Base} from '../../../framework';
+  IBreezeCollection, IRequireUser, IUserInfo, W6Context, Client, BasketService, CollectionDataService, DbClientQuery, requireUser, ICollection, Base, DependencyType,
+  breeze} from '../../../framework';
 import {CreateCollectionDialog} from '../../games/collections/create-collection-dialog';
 import {Basket, GameBaskets} from '../../game-baskets';
 import {inject} from 'aurelia-framework';
@@ -64,12 +65,23 @@ export class Playlist extends ViewModel {
   get locked() { return this.lockBasket || this.gameInfo.isLocked; }
   get canSaveBasket() { return this.baskets.active && this.baskets.active.model.items.length > 0 }
 
+  moveUp(item) {
+    let idx = this.basketItems.indexOf(item);
+    this.basketItems.move(idx, idx - 1);
+  }
+
+  moveDown(item) {
+    let idx = this.basketItems.indexOf(item);
+    this.basketItems.move(idx, idx + 1);
+  }
+
   async activate(model) {
     if (this.model === model) return;
     if (this.w6.activeGame.id) await this.gameChanged(this.w6.activeGame);
     this.model = model;
 
     this.subscriptions.subd(d => {
+      d(() => this.resetSignal.unsubscribe());
       d(this.action);
       d(this.saveBasket = uiCommandWithLogin2("Create Collection", this.saveBasketInternal, {
         canExecuteObservable: this.whenAnyValue(x => x.canSaveBasket),
@@ -106,28 +118,15 @@ export class Playlist extends ViewModel {
         cls: 'ignore-close text-button',
         tooltip: 'Unload collection'
       }));
-      d(this.saveCollection = uiCommand2("Save", async () => {
-        await new Save({
-          id: this.collection.id,
-          scope: this.collection.scope,
-          dependencies: this.basket.items.map(x => { return { dependency: x.packageName, constraint: x.constraint } })
-        }).handle(this.mediator);
-        this.collectionChanged = false;
-      }, {
-          cls: 'ok ignore-close',
-          canExecuteObservable: this.whenAnyValue(x => x.hasItems),
-          isVisibleObservable: this.whenAnyValue(x => x.collectionChanged).combineLatest(this.whenAnyValue(x => x.isYourCollection), (x, y) => x && y)
-        }));
-      d(this.undoCollection = uiCommand2("Cancel", async () => {
-        await this.updateCollections();
-        this.disposeOld();
-        let col = this.collections.asEnumerable().first(x => x.id == this.collection.id);
-        await this.loadCollectionVersion(col.latestVersionId, col.gameId);
-        this.updateCollection(col);
-      }, {
-          cls: 'cancel ignore-close',
-          isVisibleObservable: this.whenAnyValue(x => x.collectionChanged)
-        }));
+      d(this.saveCollection = uiCommand2("Save", this.saveChangesInternal, {
+        cls: 'ok ignore-close',
+        canExecuteObservable: this.whenAnyValue(x => x.hasItems),
+        isVisibleObservable: this.whenAnyValue(x => x.collectionChanged).combineLatest(this.whenAnyValue(x => x.isYourCollection), (x, y) => x && y)
+      }));
+      d(this.undoCollection = uiCommand2("Cancel", this.undoCollectionInternal, {
+        cls: 'cancel ignore-close',
+        isVisibleObservable: this.whenAnyValue(x => x.collectionChanged)
+      }));
       d(this.appEvents.gameChanged.subscribe(this.gameChanged));
       d(this.findModel = new FindModel(this.findCollections, (col: IPlaylistCollection) => this.selectCollection(col), e => e.name));
       d(Playlist.bindObservableTo(this.whenAnyValue(x => x.isCollection).map(x => x ? "Save as new collection" : "Save as collection"), this.saveBasket, x => x.name));
@@ -138,15 +137,17 @@ export class Playlist extends ViewModel {
     this.menuItems.push(new MenuItem(this.clearBasket));
 
     if (this.basket.collectionId) {
-      let c = this.collections.asEnumerable().firstOrDefault(x => x.id == this.basket.collectionId);
+      let c = await new GetMyCollection(this.basket.collectionId).handle(this.mediator);
       if (c) this.updateCollection(c, this.collectionChanged);
       else this.basket.collectionId = null;
     }
   }
+
   deactivate() {
     super.deactivate();
     this.basketService.saveChanges();
   }
+
   newBasket = () => this.baskets.replaceBasket()
   deleteBasket = () => this.basketService.performTransaction(() => this.baskets.deleteBasket(this.baskets.active));
   unload = async () => {
@@ -156,12 +157,38 @@ export class Playlist extends ViewModel {
     }
   }
 
+  saveChangesInternal = async () => {
+    await new Save({
+      id: this.collection.id,
+      scope: this.collection.scope,
+      dependencies: this.basket.items
+        .filter(x => !!x.packageName || x.itemType === BasketItemType.Collection)
+        .map(this.baskets.active.basketItemToDependency)
+    }).handle(this.mediator);
+    this.resetSignal.next(false);
+  }
+
+  undoCollectionInternal = async () => {
+    this.disposeOld();
+    this.collection = await new GetMyCollection(this.basket.collectionId).handle(this.mediator);
+    await this.loadCollectionVersion(this.collection.latestVersionId, this.collection.gameId);
+    this.updateCollection(this.collection);
+  }
+
   findCollections = async (searchItem: string) => {
     await this.updateCollections();
     return searchItem ? this.collections.filter(x => x.name && x.name.containsIgnoreCase(searchItem)) : this.collections
   }
 
-  toggleSearch = () => { this.isSearchOpen = !this.isSearchOpen; }
+  toggleSearch = () => {
+    this.isSearchOpen = !this.isSearchOpen;
+    if (this.isSearchOpen) {
+      let si = this.findModel.searchItem || '';
+      // workaround refreshing... TODO should just make a proper refresh
+      this.findModel.searchItem = null;
+      this.findModel.searchItem = si;
+    }
+  }
   closeSearch = () => { this.isSearchOpen = false; }
 
   saveBasketInternal = async () => {
@@ -173,12 +200,15 @@ export class Playlist extends ViewModel {
       gameId: basket.gameId,
       version: "0.0.1",
       forkedCollectionId: basket.collectionId,
-      dependencies: basket.items.filter(x => x.packageName ? true : false).map(x => { return { dependency: x.packageName, constraint: x.constraint } })
+      dependencies: basket.items
+        .filter(x => !!x.packageName || x.itemType === BasketItemType.Collection)
+        .map(this.baskets.active.basketItemToDependency)
     };
     if (model.dependencies.length == 0) throw new Error("There are no items in this playlist...");
     var result = await this.dialog.open({ viewModel: CreateCollectionDialog, model: { game: this.game, model: model } });
     if (result.wasCancelled) return;
     await this.unload();
+    await new LoadCollectionIntoBasket(result.output).handle(this.mediator)
   }
 
   saveAsNewCollectionInternal = () => this.baskets.active.saveAsNewCollection();
@@ -239,21 +269,23 @@ export class Playlist extends ViewModel {
     if (this.rxProperties) this.rxProperties.unsubscribe();
   }
 
+  resetSignal = new Rx.Subject<boolean>();
+
   updateCollection(c: IPlaylistCollection, startVal = false) {
     this.disposeOld();
     this.collection = c;
     if (c != null) {
       (<any>this.collection).url = `/p/${this.collection.gameSlug}/collections/${this.collection.id.toShortId()}/${this.collection.name.sluggifyEntityName()}`;
       this.rxList = this.listFactory.getList(this.basket.items);
-      let listObs = Rx.Observable.merge(this.rxList.itemsAdded.map(x => true), this.rxList.itemsRemoved.map(x => true), this.rxList.itemChanged.map(x => x.propertyName == "constraint").take(1).map(x => true));
-      let objObs = Base.observeEx(c, x => x.scope).skip(1).take(1).map(x => true);
-      let obs = Rx.Observable.merge(listObs, objObs).startWith(startVal).take(2);
-      listObs.subscribe(x => { this.tools.Debug.log("$$$ list val", x); });
-      objObs.subscribe(x => { this.tools.Debug.log("$$$ obj val", x); });
-      obs.subscribe(x => { this.tools.Debug.log("$$$ merged val", x); });
-      this.rxProperties = this.toProperty(obs, x => x.collectionChanged)
+      let listObs = Rx.Observable.merge(
+        this.rxList.itemsAdded.map(x => true),
+        this.rxList.itemsRemoved.map(x => true),
+        this.rxList.itemChanged.filter(x => x.propertyName === "constraint").map(x => true));
+      let objObs = Base.observeEx(c, x => x.scope).skip(1).map(x => true);
+      let obs = Rx.Observable.merge(listObs, objObs, this.resetSignal).startWith(startVal);
+      this.rxProperties = this.toProperty(obs, x => x.collectionChanged);
     } else {
-      this.collectionChanged = false;
+      this.collectionChanged = false; // this.reset...
     }
     this.setupCollectionMenu();
   }
@@ -265,7 +297,7 @@ export class Playlist extends ViewModel {
   action = uiCommand2("Execute", () => this.executeBasket(this.activeBasket), { canExecuteObservable: this.whenAnyValue(x => x.isNotLocked) });
 
   gameChanged = async (info: GameChanged) => {
-    let equal = this.game.id == info.id;
+    let equal = this.game.id === info.id;
     this.tools.Debug.log("$$$ ClientBar Game Changed: ", info, equal);
     if (equal) return;
     // TODO: All this data should actually change at once!
@@ -274,10 +306,7 @@ export class Playlist extends ViewModel {
     this.game.slug = info.slug;
     this.collections = [];
     //this.gameInfo = null;
-    if (this.game.id) {
-      this.gameInfo = await this.basketService.getGameInfo(this.game.id);
-      await this.updateCollections();
-    }
+    if (this.game.id) this.gameInfo = await this.basketService.getGameInfo(this.game.id);
     this.baskets = this.game.id ? this.basketService.getGameBaskets(this.game.id) : null;
   }
 
@@ -459,6 +488,49 @@ interface ICollectionModel {
 //   constructor(name: string, action: () => Promise<any>, private bar: ClientBar, options?) { super(name, action, () => bar.model && bar.model.active.model.isTemporary, options); }
 // }
 
+@requireUser()
+export class GetMyCollection extends Query<IPlaylistCollection> {
+  constructor(public id: string) { super(); }
+}
+
+@handlerFor(GetMyCollection)
+@inject(W6Context, Client, BasketService, CollectionDataService)
+class GetMyCollectionHandler extends DbClientQuery<GetMyCollection, IPlaylistCollection> {
+  constructor(dbContext, client, bs: BasketService, private collectionDataService: CollectionDataService) {
+    super(dbContext, client, bs);
+  }
+  public async handle(request: GetMyCollection): Promise<IPlaylistCollection> {
+    var optionsTodo = {};
+    var x = await this.getMyCollection(request.id, optionsTodo);
+    if (x.length === 0) return null;
+    return this.convertOnlineCollection(x[0], TypeScope.Published);
+  }
+
+  private applyExpandOptionally(q: breeze.EntityQuery, options) {
+    if (options.expand) return q.expand(options.expand)
+    return q;
+  }
+
+  public async getMyCollection(collectionId, options): Promise<IBreezeCollection[]> {
+    var query = this.applyExpandOptionally(breeze.EntityQuery.from("Collections"), options)
+      .where("id", breeze.FilterQueryOp.Equals, collectionId)
+      .withParameters({ myPage: true });
+    var r = await this.collectionDataService.query(query, options);
+    return r.results;
+  }
+
+  convertOnlineCollection(collection: IBreezeCollection, type: TypeScope): IPlaylistCollection {
+    return Object.assign(<IPlaylistCollection>{}, CollectionHelper.convertOnlineCollection(collection, type, this.w6), {
+      modsCount: collection.modsCount,
+      subscribersCount: collection.subscribersCount,
+      scope: CollectionScope[collection.scope],
+      size: collection.size,
+      latestVersionId: collection.latestVersionId
+    });
+  }
+
+}
+
 
 @requireUser()
 export class GetMyCollections extends Query<ICollectionsData> implements IRequireUser {
@@ -473,14 +545,7 @@ class GetMyCollectionsHandler extends DbClientQuery<GetMyCollections, ICollectio
     super(dbContext, client, bs);
   }
   public async handle(request: GetMyCollections): Promise<ICollectionsData> {
-    var optionsTodo = {
-      /*                    filter: {},
-                          sort: {
-                              fields: [],
-                              directions: []
-                          },
-                          pagination: {}*/
-    };
+    var optionsTodo = {};
     // TODO: only if client connected get client info.. w6.miniClient.isConnected // but we dont wait for it so bad idea for now..
     // we also need to refresh then when the client is connected later?
     var p: Promise<IPlaylistCollection[]>[] = [
@@ -497,8 +562,8 @@ class GetMyCollectionsHandler extends DbClientQuery<GetMyCollections, ICollectio
   }
 
   async getClientCollections(request: GetMyCollections) {
-    var r = await this.client.getGameCollections(request.id);
-    return r.collections.map(x => { x.typeScope = TypeScope.Local; return x; });
+    var r = await this.client.getGameCollections(request);
+    return r.items.map(x => { x.typeScope = TypeScope.Local; return x; });
   }
 
   async getMyCollections(request: GetMyCollections, options) {
@@ -516,12 +581,12 @@ class GetMyCollectionsHandler extends DbClientQuery<GetMyCollections, ICollectio
   }
 
   convertOnlineCollection(collection: IBreezeCollection, type: TypeScope): IPlaylistCollection {
-    return Object.assign({}, CollectionHelper.convertOnlineCollection(collection, type, this.w6), {
+    return Object.assign(<IPlaylistCollection>{}, CollectionHelper.convertOnlineCollection(collection, type, this.w6), {
       modsCount: collection.modsCount,
       subscribersCount: collection.subscribersCount,
       scope: CollectionScope[collection.scope],
       size: collection.size,
-      latestVersionId: collection.latestVersion.id
+      latestVersionId: collection.latestVersionId
     });
   }
 }

@@ -19,6 +19,11 @@ export class General extends ViewModel {
       this.selectedGame = this.games.find(x => x.id == this.model.id);
   }
 
+  get gameViewModel() {
+    let slug = this.selectedGame.slug.toLowerCase();
+    return slug == 'arma-3' || slug == 'arma-2' ? slug : 'general';
+  }
+
   router: Router;
   selectedGame: IGameSettingsEntry;
 

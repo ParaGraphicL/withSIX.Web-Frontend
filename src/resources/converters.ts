@@ -1,7 +1,17 @@
-import {inject, autoinject, customAttribute, valueConverter, Container} from 'aurelia-framework';
+import {customAttribute, valueConverter} from 'aurelia-framework';
 import numeral from 'numbro';
 
-import {FileSize} from '../services/lib';
+enum FileSize {
+  B,
+  KB,
+  MB,
+  GB,
+  TB,
+  PB,
+  EB,
+  ZB,
+  YB
+}
 
 @valueConverter('active')
 export class ActiveValueConverter {

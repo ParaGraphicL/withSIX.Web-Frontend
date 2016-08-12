@@ -1,9 +1,9 @@
 import {IBasketItem, BasketItemType, Base, ICollection, ViewModelWithModel, Query, DbClientQuery, handlerFor, IGame, ITab, IMenuItem, MenuItem, uiCommand2, IContentStatusChange, IContentStateChange, IContentState, ItemState,
-  InstallContents, ContentDeleted} from '../../../framework';
-import {GetGameHome, IHomeData} from '../../profile/library/home/index';
+  InstallContents, ContentDeleted, IGameHome} from '../../../framework';
+import {GetGameHome} from '../../profile/library/home/index';
 import {BaseGame} from '../../profile/lib';
 
-export interface IHomeD extends IHomeData {
+export interface IHomeD extends IGameHome {
   collections: ICollection[];
   homeLoaded: boolean;
   collectionsLoaded: boolean;

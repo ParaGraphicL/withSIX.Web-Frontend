@@ -6,7 +6,7 @@
     </button>
     <div if.bind="showTotalResults">${model.results.length} results</div>
     <div class="clearfix"></div>
-    <div class="results">
+    <div class="results" show.bind="model.results.length > 0">
       <ul>
         <template repeat.for="item of model.results">
           <li class="result">

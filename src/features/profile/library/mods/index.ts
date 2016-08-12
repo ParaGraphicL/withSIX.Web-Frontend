@@ -1,5 +1,5 @@
-import {W6Context, IBreezeMod, IUserInfo, Client, ModDataService, ISort, Query, DbClientQuery, handlerFor, requireUser, IRequireUser, IContent, TypeScope, BasketService,
-  ContentDeleted} from '../../../../framework';
+import {W6Context, IBreezeMod, IUserInfo, Client, ModDataService, IModsData, ISort, Query, DbClientQuery, handlerFor, requireUser, IRequireUser, IContent, TypeScope, BasketService,
+  ContentDeleted, breeze} from '../../../../framework';
 import {inject} from 'aurelia-framework';
 import {BaseGame, Mod} from '../../lib';
 
@@ -17,7 +17,7 @@ export class Index extends BaseGame {
     this.subscriptions.subd(d => {
       d(this.eventBus.subscribe(ContentDeleted, this.contentDeleted));
     })
-    this.items = r.mods;
+    this.items = r.items;
   }
 
   contentDeleted = (evt: ContentDeleted) => {
@@ -29,10 +29,6 @@ export class Index extends BaseGame {
   }
 
   createNew() { return this.legacyMediator.openAddModDialog(this.game.slug); }
-}
-
-interface IModsData {
-  mods: IContent[];
 }
 
 @requireUser()
@@ -48,7 +44,7 @@ class GetModsHandler extends DbClientQuery<GetMods, IModsData> {
     super(dbContext, modInfoService, bs);
   }
 
-  public async handle(request: GetMods) {
+  public async handle(request: GetMods): Promise<IModsData> {
     var optionsTodo = {
       /*                    filter: {},
                           sort: {
@@ -60,26 +56,33 @@ class GetModsHandler extends DbClientQuery<GetMods, IModsData> {
 
     // TODO: only if client connected get client info.. w6.miniClient.isConnected // but we dont wait for it so bad idea for now..
     // we also need to refresh then when the client is connected later?
+    var page, pageSize, totalPages;
     var p = [
-      this.getClientMods(request)
+      this.getClientMods(request).then(async (x) => {
+        page = x.page;
+        totalPages = x.totalPages;
+        pageSize = x.pageSize;
+        return x.items;
+      })
     ];
 
     if (request.user.slug) {
-      p.push(this.modDataService.getAllModsByAuthor(request.user.slug, optionsTodo)
+      p.push(this.modDataService.getAllModsByAuthorAndGame(request.user.slug, request.id, optionsTodo)
         .then(x => x.results.map(x => this.convertOnlineMods(x))));
     }
     let results = await Promise.all<IContent[]>(p);
-    return <IModsData>{ mods: results.flatten<IContent>() };
+    return { items: results.flatten<IContent>(), page, totalPages, pageSize };
     // return GetModsHandler.designTimeData(request);
   }
 
   async getClientMods(request: GetMods) {
     try {
-      let x = await this.client.getGameMods(request.id);
-      return x.mods;
+      let x = await this.client.getGameMods(request);
+      await this.handleModAugments(x.items);
+      return x;
     } catch (err) {
       this.tools.Debug.warn("Error while trying to get mods from client", err);
-      return [];
+      return {items: [], page: 1, pageSize: 24, totalPages: 1}
     }
   }
 

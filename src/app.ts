@@ -56,8 +56,8 @@ export class App extends ViewModel {
     this.w6.logout = () => this.logout();
     setInterval(() => signaler.signal('timeago'), 60 * 1000);
     this.w6.api.openGeneralDialog = (model: { model; viewModel: string }) => {
-         return this.dialog.open({ viewModel: "features/general-dialog", model: model });
-      }
+      return this.dialog.open({ viewModel: "features/general-dialog", model: model });
+    }
 
     let rs: RenderService = Container.instance.get(RenderService);
     this.w6.api.render = (options) => rs.open(options);
@@ -96,15 +96,15 @@ export class App extends ViewModel {
     }
 
     // workaround for dialogs not working
-Origin.set(SettingsIndex, { moduleId: "features/settings/index", moduleMember: "Index" });
-Origin.set(CreateCollectionDialog, { moduleId: "features/games/collections/create-collection-dialog", moduleMember: "CreateCollectionDialog" });
-Origin.set(AddModsToCollections, { moduleId: "features/games/add-mods-to-collections", moduleMember: "AddModsToCollections" });
-Origin.set(EditDependency, { moduleId: "features/profile/content/edit-dependency", moduleMember: "EditDependency" });
-Origin.set(EditPlaylistItem, { moduleId: "features/side-bar/playlist/edit-playlist-item", moduleMember: "EditPlaylistItem" });
-Origin.set(NewGroupDialog, { moduleId: "features/profile/groups/new-group-dialog", moduleMember: "NewGroupDialog" });
-Origin.set(UserErrorDialog, { moduleId: "features/user-error-dialog", moduleMember: "UserErrorDialog" });
-Origin.set(MessageDialog, { moduleId: "features/message-dialog", moduleMember: "MessageDialog" });
-Origin.set(Finalize, { moduleId: "features/login/finalize", moduleMember: "Finalize" })
+    Origin.set(SettingsIndex, { moduleId: "features/settings/index", moduleMember: "Index" });
+    Origin.set(CreateCollectionDialog, { moduleId: "features/games/collections/create-collection-dialog", moduleMember: "CreateCollectionDialog" });
+    Origin.set(AddModsToCollections, { moduleId: "features/games/add-mods-to-collections", moduleMember: "AddModsToCollections" });
+    Origin.set(EditDependency, { moduleId: "features/profile/content/edit-dependency", moduleMember: "EditDependency" });
+    Origin.set(EditPlaylistItem, { moduleId: "features/side-bar/playlist/edit-playlist-item", moduleMember: "EditPlaylistItem" });
+    Origin.set(NewGroupDialog, { moduleId: "features/profile/groups/new-group-dialog", moduleMember: "NewGroupDialog" });
+    Origin.set(UserErrorDialog, { moduleId: "features/user-error-dialog", moduleMember: "UserErrorDialog" });
+    Origin.set(MessageDialog, { moduleId: "features/message-dialog", moduleMember: "MessageDialog" });
+    Origin.set(Finalize, { moduleId: "features/login/finalize", moduleMember: "Finalize" })
 
 
 
@@ -141,6 +141,7 @@ Origin.set(Finalize, { moduleId: "features/login/finalize", moduleMember: "Final
       }
       */
       d(this.eventBus.subscribe('router:navigation:error', async (x) => {
+        // TODO: This seems to be a fatal error... Must refresh completely to fix!
         if (!x.result || !x.result.output) return this.redirectToError(500);
         let err: Error = x.result.output;
         if (err instanceof Tools.NotFoundException) return this.redirectToError(404);
@@ -196,7 +197,7 @@ Origin.set(Finalize, { moduleId: "features/login/finalize", moduleMember: "Final
     if (this.w6.enableBasket) this.client.getInfo(); // instead of connection.promise();
     $('body').attr('style', '');
 
-    this.checkVersion();
+    if (this.w6.url.version) this.checkVersion();
     this.newVersionInterval = setInterval(() => this.checkVersion(), 10 * 60 * 1000);
 
     this.ls.on('w6.event', (v, old, url) => this.raiseCrossEvent(v.name, v.data));
@@ -290,8 +291,6 @@ Origin.set(Finalize, { moduleId: "features/login/finalize", moduleMember: "Final
     return null;
   }
 
-  version: string;
-
   get classes() { return `${this.w6.renderAds ? null : 'no-adds'} ${this.w6.miniClient.isConnected ? 'client-active' : null} ${this.w6.miniClient.isConnected && this.gameInfo.isLocked ? 'client-busy' : null} ${this.isApiBusy ? 'api-busy' : ''} ${this.w6.userInfo.id ? 'logged-in' : null}` }
 
   isApiBusy = false;
@@ -324,13 +323,11 @@ Origin.set(Finalize, { moduleId: "features/login/finalize", moduleMember: "Final
   }
 
   async checkVersion() {
-    let version = await this.http.get(this.w6.url.cdn + "/volatile/version.json");
+    let version = await this.http.get(this.w6.url.cdn + "/volatile/version2.json");
     let newVersion = version.content.version;
-    if (this.version && this.version != newVersion) {
+    if (this.w6.url.version != newVersion) {
       this.newAppVersionAvailable = true;
       clearInterval(this.newVersionInterval);
-    } else {
-      this.version = newVersion; // todo; get the current version embedded..
     }
   }
 

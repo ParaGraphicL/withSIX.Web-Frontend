@@ -1,5 +1,5 @@
 import {UiContext, ViewModel, uiCommand2, Query, DbQuery, DbClientQuery, handlerFor, IContent, TypeScope, IGame, IContentStatusChange, IContentStateChange, ItemState, IContentState,
-  InstallContents, ContentDeleted, GameChanged} from '../../../framework';
+  InstallContents, ContentDeleted, GameChanged, IBreezeMod, breeze} from '../../../framework';
 import {inject} from 'aurelia-framework';
 import {GetGames} from '../library/games';
 
@@ -94,6 +94,11 @@ class GetHomeHandler extends DbClientQuery<GetHome, IHomeData> {
       recent: IContent[];
       games: IGame[];
     } = await this.client.getHome();
+
+    // TODO: Collections
+    var allMods = home.newContent.concat(home.recent).concat(home.updates);
+    await this.handleModAugments(allMods);
+
     return {
       updates: this.tools.enumToMap(home.updates.asEnumerable().orderByDescending(x => x.updatedVersion || ''), x => x.id),
       games: home.games.toMap(x => x.id),

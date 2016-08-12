@@ -3,6 +3,12 @@
 declare var googletag: any;
 declare var Markdown: any;
 
+// Workaround aurelia fetch
+interface URLSearchParams {}
+
+// Rxui
+interface Proxy {}
+
 interface Function {
   $name?: string;
 }
@@ -20,6 +26,7 @@ interface Array<T> {
   removeEl: (el: T) => void;
   toMap: <K>(keySelector: (x: T) => K) => Map<K, T>;
   includes: (el: T) => boolean;
+  move: (fromIdx: number, toIdx: number) => void;
   //removeRange: (...el: T[]) => void;
 }
 

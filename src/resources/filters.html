@@ -2,7 +2,7 @@
   <div class="filters-area">
     <div class="pull-right">
       Displaying
-      <span show.bind="filteredItems.length != totalCount">${filteredItems.length} /</span> ${totalCount} results
+      <span show.bind="filteredItems.length != totalCount">${filteredItems.length} /</span> <span title.bind="totalCount">${totalCount | amount} results</span>
       <span if.bind="sort.length > 0">
           <select class="filter-sort" id="select-sort" name="select-sort" value.bind="sortOrder">
             <option repeat.for="item of sort" model.bind="item">Sort by ${item.title || item.name.toUpperCaseFirst()}</option>
@@ -22,7 +22,6 @@
           placeholder.bind="searchInputPlaceholder"></input>
       <input if.bind="!typeaheadOptions" style="position: relative;" class="form-control" type="text" value.bind="searchInput" placeholder.bind="searchInputPlaceholder"></input>
     </div>
-    <!-- <div class="clearfix"></div> -->
 
     <div class="show-filter" if.bind="filters && filters.length > 0">
       <span class="show-title">Show:</span>
@@ -36,5 +35,7 @@
         </div>
       </div>
     </div>
+    <div class="clearfix"></div>
+    <slot></slot>
   </div>
 </template>

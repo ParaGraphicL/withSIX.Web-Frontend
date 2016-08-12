@@ -1,6 +1,11 @@
 @import "_v2";
 $bg: $colorSixBlue;
 #top-menu {
+  bar {
+    display: block;
+    width: 100%;
+    height: $headerSize;
+  }
   position: fixed;
   top: 0;
   left: 0;

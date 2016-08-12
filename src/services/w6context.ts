@@ -39,7 +39,8 @@ export interface IQueryResult<T extends breeze.Entity> extends breeze.QueryResul
 export interface IHttpPromise<T> extends Promise<ng.IHttpPromiseCallbackArg<T>> {
   success(callback: ng.IHttpPromiseCallback<T>): IHttpPromise<T>;
   error(callback: ng.IHttpPromiseCallback<any>): IHttpPromise<T>;
-  then<TResult>(successCallback: (response: ng.IHttpPromiseCallbackArg<T>) => Promise<TResult> | TResult, errorCallback?: (response: ng.IHttpPromiseCallbackArg<any>) => any): Promise<TResult>;
+  //then<TResult>(successCallback: (response: ng.IHttpPromiseCallbackArg<T>) => Promise<TResult> | TResult, errorCallback?: (response: ng.IHttpPromiseCallbackArg<any>) => any): Promise<TResult>;
+  //then<TResult1, TResult2>(onfulfilled: (value: ng.IHttpPromiseCallbackArg<T>) => TResult1 | PromiseLike<TResult1>, onrejected: (reason: ng.IHttpPromiseCallbackArg<any>) => TResult2 | PromiseLike<TResult2>): Promise<TResult1 | TResult2>;
 }
 
 export interface IRequestShortcutConfig extends ng.IRequestShortcutConfig {
@@ -116,8 +117,7 @@ export class W6Context {
   // TODO: We should check for the latest commit or tag on github, every minute or so, and then use that commit SHA
   public async getDocMd(subPath, addTag = false) {
     var path = 'docs/' + subPath;
-    var latestCommit = await this.getLatestCommit(path);
-    return await this.getText('https://cdn.rawgit.com/SIXNetworks/withsix-docs/' + latestCommit + '/' + path)
+    return await this.getText('https://raw.githubusercontent.com/SIXNetworks/withsix-docs/master/' + path);
   }
 
   async getLatestCommit(path, repo = 'SIXNetworks/withsix-docs') {
@@ -298,10 +298,6 @@ export class W6Context {
       pred = pred == null ? pred2 : pred.and(pred2);
     }
     return pred;
-  }
-
-  public getTagsQuery(split): breeze.Predicate {
-    return this.findInField(split, ["tagsInternal"], undefined);
   }
 
   public getAuthorQuery(split: string[]): breeze.Predicate {
