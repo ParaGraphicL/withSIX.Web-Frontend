@@ -2016,7 +2016,7 @@ export class UploadVersionDialogController extends ModelDialogControllerBase<IBr
       this.getLatestInfo();
   }
 
-  getLatestChange = (mod: IBreezeMod) => mod.updates.asEnumerable().orderByDescending(x => x.created).firstOrDefault()
+  getLatestChange = (mod: IBreezeMod) => mod.updates.asEnumerable().orderByDescending(x => x.lastUpdate).firstOrDefault()
 
   getLatestInfo() {
     let model = this.$scope.model;
