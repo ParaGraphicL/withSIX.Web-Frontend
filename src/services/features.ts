@@ -25,6 +25,5 @@ export class FeatureToggles {
   get library() { return this.syncFeatures }
   get quickActions() { return this.isTestEnvironment }
   get uiVirtualization() { return this.testingFlag }
-  get collectionsInCollections() { return this.isTestEnvironment || this.isPreviewEnvironment }
   get steam() { return this.isTestEnvironment }
 }

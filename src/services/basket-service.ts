@@ -372,5 +372,6 @@ export enum ProcessingState {
   PreparingNetworkFailed = 401,
   Syncing = 410,
   SyncFailed = 411,
+  NoChangesFound = 412,
   SignalFailed = 420
 }
