@@ -6,7 +6,7 @@
       <div>
         <div class="pull-right">
           <dropdown-menu class="pull-right" items.bind="menuItems"></dropdown-menu>
-          <button class="text-button ignore-close search-button" hover.bind="hovered" click.delegate="toggleSearch()">
+          <button class="text-button ignore-close search-button" hover.bind="hovered" click.trigger="toggleSearch($event)">
             <span class="extended" show.bind="hovered">
               <span class="icon withSIX-icon-Nav-Collection"></span>
             <span class="small">Load collection...</span>

@@ -180,7 +180,8 @@ export class Playlist extends ViewModel {
     return searchItem ? this.collections.filter(x => x.name && x.name.containsIgnoreCase(searchItem)) : this.collections
   }
 
-  toggleSearch = () => {
+  toggleSearch = ($evt) => {
+    $evt.stopPropagation();
     this.isSearchOpen = !this.isSearchOpen;
     if (this.isSearchOpen) {
       let si = this.findModel.searchItem || '';
@@ -367,7 +368,7 @@ export class Playlist extends ViewModel {
     if (this.basket.items.length == 0 || (this.collection != null && !this.collectionChanged) || await this.confirm("Do you want to overwrite your current Playlist?")) {
       await this.loadCollection(col);
       this.findModel.searchItem = '';
-      this.isSearchOpen = false;
+      this.closeSearch();
     }
   }
   visitCollection = (col: ICollection) => this.navigateInternal(`/p/${col.gameSlug}/collections/${col.id.toShortId()}/${col.name.sluggifyEntityName()}`)
