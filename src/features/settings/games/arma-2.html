@@ -3,26 +3,34 @@
     <compose view="./_paths.html"></compose>
 
     <div class="form-group">
-      <label for="mod-directory">Mod Directory</label>
-      <input id="mod-directory" name="mod-directory" type="text" value.bind="model.packageDirectory"></input>
+      <label for="mod-directory">
+        <input id="mod-directory" name="mod-directory" type="text" value.bind="model.packageDirectory"></input>
+        Mod Directory
+      </label>
       <button click.delegate="browsePackageDirectory()">Browse</button>
     </div>
 
     <div class="form-group">
-      <label for="arma2-directory">Arma2 Directory</label>
-      <input id="arma2-directory" name="arma2-directory" type="text" value.bind="model.arma2GameDirectory"></input>
+      <label for="arma2-directory">
+        <input id="arma2-directory" name="arma2-directory" type="text" value.bind="model.arma2GameDirectory"></input>
+        Arma2 Directory
+      </label>
       <button click.delegate="browseArma2Directory()">Browse</button>
     </div>
 
     <div class="form-group">
-      <label for="launch-as-dedicated-server">Launch as Dedicated Server</label>
-      <input type="checkbox" id="launch-as-dedicated-server" name="launch-as-dedicated-server" type="text" checked.bind="model.launchAsDedicatedServer"></input>
+      <label for="launch-as-dedicated-server">
+        <input type="checkbox" id="launch-as-dedicated-server" name="launch-as-dedicated-server" type="text" checked.bind="model.launchAsDedicatedServer"></input>
+        Launch as Dedicated Server
+      </label>
       <div show.bind="model.launchAsDedicatedServer"><i>You are running the game as dedicated server, only use this if you want to host a server!</i></div>
     </div>
 
     <div class="form-group" show.bind="!model.launchAsDedicatedServer">
-      <label for="launch-through-battleye">Launch through BattlEye</label>
-      <input type="checkbox" id="launch-through-battleye" name="launch-through-battleye" type="text" checked.bind="model.launchThroughBattlEye"></input>
+      <label for="launch-through-battleye">
+        <input type="checkbox" id="launch-through-battleye" name="launch-through-battleye" type="text" checked.bind="model.launchThroughBattlEye"></input>
+        Launch through BattlEye
+      </label>
     </div>
 
     <compose view="./_startup.html"></compose>
