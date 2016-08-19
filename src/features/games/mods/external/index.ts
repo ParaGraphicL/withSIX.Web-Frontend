@@ -1,5 +1,5 @@
-import { ViewModel, InterestingLink, HtmlParser, UiContext, Publisher } from '../../../../framework';
-import { UpdateInterestingLinks, ForumUrl } from '../mod-gallery';
+import { ViewModel, InterestingLink, ForumUrl, HtmlParser, UiContext, Publisher } from '../../../../framework';
+import { UpdateInterestingLinks } from '../mod-gallery';
 
 import { inject } from 'aurelia-framework';
 
