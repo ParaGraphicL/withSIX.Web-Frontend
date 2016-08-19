@@ -320,9 +320,11 @@
 }
 
 img.source {
-  position: absolute;
-  bottom: 64px;
   max-height: 32px;
   max-width: 32px;
-  right: 32px;
+  position: absolute;
+  bottom: 0;
+  background-color: $colorSixLightGray;
+  border: 8px solid $colorSixLightGray;
+  left: 48px;
 }
