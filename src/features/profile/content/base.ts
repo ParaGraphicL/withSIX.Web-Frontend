@@ -109,7 +109,7 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
     this.url = '/p/' + this.getPath();
 
     if (this.image && this.image.includes('steamusercontent.com')) {
-      this.source = { img: this.w6.url.img.steam, text: 'Steam' }
+      this.source = { img: this.w6.url.img.steam, text: 'Steam Workshop' }
     }
 
     //this.tools.Debug.log("Mod State: " + this.model.packageName, this.model.version, this.model.id, this.state);
