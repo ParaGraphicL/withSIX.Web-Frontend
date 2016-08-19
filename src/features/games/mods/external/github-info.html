@@ -1,10 +1,9 @@
 <template>
-  <h2><a href="https://github.com/${repo}" target="_blank">GitHub info</a></h2>
   <ul>
     <li repeat.for="r of model.releases">
       <a href="${r.html_url}">${r.name}</a>
       <div innerHTML.bind="r.body | pagedown" class="tile"></div>
     </li>
   </ul>
-  <i>Information provided as is by <a href="https://github.com" target="_blank">GitHub</a></i>
+  <i><a href="https://github.com/${repo}" target="_blank">Information</a> provided as is by <a href="https://github.com" target="_blank">GitHub</a></i>
 </template>
