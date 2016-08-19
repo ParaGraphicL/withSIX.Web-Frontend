@@ -1633,6 +1633,8 @@ export class ModInfoController extends ModEditBaseController {
 
   handleApis() {
     let externalInfo = <any>{};
+    if (this.$scope.model.homepageUrl) externalInfo.homepageUrl =this.$scope.model.homepageUrl;
+ 
     this.$scope.model.publishers.forEach(x => {
       switch (x.publisherType) {
         case Publisher[Publisher.Chucklefish]:

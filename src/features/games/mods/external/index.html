@@ -1,17 +1,22 @@
 <template>
   <div class="external-info contentrender">
-    <ul>
-      <li repeat.for="il of interestingLinks">
-        <a href.bind="il.url" class="interesting-link">
-          <img src.bind="il.displayImage" if.bind="il.displayImage"></img>
-          <span show.bind="!il.displayImage">${il.url}</span>
-        </a>
-      </li>
-    </ul>
-    <compose if.bind="model.forumUrl" view-model="./bif-info" model.bind="model.forumUrl"></compose>
-    <compose if.bind="model.chucklefishUrl" view-model="./chucklefish-info" model.bind="model.chucklefishUrl"></compose>
-    <compose if.bind="model.steamInfo" view-model="./steam-info" model.bind="model.steamInfo"></compose>
-    <compose if.bind="model.armaholicUrl" view-model="./armaholic-info" model.bind="model.armaholicUrl"></compose>
-    <compose if.bind="model.gitHubRepo" view-model="./github-info" model.bind="model.gitHubRepo"></compose>
+    <div innerHTML.bind="model.description" show.bind="active === -1"></div>
+    <compose if.bind="model.forumUrl" show.bind="active === Publisher.BiForums" view-model="./bif-info" model.bind="model.forumUrl"></compose>
+    <compose if.bind="model.chucklefishUrl" show.bind="active === Publisher.Chucklefish" view-model="./chucklefish-info" model.bind="model.chucklefishUrl"></compose>
+    <compose if.bind="model.steamInfo" show.bind="active === Publisher.Steam" view-model="./steam-info" model.bind="model.steamInfo"></compose>
+    <compose if.bind="model.armaholicUrl" show.bind="active === Publisher.Armaholic" view-model="./armaholic-info" model.bind="model.armaholicUrl"></compose>
+    <compose if.bind="model.gitHubRepo" show.bind="active === Publisher.GitHub" view-model="./github-info" model.bind="model.gitHubRepo"></compose>
+
+    <div class="box clearfix link-list">
+      <h3>External links</h3>
+      <ul class="external-links">
+        <li repeat.for="il of interestingLinks">
+          <a href.bind="il.url" class="interesting-link">
+            <img src.bind="il.displayImage" if.bind="il.displayImage"></img>
+            <span show.bind="!il.displayImage">${il.url}</span>
+          </a>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
