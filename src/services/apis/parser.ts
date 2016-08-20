@@ -195,8 +195,8 @@ export class Parser {
       || url.startsWith('http://www.armaholic.com/forums.php'))
       return new ForumUrl(url, images);
 
-    if (url.startsWith('http://www.armaholic.com/page.php?id='))
-      return new ArmaholicUrl(url, images);
+    //if (url.startsWith('http://www.armaholic.com/page.php?id='))
+      //return new ArmaholicUrl(url, images);
 
     if (url.startsWith('http://www.youtube.com/playlist')
       || url.startsWith('https://www.youtube.com/playlist')
