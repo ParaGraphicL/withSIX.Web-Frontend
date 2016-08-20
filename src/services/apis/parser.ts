@@ -186,7 +186,8 @@ export class Parser {
       || url.startsWith('https://twitter.com/'))
       return new SocialMedia(url, images);
 
-    if (url.startsWith('https://forums.bistudio.com/'))
+    if (url.startsWith('https://forums.bistudio.com/')
+      || url.startsWith('http://community.playstarbound.com/'))
       return new ForumUrl(url, images);
 
     if (url.startsWith('http://www.armaholic.com/forums.php'))
