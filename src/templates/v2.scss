@@ -319,6 +319,9 @@
   }
 }
 
+$awesome: rgba(255,255,255, 0.83);
+
+
 div.source {
   left: 10px;
   position: absolute;
@@ -326,11 +329,10 @@ div.source {
   img.source {
     max-height: 32px;
     max-width: 32px;
-    background-color: $colorSixLightGray;
-    border: 8px solid $colorSixLightGray;
+    background-color: $awesome;
+    border: 8px solid $awesome;
   }
 }
-
 
 .card.horizontal {
   .basketable-dropdown button.dropdown-toggle {
@@ -348,7 +350,7 @@ div.source {
 
 .logo2 {
   div.source {
-    background-color:rgba(255,255,255, 0.83);
+    background-color: $awesome;
     left: 0;
     img.source {
       float: left;
