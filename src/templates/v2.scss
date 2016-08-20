@@ -326,5 +326,13 @@ img.source {
   bottom: 0;
   background-color: $colorSixLightGray;
   border: 8px solid $colorSixLightGray;
-  left: 48px;
+  left: 10px; // or ~48px when group pic is available.. we should just put them in a container with floating items then :)
+}
+
+.play-stream {
+  .content-basketable action-bar.basketable-action {
+    button, img.source {
+      left: 0px;
+    }
+  }
 }
