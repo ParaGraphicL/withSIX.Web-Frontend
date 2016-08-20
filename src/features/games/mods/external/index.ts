@@ -16,7 +16,10 @@ export class Index extends ViewModel {
   activate(model) {
     this.model = model;
     // TODO: Improve filtering duplicate steam urls, /{id} vs /?id={id}
-    if (model.homepageUrl && (!model.steamInfo || !model.homepageUrl.includes("steamcommunity"))) this.addInterestingLinks([new HomepageUrl(model.homepageUrl)])
+    if (model.homepageUrl
+      && (!model.steamInfo || !model.homepageUrl.includes("steamcommunity"))
+      && (!model.forumUrl || !model.homepageUrl.includes("forums.bistudio.com"))
+    ) this.addInterestingLinks([new HomepageUrl(model.homepageUrl)])
 
     if (model.description) {
       let jq = this.parser.toJquery(`<div>${model.description}</div>`);
