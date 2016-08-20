@@ -126,6 +126,9 @@ export class ForumUrl extends InterestingLink {
 export class HomepageUrl extends InterestingLink {
   title = "Homepage"
 }
+export class VideoUrl extends InterestingLink {
+  title = "Video Channel";
+}
 export class DonationUrl extends InterestingLink {
   title = "Support the Author"
   protected getDisplayImage() {
@@ -184,12 +187,17 @@ export class Parser {
       return new SocialMedia(url, images);
 
     if (url.startsWith('https://forums.bistudio.com/')
-      || url.startsWith('http://www.armaholic.com/forums.php'))
+      || url.startsWith('http://community.playstarbound.com/'))
       return new ForumUrl(url, images);
 
+    if (url.startsWith('http://www.armaholic.com/forums.php'))
+      return new ArmaholicUrl(url, images);
+
     if (url.startsWith('http://www.youtube.com/playlist')
-      || url.startsWith('https://www.youtube.com/playlist'))
-      return new ForumUrl(url, images); // TODO
+      || url.startsWith('https://www.youtube.com/playlist')
+      || url.startsWith('http://www.youtube.com/user')
+      || url.startsWith('https://www.youtube.com/user'))
+      return new VideoUrl(url, images); // TODO
 
     if (url.includes('patreon.com/') || url.includes('paypal.com/') || url.includes('wmtransfer.com/') || url.includes('webmoney.ru'))
       return new DonationUrl(url, images);
