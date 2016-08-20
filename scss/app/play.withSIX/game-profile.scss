@@ -188,6 +188,11 @@ $downloadButtonHeight: 74px;
           background-repeat: no-repeat;
           background-position: center;
         }
+        .logo2 {
+          div.source {
+            width: $logoWidth;
+          }
+        }
         float: left;
       }
     }

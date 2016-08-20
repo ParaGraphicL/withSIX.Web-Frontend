@@ -319,15 +319,18 @@
   }
 }
 
-img.source {
-  max-height: 32px;
-  max-width: 32px;
+div.source {
+  left: 10px;
   position: absolute;
   bottom: 0;
-  background-color: $colorSixLightGray;
-  border: 8px solid $colorSixLightGray;
-  left: 10px; // or ~48px when group pic is available.. we should just put them in a container with floating items then :)
+  img.source {
+    max-height: 32px;
+    max-width: 32px;
+    background-color: $colorSixLightGray;
+    border: 8px solid $colorSixLightGray;
+  }
 }
+
 
 .card.horizontal {
   .basketable-dropdown button.dropdown-toggle {
@@ -338,7 +341,22 @@ img.source {
       left: 0;
     }
   }
-  img.source {
+  div.source {
     left: 0;
+  }
+}
+
+.logo2 {
+  div.source {
+    background-color:rgba(255,255,255, 0.83);
+    left: 0;
+    img.source {
+      float: left;
+      margin-left: 8px;
+    }
+    .text {
+      float: left;
+      margin: 4px;
+    }
   }
 }
