@@ -326,11 +326,11 @@ div.source {
   left: 10px;
   position: absolute;
   bottom: 0;
+  background-color: $awesome;
   img.source {
-    max-height: 32px;
-    max-width: 32px;
-    background-color: $awesome;
-    border: 8px solid $awesome;
+    max-height: 16px;
+    max-width: 16px;
+    margin: 8px;
   }
 }
 
@@ -350,7 +350,6 @@ div.source {
 
 .logo2 {
   div.source {
-    background-color: $awesome;
     left: 0;
     img.source {
       float: left;
