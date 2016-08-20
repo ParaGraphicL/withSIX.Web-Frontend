@@ -10,7 +10,7 @@
     <div class="box clearfix link-list">
       <h3>External links</h3>
       <ul class="external-links">
-        <li repeat.for="il of interestingLinks | sort:'displayName''">
+        <li repeat.for="il of interestingLinks | sort:'displayName'">
           <a href.bind="il.url" class="interesting-link">
             <img src.bind="il.displayImage" if.bind="il.displayImage" title.bind="il.displayName"></img>
             <span show.bind="!il.displayImage">${il.displayName}</span>
