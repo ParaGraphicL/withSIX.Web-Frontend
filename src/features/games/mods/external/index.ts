@@ -9,14 +9,14 @@ export class Index extends ViewModel {
 
   Publisher = Publisher;
 
-  active: Publisher;
+  active: Publisher = -1;
 
   interestingLinks: InterestingLink[] = [];
   model;
   activate(model) {
     this.model = model;
-
-    if (model.homepageUrl) this.addInterestingLinks([new HomepageUrl(model.homepageUrl)])
+    // TODO: Improve filtering duplicate steam urls, /{id} vs /?id={id}
+    if (model.homepageUrl && (!model.steamInfo || !model.homepageUrl.includes("steamcommunity"))) this.addInterestingLinks([new HomepageUrl(model.homepageUrl)])
 
     if (model.description) {
       let jq = this.parser.toJquery(`<div>${model.description}</div>`);
