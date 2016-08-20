@@ -122,6 +122,10 @@ export class ArmaholicUrl extends InterestingLink {
 }
 export class ForumUrl extends InterestingLink {
   title = "Community Forum"
+  constructor(public url: string, public images: string[] = []) {
+    super(url, images);
+    if (url.includes("armaholic.com")) this.title = "Armaholic Forums";
+  }
 }
 export class HomepageUrl extends InterestingLink {
   title = "Homepage"
@@ -187,10 +191,11 @@ export class Parser {
       return new SocialMedia(url, images);
 
     if (url.startsWith('https://forums.bistudio.com/')
-      || url.startsWith('http://community.playstarbound.com/'))
+      || url.startsWith('http://community.playstarbound.com/')
+      || url.startsWith('http://www.armaholic.com/forums.php'))
       return new ForumUrl(url, images);
 
-    if (url.startsWith('http://www.armaholic.com/forums.php'))
+    if (url.startsWith('http://www.armaholic.com'))
       return new ArmaholicUrl(url, images);
 
     if (url.startsWith('http://www.youtube.com/playlist')

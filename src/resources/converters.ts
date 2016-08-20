@@ -79,6 +79,18 @@ export class ProgressValueConverter extends NumeralValueConverter {
   toView = (n: number) => this.convert(n / 100, ProgressValueConverter.procentFormat);
 }
 
+@valueConverter('sort')
+export class SortValueConverter {
+  toView(array, propertyName, direction = 'ascending') {
+    var factor = direction === 'ascending' ? 1 : -1;
+    return array
+      .slice(0)
+      .sort((a, b) => {
+        return (a[propertyName] - b[propertyName]) * factor
+      });
+  }
+}
+
 @valueConverter('size')
 export class SizeValueConverter extends NumeralValueConverter {
   static sizeFormat = NumeralValueConverter.defaultFormat + ' b';
