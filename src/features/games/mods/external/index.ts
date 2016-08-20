@@ -1,4 +1,4 @@
-import { ViewModel, InterestingLink, ForumUrl, HtmlParser, UiContext, Publisher } from '../../../../framework';
+import { ViewModel, InterestingLink, HomepageUrl, HtmlParser, UiContext, Publisher } from '../../../../framework';
 import { UpdateInterestingLinks } from '../mod-gallery';
 
 import { inject } from 'aurelia-framework';
@@ -16,7 +16,7 @@ export class Index extends ViewModel {
   activate(model) {
     this.model = model;
 
-    if (model.homepageUrl) this.addInterestingLinks([new ForumUrl(model.homepageUrl)])
+    if (model.homepageUrl) this.addInterestingLinks([new HomepageUrl(model.homepageUrl)])
 
     if (model.description) {
       let jq = this.parser.toJquery(`<div>${model.description}</div>`);

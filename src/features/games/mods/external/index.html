@@ -12,8 +12,8 @@
       <ul class="external-links">
         <li repeat.for="il of interestingLinks">
           <a href.bind="il.url" class="interesting-link">
-            <img src.bind="il.displayImage" if.bind="il.displayImage"></img>
-            <span show.bind="!il.displayImage">${il.url}</span>
+            <img src.bind="il.displayImage" if.bind="il.displayImage" title.bind="il.displayName"></img>
+            <span show.bind="!il.displayImage">${il.displayName}</span>
           </a>
         </li>
       </ul>
