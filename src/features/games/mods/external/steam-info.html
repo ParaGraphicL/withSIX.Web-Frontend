@@ -1,17 +1,16 @@
 <template>
   <div if.bind="model.steamInfo">
-    <h2><a href.bind="steamUrl" target="_blank">Steam info (${model.steamId})</a></h2>
     <div>
-      ${model.steamInfo.name} ${model.steamInfo.title}
+      <!--${model.steamInfo.name} ${model.steamInfo.title}
       <br />Manifest: ${model.steamInfo.hcontent_file} filesize: ${model.steamInfo.file_size} favorited: ${model.steamInfo.favorited} subscriptions: ${model.steamInfo.subscriptions} created: ${getDate(model.steamInfo.time_created)} updated: ${getDate(model.steamInfo.time_updated)}
       <div><img src.bind="model.steamInfo.preview_url" width="160" height="90"></img>
       </div>
       tags:
       <ul>
         <li repeat.for="t of model.steamInfo.tags">${t.tag}</li>
-      </ul>
-      <p>description: <span innerHTML.bind="model.steamInfo.description"></span></p>
+      </ul>-->
+      <p><div innerHTML.bind="model.steamInfo.description"></div></p>
     </div>
-    <i>Information is provided by <a href="https://steampowered.com" target="_blank">Steam</a>, a Valve corporation product</i>
+    <i><a href.bind="steamUrl" target="_blank">Information</a> provided as is by <a href="https://steampowered.com" target="_blank">Steam</a>, a Valve corporation product</i>
   </div>
 </template>

@@ -320,9 +320,25 @@
 }
 
 img.source {
-  position: absolute;
-  bottom: 64px;
   max-height: 32px;
   max-width: 32px;
-  right: 32px;
+  position: absolute;
+  bottom: 0;
+  background-color: $colorSixLightGray;
+  border: 8px solid $colorSixLightGray;
+  left: 10px; // or ~48px when group pic is available.. we should just put them in a container with floating items then :)
+}
+
+.card.horizontal {
+  .basketable-dropdown button.dropdown-toggle {
+    right: 0;
+  } 
+  action-bar.basketable-action {
+    button {
+      left: 0;
+    }
+  }
+  img.source {
+    left: 0;
+  }
 }

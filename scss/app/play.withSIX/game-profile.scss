@@ -27,6 +27,11 @@ $downloadButtonHeight: 74px;
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
+  .logo {
+    div.img {
+      position: relative;
+    }
+  }
   .overlay {
     padding-top: 64px;
     padding-bottom: 64px;
