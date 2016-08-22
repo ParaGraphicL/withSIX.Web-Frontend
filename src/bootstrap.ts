@@ -24,6 +24,8 @@ if (window.location.search.startsWith("?code=")) {
   throw new Error("Window was used for auth code handling");
 }
 
+const getInstance = <T>(o) => <T>Container.instance.get(o);
+
 export async function configure(aurelia: Aurelia) {
   Tools.Debug.log("AURELIA: configuring aurelia");
 
@@ -134,7 +136,7 @@ export async function configure(aurelia: Aurelia) {
 
   async function bs(w6Urls: W6Urls) {
     Container.instance.registerSingleton(W6Urls, () => w6Urls);
-    let login = Container.instance.get(LoginBase);
+    let login = getInstance<LoginBase>(LoginBase);
     login.setHeaders();
     let userInfo: IUserInfo = null;
     try {
@@ -149,18 +151,18 @@ export async function configure(aurelia: Aurelia) {
     let rx = /[&\?]port=(\d+)/
     let match = window.location.search.match(rx);
     let port = match ? parseInt(match[1]) : null;
-    Container.instance.registerSingleton(Client, () => new Client(Container.instance.get(EventAggregator), Container.instance.get(PromiseCache), port ? port : undefined))
+    Container.instance.registerSingleton(Client, () => new Client(getInstance<EventAggregator>(EventAggregator), getInstance<PromiseCache>(PromiseCache), getInstance<FetchClient>(FetchClient), port ? port : undefined))
 
-    const client: Client = Container.instance.get(Client);
-    const api: Api = Container.instance.get(Api);
+    const client = getInstance<Client>(Client);
+    const api = getInstance<Api>(Api);
     // WARNING CANT PASS THE ROUTER INSTANCE HERE OR Aurelia STOPS ROUTING
     const w6 = W6.instance = new W6(w6Urls, userInfo, client, api);
     EntityExtends.BaseEntity.w6 = w6; // pff
     window.w6Cheat = { api, navigate: (url: string) => w6.navigate(url) }
     Container.instance.registerSingleton(W6, () => w6);
 
-    LogManager.addAppender(Container.instance.get(LogAppender))
-    const eh: GlobalErrorHandler = Container.instance.get(GlobalErrorHandler);
+    LogManager.addAppender(getInstance<LogAppender>(LogAppender))
+    const eh = getInstance<GlobalErrorHandler>(GlobalErrorHandler);
     //window.addEventListener("error", (e: ErrorEvent) => { eh.handleWindowError(e.message, e.filename, e.lineno, e.colno, e.error); });
     let existing = window.onerror;
     window.onerror = (message, file, line, col, error?) => {
