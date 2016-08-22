@@ -155,12 +155,14 @@ export class ViewModel extends ReactiveBase {
     try {
       await act();
     } catch (err) {
+        Tools.Debug.error("Catched error, rendering error page", err);
         if (err instanceof Tools.NotFoundException) return this.setErrorView(errorMap.get(404));
         if (err instanceof Tools.Forbidden) return this.setErrorView(errorMap.get(403));
         if (err instanceof Tools.RequiresLogin || err instanceof Tools.LoginNoLongerValid) {
           await this.w6.openLoginDialog();
           return this.setErrorView(errorMap.get(403))
         }
+        
         return this.setErrorView(errorMap.get(500));
     }
   }
