@@ -315,6 +315,7 @@ export class Parser {
     return null;
   }
   isImage = (url: string) => {
+    if (!url) return false;
     // TODO: improve
     const imageExt = [".png", ".gif", ".jpg"];
     let safeUrl = createUrlSafe(url);
