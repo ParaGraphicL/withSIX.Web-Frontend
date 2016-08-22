@@ -1627,8 +1627,7 @@ export class ModInfoController extends ModEditBaseController {
     this.setupDependencyAutoComplete();
 
     this.setupTitle("model.name", "Info - {0} (" + $scope.model.packageName + ") - " + $scope.model.game.name);
-    if (this.$scope.features.steam)
-      this.handleApis();
+    this.handleApis();
   }
 
   handleApis() {

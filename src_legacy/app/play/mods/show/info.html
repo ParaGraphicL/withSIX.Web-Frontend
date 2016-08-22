@@ -1,6 +1,6 @@
 <sx-info-page>
   <sx-info-main>
-    <sx-aurelia ng-if="features.steam" id="gallery" sx-view-model="'features/games/mods/mod-gallery'" sx-model="galleryInfo"></sx-aurelia>
+    <sx-aurelia id="gallery" sx-view-model="'features/games/mods/mod-gallery'" sx-model="galleryInfo"></sx-aurelia>
 
     <div class="tile">
       <section>
@@ -10,10 +10,10 @@
               <span id="modDescription">Description</span>
             </h3>
 
-            <sx-aurelia ng-if="features.steam" ng-hide="editConfig.isEditing" sx-view-model="'features/games/mods/external/index'" sx-model="externalInfo"></sx-aurelia>
+            <sx-aurelia ng-hide="editConfig.isEditing" sx-view-model="'features/games/mods/external/index'" sx-model="externalInfo"></sx-aurelia>
 
 
-            <div class="editable-full" ng-if="!features.steam || editConfig.isEditing">
+            <div class="editable-full" ng-if="editConfig.isEditing">
               <span ng-if="editConfig.isEdited('descriptionFull')" class="withSIX-icon-Alert pull-right" style="color: red; font-size: 20px;"></span>
 
               <div ng-if="editConfig.isEditing" class="editable-full" style="margin-bottom: 10px;">
