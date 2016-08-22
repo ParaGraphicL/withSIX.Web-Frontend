@@ -319,12 +319,45 @@
   }
 }
 
-img.source {
-  max-height: 32px;
-  max-width: 32px;
+$awesome: rgba(255,255,255, 0.83);
+
+
+div.source {
+  left: 10px;
   position: absolute;
   bottom: 0;
-  background-color: $colorSixLightGray;
-  border: 8px solid $colorSixLightGray;
-  left: 48px;
+  background-color: $awesome;
+  img.source {
+    max-height: 16px;
+    max-width: 16px;
+    margin: 8px;
+  }
+}
+
+.card.horizontal {
+  .basketable-dropdown button.dropdown-toggle {
+    right: 0;
+  } 
+  action-bar.basketable-action {
+    button {
+      left: 0;
+    }
+  }
+  div.source {
+    left: 0;
+  }
+}
+
+.logo2 {
+  div.source {
+    left: 0;
+    img.source {
+      float: left;
+      margin-left: 8px;
+    }
+    .text {
+      float: left;
+      margin: 4px;
+    }
+  }
 }

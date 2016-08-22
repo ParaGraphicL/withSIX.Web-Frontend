@@ -95,7 +95,9 @@ export class HtmlParser {
 
 // TODO: Pickup Publishers
 export abstract class InterestingLink {
-  displayImage: string; 
+  displayImage: string;
+  title: string;
+  get displayName() { return this.title || this.url; }
   constructor(public url: string, public images: string[] = []) {
     if (images && images.length > 0) this.displayImage = images[0];
     if (!this.displayImage) this.displayImage = this.getDisplayImage();
@@ -103,18 +105,45 @@ export abstract class InterestingLink {
  protected getDisplayImage() { return null; }
 }
 export class ImgurGallery extends InterestingLink {
+  title = "Imgur Gallery"
   constructor(url, images) { super(url, images); this.displayImage = null }
 }
-export class SocialMedia extends InterestingLink { }
-export class ForumUrl extends InterestingLink { }
-export class DonationUrl extends InterestingLink { 
+export class SocialMedia extends InterestingLink {
+  title = "Social Media"
+ }
+ export class GithubUrl extends InterestingLink {
+   title = "GitHub Repo"
+ }
+export class WorkshopUrl extends InterestingLink {
+  title = "Steam Workshop"
+}
+export class ArmaholicUrl extends InterestingLink {
+  title = "Armaholic"
+}
+export class ForumUrl extends InterestingLink {
+  title = "Community Forum"
+  constructor(public url: string, public images: string[] = []) {
+    super(url, images);
+    if (url.includes("armaholic.com")) this.title = "Armaholic Forums";
+  }
+}
+export class HomepageUrl extends InterestingLink {
+  title = "Homepage"
+}
+export class VideoUrl extends InterestingLink {
+  title = "Video Channel";
+}
+export class DonationUrl extends InterestingLink {
+  title = "Support the Author"
   protected getDisplayImage() {
     if (this.url.includes('patreon.com/')) return 'https://s3.amazonaws.com/patreon_public_assets/toolbox/patreon_logo.png';
     else if (this.url.includes('paypal.com/')) return 'https://www.paypalobjects.com/webstatic/mktg/logo-center/PP_Acceptance_Marks_for_LogoCenter_266x142.png';
     return super.getDisplayImage();
   }
 }
-export class LicenseUrl extends InterestingLink { }
+export class LicenseUrl extends InterestingLink {
+  title = "License"
+ }
 
 export class Parser {
   constructor(private doc: JQuery, private baseUrl: string, private p: HtmlParser) { }
@@ -161,13 +190,21 @@ export class Parser {
       || url.startsWith('https://twitter.com/'))
       return new SocialMedia(url, images);
 
+// TODO: better distinguishing...
+/*
     if (url.startsWith('https://forums.bistudio.com/')
+      || url.startsWith('http://community.playstarbound.com/')
       || url.startsWith('http://www.armaholic.com/forums.php'))
       return new ForumUrl(url, images);
 
+    if (url.startsWith('http://www.armaholic.com/page.php?id='))
+      return new ArmaholicUrl(url, images);
+*/
     if (url.startsWith('http://www.youtube.com/playlist')
-      || url.startsWith('https://www.youtube.com/playlist'))
-      return new ForumUrl(url, images); // TODO
+      || url.startsWith('https://www.youtube.com/playlist')
+      || url.startsWith('http://www.youtube.com/user')
+      || url.startsWith('https://www.youtube.com/user'))
+      return new VideoUrl(url, images); // TODO
 
     if (url.includes('patreon.com/') || url.includes('paypal.com/') || url.includes('wmtransfer.com/') || url.includes('webmoney.ru'))
       return new DonationUrl(url, images);

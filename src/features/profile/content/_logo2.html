@@ -1,5 +1,5 @@
 <template>
-  <div class="img">
+  <div class="img logo2">
     <action-bar class="pull-left basketable-action" items.bind="topActions"></action-bar>
     <dropdown-menu hor-adjust.bind="-112" class="basketable-dropdown new-style hide-until-open" direction="left" menu-cls="content-stateable content-state-${itemStateClass}" if.bind="topMenuActions && topMenuActions.length > 0" items.bind="topMenuActions"></dropdown-menu>
     <a href="${w6.url.play}/${path}" if.bind="path">
@@ -16,6 +16,12 @@
     </span>
     </span>
     </span>
-    <img src.one-time="source.img" class="source" if.one-time="source" title="Hosted on ${source.text}" />
+    <div class="source" if.one-time="source">
+      <!-- TODO: Multi source (Group etc) -->
+      <img src.one-time="source.img" class="source" if.one-time="source" title="Hosted on ${source.text}" />
+      <div class="text">
+        Hosted on ${source.text}
+      </div>
+    </div>
   </div>
 </template>

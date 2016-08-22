@@ -1,4 +1,4 @@
-import { ViewModel, InterestingLink, ForumUrl, HtmlParser, UiContext, Publisher } from '../../../../framework';
+import { ViewModel, InterestingLink, HomepageUrl, HtmlParser, UiContext, Publisher } from '../../../../framework';
 import { UpdateInterestingLinks } from '../mod-gallery';
 
 import { inject } from 'aurelia-framework';
@@ -9,14 +9,17 @@ export class Index extends ViewModel {
 
   Publisher = Publisher;
 
-  active: Publisher;
+  active: Publisher = -1;
 
   interestingLinks: InterestingLink[] = [];
   model;
   activate(model) {
     this.model = model;
-
-    if (model.homepageUrl) this.addInterestingLinks([new ForumUrl(model.homepageUrl)])
+    // TODO: Improve filtering duplicate steam urls, /{id} vs /?id={id}
+    if (model.homepageUrl
+      && (!model.steamInfo || !model.homepageUrl.includes("steamcommunity"))
+      && (!model.forumUrl || !model.homepageUrl.includes("forums.bistudio.com"))
+    ) this.addInterestingLinks([new HomepageUrl(model.homepageUrl)])
 
     if (model.description) {
       let jq = this.parser.toJquery(`<div>${model.description}</div>`);
