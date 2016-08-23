@@ -71,6 +71,8 @@ export class CollectionController extends ContentModelController<IBreezeCollecti
   constructor(public $scope: ICollectionScope, public logger, public $routeParams, $q, $sce: ng.ISCEService, private localStorageService, private w6: W6, private forwardService: ForwardService, private $timeout: ng.ITimeoutService, private dbContext: W6Context, private $popover, $rootScope: IRootScope, basketService: BasketService, eventBus: EventAggregator, private mediator, model: IBreezeCollection) {
     super($scope, logger, $routeParams, $q, $sce, model);
 
+    if (model.groupId != null) this.$scope.features.groups = true;
+
     w6.collection = this;
 
     $scope.tryDirectDownloadCollection = async () => {
