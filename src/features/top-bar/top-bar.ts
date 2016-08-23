@@ -13,26 +13,23 @@ export class TopBar extends ViewModel {
 
   constructor(uiContext: UiContext, public login: Login, private clientMissingHandler: ClientMissingHandler) { super(uiContext) }
 
-  setupGroups = () => {
-    let groupTab: ITab = {
-        header: "Your groups",
-        name: "groups",
-        icon: "icon withSIX-icon-Users-Group",
-        viewModel: `${TopBar.root}groups/groups`,
-        type: 'dropdown',
-        location: "middle"
-      };
-      this.tabs.unshift(groupTab);
-      this.subscriptions.subd(d => {
-        d(TopBar.bindObservableTo(this.notLoggedInObs, groupTab, x => x.disabled));
-      });
-  }
-
-  notLoggedInObs: Rx.Observable<boolean>;
-
   bind() {
-    this.notLoggedInObs = this.whenAnyValue(x => x.isLoggedin).map(x => !x);
-    this.subscriptions.subd(d => d(this.whenAnyValue(x => x.features.groups).filter(x => x).take(1).subscribe(this.setupGroups)));
+    let notLoggedInObs = this.whenAnyValue(x => x.isLoggedin).map(x => !x);
+
+    let groupTab: ITab = {
+      header: "Your groups",
+      name: "groups",
+      icon: "icon withSIX-icon-Users-Group",
+      viewModel: `${TopBar.root}groups/groups`,
+      type: 'dropdown',
+      location: "middle",
+      hidden: !this.features.groups
+    };
+    this.tabs.push(groupTab);
+    this.subscriptions.subd(d => {
+      d(TopBar.bindObservableTo(notLoggedInObs, groupTab, x => x.disabled));
+      d(this.whenAnyValue(x => x.features.groups).filter(x => x).take(1).subscribe(x => groupTab.hidden = false));
+    });
 
     let uploadContent: ITab = {
       header: "Upload content",
@@ -56,7 +53,7 @@ export class TopBar extends ViewModel {
         location: "middle"
       };
       this.tabs.push(notificationTab);
-      this.subscriptions.subd(d => d(TopBar.bindObservableTo(this.notLoggedInObs, notificationTab, x => x.disabled)));
+      this.subscriptions.subd(d => d(TopBar.bindObservableTo(notLoggedInObs, notificationTab, x => x.disabled)));
     }
 
     if (this.isLoggedin) {

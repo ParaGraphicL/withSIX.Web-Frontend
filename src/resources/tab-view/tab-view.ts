@@ -15,6 +15,7 @@ export interface ITab {
   icon?: string;
   location?: string;
   disabled?: boolean;
+  hidden?: boolean;
   type?: string;
   cls?: string;
   notificationCount?: number;

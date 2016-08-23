@@ -2,7 +2,8 @@
   <ul>
     <!-- TODO: Use a filter instead of if.bind ?? -->
     <template repeat.for="tab of tabs">
-      <li class="tab-header ${selectedTab == tab ? 'active' : ''} ${tab.name ? tab.name : tab.header.toLowerCase()} ${tab.type || 'tab'}" css="z-index: ${tabs.length - $index}" if.bind="tab.location == location" title.bind="tab.header" class.bind="tab.cls">
+      <li class="tab-header ${selectedTab == tab ? 'active' : ''} ${tab.name ? tab.name : tab.header.toLowerCase()} ${tab.type || 'tab'}" css="z-index: ${tabs.length - $index}" if.bind="tab.location == location" title.bind="tab.header" class.bind="tab.cls"
+          show.bind="!tab.hidden">
         <compose view-model="./tab-view-nav-button" model.bind="tab"></compose>
       </li>
     </template>
