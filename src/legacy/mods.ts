@@ -689,6 +689,8 @@ export class ModController extends ContentModelController<IBreezeMod> {
       return;
     }
 
+    if (model.groupId != null) this.$scope.features.groups = true;
+
     this.isForActiveGame = $scope.model.gameId == $scope.game.id;
 
     var basket = basketService.getGameBaskets($scope.game.id);
