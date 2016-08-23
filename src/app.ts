@@ -179,7 +179,7 @@ export class App extends ViewModel {
       d(this.clientWrapper.stateChanged
         .startWith(<StateChanged>{ newState: this.client.isConnected ? ConnectionState.connected : null })
         .subscribe(state => {
-          if (state.newState == ConnectionState.connected) this.infoReceived(this.client.clientInfo);
+          if (state.newState === ConnectionState.connected) this.infoReceived(this.client.clientInfo);
         }));
       let userErrors = this.whenAnyValue(x => x.userErrors).filter(x => x != null);
       d(userErrors.subscribe(x => {
@@ -343,9 +343,7 @@ export class App extends ViewModel {
     //if (info.version != newVersion) {
     // this.newVersionAvailable(newVersion);
     //}
-
-    if (this.client.currentVersion >= "3")
-      this.client.login({ accessToken: this.w6.userInfo.id ? window.localStorage.getItem(LoginBase.token) : null });
+    if (this.client.currentVersion >= "3") this.client.login({ accessToken: this.w6.userInfo.id ? window.localStorage.getItem(LoginBase.token) : null });
 
     if (info.newVersionAvailable != null)
       this.newVersionAvailable(info.newVersionAvailable);
