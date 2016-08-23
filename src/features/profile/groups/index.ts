@@ -8,7 +8,10 @@ import {EventAggregator} from 'aurelia-event-aggregator';
 
 @inject(UiContext)
 export class Index extends ViewModel {
-  constructor(ui: UiContext) { super(ui); }
+  constructor(ui: UiContext) { 
+    super(ui);
+    this.features.groups = true;
+  }
   router: Router;
   configureRouter(config: RouterConfiguration, router: Router) {
     this.router = router;
