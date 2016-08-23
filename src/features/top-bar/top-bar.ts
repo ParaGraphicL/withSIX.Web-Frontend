@@ -1,4 +1,4 @@
-import {Base, ViewModel, UiContext, MenuItem, uiCommand2, Debouncer, IMenuItem, ITab, ClientMissingHandler, CloseTabs} from '../../framework';
+import {Base, ViewModel, UiContext, MenuItem, uiCommand2, Debouncer, IMenuItem, ITab, ClientMissingHandler, CloseTabs, Rx} from '../../framework';
 import {SideBar} from '../side-bar/side-bar';
 import {Login} from '../../services/auth';
 import {inject, bindable} from 'aurelia-framework'
@@ -13,10 +13,8 @@ export class TopBar extends ViewModel {
 
   constructor(uiContext: UiContext, public login: Login, private clientMissingHandler: ClientMissingHandler) { super(uiContext) }
 
-  bind() {
-    let notLoggedInObs = this.whenAnyValue(x => x.isLoggedin).map(x => !x);
-    if (this.features.groups) {
-      let groupTab: ITab = {
+  setupGroups = () => {
+    let groupTab: ITab = {
         header: "Your groups",
         name: "groups",
         icon: "icon withSIX-icon-Users-Group",
@@ -24,11 +22,17 @@ export class TopBar extends ViewModel {
         type: 'dropdown',
         location: "middle"
       };
-      this.tabs.push(groupTab)
+      this.tabs.unshift(groupTab);
       this.subscriptions.subd(d => {
-        d(TopBar.bindObservableTo(notLoggedInObs, groupTab, x => x.disabled));
+        d(TopBar.bindObservableTo(this.notLoggedInObs, groupTab, x => x.disabled));
       });
-    }
+  }
+
+  notLoggedInObs: Rx.Observable<boolean>;
+
+  bind() {
+    this.notLoggedInObs = this.whenAnyValue(x => x.isLoggedin).map(x => !x);
+    this.subscriptions.subd(d => d(this.whenAnyValue(x => x.features.groups).filter(x => x).take(1).subscribe(this.setupGroups)));
 
     let uploadContent: ITab = {
       header: "Upload content",
@@ -52,7 +56,7 @@ export class TopBar extends ViewModel {
         location: "middle"
       };
       this.tabs.push(notificationTab);
-      this.subscriptions.subd(d => d(TopBar.bindObservableTo(notLoggedInObs, notificationTab, x => x.disabled)));
+      this.subscriptions.subd(d => d(TopBar.bindObservableTo(this.notLoggedInObs, notificationTab, x => x.disabled)));
     }
 
     if (this.isLoggedin) {
