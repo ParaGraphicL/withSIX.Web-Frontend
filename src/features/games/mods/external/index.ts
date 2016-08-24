@@ -38,6 +38,7 @@ export class Index extends ViewModel {
     if (this.model.forumUrl) return Publisher.BiForums;
     if (this.model.chucklefishUrl) return Publisher.Chucklefish;
     if (this.model.nmsmUrl) return Publisher.NoMansSkyMods;
+    if (this.model.nexusUrl) return Publisher.NexusMods;
     if (this.model.steamInfo) return Publisher.Steam;
     if (this.model.armaholicUrl) return Publisher.Armaholic;
     if (this.model.gitHubRepo) return Publisher.GitHub;
