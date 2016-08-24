@@ -1644,7 +1644,7 @@ export class ModInfoController extends ModEditBaseController {
           externalInfo.chucklefishUrl = `http://community.playstarbound.com/resources/${this.$scope.model.name.sluggify()}.${x.publisherId}/`;
           break;
         case Publisher[Publisher.NoMansSkyMods]:
-          externalInfo.nmsmUrl = `http://nomansskymods.com/mods/${x.publisherId}`;
+          externalInfo.nmsmUrl = `http://nomansskymods.com/mods/${x.publisherId}/`;
           break;
         case Publisher[Publisher.NexusMods]:
           // TODO: Include game slug..
