@@ -807,10 +807,10 @@ export class ModController extends ContentModelController<IBreezeMod> {
         await this.$scope.editConfig.saveChanges();
     };
 
-    this.$scope.changeAuthorCheck = (scope: any): boolean => {
-      if (!scope.newAuthor)
+    this.$scope.changeAuthorCheck = (newAuthor): boolean => {
+      if (!newAuthor)
         return true;
-      if ((typeof scope.newAuthor === 'string' || scope.newAuthor instanceof String))
+      if ((typeof newAuthor === 'string' || newAuthor instanceof String))
         return true;
       return false;
     };
@@ -1644,11 +1644,11 @@ export class ModInfoController extends ModEditBaseController {
           externalInfo.chucklefishUrl = `http://community.playstarbound.com/resources/${this.$scope.model.name.sluggify()}.${x.publisherId}/`;
           break;
         case Publisher[Publisher.NoMansSkyMods]:
-          externalInfo.nmsmUrl = `http://nomansskymods.com/mods/${x.publisherId}`;
+          externalInfo.nmsmUrl = `http://nomansskymods.com/mods/${x.publisherId}/`;
           break;
         case Publisher[Publisher.NexusMods]:
           // TODO: Include game slug..
-          externalInfo.nexusUrl = `http://www.nexusmods.com/nomanssky/mods/${x.publisherId}`;
+          externalInfo.nexusUrl = `http://www.nexusmods.com/${this.$scope.game.slug.toLowerCase()}/mods/${x.publisherId}/?`;
           break;
         case Publisher[Publisher.Armaholic]:
           externalInfo.armaholicUrl = `http://www.armaholic.com/page.php?id=${x.publisherId}`;
