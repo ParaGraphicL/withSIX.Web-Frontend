@@ -6,6 +6,8 @@
     <compose if.bind="model.steamInfo" show.bind="active === Publisher.Steam" view-model="./steam-info" model.bind="model.steamInfo"></compose>
     <compose if.bind="model.armaholicUrl" show.bind="active === Publisher.Armaholic" view-model="./armaholic-info" model.bind="model.armaholicUrl"></compose>
     <compose if.bind="model.gitHubRepo" show.bind="active === Publisher.GitHub" view-model="./github-info" model.bind="model.gitHubRepo"></compose>
+    <compose if.bind="model.nmsmUrl" show.bind="active === Publisher.NoMansSkyMods" view-model="./nmsm-info" model.bind="model.nmsmUrl"></compose>
+    <compose if.bind="model.nexusUrl" show.bind="active === Publisher.NexusMods" view-model="./nexus-info" model.bind="model.nexusUrl"></compose>
 
     <div class="box clearfix link-list">
       <h3>External links</h3>

@@ -7,6 +7,8 @@ export enum Publisher {
   withSIX = 6,
 
   Chucklefish = 1001,
+  NoMansSkyMods = 1002,
+  NexusMods = 1003,
 
   // Forums
   BiForums = 10000,

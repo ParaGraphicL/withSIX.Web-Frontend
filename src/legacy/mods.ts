@@ -689,6 +689,8 @@ export class ModController extends ContentModelController<IBreezeMod> {
       return;
     }
 
+    if (model.groupId != null) this.$scope.features.groups = true;
+
     this.isForActiveGame = $scope.model.gameId == $scope.game.id;
 
     var basket = basketService.getGameBaskets($scope.game.id);
@@ -1578,6 +1580,8 @@ export class ModEditBaseController extends BaseController {
   }
 }
 
+export interface IExternalInfo { forumUrl?: string; steamInfo; gitHubRepo?: string; armaholicUrl?: string; chucklefishUrl?: string; nmsmUrl?: string; nexusUrl?: string; description?: string; homepageUrl?: string }
+
 export interface IModInfoScope extends IEditableModScope, IHandleCommentsScope<IBreezeModComment> {
   openClaimDialog: () => any;
   exampleData: { key: string; values: number[][] }[];
@@ -1589,7 +1593,7 @@ export interface IModInfoScope extends IEditableModScope, IHandleCommentsScope<I
   addLink: (link) => void;
   newLink: { title: string; path: string };
   openSteamInfo: () => void;
-  externalInfo: { forumUrl?: string; steamInfo; gitHubRepo?: string; armaholicUrl?: string; chucklefishUrl?: string; description?: string; }
+  externalInfo: IExternalInfo;
   galleryInfo: { description?: string; avatar?: string }
 }
 
@@ -1627,18 +1631,24 @@ export class ModInfoController extends ModEditBaseController {
     this.setupDependencyAutoComplete();
 
     this.setupTitle("model.name", "Info - {0} (" + $scope.model.packageName + ") - " + $scope.model.game.name);
-    if (this.$scope.features.steam)
-      this.handleApis();
+    this.handleApis();
   }
 
   handleApis() {
-    let externalInfo = <any>{};
+    let externalInfo = <IExternalInfo>{};
     if (this.$scope.model.homepageUrl) externalInfo.homepageUrl =this.$scope.model.homepageUrl;
  
     this.$scope.model.publishers.forEach(x => {
       switch (x.publisherType) {
         case Publisher[Publisher.Chucklefish]:
           externalInfo.chucklefishUrl = `http://community.playstarbound.com/resources/${this.$scope.model.name.sluggify()}.${x.publisherId}/`;
+          break;
+        case Publisher[Publisher.NoMansSkyMods]:
+          externalInfo.nmsmUrl = `http://nomansskymods.com/mods/${x.publisherId}/`;
+          break;
+        case Publisher[Publisher.NexusMods]:
+          // TODO: Include game slug..
+          externalInfo.nexusUrl = `http://www.nexusmods.com/nomanssky/mods/${x.publisherId}`;
           break;
         case Publisher[Publisher.Armaholic]:
           externalInfo.armaholicUrl = `http://www.armaholic.com/page.php?id=${x.publisherId}`;
