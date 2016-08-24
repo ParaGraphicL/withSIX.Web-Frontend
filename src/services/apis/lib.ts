@@ -3,6 +3,7 @@ export * from './github';
 export * from './ipb';
 export * from './seditio';
 export * from './xen-foro';
+export * from './nmsm';
 export * from './steam';
 export * from './parser';
 export * from './imgur';
