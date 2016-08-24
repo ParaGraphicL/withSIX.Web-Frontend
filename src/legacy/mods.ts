@@ -1591,7 +1591,7 @@ export interface IModInfoScope extends IEditableModScope, IHandleCommentsScope<I
   addLink: (link) => void;
   newLink: { title: string; path: string };
   openSteamInfo: () => void;
-  externalInfo: { forumUrl?: string; steamInfo; gitHubRepo?: string; armaholicUrl?: string; chucklefishUrl?: string; description?: string; }
+  externalInfo: { forumUrl?: string; steamInfo; gitHubRepo?: string; armaholicUrl?: string; chucklefishUrl?: string; nmsmUrl?: string; description?: string; }
   galleryInfo: { description?: string; avatar?: string }
 }
 
@@ -1640,6 +1640,9 @@ export class ModInfoController extends ModEditBaseController {
       switch (x.publisherType) {
         case Publisher[Publisher.Chucklefish]:
           externalInfo.chucklefishUrl = `http://community.playstarbound.com/resources/${this.$scope.model.name.sluggify()}.${x.publisherId}/`;
+          break;
+        case Publisher[Publisher.NoMansSkyMods]:
+          externalInfo.nmsmUrl = `http://nomansskymods.com/mods/${x.publisherId}`;
           break;
         case Publisher[Publisher.Armaholic]:
           externalInfo.armaholicUrl = `http://www.armaholic.com/page.php?id=${x.publisherId}`;
