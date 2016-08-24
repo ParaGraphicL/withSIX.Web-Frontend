@@ -1648,7 +1648,7 @@ export class ModInfoController extends ModEditBaseController {
           break;
         case Publisher[Publisher.NexusMods]:
           // TODO: Include game slug..
-          externalInfo.nexusUrl = `http://www.nexusmods.com/nomanssky/mods/${x.publisherId}`;
+          externalInfo.nexusUrl = `http://www.nexusmods.com/${this.$scope.game.slug.toLowerCase()}/mods/${x.publisherId}/?`;
           break;
         case Publisher[Publisher.Armaholic]:
           externalInfo.armaholicUrl = `http://www.armaholic.com/page.php?id=${x.publisherId}`;
