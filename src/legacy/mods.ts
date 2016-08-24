@@ -807,10 +807,10 @@ export class ModController extends ContentModelController<IBreezeMod> {
         await this.$scope.editConfig.saveChanges();
     };
 
-    this.$scope.changeAuthorCheck = (scope: any): boolean => {
-      if (!scope.newAuthor)
+    this.$scope.changeAuthorCheck = (newAuthor): boolean => {
+      if (!newAuthor)
         return true;
-      if ((typeof scope.newAuthor === 'string' || scope.newAuthor instanceof String))
+      if ((typeof newAuthor === 'string' || newAuthor instanceof String))
         return true;
       return false;
     };
