@@ -1095,8 +1095,9 @@ export class ModController extends ContentModelController<IBreezeMod> {
     if (this.$scope.model.fileTransferPolicies.length > 0) {
       var transferPolicy = this.$scope.model.fileTransferPolicies[0];
 
+      var isAdded = transferPolicy.entityAspect.entityState.isAdded();
       transferPolicy.entityAspect.setDeleted();
-      await this.$scope.editConfig.saveChanges(transferPolicy);
+      if (!isAdded) await this.$scope.editConfig.saveChanges(transferPolicy);
     }
   }
 

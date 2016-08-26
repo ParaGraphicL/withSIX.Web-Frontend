@@ -301,31 +301,17 @@ export class ContentModelController<TModel extends breeze.Entity> extends Conten
       graphExpands = changeGraph.join(",");
     }
 
-    var saveChanges = async (entity?: breeze.Entity, ...entities: breeze.Entity[]): Promise<boolean> => {
-      if (entity != null) {
-        var changedEntites: breeze.Entity[] = [];
-        entities.push(entity);
-        entities.forEach((v, i, arr) => { if (!v.entityAspect.entityState.isUnchanged()) changedEntites.push(v) });
-        try {
-          await this.saveChanges(changedEntites);
-          return true;
-        } catch (reason) {
-          var reasons = (<string>(<any>breeze).saveErrorMessageService.getErrorMessage(reason)).replace(/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/gi, "").replace(/[ ]\(\)[ ][-][ ]/g, ": ");
-          this.breezeQueryFailed({ message: 'Save failed, See Validation Errors Below:<br/><br/>' + reasons });
-          return false;
-        }
-      } else {
-        var changedEntites: breeze.Entity[] = [];
-        var entities: breeze.Entity[] = (<any>this.entityManager).getEntityGraph(this.$scope.model, graphExpands);
-        entities.forEach((v, i, arr) => { if (!v.entityAspect.entityState.isUnchanged()) changedEntites.push(v) });
-        try {
-          await this.saveChanges(changedEntites);
-          return true;
-        } catch (reason) {
-          var reasons = (<string>(<any>breeze).saveErrorMessageService.getErrorMessage(reason)).replace(/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/gi, "").replace(/[ ]\(\)[ ][-][ ]/g, ": ");
-          this.breezeQueryFailed({ message: 'Save failed, See Validation Errors Below:<br/><br/>' + reasons });
-          return false;
-        }
+    var saveChanges = async (...entities: breeze.Entity[]): Promise<boolean> => {
+      var changedEntites: breeze.Entity[] = [];
+      if (!entities || entities.length === 0) entities = (<any>this.entityManager).getEntityGraph(this.$scope.model, graphExpands);
+      entities.forEach((v, i, arr) => { if (!v.entityAspect.entityState.isUnchanged()) changedEntites.push(v) });
+      try {
+        await this.saveChanges(changedEntites);
+        return true;
+      } catch (reason) {
+        var reasons = (<string>(<any>breeze).saveErrorMessageService.getErrorMessage(reason)).replace(/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/gi, "").replace(/[ ]\(\)[ ][-][ ]/g, ": ");
+        this.breezeQueryFailed({ message: 'Save failed, See Validation Errors Below:<br/><br/>' + reasons });
+        return false;
       }
     }
 
