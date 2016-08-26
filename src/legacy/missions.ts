@@ -375,22 +375,21 @@ class MissionController extends ContentModelController<IBreezeMission> {
 
   unfollow() {
     return this.requestAndProcessResponse(UnfollowMissionCommand, { model: this.$scope.model })
-      .then(r => {
-        this.applyIfNeeded(() => {
+      .then(r => this.applyIfNeeded(() => {
           delete this.$scope.followedMissions[this.$scope.model.id];
           this.$scope.model.followersCount -= 1;
-        });
-      });
+        })
+      );
   }
 
   follow() {
     return this.requestAndProcessResponse(FollowMissionCommand, { model: this.$scope.model })
-      .then(r => {
+      .then(r =>
         this.applyIfNeeded(() => {
           this.$scope.followedMissions[this.$scope.model.id] = true;
           this.$scope.model.followersCount += 1;
-        });
-      });
+        })
+      );
   }
 
   static menuItems: Array<{ header: string; segment: string; isDefault?: boolean }> = [
@@ -457,18 +456,18 @@ class MissionController extends ContentModelController<IBreezeMission> {
           .catch(this.breezeQueryFailed));
       }
 
-      this.$scope.likeComment = comment => this.$scope.request(LikeMissionCommentCommand, { missionId: this.$scope.model.id, id: comment.id }).then(() => {
+      this.$scope.likeComment = comment => this.$scope.request(LikeMissionCommentCommand, { missionId: this.$scope.model.id, id: comment.id }).then(() =>
         this.applyIfNeeded(() => {
           comment.likesCount += 1;
           this.$scope.commentLikeStates[comment.id] = true;
-        });
-      });
-      this.$scope.unlikeComment = comment => this.$scope.request(UnlikeMissionCommentCommand, { missionId: this.$scope.model.id, id: comment.id }).then(() => {
+        })
+      );
+      this.$scope.unlikeComment = comment => this.$scope.request(UnlikeMissionCommentCommand, { missionId: this.$scope.model.id, id: comment.id }).then(() =>
         this.applyIfNeeded(() => {
           comment.likesCount -= 1;
           this.$scope.commentLikeStates[comment.id] = false;
-        });
-      });
+        })
+      );
     }
 
     this.$timeout(() => this.$scope.request(GetMissionCommentsQuery, { missionId: this.$scope.model.id }));
