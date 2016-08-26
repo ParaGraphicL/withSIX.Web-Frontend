@@ -446,7 +446,7 @@ class AppModule extends Tk.Module {
           $delegate[0].compile = function($element, attr) {
             var fn = $parse(attr.ngClick, null, true);
 
-            return function(scope, element) {
+            return function(scope: ng.IScope, element) {
               element.on('click', function(event) {
                 let el = element[0];
                 if (el.disabled) return;
@@ -456,6 +456,8 @@ class AppModule extends Tk.Module {
                 } catch (err) {
                   if (!err.__wsprocessed) errorHandler.handleAngularActionError(err);
                   return;
+                } finally {
+                  scope.$evalAsync();
                 }
 
                 let isPromise = result != null && typeof result.then == 'function';
@@ -468,7 +470,7 @@ class AppModule extends Tk.Module {
                 p.then(enable, x => {
                   enable();
                   if (!x.__wsprocessed) errorHandler.handleAngularActionError(x);
-                });
+                }).then(_ => scope.$evalAsync());
               });
             };
           };
