@@ -228,8 +228,16 @@ export class BaseController extends Tk.Controller {
     $scope.$on('$destroy', () => $scope.destroyed = true);
   }
 
-  applyIfNeeded = (func?) => this.applyIfNeededOnScope(func, this.$scope);
-  applyIfNeededOnScope = (func, scope: ng.IScope) => scope.$evalAsync(func);
+  applyIfNeeded = <T>(func?: () => T) => this.applyIfNeededOnScope<T>(func, this.$scope);
+  applyIfNeededOnScope = <T>(func: () => T, scope: ng.IScope) => new Promise<T>((res, rej) => {
+    scope.$evalAsync(() => {
+      try {
+        func ? res(func()) : res();
+      } catch (err) {
+        rej(err);
+      }
+    })
+  });
 
   public setupDefaultTitle() {
     var titleParts = [];
