@@ -360,7 +360,7 @@ export class ContentModelController<TModel extends breeze.Entity> extends Conten
     try {
       return await this.entityManager.saveChanges(changedEntities);
     } finally {
-      this.applyIfNeeded();
+      await this.applyIfNeeded();
     }
   }
 

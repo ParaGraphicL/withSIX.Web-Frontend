@@ -279,10 +279,10 @@ export class BaseController extends Tk.Controller {
     this.$scope.response = undefined;
     try {
       let r = await this.$scope.request<T>(command, data);
-      this.applyIfNeeded(() => this.successResponse(r));
+      await this.applyIfNeeded(() => this.successResponse(r));
       return r;
     } catch (err) {
-      this.applyIfNeeded(() => this.errorResponse(err));
+      await this.applyIfNeeded(() => this.errorResponse(err));
       err.__wsprocessed = true;
       throw err;
     }

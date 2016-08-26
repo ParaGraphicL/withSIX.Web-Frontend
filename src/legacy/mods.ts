@@ -86,32 +86,32 @@ export class ClaimDialogController extends DialogControllerBase {
 
   private ok = () => {
     return this.$scope.request<{ token; formatProvider; data }>(GetClaimQuery, { modId: this.$scope.model.id })
-      .then((result) => {
+      .then((result) => 
         this.applyIfNeeded(() => {
           this.$scope.claimToken = result.token;
           this.$scope.formatProvider = result.formatProvider;
           this.$scope.ctModel = result.data;
           this.$scope.page = '/src_legacy/app/play/mods/dialogs/_claim-page2.html';
-        });
-      })
+        })
+      )
       .catch(this.httpFailed);
   };
 
   private verifyToken = () => {
     this.$scope.verificationFailed = false;
     return this.$scope.request(VerifyClaimCommand, { modId: this.$scope.model.id })
-      .then((result) => {
+      .then((result) =>
         this.applyIfNeeded(() => {
           this.$scope.page = '/src_legacy/app/play/mods/dialogs/_claim-page3.html';
           this.$scope.error = undefined;
-        });
-      })
-      .catch((reason) => {
+        })
+      )
+      .catch((reason) =>
         this.applyIfNeeded(() => {
           this.httpFailed(reason);
           this.$scope.error = reason.data.message;
-        });
-      });
+        })
+      );
   };
 }
 
@@ -935,7 +935,7 @@ export class ModController extends ContentModelController<IBreezeMod> {
           setTimeout(() => $scope.approving = false, 1000 * 2);
           await $scope.request(GetModUpdatesQuery, { modId: $scope.model.id });
         }).catch(async (reason) => {
-          this.applyIfNeeded(() => {
+          await this.applyIfNeeded(() => {
             $scope.approving = false;
             this.httpFailed(reason);
           });
@@ -954,7 +954,7 @@ export class ModController extends ContentModelController<IBreezeMod> {
           setTimeout(() => $scope.approving = false, 1000 * 2);
           await $scope.request(GetModUpdatesQuery, { modId: $scope.model.id });
         }).catch(async (reason) => {
-          this.applyIfNeeded(() => {
+          await this.applyIfNeeded(() => {
             $scope.approving = false;
           });
           await $scope.request(GetModUpdatesQuery, { modId: $scope.model.id });
@@ -1035,20 +1035,16 @@ export class ModController extends ContentModelController<IBreezeMod> {
         await $scope.request(CancelUploadRequestQuery, { requestId: getCurrentChange().id, force: force })
           .then((result) => {
             $scope.request(GetModUpdatesQuery, { modId: $scope.model.id });
-            setTimeout(() => {
-              this.applyIfNeeded(() => {
+            setTimeout(() => this.applyIfNeeded(() => {
                 setCancelConfirmState(false, force);
                 setCancelState(false, force);
-              });
-            }, 1000 * 2);
+              }), 1000 * 2);
           }).catch(reason => {
             $scope.request(GetModUpdatesQuery, { modId: $scope.model.id });
-            setTimeout(() => {
-              this.applyIfNeeded(() => {
+            setTimeout(() => this.applyIfNeeded(() => {
                 setCancelConfirmState(false, force);
                 setCancelState(false, force);
-              });
-            }, 1000 * 2);
+              }), 1000 * 2);
             this.httpFailed(reason);
           });
       } else {
@@ -1246,7 +1242,7 @@ export class ModController extends ContentModelController<IBreezeMod> {
       this.logger.error("We were unable to retrieve an upload policy for your image. Please try again later", "Failed to upload image.");
       this.cancelImageUpload();
     } finally {
-      this.applyIfNeeded(() => this.$scope.uploadingModImage = false)
+      await this.applyIfNeeded(() => this.$scope.uploadingModImage = false)
     }
   }
 
@@ -1254,7 +1250,7 @@ export class ModController extends ContentModelController<IBreezeMod> {
     try {
       return await this.entityManager.saveChanges(changedEntities);
     } finally {
-      this.applyIfNeeded();
+      await this.applyIfNeeded();
     }
   }
 
@@ -1293,7 +1289,7 @@ export class ModController extends ContentModelController<IBreezeMod> {
       this.logger.error("We were unable to retrieve an upload policy for your image. Please try again later", "Failed to upload image.");
       this.cancelImageUpload();
     } finally {
-      this.applyIfNeeded(() => $scope.uploadingModImage = false);
+      await this.applyIfNeeded(() => $scope.uploadingModImage = false);
     }
   }
 
@@ -1313,7 +1309,7 @@ export class ModController extends ContentModelController<IBreezeMod> {
       if (data.includes("EntityTooSmall")) this.logger.error("Your image must be at least 10KB", "Image too small");
       throw r;
     } finally {
-      this.applyIfNeeded(() => this.$scope.uploadingModImage = false);
+      await this.applyIfNeeded(() => this.$scope.uploadingModImage = false);
     }
   }
 
@@ -1325,22 +1321,21 @@ export class ModController extends ContentModelController<IBreezeMod> {
 
   unfollow() {
     this.requestAndProcessResponse(UnfollowModCommand, { model: this.$scope.model })
-      .then(r => {
-        this.applyIfNeeded(() => {
+      .then(r => this.applyIfNeeded(() => {
           delete this.$scope.followedMods[this.$scope.model.id];
           this.$scope.model.followersCount -= 1;
-        });
-      });
+        })
+      );
   }
 
   follow() {
     this.requestAndProcessResponse(FollowModCommand, { model: this.$scope.model })
-      .then(r => {
+      .then(r =>
         this.applyIfNeeded(() => {
           this.$scope.followedMods[this.$scope.model.id] = true;
           this.$scope.model.followersCount += 1;
-        });
-      });
+        })
+      );
   }
 
   setupHelp() {
@@ -1702,18 +1697,18 @@ export class ModInfoController extends ModEditBaseController {
           .catch(this.breezeQueryFailed));
       }
 
-      this.$scope.likeComment = comment => this.$scope.request(LikeModCommentCommand, { modId: this.$scope.model.id, id: comment.id }).then(() => {
+      this.$scope.likeComment = comment => this.$scope.request(LikeModCommentCommand, { modId: this.$scope.model.id, id: comment.id }).then(() =>
         this.applyIfNeeded(() => {
           comment.likesCount += 1;
           this.$scope.commentLikeStates[comment.id] = true;
-        });
-      });
-      this.$scope.unlikeComment = comment => this.$scope.request(UnlikeModCommentCommand, { modId: this.$scope.model.id, id: comment.id }).then(() => {
+        })
+      );
+      this.$scope.unlikeComment = comment => this.$scope.request(UnlikeModCommentCommand, { modId: this.$scope.model.id, id: comment.id }).then(() =>
         this.applyIfNeeded(() => {
           comment.likesCount -= 1;
           this.$scope.commentLikeStates[comment.id] = false;
-        });
-      });
+        })
+      );
     }
 
     this.$timeout(() => this.$scope.request(GetModCommentsQuery, { modId: this.$scope.model.id }));
@@ -2033,25 +2028,25 @@ export class UploadVersionDialogController extends ModelDialogControllerBase<IBr
 
   getLatestInfo() {
     let model = this.$scope.model;
-    this.$scope.request<IModVersionInfo>(GetLatestInfo, { data: { downloadUri: model.mod.download } }).then(r => {
+    this.$scope.request<IModVersionInfo>(GetLatestInfo, { data: { downloadUri: model.mod.download } }).then(r =>
       this.applyIfNeeded(() => {
         model.mod.version = r.version;
         model.mod.branch = r.branch;
-      });
-    });
+      })
+    );
   }
 
   checkDownloadLink(uri: string) {
     this.$scope.checkingDownloadLink = true;
     this.$scope.model.downloadLinkAvailable = false;
     this.$scope.request<boolean>(GetCheckLinkQuery, { linkToCheck: uri })
-      .then((result) => {
+      .then((result) =>
         this.applyIfNeeded(() => {
           this.$scope.checkingDownloadLink = false;
           Tools.Debug.log(result);
           this.$scope.model.downloadLinkAvailable = result;
-        });
-      })
+        })
+      )
       .catch(this.httpFailed);
   }
 

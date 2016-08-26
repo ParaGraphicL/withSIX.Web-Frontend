@@ -209,21 +209,11 @@ export class CollectionController extends ContentModelController<IBreezeCollecti
 
   // workaround for angular vs aurelia
 
-  public enableEditModeFromAurelia() {
-    this.applyIfNeeded(() => {
-      this.$scope.editConfig.enableEditing();
-    })
-  }
+  public enableEditModeFromAurelia = () => this.applyIfNeeded(() => this.$scope.editConfig.enableEditing())
 
-  public disableEditModeFromAurelia() {
-    this.applyIfNeeded(() => {
-      this.$scope.editConfig.closeEditing();
-    })
-  }
+  public disableEditModeFromAurelia = () => this.applyIfNeeded(() => this.$scope.editConfig.closeEditing())
 
-  public saveFromAurelia() {
-    return this.$scope.editConfig.hasChanges() ? this.$scope.editConfig.saveChanges() : null;
-  }
+  public saveFromAurelia() { return this.$scope.editConfig.hasChanges() ? this.$scope.editConfig.saveChanges() : null; }
 
   public cancelFromAurelia() {
     if (this.$scope.editConfig.hasChanges())
@@ -272,20 +262,17 @@ export class CollectionController extends ContentModelController<IBreezeCollecti
 
   unsubscribe() {
     return this.requestAndProcessResponse(UnsubscribeCollectionCommand, { model: this.$scope.model })
-      .then(r => {
-        this.applyIfNeeded(() => {
+      .then(r => this.applyIfNeeded(() => {
           delete this.$scope.subscribedCollections[this.$scope.model.id];
           this.$scope.model.subscribersCount -= 1;
           if (window.six_client.unsubscribedFromCollection)
             window.six_client.unsubscribedFromCollection(this.$scope.model.id);
-        });
-      });
+        }));
   }
 
   subscribe() {
     return this.requestAndProcessResponse(SubscribeCollectionCommand, { model: this.$scope.model })
-      .then(r => {
-        this.applyIfNeeded(() => {
+      .then(r => this.applyIfNeeded(() => {
           this.$scope.subscribedCollections[this.$scope.model.id] = true;
           this.$scope.model.subscribersCount += 1;
           if (window.six_client.subscribedToCollection)
@@ -304,8 +291,8 @@ export class CollectionController extends ContentModelController<IBreezeCollecti
             this.localStorageService.set('clientInstalled', true);
             //Downloads.startDownload(url);
           }
-        });
-      });
+        })
+      );
   }
 
   setupContentHeader(content: IBreezeCollection): IContentHeader {
@@ -462,7 +449,7 @@ export class CollectionController extends ContentModelController<IBreezeCollecti
       this.logger.error("We were unable to retrieve an upload policy for your image. Please try again later", "Failed to upload image.");
       this.cancelImageUpload();
     } finally {
-      this.applyIfNeeded(() => $scope.uploadingCollectionImage = false);
+      await this.applyIfNeeded(() => $scope.uploadingCollectionImage = false);
     }
   }
 
@@ -500,7 +487,7 @@ export class CollectionController extends ContentModelController<IBreezeCollecti
       this.logger.error("We were unable to retrieve an upload policy for your image. Please try again later", "Failed to upload image.");
       this.cancelImageUpload();
     } finally {
-      this.applyIfNeeded(() => this.$scope.uploadingCollectionImage = false);
+      await this.applyIfNeeded(() => this.$scope.uploadingCollectionImage = false);
     }
   }
 
@@ -508,7 +495,7 @@ export class CollectionController extends ContentModelController<IBreezeCollecti
     try {
       return await this.entityManager.saveChanges(changedEntities);
     } finally {
-      this.applyIfNeeded();
+      await this.applyIfNeeded();
     }
   }
 
@@ -526,7 +513,7 @@ export class CollectionController extends ContentModelController<IBreezeCollecti
       if (data.includes("EntityTooSmall")) this.logger.error("Your image must be at least 10KB", "Image too small");
       throw r;
     } finally {
-      this.applyIfNeeded(() => this.$scope.uploadingCollectionImage = false);
+      await this.applyIfNeeded(() => this.$scope.uploadingCollectionImage = false);
     }
   }
 
@@ -744,20 +731,20 @@ export class CollectionInfoController extends ContentController {
       }
 
       this.$scope.likeComment = comment => {
-        return this.$scope.request(LikeCollectionCommentCommand, { collectionId: this.$scope.model.id, id: comment.id }).then(() => {
+        return this.$scope.request(LikeCollectionCommentCommand, { collectionId: this.$scope.model.id, id: comment.id }).then(() =>
           this.applyIfNeeded(() => {
             comment.likesCount += 1;
             this.$scope.commentLikeStates[comment.id] = true;
-          });
-        });
+          })
+        );
       };
       this.$scope.unlikeComment = comment => {
-        return this.$scope.request(UnlikeCollectionCommentCommand, { collectionId: this.$scope.model.id, id: comment.id }).then(() => {
+        return this.$scope.request(UnlikeCollectionCommentCommand, { collectionId: this.$scope.model.id, id: comment.id }).then(() => 
           this.applyIfNeeded(() => {
             comment.likesCount -= 1;
             this.$scope.commentLikeStates[comment.id] = false;
-          });
-        });
+          })
+        );
       };
     }
 
