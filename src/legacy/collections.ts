@@ -462,7 +462,7 @@ export class CollectionController extends ContentModelController<IBreezeCollecti
       this.logger.error("We were unable to retrieve an upload policy for your image. Please try again later", "Failed to upload image.");
       this.cancelImageUpload();
     } finally {
-      this.applyIfNeeded(_ => $scope.uploadingCollectionImage = false);
+      this.applyIfNeeded(() => $scope.uploadingCollectionImage = false);
     }
   }
 
@@ -500,7 +500,7 @@ export class CollectionController extends ContentModelController<IBreezeCollecti
       this.logger.error("We were unable to retrieve an upload policy for your image. Please try again later", "Failed to upload image.");
       this.cancelImageUpload();
     } finally {
-      this.applyIfNeeded(_ => this.$scope.uploadingCollectionImage = false);
+      this.applyIfNeeded(() => this.$scope.uploadingCollectionImage = false);
     }
   }
 
@@ -526,7 +526,7 @@ export class CollectionController extends ContentModelController<IBreezeCollecti
       if (data.includes("EntityTooSmall")) this.logger.error("Your image must be at least 10KB", "Image too small");
       throw r;
     } finally {
-      this.applyIfNeeded(_ => this.$scope.uploadingCollectionImage = false);
+      this.applyIfNeeded(() => this.$scope.uploadingCollectionImage = false);
     }
   }
 

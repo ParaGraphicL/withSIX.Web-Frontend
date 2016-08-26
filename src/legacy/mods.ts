@@ -1246,7 +1246,7 @@ export class ModController extends ContentModelController<IBreezeMod> {
       this.logger.error("We were unable to retrieve an upload policy for your image. Please try again later", "Failed to upload image.");
       this.cancelImageUpload();
     } finally {
-      this.applyIfNeeded(_ => this.$scope.uploadingModImage = false)
+      this.applyIfNeeded(() => this.$scope.uploadingModImage = false)
     }
   }
 
@@ -1293,7 +1293,7 @@ export class ModController extends ContentModelController<IBreezeMod> {
       this.logger.error("We were unable to retrieve an upload policy for your image. Please try again later", "Failed to upload image.");
       this.cancelImageUpload();
     } finally {
-      this.applyIfNeeded(_ => $scope.uploadingModImage = false);
+      this.applyIfNeeded(() => $scope.uploadingModImage = false);
     }
   }
 
@@ -1313,7 +1313,7 @@ export class ModController extends ContentModelController<IBreezeMod> {
       if (data.includes("EntityTooSmall")) this.logger.error("Your image must be at least 10KB", "Image too small");
       throw r;
     } finally {
-      this.applyIfNeeded(_ => this.$scope.uploadingModImage = false);
+      this.applyIfNeeded(() => this.$scope.uploadingModImage = false);
     }
   }
 
