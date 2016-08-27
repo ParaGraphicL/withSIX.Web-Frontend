@@ -16,53 +16,10 @@ import {W6} from './withSIX';
 import {Container} from 'aurelia-framework';
 export * from 'aurelia-mediator';
 
-@inject(W6, Toastr, Router, EventAggregator)
-export class ClientMissingHandler {
-  constructor(private w6: W6, private toastr: Toastr, private router: Router, private eventBus: EventAggregator) { }
-
-  get hasActiveGame() { return this.w6.activeGame.id != null };
-  get isClientConnected() { return this.w6.miniClient.isConnected; }
-
-  async requireAccount() { this.toastr.warning("Requires account", "Please login").then(x => this.w6.openLoginDialog(null)) }
-
-  async handleClientOrGameMissing() {
-    if (!this.hasActiveGame) await this.handleActiveGameMissing();
-    else if (!this.isClientConnected) await this.handleClientMissing();
-  }
-
-  async handleClientMissing() {
-    if (this.w6.settings.hasSync) {
-      this.addClientIframe();
-      await this.handleMessage("Trying to start the client, or click here to download the Sync client");
-    } else await this.handleMessage("Click here to download the Sync client");
-  }
-
-  async handleActiveGameMissing() {
-    this.toastr.warning("Please select a game", "Requires an active game")
-      .then(x => x ? this.openPlayTab() : null);
-    this.openPlayTab();
-  }
-
-  openPlayTab = () => this.eventBus.publish(new SwitchSideBarTab('play'));
-
-  private async handleMessage(message: string) {
-    if (await this.toastr.warning(message, "Requires Sync client"))
-      this.router.navigate("/download");
-  }
-
-  addClientIframe() {
-    var i = document.createElement('iframe');
-    i.style.display = 'none';
-    i.onload = function () { i.parentNode.removeChild(i); };
-    i.src = 'syncws://?launch=1';
-    document.body.appendChild(i);
-  }
-}
-
 // App specific starts
-@inject(Mediator, Toastr, ClientMissingHandler, W6, GlobalErrorHandler)
+@inject(Mediator, Toastr)
 export class ErrorLoggingMediatorDecorator implements IMediator {
-  constructor(private mediator: IMediator, private toastr: Toastr, private clientMissingHandler: ClientMissingHandler, private w6: W6, private eh: GlobalErrorHandler) { }
+  constructor(private mediator: IMediator, private toastr: Toastr) { }
 
   request<T>(request: IRequest<T>): Promise<T> {
     let action = (<any>request.constructor).action;
@@ -74,29 +31,6 @@ export class ErrorLoggingMediatorDecorator implements IMediator {
         }
         return x;
       })
-      .catch(fail => {
-        if (fail instanceof ValidationResult) this.handleValidationError(fail, action);
-        else if (fail == 'Error: Error during negotiation request.') this.handleClientMissing(fail, action);
-        else if (fail == 'Error: The user cancelled the operation' || fail == 'Error: Operation aborted') {
-        } else {
-          this.handleGeneralError(fail, action);
-          this.eh.handleUseCaseError(fail);
-        }
-        return Promise.reject<T>(fail);
-      });
-  }
-  handleValidationError(err, action) {
-    // TODO: Just disable the save button until validated?
-    toastr.warning("Please fix the indicated fields", "Validation failed");
-  }
-
-  handleClientMissing = (err, action) => this.clientMissingHandler.handleClientMissing();
-
-  handleGeneralError(err, action) {
-    // TODO: Perhaps only show toast if we specified action?
-    var msg = this.w6.api.errorMsg(err);
-    Tools.Debug.error(msg);
-    this.toastr.error(msg[0], (action || "Action") + ": " + msg[1]);
   }
 }
 
@@ -231,10 +165,6 @@ export class DbQuery<TRequest, TResponse> implements IRequestHandler<TRequest, T
     var r = await this.context.executeQuery<IBreezeMod>(query);
     return r.results.toMap(x => x.id);
   }
-}
-
-export class SwitchSideBarTab {
-  constructor(public name: string) { }
 }
 
 export interface ISort<T> {

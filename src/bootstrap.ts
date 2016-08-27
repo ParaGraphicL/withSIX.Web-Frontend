@@ -190,6 +190,6 @@ export class ContainerSetup {
     this.instance.registerTransient(UiContext);
 
     this.instance.registerSingleton(Mediator,
-      () => new ErrorLoggingMediatorDecorator(new InjectingMediatorDecorator(new Mediator(), this.instance.get(W6)), this.instance.get(Toastr), this.instance.get(ClientMissingHandler), this.instance.get(W6), this.instance.get(GlobalErrorHandler)));
+      () => new ErrorLoggingMediatorDecorator(new InjectingMediatorDecorator(new Mediator(), this.instance.get(W6)), this.instance.get(Toastr)));
   }
 }
