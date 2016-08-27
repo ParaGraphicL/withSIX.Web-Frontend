@@ -111,6 +111,7 @@ export class App extends ViewModel {
     let isSync = window.location.search.includes('sync=1') ? true : false;
     if (isSync) { this.w6.updateSettings(x => x.hasSync = true); }
     this.template = 'v2';
+    if (window.location.pathname === '/plugin') this.template = 'plugin';
 
     this.userMenuItems.push(new MenuItem(this.openSettings));
     if (!this.features.library) this.userMenuItems.push(new MenuItem(this.openLibrary));
