@@ -163,8 +163,13 @@ export class ViewModel extends ReactiveBase {
           return this.setErrorView(errorMap.get(403))
         }
         
-        return this.setErrorView(errorMap.get(500));
+        return this.handleUnknownError(err);
     }
+  }
+
+  handleUnknownError(fail: Error) {
+    this.ui.errorHandler.handleError(fail, 'page load');
+    return this.setErrorView(errorMap.get(500));
   }
 
   protected canActivate() {

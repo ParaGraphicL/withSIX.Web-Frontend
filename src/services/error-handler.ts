@@ -66,7 +66,7 @@ export class ErrorHandler {
     }
   }
 
-    handleValidationError(err, action) {
+  handleValidationError(err, action) {
     // TODO: Just disable the save button until validated?
     toastr.warning("Please fix the indicated fields", "Validation failed");
   }
