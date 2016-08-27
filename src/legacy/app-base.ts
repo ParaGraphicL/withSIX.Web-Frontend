@@ -7,6 +7,7 @@ import {ITagKey, ICreateComment, ICQWM, IModel, IMenuItem} from '../services/leg
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {HttpClient} from 'aurelia-fetch-client';
 import {ToastLogger, GlobalErrorHandler} from '../services/legacy/logger';
+import { ErrorHandler } from '../services/error-handler';
 import {Container} from 'aurelia-framework';
 import breeze from 'breeze-client';
 
@@ -422,7 +423,8 @@ class AppModule extends Tk.Module {
 
     this.app
       .factory('dbContext', () => Container.instance.get(W6Context))
-      .factory('errorHandler', () => Container.instance.get(GlobalErrorHandler))
+      .factory('errorHandler', () => Container.instance.get(ErrorHandler))
+      .factory('globalErrorHandler', () => Container.instance.get(GlobalErrorHandler))
       .factory('logger', () => Container.instance.get(ToastLogger))
       .factory('basketService', () => Container.instance.get(BasketService))
       .factory('aur.amountConverter', () => Container.instance.get(AmountValueConverter))
@@ -433,7 +435,7 @@ class AppModule extends Tk.Module {
       .factory('aur.eventBus', () => Container.instance.get(EventAggregator))
       .factory('aur.client', () => Container.instance.get(Client))
       .factory('aur.features', () => Container.instance.get(FeatureToggles))
-      .factory("$exceptionHandler", ['errorHandler', (eh: GlobalErrorHandler) => (exception, cause) => eh.handleAngularError(exception, cause)])
+      .factory("$exceptionHandler", ['globalErrorHandler', (eh: GlobalErrorHandler) => (exception, cause) => eh.handleAngularError(exception, cause)])
       .config(['redactorOptions', redactorOptions => angular.copy(globalRedactorOptions, redactorOptions)])
       .config([
         '$httpProvider', $httpProvider => {
@@ -450,7 +452,7 @@ class AppModule extends Tk.Module {
         }
       ])
       .config(['$provide', function($provide) {
-        $provide.decorator('ngClickDirective', ['$delegate', '$parse', 'errorHandler', function($delegate, $parse, errorHandler: GlobalErrorHandler) {
+        $provide.decorator('ngClickDirective', ['$delegate', '$parse', 'errorHandler', function($delegate, $parse, errorHandler: ErrorHandler) {
           $delegate[0].compile = function($element, attr) {
             var fn = $parse(attr.ngClick, null, true);
 
@@ -462,7 +464,7 @@ class AppModule extends Tk.Module {
                 try {
                   result = fn(scope, { $event: event });
                 } catch (err) {
-                  if (!err.__wsprocessed) errorHandler.handleAngularActionError(err);
+                  if (!err.__wsprocessed) errorHandler.handleError(err);
                   return;
                 } finally {
                   scope.$evalAsync();
@@ -477,7 +479,7 @@ class AppModule extends Tk.Module {
                 function enable() { el.disabled = false; }
                 p.then(enable, x => {
                   enable();
-                  if (!x.__wsprocessed) errorHandler.handleAngularActionError(x);
+                  if (!x.__wsprocessed) errorHandler.handleError(x);
                 }).then(_ => scope.$evalAsync());
               });
             };

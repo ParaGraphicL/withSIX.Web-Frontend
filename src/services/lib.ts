@@ -24,7 +24,8 @@ export * from './viewmodel';
 export * from './tools';
 export * from './withSIX';
 
-export * from './mediator'
+export * from './mediator';
+export * from './error-handler';
 export * from './basket-service';
 export * from './toastr';
 export * from './client-wrapper';

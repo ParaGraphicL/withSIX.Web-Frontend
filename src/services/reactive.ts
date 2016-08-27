@@ -8,6 +8,7 @@ import {Container, inject, PropertyObserver} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {Validation, ValidationResult} from 'aurelia-validation';
 import {GlobalErrorHandler} from './legacy/logger';
+import { ErrorHandler } from './error-handler';
 
 
 export class ObservableEventAggregator extends EventAggregator {
@@ -196,8 +197,8 @@ export var uiCommandWithLogin = function <T>(action: IPromiseFunction<T>, canExe
 
 export var uiCommand2 = function <T>(name: string, action: IPromiseFunction<T>, options?: ICommandInfo): IReactiveCommand<T> { // Rx.Observable<boolean>
   let command = new ReactiveCommand<T>(name, action, options);
-  let eh: GlobalErrorHandler = Container.instance.get(GlobalErrorHandler);
-  command.thrownExceptions.subscribe(x => eh.handleUseCaseError(x, 'unhandled'));
+  let eh: ErrorHandler = Container.instance.get(ErrorHandler);
+  command.thrownExceptions.subscribe(x => eh.handleError(x));
 
   // TODO: Optimize?
   let f = (...args) => command.execute(...args);
