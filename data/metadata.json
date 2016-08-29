@@ -3401,6 +3401,20 @@
 			}]
 		},
 		{
+			"name": "totalInstall",
+			"dataType": "Int32",
+			"isNullable": false,
+			"defaultValue": 0,
+			"validators": [{
+				"name": "required"
+			},
+			{
+				"min": -2147483648,
+				"max": 2147483647,
+				"name": "int32"
+			}]
+		},
+		{
 			"name": "update",
 			"dataType": "Int32",
 			"isNullable": false,
@@ -3932,6 +3946,20 @@
 		},
 		{
 			"name": "install",
+			"dataType": "Int32",
+			"isNullable": false,
+			"defaultValue": 0,
+			"validators": [{
+				"name": "required"
+			},
+			{
+				"min": -2147483648,
+				"max": 2147483647,
+				"name": "int32"
+			}]
+		},
+		{
+			"name": "totalInstall",
 			"dataType": "Int32",
 			"isNullable": false,
 			"defaultValue": 0,
@@ -5941,6 +5969,20 @@
 		},
 		{
 			"name": "install",
+			"dataType": "Int32",
+			"isNullable": false,
+			"defaultValue": 0,
+			"validators": [{
+				"name": "required"
+			},
+			{
+				"min": -2147483648,
+				"max": 2147483647,
+				"name": "int32"
+			}]
+		},
+		{
+			"name": "totalInstall",
 			"dataType": "Int32",
 			"isNullable": false,
 			"defaultValue": 0,
