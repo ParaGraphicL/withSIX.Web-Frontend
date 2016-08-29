@@ -62,16 +62,20 @@ export class HtmlParser {
     '//www.bistudio.com/assets/img/licenses',
     '//www.bistudio.com/license',
 
-    'armaholic.com/images/pfs/',
-    'armaholic.com/datas/users/news_download',
-    'armaholic.com/skins/',
+    '//armaholic.com/images/pfs/',
+    '//armaholic.com/datas/users/news_download',
+    '//armaholic.com/skins/',
 
     '//button.moddb.com/',
+    '//staticdelivery.nexusmods.com/contents/images',
 
-    'wmtransfer.com/',
-    'paypalobjects.com/',
-    'creativecommons.org/',
-    'patreon.com/'
+    '//store.akamai.steamstatic.com/public/shared/images/',
+    '//cfl.dropboxstatic.com/static/images/',
+    '//wmtransfer.com/',
+    '//paypalobjects.com/',
+    '//www.paypal.com/',
+    '//creativecommons.org/',
+    '//patreon.com/'
   ]
 
   static filterHref(href: string) { return this.shouldFilterHref.some(x => href.includes(x)); }
