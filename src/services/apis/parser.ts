@@ -62,9 +62,10 @@ export class HtmlParser {
     '//www.bistudio.com/assets/img/licenses',
     '//www.bistudio.com/license',
 
-    '//armaholic.com/images/pfs/',
-    '//armaholic.com/datas/users/news_download',
-    '//armaholic.com/skins/',
+    // both www. and main
+    'armaholic.com/images/pfs/',
+    'armaholic.com/datas/users/news_download',
+    'armaholic.com/skins/',
 
     '//button.moddb.com/',
     '//staticdelivery.nexusmods.com/contents/images',
