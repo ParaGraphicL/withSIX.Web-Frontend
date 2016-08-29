@@ -39,7 +39,7 @@
     </sx-header-author>
 
     <div name="follow-info">
-      {{model.stat.totalInstall | amount}} <span ng-if="w6.userInfo.isManager"> ({{model.stat.install}})</span> Installs.
+      <span title="{{model.stat.totalInstall}}>{{model.stat.totalInstall | amount}}</span> <span ng-if="w6.userInfo.isManager" title="{{model.stat.install}}"> ({{model.stat.install | amount}})</span> Installs.
       <span ng-if="w6.userInfo.id">
                 <button class="anchor" ng-click="toggleFollow() && $event.stopPropagation()">
                     <span class="icon withSIX-icon-Follow"></span> {{followedMods[model.id] ? 'Unfollow' : 'Follow'}}

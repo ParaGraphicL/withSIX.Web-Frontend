@@ -191,6 +191,7 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
     this.handleUpdateAvailable(this.hasUpdateAvailable);
     let m = <any>this.model;
     this.installs = this.type === 'collection' ? m.subscribers : m.statInstall;
+    this.totalInstalls = this.type === 'collection' ? m.subscribers : m.statTotalInstall;
     this.updatedAt = m.updated || m.updatedAt || this.model.updatedVersion || this.model.lastUpdated || this.model.lastInstalled;
 
     this.hasRealAuthor = model.authorSlug != 'withSIX-o-bot';
@@ -202,6 +203,7 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
   updatedAt: Date;
 
   installs: number;
+  totalInstalls: number;
 
   getInstallSpec() { return { id: this.model.id } }
 
