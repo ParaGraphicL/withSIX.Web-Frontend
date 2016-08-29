@@ -326,7 +326,7 @@ export class AddModDialogController extends DialogControllerBase {
         this.applyIfNeeded(() => {
           $scope.model.mod.name = r.title;
           $scope.model.mod.author = r.author;
-          $scope.model.mod.description = r.body;
+          //$scope.model.mod.description = r.body;
         })
       );
 
@@ -423,7 +423,7 @@ export class AddModDialogController extends DialogControllerBase {
         if (!model.mod.name) model.mod.name = r.name;
         if (!model.mod.author) model.mod.author = r.author;
         if (!model.mod.homepage) model.mod.homepage = r.url;
-        if (!model.mod.description) model.mod.description = r.description;
+        //if (!model.mod.description) model.mod.description = r.description;
         if (!model.mod.homepage) model.mod.download;
         model.mod.tags = r.tags;
       })

@@ -65,7 +65,7 @@ export class ModHelper {
       stat: x.stat,
       type: "mod",
       version: x.latestStableVersion,
-      statInstall: x.stat.install
+      statInstall: x.stat.totalInstall
     }
   }
 }
