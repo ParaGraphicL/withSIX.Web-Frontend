@@ -79,7 +79,7 @@ export class HtmlParser {
     '//patreon.com/'
   ]
 
-  static filterHref(href: string) { return this.shouldFilterHref.some(x => href.includes(x)); }
+  static filterHref(href: string) { return this.shouldFilterHref.some(x => href.toLowerCase().includes(x)); }
 
   static compareImage = (x, i) => {
     return (i.href && i.href === x.href)
