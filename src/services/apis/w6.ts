@@ -9,6 +9,7 @@ export enum Publisher {
   Chucklefish = 1001,
   NoMansSkyMods = 1002,
   NexusMods = 1003,
+  ModDb = 1004,
 
   // Forums
   BiForums = 10000,
