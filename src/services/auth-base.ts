@@ -300,6 +300,7 @@ export class LoginBase {
       emailMd5: r["withsix:email_md5"],
       passwordSet: r["withsix:password_set"],
       emailConfirmed: r["withsix:email_confirmed"],
+      hasGroups: r["withsix:has_groups"],
       roles: roles,
       isAdmin: roles.indexOf("admin") > -1,
       isManager: roles.indexOf("manager") > -1,
