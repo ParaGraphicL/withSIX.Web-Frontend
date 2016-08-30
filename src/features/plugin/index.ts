@@ -3,7 +3,7 @@ export class Index {
         window.addEventListener('message', this.listener, false);
     }
 
-    deactiavte() {
+    deactivate() {
         window.removeEventListener('message', this.listener);
     }
 
