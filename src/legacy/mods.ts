@@ -1576,7 +1576,10 @@ export class ModEditBaseController extends BaseController {
   }
 }
 
-export interface IExternalInfo { forumUrl?: string; steamInfo; gitHubRepo?: string; armaholicUrl?: string; chucklefishUrl?: string; nmsmUrl?: string; nexusUrl?: string; description?: string; homepageUrl?: string }
+export interface IExternalInfo { 
+  forumUrl?: string; steamInfo; gitHubRepo?: string; armaholicUrl?: string; chucklefishUrl?: string; nmsmUrl?: string; nexusUrl?: string; description?: string; homepageUrl?: string;
+  mdbUrl?: string; curseUrl?: string;
+}
 
 export interface IModInfoScope extends IEditableModScope, IHandleCommentsScope<IBreezeModComment> {
   openClaimDialog: () => any;
@@ -1633,8 +1636,11 @@ export class ModInfoController extends ModEditBaseController {
   handleApis() {
     let externalInfo = <IExternalInfo>{};
     if (this.$scope.model.homepageUrl) externalInfo.homepageUrl =this.$scope.model.homepageUrl;
- 
-    this.$scope.model.publishers.forEach(x => {
+
+    const gameSlug = this.$scope.game.slug.toLowerCase();
+
+    // TODO: Game slugs for multi-game hosts (game.publishers)
+     this.$scope.model.publishers.forEach(x => {
       switch (x.publisherType) {
         case Publisher[Publisher.Chucklefish]:
           externalInfo.chucklefishUrl = `http://community.playstarbound.com/resources/${this.$scope.model.name.sluggify()}.${x.publisherId}/`;
@@ -1642,9 +1648,15 @@ export class ModInfoController extends ModEditBaseController {
         case Publisher[Publisher.NoMansSkyMods]:
           externalInfo.nmsmUrl = `http://nomansskymods.com/mods/${x.publisherId}/`;
           break;
+        case Publisher[Publisher.ModDb]:
+          externalInfo.mdbUrl = `http://www.moddb.com/${gameSlug}/${x.publisherId}/`;
+          break;
+        case Publisher[Publisher.Curse]:
+          externalInfo.curseUrl = `http://www.curse.com/${gameSlug}/${x.publisherId}/`;
+          break;
         case Publisher[Publisher.NexusMods]:
           // TODO: Include game slug..
-          externalInfo.nexusUrl = `http://www.nexusmods.com/${this.$scope.game.slug.toLowerCase()}/mods/${x.publisherId}/?`;
+          externalInfo.nexusUrl = `http://www.nexusmods.com/${gameSlug}/mods/${x.publisherId}/?`;
           break;
         case Publisher[Publisher.Armaholic]:
           externalInfo.armaholicUrl = `http://www.armaholic.com/page.php?id=${x.publisherId}`;
