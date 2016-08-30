@@ -18,6 +18,12 @@ enum Sites {
 }
 
 
+export interface IExternalInfo { 
+  forumUrl?: string; steamInfo; gitHubRepo?: string; armaholicUrl?: string; chucklefishUrl?: string; nmsmUrl?: string; nexusUrl?: string; description?: string; homepageUrl?: string;
+  mdbUrl?: string; curseUrl?: string;
+}
+
+
 if (!window.RedactorPlugins) window.RedactorPlugins = <any>{};
 
 window.RedactorPlugins.bufferbuttons = () => {

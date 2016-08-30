@@ -8,6 +8,8 @@
     <compose if.bind="model.gitHubRepo" show.bind="active === Publisher.GitHub" view-model="./github-info" model.bind="model.gitHubRepo"></compose>
     <compose if.bind="model.nmsmUrl" show.bind="active === Publisher.NoMansSkyMods" view-model="./nmsm-info" model.bind="model.nmsmUrl"></compose>
     <compose if.bind="model.nexusUrl" show.bind="active === Publisher.NexusMods" view-model="./nexus-info" model.bind="model.nexusUrl"></compose>
+    <compose if.bind="model.mdbUrl" show.bind="active === Publisher.ModDb" view-model="./mdb-info" model.bind="model.mdbUrl"></compose>
+    <compose if.bind="model.curseUrl" show.bind="active === Publisher.Curse" view-model="./curse-info" model.bind="model.curseUrl"></compose>
 
     <div class="box clearfix link-list">
       <h3>External links</h3>

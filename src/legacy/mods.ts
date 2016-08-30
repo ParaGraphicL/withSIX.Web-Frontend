@@ -13,7 +13,7 @@ import {ModHelper, CollectionHelper, MissionHelper} from '../services/helpers';
 
 import {RestoreBasket, OpenCreateCollectionDialog, OpenAddModDialog, OpenAddModsToCollectionsDialog} from '../services/api';
 import {ForkCollection} from '../features/profile/content/collection';
-import {W6, W6Urls, globalRedactorOptions} from '../services/withSIX';
+import {W6, W6Urls, globalRedactorOptions, IExternalInfo} from '../services/withSIX';
 import {Tools} from '../services/tools';
 import {W6Context, IQueryResult, BooleanResult, Result} from '../services/w6context';
 import {Tk} from '../services/legacy/tk'
@@ -1576,10 +1576,6 @@ export class ModEditBaseController extends BaseController {
   }
 }
 
-export interface IExternalInfo { 
-  forumUrl?: string; steamInfo; gitHubRepo?: string; armaholicUrl?: string; chucklefishUrl?: string; nmsmUrl?: string; nexusUrl?: string; description?: string; homepageUrl?: string;
-  mdbUrl?: string; curseUrl?: string;
-}
 
 export interface IModInfoScope extends IEditableModScope, IHandleCommentsScope<IBreezeModComment> {
   openClaimDialog: () => any;
