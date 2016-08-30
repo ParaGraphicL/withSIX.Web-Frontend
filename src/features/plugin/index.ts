@@ -1,9 +1,13 @@
 export class Index {
     parentOrigin: string;
-    activate() {
-        this.parentOrigin = location.search.substring(5);
+    activate(params) {
+        this.parentOrigin = params.ref;
         window.addEventListener('message', this.listener, false);
-        this.send("Hello from withSIX.com!");
+        try {
+            this.send("Hello from withSIX.com!");
+        } catch (e) {
+            console.error(e);
+        }
     }
 
     deactivate() {
