@@ -1,13 +1,24 @@
+import { HttpClient } from 'aurelia-fetch-client';
+import { inject } from 'aurelia-framework';
+
+@inject(HttpClient)
 export class Index {
+    constructor(private http: HttpClient) {}
     parentOrigin: string;
-    activate(params) {
+    async activate(params) {
         this.parentOrigin = params.ref;
+        let browser = params.browser;
         window.addEventListener('message', this.listener, false);
         try {
             this.send("Hello from withSIX.com!");
         } catch (e) {
             console.error(e);
         }
+
+        this.http.fetch("https://127.0.0.66:48666/api/ping-plugin", {
+            method: 'post',
+            body: JSON.stringify({browser: 1})
+        });
     }
 
     deactivate() {

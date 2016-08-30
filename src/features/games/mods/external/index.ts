@@ -1,4 +1,4 @@
-import { ViewModel, InterestingLink, HomepageUrl, HtmlParser, UiContext, Publisher } from '../../../../framework';
+import { ViewModel, InterestingLink, HomepageUrl, HtmlParser, UiContext, Publisher, IExternalInfo } from '../../../../framework';
 import { UpdateInterestingLinks } from '../mod-gallery';
 
 import { inject } from 'aurelia-framework';
@@ -12,8 +12,8 @@ export class Index extends ViewModel {
   active: Publisher = -1;
 
   interestingLinks: InterestingLink[] = [];
-  model;
-  activate(model) {
+  model: IExternalInfo;
+  activate(model: IExternalInfo) {
     this.model = model;
     // TODO: Improve filtering duplicate steam urls, /{id} vs /?id={id}
     if (model.homepageUrl
@@ -38,8 +38,12 @@ export class Index extends ViewModel {
     if (this.model.forumUrl) return Publisher.BiForums;
     if (this.model.chucklefishUrl) return Publisher.Chucklefish;
     if (this.model.nmsmUrl) return Publisher.NoMansSkyMods;
+
     if (this.model.nexusUrl) return Publisher.NexusMods;
+    if (this.model.mdbUrl) return Publisher.ModDb;
+    if (this.model.curseUrl) return Publisher.Curse;
     if (this.model.steamInfo) return Publisher.Steam;
+
     if (this.model.armaholicUrl) return Publisher.Armaholic;
     if (this.model.gitHubRepo) return Publisher.GitHub;
     return -1;
