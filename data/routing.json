@@ -4,6 +4,8 @@
     "/errors/500": { "type": "aurelia" },
     "/errors/404": { "type": "aurelia" },
     "/errors/403": { "type": "aurelia" },
+    
+    "/plugin": { "type": "aurelia", "ssl": 1 },
 
     "/getting-started": {
       "type": "static",
