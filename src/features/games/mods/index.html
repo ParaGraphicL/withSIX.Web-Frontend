@@ -1,6 +1,11 @@
 <template>
   <div class="container-fluid" infinite-scroll.bind="loadMore">
     <h1 class="pagetitle">${w6.activeGame.slug.replace("-", "").toUpperCaseFirst()} Mods</h1>
+
+    <div if.bind="w6.userInfo.isManager" show.bind="w6.miniClient.isConnected">
+      <button command.bind="browseExternal">Browse External (WIP)</button>
+    </div>
+
     <filters custom-handler.bind="handleFilter" filters.ref="filteredComponent" search-input-placeholder.bind="searchInputPlaceholder" typeahead-options.bind="typeahead" items.bind="model.items" filters.bind="filters" search-fields.bind="searchFields" sort.bind="sort"
         view-types.bind="availableViewTypes">
       <div if.bind="features.isTestEnvironment" class="tags">

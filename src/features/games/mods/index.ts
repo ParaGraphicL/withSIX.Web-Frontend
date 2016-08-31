@@ -1,4 +1,4 @@
-import {breeze, FindModel, IPaginated, ModHelper, PaginatedViewModel, IFilterInfo, SortDirection, Query, DbQuery, handlerFor, uiCommandWithLogin2, IMenuItem, MenuItem, IBreezeMod, ModsHelper, IMod, uiCommand2} from '../../../framework';
+import {breeze, FindModel, IPaginated, ModHelper, PaginatedViewModel, IFilterInfo, SortDirection, Query, DbQuery, handlerFor, uiCommandWithLogin2, IMenuItem, MenuItem, IBreezeMod, ModsHelper, IMod, uiCommand2, VoidCommand} from '../../../framework';
 import {FilteredBase} from '../../filtered-base';
 
 export class Index extends FilteredBase<IMod> {
@@ -25,6 +25,19 @@ export class Index extends FilteredBase<IMod> {
   }
 
   getMore(page = 1) { return new GetMods(this.w6.activeGame.id, page, this.selectedTag ? Object.assign({}, this.filterInfo, { tags: [this.selectedTag.tagId] }) : this.filterInfo).handle(this.mediator); }
+
+  browseExternal = uiCommand2("Browse external", () => new BrowseExternal(this.w6.activeGame.id).handle(this.mediator));
+}
+
+class BrowseExternal extends VoidCommand {
+  constructor(public id: string) { super() }
+}
+
+@handlerFor(BrowseExternal)
+class BrowseExternalHandler extends DbQuery<BrowseExternal, void> {
+  handle(request: BrowseExternal) {
+    return this.context.postCustom("https://127.0.0.66:48666/api/external-downloads/start-session", request);
+  }
 }
 
 interface IGameTag { tagId: string, contentCount: number }
