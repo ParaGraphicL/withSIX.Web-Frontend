@@ -65,7 +65,9 @@ export class W6Urls {
     this.docsCdn = "//withsix-cdn.azureedge.net";
     this.img = {
       play: this.getAssetUrl('img/play-icon.png'),
-      steam: this.getAssetUrl('img/steam-512.gif'),
+      steam: this.getAssetUrl('img/hosts/steam-512.gif'),
+      chucklefish: this.getAssetUrl('img/hosts/chucklefish.png'),
+      unknown: this.getAssetUrl('img/avatar/noava_72.jpg')
     }
     this.version = this.getAssetHashed("version");
   }
