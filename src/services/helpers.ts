@@ -123,7 +123,7 @@ export class ContentHelper {
   public static getContentState = (state: ItemState, version: string, constraint?: string) => {
     if (!state || !constraint || !version) return state;
     if (state !== ItemState.UpdateAvailable && state !== ItemState.Uptodate) return state;
-    return constraint === version ? ItemState.Uptodate : ItemState.UpdateAvailable;
+    return constraint.toLowerCase() === version.toLowerCase() ? ItemState.Uptodate : ItemState.UpdateAvailable;
   }
 
   public static itemStateToAction = (state: ItemState) => {
