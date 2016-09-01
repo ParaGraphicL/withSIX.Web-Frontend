@@ -111,7 +111,7 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
     if (this.image) {
       // TODO: Use Publishers instead
       if (this.image.includes('steamusercontent.com')) this.source = { img: this.w6.url.img.steam, text: 'Steam Workshop' }
-      else if (this.image.includes('community.starbound.com')) this.source = { img: this.w6.url.img.chuckleflish, text: 'Starbound Community Forums' }
+      else if (this.image.includes('community.playstarbound.com')) this.source = { img: this.w6.url.img.chucklefish, text: 'Starbound Community Forums' }
       else if (this.image.includes('nomansskymods.com')) this.source = { img: this.w6.url.img.unknown, text: 'NoMansSkyMods' }
       else if (this.image.includes('nexusmods.com')) this.source = { img: this.w6.url.img.unknown, text: 'Nexus Mods' }
       else if (this.image.includes('moddb.com')) this.source = { img: this.w6.url.img.unknown, text: 'ModDB' }
