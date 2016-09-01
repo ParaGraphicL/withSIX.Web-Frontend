@@ -3,7 +3,7 @@ import { IUserInfo, IBreezeMod } from './dtos';
 import { W6Context, IQueryResult } from './w6context'
 import { BasketService } from './basket-service';
 import { Toastr } from './toastr';
-import { Client } from 'withsix-sync-api';
+import { Client, IContent } from 'withsix-sync-api';
 import { defineProperties } from '../helpers/utils/extenders';
 import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
@@ -128,7 +128,7 @@ export class DbQuery<TRequest, TResponse> implements IRequestHandler<TRequest, T
       .inlineCount(true);
   }
 
-  protected async handleModAugments(allMods: any[]) {
+  protected async handleModAugments(allMods: IContent[]) {
     if (allMods.length > 0) {
       var onlineModsInfo = await this.getOnlineModsInfo(allMods.map(x => x.id));
       allMods.forEach(x => {
@@ -141,7 +141,7 @@ export class DbQuery<TRequest, TResponse> implements IRequestHandler<TRequest, T
   }
 
 
-  private augmentModInfo(x: IBreezeMod, mod) {
+  private augmentModInfo(x: IBreezeMod, mod: IContent) {
     Object.assign(mod, {
       image: this.w6.url.getContentAvatarUrl(x.avatar, x.avatarUpdatedAt),
       size: x.size,
@@ -149,6 +149,7 @@ export class DbQuery<TRequest, TResponse> implements IRequestHandler<TRequest, T
       stat: x.stat,
       author: x.authorText || x.author.displayName,
       authorSlug: x.author ? x.author.slug : null,
+      publishers: x.publishers
     })
   }
 
@@ -161,7 +162,7 @@ export class DbQuery<TRequest, TResponse> implements IRequestHandler<TRequest, T
       }
     }
     var query = new breeze.EntityQuery(jsonQuery)
-      .select(['id', 'avatar', 'avatarUpdatedAt', 'size', 'sizePacked', 'author', 'authorText']);
+      .select(['id', 'avatar', 'avatarUpdatedAt', 'size', 'sizePacked', 'author', 'authorText', 'publishers']);
     var r = await this.context.executeQuery<IBreezeMod>(query);
     return r.results.toMap(x => x.id);
   }

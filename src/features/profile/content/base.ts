@@ -1,9 +1,11 @@
 import {inject} from 'aurelia-framework';
 import {IContentGuidSpec, BasketItemType, IBasketItem, BasketService, Base, GameClientInfo, uiCommand, uiCommand2, UiContext, MenuItem, ViewModel, Mediator, Query, DbQuery, DbClientQuery, handlerFor, VoidCommand, IContent, ItemState, IContentState,
-  RemoveRecent, Abort, UninstallContent, LaunchContent, OpenFolder, InstallContent, UnFavoriteContent, FavoriteContent, GameChanged, IMenuItem, FolderType, LaunchAction, IReactiveCommand} from '../../../framework';
+  RemoveRecent, Abort, UninstallContent, LaunchContent, OpenFolder, InstallContent, UnFavoriteContent, FavoriteContent, GameChanged, IMenuItem, FolderType, LaunchAction, IReactiveCommand, Publisher} from '../../../framework';
 import {Router} from 'aurelia-router';
 import {GameBaskets, Basket} from '../../game-baskets';
 import {AddModsToCollections} from '../../games/add-mods-to-collections';
+
+interface ISource {img: string; text: string}
 
 @inject(UiContext, BasketService)
 export class ContentViewModel<TContent extends IContent> extends ViewModel {
@@ -33,7 +35,7 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
   state: IContentState = this.getDefaultState();
   bottomMenuActions = [];
   url: string;
-  source?: {img: string; text: string};
+  sources: ISource[] = [];
 
   isForActiveGame: boolean;
   launchMenuItem: MenuItem<any>;
@@ -108,14 +110,20 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
 
     this.url = '/p/' + this.getPath();
 
-    if (this.image) {
-      // TODO: Use Publishers instead
-      if (this.image.includes('steamusercontent.com')) this.source = { img: this.w6.url.img.steam, text: 'Steam Workshop' }
-      else if (this.image.includes('community.playstarbound.com')) this.source = { img: this.w6.url.img.chucklefish, text: 'Starbound Community Forums' }
-      else if (this.image.includes('nomansskymods.com')) this.source = { img: this.w6.url.img.unknown, text: 'NoMansSkyMods' }
-      else if (this.image.includes('nexusmods.com')) this.source = { img: this.w6.url.img.unknown, text: 'Nexus Mods' }
-      else if (this.image.includes('moddb.com')) this.source = { img: this.w6.url.img.unknown, text: 'ModDB' }
-      else if (this.image.includes('curse.com')) this.source = { img: this.w6.url.img.unknown, text: 'Curse' }
+    let publishers = <{publisherId: string; publisherType: string}[]> (<any>model).publishers || [];
+    // TODO: Add Group Owned and Custom Repository icons
+    if (publishers.length > 0) {
+      publishers.forEach(x => {
+        var pInfo = this.getPinfo(Publisher[x.publisherType]);
+        if (pInfo) this.sources.push(pInfo);
+      })
+    } else if (this.image) {
+      if (this.image.includes('steamusercontent.com')) this.sources.push(this.getPinfo(Publisher.Steam))
+      else if (this.image.includes('community.playstarbound.com')) this.sources.push(this.getPinfo(Publisher.Chucklefish))
+      else if (this.image.includes('nomansskymods.com')) this.sources.push(this.getPinfo(Publisher.NoMansSkyMods))
+      else if (this.image.includes('nexusmods.com')) this.sources.push(this.getPinfo(Publisher.NexusMods))
+      else if (this.image.includes('moddb.com')) this.sources.push(this.getPinfo(Publisher.ModDb))
+      else if (this.image.includes('curse.com')) this.sources.push(this.getPinfo(Publisher.Curse))
     }
 
     //this.tools.Debug.log("Mod State: " + this.model.packageName, this.model.version, this.model.id, this.state);
@@ -221,6 +229,19 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
 
   getNoteInfo() { return { text: this.model.name || this.model.packageName, href: this.url } };
   updateState() { this.state = (this.gameInfo.clientInfo.content[this.model.id] || this.getDefaultState()); }
+
+  
+  getPinfo(p: Publisher) {
+      switch (p) {
+        case Publisher.Steam: return { img: this.w6.url.img.steam, text: 'Steam Workshop' }
+        case Publisher.Chucklefish: return { img: this.w6.url.img.chucklefish, text: 'Starbound Community Forums' }
+        case Publisher.NoMansSkyMods: return { img: this.w6.url.img.unknown, text: 'NoMansSkyMods' }
+        case Publisher.NexusMods: return { img: this.w6.url.img.unknown, text: 'Nexus Mods' }
+        case Publisher.ModDb: return { img: this.w6.url.img.unknown, text: 'ModDB' }
+        case Publisher.Curse: return { img: this.w6.url.img.unknown, text: 'Curse' }
+      }
+    return null;
+  }
 
   handleUpdateAvailable(updateAvailable: boolean) {
     if (updateAvailable) {

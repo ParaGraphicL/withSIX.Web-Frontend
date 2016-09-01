@@ -32,7 +32,7 @@ export class MissionHelper {
 }
 
 export class ModHelper {
-  public static interestingFields = ["id", "name", "packageName", "group", "groupId", "gameId", "game", "slug", "avatar", "avatarUpdatedAt", "tags", "description", "author", "authorText", "size", "sizePacked", "followersCount", "modVersion", "stat", "latestStableVersion"]
+  public static interestingFields = ["id", "name", "packageName", "group", "groupId", "gameId", "game", "slug", "avatar", "avatarUpdatedAt", "tags", "description", "author", "authorText", "size", "sizePacked", "followersCount", "modVersion", "stat", "latestStableVersion", "publishers"]
   public static async getCompatibilityModIds(compatibilityMods: string[], gameId: string, context: W6Context) {
     let jsonQuery = {
       from: 'Mods',
@@ -66,7 +66,8 @@ export class ModHelper {
       type: "mod",
       version: x.latestStableVersion,
       statInstall: x.stat.install,
-      statTotalInstall: x.stat.totalInstall
+      statTotalInstall: x.stat.totalInstall,
+      publishers: x.publishers
     }
   }
 }
