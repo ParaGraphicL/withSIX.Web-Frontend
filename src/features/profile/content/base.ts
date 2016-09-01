@@ -108,8 +108,14 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
 
     this.url = '/p/' + this.getPath();
 
-    if (this.image && this.image.includes('steamusercontent.com')) {
-      this.source = { img: this.w6.url.img.steam, text: 'Steam Workshop' }
+    if (this.image) {
+      // TODO: Use Publishers instead
+      if (this.image.includes('steamusercontent.com')) this.source = { img: this.w6.url.img.steam, text: 'Steam Workshop' }
+      else if (this.image.includes('community.playstarbound.com')) this.source = { img: this.w6.url.img.chucklefish, text: 'Starbound Community Forums' }
+      else if (this.image.includes('nomansskymods.com')) this.source = { img: this.w6.url.img.unknown, text: 'NoMansSkyMods' }
+      else if (this.image.includes('nexusmods.com')) this.source = { img: this.w6.url.img.unknown, text: 'Nexus Mods' }
+      else if (this.image.includes('moddb.com')) this.source = { img: this.w6.url.img.unknown, text: 'ModDB' }
+      else if (this.image.includes('curse.com')) this.source = { img: this.w6.url.img.unknown, text: 'Curse' }
     }
 
     //this.tools.Debug.log("Mod State: " + this.model.packageName, this.model.version, this.model.id, this.state);
