@@ -7,6 +7,7 @@ import {W6} from './withSIX';
 import { Toastr } from './toastr';
 import {Router} from 'aurelia-router';
 import {EventAggregator} from 'aurelia-event-aggregator';
+import { ClientConnectionFailed } from 'withsix-sync-api';
 
 @inject(W6, Toastr, Router, EventAggregator)
 export class ClientMissingHandler {
@@ -58,7 +59,7 @@ export class ErrorHandler {
   handleError = (fail: Error, action?: string) => {
     let failStr = fail.toString();
     if (fail instanceof ValidationResult) this.handleValidationError(fail, action);
-    else if (failStr == 'Error: Error during negotiation request.') this.handleClientMissing(fail, action);
+    else if (failStr == 'Error: Error during negotiation request.' || fail instanceof ClientConnectionFailed) this.handleClientMissing(fail, action);
     else if (failStr == 'Error: The user cancelled the operation' || failStr == 'Error: Operation aborted') {
     } else {
       this.handleGeneralError(fail, action);
