@@ -52,6 +52,8 @@ export class ClientMissingHandler {
   }
 }
 
+// TODO: UserError esque (Or check RXUI7) Retry/Cancel support
+
 @inject(Toastr, ClientMissingHandler, W6, GlobalErrorHandler)
 export class ErrorHandler {
   constructor(private toastr: Toastr, private clientMissingHandler: ClientMissingHandler, private w6: W6, private eh: GlobalErrorHandler) {}
@@ -59,18 +61,17 @@ export class ErrorHandler {
   handleError = (fail: Error, action?: string) => {
     let failStr = fail.toString();
     if (fail instanceof ValidationResult) this.handleValidationError(fail, action);
-    else if (failStr == 'Error: Error during negotiation request.' || fail instanceof ClientConnectionFailed) this.handleClientMissing(fail, action);
-    else if (failStr == 'Error: The user cancelled the operation' || failStr == 'Error: Operation aborted') {
+    else if (fail instanceof ClientConnectionFailed || failStr === 'Error: Error during negotiation request.') this.handleClientMissing(fail, action);
+    else if (failStr === 'Error: The user cancelled the operation' || failStr === 'Error: Operation aborted') {
     } else {
       this.handleGeneralError(fail, action);
       this.eh.handleUseCaseError(fail);
     }
   }
 
-  handleValidationError(err, action) {
-    // TODO: Just disable the save button until validated?
-    toastr.warning("Please fix the indicated fields", "Validation failed");
-  }
+  // TODO: Just disable the save button until validated?
+  handleValidationError = (err, action) =>
+    this.toastr.warning("Please fix the indicated fields", "Validation failed");
 
   handleClientMissing = (err, action) => this.clientMissingHandler.handleClientMissing();
 
@@ -78,7 +79,7 @@ export class ErrorHandler {
     // TODO: Perhaps only show toast if we specified action?
     var msg = this.w6.api.errorMsg(err);
     Tools.Debug.error(msg);
-    this.toastr.error(msg[0], (action || "Action") + ": " + msg[1]);
+    return this.toastr.error(msg[0], (action || "Action") + ": " + msg[1]);
   }
 }
 
