@@ -37,6 +37,7 @@ import { OpenReportDialogQuery } from './components';
 
 export class ContentDownloads {
   public static downloadInclClientCheck(url: string, forwardService, localStorageService, w6) {
+    if (window.___prerender___) return;
     if (w6.client && w6.client.clientFound) {
       w6.client.openPwsUri(url);
       return;
