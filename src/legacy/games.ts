@@ -31,7 +31,7 @@ import {ToastLogger} from '../services/legacy/logger';
 import {registerCommands, getFactory, skyscraperSlotSizes, rectangleSlotSizes, leaderboardSlotSizes} from './app-base';
 import {joinUri} from '../helpers/utils/url'
 
-import { app, registerCQ, registerService, registerController, IBaseGameScope, IContentScopeT } from './play.ts'
+import { app, registerCQ, registerService, registerController, IBaseGameScope, IContentScopeT } from './play'
 import { GetForumPostQuery, ModExistsQuery, ModNameExistsQuery, GetLatestInfo, GetModTagsQuery } from './mods';
 import { OpenTermsDialogQuery } from './components';
 

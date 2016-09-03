@@ -8,7 +8,7 @@ export class Show extends ViewModel {
   model: {
     games: Map<string, any>;
     game: any
-  } = { games: null, game: null }
+  } = { games: new Map<string, any>(), game: null }
   router: Router;
 
   constructor(ui) { super(ui); }

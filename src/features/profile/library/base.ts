@@ -36,6 +36,7 @@ export class BaseGame extends ViewModel {
     this.libraryParent = this.w6.libraryParent;
     //Tools.Debug.log("$$$ parent", this.$parent, params, routeConfig, routeConfig.navModel.router.parent);
     this.game = this.libraryParent.model.game;
+    if (!this.game) throw new this.tools.NotFoundException("The specified game could not be found!", {status: 404, statusText: "NotFound", body: null});
     this.selectedGame = this.libraryParent.model.games.get(this.game.id);
     var itemSlug = this.itemType ? "/" + this.itemType + "s" : '';
     this.subscriptions.subd(d =>

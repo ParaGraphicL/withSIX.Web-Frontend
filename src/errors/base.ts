@@ -4,8 +4,8 @@ export abstract class BaseError extends ViewModel {
   el: JQuery;
   constructor(private code: string, ui) { super(ui); }
   resource: string;
-  activate(param) {
-    this.resource = param.resource;
+  activate(param?) {
+    this.resource = param ? param.resource : null;
     this.el = $(`<meta name="prerender-status-code" content="${this.code}">`);
     $('head').append(this.el);
     window.prerenderReady = true;

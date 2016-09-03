@@ -19,13 +19,6 @@ import {UiContext} from './uicontext'
 
 import * as clipboard from 'clipboard-js';
 
-var errorMap = new Map<number, string>();
-
-
-errorMap.set(500, <string><any>require('../errors/500.html'));
-errorMap.set(404, <string><any>require('../errors/404.html'));
-errorMap.set(403, <string><any>require('../errors/403.html'));
-
 @inject(UiContext)
 export class ViewModel extends ReactiveBase {
   hasApi: boolean = (<any>window).api != null
@@ -142,25 +135,21 @@ export class ViewModel extends ReactiveBase {
   protected openChanges() { this.alert("You have outstanding changes, please save or cancel them first", "Outstanding changes"); }
 
   getViewStrategy;
-  protected accessDenied() { this.setErrorView('403') }
-  setErrorView = (template: string) => this.getViewStrategy = () => new InlineViewStrategy(template) // () => `/dist/errors/${err}.html`
+  protected accessDenied() { this.setErrorView(403) }
+  setErrorView = (errorCode: number) => this.getViewStrategy = () => new InlineViewStrategy(`<template><compose view-model="errors/${errorCode}"></compose><router-view style="display: none"></router-view></template>`, undefined, '/') // () => `/dist/errors/${err}.html`
 
   _configured = false;
-
-  getErrorTemplate = (errCode, err: Error) => {
-    return `<template>Error ${errCode} ${err}</template>`
-  }
 
   async handleActivation(act: () => Promise<void>) {
     try {
       await act();
     } catch (err) {
         Tools.Debug.error("Catched error, rendering error page", err);
-        if (err instanceof Tools.NotFoundException) return this.setErrorView(errorMap.get(404));
-        if (err instanceof Tools.Forbidden) return this.setErrorView(errorMap.get(403));
+        if (err instanceof Tools.NotFoundException) return this.setErrorView(404);
+        if (err instanceof Tools.Forbidden) return this.setErrorView(403);
         if (err instanceof Tools.RequiresLogin || err instanceof Tools.LoginNoLongerValid) {
           await this.w6.openLoginDialog();
-          return this.setErrorView(errorMap.get(403))
+          return this.setErrorView(403)
         }
         
         return this.handleUnknownError(err);
@@ -169,7 +158,7 @@ export class ViewModel extends ReactiveBase {
 
   handleUnknownError(fail: Error) {
     this.ui.errorHandler.handleError(fail, 'page load');
-    return this.setErrorView(errorMap.get(500));
+    return this.setErrorView(500);
   }
 
   protected canActivate() {
