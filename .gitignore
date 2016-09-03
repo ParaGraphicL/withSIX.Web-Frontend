@@ -1,4 +1,4 @@
-*.log
+*.log.*
 .awcache/
 node_modules/
 .sass-cache/
