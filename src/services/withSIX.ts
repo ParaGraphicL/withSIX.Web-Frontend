@@ -562,33 +562,35 @@ export class W6 {
       angular.forEach(obj, (v, i) => newAr[i] = this.convertToClient(v, convertPropertyNames));
       return <T><any>newAr;
     } else if (obj instanceof Date) {
-      return <T>obj;
+      return <T><any>obj;
     } else if (obj instanceof Object) {
       var newObj = {};
       if (convertPropertyNames) angular.forEach(obj, (v, p) => newObj[converter.serverPropertyNameToClient(p)] = this.convertToClient(v, convertPropertyNames));
       else angular.forEach(obj, (v, p) => newObj[p] = this.convertToClient(v, convertPropertyNames));
       return <T>newObj;
-    } else if (typeof(obj) === 'string' || obj instanceof String) {
+    } else if (typeof(obj) === 'string') {
       if (this.iso8601RegEx.test(obj)) return <T><any>breeze.DataType.parseDateFromServer(obj);
+    } else if (obj instanceof String) {
+      if (this.iso8601RegEx.test(obj.toString())) return <T><any>breeze.DataType.parseDateFromServer(obj);
     }
 
     return <T>obj;
   }
 
-  private convertToServer<T>(obj) {
+  private convertToServer<T>(obj: T) {
     var converter = breeze.NamingConvention.defaultInstance;
     if (obj instanceof Array) {
       var newAr = [];
       angular.forEach(obj, (v, i) => newAr[i] = this.convertToServer(v));
       return <T><any>newAr;
     } else if (obj instanceof Date) {
-      return <T>obj;
+      return <T><any>obj;
     } else if (obj instanceof Object) {
       var newObj = {};
       angular.forEach(obj, (v, p) => newObj[converter.clientPropertyNameToServer(p)] = v instanceof Object ? this.convertToServer(v) : v);
       return <T>newObj;
     }
-    return <T>obj;
+    return obj;
   }
   // Divisable by 8! Keep in sync with C#: ImageConstants
   public imageSizes = {
