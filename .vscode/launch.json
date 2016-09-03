@@ -16,7 +16,7 @@
             "name": "Attach with sourcemaps",
             "type": "chrome",
             "request": "attach",
-            "url": "http://local.withsix.net:9000",
+            "url": "http://local.withsix.net:9000/*",
             "address": "localhost",
             "webRoot": "${workspaceRoot}",
             "port": 9222,
