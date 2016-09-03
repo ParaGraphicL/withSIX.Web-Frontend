@@ -1,0 +1,27 @@
+{
+    "version": "0.1.0",
+    "configurations": [
+        {
+            "name": "Launch localhost with sourcemaps",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://local.withsix.net:9000",
+            "webRoot": "${workspaceRoot}",
+            "sourceMaps": true,
+            "address": "localhost",
+            "port": 9222,
+            "diagnosticLogging": true
+        },
+        {
+            "name": "Attach with sourcemaps",
+            "type": "chrome",
+            "request": "attach",
+            "url": "http://local.withsix.net:9000",
+            "address": "localhost",
+            "webRoot": "${workspaceRoot}",
+            "port": 9222,
+            "sourceMaps": true,
+            "diagnosticLogging": true
+        }
+    ]
+}
