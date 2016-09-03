@@ -64,6 +64,7 @@ interface IApi {
 interface ISettings { model?; view?; viewModel?; targetElement}
 
 interface Window {
+  ___prerender___?: boolean;
   // from legacy client
   six_client: {
     open_pws_uri: (url) => void;

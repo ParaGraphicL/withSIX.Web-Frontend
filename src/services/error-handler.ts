@@ -44,6 +44,7 @@ export class ClientMissingHandler {
   }
 
   addClientIframe() {
+    if (window.___prerender___) return;
     var i = document.createElement('iframe');
     i.style.display = 'none';
     i.onload = function () { i.parentNode.removeChild(i); };
