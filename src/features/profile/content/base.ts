@@ -211,6 +211,8 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
     this.hasRealAuthor = model.authorSlug != 'withSIX-o-bot';
   }
 
+  get name() { return this.model.name || this.model.packageName || this.model.id }
+
   get shouldAddConfigAction() { return this.model.gameSlug.startsWith('Arma'); }
   hasRealAuthor: boolean;
 

@@ -30,8 +30,8 @@
               <div class="alternative-game" if.bind="!isForActiveGame" title="This content was made for ${gameName}">
                 <img src="${w6.url.cdn}/img/play.withSIX/games/Arma-2/arma2-blck.png" />
               </div>
-              <div class="basket-content-name" title.bind="model.name">
-                <a class="text-link" href.bind="url">${model.name}</a>
+              <div class="basket-content-name" title.bind="name">
+                <a class="text-link" href.bind="url">${name}</a>
               </div>
               <div class="basket-content-info tiny">
                 <span class="update-available" if.bind="hasUpdateAvailable" title="current version: v${state.version}">Update available <span class="version">v${model.constraint || model.version}</span></span>
