@@ -71,7 +71,7 @@ export class PlaylistItem extends ViewModel {
     super(ui);
   }
 
-  getNoteInfo() { return { text: this.model.name || this.model.packageName, href: this.url } };
+  getNoteInfo() { return { text: this.model.name || this.model.packageName, href: this.url ? (this.url.startsWith("http") ? this.url : `https://withsix.com${this.url}` ) : this.url } };
 
   async activate(model: IPlayModel) {
     if (model == null) throw Error("model cannot be null!");
