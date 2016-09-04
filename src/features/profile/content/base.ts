@@ -229,7 +229,7 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
   protected diagnoseInternal = async () => { this.emitGameChanged(); await new InstallContent(this.model.gameId, { id: this.model.id }, this.getNoteInfo(), true, true).handle(this.mediator) }
   protected emitGameChanged = () => this.eventBus.publish(new GameChanged(this.model.gameId, this.model.gameSlug)); // incase we are on Home..
 
-  getNoteInfo() { return { text: this.model.name || this.model.packageName, href: this.url } };
+  getNoteInfo() { return { text: this.model.name || this.model.packageName, href: this.url ? (this.url.startsWith("http") ? this.url : `https://withsix.com${this.url}` ) : this.url } };
   updateState() { this.state = (this.gameInfo.clientInfo.content[this.model.id] || this.getDefaultState()); }
 
   
