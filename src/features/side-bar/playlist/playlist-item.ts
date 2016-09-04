@@ -239,6 +239,8 @@ export class PlaylistItem extends ViewModel {
 
   unbind() { this.revert(); }
 
+  get name() { return this.model.name || this.model.packageName || this.model.id }
+
   get canEdit() { return !this.basket.active.model.isTemporary; }
 
   installInternal = () => new InstallContent(this.model.gameId, { id: this.model.id, constraint: this.model.constraint }, this.getNoteInfo()).handle(this.mediator);

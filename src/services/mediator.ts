@@ -147,6 +147,7 @@ export class DbQuery<TRequest, TResponse> implements IRequestHandler<TRequest, T
       size: x.size,
       sizePacked: x.sizePacked,
       stat: x.stat,
+      name: x.name,
       author: x.authorText || x.author.displayName,
       authorSlug: x.author ? x.author.slug : null,
       publishers: x.publishers
@@ -162,7 +163,7 @@ export class DbQuery<TRequest, TResponse> implements IRequestHandler<TRequest, T
       }
     }
     var query = new breeze.EntityQuery(jsonQuery)
-      .select(['id', 'avatar', 'avatarUpdatedAt', 'size', 'sizePacked', 'author', 'authorText', 'publishers']);
+      .select(['id', 'avatar', 'avatarUpdatedAt', 'size', 'sizePacked', 'author', 'authorText', 'publishers', 'name']);
     var r = await this.context.executeQuery<IBreezeMod>(query);
     return r.results.toMap(x => x.id);
   }

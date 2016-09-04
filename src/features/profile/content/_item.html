@@ -21,11 +21,11 @@
             <div class="clearfix"></div>
           </div>
 
-          <div class="title" title.bind="model.name">
+          <div class="title" title.bind="name">
             <span if.bind="typeScopeIcon" class="icon ${typeScopeIcon} micro"></span>
             <span if.bind="scopeIcon" class="icon ${scopeIcon} micro"></span>
-            <a if.bind="path" href="${w6.url.play}/${path}">${model.name}</a>
-            <span if.bind="!path">${model.name}</span>
+            <a if.bind="path" href="${w6.url.play}/${path}">${name}</a>
+            <span if.bind="!path">${name}</span>
           </div>
 
           <div class="tiny">
