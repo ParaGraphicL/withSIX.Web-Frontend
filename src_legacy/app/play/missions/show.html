@@ -2,7 +2,7 @@
 
   <div sx-content-header class="sx-content-header">
     <sx-header-name class="editable-half">
-      <span ng-class="{'edit-border-blue edit-field': editConfig.canManage()}" sx-editable-text="model.name" buttons="no" can-edit="editConfig.isEditing && editConfig.canManage()" blur-saves>
+      <span ng-class="{'edit-border-blue edit-field': (editConfig.canEdit() || editConfig.canManage())}" sx-editable-text="model.name" buttons="no" can-edit="editConfig.isEditing && (editConfig.canEdit() || editConfig.canManage())" blur-saves>
                 {{model.name | characters:54 :true}}<span style="display: inline-flex; vertical-align: top"><span ng-if="editConfig.isEdited('name')" class="withSIX-icon-Alert" style="color: red; font-size: 20px;"></span></span>
       </span>
     </sx-header-name>

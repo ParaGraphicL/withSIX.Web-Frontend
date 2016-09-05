@@ -1,6 +1,6 @@
 import {ContentViewModel} from './base';
 import {ContentDeleted, Command, BasketItemType, IBasketItem, Base, IPromiseFunction, uiCommand2, MenuItem, VoidCommand, DbQuery, DbClientQuery, handlerFor, IContent, TypeScope, ICollection} from '../../../framework';
-import {ViewModel, Query, IGame, ITab, IMenuItem,
+import {ViewModel, Query, IGame, ITab, IMenuItem, LaunchContent, LaunchAction,
   CollectionScope, IBreezeCollectionVersion, IBreezeCollectionVersionDependency, UiContext, CollectionHelper, UninstallContent,
   ReactiveList, FindModel, ActionType, BasketState, BasketType, ConnectionState, Debouncer, GameChanged, uiCommandWithLogin2, GameClientInfo, MessageDialog, Confirmation,
   IBreezeCollection, IRequireUser, IUserInfo, W6Context, Client, BasketService, CollectionDataService, requireUser, SelectTab,
@@ -59,13 +59,26 @@ export class Collection extends ContentViewModel<ICollection> {
         icon: "withSIX-icon-Hexagon-Play"
       }));
 
+      d(this.launchAsServer = uiCommand2("Launch as server", () => 
+        new LaunchContent(this.model.gameId, this.model.id, this.getNoteInfo(), LaunchAction.LaunchAsServer)
+        .handle(this.mediator), {
+            isVisibleObservable: this.isInstalledObservable,
+            canExecuteObservable: this.canExecuteObservable,
+        //isVisibleObservable: // if the game supports launching as server
+      }));
+
       this.topMenuActions.push(new MenuItem(this.launch2));
+      
+      if (this.features.serverBrowser) this.topMenuActions.push(new MenuItem(this.launchAsServer));
 
       if (this.model.typeScope != null) d(this.uninstall = this.createDeleteCommand());
     })
 
     super.setupMenuItems();
   }
+
+  // TODO: Other kinds of info required for the server setup? (server profile: name, settings?)
+  launchAsServer;
 
   loadIntoPlaylistInternal = async () => {
     await new LoadCollectionIntoBasket(this.model.id).handle(this.mediator);
@@ -107,6 +120,7 @@ export class Collection extends ContentViewModel<ICollection> {
   getScopeIcon() { return CollectionHelper.scopeIcons[this.model.scope]; }
   getTypeScopeIcon() { return CollectionHelper.typeScopeIcons[this.model.typeScope]; }
 }
+
 
 export class DeleteCollection extends VoidCommand {
   constructor(public id: string, public gameId: string, public typeScope: TypeScope) { super() }

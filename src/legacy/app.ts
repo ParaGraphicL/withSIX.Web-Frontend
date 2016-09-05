@@ -138,12 +138,12 @@ export class MainAppController extends BaseController {
             this.w6.ads.check();
         }
         $rootScope.status = 'ready';
+        window.prerenderReady = true;
       }, $rootScope);
-      window.prerenderReady = true;
     };
     $rootScope.startLoading = () => {
       $rootScope.status = 'loading';
-      $scope.$evalAsync();
+      this.applyIfNeeded();
     };
 
     $rootScope.initialLoad = true;

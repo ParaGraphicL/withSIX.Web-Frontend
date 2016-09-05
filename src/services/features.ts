@@ -12,7 +12,7 @@ export class FeatureToggles {
   private isPreviewEnvironment = window.location.hostname === 'preview.withsix.com';
   private testingFlag = window.location.search.includes('testmode=1');
   private groupTestingFlag = window.location.search.includes('testgroupmode=1') || (!window.location.search.includes('testgroupmode=0') && this.isManager);
-  private _groups = this.groupTestingFlag;
+  private _groups = this.groupTestingFlag || this.w6.userInfo.hasGroups;
   private get clientInfo() { return this.w6.miniClient.clientInfo }
   private get isPrereleaseClient() { return this.clientInfo && this.clientInfo.version.includes('-') }
   loggedIn = this.w6.userInfo.id != null;
@@ -27,4 +27,5 @@ export class FeatureToggles {
   get library() { return this.syncFeatures }
   get quickActions() { return this.isTestEnvironment }
   get uiVirtualization() { return this.testingFlag }
+  get serverBrowser() { return this.isTestEnvironment }
 }

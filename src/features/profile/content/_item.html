@@ -21,11 +21,11 @@
             <div class="clearfix"></div>
           </div>
 
-          <div class="title" title.bind="model.name">
+          <div class="title" title.bind="name">
             <span if.bind="typeScopeIcon" class="icon ${typeScopeIcon} micro"></span>
             <span if.bind="scopeIcon" class="icon ${scopeIcon} micro"></span>
-            <a if.bind="path" href="${w6.url.play}/${path}">${model.name}</a>
-            <span if.bind="!path">${model.name}</span>
+            <a if.bind="path" href="${w6.url.play}/${path}">${name}</a>
+            <span if.bind="!path">${name}</span>
           </div>
 
           <div class="tiny">
@@ -37,7 +37,7 @@
               <div>
                 <span class="icon withSIX-icon-Lock" title="The content is locked to v${model.constraint}" if.bind="model.constraint"></span>
                 <span class="small">v${versionInfo}</span> &nbsp;
-                <span class="followers small" if.bind="installs != null"><i>${installs | amount } ${installs | pluralizeWord:statTitle}</i></span>
+                <span class="followers small" if.bind="totalInstalls != null"><i title.bind="totalInstalls">${totalInstalls | amount } <i if.bind="w6.userInfo.isManager" title.bind="installs"> (${installs | amount })</i> ${totalInstalls | pluralizeWord:statTitle}</i></span>
               </div>
               <div class="clearfix"></div>
             </div>

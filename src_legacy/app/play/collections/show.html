@@ -1,7 +1,7 @@
 <div itemscope itemtype="http://schema.org/CreativeWork" ng-class="{'has-servers': model.latestVersion.hasServers, 'editing': editConfig.isEditing}" class="not-editing">
   <div sx-content-header ng-class="{'content-stateable': w6.enableBasket}" class="sx-content-header content-basketable {{getItemClass(model)}}">
     <sx-header-name class="editable-half">
-      <span ng-class="{'edit-border-blue edit-field': editConfig.canManage()}" sx-editable-text="model.name" buttons="no" can-edit="editConfig.isEditing && editConfig.canManage()" blur-saves>
+      <span ng-class="{'edit-border-blue edit-field': editConfig.canEdit() || editConfig.canManage()}" sx-editable-text="model.name" buttons="no" can-edit="editConfig.isEditing && (editConfig.canEdit() || editConfig.canManage())" blur-saves>
                 {{model.name | characters:54 :true}}<span style="display: inline-flex; vertical-align: top"><span ng-if="editConfig.isEdited('name')" class="withSIX-icon-Alert" style="color: red; font-size: 20px;"></span></span>
       </span>
     </sx-header-name>
@@ -10,7 +10,7 @@
       <a ng-href="{{header.contentRootUrl}}">
         <span class="withSIX-icon-Folder"></span> Collection
       </a>
-      (<span ng-if="model.groupId">Group</span> <span ng-class="{'edit-border-blue edit-field': editConfig.canManage() && !model.groupId}" can-edit="editConfig.isEditing && editConfig.canManage() && !model.groupId" blur-saves buttons="no" sx-editable-select="model.scope"
+      (<span ng-if="model.groupId">Group</span> <span ng-class="{'edit-border-blue edit-field': (editConfig.canEdit() || editConfig.canManage()) && !model.groupId}" can-edit="editConfig.isEditing && (editConfig.canEdit() || editConfig.canManage()) && !model.groupId" blur-saves buttons="no" sx-editable-select="model.scope"
           e-ng-options="s.text as s.text for s in $parent.scopes">{{model.scope}}</span>)
 
       <!-- <button ng-if="w6.userInfo.id" class="default" ng-click="vm.fork()" ng-disabled="vm.forking">

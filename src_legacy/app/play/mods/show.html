@@ -6,7 +6,7 @@
       <div ng-if="!vm.isForActiveGame" class="alternative-game" title="This content was made for ARMA 2">
         <img ng-src="{{w6.url.cdn}}/img/play.withSIX/games/Arma-2/arma2-blck.png" />
       </div>
-      <span ng-class="{'edit-border-blue edit-field': editConfig.canManage()}" title="{{model.name}} ({{model.packageName}})" sx-editable-text="model.name" buttons="no" can-edit="editConfig.isEditing" blur-saves>
+      <span ng-class="{'edit-border-blue edit-field': (editConfig.canEdit() || editConfig.canManage())}" title="{{model.name}} ({{model.packageName}})" sx-editable-text="model.name" buttons="no" can-edit="editConfig.isEditing" blur-saves>
                   <span ng-if="model.group" class="icon withSIX-icon-Lock" title="This is a private mod"></span> {{model.name | characters:54 :true}}<span style="display: inline-flex; vertical-align: top"><span ng-if="editConfig.isEdited('name')" class="withSIX-icon-Alert" style="color: red; font-size: 20px;"></span></span>
       </span>
     </sx-header-name>
@@ -39,7 +39,7 @@
     </sx-header-author>
 
     <div name="follow-info">
-      {{model.stat.install | amount}} Installs.
+      <span title="{{model.stat.totalInstall}}">{{model.stat.totalInstall | amount}} <i ng-if="w6.userInfo.isManager" title="{{model.stat.install}}"> ({{model.stat.install | amount}})</i></span> Installs.
       <span ng-if="w6.userInfo.id">
                 <button class="anchor" ng-click="toggleFollow() && $event.stopPropagation()">
                     <span class="icon withSIX-icon-Follow"></span> {{followedMods[model.id] ? 'Unfollow' : 'Follow'}}
@@ -117,7 +117,7 @@
           <span class="main" itemprop="version" title="{{formatVersion()}} {{model.latestStableVersion && model.latestStableVersion != model.modVersion ? 'newer dev version: ' + model.modVersion : ''}}">{{formatVersion()}}</span> <span itemprop="dateModified">{{model.updatedAt | date:"dd MMM 'yy"}}</span></li>
         <li title="{{model.size | size:'B':false}} unpacked" ng-bind-html="model.sizePacked | size"></li>
         <li>
-          <span class="main">{{model.stat.install | amount}}</span> <span>Installs</span></li>
+          <span class="main" title="{{model.stat.totalInstall}}">{{model.stat.totalInstall | amount}}<i ng-if="w6.userInfo.isManager" title="{{model.stat.install}}"> ({{model.stat.install | amount}})</i></span> <span>Installs</span></li>
       </ul>
       <div ng-if="model.modVersion == null">
         <span class="main">Waiting on Network</span><span class="tiny">Please be patient</span>

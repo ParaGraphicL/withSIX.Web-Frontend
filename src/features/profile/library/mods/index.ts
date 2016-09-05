@@ -87,7 +87,7 @@ class GetModsHandler extends DbClientQuery<GetMods, IModsData> {
   }
 
   convertOnlineMods(mod: IBreezeMod): IContent {
-    return {
+    return Object.assign(<IContent>{
       id: mod.id,
       author: mod.author ? mod.author.displayName : mod.authorText,
       authorSlug: mod.author ? mod.author.slug : null,
@@ -99,7 +99,9 @@ class GetModsHandler extends DbClientQuery<GetMods, IModsData> {
       gameSlug: mod.game.slug,
       type: "mod",
       version: mod.latestStableVersion
-    }
+    }, { 
+            publishers: mod.publishers
+    })
   }
 
   static async designTimeData(request: GetMods) {

@@ -32,7 +32,7 @@ export class MissionHelper {
 }
 
 export class ModHelper {
-  public static interestingFields = ["id", "name", "packageName", "group", "groupId", "gameId", "game", "slug", "avatar", "avatarUpdatedAt", "tags", "description", "author", "authorText", "size", "sizePacked", "followersCount", "modVersion", "stat", "latestStableVersion"]
+  public static interestingFields = ["id", "name", "packageName", "group", "groupId", "gameId", "game", "slug", "avatar", "avatarUpdatedAt", "tags", "description", "author", "authorText", "size", "sizePacked", "followersCount", "modVersion", "stat", "latestStableVersion", "publishers"]
   public static async getCompatibilityModIds(compatibilityMods: string[], gameId: string, context: W6Context) {
     let jsonQuery = {
       from: 'Mods',
@@ -65,7 +65,9 @@ export class ModHelper {
       stat: x.stat,
       type: "mod",
       version: x.latestStableVersion,
-      statInstall: x.stat.install
+      statInstall: x.stat.install,
+      statTotalInstall: x.stat.totalInstall,
+      publishers: x.publishers
     }
   }
 }
@@ -121,7 +123,7 @@ export class ContentHelper {
   public static getContentState = (state: ItemState, version: string, constraint?: string) => {
     if (!state || !constraint || !version) return state;
     if (state !== ItemState.UpdateAvailable && state !== ItemState.Uptodate) return state;
-    return constraint === version ? ItemState.Uptodate : ItemState.UpdateAvailable;
+    return constraint.toLowerCase() === version.toLowerCase() ? ItemState.Uptodate : ItemState.UpdateAvailable;
   }
 
   public static itemStateToAction = (state: ItemState) => {

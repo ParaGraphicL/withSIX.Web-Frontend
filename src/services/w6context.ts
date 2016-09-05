@@ -141,7 +141,7 @@ export class W6Context {
     Tools.Debug.log("postCustomFormData", path, fd, configOverrides);
     return this.handleJson<T>(path, Object.assign({ body: fd, method: 'POST' }, configOverrides));
   }
-  public deleteCustom = <T>(path, configOverrides?: IRequestShortcutConfig) => this.handleJson(path, { method: 'DELETE' })
+  public deleteCustom = <T>(path, configOverrides?: IRequestShortcutConfig) => this.handleJson<T>(path, Object.assign({ method: 'DELETE' }, configOverrides))
 
   handleJsonWithBody = <T>(path, data, configOverride?) => this.handleJson<T>(path, Object.assign({
     body: data ? json(data) : null

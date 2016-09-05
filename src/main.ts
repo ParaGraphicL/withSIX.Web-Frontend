@@ -24,8 +24,7 @@ Bluebird.config({
 // // Some modules use {DOM} from 'aurelia-pal' and expect it to already be initialized.
 // initialize();
 
-let mw = <any>require('jquery-mousewheel');
-mw($);
+require('jquery-mousewheel');
 
 export * from './bootstrap';
 

@@ -12,6 +12,7 @@ export class FilteredBase<T> extends PaginatedViewModel<T> {
   params;
 
   async activate(params) {
+    if (this.w6.userInfo.isManager) { if (this.sort.some(x => x.name === 'stat.totalInstall')) this.sort.push({ name: "stat.install", title: "Installs (Local)", direction: SortDirection.Desc }) }
     this.filterInfo = { search: { input: null, fields: this.searchFields }, enabledFilters: [], sortOrder: this.sort[0] }
     await super.activate(params);
   }
