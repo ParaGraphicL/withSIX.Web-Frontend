@@ -37,7 +37,7 @@ export class Show extends ViewModel {
 
   async activate(params) {
     let game = await new GetGame(params.gameSlug).handle(this.mediator);
-    this.eventBus.publish(new GameChanged(game.id, game.slug));
+    this.eventBus.publish(new GameChanged(game.id, game.slug, true));
     this.handleAngularHeader()
   }
 

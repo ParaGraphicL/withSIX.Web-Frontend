@@ -174,7 +174,7 @@ export class App extends ViewModel {
         }));
 
       let changed = this.appEvents.gameChanged;
-      d(changed.subscribe(info => this.setActiveGame(info)));
+      d(changed.flatMap(x => this.setActiveGame(x)).concat().subscribe());
       d(changed.startWith(this.w6.activeGame)
         .subscribe(this.gameChanged))
       d(this.clientWrapper.stateChanged
@@ -228,9 +228,9 @@ export class App extends ViewModel {
     this.tools.removeEl(this.dialogMap, userError.id);
   }
 
-  setActiveGame(info: GameChanged) {
+  async setActiveGame(info: GameChanged) {
     this.w6.setActiveGame({ id: info.id, slug: info.slug });
-    if (info && info.id) this.client.selectGame(info.id)
+    if (info && info.id && info.isPageChange) await this.client.selectGame(info.id)
   }
 
   myKeypressCallback = ($event: KeyboardEvent) => {
