@@ -32,7 +32,8 @@ class ClientQuery<T, T2> extends DbClientQuery<T, T2> {
 export enum LaunchAction {
   Default,
   Launch,
-  Join
+  Join,
+  LaunchAsServer
 }
 
 export enum LaunchType {

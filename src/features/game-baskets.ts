@@ -7,7 +7,7 @@ import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject, Container} from 'aurelia-framework';
 import {
   Base, LS, Notifier, Toastr, uiCommand2, ViewModel, ViewModelWithModel, SelectTab,
-  BasketType, IBasketModel, IBasketItem, BasketState, IBasketCollection, W6Context,
+  BasketType, IBasketModel, IBasketItem, BasketState, IBasketCollection, W6Context, LaunchAction,
   SubscribeCollection, InstallContent, InstallContents, LaunchContents, LaunchContent, ContentHelper, Action,
   BasketItemType, DependencyType
 } from '../framework';
@@ -360,9 +360,9 @@ export class Basket extends ViewModelWithModel<IBasketCollection> {
     var cmdData2 = this.basketToCommandDataForSingleItem(hide);
     return new InstallContent(cmdData2.gameId, cmdData2.content, { text: cmdData2.name }).handle(this.mediator)
   }
-  launch = () => {
+  launch = (action?: LaunchAction) => {
     var cmd = this.basketToCommandData();
-    return new LaunchContents(cmd.gameId, cmd.contents, { text: cmd.name }).handle(this.mediator);
+    return new LaunchContents(cmd.gameId, cmd.contents, { text: cmd.name }, action).handle(this.mediator);
   }
   update = () => this.install();
   play = this.launch;

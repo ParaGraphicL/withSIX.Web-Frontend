@@ -1,4 +1,4 @@
-import {ViewModel, Query, DbQuery, handlerFor, IGame, ITab, IMenuItem, MenuItem, uiCommand2, VoidCommand, IReactiveCommand, IDisposable, Rx,
+import {ViewModel, Query, DbQuery, handlerFor, IGame, ITab, IMenuItem, MenuItem, uiCommand2, VoidCommand, IReactiveCommand, IDisposable, Rx, LaunchAction,
   CollectionScope, IBreezeCollectionVersion, IBreezeCollectionVersionDependency, BasketItemType, TypeScope, UiContext, CollectionHelper, Confirmation, MessageDialog,
   ReactiveList, IBasketItem, FindModel, ActionType, BasketState, BasketType, ConnectionState, Debouncer, GameChanged, uiCommandWithLogin2, GameClientInfo, UninstallContent,
   IBreezeCollection, IRequireUser, IUserInfo, W6Context, Client, BasketService, CollectionDataService, DbClientQuery, requireUser, ICollection, Base, DependencyType,
@@ -127,6 +127,10 @@ export class Playlist extends ViewModel {
         cls: 'cancel ignore-close',
         isVisibleObservable: this.whenAnyValue(x => x.collectionChanged)
       }));
+      d(this.launchAsServer = uiCommand2("Launch as server", () => this.launch(this.activeBasket, LaunchAction.LaunchAsServer), {
+        canExecuteObservable: this.whenAnyValue(x => x.hasItems)
+        //isVisibleObservable: // if the game supports launching as server
+      }))
       d(this.appEvents.gameChanged.subscribe(this.gameChanged));
       d(this.findModel = new FindModel(this.findCollections, (col: IPlaylistCollection) => this.selectCollection(col), e => e.name));
       d(Playlist.bindObservableTo(this.whenAnyValue(x => x.isCollection).map(x => x ? "Save as new collection" : "Save as collection"), this.saveBasket, x => x.name));
@@ -135,6 +139,8 @@ export class Playlist extends ViewModel {
 
     this.menuItems.push(new MenuItem(this.saveBasket));
     this.menuItems.push(new MenuItem(this.clearBasket));
+
+    if (this.features.serverBrowser) this.menuItems.push(new MenuItem(this.launchAsServer));
 
     if (this.basket.collectionId) {
       let c = await new GetMyCollection(this.basket.collectionId).handle(this.mediator);
@@ -295,7 +301,8 @@ export class Playlist extends ViewModel {
   unloadCollection;
   saveCollection;
   undoCollection;
-  action = uiCommand2("Execute", () => this.executeBasket(this.activeBasket), { canExecuteObservable: this.whenAnyValue(x => x.isNotLocked) });
+  launchAsServer;
+  action = uiCommand2("Execute", () => this.executeBasket(), { canExecuteObservable: this.whenAnyValue(x => x.isNotLocked) });
 
   gameChanged = async (info: GameChanged) => {
     let equal = this.game.id === info.id;
@@ -311,11 +318,8 @@ export class Playlist extends ViewModel {
     this.baskets = this.game.id ? this.basketService.getGameBaskets(this.game.id) : null;
   }
 
-  async executeBasket(basket: Basket) {
-    if (this.client.state == ConnectionState.disconnected) {
-      //await this.client.getInfo(); // TODO: this shouyld not be needed! // instead of connection.promise();
-      return;
-    }
+  async executeBasket() {
+    const basket = this.activeBasket;
     if (this.locked) {
       this.toastr.error("Client is currently busy", "Busy");
       return;
@@ -342,14 +346,7 @@ export class Playlist extends ViewModel {
         };
         return;
       case BasketState.Launch:
-        this.overrideBasketState = "launching";
-        this.lockBasket = true;
-        try {
-          await basket.launch();
-        } finally {
-          this.overrideBasketState = "";
-          this.lockBasket = false;
-        };
+        await this.launch(this.activeBasket);
         return;
       case BasketState.Syncing:
         return;
@@ -360,6 +357,17 @@ export class Playlist extends ViewModel {
         throw new Error("Unknown action!");
       }
     }
+  }
+
+  launch = async (basket: Basket, action?: LaunchAction) => {
+    this.overrideBasketState = "launching";
+    this.lockBasket = true;
+    try {
+      await basket.launch(action);
+    } finally {
+      this.overrideBasketState = "";
+      this.lockBasket = false;
+    };
   }
 
   get isNotLocked() { return !this.locked; }
