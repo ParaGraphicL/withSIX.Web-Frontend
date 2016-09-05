@@ -27,7 +27,7 @@ export class Show extends ViewModel {
     this.w6.libraryParent = this;
     let x = await new GetGame(params['gameSlug']).handle(this.mediator)
     this.model.game = x;
-    this.eventBus.publish(new GameChanged(x.id, x.slug));
+    this.eventBus.publish(new GameChanged(x.id, x.slug, true));
     try {
       let x = await new GetGames().handle(this.mediator);
       this.model.games = x.games;

@@ -9,7 +9,7 @@ export class ClientWrapper extends EventWrapper {
   get userErrorResolved() { return this.observableFromEvent<IUserErrorResolved>("client.userErrorResolved") }
 }
 
-export class GameChanged { constructor(public id?: string, public slug?: string) { } }
+export class GameChanged { constructor(public id?: string, public slug?: string, public isPageChange?: boolean) { } }
 
 export class AppEventsWrapper extends EventWrapper {
   get gameChanged() { return this.observableFromEvent<GameChanged>(GameChanged); }
