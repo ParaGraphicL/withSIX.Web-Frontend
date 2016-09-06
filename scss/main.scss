@@ -1333,17 +1333,18 @@ button {
   &.prominent {
     padding: 8px;
   }
-  &.default, .continue {
+  &.default {
     padding: 8px;
     @include color-button($colorSixBlue);
   }
-  &.ok, .yes {
+  &.ok,
+  &.yes {
     padding: 8px;
     @include color-button($colorSixGreen);
   }
   &.cancel,
-  .danger,
-  .no {
+  &.danger,
+  &.no {
     padding: 8px;
     @include color-button($colorSixSoftRed);
   }

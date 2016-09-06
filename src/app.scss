@@ -21,9 +21,6 @@ virtual-list {
 .virtual-row {
   display: block;
 }
-.user-error-dialog {
-  max-width: 800px;
-}
 filters {
   .filters-area {
     //height: 92px;
@@ -62,17 +59,12 @@ filters {
     }
   }
 }
-.message-dialog {
+.message-dialog, .user-error-dialog {
   max-width: 800px;
-  .buttons {
-    button {
-      &.yes {
-        background-color: $colorSixBlue;
-      }
-      &.cancel,
-      &.no {
-        background-color: $colorSixSoftRed;
-      }
+  button {
+    padding: 8px;
+    &.continue {
+      @include color-button($colorSixGreen);
     }
   }
 }
