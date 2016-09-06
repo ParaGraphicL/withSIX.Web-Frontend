@@ -127,6 +127,10 @@ export class Playlist extends ViewModel {
         cls: 'cancel ignore-close',
         isVisibleObservable: this.whenAnyValue(x => x.collectionChanged)
       }));
+      d(this.launchAsDedicatedServer = uiCommand2("Launch as Dedicated server", () => this.launch(this.activeBasket, LaunchAction.LaunchAsDedicatedServer), {
+        canExecuteObservable: this.whenAnyValue(x => x.hasItems)
+        //isVisibleObservable: // if the game supports launching as server
+      }))
       d(this.launchAsServer = uiCommand2("Launch as server", () => this.launch(this.activeBasket, LaunchAction.LaunchAsServer), {
         canExecuteObservable: this.whenAnyValue(x => x.hasItems)
         //isVisibleObservable: // if the game supports launching as server
@@ -140,7 +144,10 @@ export class Playlist extends ViewModel {
     this.menuItems.push(new MenuItem(this.saveBasket));
     this.menuItems.push(new MenuItem(this.clearBasket));
 
-    if (this.features.serverBrowser) this.menuItems.push(new MenuItem(this.launchAsServer));
+    if (this.features.serverBrowser) {
+      this.menuItems.push(new MenuItem(this.launchAsDedicatedServer));
+      this.menuItems.push(new MenuItem(this.launchAsServer));
+    }
 
     if (this.basket.collectionId) {
       let c = await new GetMyCollection(this.basket.collectionId).handle(this.mediator);
@@ -302,6 +309,7 @@ export class Playlist extends ViewModel {
   saveCollection;
   undoCollection;
   launchAsServer;
+  launchAsDedicatedServer;
   action = uiCommand2("Execute", () => this.executeBasket(), { canExecuteObservable: this.whenAnyValue(x => x.isNotLocked) });
 
   gameChanged = async (info: GameChanged) => {

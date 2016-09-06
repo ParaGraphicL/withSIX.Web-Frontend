@@ -33,7 +33,8 @@ export enum LaunchAction {
   Default,
   Launch,
   Join,
-  LaunchAsServer
+  LaunchAsServer,
+  LaunchAsDedicatedServer
 }
 
 export enum LaunchType {
