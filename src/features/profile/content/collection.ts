@@ -59,6 +59,16 @@ export class Collection extends ContentViewModel<ICollection> {
         icon: "withSIX-icon-Hexagon-Play"
       }));
 
+      
+      d(this.launchAsDedicatedServer = uiCommand2("Launch as Dedicated server", () => 
+        new LaunchContent(this.model.gameId, this.model.id, this.getNoteInfo(), LaunchAction.LaunchAsDedicatedServer)
+        .handle(this.mediator), {
+            isVisibleObservable: this.isInstalledObservable,
+            canExecuteObservable: this.canExecuteObservable,
+        //isVisibleObservable: // if the game supports launching as server
+      }));
+
+
       d(this.launchAsServer = uiCommand2("Launch as server", () => 
         new LaunchContent(this.model.gameId, this.model.id, this.getNoteInfo(), LaunchAction.LaunchAsServer)
         .handle(this.mediator), {
@@ -69,7 +79,10 @@ export class Collection extends ContentViewModel<ICollection> {
 
       this.topMenuActions.push(new MenuItem(this.launch2));
       
-      if (this.features.serverBrowser) this.topMenuActions.push(new MenuItem(this.launchAsServer));
+      if (this.features.serverBrowser) {
+        this.topMenuActions.push(new MenuItem(this.launchAsDedicatedServer)); 
+        this.topMenuActions.push(new MenuItem(this.launchAsServer));
+      }
 
       if (this.model.typeScope != null) d(this.uninstall = this.createDeleteCommand());
     })
@@ -79,6 +92,7 @@ export class Collection extends ContentViewModel<ICollection> {
 
   // TODO: Other kinds of info required for the server setup? (server profile: name, settings?)
   launchAsServer;
+  launchAsDedicatedServer;
 
   loadIntoPlaylistInternal = async () => {
     await new LoadCollectionIntoBasket(this.model.id).handle(this.mediator);
