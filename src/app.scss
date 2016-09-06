@@ -63,7 +63,7 @@ filters {
   max-width: 800px;
   button {
     padding: 8px;
-    &.continue {
+    &.continue, &.retry {
       @include color-button($colorSixGreen);
     }
   }
