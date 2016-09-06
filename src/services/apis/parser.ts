@@ -33,14 +33,16 @@ export class HtmlParser {
 
   handleAttr = (el: JQuery, attr: string, baseUrl: string) => {
     let src = el.attr(attr);
-    let updatedUrl = src && this.handleRelativeUrl(src, baseUrl);
+    let updatedUrl = src && (this.cleanupUrl(this.handleRelativeUrl(src, baseUrl)));
     if (updatedUrl) el.attr(attr, updatedUrl);
   }
+
+  cleanupUrl(url: string) { return url.replace(/\/+$/, "") }
 
   handleRelativeUrl = (url: string, baseUrl: string) =>
     !url.match(/^(\/\/)|(https?:\/)\//) //url.match(/^((\.)?\/[^\/\?#\s]/)
       ? this.combineUrls(baseUrl, url)
-      : null;
+      : url;
 
   combineUrls = (baseUrl: string, url: string) => {
     if (url.startsWith(".")) url = url.substring(1);
@@ -104,6 +106,7 @@ export abstract class InterestingLink {
   title: string;
   get displayName() { return this.title || this.url; }
   constructor(public url: string, public images: string[] = []) {
+    this.url = url.replace(/\/+$/, "");
     if (images && images.length > 0) this.displayImage = images[0];
     if (!this.displayImage) this.displayImage = this.getDisplayImage();
  }
@@ -129,7 +132,7 @@ export class ForumUrl extends InterestingLink {
   title = "Community Forum"
   constructor(public url: string, public images: string[] = []) {
     super(url, images);
-    if (url.includes("armaholic.com")) this.title = "Armaholic Forums";
+    if (this.url.includes("armaholic.com")) this.title = "Armaholic Forums";
   }
 }
 export class HomepageUrl extends InterestingLink {
