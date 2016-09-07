@@ -113,13 +113,13 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
 
     let publishers = <{publisherId: string; publisherType: string}[]> (<any>model).publishers || [];
     // TODO: Add Group Owned and Custom Repository icons
-    if (publishers.length > 0 
-      && this.model.gameId.toUpperCase() !== ModsHelper.arma3Id
-      && (!this.model.originalGameId || this.model.originalGameId.toUpperCase() !== ModsHelper.arma3Id)) {
-      publishers.forEach(x => {
-        var pInfo = this.getPinfo(Publisher[x.publisherType]);
-        if (pInfo) this.sources.push(pInfo);
-      })
+    if (publishers.length > 0) {
+      // Don't show the indicators on mods that are (also) hosted on our network
+      if (!publishers.some(x => x.publisherType === Publisher[Publisher.withSIX]))
+        publishers.forEach(x => {
+          var pInfo = this.getPinfo(Publisher[x.publisherType]);
+          if (pInfo) this.sources.push(pInfo);
+        })
     } else if (this.image) {
       if (this.image.includes('steamusercontent.com')) this.sources.push(this.getPinfo(Publisher.Steam))
       else if (this.image.includes('community.playstarbound.com')) this.sources.push(this.getPinfo(Publisher.Chucklefish))
