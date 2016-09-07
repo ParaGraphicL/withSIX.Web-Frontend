@@ -1,6 +1,7 @@
 import {inject} from 'aurelia-framework';
 import {IContentGuidSpec, BasketItemType, IBasketItem, BasketService, Base, GameClientInfo, uiCommand, uiCommand2, UiContext, MenuItem, ViewModel, Mediator, Query, DbQuery, DbClientQuery, handlerFor, VoidCommand, IContent, ItemState, IContentState,
-  RemoveRecent, Abort, UninstallContent, LaunchContent, OpenFolder, InstallContent, UnFavoriteContent, FavoriteContent, GameChanged, IMenuItem, FolderType, LaunchAction, IReactiveCommand, Publisher} from '../../../framework';
+  RemoveRecent, Abort, UninstallContent, LaunchContent, OpenFolder, InstallContent, UnFavoriteContent, FavoriteContent, GameChanged, IMenuItem, FolderType, LaunchAction, IReactiveCommand, Publisher,
+ModsHelper} from '../../../framework';
 import {Router} from 'aurelia-router';
 import {GameBaskets, Basket} from '../../game-baskets';
 import {AddModsToCollections} from '../../games/add-mods-to-collections';
@@ -112,7 +113,9 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
 
     let publishers = <{publisherId: string; publisherType: string}[]> (<any>model).publishers || [];
     // TODO: Add Group Owned and Custom Repository icons
-    if (publishers.length > 0) {
+    if (publishers.length > 0 
+      && this.model.gameId.toUpperCase() !== ModsHelper.arma3Id
+      && (!this.model.originalGameId || this.model.originalGameId.toUpperCase() !== ModsHelper.arma3Id)) {
       publishers.forEach(x => {
         var pInfo = this.getPinfo(Publisher[x.publisherType]);
         if (pInfo) this.sources.push(pInfo);
