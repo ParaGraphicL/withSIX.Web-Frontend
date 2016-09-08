@@ -263,7 +263,7 @@ export class App extends ViewModel {
     this.w6.updateSettings(x => x.template = template);
   }
 
-  openClientSettings = (evt: OpenSettings) => this.dialog.open({ viewModel: SettingsIndex, model: evt })
+  openClientSettings = (evt: OpenSettings) => this.dialog.open({ viewModel: SettingsIndex, model: evt.model })
 
   deactivate() {
     window.removeEventListener('keypress', this.myKeypressCallback);
