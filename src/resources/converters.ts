@@ -58,7 +58,7 @@ export class TextValueConverter {
   toView = text => text ? this.parseText(text) : text;
   parseText = text => this.replaceBreaks(this.replaceSpecial(this.replaceLinks(text)))
   replaceBreaks = text => text.replace(/(\r\n)|\n/g, "<br />")
-  replaceSpecial = text => text.replace(/configure the game first in the Settings/, (whole) => `<a target="_blank" href="/client/?openClientSettings=1">${whole}</a>`)
+  replaceSpecial = text => text.replace(/configure the game first in the Settings/, (whole) => `<a href="#" onclick="w6Cheat.api.openSettings({module: 'games'})">${whole}</a>`)
   replaceLinks = text => text.replace(/(\b(https?|ftp|file):\/\/([-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|]))/gi, (whole, m1, m2, m3) => `<a target="_blank" href="${whole}">${m3}</a>`);
 }
 
