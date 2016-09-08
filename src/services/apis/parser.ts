@@ -72,6 +72,8 @@ export class HtmlParser {
     '//button.moddb.com/',
     '//staticdelivery.nexusmods.com/contents/images',
 
+    '/noimage.',
+
     '//store.akamai.steamstatic.com/public/shared/images/',
     '//cfl.dropboxstatic.com/static/images/',
     '//wmtransfer.com/',
