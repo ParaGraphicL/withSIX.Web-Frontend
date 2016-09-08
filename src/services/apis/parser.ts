@@ -104,8 +104,9 @@ export class HtmlParser {
 export abstract class InterestingLink {
   displayImage: string;
   title: string;
+  url: string;
   get displayName() { return this.title || this.url; }
-  constructor(public url: string, public images: string[] = []) {
+  constructor(url: string, public images: string[] = []) {
     this.url = url.replace(/\/+$/, "");
     if (images && images.length > 0) this.displayImage = images[0];
     if (!this.displayImage) this.displayImage = this.getDisplayImage();
@@ -130,7 +131,7 @@ export class ArmaholicUrl extends InterestingLink {
 }
 export class ForumUrl extends InterestingLink {
   title = "Community Forum"
-  constructor(public url: string, public images: string[] = []) {
+  constructor(url: string, public images: string[] = []) {
     super(url, images);
     if (this.url.includes("armaholic.com")) this.title = "Armaholic Forums";
   }
