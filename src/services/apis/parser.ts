@@ -307,11 +307,8 @@ export class Parser {
 
   tryVideo = (src: string) => {
     if (!src) return null;
-    let m;
-    if (
-      (src.includes('youtube.com/embed/') || src.includes('youtu.be/embed/') || src.includes('youtube-nocookie.com/embed/'))
-        && (m = src.match(/embed\/([^\/\?#\s]+)/))) {
-      let id = m[1];
+    let id;
+    if (id = this.parseYoutubeId(src)) {
       return {
         href: src,
         title: 'Video',
@@ -322,6 +319,16 @@ export class Parser {
     }
     return null;
   }
+
+  parseYoutubeId(src: string) {
+      let m;
+      // https://www.youtube.com/watch?v=icXoLobjUEg
+      if ((src.includes('youtube.com/embed/') || src.includes('youtu.be/embed/') || src.includes('youtube-nocookie.com/embed/'))
+        && (m = src.match(/embed\/([^\/\?#\s]+)/))) return m[1];
+      if (src.includes('youtube.com/watch?v=') && (m = src.match(/v=([^&#]+)/))) return m[1];
+      return null;
+  }
+
   isImage = (url: string) => {
     if (!url) return false;
     // TODO: improve
