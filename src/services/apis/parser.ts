@@ -73,7 +73,7 @@ export class HtmlParser {
     '//staticdelivery.nexusmods.com/contents/images',
 
     '/noimage.',
-
+    '//steamcommunity-a.akamaihd.net/public/shared/images/',
     '//store.akamai.steamstatic.com/public/shared/images/',
     '//cfl.dropboxstatic.com/static/images/',
     '//wmtransfer.com/',
