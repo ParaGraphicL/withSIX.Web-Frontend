@@ -572,11 +572,13 @@ export class W6Context {
 
   handleResponseErrorStatus(requestInfo: IRequestInfo<any>, isLoggedIn: boolean) {
     const {status} = requestInfo;
-    if (status == 400) throw new Tools.ValidationError("Input not valid", requestInfo);
-    if (status == 401) throw isLoggedIn ? new Tools.LoginNoLongerValid("The login is no longer valid, please retry after logging in again", requestInfo) : new Tools.RequiresLogin("The requested action requires you to be logged-in", requestInfo);
-    if (status == 403) throw new Tools.Forbidden("You do not have access to this resource", requestInfo);
-    if (status == 404) throw new Tools.NotFoundException("The requested resource does not appear to exist", requestInfo);
-    if (status == 500) throw new Tools.HttpException(`Internal server error. We've been notified about the problem and will investigate. For your reference: ${requestInfo.headers['withSIX-RequestID']}`, requestInfo);
+    switch (status) {
+      case 400: throw new Tools.ValidationError("Input not valid", requestInfo);
+      case 401: throw isLoggedIn ? new Tools.LoginNoLongerValid("The login is no longer valid, please retry after logging in again", requestInfo) : new Tools.RequiresLogin("The requested action requires you to be logged-in", requestInfo);
+      case 403: throw new Tools.Forbidden("You do not have access to this resource", requestInfo);
+      case 404: throw new Tools.NotFoundException("The requested resource does not appear to exist", requestInfo);
+      case 500: throw new Tools.HttpException(`Internal server error. We've been notified about the problem and will investigate. For your reference: ${requestInfo.headers['withSIX-RequestID']}`, requestInfo);
+    }
     throw new Tools.HttpException(`Unknown error. For your reference: ${requestInfo.headers['withSIX-RequestID']}`, requestInfo);
   }
 }
