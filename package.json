@@ -176,7 +176,7 @@
     "local-storage": "^1.4.2",
     "ms-signalr-client": "^2.2.5",
     "numbro": "^1.9.2",
-    "rxjs": "^5.0.0-beta.11",
+    "rxjs": "^5.0.0-beta.12",
     "rxui": "git+https://github.com/sickboy/RxUI.git",
     "sanitize-html": "^1.13.0",
     "typeahead.js": "git+https://github.com/twitter/typeahead.js.git",
