@@ -1,0 +1,5 @@
+<template>
+    <label for.one-time="name" placeholder.bind="placeholder"><slot>${label}</slot></label>
+    <input if.bind="!multiLine" class="form-control" name.one-time="name" id.one-time="name" type="text" value.bind="value">
+    <textarea if.bind="multiLine" class="form-control" name.one-time="name" id.one-time="name" value.bind="value"></textarea>
+</template>
