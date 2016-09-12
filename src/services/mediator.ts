@@ -86,10 +86,10 @@ export class DbQuery<TRequest, TResponse> implements IRequestHandler<TRequest, T
     try {
       result = await promise;
     } catch (failure) {
-      if (failure.status == 404) throw new Tools.NotFoundException("The server responded with 404", { status: 404, statusText: 'NotFound', body: {} });
+      if (failure.status === 404) throw new Tools.NotFoundException("The server responded with 404", { status: 404, statusText: 'NotFound', body: {} });
       else throw failure;
     }
-    if (result.results.length == 0) throw new Tools.NotFoundException("There were no results returned from the server", { status: 404, statusText: 'NotFound', body: {} });
+    if (result.results.length === 0) throw new Tools.NotFoundException("There were no results returned from the server", { status: 404, statusText: 'NotFound', body: {} });
     return result.results[0];
   }
 

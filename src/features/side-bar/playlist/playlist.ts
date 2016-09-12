@@ -4,6 +4,7 @@ import {ViewModel, Query, DbQuery, handlerFor, IGame, ITab, IMenuItem, MenuItem,
   IBreezeCollection, IRequireUser, IUserInfo, W6Context, Client, BasketService, CollectionDataService, DbClientQuery, requireUser, ICollection, Base, DependencyType,
   breeze} from '../../../framework';
 import {CreateCollectionDialog} from '../../games/collections/create-collection-dialog';
+import { HostServer } from '../../games/servers/host-server';
 import {Basket, GameBaskets} from '../../game-baskets';
 import {inject} from 'aurelia-framework';
 import {DeleteCollection, ForkCollection, LoadCollectionIntoBasket, GetDependencies} from '../../profile/content/collection';
@@ -127,7 +128,10 @@ export class Playlist extends ViewModel {
         cls: 'cancel ignore-close',
         isVisibleObservable: this.whenAnyValue(x => x.collectionChanged)
       }));
-      d(this.launchAsServer = uiCommand2("Launch as server", () => this.launch(this.activeBasket, LaunchAction.LaunchAsServer), {
+      d(this.launchAsServer = uiCommand2("Host Server", () => this.dialog.open({viewModel: HostServer, model: {
+        launchDedicated: () => this.launch(this.activeBasket, LaunchAction.LaunchAsDedicatedServer),
+        launch: () => this.launch(this.activeBasket, LaunchAction.LaunchAsServer)
+      }}), {
         canExecuteObservable: this.whenAnyValue(x => x.hasItems)
         //isVisibleObservable: // if the game supports launching as server
       }))

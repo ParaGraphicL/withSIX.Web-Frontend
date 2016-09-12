@@ -1673,11 +1673,16 @@ export class ModInfoController extends ModEditBaseController {
       }
     })
 
-    if (!externalInfo.forumUrl) {
-      let hp = this.$scope.model.homepageUrl;
-      if (hp && (hp.startsWith("http://forums.bistudio.com/") || hp.startsWith("https://forums.bistudio.com/"))) {
-        externalInfo.forumUrl = hp;
-      }
+    let hp = this.$scope.model.homepageUrl;
+    if (hp != null) {
+      if (!externalInfo.forumUrl && (hp.startsWith("http://forums.bistudio.com/") || hp.startsWith("https://forums.bistudio.com/"))) externalInfo.forumUrl = hp;
+      if (!externalInfo.nmsmUrl && hp.startsWith("http://nomansskymods.com/")) externalInfo.nmsmUrl = hp;
+      if (!externalInfo.curseUrl && hp.startsWith("http://www.curse.com/")) externalInfo.curseUrl = hp;
+      if (!externalInfo.nexusUrl && hp.startsWith("http://www.nexusmods.com/")) externalInfo.nexusUrl = hp;
+      if (!externalInfo.mdbUrl && hp.startsWith("http://www.moddb.com/")) externalInfo.mdbUrl = hp;
+      if (!externalInfo.chucklefishUrl && hp.startsWith("http://community.playstarbound.com")) externalInfo.chucklefishUrl = hp;
+      if (!externalInfo.armaholicUrl && hp.startsWith("http://www.armaholic.com")) externalInfo.armaholicUrl = hp;
+      //if (!externalInfo.steamInfo && hp.startsWith("http://steamcommunity.com/")) externalInfo.steamInfo = hp;
     }
     externalInfo.description = this.$scope.model.descriptionFull;
     this.$scope.externalInfo = externalInfo;

@@ -33,14 +33,16 @@ export class HtmlParser {
 
   handleAttr = (el: JQuery, attr: string, baseUrl: string) => {
     let src = el.attr(attr);
-    let updatedUrl = src && this.handleRelativeUrl(src, baseUrl);
+    let updatedUrl = src && (this.cleanupUrl(this.handleRelativeUrl(src, baseUrl)));
     if (updatedUrl) el.attr(attr, updatedUrl);
   }
+
+  cleanupUrl(url: string) { return url.replace(/\/+$/, "") }
 
   handleRelativeUrl = (url: string, baseUrl: string) =>
     !url.match(/^(\/\/)|(https?:\/)\//) //url.match(/^((\.)?\/[^\/\?#\s]/)
       ? this.combineUrls(baseUrl, url)
-      : null;
+      : url;
 
   combineUrls = (baseUrl: string, url: string) => {
     if (url.startsWith(".")) url = url.substring(1);
@@ -70,6 +72,8 @@ export class HtmlParser {
     '//button.moddb.com/',
     '//staticdelivery.nexusmods.com/contents/images',
 
+    '/noimage.',
+    '//steamcommunity-a.akamaihd.net/public/shared/images/',
     '//store.akamai.steamstatic.com/public/shared/images/',
     '//cfl.dropboxstatic.com/static/images/',
     '//wmtransfer.com/',
@@ -102,8 +106,10 @@ export class HtmlParser {
 export abstract class InterestingLink {
   displayImage: string;
   title: string;
+  url: string;
   get displayName() { return this.title || this.url; }
-  constructor(public url: string, public images: string[] = []) {
+  constructor(url: string, public images: string[] = []) {
+    this.url = url.replace(/\/+$/, "");
     if (images && images.length > 0) this.displayImage = images[0];
     if (!this.displayImage) this.displayImage = this.getDisplayImage();
  }
@@ -115,6 +121,13 @@ export class ImgurGallery extends InterestingLink {
 }
 export class SocialMedia extends InterestingLink {
   title = "Social Media"
+  constructor(url: string, public images: string[] = []) {
+    super(url, images);
+    if (this.url.includes("facebook.com")) this.title = "Facebook";
+    else if (this.url.includes("twitter.com")) this.title = "Twitter";
+    else if (this.url.includes("plus.google.com")) this.title = "Google Plus";
+  }
+
  }
  export class GithubUrl extends InterestingLink {
    title = "GitHub Repo"
@@ -127,10 +140,21 @@ export class ArmaholicUrl extends InterestingLink {
 }
 export class ForumUrl extends InterestingLink {
   title = "Community Forum"
-  constructor(public url: string, public images: string[] = []) {
+  constructor(url: string, public images: string[] = []) {
     super(url, images);
-    if (url.includes("armaholic.com")) this.title = "Armaholic Forums";
+    if (this.url.includes("armaholic.com")) this.title = "Armaholic Forums";
+    else if (this.url.includes("www.reddit.com")) this.title = "Reddit";
   }
+}
+export class ProfileUrl extends InterestingLink {
+  title = "User Profile"
+  constructor(url: string, public images: string[] = []) {
+    super(url, images);
+    if (this.url.includes("www.reddit.com")) this.title = "Reddit Profile";
+  }
+}
+export class CommsUrl extends InterestingLink {
+  title = "(voice) chat"
 }
 export class HomepageUrl extends InterestingLink {
   title = "Homepage"
@@ -194,6 +218,22 @@ export class Parser {
       || url.startsWith('https://plus.google.com/')
       || url.startsWith('https://twitter.com/'))
       return new SocialMedia(url, images);
+
+    if (url.startsWith('https://www.reddit.com/r/')
+        || url.startsWith('http://www.reddit.com/r/'))
+      return new ForumUrl(url, images);
+
+    if (url.startsWith('https://www.reddit.com/u/')
+        || url.startsWith('http://www.reddit.com/u/'))
+      return new ProfileUrl(url, images);
+
+    if (url.startsWith('ts3server://')
+        || url.startsWith('http://discord.gg/')
+        || url.startsWith('https://discord.gg/')
+        || url.startsWith('https://gitter.im/')
+        || url.startsWith('http://gitter.im/')
+        || url.includes('.slack.com/'))
+      return new CommsUrl(url, images);
 
 // TODO: better distinguishing...
 /*
@@ -304,11 +344,8 @@ export class Parser {
 
   tryVideo = (src: string) => {
     if (!src) return null;
-    let m;
-    if (
-      (src.includes('youtube.com/embed/') || src.includes('youtu.be/embed/') || src.includes('youtube-nocookie.com/embed/'))
-        && (m = src.match(/embed\/([^\/\?#\s]+)/))) {
-      let id = m[1];
+    let id;
+    if (id = this.parseYoutubeId(src)) {
       return {
         href: src,
         title: 'Video',
@@ -319,6 +356,16 @@ export class Parser {
     }
     return null;
   }
+
+  parseYoutubeId(src: string) {
+      let m;
+      // https://www.youtube.com/watch?v=icXoLobjUEg
+      if ((src.includes('youtube.com/embed/') || src.includes('youtu.be/embed/') || src.includes('youtube-nocookie.com/embed/'))
+        && (m = src.match(/embed\/([^\/\?#\s]+)/))) return m[1];
+      if (src.includes('youtube.com/watch?v=') && (m = src.match(/v=([^&#]+)/))) return m[1];
+      return null;
+  }
+
   isImage = (url: string) => {
     if (!url) return false;
     // TODO: improve

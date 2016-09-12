@@ -1,5 +1,5 @@
 <template>
-  <div if.bind="model.steamInfo">
+  <div if.bind="model.steamInfo && model.steamInfo.description">
     <div>
       <!--${model.steamInfo.name} ${model.steamInfo.title}
       <br />Manifest: ${model.steamInfo.hcontent_file} filesize: ${model.steamInfo.file_size} favorited: ${model.steamInfo.favorited} subscriptions: ${model.steamInfo.subscriptions} created: ${getDate(model.steamInfo.time_created)} updated: ${getDate(model.steamInfo.time_updated)}

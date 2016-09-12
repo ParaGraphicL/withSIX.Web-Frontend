@@ -1,4 +1,4 @@
-import {ViewModel, Query, DbQuery, handlerFor, uiCommandWithLogin2, IMenuItem, MenuItem} from '../../framework';
+import {ViewModel, Query, DbQuery, handlerFor, uiCommandWithLogin2, IMenuItem, MenuItem, Publisher} from '../../framework';
 import {CreateCollectionDialog} from './collections/create-collection-dialog';
 
 interface IStream { contentItems: any[]; postItems: any[] }
@@ -51,7 +51,7 @@ enum ContentTypes {
 export class GetStreamHandler extends DbQuery<GetStream, IStream> {
   async handle(request: GetStream) {
     let r = await this.context.getCustom<{ contentItems: any[] }>("games/" + request.gameSlug + "/stream?streamType=" + request.streamType);
-    r.contentItems.forEach(x => x.type = this.getType(x));
+    r.contentItems.forEach(x => { x.type = this.getType(x); if (x.publishers) x.publishers.forEach(p => p.publisherType = Publisher[<number>p.publisherType]) });
     return r;
   }
 

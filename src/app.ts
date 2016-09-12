@@ -30,6 +30,7 @@ import {TopBar} from './features/top-bar/top-bar';
 import {UserErrorDialog} from './features/user-error-dialog';
 import {MessageDialog} from './features/message-dialog';
 import {Finalize} from './features/login/finalize';
+import { HostServer } from './features/games/servers/host-server';
 
 import {BindingSignaler} from 'aurelia-templating-resources';
 
@@ -105,8 +106,7 @@ export class App extends ViewModel {
     Origin.set(UserErrorDialog, { moduleId: "features/user-error-dialog", moduleMember: "UserErrorDialog" });
     Origin.set(MessageDialog, { moduleId: "features/message-dialog", moduleMember: "MessageDialog" });
     Origin.set(Finalize, { moduleId: "features/login/finalize", moduleMember: "Finalize" })
-
-
+    Origin.set(HostServer, { moduleId: "features/games/servers/host-server", moduleMember: "HostServer"})
 
     let isSync = window.location.search.includes('sync=1') ? true : false;
     if (isSync) { this.w6.updateSettings(x => x.hasSync = true); }
@@ -174,7 +174,7 @@ export class App extends ViewModel {
         }));
 
       let changed = this.appEvents.gameChanged;
-      d(changed.subscribe(info => this.setActiveGame(info)));
+      d(changed.flatMap(x => this.setActiveGame(x)).concat().subscribe());
       d(changed.startWith(this.w6.activeGame)
         .subscribe(this.gameChanged))
       d(this.clientWrapper.stateChanged
@@ -228,9 +228,9 @@ export class App extends ViewModel {
     this.tools.removeEl(this.dialogMap, userError.id);
   }
 
-  setActiveGame(info: GameChanged) {
+  async setActiveGame(info: GameChanged) {
     this.w6.setActiveGame({ id: info.id, slug: info.slug });
-    if (info && info.id) this.client.selectGame(info.id)
+    if (info && info.id && info.isPageChange) await this.client.selectGame(info.id)
   }
 
   myKeypressCallback = ($event: KeyboardEvent) => {
@@ -263,7 +263,7 @@ export class App extends ViewModel {
     this.w6.updateSettings(x => x.template = template);
   }
 
-  openClientSettings = (evt: OpenSettings) => this.dialog.open({ viewModel: SettingsIndex, model: evt })
+  openClientSettings = (evt: OpenSettings) => this.dialog.open({ viewModel: SettingsIndex, model: evt.model })
 
   deactivate() {
     window.removeEventListener('keypress', this.myKeypressCallback);

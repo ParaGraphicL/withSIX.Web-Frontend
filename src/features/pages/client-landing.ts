@@ -12,10 +12,11 @@ export class ClientLanding extends ViewModel {
     // TODO: Support these from any page?
     if (params.openClientSettings) {
       let model = {};
-      this.dialog.open({ viewModel: SettingsIndex, model: model })
+      this.openSettingsDialog(model);
       //this.w6.api.openSettings();
     } else if (params.openTab) {
       this.eventBus.publish(new SelectTab(params.openTab));
     }
   }
+  openSettingsDialog = (model = {}) => this.dialog.open({ viewModel: SettingsIndex, model: model })
 }

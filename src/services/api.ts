@@ -111,7 +111,7 @@ export class Api extends Base {
   closeDropdowns = () => this.subj.next(null);
   refreshPlaylist = () => this.ls.set('w6.event', { name: 'refresh-playlist' });
   get tools() { return Tools }
-  openSettings = (model?) => this.eventBus.publish(new OpenSettings());
+  openSettings = (model = {}) => this.eventBus.publish(new OpenSettings(model));
   getContentStateInitial = ContentHelper.getConstentStateInitial;
   render: (options) => Promise<IDisposable>;
   logout;// = () => this.w6.logout();
@@ -186,7 +186,7 @@ export class Notifier {
   }
 }
 
-export class OpenSettings { }
+export class OpenSettings { constructor(public model = {}) {} }
 
 
 class Ipc<T> {

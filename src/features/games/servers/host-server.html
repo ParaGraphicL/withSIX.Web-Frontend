@@ -1,0 +1,24 @@
+<template>
+    <ai-dialog class="ai-dialog">
+        <ai-dialog-header>
+            <h2>Host a server</h2>
+        </ai-dialog-header>
+
+        <ai-dialog-body>
+            <textbox use-id="name" value.bind="model.name" placeholder="Enter a name to identify your server..">Name</textbox>
+            <textbox use-id="password" value.bind="model.password" placeholder="Optional password..">Password</textbox>
+
+            <textbox use-id="comms-url" value.bind="model.commsUrl" placeholder="Optional communication url like ts3server or Discord">Comms link</textbox>
+
+            <textbox use-id="homepage-url" value.bind="model.homepageUrl" placeholder="Optional homepage url">Homepage link</textbox>
+
+            <textbox use-id="description" multi-line.bind="true" value.bind="model.description" placeholder="Optional description">Description</textbox>
+            <imageupload use-id="banner">Banner (optional)</imageupload>
+
+        </ai-dialog-body>
+        <ai-dialog-footer>
+            <button click.delegate="model.launch()">Launch as Server</button>
+            <button click.delegate="model.launchDedicated()">Launch as Dedicated Server</button>
+        </ai-dialog-footer>
+    </ai-dialog>
+</template>
