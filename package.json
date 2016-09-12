@@ -191,7 +191,7 @@
       "resources": [
         "aurelia-auth/authFilter",
         "aurelia-validation/validate-custom-attribute",
-        "aurelia-ui-virtualization/virtual-repeat-next",
+        "aurelia-ui-virtualization/infinite-scroll-next",
         "contextMenu/contextMenu.css",
         "templates/v2.html"
       ]
