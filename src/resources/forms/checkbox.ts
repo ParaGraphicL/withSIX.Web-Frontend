@@ -1,7 +1,6 @@
 import { bindable, bindingMode } from 'aurelia-framework';
+import { Field } from './base';
 
-export class Checkbox {
-    @bindable label: string;
-    @bindable name: string;
+export class Checkbox extends Field {
     @bindable({defaultBindingMode: bindingMode.twoWay}) value: boolean;
 }
