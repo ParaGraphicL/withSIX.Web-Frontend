@@ -1,7 +1,7 @@
 <template>
-    <fileupload name.bind="name" value.bind="value" label.bind="label" accept.bind="accept">
+    <fileupload use-id.bind="useId" value.bind="value" label.bind="label" accept.bind="accept">
         <slot>${label}</slot>
-        <div name="extra">
+        <div slot="extra">
             <img style="max-width: 300px; max-height: 300px" if.bind="value[0]" src.bind="value[0] | blobToUrl">
         </div>
     </fileupload>
