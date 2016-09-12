@@ -121,6 +121,13 @@ export class ImgurGallery extends InterestingLink {
 }
 export class SocialMedia extends InterestingLink {
   title = "Social Media"
+  constructor(url: string, public images: string[] = []) {
+    super(url, images);
+    if (this.url.includes("facebook.com")) this.title = "Facebook";
+    else if (this.url.includes("twitter.com")) this.title = "Twitter";
+    else if (this.url.includes("plus.google.com")) this.title = "Google Plus";
+  }
+
  }
  export class GithubUrl extends InterestingLink {
    title = "GitHub Repo"
@@ -145,6 +152,9 @@ export class ProfileUrl extends InterestingLink {
     super(url, images);
     if (this.url.includes("www.reddit.com")) this.title = "Reddit Profile";
   }
+}
+export class CommsUrl extends InterestingLink {
+  title = "(voice) chat"
 }
 export class HomepageUrl extends InterestingLink {
   title = "Homepage"
@@ -216,6 +226,14 @@ export class Parser {
     if (url.startsWith('https://www.reddit.com/u/')
         || url.startsWith('http://www.reddit.com/u/'))
       return new ProfileUrl(url, images);
+
+    if (url.startsWith('ts3server://')
+        || url.startsWith('http://discord.gg/')
+        || url.startsWith('https://discord.gg/')
+        || url.startsWith('https://gitter.im/')
+        || url.startsWith('http://gitter.im/')
+        || url.includes('.slack.com/'))
+      return new CommsUrl(url, images);
 
 // TODO: better distinguishing...
 /*
