@@ -21,7 +21,7 @@ export class Mod extends ViewModelOf<IMod> {
   activate(model: IMod) {
     super.activate(model);
     this.url = `/p/${model.gameSlug}/mods/${model.id.toShortId()}/${model.name.sluggifyEntityName()}`;
-    this.avatarUrl = this.w6.url.getUsercontentUrl2(model.avatar, model.avatarUpdatedAt);
+    this.avatarUrl = model.avatar ? this.w6.url.getUsercontentUrl2(model.avatar, model.avatarUpdatedAt) : this.w6.url.getAssetUrl('img/noimage.png');
     this.subscriptions.subd(d => {
       // TODO: This should only be here if group admin instead?
       if (this.isLoggedIn)
