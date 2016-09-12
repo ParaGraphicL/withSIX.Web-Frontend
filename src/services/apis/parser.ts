@@ -136,6 +136,14 @@ export class ForumUrl extends InterestingLink {
   constructor(url: string, public images: string[] = []) {
     super(url, images);
     if (this.url.includes("armaholic.com")) this.title = "Armaholic Forums";
+    else if (this.url.includes("www.reddit.com")) this.title = "Reddit";
+  }
+}
+export class ProfileUrl extends InterestingLink {
+  title = "User Profile"
+  constructor(url: string, public images: string[] = []) {
+    super(url, images);
+    if (this.url.includes("www.reddit.com")) this.title = "Reddit Profile";
   }
 }
 export class HomepageUrl extends InterestingLink {
@@ -200,6 +208,14 @@ export class Parser {
       || url.startsWith('https://plus.google.com/')
       || url.startsWith('https://twitter.com/'))
       return new SocialMedia(url, images);
+
+    if (url.startsWith('https://www.reddit.com/r/')
+        || url.startsWith('http://www.reddit.com/r/'))
+      return new ForumUrl(url, images);
+
+    if (url.startsWith('https://www.reddit.com/u/')
+        || url.startsWith('http://www.reddit.com/u/'))
+      return new ProfileUrl(url, images);
 
 // TODO: better distinguishing...
 /*
