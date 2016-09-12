@@ -3,6 +3,8 @@ import {FrameworkConfiguration} from 'aurelia-framework';
 export function configure(config: FrameworkConfiguration) {
   config.globalResources('./router-menu');
 
+  config.feature('resources/forms');
+
   config.globalResources('./bar');
   config.globalResources('./card-view');
   config.globalResources('./list-view');

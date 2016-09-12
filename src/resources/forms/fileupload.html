@@ -1,0 +1,8 @@
+<template>
+    <div class="form-group">
+        <label for.one-time="useId"><slot>${label}</slot></label>
+        <input type="file" accept.one-time="accept" name.one-time="useId" id.one-time="useId" class="form-control" files.bind="value">
+        <!--<button show.bind="value.length > 0" click.delegate="value.clear()">Clear</button>-->
+        <slot name="extra"></slot>
+    </div>
+</template>
