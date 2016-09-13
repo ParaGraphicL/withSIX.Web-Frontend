@@ -1,9 +1,11 @@
 import {inject} from 'aurelia-framework';
 import {Tk} from './tk';
+import { ErrorWithOptionalInner } from '../../helpers/utils/errors';
 import {Tools} from '../tools';
 import {W6} from '../withSIX';
 import {Logger} from 'aurelia-logging';
 import {ValidationResult} from 'aurelia-validation';
+import { ClientConnectionFailed } from 'withsix-sync-api';
 
 export class ToastLogger {
   constructor() {
@@ -72,10 +74,11 @@ LE.init(Tools.env === Tools.Environment.Production ? '3a2f5219-696a-4498-92b5-0f
 
 @inject(ToastLogger, W6)
 export class GlobalErrorHandler {
-  private logSilentErrors = true;
+  private logSilentErrors = false;
   private logStacktraces = true;
   constructor(private toastr: ToastLogger, private w6: W6) { }
-  silence = [];
+  silenceGeneral = ["Error during negotiation request.", "The user cancelled the operation", 'Operation aborted', 'A connection to the client could not be made'];
+  silenceGeneralTypes = [ClientConnectionFailed]
   silenceAngular = [
     // These are coming from Angular elements that no longer exist, while Angular (components) expect the element to still live.
     "Cannot read property 'toLowerCase' of undefined", "Cannot read property 'toUpperCase' of undefined",
@@ -83,30 +86,51 @@ export class GlobalErrorHandler {
     "f[0].nodeName is undefined"
   ];
   silenceAngularAction = [];
-  silenceGeneral = ["Error during negotiation request.", "The user cancelled the operation", 'Operation aborted'];
   silenceWindow = [
     // This comes from the browser disallowing cross-origin calls: http://stackoverflow.com/questions/5913978/cryptic-script-error-reported-in-javascript-in-chrome-and-firefox
     'Script error', 'Script error.'
   ];
 
-  //handleAureliaError = (exception: Error, cause = 'Unknown') => this.handleErrorInternal(`[Aurelia]`, exception, cause, this.isSilence(exception))
-  handleAngularError = (exception: Error, cause?: string) => { if (!this.isSilenceAngular(exception)) { let info = this.getErrorInfo(`[Angular]`, cause, exception); this.tryErrorLog(info); this.leLog(info) } }
-  handleAngularActionError = (exception: Error, cause?: string) => { if (!this.isUserError(exception)) this.handleErrorInternal(`[Angular Action]`, exception, cause, this.isSilenceAngularAction(exception)) }
-  handleUseCaseError = (exception: Error, cause = 'Unknown') => { if (!this.isUserError(exception)) { this.handleErrorInternal('[Command]', exception, cause) } }
+  handleAngularError = (exception: Error, cause?: string) => { 
+    if (!this.isSilenceAngular(exception)) { 
+      let info = this.getErrorInfo(`[Angular]`, cause, exception); this.tryErrorLog(info); this.leLog(info)
+    }
+  }
+  handleAngularActionError = (exception: Error, cause?: string) => { 
+    if (!this.isUserError(exception))
+      this.handleErrorInternal(`[Angular Action]`, exception, cause, this.isSilenceAngularAction(exception))
+  }
+  handleUseCaseError = (exception: Error, cause = 'Unknown') => { 
+    if (!this.isUserError(exception)) 
+      this.handleErrorInternal('[Command]', exception, cause)
+  }
   handleLog = (loggerId, ...logParams: any[]) => this.leLog(`[Aurelia: ${loggerId}]`, ...logParams)
-  handleWindowError = (message: string, source, line: number, column: number, error?: Error) => { if (!this.isSilenceWindow(message)) this.leLog(`[Window] ${message}`, source, line, column, error ? error.toString() : null, error ? (<any>error).stack : null) }
+  handleWindowError = (message: string, source, line: number, column: number, error?: Error) => {
+    if (!this.isSilenceWindow(message)) 
+      this.leLog(`[Window] ${message}`, source, line, column, error && this.logStacktraces ? this.getFullStack(error) : null)
+  }
+  private shouldSilentWindow = (msg: string, err?: Error) => (err && this.isSilenceGeneral(err)) || this.isSilenceWindow(msg) || this.isSilentFilteredMsg(msg, this.silenceGeneral);
 
-  private handleErrorInternal(source: string, exception, cause?: string, silent = false) {
-    if (!silent && this.silenceGeneral.some(x => x === exception.message)) silent = true;
+  private handleErrorInternal(source: string, exception: Error, cause?: string, silent = false) {
+    if (!silent && this.isSilenceGeneral(exception)) silent = true;
     if (silent && !this.logSilentErrors) return;
-    let errorInfo = this.getErrorInfo(source, cause, exception);
+    const errorInfo = this.getErrorInfo(source, cause, exception);
     this.tryErrorLog(errorInfo);
-    this.leLog(errorInfo, this.logStacktraces && exception.stack ? exception.stack : null);
+    this.leLog(errorInfo, this.logStacktraces ? this.getFullStack(exception) : null);
     if (!silent) return this.toastr.error(`${errorInfo}\nWe were notified about the problem.`, 'Unexpected error has occurred');
   }
 
+  private getFullStack(err: Error) {
+    let stack = err.stack || "";
+    let subError: ErrorWithOptionalInner = err;
+    while (subError = subError.inner) {
+      stack += `\n${subError}:\n${subError.stack}`
+    }
+    return stack;
+  }
+
   private getErrorInfo(source, cause, exception) {
-    let causeInfo = cause ? ` (Cause: ${cause})` : '';
+    const causeInfo = cause ? ` (Cause: ${cause})` : '';
     return `${source} An unexpected error has occured: ${exception}${causeInfo}`;
   }
 
@@ -123,12 +147,15 @@ export class GlobalErrorHandler {
   userExceptions = [Tools.NotFoundException, Tools.Forbidden, Tools.ValidationError, Tools.RequiresLogin, Tools.RequireSslException, Tools.RequireNonSslException, ValidationResult];
   private isUserError(err: Error) { return this.userExceptions.some(x => err instanceof x) }
 
-  private isSilence = (err: Error) => this.isSilentFiltered(err.message, this.silence);
-  private isSilenceAngular = (err: Error) => this.isSilentFiltered(err.message, this.silenceAngular);
-  private isSilenceAngularAction = (err: Error) => this.isSilentFiltered(err.message, this.silenceAngularAction);
-  private isSilenceGeneral = (err: Error) => this.isSilentFiltered(err.message, this.silenceGeneral);
-  private isSilenceWindow = (msg: string) => this.isSilentFiltered(msg, this.silenceWindow);
-  private isSilentFiltered = (msg: string, silencia: string[]) => silencia.some(x => x === msg);
+  private isSilenceGeneral = (err: Error) => this.isSilentFiltered(err, this.silenceGeneral, this.silenceGeneralTypes);
+  private isSilenceAngular = (err: Error) => this.isSilentFiltered(err, this.silenceAngular);
+  private isSilenceAngularAction = (err: Error) => this.isSilentFiltered(err, this.silenceAngularAction);
+  private isSilenceWindow = (msg: string) => this.isSilentFilteredMsg(msg, this.silenceWindow);
+  
+  private isSilentFiltered = (err: Error, silencia: string[], silenciaTypes?: Function[]) => 
+    (silenciaTypes && this.isSilentFilteredType(err, silenciaTypes)) || this.isSilentFilteredMsg(err.message, silencia);
+  private isSilentFilteredType = (err: Error, silenciaTypes: Function[]) => silenciaTypes.some(x => err instanceof x)
+  private isSilentFilteredMsg = (msg: string, silencia: string[]) => silencia.some(x => x === msg)
 }
 
 // http://www.mikeobrien.net/blog/client-side-exception-logging-in-aurelia/
