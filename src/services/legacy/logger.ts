@@ -82,6 +82,7 @@ export class GlobalErrorHandler {
     "Error during negotiation request.", 
     "The user cancelled the operation", 
     'Operation aborted',
+    'The operation was aborted',
     'Connection was disconnected before invocation result was received.',
     /* ClientConnectionFailed: */ 'A connection to the client could not be made'
   ];
