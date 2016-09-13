@@ -77,13 +77,19 @@ export class GlobalErrorHandler {
   private logSilentErrors = false;
   private logStacktraces = true;
   constructor(private toastr: ToastLogger, private w6: W6) { }
-  silenceGeneral = ["Error during negotiation request.", "The user cancelled the operation", 'Operation aborted', 'A connection to the client could not be made'];
+  silenceGeneral = [
+    "Error during negotiation request.", 
+    "The user cancelled the operation", 
+    'Operation aborted',
+    /* ClientConnectionFailed: */ 'A connection to the client could not be made'
+  ];
   silenceGeneralTypes = [ClientConnectionFailed]
   silenceAngular = [
     // These are coming from Angular elements that no longer exist, while Angular (components) expect the element to still live.
     "Cannot read property 'toLowerCase' of undefined", "Cannot read property 'toUpperCase' of undefined",
     "Unable to get property 'toLowerCase' of undefined or null reference", "Unable to get property 'toUpperCase' of undefined or null reference",
-    "f[0].nodeName is undefined"
+    "f[0].nodeName is undefined",
+    /* TypeError: */ "Cannot read property '$route' of undefined"
   ];
   silenceAngularAction = [];
   silenceWindow = [
@@ -106,10 +112,12 @@ export class GlobalErrorHandler {
   }
   handleLog = (loggerId, ...logParams: any[]) => this.leLog(`[Aurelia: ${loggerId}]`, ...logParams)
   handleWindowError = (message: string, source, line: number, column: number, error?: Error) => {
-    if (!this.isSilenceWindow(message)) 
+    let idx = message.indexOf(": ");
+    if (!this.shouldSilentWindow(message, error) && (idx < 0 || !this.shouldSilentWindowMsg(message.substring(idx + 2))))
       this.leLog(`[Window] ${message}`, source, line, column, error && this.logStacktraces ? this.getFullStack(error) : null)
   }
-  private shouldSilentWindow = (msg: string, err?: Error) => (err && this.isSilenceGeneral(err)) || this.isSilenceWindow(msg) || this.isSilentFilteredMsg(msg, this.silenceGeneral);
+  private shouldSilentWindow = (msg: string, err?: Error) => (err && this.isSilenceGeneral(err)) || this.shouldSilentWindowMsg(msg);
+  private shouldSilentWindowMsg = (msg: string) => this.isSilenceWindow(msg) || this.isSilentFilteredMsg(msg, this.silenceGeneral)
 
   private handleErrorInternal(source: string, exception: Error, cause?: string, silent = false) {
     if (!silent && this.isSilenceGeneral(exception)) silent = true;

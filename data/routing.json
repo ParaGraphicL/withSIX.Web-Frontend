@@ -35,7 +35,9 @@
     "/blog/team": { },
     "/blog/archive/:year/:month": { },
     "/blog/team/archive/:year/:month": { },
-    "/blog/:slug": { }
+    "/blog/:slug": { },
+    "/thanks": { "type": "aurelia" },
+    "/thankyou": { "type": "aurelia" }
   },
   "connect": {
     "/errors/500": { "type": "aurelia" },
