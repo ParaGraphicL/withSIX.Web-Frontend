@@ -5,15 +5,22 @@
         </ai-dialog-header>
 
         <ai-dialog-body>
-            <textbox use-id="name" value.bind="model.name" placeholder="Enter a name to identify your server..">Name</textbox>
-            <textbox use-id="password" value.bind="model.password" placeholder="Optional password..">Password</textbox>
+            <textbox value.bind="model.name" placeholder="Enter a name to identify your server..">Name</textbox>
+            <textbox value.bind="model.password" placeholder="Optional password..">Password</textbox>
 
-            <textbox use-id="comms-url" value.bind="model.commsUrl" placeholder="Optional communication url like ts3server or Discord">Comms link</textbox>
+            <textbox value.bind="model.commsUrl" placeholder="Optional communication url like ts3server or Discord">Comms link</textbox>
 
-            <textbox use-id="homepage-url" value.bind="model.homepageUrl" placeholder="Optional homepage url">Homepage link</textbox>
+            <textbox value.bind="model.homepageUrl" placeholder="Optional homepage url">Homepage link</textbox>
 
-            <textbox use-id="description" multi-line.bind="true" value.bind="model.description" placeholder="Optional description">Description</textbox>
-            <imageupload use-id="banner">Banner (optional)</imageupload>
+            <textbox multi-line.bind="true" value.bind="model.description" placeholder="Optional description">Description</textbox>
+            <imageupload>Banner (optional)</imageupload>
+            
+            <selectbox options.bind="scopes" value.bind="model.scope">
+                Scope
+                <!--<template replace-part="item-template">
+                    Hello! ${o}
+                </template>-->
+            </selectbox>
 
         </ai-dialog-body>
         <ai-dialog-footer>
