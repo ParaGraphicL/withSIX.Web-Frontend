@@ -61,3 +61,4 @@ export * from './finder/finder-results';
 export * from './dropdown-menu/dropdown-menu';
 export * from './dropdown-menu/action-bar';
 export * from './tab-view/tab-view';
+export * from './gallery/gallery';
