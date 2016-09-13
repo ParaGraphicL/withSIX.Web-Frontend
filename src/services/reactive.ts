@@ -198,7 +198,7 @@ export var uiCommandWithLogin = function <T>(action: IPromiseFunction<T>, canExe
 export var uiCommand2 = function <T>(name: string, action: IPromiseFunction<T>, options?: ICommandInfo): IReactiveCommand<T> { // Rx.Observable<boolean>
   let command = new ReactiveCommand<T>(name, action, options);
   let eh: ErrorHandler = Container.instance.get(ErrorHandler);
-  command.thrownExceptions.subscribe(x => eh.handleError(x));
+  command.thrownExceptions.subscribe(x => eh.handleError(x)); // TODO: plug in retryability
 
   // TODO: Optimize?
   let f = (...args) => command.execute(...args);
