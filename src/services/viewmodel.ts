@@ -24,6 +24,7 @@ export class ViewModel extends ReactiveBase {
   hasApi: boolean = (<any>window).api != null
   _router: Router;
   _changed = false;
+  __errorCode: number;
   get changed() { return this._changed; }
   set changed(value: boolean) {
     this.tools.Debug.log("set changed: ", value);
@@ -136,7 +137,10 @@ export class ViewModel extends ReactiveBase {
 
   getViewStrategy;
   protected accessDenied() { this.setErrorView(403) }
-  setErrorView = (errorCode: number) => this.getViewStrategy = () => new InlineViewStrategy(`<template><compose view-model="errors/${errorCode}"></compose><router-view style="display: none"></router-view></template>`, undefined, '/') // () => `/dist/errors/${err}.html`
+  setErrorView = (errorCode: number) => {
+    this.__errorCode = errorCode; 
+    this.getViewStrategy = () => new InlineViewStrategy(`<template><compose view-model="errors/${errorCode}"></compose><router-view show.bind="false"></router-view></template>`, undefined, '/') // () => `/dist/errors/${err}.html`
+  }
 
   _configured = false;
 
