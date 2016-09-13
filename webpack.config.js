@@ -237,6 +237,10 @@ switch (ENV) {
         minify: false
       })
       /*,
+      require('@easy-webpack/config-copy-files')
+        ({patterns: [{ from: 'favicon.ico', to: 'favicon.ico' }]}),
+      */
+      /*,
            require('@easy-webpack/config-common-chunks-simple')
            ({
              appChunkName: 'app',
