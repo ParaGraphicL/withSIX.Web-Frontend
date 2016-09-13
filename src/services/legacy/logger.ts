@@ -81,6 +81,7 @@ export class GlobalErrorHandler {
     "Error during negotiation request.", 
     "The user cancelled the operation", 
     'Operation aborted',
+    'Connection was disconnected before invocation result was received.',
     /* ClientConnectionFailed: */ 'A connection to the client could not be made'
   ];
   silenceGeneralTypes = [ClientConnectionFailed]
@@ -89,7 +90,8 @@ export class GlobalErrorHandler {
     "Cannot read property 'toLowerCase' of undefined", "Cannot read property 'toUpperCase' of undefined",
     "Unable to get property 'toLowerCase' of undefined or null reference", "Unable to get property 'toUpperCase' of undefined or null reference",
     "f[0].nodeName is undefined",
-    /* TypeError: */ "Cannot read property '$route' of undefined"
+    /* TypeError: */ "Cannot read property '$route' of undefined",
+    /Route param `[^`]*` is not specified for route `[^`]*`/i // This takes care of weird angular route bugs, e.g on /p/Arma-3/mods/?tag=Vehicles
   ];
   silenceAngularAction = [];
   silenceWindow = [
@@ -160,10 +162,10 @@ export class GlobalErrorHandler {
   private isSilenceAngularAction = (err: Error) => this.isSilentFiltered(err, this.silenceAngularAction);
   private isSilenceWindow = (msg: string) => this.isSilentFilteredMsg(msg, this.silenceWindow);
   
-  private isSilentFiltered = (err: Error, silencia: string[], silenciaTypes?: Function[]) => 
+  private isSilentFiltered = (err: Error, silencia: (string | RegExp)[], silenciaTypes?: Function[]) => 
     (silenciaTypes && this.isSilentFilteredType(err, silenciaTypes)) || this.isSilentFilteredMsg(err.message, silencia);
   private isSilentFilteredType = (err: Error, silenciaTypes: Function[]) => silenciaTypes.some(x => err instanceof x)
-  private isSilentFilteredMsg = (msg: string, silencia: string[]) => silencia.some(x => x === msg)
+  private isSilentFilteredMsg = (msg: string, silencia: (string | RegExp)[]) => silencia.some(x => (x instanceof RegExp) ? x.test(msg) : x === msg)
 }
 
 // http://www.mikeobrien.net/blog/client-side-exception-logging-in-aurelia/
