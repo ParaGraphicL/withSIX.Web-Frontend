@@ -94,27 +94,32 @@ export class Search extends ViewModel {
 
   search = uiCommand2("Search", async (fullView?: boolean) => {
     this.closeTabs();
-    let game = this.w6.activeGame;
-    let gameIds = game.id ? ModsHelper.getGameIds(game.id) : [];
+    const game = this.w6.activeGame;
+    const gameIds = game.id ? ModsHelper.getGameIds(game.id) : [];
     this.gameSlug = game.id ? game.slug : null;
     this.resultQ = this.searchInput;
-    let types = this.types;
-    let results = this.results = [];
+    const types = this.types;
     fullView = this.fullView;
     this.openNow();
-    for (let i in types) results[i] = { key: { loading: true, type: types[i].toUpperCaseFirst() + 's', totalCount: 0 }, value: [] }
-    for (let i in types) {
-      results[i].key.processing = true;
-      let result = await new SearchQuery(this.searchInput, gameIds, [types[i]], fullView).handle(this.mediator);
-      let r = result.contentResults[0];
-      results[i].key = r.key;
-      results[i].value = r.value;
-      results[i].key.processing = false;
+    const results = this.results = types.map(t => { return { key: { loading: true, type: t.toUpperCaseFirst() + 's', totalCount: 0, processing: false }, value: [] } });
+
+    for (const i in types) {
+      const type = types[i];
+      const tr = results[i];
+      tr.key.processing = true;
+      const result = await new SearchQuery(this.searchInput, gameIds, [type], fullView).handle(this.mediator);
+      const r = result.contentResults[0];
+      if (!r) continue;
+      tr.key = r.key;
+      tr.key.processing = false;
+      tr.value = r.value;
     };
   });
 
-  searchOneType = type => {
-    this.types = [SearchContentType[type]];
+  searchOneType = (type: number) => {
+    const t = SearchContentType[type];
+    if (t == null) throw new Error(`Unknown search content type: ${type}`)
+    this.types = [t];
     this.fullView = true;
     return this.search();
   };
