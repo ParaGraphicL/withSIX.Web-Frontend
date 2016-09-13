@@ -13,8 +13,7 @@
             <textbox value.bind="model.homepageUrl" placeholder="Optional homepage url">Homepage link</textbox>
 
             <textbox multi-line.bind="true" value.bind="model.description" placeholder="Optional description">Description</textbox>
-            <imageupload>Banner (optional)</imageupload>
-            
+
             <selectbox options.bind="scopes" value.bind="model.scope">
                 Scope
                 <!--<template replace-part="item-template">
@@ -22,6 +21,7 @@
                 </template>-->
             </selectbox>
 
+            <imageupload>Banner (optional)</imageupload>
         </ai-dialog-body>
         <ai-dialog-footer>
             <button click.delegate="model.launch()">Launch as Server</button>
