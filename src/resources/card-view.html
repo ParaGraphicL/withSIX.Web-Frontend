@@ -5,129 +5,21 @@
 
   <template if.bind="items">
     <div if.bind="!isVirtual">
-      <template repeat.for="item of items">
-  <div class.bind="cardContainerCls" class="card-container">
-    <div class="card ${cardCls}">
-      <template replaceable part="item-template">
-        <compose model.bind="item" view.bind="view" view-model="${viewPath}${item.type || itemType}"></compose>
-      </template>
-</div>
-</div>
-<card-clearfix if.bind="handleClearFix" index.bind="calculateIndex($index)" columns.one-time="cardColumns"></card-clearfix>
-
-<template if.bind="renderAds && ($index + indexOffset) == ads[0]">
-    <div class.bind="cardContainerCls">
-      <div class="card ${cardCls}">
-        <ad-unit unit-id="angular-ad1"></ad-unit>
-      </div>
+      <compose view="./card-view-item.html" repeat.for="item of items"></compose>
     </div>
-    <card-clearfix if.bind="handleClearFix" index.bind="calculateIndex($index) + 1" columns.one-time="cardColumns"></card-clearfix>
+    <div if.bind="isVirtual" class="virtual-container">
+      <compose view="./card-view-item.html" class="virtual-row" virtual-repeat.for="item of items"></compose>
+    </div>
   </template>
 
-<template if.bind="renderAds && $index == ads[1]">
-    <div class.bind="cardContainerCls">
-      <div class="card ${cardCls}">
-        <ad-unit unit-id="angular-ad2"></ad-unit>
-      </div>
-    </div>
-    <card-clearfix if.bind="handleClearFix" index.bind="calculateIndex($index) + 1 + (($index + indexOffset) == ads[0] ? 1 : 0)" columns.one-time="cardColumns"></card-clearfix>
-  </template>
-</template>
-</div>
-<div if.bind="isVirtual" class="virtual-container">
-  <template class="virtual-row" virtual-repeat.for="item of items">
-  <div class.bind="cardContainerCls" class="card-container">
-    <div class="card ${cardCls}">
-      <template replaceable part="item-template">
-        <compose model.bind="item" view.bind="view" view-model="${viewPath}${item.type || itemType}"></compose>
-      </template>
-</div>
-</div>
-<card-clearfix if.bind="handleClearFix" index.bind="calculateIndex($index)" columns.one-time="cardColumns"></card-clearfix>
-
-<template if.bind="renderAds && ($index + indexOffset) == ads[0]">
-    <div class.bind="cardContainerCls">
-      <div class="card ${cardCls}">
-        <ad-unit unit-id="angular-ad1"></ad-unit>
-      </div>
-    </div>
-    <card-clearfix if.bind="handleClearFix" index.bind="calculateIndex($index) + 1" columns.one-time="cardColumns"></card-clearfix>
-  </template>
-
-<template if.bind="renderAds && $index == ads[1]">
-    <div class.bind="cardContainerCls">
-      <div class="card ${cardCls}">
-        <ad-unit unit-id="angular-ad2"></ad-unit>
-      </div>
-    </div>
-    <card-clearfix if.bind="handleClearFix" index.bind="calculateIndex($index) + 1 + (($index + indexOffset) == ads[0] ? 1 : 0)" columns.one-time="cardColumns"></card-clearfix>
-  </template>
-</template>
-</div>
-</template>
-
-<template if.bind="itemsMap">
+  <template if.bind="itemsMap">
     <div if.bind="!isVirtual">
-      <template repeat.for="[key, item] of itemsMap">
-  <div class.bind="cardContainerCls" class="card-container">
-    <div class="card ${cardCls}">
-      <template replaceable part="item-template">
-        <compose model.bind="item" view.bind="view" view-model="${viewPath}${item.type || itemType}"></compose>
-      </template>
-</div>
-</div>
-<card-clearfix if.bind="handleClearFix" index.bind="calculateIndex($index)" columns.one-time="cardColumns"></card-clearfix>
-
-<template if.bind="renderAds && ($index + indexOffset) == ads[0]">
-    <div class.bind="cardContainerCls">
-      <div class="card ${cardCls}">
-        <ad-unit unit-id="angular-ad1"></ad-unit>
-      </div>
+      <compose view="./card-view-item.html" repeat.for="[key, item] of itemsMap"></compose>
     </div>
-    <card-clearfix if.bind="handleClearFix" index.bind="calculateIndex($index) + 1" columns.one-time="cardColumns"></card-clearfix>
+    <div if.bind="isVirtual" class="virtual-container">
+      <compose view="./card-view-item.html" class="virtual-row" virtual-repeat.for="item of itemsMapToArrayWorkaround"></compose>
+    </div>
   </template>
 
-<template if.bind="renderAds && $index == ads[1]">
-    <div class.bind="cardContainerCls">
-      <div class="card ${cardCls}">
-        <ad-unit unit-id="angular-ad2"></ad-unit>
-      </div>
-    </div>
-    <card-clearfix if.bind="handleClearFix" index.bind="calculateIndex($index) + 1 + (($index + indexOffset) == ads[0] ? 1 : 0)" columns.one-time="cardColumns"></card-clearfix>
-  </template>
-</template>
-</div>
-<div if.bind="isVirtual" class="virtual-container">
-  <template class="virtual-row" virtual-repeat.for="item of itemsMapToArrayWorkaround">
-          <div class.bind="cardContainerCls" class="card-container">
-    <div class="card ${cardCls}">
-      <template replaceable part="item-template">
-        <compose model.bind="item" view.bind="view" view-model="${viewPath}${item.type || itemType}"></compose>
-      </template>
-</div>
-</div>
-<card-clearfix if.bind="handleClearFix" index.bind="calculateIndex($index)" columns.one-time="cardColumns"></card-clearfix>
-
-<template if.bind="renderAds && ($index + indexOffset) == ads[0]">
-    <div class.bind="cardContainerCls">
-      <div class="card ${cardCls}">
-        <ad-unit unit-id="angular-ad1"></ad-unit>
-      </div>
-    </div>
-    <card-clearfix if.bind="handleClearFix" index.bind="calculateIndex($index) + 1" columns.one-time="cardColumns"></card-clearfix>
-  </template>
-
-<template if.bind="renderAds && $index == ads[1]">
-    <div class.bind="cardContainerCls">
-      <div class="card ${cardCls}">
-        <ad-unit unit-id="angular-ad2"></ad-unit>
-      </div>
-    </div>
-    <card-clearfix if.bind="handleClearFix" index.bind="calculateIndex($index) + 1 + (($index + indexOffset) == ads[0] ? 1 : 0)" columns.one-time="cardColumns"></card-clearfix>
-  </template>
-</template>
-</div>
-</template>
-
-<slot name="additional-items"></slot>
+  <slot name="additional-items"></slot>
 </template>
