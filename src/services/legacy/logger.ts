@@ -5,7 +5,7 @@ import {Tools} from '../tools';
 import {W6} from '../withSIX';
 import {Logger} from 'aurelia-logging';
 import {ValidationResult} from 'aurelia-validation';
-import { ClientConnectionFailed } from 'withsix-sync-api';
+import { ClientConnectionFailed, UserError } from 'withsix-sync-api';
 
 export class ToastLogger {
   constructor() {
@@ -77,6 +77,7 @@ export class GlobalErrorHandler {
   private logSilentErrors = false;
   private logStacktraces = true;
   constructor(private toastr: ToastLogger, private w6: W6) { }
+  userExceptions = [UserError, Tools.NotFoundException, Tools.Forbidden, Tools.ValidationError, Tools.RequiresLogin, Tools.RequireSslException, Tools.RequireNonSslException, ValidationResult];
   silenceGeneral = [
     "Error during negotiation request.", 
     "The user cancelled the operation", 
@@ -154,7 +155,6 @@ export class GlobalErrorHandler {
     } catch (err) { }
   }
 
-  userExceptions = [Tools.NotFoundException, Tools.Forbidden, Tools.ValidationError, Tools.RequiresLogin, Tools.RequireSslException, Tools.RequireNonSslException, ValidationResult];
   private isUserError(err: Error) { return this.userExceptions.some(x => err instanceof x) }
 
   private isSilenceGeneral = (err: Error) => this.isSilentFiltered(err, this.silenceGeneral, this.silenceGeneralTypes);

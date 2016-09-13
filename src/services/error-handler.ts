@@ -66,7 +66,7 @@ export class ErrorHandler {
     else if (failStr === 'Error: The user cancelled the operation' || failStr === 'Error: Operation aborted') {
     } else {
       this.handleGeneralError(fail, action);
-      this.eh.handleUseCaseError(fail);
+      this.eh.handleUseCaseError(fail, action);
     }
   }
 
