@@ -35,7 +35,9 @@
     "/blog/team": { },
     "/blog/archive/:year/:month": { },
     "/blog/team/archive/:year/:month": { },
-    "/blog/:slug": { }
+    "/blog/:slug": { },
+    "/thanks": { "type": "aurelia" },
+    "/thankyou": { "type": "aurelia" }
   },
   "connect": {
     "/errors/500": { "type": "aurelia" },
@@ -134,7 +136,6 @@
     "/:gameSlug/collections": {"type": "aurelia"},
     "/:gameSlug/collections/:collectionId/:collectionSlug?/content": { "type": "aurelia" },
     "/:gameSlug/collections/:collectionId/:collectionSlug?/conten/editt": { "type": "aurelia" },
-    "/:gameSlug/collections/:collectionId/:collectionSlug?/comments": {},
     "/:gameSlug/collections/:collectionId/:collectionSlug?/related": {},
     "/:gameSlug/collections/:collectionId/:collectionSlug?/edit": {"type": "static"},
     "/:gameSlug/collections/:collectionId/:collectionSlug?": {},

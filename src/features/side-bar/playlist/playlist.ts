@@ -78,7 +78,8 @@ export class Playlist extends ViewModel {
 
   async activate(model) {
     if (this.model === model) return;
-    if (this.w6.activeGame.id) await this.gameChanged(this.w6.activeGame);
+    if (!this.w6.activeGame.id) throw new Error("There appears to be no active game");
+    await this.gameChanged(this.w6.activeGame);
     this.model = model;
 
     this.subscriptions.subd(d => {
@@ -310,16 +311,14 @@ export class Playlist extends ViewModel {
 
   gameChanged = async (info: GameChanged) => {
     let equal = this.game.id === info.id;
-    this.tools.Debug.log("$$$ ClientBar Game Changed: ", info, equal);
+    this.tools.Debug.log("$$$ ClientBar Game Changing: ", info, equal);
     if (equal) return;
-    // TODO: All this data should actually change at once!
-    this.baskets = null;
+    if (info.id) this.gameInfo = await this.basketService.getGameInfo(info.id);
     this.game.id = info.id;
     this.game.slug = info.slug;
     this.collections = [];
-    //this.gameInfo = null;
-    if (this.game.id) this.gameInfo = await this.basketService.getGameInfo(this.game.id);
     this.baskets = this.game.id ? this.basketService.getGameBaskets(this.game.id) : null;
+    this.tools.Debug.log("$$$ ClientBar Game Changed: ", info);
   }
 
   async executeBasket() {
