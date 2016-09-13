@@ -136,7 +136,6 @@
     "/:gameSlug/collections": {"type": "aurelia"},
     "/:gameSlug/collections/:collectionId/:collectionSlug?/content": { "type": "aurelia" },
     "/:gameSlug/collections/:collectionId/:collectionSlug?/conten/editt": { "type": "aurelia" },
-    "/:gameSlug/collections/:collectionId/:collectionSlug?/comments": {},
     "/:gameSlug/collections/:collectionId/:collectionSlug?/related": {},
     "/:gameSlug/collections/:collectionId/:collectionSlug?/edit": {"type": "static"},
     "/:gameSlug/collections/:collectionId/:collectionSlug?": {},
