@@ -7,7 +7,9 @@ export function configure(config: FrameworkConfiguration) {
 
   config.globalResources('./bar');
   config.globalResources('./card-view');
+  config.globalResources('./card-view-item');
   config.globalResources('./list-view');
+  config.globalResources('./list-view-item');
   config.globalResources('./tab-view/tab-view');
   config.globalResources('./tab-view/tab-view-render');
   config.globalResources('./filters');

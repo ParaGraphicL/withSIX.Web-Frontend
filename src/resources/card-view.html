@@ -5,19 +5,43 @@
 
   <template if.bind="items">
     <div if.bind="!isVirtual">
-      <compose view="./card-view-item.html" repeat.for="item of items"></compose>
+      <template repeat.for="item of items">
+        <card-view-item item.bind="item" card-container-cls.bind="cardContainerCls" card-cls.bind="cardCls"
+                        item-type.bind="itemType" view-path.bind="viewPath" view.bind="view">
+          <div slot="item-template" if.bind="replaced"><template replaceable part="item-template"></template></div>
+        </card-view-item>
+        <compose view="./card-view-item-ads.html"></compose>
+      </template>
     </div>
     <div if.bind="isVirtual" class="virtual-container">
-      <compose view="./card-view-item.html" class="virtual-row" virtual-repeat.for="item of items"></compose>
+      <template virtual-repeat.for="item of items">
+        <card-view-item class="virtual-row" item.bind="item" card-container-cls.bind="cardContainerCls" card-cls.bind="cardCls"
+                        item-type.bind="itemType" view-path.bind="viewPath" view.bind="view">
+          <div slot="item-template" if.bind="replaced"><template replaceable part="item-template"></template></div>
+        </card-view-item>
+        <compose view="./card-view-item-ads.html"></compose>
+      </template>
     </div>
   </template>
 
   <template if.bind="itemsMap">
     <div if.bind="!isVirtual">
-      <compose view="./card-view-item.html" repeat.for="[key, item] of itemsMap"></compose>
+      <template repeat.for="[key, item] of items">
+        <card-view-item item.bind="item" card-container-cls.bind="cardContainerCls" card-cls.bind="cardCls"
+                        item-type.bind="itemType" view-path.bind="viewPath" view.bind="view">
+          <div slot="item-template" if.bind="replaced"><template replaceable part="item-template"></template></div>
+        </card-view-item>
+        <compose view="./card-view-item-ads.html"></compose>
+      </template>
     </div>
     <div if.bind="isVirtual" class="virtual-container">
-      <compose view="./card-view-item.html" class="virtual-row" virtual-repeat.for="item of itemsMapToArrayWorkaround"></compose>
+      <template virtual-repeat.for="item of itemsMapToArrayWorkaround">
+        <card-view-item class="virtual-row" item.bind="item" card-container-cls.bind="cardContainerCls" card-cls.bind="cardCls"
+                        item-type.bind="itemType" view-path.bind="viewPath" view.bind="view">
+          <div slot="item-template" if.bind="replaced"><template replaceable part="item-template"></template></div>
+        </card-view-item>
+        <compose view="./card-view-item-ads.html"></compose>
+      </template>
     </div>
   </template>
 

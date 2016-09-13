@@ -17,6 +17,7 @@ export class CardView<T> extends ViewModel {
   @bindable adUnitId1 = "angular-ad1";
   @bindable adUnitId2 = "angular-ad2";
   @bindable indexOffset = 0;
+  @bindable replaced = false; // TODO: Drop once we refactor
 
   handleClearFix: boolean;
 
