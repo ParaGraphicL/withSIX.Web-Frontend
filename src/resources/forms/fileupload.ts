@@ -5,5 +5,5 @@ export class Fileupload extends Field {
     @bindable({defaultBindingMode: bindingMode.twoWay}) value: boolean;
     @bindable accept: string;
     @bindable label: string;
-    @bindable useId: string;
+    @bindable useId = Field.generateId('select');
 }

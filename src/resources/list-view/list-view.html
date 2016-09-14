@@ -1,0 +1,47 @@
+<template>
+    <template if.bind="items">
+      <div if.bind="!isVirtual">
+        <ul class.bind="listCls">
+          <template repeat.for="item of items">
+            <list-view-item item.bind="item" view-path.bind="viewPath" item-type.bind="itemType" view.bind="view">
+              <div slot="item-template" if.bind="replaced"><template replaceable part="item-template"></template></div>
+            </list-view-item>
+            <compose view="./list-view-item-ads.html"></compose>
+          </template>
+        </ul>
+      </div>
+      <div if.bind="isVirtual" class="virtual-container">
+        <ul class.bind="listCls">
+          <template virtual-repeat.for="item of items">
+            <list-view-item class="virtual-row" item.bind="item" view-path.bind="viewPath" item-type.bind="itemType" view.bind="view">
+              <div slot="item-template" if.bind="replaced"><template replaceable part="item-template"></template></div>
+            </list-view-item>
+            <compose view="./list-view-item-ads.html"></compose>
+          </template>
+        </ul>
+      </div>
+    </template>
+
+    <template if.bind="itemsMap">
+      <div if.bind="!isVirtual">
+        <ul class.bind="listCls">
+          <template repeat.for="[key, item] of itemsMap">
+            <list-view-item item.bind="item" view-path.bind="viewPath" item-type.bind="itemType" view.bind="view">
+              <div slot="item-template" if.bind="replaced"><template replaceable part="item-template"></template></div>
+            </list-view-item>
+            <compose view="./list-view-item-ads.html"></compose>
+          </template>
+        </ul>
+      </div>
+      <div if.bind="isVirtual" class="virtual-container">
+        <ul class.bind="listCls">
+          <template virtual-repeat.for="item of itemsMapToArrayWorkaround">
+            <list-view-item class="virtual-row" item.bind="item" view-path.bind="viewPath" item-type.bind="itemType" view.bind="view">
+              <div slot="item-template" if.bind="replaced"><template replaceable part="item-template"></template></div>
+            </list-view-item>
+            <compose view="./list-view-item-ads.html"></compose>
+          </template>
+        </ul>
+      </div>
+    </template>
+</template>

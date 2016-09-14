@@ -2,6 +2,6 @@
     <div class="form-group">
         <label for.one-time="useId"><slot>${label}</slot></label>
         <input placeholder.bind="placeholder" if.bind="!multiLine" class="form-control" name.one-time="useId" id.one-time="useId" type="text" value.bind="value">
-        <textarea if.bind="multiLine" class="form-control" name.one-time="useId" id.one-time="useId" value.bind="value"></textarea>
+        <textarea if.bind="multiLine" class="form-control" name.one-time="useId" id.one-time="useId" value.bind="value" placeholder.bind="placeholder"></textarea>
     </div>
 </template>

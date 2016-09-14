@@ -1,5 +1,13 @@
-export var createError = (name: string, proto = Error.prototype): ErrorConstructor => {
-  var f = function(message: string) {
+export interface ErrorWithOptionalInner extends Error {
+  inner?: ErrorWithOptionalInner;
+}
+
+export interface ErrorWithInnerConstructor extends ErrorConstructor {
+  new (message?: string, inner?: Error): ErrorWithOptionalInner;
+}
+
+export var createError = (name: string, proto = Error.prototype): ErrorWithInnerConstructor => {
+  var f = function(message: string, inner?: ErrorWithOptionalInner) {
     Object.defineProperty(this, 'name', {
       enumerable: false,
       writable: false,
@@ -9,6 +17,11 @@ export var createError = (name: string, proto = Error.prototype): ErrorConstruct
       enumerable: false,
       writable: true,
       value: message
+    });
+    Object.defineProperty(this, 'inner', {
+      enumerable: false,
+      writable: false,
+      value: inner
     });
 
     if (Error.hasOwnProperty('captureStackTrace')) { // V8

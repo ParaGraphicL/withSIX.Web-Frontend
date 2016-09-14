@@ -6,5 +6,5 @@ export class Textbox extends Field {
     @bindable multiLine: boolean;
     @bindable({defaultBindingMode: bindingMode.twoWay}) value: string;
     @bindable label: string;
-    @bindable useId: string;
+    @bindable useId = Field.generateId('select');
 }

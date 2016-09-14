@@ -292,7 +292,7 @@ export class App extends ViewModel {
     return null;
   }
 
-  get classes() { return `${this.w6.renderAds ? null : 'no-adds'} ${this.w6.miniClient.isConnected ? 'client-active' : null} ${this.w6.miniClient.isConnected && this.gameInfo.isLocked ? 'client-busy' : null} ${this.isApiBusy ? 'api-busy' : ''} ${this.w6.userInfo.id ? 'logged-in' : null}` }
+  get classes() { return `${this.w6.renderAds ? null : 'no-adds'} ${this.w6.miniClient.isConnected ? 'client-active' : null} ${this.w6.miniClient.isConnected && this.gameInfo.isLocked ? 'client-busy' : null} ${this.isApiBusy ? 'api-busy' : ''} ${this.w6.userInfo.id ? 'logged-in' : null} ${window.location.pathname.startsWith('/errors') ? 'is-error' : ''} `}
 
   isApiBusy = false;
 

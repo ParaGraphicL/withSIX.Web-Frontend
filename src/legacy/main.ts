@@ -65,6 +65,8 @@ class MainModule extends Tk.Module {
             .when('/support', 'static_community')
             .when('/community', 'static_community')
             .when('/update', 'static_update')
+            .when('/thanks', 'static_thanks')
+            .when('/thankyou', 'static_thanks')
             .segment('static_orders', { controller: 'AureliaPageController' })
             .segment('static_community', { controller: 'AureliaPageController' })
             .segment('static_root', { controller: 'AureliaPageController' })
@@ -72,9 +74,8 @@ class MainModule extends Tk.Module {
             .segment('static_getting-started-publishing', { controller: 'AureliaPageController' })
             .segment('static_legal', { controller: 'AureliaPageController' })
             .segment('static_download', { controller: 'AureliaPageController' })
-            .segment('static_update',
-            { controller: 'AureliaPageController' }
-            );
+            .segment('static_thanks',  { controller: 'AureliaPageController' })
+            .segment('static_update',  { controller: 'AureliaPageController' });
 
           var global = $routeProvider
             .when('/changelog/:nolayout?', 'changelog')

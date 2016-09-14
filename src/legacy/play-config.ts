@@ -38,7 +38,6 @@ export const configure = (app: ng.IModule) => {
         when('/:gameSlug/mods/:modId/:modSlug?/license', 'game.modsShow.license').
         when('/:gameSlug/mods/:modId/:modSlug?/changelog', 'game.modsShow.changelog').
         when('/:gameSlug/mods/:modId/:modSlug?/settings', 'game.modsShow.settings').
-        when('/:gameSlug/mods/:modId/:modSlug?/blog', 'game.modsShow.blog').
         when('/:gameSlug/mods/:modId/:modSlug?', 'game.modsShow').
         when('/:gameSlug/missions', 'game.missions').
         when('/:gameSlug/missions/new', 'game.new_mission').
@@ -49,7 +48,6 @@ export const configure = (app: ng.IModule) => {
         when('/:gameSlug/missions/:missionId/:missionSlug?', 'game.missionsShow').
         when('/:gameSlug/collections', 'game.collections').
         when('/:gameSlug/collections/:collectionId/:collectionSlug?', 'game.collectionsShow').
-        when('/:gameSlug/collections/:collectionId/:collectionSlug?/comments', 'game.collectionsShow.comments').
         when('/:gameSlug/collections/:collectionId/:collectionSlug?/related', 'game.collectionsShow.related').
         when('/:gameSlug/collections/:collectionId/:collectionSlug?/content', 'game.collectionsShow.content').
         when('/:gameSlug/collections/:collectionId/:collectionSlug?/content/edit', 'game.collectionsShow.content-edit').

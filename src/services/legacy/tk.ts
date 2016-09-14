@@ -177,10 +177,14 @@ export module Tk {
       return { model: this.setupQueryPart(query, defaults) };
     }
     public setupQueryPart = (query, defaults?) => ['aur.legacyMediator', '$route', '$interval', '$q', (m: LegacyMediator, $route, $interval, $q) => {
+      const params = Object.assign({}, defaults, $route.current ? $route.current.params : {});
       if (!this.p) {
         (<any>this.setupP())[2]($interval, $q);
       }
-      return this.p.then(x => m.legacyRequest(query.$name, Object.assign({}, defaults, $route.current ? $route.current.params : {})));
+      return this.p.then(x => m.legacyRequest(query.$name, params)).catch(x => {
+        if (x && x.toString().includes('Unknown provider: ')) return Promise.reject(new Error("Route parameter missing"));
+        return Promise.reject(x);
+      });
     }]
 
     public defaultRefreshFunction = type => {

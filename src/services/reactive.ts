@@ -10,6 +10,8 @@ import {Validation, ValidationResult} from 'aurelia-validation';
 import {GlobalErrorHandler} from './legacy/logger';
 import { ErrorHandler } from './error-handler';
 
+const { Subject } = Rx;
+
 
 export class ObservableEventAggregator extends EventAggregator {
   observableFromEvent = <T>(evt: Function | string) => ObservableEventAggregator.observableFromEvent<T>(evt, this);
@@ -128,9 +130,9 @@ export class ReactiveList<T> extends ReactiveBase implements IDisposable {
 
   get modified() { return Rx.Observable.merge(this.itemsAdded.map(x => 0), this.itemsRemoved.map(x => 0), this.itemChanged.map(x => 0)) }
 
-  private _itemsAdded = new Rx.Subject<T[]>();
-  private _itemsRemoved = new Rx.Subject<T[]>();
-  private _itemChanged = new Rx.Subject<IPropertyChange<T>>();
+  private _itemsAdded = new Subject<T[]>();
+  private _itemsRemoved = new Subject<T[]>();
+  private _itemChanged = new Subject<IPropertyChange<T>>();
 
   public get itemsAdded() { return this._itemsAdded.asObservable(); }
   public get itemsRemoved() { return this._itemsRemoved.asObservable(); }
@@ -198,7 +200,7 @@ export var uiCommandWithLogin = function <T>(action: IPromiseFunction<T>, canExe
 export var uiCommand2 = function <T>(name: string, action: IPromiseFunction<T>, options?: ICommandInfo): IReactiveCommand<T> { // Rx.Observable<boolean>
   let command = new ReactiveCommand<T>(name, action, options);
   let eh: ErrorHandler = Container.instance.get(ErrorHandler);
-  command.thrownExceptions.subscribe(x => eh.handleError(x));
+  command.thrownExceptions.subscribe(x => eh.handleError(x)); // TODO: plug in retryability
 
   // TODO: Optimize?
   let f = (...args) => command.execute(...args);
@@ -255,10 +257,10 @@ class ReactiveCommand<T> extends ReactiveBase {
   private _isExecuting: boolean;
   private _otherBusy: boolean;
   private _isVisible: boolean = true;
-  private _thrownExceptions = new Rx.Subject<Error>();
-  private _isExecutingObservable = new Rx.Subject<boolean>();
-  private _isVisibleObservable = new Rx.Subject<boolean>();
-  private _canExecuteObservable = new Rx.Subject<boolean>();
+  private _thrownExceptions = new Subject<Error>();
+  private _isExecutingObservable = new Subject<boolean>();
+  private _isVisibleObservable = new Subject<boolean>();
+  private _canExecuteObservable = new Subject<boolean>();
 
   public get isExecuting() { return this._isExecuting; }
   public get otherBusy() { return this._otherBusy; }
@@ -327,4 +329,34 @@ export class EditConfig extends ReactiveBase {
 
   edit = uiCommand2("Edit", async () => this.enabled = true, { isVisibleObservable: this.whenAnyValue(x => x.canEdit) });
   close = uiCommand2("Close", async () => this.enabled = false, { canExecuteObservable: this.whenAnyValue(x => x.canClose) });
+}
+
+export class BusySignalCombiner {
+    public readonly signal = new Subject<boolean>(); // TODO: protect
+    subscribe<T>(...commands: IReactiveCommand<T>[]) { return this.combineBusySignal(...commands).subscribe(x => this.signal.next(x)); }
+
+    private combineBusySignal<T>(...commands: IReactiveCommand<T>[]) { return this.combineBusySignalBools(...commands.map(x => x.isExecutingObservable)); }
+    private combineBusySignalBools(...bools: Rx.Observable<boolean>[]) {
+        var obs: Rx.Observable<boolean> = null;
+        bools.forEach(x => {
+            if (obs == null) obs = x;
+            else obs = obs.combineLatest<boolean>(x, (x, y) => x || y);
+        })
+        return obs;
+    }
+}
+
+export class AllSignalCombiner {
+    public readonly signal = new Subject<boolean>(); // TODO: protect
+    subscribe<T>(...commands: IReactiveCommand<T>[]) { return this.combineBusySignal(...commands).subscribe(x => this.signal.next(x)); }
+
+    private combineBusySignal<T>(...commands: IReactiveCommand<T>[]) { return this.combineBusySignalBools(...commands.map(x => x.isExecutingObservable)); }
+    private combineBusySignalBools(...bools: Rx.Observable<boolean>[]) {
+        var obs: Rx.Observable<boolean> = null;
+        bools.forEach(x => {
+            if (obs == null) obs = x;
+            else obs = obs.combineLatest<boolean>(x, (x, y) => x && y);
+        })
+        return obs;
+    }
 }

@@ -119,7 +119,7 @@ export class Api extends Base {
   navigate; // = (url) => this.w6.navigate(url);
   errorMsg = (reason) => {
     try {
-      this.tools.Debug.log("$$$ err reason", JSON.stringify(reason));
+      this.tools.Debug.log("$$$ err reason", reason, JSON.stringify(reason));
     } catch (err) { this.tools.Debug.warn("Err while converting error reason", err) }
 
     if (!reason) { this.tools.Debug.error("undefined/null error, fix!"); return [reason, 'Unknown error']; }
@@ -131,7 +131,7 @@ export class Api extends Base {
     if (reason instanceof Tools.RequireNonSslException) return [reason.message, "please wait until you are redirected", "Requires NO-SSL"];
     if (reason.entityErrors && reason.entityErrors.length > 0) return this.handleBreezeSaveError(reason);
     if (reason.httpResponse != null) return this.handleBreezeErrorResponse(reason);
-    return [reason, 'Unknown error'];
+    return [reason.toString(), 'Unknown error'];
   }
 
   openGeneralDialog: (model: { model; viewModel: string }) => Promise<any>;

@@ -1,0 +1,49 @@
+<template class="row">
+  <require from="./card-view.scss"></require>
+
+  <slot name="prepend-items"></slot>
+
+  <template if.bind="items">
+    <div if.bind="!isVirtual">
+      <template repeat.for="item of items">
+        <card-view-item item.bind="item" card-container-cls.bind="cardContainerCls" card-cls.bind="cardCls"
+                        item-type.bind="itemType" view-path.bind="viewPath" view.bind="view">
+          <div slot="item-template" if.bind="replaced"><template replaceable part="item-template"></template></div>
+        </card-view-item>
+        <compose view="./card-view-item-ads.html"></compose>
+      </template>
+    </div>
+    <div if.bind="isVirtual" class="virtual-container">
+      <template virtual-repeat.for="item of items">
+        <card-view-item class="virtual-row" item.bind="item" card-container-cls.bind="cardContainerCls" card-cls.bind="cardCls"
+                        item-type.bind="itemType" view-path.bind="viewPath" view.bind="view">
+          <div slot="item-template" if.bind="replaced"><template replaceable part="item-template"></template></div>
+        </card-view-item>
+        <compose view="./card-view-item-ads.html"></compose>
+      </template>
+    </div>
+  </template>
+
+  <template if.bind="itemsMap">
+    <div if.bind="!isVirtual">
+      <template repeat.for="[key, item] of items">
+        <card-view-item item.bind="item" card-container-cls.bind="cardContainerCls" card-cls.bind="cardCls"
+                        item-type.bind="itemType" view-path.bind="viewPath" view.bind="view">
+          <div slot="item-template" if.bind="replaced"><template replaceable part="item-template"></template></div>
+        </card-view-item>
+        <compose view="./card-view-item-ads.html"></compose>
+      </template>
+    </div>
+    <div if.bind="isVirtual" class="virtual-container">
+      <template virtual-repeat.for="item of itemsMapToArrayWorkaround">
+        <card-view-item class="virtual-row" item.bind="item" card-container-cls.bind="cardContainerCls" card-cls.bind="cardCls"
+                        item-type.bind="itemType" view-path.bind="viewPath" view.bind="view">
+          <div slot="item-template" if.bind="replaced"><template replaceable part="item-template"></template></div>
+        </card-view-item>
+        <compose view="./card-view-item-ads.html"></compose>
+      </template>
+    </div>
+  </template>
+
+  <slot name="additional-items"></slot>
+</template>

@@ -1,13 +1,11 @@
 <div itemscope itemtype="http://schema.org/CreativeWork" ng-class="{'editing': editConfig.isEditing}" class="not-editing">
   <div sx-content-header ng-class="{'content-stateable': w6.enableBasket, 'in-basket': isInBasket()}" class="sx-content-header content-basketable {{getItemClass(model)}}">
     <sx-header-name class="editable-half">
-      <span ng-if="model.group" class="icon withSIX-icon-Lock"></span>
-
       <div ng-if="!vm.isForActiveGame" class="alternative-game" title="This content was made for ARMA 2">
         <img ng-src="{{w6.url.cdn}}/img/play.withSIX/games/Arma-2/arma2-blck.png" />
       </div>
       <span ng-class="{'edit-border-blue edit-field': (editConfig.canEdit() || editConfig.canManage())}" title="{{model.name}} ({{model.packageName}})" sx-editable-text="model.name" buttons="no" can-edit="editConfig.isEditing" blur-saves>
-                  <span ng-if="model.group" class="icon withSIX-icon-Lock" title="This is a private mod"></span> {{model.name | characters:54 :true}}<span style="display: inline-flex; vertical-align: top"><span ng-if="editConfig.isEdited('name')" class="withSIX-icon-Alert" style="color: red; font-size: 20px;"></span></span>
+                  {{model.name | characters:54 :true}}<span style="display: inline-flex; vertical-align: top"><span ng-if="editConfig.isEdited('name')" class="withSIX-icon-Alert" style="color: red; font-size: 20px;"></span></span>
       </span>
     </sx-header-name>
 
