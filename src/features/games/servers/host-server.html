@@ -1,31 +1,44 @@
 <template>
-    <ai-dialog class="ai-dialog">
+    <require from="./host-server.scss"></require>
+    <ai-dialog class="ai-dialog" id="host-server">
         <ai-dialog-header>
             <h2>Host a server</h2>
         </ai-dialog-header>
 
         <ai-dialog-body>
-            <textbox value.bind="model.name" placeholder="Enter a name to identify your server..">Name</textbox>
-            <textbox value.bind="model.password" placeholder="Optional password..">Password</textbox>
+            <form>
+            <div class="row">
+                <div class="col-md-7">
+                    <textbox value.bind="model.name" placeholder="Enter a name to identify your server..">Name</textbox>
 
-            <textbox value.bind="model.commsUrl" placeholder="Optional communication url like ts3server or Discord">Comms link</textbox>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <textbox value.bind="model.password" placeholder="Optional password..">Password</textbox>
+                        </div>
+                        <div class="col-md-6">
+                            <selectbox options.bind="scopes" value.bind="model.scope">Scope</selectbox>
+                        </div>
+                    </div>
 
-            <textbox value.bind="model.homepageUrl" placeholder="Optional homepage url">Homepage link</textbox>
+                    <fieldset>
+                        <textbox value.bind="model.commsUrl" placeholder="Optional communication url like ts3server or Discord">Comms link</textbox>
 
-            <textbox multi-line.bind="true" value.bind="model.description" placeholder="Optional description">Description</textbox>
-            <imageupload>Banner (optional)</imageupload>
-            
-            <selectbox options.bind="scopes" value.bind="model.scope">
-                Scope
-                <!--<template replace-part="item-template">
-                    Hello! ${o}
-                </template>-->
-            </selectbox>
+                        <textbox value.bind="model.homepageUrl" placeholder="Optional homepage url">Homepage link</textbox>
+                    </fieldset>
 
+                    <textbox multi-line.bind="true" value.bind="model.description" placeholder="Optional description">Description</textbox>
+                </div>
+                <div class="col-md-5">
+                    <imageupload>Banner (optional)</imageupload>
+                </div>
+            </div>
+            </form>
         </ai-dialog-body>
+
         <ai-dialog-footer>
-            <button click.delegate="model.launch()">Launch as Server</button>
-            <button click.delegate="model.launchDedicated()">Launch as Dedicated Server</button>
+            <command-button model.bind="launch"></command-button>
+            <command-button model.bind="launchDedicated"></command-button>
+            <command-button model.bind="cancel"></command-button>
         </ai-dialog-footer>
     </ai-dialog>
 </template>

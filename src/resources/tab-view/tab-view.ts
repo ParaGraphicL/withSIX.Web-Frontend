@@ -31,7 +31,17 @@ export class TabView<T extends ITab> extends ViewModel {
   @bindable tabs: T[] = [];
   @bindable renderView = true;
   @bindable({ defaultBindingMode: bindingMode.twoWay }) selectedTab: T;
-  toggleTab = (tab: T, $evt) => {
+
+  bind() {
+    this.subscriptions.subd(d => {
+      d(this.observableFromEvent<CloseTabs>(CloseTabs).filter(x => x.exclude !== this).subscribe(this.closeNow))
+      d(this.eventBus.subscribe(ShowTabNotification, this.showTabNotification));
+      d(this.eventBus.subscribe(SelectTab, this.selectTab));
+      d(this.whenAnyValue(x => x.selectedTab).subscribe(x => this.tabs.forEach(this.disableNotification)));
+    });
+  }
+
+  toggleTab(tab: T, $evt) {
     if ($evt) $evt.stopPropagation();
     this.eventBus.publish(new CloseTabs(this));
     if (tab && tab.disabled && tab.disabledAction) tab.disabledAction();
@@ -44,14 +54,6 @@ export class TabView<T extends ITab> extends ViewModel {
     return true;
   }
   closeNow = () => this.selectedTab = null;
-  bind() {
-    this.subscriptions.subd(d => {
-      d(this.observableFromEvent<CloseTabs>(CloseTabs).filter(x => x.exclude !== this).subscribe(this.closeNow))
-      d(this.eventBus.subscribe(ShowTabNotification, this.showTabNotification));
-      d(this.eventBus.subscribe(SelectTab, this.selectTab));
-      d(this.whenAnyValue(x => x.selectedTab).subscribe(x => this.tabs.forEach(this.disableNotification)));
-    });
-  }
 
   selectTab = (evt: SelectTab) => {
     let tab = this.tabs.asEnumerable().firstOrDefault(x => (x.name || x.header).toLowerCase() == evt.name.toLowerCase())

@@ -427,7 +427,7 @@ registerCQ(ModVersionHistoryDialogQuery);
 
 export class NewModVersionCommand extends DbCommandBase {
   static $name = 'NewModVersion';
-  public execute = ['data', data => this.context.postCustom("mods/" + data.modId + "/versions", data, { requestName: 'postNewModUpload' })];
+  public execute = ['data', data => this.context.postCustom<{result: string}>("mods/" + data.modId + "/versions", data, { requestName: 'postNewModUpload' }).then(x => x.result)];
 }
 
 registerCQ(NewModVersionCommand);
@@ -1057,7 +1057,7 @@ export class ModController extends ContentModelController<IBreezeMod> {
 
   requiresApproval = (state: ProcessingState) => state === ProcessingState.RequiresApproval || state === ProcessingState.RequiresApprovalUploadFinished;
 
-  getLatestChange = () => this.$scope.model.updates.asEnumerable().orderByDescending(x => x.lastUpdate).firstOrDefault()
+  getLatestChange = () => this.$scope.model.updates.asEnumerable().orderByDescending(x => x.created).firstOrDefault()
 
   showUploadBanner() {
     var $scope = this.$scope;
@@ -1136,8 +1136,7 @@ export class ModController extends ContentModelController<IBreezeMod> {
     if (this.$scope.model.dependentsCount > 0 || this.$scope.model.collectionsCount > 0)
       menuItems.push({ header: "Related", segment: "related" });
 
-    if (this.$scope.environment != Tools.Environment.Production) {
-      menuItems.push({ header: "Blog", segment: "blog" });
+    if (this.$scope.environment !== Tools.Environment.Production) {
       menuItems.push({ header: "Credits", segment: "credits" });
     }
 
@@ -2037,7 +2036,7 @@ export class UploadVersionDialogController extends ModelDialogControllerBase<IBr
       this.getLatestInfo();
   }
 
-  getLatestChange = (mod: IBreezeMod) => mod.updates.asEnumerable().orderByDescending(x => x.lastUpdate).firstOrDefault()
+  getLatestChange = (mod: IBreezeMod) => mod.updates.asEnumerable().orderByDescending(x => x.created).firstOrDefault()
 
   getLatestInfo() {
     let model = this.$scope.model;

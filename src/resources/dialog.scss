@@ -4,6 +4,10 @@ ai-dialog.ai-dialog {
   border: 0;
   border-top: 4px $colorSixBlue solid;
   min-width: 600px;
+  
+  overflow-x: hidden;
+  overflow-y: auto;
+
   ai-dialog-footer {
     background-color: $colorSixLightGray;
     border: 0;

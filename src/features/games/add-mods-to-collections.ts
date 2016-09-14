@@ -30,7 +30,7 @@ export class AddModsToCollections extends Dialog<IAddModsToCollections> {
     this.controller.ok(null);
   }, { cls: "ok" })
 
-  cancel = uiCommand2("Cancel", async () => this.controller.cancel(null), { cls: "cancel" });
+  cancel = uiCommand2("Cancel", () => this.controller.cancel(null), { cls: "cancel" });
 }
 
 export class GetCollections extends Query<ICollectionsData> {

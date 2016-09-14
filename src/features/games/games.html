@@ -7,7 +7,11 @@
 include="'/src_legacy/app/components/ads/play-hz-large.html'"></div>
       </center> -->
 
-    <card-view items.bind="games" item-type="game" view-path="features/profile/content/"></card-view>
+    <card-view items.bind="games" replaced.one-time="true">
+      <template replace-part="item-template">
+        <compose model.bind="item" view-model="../profile/content/${item.type || 'game'}"></compose>
+      </template>
+    </card-view>
 
     <div class="row" if.bind="w6.renderAds">
       <div class="col-sm-6">

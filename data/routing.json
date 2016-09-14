@@ -124,7 +124,6 @@
     "/:gameSlug/mods/:modId/:modSlug?/license": {},
     "/:gameSlug/mods/:modId/:modSlug?/changelog": {},
     "/:gameSlug/mods/:modId/:modSlug?/settings": {},
-    "/:gameSlug/mods/:modId/:modSlug?/blog": {},
     "/:gameSlug/mods/:modId/:modSlug?": {},
     "/:gameSlug/missions": {"type": "aurelia"},
     "/:gameSlug/missions/new": {},

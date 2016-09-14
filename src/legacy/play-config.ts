@@ -38,7 +38,6 @@ export const configure = (app: ng.IModule) => {
         when('/:gameSlug/mods/:modId/:modSlug?/license', 'game.modsShow.license').
         when('/:gameSlug/mods/:modId/:modSlug?/changelog', 'game.modsShow.changelog').
         when('/:gameSlug/mods/:modId/:modSlug?/settings', 'game.modsShow.settings').
-        when('/:gameSlug/mods/:modId/:modSlug?/blog', 'game.modsShow.blog').
         when('/:gameSlug/mods/:modId/:modSlug?', 'game.modsShow').
         when('/:gameSlug/missions', 'game.missions').
         when('/:gameSlug/missions/new', 'game.new_mission').

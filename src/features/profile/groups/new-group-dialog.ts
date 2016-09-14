@@ -44,7 +44,7 @@ export class NewGroupDialog extends Dialog<IGroup> {
     this.navigateInternal(`/me/groups/${id.toShortId()}/${this.model.name.sluggifyEntityName()}`);
     this.controller.ok(null);
   }, { cls: "ok" });
-  cancel = uiCommand2('Cancel', async () => this.controller.cancel(null), { cls: "cancel" });
+  cancel = uiCommand2('Cancel', () => this.controller.cancel(null), { cls: "cancel" });
 }
 
 export class CreateGroup extends Command<string> {

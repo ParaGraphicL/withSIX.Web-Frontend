@@ -56,12 +56,12 @@
         <div id="tab-overlay" if.bind="tabActive && tabAsTabActive" class="${tabAsTabActive ? 'tab' : ''}"></div>
 
         <search-results open.bind="topBar.search.showResults" game-slug.one-way="topBar.search.gameSlug" results.bind="topBar.search.results" result-q.bind="topBar.search.resultQ" search-one-type.one-way="topBar.search.searchOneType" full-view.one-way="topBar.search.fullView"
-            go-back-to-overview.one-way="topBar.search.goBackToOverview" close-now.one-way="topBar.search.closeNow"></search-results>
+            go-back-to-overview.call="topBar.search.goBackToOverview()" close-now.call="topBar.search.closeNow()"></search-results>
         <!-- if.bind="topBar.search.open && topBar.search.results.length > 0" -->
       </div>
 
-      <tab-view-render id="left-tabs" selected-tab.bind="sideBar.selectedTab" close.bind="sideBar.tabView.close"></tab-view-render>
-      <tab-view-render id="right-tabs" selected-tab.bind="topBar.selectedTab" close.bind="topBar.tabView.close"></tab-view-render>
+      <tab-view-render id="left-tabs" selected-tab.bind="sideBar.selectedTab" close.call="sideBar.tabView.close()"></tab-view-render>
+      <tab-view-render id="right-tabs" selected-tab.bind="topBar.selectedTab" close.call="topBar.tabView.close()"></tab-view-render>
     </section>
   </div>
 </template>
