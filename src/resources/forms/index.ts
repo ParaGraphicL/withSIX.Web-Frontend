@@ -1,8 +1,9 @@
 import {FrameworkConfiguration} from 'aurelia-framework';
 
 export function configure(config: FrameworkConfiguration) {
-  config.globalResources('./checkbox');
   config.globalResources('./textbox');
+  config.globalResources('./passwordbox');
+  config.globalResources('./checkbox');
   config.globalResources('./selectbox');
   config.globalResources('./imageupload');
   config.globalResources('./fileupload');
