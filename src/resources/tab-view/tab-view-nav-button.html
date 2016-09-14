@@ -12,7 +12,7 @@
 
     <div class="item-progress-bar ${progressClass}" title.bind="tab.header">
       <conditional-title desired-title.bind="tab.progressInfo.text" condition.bind="tab.progressInfo && tab.progressInfo.text != null">
-        <button click.trigger="toggleTab({ tab, $event })" click.delegate="removeNotification()" disabled.bind="tab.disabled && !tab.disabledAction" class="tab-button ${tabNotificationActive ? 'notification' : ''} ${lastNotificationClass} ${tab.disabled ? 'disabled' : ''}">
+        <button click.trigger="toggleTab({ tab, event: $event })" click.delegate="removeNotification()" disabled.bind="tab.disabled && !tab.disabledAction" class="tab-button ${tabNotificationActive ? 'notification' : ''} ${lastNotificationClass} ${tab.disabled ? 'disabled' : ''}">
           <div class="item-progress-width item-progress-c-bgd"></div>
 
           <div class="tab-btn-inner">
