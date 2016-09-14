@@ -80,7 +80,8 @@ interface Window {
   w6Cheat: {
     api: IApi; // for modern client
     navigate: (string) => void; // for legacy client
-  }
+  },
+  w6Debug: any,
   assetHash: { [asset: string]: string }
   prerenderReady: boolean;
   RedactorPlugins;

@@ -160,6 +160,7 @@ export async function configure(aurelia: Aurelia) {
     EntityExtends.BaseEntity.w6 = w6; // pff
     window.w6Cheat = { api, navigate: (url: string) => w6.navigate(url) }
     Container.instance.registerSingleton(W6, () => w6);
+    if (Tools.env > Tools.Environment.Staging) window.w6Debug = { w6, container: Container.instance };
 
     LogManager.addAppender(getInstance<LogAppender>(LogAppender))
     const eh = getInstance<GlobalErrorHandler>(GlobalErrorHandler);

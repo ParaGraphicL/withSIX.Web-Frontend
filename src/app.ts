@@ -69,6 +69,7 @@ export class App extends ViewModel {
       return gm;
     }
     //this.eventBus.subscribe('router:navigation:processing', () => console.log("$$$ processing route"));
+    if (Tools.env > Tools.Environment.Staging) window.w6Debug.app = this;
     //this.eventBus.subscribe('router:navigation:complete', () => console.log("$$$ complete route"));
   }
 
