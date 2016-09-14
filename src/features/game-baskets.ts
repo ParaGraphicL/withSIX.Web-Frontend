@@ -142,7 +142,7 @@ export class GameBaskets extends ViewModel {
     }
   }
 
-  isBusy(clientInfo: IClientInfo) { return clientInfo.globalLock || clientInfo.gameLock; }
+  isBusy(clientInfo: IClientInfo) { return clientInfo.gameLock; }
 
 
   // Legacy for Angular
