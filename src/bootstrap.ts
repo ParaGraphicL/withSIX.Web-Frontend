@@ -156,7 +156,7 @@ export async function configure(aurelia: Aurelia) {
       const eventBus: EventAggregator = Container.instance.get(EventAggregator)
       const debug = Tools.env > Tools.Environment.Staging; 
       client.onAny((event, ...args) => {
-        if (debug) Tools.Debug.log(`$WSAPI: ${event}`, args);
+        if (debug) Tools.Debug.log(`$WSAPI: ${event}`, ...args);
         if (event.startsWith('command.')) return;
         if (event === 'connection.state-changed') {
           eventBus.publish(new StateChanged(args[0], args[1])) 
@@ -166,6 +166,9 @@ export async function configure(aurelia: Aurelia) {
         let callParams = params.length < 3 ? params : [event, args]
         eventBus.publish.apply(eventBus, callParams)
       })
+      
+      //Rx.Observable.fromEvent(client, 'command.executed', (commandName, command, result) => { return  { commandName, command, result} } ) // or, if unknown (...args) => args
+        //.subscribe(x => console.log("$$$$ Received ", x))
       return client;
     })
 

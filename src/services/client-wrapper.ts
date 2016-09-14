@@ -1,17 +1,25 @@
-import {EventWrapper} from './reactive';
-import {IActionTabStateUpdate, IActionNotification, IUserErrorAdded, IUserErrorResolved, ConnectionState, IMod, ICollection, IContent} from 'withsix-sync-api';
+import { EventWrapper } from './reactive';
+import * as Rx from 'rxjs/Rx';
+import { EventAggregator } from 'aurelia-event-aggregator';
+import { IActionTabStateUpdate, IActionNotification, IUserErrorAdded, IUserErrorResolved, ConnectionState, IMod, ICollection, IContent, Client } from 'withsix-sync-api';
 
 
 export class StateChanged {
   constructor(public oldState: ConnectionState, public newState: ConnectionState) { }
 }
 
-export class ClientWrapper extends EventWrapper {
-  get stateChanged() { return this.observableFromEvent<StateChanged>(StateChanged) }
-  get actionUpdateNotification() { return this.observableFromEvent<IActionTabStateUpdate>("status.actionUpdateNotification") }
-  get actionNotification() { return this.observableFromEvent<IActionNotification>("status.actionNotification") }
-  get userErrorAdded() { return this.observableFromEvent<IUserErrorAdded>("client.userErrorAdded") }
-  get userErrorResolved() { return this.observableFromEvent<IUserErrorResolved>("client.userErrorResolved") }
+@inject(Client)
+export class ClientWrapper implements IClientWrapper {
+  constructor(private client: Client) {}
+  readonly stateChanged;
+  //get stateChanged() { return this.fromClient('connection.state-changed', (previous, next) => new StateChanged(previous, next)) }
+  get actionUpdateNotification() { return this.fromClientNative<IActionTabStateUpdate>('status.actionUpdateNotification') }
+  get actionNotification() { return this.fromClientNative<IActionNotification>('status.actionNotification') }
+  get userErrorAdded() { return this.fromClientNative<IUserErrorAdded>('client.userErrorAdded') }
+  get userErrorResolved() { return this.fromClientNative<IUserErrorResolved>('client.userErrorResolved') }
+
+  private fromClientNative = <T>(eventName: string) => Rx.Observable.fromEvent<T>(this.client, eventName)
+  private fromClient = <T>(eventName: string, transform: (...args) => T) => Rx.Observable.fromEvent<T>(this.client, eventName, transform); 
 }
 
 export class GameChanged { constructor(public id?: string, public slug?: string, public isPageChange?: boolean) { } }
@@ -29,3 +37,38 @@ export interface IInContent extends IContent {
 
 export interface IModInContent extends IMod, IInContent { }
 export interface ICollectionInContent extends ICollection, IInContent { }
+
+/*
+// TODO: Eval ES6 proxies; when it doesn't exit, auto fromClientNative
+class Handler {
+  constructor(private client: Client) {}
+  mapping = {
+    stateChanged: "connection.state-changed",
+    actionUpdateNotification: "status.actionUpdateNotification",
+    actionNotification: "status.actionNotification",
+    userErrorAdded: "client.userErrorAdded", 
+    userErrorResolved: "client.userErrorResolved"
+  }
+  cached = {}
+  get (target, key) { return this.cached[key] || this.cached[key] = this.getInternal(target, key) }
+
+  getInternal (target, key) {
+    if (target[key]) return target[key];
+    const resolved = this.mapping[key];
+    if (resolved == null) throw new Error(`${key} undefined`); 
+    return this.fromClientNative(resolved); 
+  }
+
+  private fromClientNative = <T>(eventName: string) => Rx.Observable.fromEvent<T>(this.client, eventName)
+}
+
+const createClientWrapper = (client: Client) => <IClientWrapper> new Proxy(new ClientWrapper(client), new Handler(client))
+*/
+
+interface IClientWrapper {
+  readonly stateChanged: Rx.Observable<StateChanged>;
+  readonly actionUpdateNotification: Rx.Observable<IActionTabStateUpdate>;
+  readonly actionNotification: Rx.Observable<IActionNotification>;
+  readonly userErrorAdded: Rx.Observable<IUserErrorAdded>;
+  readonly userErrorResolved: Rx.Observable<IUserErrorResolved>; 
+}
