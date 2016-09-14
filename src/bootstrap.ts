@@ -151,7 +151,7 @@ export async function configure(aurelia: Aurelia) {
     let rx = /[&\?]port=(\d+)/
     let match = window.location.search.match(rx);
     let port = match ? parseInt(match[1]) : null;
-    Container.instance.registerSingleton(Client, () => new Client(getInstance<EventAggregator>(EventAggregator), getInstance<PromiseCache>(PromiseCache), getInstance<FetchClient>(FetchClient), port ? port : undefined))
+    Container.instance.registerSingleton(Client, () => new Client(getInstance<EventAggregator>(EventAggregator), getInstance<PromiseCache>(PromiseCache), getInstance<FetchClient>(FetchClient), port ? port : undefined, Tools.env > Tools.Environment.Staging))
 
     const client = getInstance<Client>(Client);
     const api = getInstance<Api>(Api);
@@ -160,6 +160,7 @@ export async function configure(aurelia: Aurelia) {
     EntityExtends.BaseEntity.w6 = w6; // pff
     window.w6Cheat = { api, navigate: (url: string) => w6.navigate(url) }
     Container.instance.registerSingleton(W6, () => w6);
+    if (Tools.env > Tools.Environment.Staging) window.w6Debug = { w6, container: Container.instance };
 
     LogManager.addAppender(getInstance<LogAppender>(LogAppender))
     const eh = getInstance<GlobalErrorHandler>(GlobalErrorHandler);
