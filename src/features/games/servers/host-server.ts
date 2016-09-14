@@ -31,7 +31,8 @@ export class HostServer extends Dialog<IModel> {
             const changedObs = this.listFactory.getObserveAll(this.model).map(x => true)
             d(this.toProperty(changedObs, x => x.changed))
             d(this.cancel)
-            const busyHandler = new BusySignalCombiner()
+            var busyHandler: BusySignalCombiner
+            d(busyHandler = new BusySignalCombiner())
             d(this.launch = uiCommand2('Launch Server', this.performLaunch, { cls: "ok", isVisibleObservable: this.whenAny(x => x.model.launch).map(x => x != null), canExecuteObservable: busyHandler.signal.map(x => !x) }))
             d(this.launchDedicated = uiCommand2('Launch Dedicated Server', this.performLaunchDedicated, { cls: "ok", isVisibleObservable: this.whenAny(x => x.model.launchDedicated).map(x => x != null), canExecuteObservable: busyHandler.signal.map(x => !x) }))
             d(busyHandler.subscribe(this.launch, this.launchDedicated))
