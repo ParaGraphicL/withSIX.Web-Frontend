@@ -1,4 +1,4 @@
-import {UiContext, ViewModel, Mediator, DbQuery, Query, VoidCommand, handlerFor, uiCommand2} from '../../../../framework'
+import {UiContext, ViewModel, Mediator, DbQuery, Query, VoidCommand, handlerFor, uiCommand2, TypeScope} from '../../../../framework'
 import {ICollection} from './collection';
 import {CreateCollectionDialog} from '../../../games/collections/create-collection-dialog';
 
@@ -32,7 +32,7 @@ export class GetGroupCollections extends Query<IGroup> { constructor(public id: 
 export class GetGroupCollectionsHandler extends DbQuery<GetGroupCollections, IGroup> {
   async handle(request: GetGroupCollections): Promise<IGroup> {
     var r = await this.context.getCustom<ICollection[]>("groups/" + request.id + '/collections');
-    r.forEach(x => { let xAny = (<any>x); xAny.gameSlug = x.game.slug; xAny.author = xAny.author.displayName; xAny.type = 'collection' });
+    r.forEach(x => { let xAny = (<any>x); xAny.gameSlug = x.game.slug; xAny.author = xAny.author.displayName; xAny.type = 'collection'; xAny.typeScope = x.authorId === this.w6.userInfo.id ? TypeScope.Published : TypeScope.Subscribed });
     return {
       id: request.id,
       collections: r

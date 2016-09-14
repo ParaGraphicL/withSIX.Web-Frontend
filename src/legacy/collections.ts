@@ -21,7 +21,7 @@ import { Publisher } from '../services/apis/lib';
 import {EventAggregator} from 'aurelia-event-aggregator';
 
 import {Mediator} from 'aurelia-mediator';
-import {Client, IClientInfo, ItemState} from 'withsix-sync-api';
+import {Client, IClientInfo, ItemState, TypeScope} from 'withsix-sync-api';
 
 import { ForwardService } from './components';
 import {IBasketItem, BasketItemType} from '../services/legacy/baskets';
@@ -203,7 +203,7 @@ export class CollectionController extends ContentModelController<IBreezeCollecti
 
   protected updateAuModel() {
     // todo; call when going out of edit mode etc ?
-    this.$scope.auModel = CollectionHelper.convertOnlineCollection(this.$scope.model, 1, this.$scope.w6);
+    this.$scope.auModel = CollectionHelper.convertOnlineCollection(this.$scope.model, this.$scope.model.authorId === this.w6.userInfo.id ? TypeScope.Published : TypeScope.Subscribed, this.$scope.w6);
   }
 
 

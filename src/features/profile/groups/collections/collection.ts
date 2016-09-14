@@ -9,6 +9,8 @@ export interface ICollection {
   id: string;
   name: string;
   gameId: string;
+  authorId: string;
+  groupId?: string;
   game: IGame;
 }
 
