@@ -9,11 +9,10 @@ export class CommandCustomAttribute {
   subscriptions = new Subscriptions();
   constructor(private el: Element) { }
   valueChanged(value: { canExecute: boolean, isExecuting: boolean, (): void }) {
-    this.value = value;
-    this.subscriptions.dispose();
     this.handleNewValue(value);
   }
   handleNewValue(value) {
+    this.subscriptions.dispose();
     if (!value) return;
     this.setupValue(value);
   }
@@ -36,5 +35,6 @@ export class CommandCustomAttribute {
     if (v) this.el.classList.add("active");
     else this.el.classList.remove("active");
   }
+  bind() { if (this.value) this.handleNewValue(this.value); }
   unbind() { this.subscriptions.dispose() }
 }

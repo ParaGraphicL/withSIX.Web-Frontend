@@ -267,8 +267,10 @@ export class Dialog<T> extends ViewModelOf<T> {
     });
   }
 
+  clk = ($evt) => (<any>$evt.originalEvent).stopBubbleUp = true;
   attached() {
-    $('ai-dialog').bind('click', ($evt) => (<any>$evt.originalEvent).stopBubbleUp = true);
+    // we don't need to unbind them because we delete the elements?
+    $('ai-dialog').bind('click', this.clk);
     $('ai-dialog-container').bind('click', this.clicked)
   }
 
