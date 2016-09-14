@@ -1136,8 +1136,7 @@ export class ModController extends ContentModelController<IBreezeMod> {
     if (this.$scope.model.dependentsCount > 0 || this.$scope.model.collectionsCount > 0)
       menuItems.push({ header: "Related", segment: "related" });
 
-    if (this.$scope.environment != Tools.Environment.Production) {
-      menuItems.push({ header: "Blog", segment: "blog" });
+    if (this.$scope.environment !== Tools.Environment.Production) {
       menuItems.push({ header: "Credits", segment: "credits" });
     }
 
