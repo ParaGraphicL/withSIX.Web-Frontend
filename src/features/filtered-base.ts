@@ -19,7 +19,7 @@ export class FilteredBase<T> extends PaginatedViewModel<T> {
 
   first = true;
 
-  handleFilter = async (info: IFilterInfo<T>) => {
+  async handleFilter(info: IFilterInfo<T>) {
     if (this.first) {
       this.first = false;
       return this.model; // pff

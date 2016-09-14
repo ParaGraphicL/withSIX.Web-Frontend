@@ -11,7 +11,7 @@ export class Filters<T> extends ViewModel {
   @bindable selectedViewType: ViewType;
   @bindable typeaheadOptions: ITypeahead<T>;
   @bindable searchInputPlaceholder: string;
-  @bindable customHandler: (info: IFilterInfo<T>) => Promise<{ items: T[]; inlineCount: number }>;
+  @bindable customHandler: (arg: { info: IFilterInfo<T> }) => Promise<{ items: T[]; inlineCount: number }>;
   sortOrder: ISort<T>;
   searchInput: string;
   enabledFilters: IFilter<T>[] = [];
@@ -86,11 +86,12 @@ export class Filters<T> extends ViewModel {
 
   public async updateFilteredItems() {
     if (this.customHandler) {
-      let r = await this.customHandler({ search: { input: this.searchInput, fields: this.searchFields }, sortOrder: this.sortOrder, enabledFilters: this.enabledFilters })
-      this.filteredItems = r.items;
+      const filterInfo: IFilterInfo<T> = { search: { input: this.searchInput, fields: this.searchFields }, sortOrder: this.sortOrder, enabledFilters: this.enabledFilters }
+      const r = await this.customHandler({info: filterInfo})
+      this.filteredItems = r.items
       this.customCount = r.inlineCount
     } else {
-      this.filteredItems = this.orderItems(this.filterItems());
+      this.filteredItems = this.orderItems(this.filterItems())
     }
     this.tools.Debug.log("updatedFilteredItems", this.filteredItems.length);
   }

@@ -1,7 +1,7 @@
 <template>
   <div infinite-scroll.bind="loadMore">
     <h2 class="page-title">${params.slug.replace("-", "").toUpperCaseFirst()}'s Mods</h2>
-    <filters custom-handler.bind="handleFilter" filters.ref="filteredComponent" search-input-placeholder.bind="searchInputPlaceholder" typeahead-options.bind="typeahead" items.bind="model.items" filters.bind="filters" search-fields.bind="searchFields" sort.bind="sort"
+    <filters custom-handler.call="handleFilter(info)" filters.ref="filteredComponent" search-input-placeholder.bind="searchInputPlaceholder" typeahead-options.bind="typeahead" items.bind="model.items" filters.bind="filters" search-fields.bind="searchFields" sort.bind="sort"
         view-types.bind="availableViewTypes"></filters>
 
     <card-view items.bind="model.items" card-columns.one-time="[2,2,3,3]" show-ads.one-time="true" view-path="features/profile/content/" item-type="mod"></card-view>
