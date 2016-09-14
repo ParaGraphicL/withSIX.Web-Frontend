@@ -54,7 +54,7 @@
 				</section>
 
 				<div if.bind="model.updated || isConnected">
-					<button class="btn updatebtn ${!isConnected ? 'noclient' : ''} ${isConnected && hasUpdates ? 'updateavailable' : ''}" style="text-align: center" command.bind="updateClient">
+					<button class="btn updatebtn ${!isConnected ? 'noclient' : ''} ${isConnected && (hasUpdates || isProcessingUpdates) ? 'updateavailable' : ''}" style="text-align: center" command.bind="updateClient">
 						<span class="no-tween-out" if.bind="!isConnected">
 							<span class="no-tween-out" if.bind="!model.updated">No Client detected</span>
 						<span class="no-tween-out" if.bind="model.updated">Waiting for client restart..</span>

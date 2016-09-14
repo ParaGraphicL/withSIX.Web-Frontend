@@ -26,6 +26,7 @@ export class Update extends MainBase {
   }
 
   get hasUpdates() { return this.updateState === UpdateState.UpdateAvailable; }
+  get isProcessingUpdates() { return this.updateState === UpdateState.UpdateDownloading || this.updateState === UpdateState.Updating }
   get isUptodate() { return this.updateState < UpdateState.UpdateAvailable; }
   get updateState() { return this.clientInfo && this.clientInfo.updateState; }
   get clientInfo() { return this.w6.miniClient.clientInfo; }
