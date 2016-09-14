@@ -274,7 +274,7 @@ export class Dialog<T> extends ViewModelOf<T> {
 
   clicked = ($evt: JQueryEventObject) => { if (!(<any>$evt.originalEvent).stopBubbleUp) this.eventBus.publish(new CloseDialogs()); }
 
-  //cancel = uiCommand2('Cancel', async () => this.controller.cancel(), { cls: "cancel" });
+  //cancel = uiCommand2('Cancel', () => this.controller.cancel(), { cls: "cancel" });
 }
 
 export interface IPaginated<T> {
