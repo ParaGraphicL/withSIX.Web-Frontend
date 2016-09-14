@@ -1,5 +1,10 @@
 import {EventWrapper} from './reactive';
-import {IActionTabStateUpdate, IActionNotification, IUserErrorAdded, IUserErrorResolved, StateChanged, IMod, ICollection, IContent} from 'withsix-sync-api';
+import {IActionTabStateUpdate, IActionNotification, IUserErrorAdded, IUserErrorResolved, ConnectionState, IMod, ICollection, IContent} from 'withsix-sync-api';
+
+
+export class StateChanged {
+  constructor(public oldState: ConnectionState, public newState: ConnectionState) { }
+}
 
 export class ClientWrapper extends EventWrapper {
   get stateChanged() { return this.observableFromEvent<StateChanged>(StateChanged) }

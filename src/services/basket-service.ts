@@ -8,9 +8,9 @@ import {W6} from './withSIX';
 import {BasketType, IBasketModel, IBasketItem, BasketState, IBasketCollection, IBaskets} from './legacy/baskets';
 import {W6Context} from './w6context';
 import {ContentHelper} from './helpers';
-import {ActionType, IActionNotification, Client, ConnectionState, IContentState, ItemState, IContentStateChange, IContentStatusChange, IClientInfo, IActionTabStateUpdate, StateChanged, IContentGuidSpec, IContentsBase, IContentBase,
+import {ActionType, IActionNotification, Client, ConnectionState, IContentState, ItemState, IContentStateChange, IContentStatusChange, IClientInfo, IActionTabStateUpdate, IContentGuidSpec, IContentsBase, IContentBase,
   IUserErrorAdded, IUserErrorResolved} from 'withsix-sync-api';
-import {ClientWrapper, AppEventsWrapper} from './client-wrapper';
+import {ClientWrapper, AppEventsWrapper, StateChanged} from './client-wrapper';
 
 @inject(EventAggregator, W6, Client, Toastr, ClientWrapper, AppEventsWrapper)
 export class BasketService extends ReactiveBase {
