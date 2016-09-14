@@ -152,7 +152,7 @@ export class BasketService extends ReactiveBase {
     //if (this.client.state != ConnectionState.connected) return Promise.resolve(ci);
     //return this.clientPromises[gameId] = this.Int(ci);
     this.tools.Debug.log("$$$ Getting game info", gameId);
-    return this.clientPromises[gameId] = this.client.state == ConnectionState.connected ? this.Int(ci) : Promise.resolve(ci);
+    return this.clientPromises[gameId] = this.client.state === ConnectionState.connected ? this.Int(ci) : Promise.resolve(ci);
     // we update the info later on
   }
 
@@ -320,7 +320,7 @@ export class GameClientInfo extends ReactiveBase {
   informAngular = () => this.appEvents.emitBasketChanged();
 
   handleStateChange(state: IContentState) {
-    if (state.state == ItemState.NotInstalled) {
+    if (state.state === ItemState.NotInstalled) {
       delete this.clientInfo.content[state.id];
       this.eventBus.publish('contentInfoStateChange-' + state.id, null);
     } else if (this.clientInfo.content[state.id]) Object.assign(this.clientInfo.content[state.id], this.defaults, state);
