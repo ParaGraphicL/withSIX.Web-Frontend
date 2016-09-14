@@ -1,0 +1,9 @@
+<template>
+  <div class.bind="cardContainerCls" class="card-container">
+    <div class="card ${cardCls}">
+      <slot name="item-template">
+        <compose model.bind="item" view.bind="view" view-model="${viewPath}${item.type || itemType}"></compose>
+      </slot>
+    </div>
+  </div>
+</template>

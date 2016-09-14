@@ -1,5 +1,5 @@
 import {bindable, inject} from 'aurelia-framework';
-import {ViewModel} from '../services/viewmodel';
+import {ViewModel} from '../../services/viewmodel';
 
 export class CardView<T> extends ViewModel {
   @bindable cardColumns = [2, 3, 3, 4]   // sm, md, lg, xl
@@ -17,6 +17,7 @@ export class CardView<T> extends ViewModel {
   @bindable adUnitId1 = "angular-ad1";
   @bindable adUnitId2 = "angular-ad2";
   @bindable indexOffset = 0;
+  @bindable replaced = false; // TODO: Drop once we refactor
 
   handleClearFix: boolean;
 

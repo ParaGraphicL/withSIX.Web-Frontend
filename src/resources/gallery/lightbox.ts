@@ -1,7 +1,7 @@
 const blueimpGallery = <any>require('blueimp-gallery');
 import { bindable } from 'aurelia-framework';
 import { ViewModel, UiContext } from '../../services/lib';
-import { GalleryItem, defaultOptions } from '../gallery';
+import { GalleryItem, defaultOptions } from './gallery';
 import { inject } from 'aurelia-framework';
 
 @inject(Element, UiContext)

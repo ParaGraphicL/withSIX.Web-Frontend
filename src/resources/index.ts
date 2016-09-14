@@ -4,25 +4,23 @@ export function configure(config: FrameworkConfiguration) {
   config.globalResources('./router-menu');
 
   config.feature('resources/forms');
+  config.feature('resources/card-view');
+  config.feature('resources/list-view');
+  config.feature('resources/tab-view');
+  config.feature('resources/dropdown-menu');
+  config.feature('resources/gallery');
+  config.feature('resources/finder');
 
   config.globalResources('./bar');
-  config.globalResources('./card-view');
-  config.globalResources('./list-view');
-  config.globalResources('./tab-view/tab-view');
-  config.globalResources('./tab-view/tab-view-render');
   config.globalResources('./filters');
   config.globalResources('./typeahead');
   config.globalResources('./card-clearfix');
   config.globalResources('./command-button');
   config.globalResources('./optional-link');
-  config.globalResources('./gallery');
 
   config.globalResources('./loading-composer');
 
   config.globalResources('./infinite-scroll');
-
-  config.globalResources('./finder/finder');
-  config.globalResources('./finder/finder-results');
 
   config.globalResources('./labs');
   config.globalResources('./attributes');
@@ -37,8 +35,6 @@ export function configure(config: FrameworkConfiguration) {
 
   config.globalResources('./router');
   config.globalResources('./menu');
-  config.globalResources('./dropdown-menu/dropdown-menu');
-  config.globalResources('./dropdown-menu/action-bar');
   config.globalResources('./ad-links');
   config.globalResources('./ad-unit');
   config.globalResources('./time-ago');
@@ -46,21 +42,23 @@ export function configure(config: FrameworkConfiguration) {
 
 //export * from './command';
 export * from './attributes';
-export * from './finder/finder';
-export * from './finder/finder-results';
 export * from './command-button';
 export * from './router';
 export * from './labs';
 export * from './router-menu';
 export * from './infinite-scroll';
-export * from './dropdown-menu/dropdown-menu';
-export * from './dropdown-menu/action-bar';
 export * from './loading-composer';
 export * from './menu';
 export * from './ad-links';
 export * from './markdown';
 export * from './usertitle';
 export * from './time-ago';
-export * from './gallery';
 export * from './filters';
+
+// TODO: Export from the components instead
+export * from './finder/finder';
+export * from './finder/finder-results';
+export * from './dropdown-menu/dropdown-menu';
+export * from './dropdown-menu/action-bar';
 export * from './tab-view/tab-view';
+export * from './gallery/gallery';
