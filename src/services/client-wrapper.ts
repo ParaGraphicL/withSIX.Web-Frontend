@@ -1,6 +1,6 @@
 import { EventWrapper } from './reactive';
 import * as Rx from 'rxjs/Rx';
-import { EventAggregator } from 'aurelia-event-aggregator';
+import { inject } from 'aurelia-framework';
 import { IActionTabStateUpdate, IActionNotification, IUserErrorAdded, IUserErrorResolved, ConnectionState, IMod, ICollection, IContent, Client } from 'withsix-sync-api';
 
 
@@ -11,8 +11,7 @@ export class StateChanged {
 @inject(Client)
 export class ClientWrapper implements IClientWrapper {
   constructor(private client: Client) {}
-  readonly stateChanged;
-  //get stateChanged() { return this.fromClient('connection.state-changed', (previous, next) => new StateChanged(previous, next)) }
+  get stateChanged() { return this.fromClient('connection.state-changed', (previous, next) => new StateChanged(previous, next)) }
   get actionUpdateNotification() { return this.fromClientNative<IActionTabStateUpdate>('status.actionUpdateNotification') }
   get actionNotification() { return this.fromClientNative<IActionNotification>('status.actionNotification') }
   get userErrorAdded() { return this.fromClientNative<IUserErrorAdded>('client.userErrorAdded') }
