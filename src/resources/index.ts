@@ -14,7 +14,6 @@ export function configure(config: FrameworkConfiguration) {
   config.globalResources('./bar');
   config.globalResources('./filters');
   config.globalResources('./typeahead');
-  config.globalResources('./card-clearfix');
   config.globalResources('./command-button');
   config.globalResources('./optional-link');
 
