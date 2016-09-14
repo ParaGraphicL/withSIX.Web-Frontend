@@ -26,10 +26,23 @@ export class Update extends MainBase {
   }
 
   get hasUpdates() { return this.updateState === UpdateState.UpdateAvailable; }
+  get isProcessingUpdates() { return this.updateState === UpdateState.UpdateDownloading || this.updateState === UpdateState.Updating }
   get isUptodate() { return this.updateState < UpdateState.UpdateAvailable; }
   get updateState() { return this.clientInfo && this.clientInfo.updateState; }
   get clientInfo() { return this.w6.miniClient.clientInfo; }
   get isConnected() { return this.w6.miniClient.isConnected; }
+
+  get updateMessage() {
+    if (!this.isConnected) {
+      if (this.model.updated) return "Waiting for client restart.."
+      else return "No Client detected"
+    }
+    if (this.isUptodate) return "Your client is uptodate!"
+    if (this.updateState === UpdateState.UpdateDownloading) return "Downloading update"
+    if (this.updateState === UpdateState.Updating) return "Installing update" 
+    if (this.hasUpdates) return `Update Sync withSIX to ${this.clientInfo.newVersionAvailable}`
+    return ''
+  }
 
   updateClient = uiCommand2("Update", async () => {
     this.model.isUpdating = true;

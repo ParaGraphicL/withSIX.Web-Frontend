@@ -722,7 +722,7 @@ class GameController extends BaseQueryController<IBreezeGame> {
           return "install";
         }
       }
-      //if ($scope.clientInfo.gameLock || $scope.clientInfo.globalLock) {
+      //if ($scope.clientInfo.gameLock) {
       //    return "busy";
       //}
       if ($scope.showBusyState())
@@ -805,7 +805,7 @@ class GameController extends BaseQueryController<IBreezeGame> {
 
     $scope.showBusyState = (): boolean => {
       //isInitBusy ||
-      return $scope.clientInfo.gameLock || $scope.clientInfo.globalLock;
+      return $scope.clientInfo.gameLock;
     };
 
     $scope.isActive = (mod: IBreezeMod) => $scope.showBusyState() && basketService.lastActiveItem == mod.id;
@@ -813,7 +813,7 @@ class GameController extends BaseQueryController<IBreezeGame> {
     $scope.abort = (mod: IBreezeMod) => basketService.abort(mod.gameId)
 
     $scope.directDownload = async (item: any) => {
-      if ($scope.clientInfo.gameLock || $scope.clientInfo.globalLock) {
+      if ($scope.clientInfo.gameLock) {
         logger.error("Client is currently busy");
         return;
       }
@@ -826,7 +826,7 @@ class GameController extends BaseQueryController<IBreezeGame> {
     // };
 
     $scope.directDownloadCollection = async (item: IBreezeCollection) => {
-      if ($scope.clientInfo.gameLock || $scope.clientInfo.globalLock) {
+      if ($scope.clientInfo.gameLock) {
         logger.error("Client is currently busy");
         return null;
       }

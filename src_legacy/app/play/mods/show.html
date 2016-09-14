@@ -126,7 +126,7 @@
       <div ng-if="model.modVersion != null && !model.group" class="action download content-state-c-bgd">
         <sx-aurelia ng-if="w6.enableBasket" sx-view-model="'features/profile/content/mod'" sx-view="'features/profile/content/_action.html'" sx-model="auModel"></sx-aurelia>
         <div ng-if="!w6.enableBasket" ng-class="{'processing-button': model.modVersion == null, 'add-to-button-override': model.group != null}">
-          <button ng-click="(callToAction() && $event.stopPropagation())" class="anchor calltoactionBase btn-block" type="button" ng-disabled="processing || (clientInfo.globalLock || clientInfo.gameLock)" http-progress="content.installContent" http-processing="processing"
+          <button ng-click="(callToAction() && $event.stopPropagation())" class="anchor calltoactionBase btn-block" type="button" ng-disabled="processing || clientInfo.gameLock" http-progress="content.installContent" http-processing="processing"
               http-pending="Installing..." http-success="Installed!" http-error="Failed...">
             <span class="icon withSIX-icon-Download" title="Download"></span>
             <span class="text">Download</span>

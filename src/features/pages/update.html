@@ -54,15 +54,8 @@
 				</section>
 
 				<div if.bind="model.updated || isConnected">
-					<button class="btn updatebtn ${!isConnected ? 'noclient' : ''} ${isConnected && hasUpdates ? 'updateavailable' : ''}" style="text-align: center" command.bind="updateClient">
-						<span class="no-tween-out" if.bind="!isConnected">
-							<span class="no-tween-out" if.bind="!model.updated">No Client detected</span>
-						<span class="no-tween-out" if.bind="model.updated">Waiting for client restart..</span>
-						</span>
-						<span class="no-tween-out" if.bind="isUptodate">Your client is uptodate!</span>
-						<span class="no-tween-out" if.bind="updateState === 3">Downloading update</span>
-						<span class="no-tween-out" if.bind="updateState === 4">Installing update</span>
-						<span class="no-tween-out" if.bind="hasUpdates">Update Sync withSIX to ${clientInfo.newVersionAvailable}</span>
+					<button class="btn updatebtn ${!isConnected ? 'noclient' : ''} ${isConnected && (hasUpdates || isProcessingUpdates) ? 'updateavailable' : ''}" style="text-align: center" command.bind="updateClient">
+						<span class="no-tween-out">${updateMessage}</span>
 					</button>
 				</div>
 
