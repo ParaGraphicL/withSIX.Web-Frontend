@@ -24,14 +24,14 @@ export class CommandCustomAttribute {
     this.subscriptions.subd(d => {
       this.el.addEventListener('click', f);
       d(() => this.el.removeEventListener('click', f));
-      d(Base.observeEx(value, x => x.canExecute).subscribe(v => this.handleCanExecuteChange(v)));
-      d(Base.observeEx(value, x => x.isExecuting).subscribe(v => this.handleIsExecutingChange(v)));
+      d(Base.observeEx(value, x => x.canExecute).subscribe(this.handleCanExecuteChange));
+      d(Base.observeEx(value, x => x.isExecuting).subscribe(this.handleIsExecutingChange));
     });
     this.handleCanExecuteChange(value.canExecute);
     this.handleIsExecutingChange(value.isExecuting);
   }
-  handleCanExecuteChange(v) { v ? this.el.removeAttribute("disabled") : this.el.setAttribute("disabled", "") }
-  handleIsExecutingChange(v) {
+  handleCanExecuteChange = v => v ? this.el.removeAttribute("disabled") : this.el.setAttribute("disabled", "")
+  handleIsExecutingChange = v => {
     if (v) this.el.classList.add("active");
     else this.el.classList.remove("active");
   }
