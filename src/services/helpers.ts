@@ -72,6 +72,22 @@ export class ModHelper {
   }
 }
 
+export class ServerHelper {
+  public static scopeHints = [
+    'Your server will be listed and can be searched for',
+    'Only Users with a direct link will be able to find this server',
+    'Only users in the group will be able to find this server'
+  ]
+
+  public static scopeIcons = [
+    'withSIX-icon-Nav-Server',
+    'withSIX-icon-Hidden',
+    'withSIX-icon-Lock'
+  ]
+
+  public static scopes = [CollectionScope.Public, CollectionScope.Unlisted, CollectionScope.Private]
+}
+
 export class CollectionHelper {
   public static scopeHints = [
     'Your collection will be listed and can be searched for',
