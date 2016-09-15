@@ -326,7 +326,9 @@ export class BreezeInitialzation {
     store.registerEntityTypeCtor('GameStat', _InternalFakeCtors.GameStat);
     store.registerEntityTypeCtor('GroupMembership', _InternalFakeCtors.GroupMembership);
     store.registerEntityTypeCtor('Group', _InternalFakeCtors.Group);
-    store.registerEntityTypeCtor('Comment', EntityExtends.Comment);
+
+    // workaround the warnings of breeze inheritance
+    //store.registerEntityTypeCtor('Comment', EntityExtends.Comment);
     store.registerEntityTypeCtor('Server', _InternalFakeCtors.Server);
     store.registerEntityTypeCtor('ServerComment', EntityExtends.ServerComment);
     store.registerEntityTypeCtor('Player', _InternalFakeCtors.Player);
