@@ -1,4 +1,4 @@
-import { Dialog, uiCommand2, Rx, IReactiveCommand, IDisposable, BusySignalCombiner } from '../../../framework';
+import { Dialog, uiCommand2, Rx, IReactiveCommand, IDisposable, BusySignalCombiner, CollectionScope, ServerHelper } from '../../../framework';
 const { Subject } = Rx;
 
 interface IModel {
@@ -9,13 +9,19 @@ interface IModel {
     commsUrl: string;
     homepageUrl: string;
     files: FileList;
+    launchAsDedicated: boolean;
    
     launch: Function;
     launchDedicated: Function;
 }
 
 export class HostServer extends Dialog<IModel> {
-    scopes = ["Public", "Unlisted", "Private"]
+  ServerScope = CollectionScope;
+  scopes = ServerHelper.scopes;
+  scopeHints = ServerHelper.scopeHints;
+  get scopeIcon() { return ServerHelper.scopeIcons[this.model.scope] }
+   get scopeHint() { return ServerHelper.scopeHints[this.model.scope] }
+
     activate(model: IModel) {
         super.activate(Object.assign({
             scope: "Public",
@@ -31,11 +37,11 @@ export class HostServer extends Dialog<IModel> {
             const changedObs = this.listFactory.getObserveAll(this.model).map(x => true)
             d(this.toProperty(changedObs, x => x.changed))
             d(this.cancel)
-            var busyHandler: BusySignalCombiner
-            d(busyHandler = new BusySignalCombiner())
-            d(this.launch = uiCommand2('Launch Server', this.performLaunch, { cls: "ok", isVisibleObservable: this.whenAny(x => x.model.launch).map(x => x != null), canExecuteObservable: busyHandler.signal.map(x => !x) }))
-            d(this.launchDedicated = uiCommand2('Launch Dedicated Server', this.performLaunchDedicated, { cls: "ok", isVisibleObservable: this.whenAny(x => x.model.launchDedicated).map(x => x != null), canExecuteObservable: busyHandler.signal.map(x => !x) }))
-            d(busyHandler.subscribe(this.launch, this.launchDedicated))
+            //var busyHandler: BusySignalCombiner
+            //d(busyHandler = new BusySignalCombiner())
+            d(this.launch = uiCommand2('Launch Server', 
+                () => this.model.launchAsDedicated ? this.performLaunchDedicated() : this.performLaunch(),
+                { cls: "ok", isVisibleObservable: this.whenAny(x => x.model.launch).map(x => x != null) }))
         })
     }
     performCancel = async () => {
@@ -56,5 +62,4 @@ export class HostServer extends Dialog<IModel> {
     }
     cancel = uiCommand2('Cancel', this.performCancel, { cls: "cancel" });
     launch: IReactiveCommand<void>;
-    launchDedicated: IReactiveCommand<void>;
 }
