@@ -11,10 +11,10 @@ import {bootAngular} from './legacy';
 
 import {Toastr, UiContext, Mediator, ErrorLoggingMediatorDecorator, InjectingMediatorDecorator, BasketService, Client,
   CollectionDataService, ModDataService, MissionDataService, PromiseCache,
-  EntityExtends, IUserInfo, W6Context, ClientMissingHandler,
+  IUserInfo, W6Context, ClientMissingHandler, EntityExtends,
   W6Urls, W6, Tools, Environment, StateChanged} from './services/lib';
 import {ToastLogger, GlobalErrorHandler, LogAppender} from './services/legacy/logger';
-import {AbortError, LoginBase} from './services/auth-base';
+import { AbortError, LoginBase, UserInfo } from './services/auth-base';
 import {Api} from './services/api';
 
 // hack for electron cant communicate with popup
@@ -144,7 +144,7 @@ export async function configure(aurelia: Aurelia) {
     } catch (err) {
       if (err instanceof AbortError) throw err;
       Tools.Debug.log("Error logging in", err);
-      userInfo = new EntityExtends.UserInfo();
+      userInfo = new UserInfo();
       userInfo.failedLogin = true;
     }
 
