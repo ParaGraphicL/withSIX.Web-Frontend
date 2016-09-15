@@ -228,6 +228,8 @@ export class BaseController extends Tk.Controller {
     $scope.$on('$destroy', () => $scope.destroyed = true);
   }
 
+  get w6() { return this.$scope.w6 }
+
   applyIfNeeded = <T>(func?: () => T) => this.applyIfNeededOnScope<T>(func, this.$scope);
   applyIfNeededOnScope = <T>(func: () => T, scope: ng.IScope) => new Promise<T>((res, rej) => {
     scope.$evalAsync(() => {
