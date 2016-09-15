@@ -132,8 +132,8 @@ export class ViewModel extends ReactiveBase {
     this.openChanges();
     return false;
   }
+  protected openChanges() { return this.alert("You have outstanding changes, please save or cancel them first", "Outstanding changes"); }
   protected alert(message, title = "Alert") { return this.toastr.warning(message, title); }
-  protected openChanges() { this.alert("You have outstanding changes, please save or cancel them first", "Outstanding changes"); }
 
   getViewStrategy;
   protected accessDenied() { this.setErrorView(403) }
