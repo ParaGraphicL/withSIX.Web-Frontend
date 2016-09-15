@@ -26,7 +26,7 @@ export class MissionHelper {
       sizePacked: x.sizePacked,
       stat: x.stat,
       type: "mission",
-      //version: x.version, // todo
+      // version: x.version, // todo
     }
   }
 }
