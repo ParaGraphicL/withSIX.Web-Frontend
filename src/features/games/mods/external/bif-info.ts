@@ -29,6 +29,6 @@ class GetIpbInfo extends Query<{ id: string; info }> {
 class GetIpbInfoHandler extends DbQuery<GetIpbInfo, Post> {
   constructor(private ipb: IpboardService, ctx) { super(ctx) }
   handle(request: GetIpbInfo) {
-    return this.ipb.getPost(request.url.replace(/https?:\/\/forums.bistudio.com\//, `${W6Urls.proxy}/api3/`), "https://forums.bistudio.com/")
+    return this.ipb.getPost(request.url.replace(/https?:\/\/forums.bistudio.com\//, W6Urls.getProxyUrl('bif')), "https://forums.bistudio.com/")
   }
 }
