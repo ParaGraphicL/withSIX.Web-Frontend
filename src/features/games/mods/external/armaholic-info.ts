@@ -28,6 +28,6 @@ class GetArmaholicInfo extends Query<{ body: string }> {
 class GetArmaholicInfoHandler extends DbQuery<GetArmaholicInfo, { body: string }> {
   constructor(private sed: Seditio, ctx) { super(ctx) }
   handle(request: GetArmaholicInfo) {
-    return this.sed.getPost(request.url.replace(/https?:\/\/(www\.)?armaholic.com\//, `${W6Urls.proxy}/api5/`), "http://www.armaholic.com/")
+    return this.sed.getPost(request.url.replace(/https?:\/\/(www\.)?armaholic.com\//, W6Urls.getProxyUrl('armaholic')), "http://www.armaholic.com/")
   }
 }

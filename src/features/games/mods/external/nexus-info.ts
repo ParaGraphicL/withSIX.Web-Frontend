@@ -28,6 +28,6 @@ class GetNexusInfo extends Query<{ body: string }> {
 class GetNexusInfoHandler extends DbQuery<GetNexusInfo, { body: string }> {
   constructor(private xen: Nexus, ctx) { super(ctx) }
   handle(request: GetNexusInfo) {
-    return this.xen.getPost(request.url.replace(/https?:\/\/(www\.)?nexusmods.com\//, `${W6Urls.proxy}/api10/`), "http://www.nexusmods.com/")
+    return this.xen.getPost(request.url.replace(/https?:\/\/(www\.)?nexusmods.com\//, W6Urls.getProxyUrl('nexus')), "http://www.nexusmods.com/")
   }
 }
