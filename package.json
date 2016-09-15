@@ -141,7 +141,7 @@
     "aurelia-bootstrapper-webpack": "^1.0.0",
     "aurelia-breeze": "git+https://github.com/sickboy/aurelia-breeze.git",
     "aurelia-computed": "git+https://github.com/sickboy/aurelia-computed.git",
-    "aurelia-dialog": "^1.0.0-beta.3.0.0",
+    "aurelia-dialog": "https://github.com/StrahilKazlachev/dialog.git#dialog-controller/close/multiple-retries",
     "aurelia-event-aggregator": "^1.0.0",
     "aurelia-fetch-client": "^1.0.0",
     "aurelia-framework": "^1.0.1",
