@@ -66,14 +66,14 @@ export class CollectionController extends ContentModelController<IBreezeCollecti
     { header: "Content", segment: "content" }
     //{ header: "Comments", segment: "comments" }
   ];
-  static $inject = ['$scope', 'logger', '$routeParams', '$q', '$sce', 'localStorageService', 'w6', 'ForwardService', '$timeout', 'dbContext', '$popover', '$rootScope', 'basketService', 'aur.eventBus', 'aur.mediator', 'model'];
+  static $inject = ['$scope', 'logger', '$routeParams', '$q', '$sce', 'localStorageService', 'ForwardService', '$timeout', 'dbContext', '$popover', '$rootScope', 'basketService', 'aur.eventBus', 'aur.mediator', 'model'];
 
-  constructor(public $scope: ICollectionScope, public logger, public $routeParams, $q, $sce: ng.ISCEService, private localStorageService, private w6: W6, private forwardService: ForwardService, private $timeout: ng.ITimeoutService, private dbContext: W6Context, private $popover, $rootScope: IRootScope, basketService: BasketService, eventBus: EventAggregator, private mediator, model: IBreezeCollection) {
+  constructor(public $scope: ICollectionScope, public logger, public $routeParams, $q, $sce: ng.ISCEService, private localStorageService, private forwardService: ForwardService, private $timeout: ng.ITimeoutService, private dbContext: W6Context, private $popover, $rootScope: IRootScope, basketService: BasketService, eventBus: EventAggregator, private mediator, model: IBreezeCollection) {
     super($scope, logger, $routeParams, $q, $sce, model);
 
     if (model.groupId != null) this.$scope.features.groups = true;
 
-    w6.collection = this;
+    this.w6.collection = this;
 
     $scope.tryDirectDownloadCollection = async () => {
       if (model.latestVersion.repositories != null) {
@@ -163,10 +163,10 @@ export class CollectionController extends ContentModelController<IBreezeCollecti
       menuEntry.url = newV ? $scope.gameUrl + "/collections/" + model.id.toShortId() + "/" + model.name.sluggifyEntityName() + "/content/edit" : null;
       if (newV) {
         if (window.location.pathname.endsWith("/content"))
-          w6.navigate(window.location.pathname + "/edit");
+          this.w6.navigate(window.location.pathname + "/edit");
       } else {
         if (window.location.pathname.endsWith("/edit"))
-          w6.navigate(window.location.pathname.replace("/edit", ""));
+          this.w6.navigate(window.location.pathname.replace("/edit", ""));
       }
     }
 
@@ -178,7 +178,7 @@ export class CollectionController extends ContentModelController<IBreezeCollecti
     handleEditMode($scope.editConfig.editMode);
 
     $scope.$on('$destroy', () => {
-      w6.collection = null;
+      this.w6.collection = null;
       eventBus.publish(new RestoreBasket());
       w();
     });

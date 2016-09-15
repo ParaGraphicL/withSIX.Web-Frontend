@@ -11,10 +11,10 @@ import {bootAngular} from './legacy';
 
 import {Toastr, UiContext, Mediator, ErrorLoggingMediatorDecorator, InjectingMediatorDecorator, BasketService, Client,
   CollectionDataService, ModDataService, MissionDataService, PromiseCache,
-  EntityExtends, IUserInfo, W6Context, ClientMissingHandler,
-  W6Urls, W6, Tools, Environment} from './services/lib';
+  IUserInfo, W6Context, ClientMissingHandler, EntityExtends,
+  W6Urls, W6, Tools, Environment, StateChanged} from './services/lib';
 import {ToastLogger, GlobalErrorHandler, LogAppender} from './services/legacy/logger';
-import {AbortError, LoginBase} from './services/auth-base';
+import { AbortError, LoginBase, UserInfo } from './services/auth-base';
 import {Api} from './services/api';
 
 // hack for electron cant communicate with popup
@@ -144,14 +144,33 @@ export async function configure(aurelia: Aurelia) {
     } catch (err) {
       if (err instanceof AbortError) throw err;
       Tools.Debug.log("Error logging in", err);
-      userInfo = new EntityExtends.UserInfo();
+      userInfo = new UserInfo();
       userInfo.failedLogin = true;
     }
 
     let rx = /[&\?]port=(\d+)/
     let match = window.location.search.match(rx);
     let port = match ? parseInt(match[1]) : null;
-    Container.instance.registerSingleton(Client, () => new Client(getInstance<EventAggregator>(EventAggregator), getInstance<PromiseCache>(PromiseCache), getInstance<FetchClient>(FetchClient), port ? port : undefined, Tools.env > Tools.Environment.Staging))
+    Container.instance.registerSingleton(Client, () => {
+      const client = new Client(getInstance<PromiseCache>(PromiseCache), getInstance<FetchClient>(FetchClient), port ? port : undefined)
+      const eventBus: EventAggregator = Container.instance.get(EventAggregator)
+      const debug = Tools.env > Tools.Environment.Staging; 
+      client.onAny((event, ...args) => {
+        if (debug) Tools.Debug.log(`$WSAPI: ${event}`, ...args);
+        if (event.startsWith('command.')) return;
+        if (event === 'connection.state-changed') {
+          eventBus.publish(new StateChanged(args[0], args[1])) 
+          return
+        }
+        let params = [event].concat(args)
+        let callParams = params.length < 3 ? params : [event, args]
+        eventBus.publish.apply(eventBus, callParams)
+      })
+      
+      //Rx.Observable.fromEvent(client, 'command.executed', (commandName, command, result) => { return  { commandName, command, result} } ) // or, if unknown (...args) => args
+        //.subscribe(x => console.log("$$$$ Received ", x))
+      return client;
+    })
 
     const client = getInstance<Client>(Client);
     const api = getInstance<Api>(Api);
