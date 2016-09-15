@@ -4,7 +4,7 @@ import { W6Urls } from '../withSIX';
 
 @inject(HtmlFetcher)
 export class Imgur {
-  apiUrl = `${W6Urls.proxy}/api7/`;
+  apiUrl = W6Urls.getProxyUrl('imgur');
   constructor(private fetcher: HtmlFetcher) { }
 
   async getImages(url: string) {

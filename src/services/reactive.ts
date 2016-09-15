@@ -331,7 +331,7 @@ export class EditConfig extends ReactiveBase {
   close = uiCommand2("Close", async () => this.enabled = false, { canExecuteObservable: this.whenAnyValue(x => x.canClose) });
 }
 
-export class BusySignalCombiner {
+export class BusySignalCombiner implements IDisposable {
     public readonly signal = new Subject<boolean>(); // TODO: protect
     subscribe<T>(...commands: IReactiveCommand<T>[]) { return this.combineBusySignal(...commands).subscribe(x => this.signal.next(x)); }
 
@@ -344,9 +344,11 @@ export class BusySignalCombiner {
         })
         return obs;
     }
+
+    dispose() { this.signal.unsubscribe() }
 }
 
-export class AllSignalCombiner {
+export class AllSignalCombiner implements IDisposable {
     public readonly signal = new Subject<boolean>(); // TODO: protect
     subscribe<T>(...commands: IReactiveCommand<T>[]) { return this.combineBusySignal(...commands).subscribe(x => this.signal.next(x)); }
 
@@ -359,4 +361,6 @@ export class AllSignalCombiner {
         })
         return obs;
     }
+
+    dispose() { this.signal.unsubscribe() }
 }

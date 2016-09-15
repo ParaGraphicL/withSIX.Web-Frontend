@@ -9,9 +9,10 @@ import {
   Base, LS, Notifier, Toastr, uiCommand2, ViewModel, ViewModelWithModel, SelectTab,
   BasketType, IBasketModel, IBasketItem, BasketState, IBasketCollection, W6Context, LaunchAction,
   SubscribeCollection, InstallContent, InstallContents, LaunchContents, LaunchContent, ContentHelper, Action,
-  BasketItemType, DependencyType
+  BasketItemType, DependencyType, StateChanged
 } from '../framework';
-import {Client, ConnectionState, IContentState, ItemState, IContentStateChange, IContentStatusChange, IClientInfo, StateChanged, IContentGuidSpec, IContentsBase, IContentBase} from 'withsix-sync-api';
+
+import {Client, ConnectionState, IContentState, ItemState, IContentStateChange, IContentStatusChange, IClientInfo, IContentGuidSpec, IContentsBase, IContentBase} from 'withsix-sync-api';
 
 import {CreateCollectionDialog} from './games/collections/create-collection-dialog';
 import {LoadCollectionIntoBasket} from './profile/content/collection';
@@ -142,7 +143,7 @@ export class GameBaskets extends ViewModel {
     }
   }
 
-  isBusy(clientInfo: IClientInfo) { return clientInfo.globalLock || clientInfo.gameLock; }
+  isBusy(clientInfo: IClientInfo) { return clientInfo.gameLock; }
 
 
   // Legacy for Angular

@@ -28,6 +28,6 @@ class GetCurseInfo extends Query<{ body: string }> {
 class GetCurseInfoHandler extends DbQuery<GetCurseInfo, { body: string }> {
   constructor(private xen: Curse, ctx) { super(ctx) }
   handle(request: GetCurseInfo) {
-    return this.xen.getPost(request.url.replace(/https?:\/\/mods.curse.com\//, `${W6Urls.proxy}/api12/`), "http://mods.curse.com/")
+    return this.xen.getPost(request.url.replace(/https?:\/\/mods.curse.com\//, W6Urls.getProxyUrl('curse')), "http://mods.curse.com/")
   }
 }

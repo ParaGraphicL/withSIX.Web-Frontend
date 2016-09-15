@@ -13,10 +13,19 @@
 
                     <div class="row">
                         <div class="col-md-6">
-                            <textbox value.bind="model.password" placeholder="Optional password..">Password</textbox>
+                            <passwordbox value.bind="model.password" placeholder="Optional password..">Password</passwordbox>
                         </div>
                         <div class="col-md-6">
-                            <selectbox options.bind="scopes" value.bind="model.scope">Scope</selectbox>
+                            <selectbox options.bind="scopes" value.bind="model.scope">
+                                Scope
+                                <span class="icon ${scopeIcon}"></span>
+                                <template replace-part="item-template">
+                                    <option model.bind="o" title.bind="$parent.$parent.scopeHints[o]">
+                                        ${$parent.$parent.ServerScope[o]}
+                                    </option>
+                                </template>
+                            </selectbox>
+                            <i>${scopeHint}</i>
                         </div>
                     </div>
 
@@ -27,9 +36,15 @@
                     </fieldset>
 
                     <textbox multi-line.bind="true" value.bind="model.description" placeholder="Optional description">Description</textbox>
+                    <checkbox value.bind="model.launchAsDedicated">Launch as dedicated server</checkbox>
+
                 </div>
                 <div class="col-md-5">
                     <imageupload>Banner (optional)</imageupload>
+                    <div>
+                        <h2>Active mods</h2>
+                        The blabla mod, and the bli bli mod, and the blo blo mod.
+                    </div>
                 </div>
             </div>
             </form>
@@ -37,7 +52,6 @@
 
         <ai-dialog-footer>
             <command-button model.bind="launch"></command-button>
-            <command-button model.bind="launchDedicated"></command-button>
             <command-button model.bind="cancel"></command-button>
         </ai-dialog-footer>
     </ai-dialog>

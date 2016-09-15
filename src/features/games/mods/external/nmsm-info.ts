@@ -28,6 +28,6 @@ class GetNmsmInfo extends Query<{ body: string }> {
 class GetNmsmInfoHandler extends DbQuery<GetNmsmInfo, { body: string }> {
   constructor(private xen: Nmsm, ctx) { super(ctx) }
   handle(request: GetNmsmInfo) {
-    return this.xen.getPost(request.url.replace(/https?:\/\/nomansskymods.com\//, `${W6Urls.proxy}/api9/`), "http://nomansskymods.com/")
+    return this.xen.getPost(request.url.replace(/https?:\/\/nomansskymods.com\//, W6Urls.getProxyUrl('nmsm')), "https://nomansskymods.com/")
   }
 }

@@ -234,7 +234,7 @@ export class LoginBase {
     this.handleLogout();
 
     let userInfo = await this.getUserInfoInternal();
-    if (!userInfo) userInfo = new EntityExtends.UserInfo();
+    if (!userInfo) userInfo = new UserInfo();
     let hasSslRedir = window.location.hash.includes('sslredir=1');
     let isLoggedIn = userInfo.id ? true : false;
     if (userInfo.isPremium) {
@@ -307,7 +307,7 @@ export class LoginBase {
       isPremium: roles.indexOf("premium") > -1
     };
 
-    userInfo = new EntityExtends.UserInfo();
+    userInfo = new UserInfo();
     Object.assign(userInfo, uInfo);
     return userInfo;
   }
@@ -315,4 +315,28 @@ export class LoginBase {
 
 export class LoginUpdated {
   constructor(public accessToken: string) { }
+}
+
+
+export class UserInfo extends EntityExtends.UserBase implements IUserInfo {
+  // TODO: Instead use dynamic getters that use isInRole internally and cache the result?
+  isPremium: boolean;
+  // TODO: Instead use dynamic getters that use isInRole internally and cache the result?
+  isAdmin: boolean;
+  // TODO: Instead use dynamic getters that use isInRole internally and cache the result?
+  isManager: boolean;
+  id: string;
+  slug: string;
+  avatarURL: string;
+  hasAvatar: boolean;
+  emailMd5: string;
+  firstName: string;
+  lastName: string;
+  userName: string;
+  displayName: string;
+  failedLogin: boolean;
+  avatarUpdatedAt: Date;
+  emailConfirmed: boolean;
+  passwordSet: boolean;
+  hasGroups: boolean;    
 }

@@ -257,7 +257,7 @@ export class Playlist extends ViewModel {
     if (this.overrideBasketState != "") return this.overrideBasketState;
     let cInfo = this.gameInfo.clientInfo;
     if (this.action.isExecuting && cInfo.actionInfo && cInfo.actionInfo.type == ActionType.Start) return "busy-active";
-    if (cInfo.gameLock || cInfo.globalLock) return "busy";
+    if (cInfo.gameLock) return "busy";
 
     if (basket == null) return "install";
     if (this.locked) return "busy";

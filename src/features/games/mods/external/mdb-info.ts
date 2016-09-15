@@ -28,6 +28,6 @@ class GetMdbInfo extends Query<{ body: string }> {
 class GetMdbInfoHandler extends DbQuery<GetMdbInfo, { body: string }> {
   constructor(private xen: Mdb, ctx) { super(ctx) }
   handle(request: GetMdbInfo) {
-    return this.xen.getPost(request.url.replace(/https?:\/\/(www\.)?moddb.com\//, `${W6Urls.proxy}/api11/`), "http://www.moddb.com/")
+    return this.xen.getPost(request.url.replace(/https?:\/\/(www\.)?moddb.com\//, W6Urls.getProxyUrl('moddb')), "http://www.moddb.com/")
   }
 }

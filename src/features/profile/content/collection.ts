@@ -30,7 +30,7 @@ export class Collection extends ContentViewModel<ICollection> {
   }
 
   setupMenuItems() {
-    let published = this.model.typeScope == TypeScope.Published;
+    let published = this.model.typeScope === TypeScope.Published;
 
     this.setupAddToBasket();
 
