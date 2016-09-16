@@ -1,6 +1,6 @@
 import {inject} from 'aurelia-framework';
 import {Validation, ValidationResult} from 'aurelia-validation';
-import {Mediator, IMediator, IRequest, IRequestHandler} from 'aurelia-mediator';
+import {Mediator, IMediator, IRequest, IRequestHandler} from './mediator';
 import {GlobalErrorHandler} from './legacy/logger';
 import {Tools} from './tools';
 import {W6} from './withSIX';

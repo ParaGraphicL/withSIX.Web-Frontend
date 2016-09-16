@@ -9,12 +9,12 @@ import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {Validation, ValidationResult} from 'aurelia-validation';
-import {Mediator, IMediator, IRequest, IRequestHandler} from 'aurelia-mediator';
+import {Mediator, IMediator, IRequest, IRequestHandler} from 'mediatr';
 import {GlobalErrorHandler} from './legacy/logger';
 import {Tools} from './tools';
 import {W6} from './withSIX';
 import {Container} from 'aurelia-framework';
-export * from 'aurelia-mediator';
+export * from 'mediatr';
 
 // App specific starts
 @inject(Mediator, Toastr)

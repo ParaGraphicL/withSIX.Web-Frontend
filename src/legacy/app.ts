@@ -7,7 +7,6 @@ import {Tk} from '../services/legacy/tk'
 
 import {EventAggregator} from 'aurelia-event-aggregator';
 
-import {Mediator} from 'aurelia-mediator';
 import {Client} from 'withsix-sync-api';
 
 import {IRootScope, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHaveModel, DialogQueryBase, DbCommandBase, DbQueryBase, BaseController, BaseQueryController } from './app-base'

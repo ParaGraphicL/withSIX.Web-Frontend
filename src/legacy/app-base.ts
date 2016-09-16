@@ -15,8 +15,7 @@ import {BasketService} from '../services/basket-service';
 
 import {SpeedValueConverter, SizeValueConverter, AmountValueConverter} from '../resources/converters';
 import {CollectionDataService, ModDataService, MissionDataService} from '../services/legacy/data-services';
-import {LegacyMediator} from '../services/mediator';
-import {Mediator} from 'aurelia-mediator';
+import {LegacyMediator, Mediator} from '../services/mediator';
 import {Client, PromiseCache} from 'withsix-sync-api';
 
 declare var commangular;
