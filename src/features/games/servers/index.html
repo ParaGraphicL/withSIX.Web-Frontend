@@ -8,11 +8,11 @@
       </tr>
     </table> -->
     <div class="tile">
-      <ul>
-        <li virtual-repeat.for="item of model.addresses">
-          <compose view-model="./server-item" model.bind="item"></compose>
-        </li>
-      </ul>
+      <list-view is-virtual.one-time="true" items.bind="model.addresses" replaced.one-time="true">
+            <template replace-part="item-template">
+              <compose view-model="./server-item" model.bind="item"></compose>
+            </template>
+      </list-view>
     </div>
   </div>
 </template>
