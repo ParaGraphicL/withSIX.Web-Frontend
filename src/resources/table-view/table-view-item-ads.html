@@ -1,0 +1,8 @@
+<template>
+  <tr if.bind="w6.renderAds && showAds && $index == ads[0]">
+    <ad-unit unit-id.bind="adUnitId1"></ad-unit>
+  </tr>
+  <tr if.bind="w6.renderAds && showAds && $index == ads[1]">
+    <ad-unit unit-id.bind="adUnitId2"></ad-unit>
+  </tr>
+</template>

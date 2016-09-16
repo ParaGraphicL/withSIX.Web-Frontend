@@ -7,6 +7,7 @@ export function configure(config: FrameworkConfiguration) {
   config.feature('resources/card-view');
   config.feature('resources/list-view');
   config.feature('resources/tab-view');
+  config.feature('resources/table-view');
   config.feature('resources/dropdown-menu');
   config.feature('resources/gallery');
   config.feature('resources/finder');

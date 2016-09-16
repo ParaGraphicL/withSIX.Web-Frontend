@@ -8,11 +8,25 @@
       </tr>
     </table> -->
     <div class="tile">
-      <list-view is-virtual.one-time="true" items.bind="model.addresses">
+      <!--<table>
+        <tbody class="virtual-container" style="display: block">
+          <tr virtual-repeat.for="item of model.addresses" as-element="compose" view-model="./server-item" model.bind="item">
+          </tr>
+        </tbody>
+      </table>-->
+
+      <div class="table virtual-container">
+        <div class="tr virtual-row" virtual-repeat.for="item of model.addresses" as-element="compose" view-model="./server-item" model.bind="item">
+          </div>
+        </div>
+    <!--<table-view is-virtual.one-time="true" items.bind="model.addresses" view-path="features/games/servers/" item-type="server-item"></table-view>-->
+
+      <!--<list-view is-virtual.one-time="true" items.bind="model.addresses">
         <template replace-part="item-template">
           <compose view-model="./server-item" model.bind="item"></compose>
         </template>
-      </list-view>
+      </list-view>-->
+
     </div>
   </div>
 </template>
