@@ -1,9 +1,15 @@
-import {uiCommand2, ViewModel, handlerFor, Query, DbClientQuery, IGameSettingsEntry, IGamesSettings, IServerInfo, IIPEndpoint} from "../../../framework";
+import {
+  uiCommand2, handlerFor, Query, DbClientQuery, IGameSettingsEntry, IGamesSettings, IServerInfo, IIPEndpoint, ViewModel
+} from "../../../framework";
+
 export class Show extends ViewModel {
   interval: number;
   modelPartial: { address: IIPEndpoint; };
   gameId = "9DE199E3-7342-4495-AD18-195CF264BA5B"; // a3 TODO
   model: IServerInfo;
+  refresh = uiCommand2("Refresh", () => this.loadModel(this.modelPartial), { icon: "withSIX-icon-Reload" });
+  join = uiCommand2("Join", async () => alert("TODO"), { icon: "withSIX-icon-Rocket" });
+
   async activate(params, routeConfig) {
     let addr = params.serverId.replace(/-/g, ".").split(":");
     this.modelPartial = { address: { address: addr[0], port: parseInt(addr[1]) } };
@@ -14,9 +20,6 @@ export class Show extends ViewModel {
   deactivate() { clearInterval(this.interval); }
 
   loadModel(info) { return new GetServer(this.gameId, this.modelPartial.address).handle(this.mediator); }
-
-  refresh = uiCommand2("Refresh", () => this.loadModel(this.modelPartial), { icon: "withSIX-icon-Reload" });
-  join = uiCommand2("Join", async () => alert("TODO"), { icon: "withSIX-icon-Rocket" });
 }
 
 export class GetServer extends Query<IServerInfo> {
