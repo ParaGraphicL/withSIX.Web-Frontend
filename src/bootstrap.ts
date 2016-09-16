@@ -192,7 +192,7 @@ export async function configure(aurelia: Aurelia) {
       if (existing) (<any> existing)(message, file, line, col, error);
     };
 
-    if (w6.enableBasket) (<any> client).connection.promise(); // kick off the connection early
+    if (w6.enableBasket) { (<any> client).connection.promise().catch(x => { /* Ignore */ }); } // kick off the connection early
 
     await bootAngular(w6);
   }
