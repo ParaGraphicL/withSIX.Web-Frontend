@@ -1,7 +1,10 @@
 import { ReactiveBase } from "../../services/base";
 import { bindable } from "aurelia-framework";
 
-export class ListView<T> extends ReactiveBase {
+export class TableView<T> extends ReactiveBase {
+  @bindable view: string;
+  @bindable viewPath: string;
+  @bindable itemType: string;
   @bindable items: T[];
   @bindable itemsMap: Map<string, T>;
   @bindable isVirtual: boolean;

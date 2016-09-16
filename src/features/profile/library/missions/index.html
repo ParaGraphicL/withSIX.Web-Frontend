@@ -16,6 +16,10 @@
 				</div>
 			</div>
 		</card-view>
-		<list-view if.bind="filteredComponent.selectedViewType == 1" show-ads.one-time="true" items.bind="filteredComponent.filteredItems" view-path="features/profile/content/" item-type.bind="itemType"></list-view>
+		<list-view if.bind="filteredComponent.selectedViewType === 1" show-ads.one-time="true" items.bind="filteredComponent.filteredItems">
+			<template replace-part="item-template">
+			<compose view-model="features/profile/content/${item.type || itemType}" model.bind="item"></compose>
+			</template>
+		</list-view>
 	</section>
 </template>
