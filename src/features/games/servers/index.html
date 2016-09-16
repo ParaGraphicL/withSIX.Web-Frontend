@@ -18,6 +18,14 @@
 
       <div class="tablewrapper">
         <div class="table virtual-container">
+          <div class="tr">
+            <div class="td">Ping</div>
+            <div class="td"></div>
+            <div class="td"># plyrs</div>
+            <div class="td">Info</div>
+            <div class="td">Mods</div>
+            <div class="td">Mission</div>
+          </div>
           <div virtual-repeat.for="item of model.addresses" class="${item.loading ? '' : 'tr'} virtual-row"
               as-element="compose" view-model="./server-item" model.bind="item">
           </div>
