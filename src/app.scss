@@ -7,13 +7,30 @@
   }
 }
 
+.tablewrapper {
+  position: relative;
+}
+
 .table {
   display: table;
+  position: relative;
   .tr {
     display: table-row;
+    position: relative;
   }
   .td {
     display: table-cell;
+    &.rowspanned {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 100px;
+    }
+    &.colspan {
+      position: absolute;
+      left: 0;
+      right: 0;
+    }
   }
 }
 

@@ -1,18 +1,16 @@
 <template>
   <template if.bind="loading">
-    Loading ${model.address | ipEndpoint}
+    <div class="td colspan">
+      Loading ${model.address | ipEndpoint}
+    </div>
   </template>
   <template if.bind="!loading">
     <div class="td">${model.ping}ms</div>
     <div class="td">
-      <command-button model.bind="refresh">
-        <span class="icon ${refresh.icon}"></span>
-      </command-button>
+      <command-button model.bind="refresh"></command-button>
     </div>
     <div class="td">
-      <command-button model.bind="join">
-        <span class="icon ${join.icon}"></span>
-      </command-button>
+      <command-button model.bind="join"></command-button>
     </div>
     <div class="td">${model.numPlayers} / ${model.maxPlayers} plyrs |</div>
     <div class="td">

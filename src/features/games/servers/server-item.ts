@@ -12,8 +12,8 @@ export class ServerItem extends ViewModel {
   modelPartial: IServer;
   loading: boolean;
   model: IServerInfo | IServer;
-  refresh = uiCommand2("Refresh", () => this.loadModel(this.modelPartial), {icon: "withSIX-icon-Reload"});
-  join = uiCommand2("Join", async () => alert("TODO"), {icon: "withSIX-icon-Rocket"});
+  refresh = uiCommand2("", () => this.loadModel(this.modelPartial), {icon: "withSIX-icon-Reload"});
+  join = uiCommand2("", async () => alert("TODO"), {icon: "withSIX-icon-Rocket"});
 
   activate(model: IServer) {
     this.modelPartial = model;
