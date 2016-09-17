@@ -13,7 +13,6 @@ import {IRootScope, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHaveModel, 
 import {ITagKey, ICreateComment, ICQWM, IModel, IMenuItem} from '../services/legacy/base'
 import {EventAggregator} from 'aurelia-event-aggregator';
 
-import {Mediator} from 'aurelia-mediator';
 import {Client} from 'withsix-sync-api';
 
 import {registerCommands, getFactory} from './app-base';
