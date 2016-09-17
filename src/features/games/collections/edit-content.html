@@ -2,7 +2,7 @@
   <filters filters.ref="filteredComponent" search-input-placeholder.bind="searchInputPlaceholder" typeahead-options.bind="typeahead" items.bind="items" filters.bind="filters" search-fields.bind="searchFields" sort.bind="sort" custom-sort.bind="customSort"
       view-types.bind="availableViewTypes" custom-sort.bind="customSort"></filters>
 
-  <card-view card-view.ref="cv" if.bind="filteredComponent.selectedViewType == 0" items.bind="filteredComponent.filteredItems" view-path="features/profile/content/" item-type.bind="itemType" index-offset.bind="1">
+  <card-view card-view.ref="cv" if.bind="filteredComponent.selectedViewType == 0" items.bind="filteredComponent.filteredItems" view-path="features/profile/content/" item-type.bind="itemType" index-offset.one-time="1">
     <div class.bind="cv.cardContainerCls" slot="prepend-items">
       <div class="card ${cardCls} new-item">
         <header>ADD Mods</header>
