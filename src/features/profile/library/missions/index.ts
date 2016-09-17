@@ -44,51 +44,5 @@ class GetMissionsHandler extends DbClientQuery<GetMissions, IMissionsData> {
       this.tools.Debug.warn("Error while trying to get collections from client", err);
       return { items: [], page: 1, totalPages: 1, pageSize: 24 };
     }
-    // return GetMissionsHandler.designTimeData(request);
-  }
-
-  static async designTimeData(request: GetMissions) {
-    var testData = <any>[{
-      id: "x",
-      name: "Test mission",
-      slug: "test-mission",
-      type: "mission",
-      isFavorite: false,
-      gameId: request.id,
-      gameSlug: "arma-3",
-      author: "Some author",
-      image: "http://i.ytimg.com/vi/yaqe1qesQ8c/maxresdefault.jpg"
-    }, {
-        id: "x",
-        name: "Test mission 2",
-        slug: "test-mission-2",
-        type: "mission",
-        isFavorite: false,
-        gameId: request.id,
-        gameSlug: "arma-3",
-        author: "Some author",
-        image: "http://i.ytimg.com/vi/yaqe1qesQ8c/maxresdefault.jpg"
-						}, {
-        id: "x",
-        name: "Test mission 3",
-        slug: "test-mission-3",
-        type: "mission",
-        isFavorite: false,
-        gameId: request.id,
-        gameSlug: "arma-3",
-        author: "Some author",
-        image: "http://i.ytimg.com/vi/yaqe1qesQ8c/maxresdefault.jpg"
-						}, {
-        id: "x",
-        name: "Test mission 4",
-        slug: "test-mission-4",
-        type: "mission",
-        isFavorite: false,
-        gameId: request.id,
-        gameSlug: "arma-3",
-        author: "Some author",
-        image: "http://i.ytimg.com/vi/yaqe1qesQ8c/maxresdefault.jpg"
-						}];
-    return { missions: testData.concat(testData, testData) };
   }
 }

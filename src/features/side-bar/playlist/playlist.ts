@@ -566,11 +566,10 @@ class GetMyCollectionsHandler extends DbClientQuery<GetMyCollections, ICollectio
 
     if (request.user.id) {
       p.push(this.getMyCollections(request, optionsTodo));
-      if (request.includeSubscribed) p.push(this.getSubscribedCollections(request, optionsTodo));
+      if (request.includeSubscribed) { p.push(this.getSubscribedCollections(request, optionsTodo)); }
     }
     var results = await Promise.all(p)
     return { collections: results.flatten<IPlaylistCollection>() };
-    // return GetCollectionsHandler.designTimeData(request);
   }
 
   async getClientCollections(request: GetMyCollections) {
