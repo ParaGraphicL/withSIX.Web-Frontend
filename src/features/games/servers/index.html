@@ -26,12 +26,12 @@
             <div class="td">Mods</div>
             <div class="td">Mission</div>
           </div>
-          <div virtual-repeat.for="item of model.addresses" class="${item.loading ? '' : 'tr'} virtual-row"
-              as-element="compose" view-model="./server-item" model.bind="item">
+          <div virtual-repeat.for="item of model.addresses" class="${item.loading ? '' : 'tr'} virtual-row" as-element="compose"
+            view-model="./server-item" model.bind="item">
           </div>
         </div>
       </div>
-    <!--<table-view is-virtual.one-time="true" items.bind="model.addresses" view-path="features/games/servers/" item-type="server-item"></table-view>-->
+      <!--<table-view is-virtual.one-time="true" items.bind="model.addresses" view-path="features/games/servers/" item-type="server-item"></table-view>-->
 
       <!--<list-view is-virtual.one-time="true" items.bind="model.addresses">
         <template replace-part="item-template">

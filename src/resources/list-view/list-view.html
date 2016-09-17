@@ -1,6 +1,6 @@
 <template>
   <slot name="prepend-items"></slot>
-  
+
   <template if.bind="items">
     <ul class.bind="listCls" if.bind="!isVirtual">
       <li repeat.for="item of items">
