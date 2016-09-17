@@ -1,6 +1,9 @@
 <template>
   <h2>Select group</h2>
-  <card-view card-view.ref="cv" items.bind="groups" item-type="group" view-path="features/profile/groups/">
+  <card-view
+    card-view.ref="cv" items.bind="groups" item-type="group" view-path="features/profile/groups/"
+    index-offset.one-time="1"
+  >
     <div class.bind="cv.cardContainerCls" slot="prepend-items">
       <div class="card ${cv.cardCls} new-item">
         <div class="button">
