@@ -170,37 +170,46 @@ export class App extends ViewModel {
 
       d(this.whenAnyValue(x => x.overlayShown)
         .subscribe(x => {
-          if (x) $("body").addClass("overlay-shown");
-          else $("body").removeClass("overlay-shown");
+          if (x) {
+            $("body").addClass("overlay-shown");
+          } else {
+            $("body").removeClass("overlay-shown");
+          }
         }));
 
-      let changed = this.appEvents.gameChanged;
+      const changed = this.appEvents.gameChanged;
       d(changed.flatMap(x => this.setActiveGame(x)).concat().subscribe());
       d(changed.startWith(this.w6.activeGame)
         .subscribe(this.gameChanged));
       d(this.clientWrapper.stateChanged
         .startWith(<StateChanged> { newState: this.client.isConnected ? ConnectionState.connected : null })
         .subscribe(state => {
-          if (state.newState === ConnectionState.connected) this.infoReceived(this.client.clientInfo);
+          if (state.newState === ConnectionState.connected) { this.infoReceived(this.client.clientInfo); }
         }));
-      let userErrors = this.whenAnyValue(x => x.userErrors).filter(x => x != null);
-      d(userErrors.subscribe(x => {
-        // close all open dialogs
-        this.dialogMap.forEach(x => { this.eventBus.publish("client.userErrorResolved", { id: x }); this.tools.removeEl(this.dialogMap, x); });
+      const userErrors = this.whenAnyValue(x => x.userErrors).filter(x => x != null);
+      d(userErrors.subscribe(_ => {
+        // close all open dialogs when userErrors get replaced
+        this.dialogMap.forEach(id => {
+          this.eventBus.publish("client.userErrorResolved", { id });
+          this.tools.removeEl(this.dialogMap, id);
+        });
       }));
       d(userErrors.flatMap(x => x)
-        .merge(this.clientWrapper.userErrorAdded.map(x => x.userError))
-        .subscribe(x => { if (!this.dialogMap.some(x => x === x.id)) this.showUserErrorDialog(x); }));
+        .merge<IUserError>(this.clientWrapper.userErrorAdded.map(x => x.userError))
+        .subscribe(x => { if (!this.dialogMap.some(id => id === x.id)) { this.showUserErrorDialog(x); } }));
     });
-    // TODO: this adds accept application/json, and authorize header to EVERY request. we only want to do that to actualy JSON endpoints, and definitely not to CDN!
+    // TODO: this adds accept application/json, and authorize header to EVERY request.
+    // we only want to do that to actualy JSON endpoints, and definitely not to CDN!
     // this.httpClientConfig.configure();
 
     this.loginLegacyClient({ accessToken: this.w6.userInfo.id ? window.localStorage.getItem(LoginBase.token) : null });
     if (this.w6.enableBasket) { this.client.getInfo().catch(x => { /* Ignore */ }); } // instead of connection.promise();
     $("body").attr("style", "");
 
-    if (this.w6.url.version) this.checkVersion();
-    this.newVersionInterval = setInterval(() => this.checkVersion(), 10 * 60 * 1000);
+    if (this.w6.url.version) {
+      this.checkVersion();
+      this.newVersionInterval = setInterval(() => this.checkVersion(), 15 * 60 * 1000);
+    }
 
     this.ls.on("w6.event", (v, old, url) => this.raiseCrossEvent(v.name, v.data));
     window.addEventListener("keydown", this.myKeypressCallback, false);
@@ -293,7 +302,7 @@ export class App extends ViewModel {
     return null;
   }
 
-  get classes() { return `${this.w6.renderAds ? null : "no-adds"} ${this.w6.miniClient.isConnected ? "client-active" : null} ${this.w6.miniClient.isConnected && this.gameInfo.isLocked ? "client-busy" : null} ${this.isApiBusy ? "api-busy" : ""} ${this.w6.userInfo.id ? "logged-in" : null} ${window.location.pathname.startsWith("/errors") ? "is-error" : ""} `;}
+  get classes() { return `${this.w6.renderAds ? null : "no-adds"} ${this.w6.miniClient.isConnected ? "client-active" : null} ${this.w6.miniClient.isConnected && this.gameInfo.isLocked ? "client-busy" : null} ${this.isApiBusy ? "api-busy" : ""} ${this.w6.userInfo.id ? "logged-in" : null} ${window.location.pathname.startsWith("/errors") ? "is-error" : ""} `; }
 
   isApiBusy = false;
 
@@ -317,6 +326,8 @@ export class App extends ViewModel {
 
   sideBar: SideBar;
   topBar: TopBar;
+  newAppVersionAvailable: boolean;
+
   closeTabs() {
     // TODO: Better with event?
     this.sideBar.selectedTab = null;
@@ -327,15 +338,13 @@ export class App extends ViewModel {
   async checkVersion() {
     let version = await this.http.get(this.w6.url.cdn + "/volatile/version2.json");
     let newVersion = version.content.version;
-    if (this.w6.url.version != newVersion) {
+    if (this.w6.url.version !== newVersion) {
       this.newAppVersionAvailable = true;
       clearInterval(this.newVersionInterval);
     }
   }
 
   refresh() { this.w6.reload(); }
-
-  newAppVersionAvailable: boolean;
 
   infoReceived = (info: IMiniClientInfo) => {
     // TODO: Parse version + semver info,
