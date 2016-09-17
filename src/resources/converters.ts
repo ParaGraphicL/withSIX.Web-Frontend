@@ -62,6 +62,13 @@ export class TextValueConverter {
   replaceLinks = text => text.replace(/(\b(https?|ftp|file):\/\/([-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|]))/gi, (whole, m1, m2, m3) => `<a target="_blank" href="${whole}">${m3}</a>`);
 }
 
+// This only converts the ary on first use, and then becomes static.
+// better is to bind to arrays directly..
+@valueConverter('mapToAry')
+export class MapToAryValueConverter {
+  toView = map => map == null ? null : Array.from(map, (x, i) => x[1]);
+}
+
 @valueConverter('ipEndpoint')
 export class IpEndpointValueConverter {
   toView = addr => addr ? `${addr.address}:${addr.port}` : '';

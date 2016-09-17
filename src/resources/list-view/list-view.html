@@ -1,6 +1,6 @@
 <template>
   <slot name="prepend-items"></slot>
-  
+
   <template if.bind="items">
     <ul class.bind="listCls" if.bind="!isVirtual">
       <li repeat.for="item of items">
@@ -30,7 +30,7 @@
       <compose view="./list-view-item-ads.html"></compose>
     </ul>
     <ul class.bind="listCls" if.bind="isVirtual" class="virtual-container">
-      <li virtual-repeat.for="item of itemsMapToArrayWorkaround" class="virtual-row">
+      <li virtual-repeat.for="item of itemsMap | mapToAry" class="virtual-row">
         <template replaceable part="item-template">
           <compose class="content-basketable" model.bind="item" view.bind="view" view-model="${viewPath}${item.type || itemType}"></compose>
         </template>

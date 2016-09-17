@@ -33,7 +33,7 @@
     </table>
     <table class.bind="listCls" if.bind="isVirtual">
       <tbody class="virtual-container" style="display: block">
-      <tr virtual-repeat.for="item of itemsMapToArrayWorkaround" class="virtual-row"
+      <tr virtual-repeat.for="item of itemsMap | mapToAry" class="virtual-row"
           part="item-template"
           as-element="compose" view.bind="view" view-model="${viewPath}${item.type || itemType}" model.bind="item">
       </tr>
