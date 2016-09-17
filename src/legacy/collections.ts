@@ -20,7 +20,6 @@ import {ITagKey, ICreateComment, ICQWM, IModel, IMenuItem, IHandleCommentsScope}
 import { Publisher } from '../services/apis/lib';
 import {EventAggregator} from 'aurelia-event-aggregator';
 
-import {Mediator} from 'aurelia-mediator';
 import {Client, IClientInfo, ItemState, TypeScope} from 'withsix-sync-api';
 
 import { ForwardService } from './components';

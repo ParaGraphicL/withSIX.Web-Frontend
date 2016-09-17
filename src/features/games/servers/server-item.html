@@ -1,25 +1,21 @@
 <template>
-  <div if.bind="loading">
-    Loading ${model.address | ipEndpoint}
-  </div>
-  <div if.bind="!loading">
-    <td>${model.ping}ms</td>
-    <td>
-      <command-button model.bind="refresh">
-        <span class="icon ${refresh.icon}"></span>
-      </command-button>
-    </td>
-    <td>
-      <command-button model.bind="join">
-        <span class="icon ${join.icon}"></span>
-      </command-button>
-    </td>
-    <td>${model.numPlayers} / ${model.maxPlayers} plyrs |</td>
-    <td>
+  <template if.bind="loading">
+    <div class="td colspan">
+      Loading ${model.address | ipEndpoint}
+    </div>
+  </template>
+  <template if.bind="!loading">
+    <div class="td">${model.ping}ms</div>
+    <div class="td">
+      <command-button model.bind="refresh"></command-button>
+      <command-button model.bind="join"></command-button>
+    </div>
+    <div class="td">${model.numPlayers} / ${model.maxPlayers} plyrs</div>
+    <div class="td">
       <i class="icon withSIX-icon-Lock" if.bind="model.passwordRequired"></i>
-      <a href="/p/Arma-3/servers/${slug}">${model.name}</a> [${model.gameState} | ${model.gameType}] | v${model.gameVersion} |
-    </td>
-    <td>${model.mods.length} mods |</td>
-    <td>[${model.missionName} @ ${model.mapName}]</td>
-  </div>
+      <a href="/p/Arma-3/servers/${slug}">${model.name}</a> [${model.gameState} ${model.gameType}] v${model.gameVersion}
+    </div>
+    <div class="td">${model.mods.length} mods</div>
+    <div class="td">[${model.missionName} @ ${model.mapName}]</div>
+  </template>
 </template>

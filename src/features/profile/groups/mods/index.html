@@ -1,7 +1,10 @@
 <template>
   <compose view="../_header.html"></compose>
 
-  <card-view card-view.ref="cv" items.bind="group.mods" view-path="features/profile/groups/mods/" item-type="mod">
+  <card-view 
+    card-view.ref="cv" items.bind="group.mods" view-path="features/profile/groups/mods/" item-type="mod"
+    index-offset.one-time="isAdmin ? 1 : 0"
+    >
     <div class.bind="cv.cardContainerCls" if.bind="isAdmin" slot="prepend-items">
       <div class="card ${cv.cardCls} new-item">
         <header>ADD Mod</header>

@@ -56,7 +56,7 @@ const coreBundles = {
     'aurelia-templating-resources',
     // custom
     'aurelia-dialog',
-    'aurelia-mediator',
+    'mediatr',
     'aurelia-fetch-client',
     'aurelia-validation',
     //'aurelia-ui-virtualization',

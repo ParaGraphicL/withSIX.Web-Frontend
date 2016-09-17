@@ -1,40 +1,40 @@
-import {inject, autoinject, Container, TaskQueue} from 'aurelia-framework';
-import {Router, RouterConfiguration, NavigationInstruction, Redirect} from 'aurelia-router';
-import {EventAggregator} from 'aurelia-event-aggregator';
-import {DialogService} from 'aurelia-dialog';
-import {FeaturesModule} from './features/index';
-import {HttpClient} from 'aurelia-http-client';
-//import HttpClientConfig from 'aurelia-auth/app.httpClient.config';
+import {inject, autoinject, Container, TaskQueue} from "aurelia-framework";
+import {Router, RouterConfiguration, NavigationInstruction, Redirect} from "aurelia-router";
+import {EventAggregator} from "aurelia-event-aggregator";
+import {DialogService} from "aurelia-dialog";
+import {FeaturesModule} from "./features/index";
+import {HttpClient} from "aurelia-http-client";
+// import HttpClientConfig from 'aurelia-auth/app.httpClient.config';
 import {UiContext, ViewModel, Dialog, Mediator, Command, DbQuery, handlerFor, MenuItem, uiCommand2, CloseDialogs,
   ContentDeleted, Client, BasketService, StateChanged, ConnectionState, GameClientInfo, LS, ClientMissingHandler,
   IUserErrorAdded, IUserErrorResolved, IUserError, GameChanged, CloseTabs, IBreezeErrorReason, ContentHelper, W6,
-  IMiniClientInfo, Tools} from './framework';
+  IMiniClientInfo, Tools} from "./framework";
 
-import {GameBaskets} from './features/game-baskets';
+import {GameBaskets} from "./features/game-baskets";
 
-import {RouteHandler, RestoreBasket, OpenCreateCollectionDialog, OpenAddModDialog, OpenAddModsToCollectionsDialog, OpenSettings, Test} from './services/api';
+import {RouteHandler, RestoreBasket, OpenCreateCollectionDialog, OpenAddModDialog, OpenAddModsToCollectionsDialog, OpenSettings, Test} from "./services/api";
 
-import {Login} from './services/auth';
-import {LoginBase, LoginUpdated} from './services/auth-base';
+import {Login} from "./services/auth";
+import {LoginBase, LoginUpdated} from "./services/auth-base";
 
-import {RenderService} from './services/renderer/render-service';
+import {RenderService} from "./services/renderer/render-service";
 
-import {CreateCollectionDialog} from './features/games/collections/create-collection-dialog';
-import {AddModsToCollections} from './features/games/add-mods-to-collections';
-import {EditPlaylistItem} from './features/side-bar/playlist/edit-playlist-item';
-import {EditDependency} from './features/profile/content/edit-dependency';
-import {NewGroupDialog} from './features/profile/groups/new-group-dialog';
-import {Index as SettingsIndex} from './features/settings/index';
-import {SideBar} from './features/side-bar/side-bar';
-import {TopBar} from './features/top-bar/top-bar';
-import {UserErrorDialog} from './features/user-error-dialog';
-import {MessageDialog} from './features/message-dialog';
-import {Finalize} from './features/login/finalize';
-import { HostServer } from './features/games/servers/host-server';
+import {CreateCollectionDialog} from "./features/games/collections/create-collection-dialog";
+import {AddModsToCollections} from "./features/games/add-mods-to-collections";
+import {EditPlaylistItem} from "./features/side-bar/playlist/edit-playlist-item";
+import {EditDependency} from "./features/profile/content/edit-dependency";
+import {NewGroupDialog} from "./features/profile/groups/new-group-dialog";
+import {Index as SettingsIndex} from "./features/settings/index";
+import {SideBar} from "./features/side-bar/side-bar";
+import {TopBar} from "./features/top-bar/top-bar";
+import {UserErrorDialog} from "./features/user-error-dialog";
+import {MessageDialog} from "./features/message-dialog";
+import {Finalize} from "./features/login/finalize";
+import { HostServer } from "./features/games/servers/host-server";
 
-import {BindingSignaler} from 'aurelia-templating-resources';
+import {BindingSignaler} from "aurelia-templating-resources";
 
-import {Origin} from 'aurelia-metadata';
+import {Origin} from "aurelia-metadata";
 
 @inject(UiContext, HttpClient, Login, RouteHandler, TaskQueue, Client, BasketService, LS, ClientMissingHandler, BindingSignaler)
 export class App extends ViewModel {
@@ -49,39 +49,39 @@ export class App extends ViewModel {
 
   constructor(ui: UiContext, public http: HttpClient, private login: Login, private routeHandler: RouteHandler, private taskQueue: TaskQueue, private client: Client, private basketService: BasketService, private ls: LS, private clientMissingHandler: ClientMissingHandler, private signaler: BindingSignaler) {
     super(ui);
-    var site = this.w6.url.site || "main";
+    let site = this.w6.url.site || "main";
     this.modules = [new FeaturesModule()];
     this.original = this.w6.enableBasket;
     this.breadcrumbs = this.setupBreadcrumbs();
-    this.w6.openLoginDialog = evt => { if (evt) evt.preventDefault(); return this.login.login(); }
+    this.w6.openLoginDialog = evt => { if (evt) evt.preventDefault(); return this.login.login(); };
     this.w6.logout = () => this.logout();
-    setInterval(() => signaler.signal('timeago'), 60 * 1000);
+    setInterval(() => signaler.signal("timeago"), 60 * 1000);
     this.w6.api.openGeneralDialog = (model: { model; viewModel: string }) => {
       return this.dialog.open({ viewModel: "features/general-dialog", model: model });
-    }
+    };
 
     let rs: RenderService = Container.instance.get(RenderService);
     this.w6.api.render = (options) => rs.open(options);
 
     this.w6.api.createGameBasket = (gameId, basketModel) => {
-      var gm = Container.instance.get(GameBaskets);
+      let gm = Container.instance.get(GameBaskets);
       gm.activate(gameId, basketModel);
       return gm;
-    }
-    //this.eventBus.subscribe('router:navigation:processing', () => console.log("$$$ processing route"));
+    };
+    // this.eventBus.subscribe('router:navigation:processing', () => console.log("$$$ processing route"));
     if (Tools.env > Tools.Environment.Staging) window.w6Debug.app = this;
-    //this.eventBus.subscribe('router:navigation:complete', () => console.log("$$$ complete route"));
+    // this.eventBus.subscribe('router:navigation:complete', () => console.log("$$$ complete route"));
   }
 
-  template = 'v2'
+  template = "v2";
   userMenuItems = [];
 
   // this.w6.settings.hasSync
   get showFirefoxNotice() { return this.w6.isFirefox && this.w6.settings.downloadedSync && this.firefoxTimeoutPassed && !this.w6.miniClient.isConnected && !this.basketService.hasConnected; }
 
-  get currentRoute() { return this.router.currentInstruction }
-  get shouldFinalizeAccount() { return this.isLoggedIn && (!this.w6.userInfo.emailConfirmed && !this.w6.userInfo.passwordSet) };
-  get shouldConfirmEmail() { return this.isLoggedIn && (!this.w6.userInfo.emailConfirmed && this.w6.userInfo.passwordSet) }
+  get currentRoute() { return this.router.currentInstruction; }
+  get shouldFinalizeAccount() { return this.isLoggedIn && (!this.w6.userInfo.emailConfirmed && !this.w6.userInfo.passwordSet); };
+  get shouldConfirmEmail() { return this.isLoggedIn && (!this.w6.userInfo.emailConfirmed && this.w6.userInfo.passwordSet); }
 
   activate() {
     if (this.hasApi) window.onbeforeunload = () => {
@@ -91,9 +91,9 @@ export class App extends ViewModel {
 
     this.activateNg();
 
-    var w = <any>window;
+    let w = <any> window;
     if (Tools.env >= Tools.Environment.Staging && w.api) {
-      var test = Container.instance.get(Test);
+      let test = Container.instance.get(Test);
       w.test = test;
     }
 
@@ -106,13 +106,13 @@ export class App extends ViewModel {
     Origin.set(NewGroupDialog, { moduleId: "features/profile/groups/new-group-dialog", moduleMember: "NewGroupDialog" });
     Origin.set(UserErrorDialog, { moduleId: "features/user-error-dialog", moduleMember: "UserErrorDialog" });
     Origin.set(MessageDialog, { moduleId: "features/message-dialog", moduleMember: "MessageDialog" });
-    Origin.set(Finalize, { moduleId: "features/login/finalize", moduleMember: "Finalize" })
-    Origin.set(HostServer, { moduleId: "features/games/servers/host-server", moduleMember: "HostServer"})
+    Origin.set(Finalize, { moduleId: "features/login/finalize", moduleMember: "Finalize" });
+    Origin.set(HostServer, { moduleId: "features/games/servers/host-server", moduleMember: "HostServer"});
 
-    let isSync = window.location.search.includes('sync=1') ? true : false;
+    let isSync = window.location.search.includes("sync=1") ? true : false;
     if (isSync) { this.w6.updateSettings(x => x.hasSync = true); }
-    this.template = 'v2';
-    if (window.location.pathname === '/plugin') this.template = 'plugin';
+    this.template = "v2";
+    if (window.location.pathname === "/plugin") this.template = "plugin";
 
     this.userMenuItems.push(new MenuItem(this.openSettings));
     if (!this.features.library) this.userMenuItems.push(new MenuItem(this.openLibrary));
@@ -121,7 +121,7 @@ export class App extends ViewModel {
     this.userMenuItems.push(new MenuItem(this.openLogout));
 
     setTimeout(() => {
-      if (!this.w6.settings.hasSync && (this.w6.miniClient.isConnected || this.basketService.hasConnected)) { this.w6.updateSettings(x => x.hasSync = true) } // TODO: put it on a connected handler?
+      if (!this.w6.settings.hasSync && (this.w6.miniClient.isConnected || this.basketService.hasConnected)) { this.w6.updateSettings(x => x.hasSync = true); } // TODO: put it on a connected handler?
       if (!this.w6.miniClient.isConnected && this.w6.settings.hasSync && this.features.clientAutostart) this.clientMissingHandler.addClientIframe();
       this.firefoxTimeoutPassed = true;
     }, 15 * 1000);
@@ -142,7 +142,7 @@ export class App extends ViewModel {
         }
       }
       */
-      d(this.eventBus.subscribe('router:navigation:error', async (x) => {
+      d(this.eventBus.subscribe("router:navigation:error", async (x) => {
         // TODO: This seems to be a fatal error... Must refresh completely to fix!
         if (!x.result || !x.result.output) return this.redirectToError(500);
         let err: Error = x.result.output;
@@ -150,7 +150,7 @@ export class App extends ViewModel {
         if (err instanceof Tools.Forbidden) return this.redirectToError(403);
         if (err instanceof Tools.RequiresLogin || err instanceof Tools.LoginNoLongerValid) return await this.login.login();
         return this.redirectToError(500);
-      }))
+      }));
 
       // TODO: we might be better off abstracting this away in a service instead, so that we dont have all these eventclasses laying around just for interop from Angular...
       d(this.eventBus.subscribe(RestoreBasket, this.restoreBasket));
@@ -161,8 +161,8 @@ export class App extends ViewModel {
       d(this.eventBus.subscribe(OpenSettings, this.openClientSettings));
       d(this.toProperty(this.whenAnyValue(x => x.isRequesting)
         .combineLatest(this.whenAnyValue(x => x.isNavigating), (api, router) => api || router)
-        .debounceTime(250), x => x.isApiBusy))
-      d(this.whenAnyValue(x => x.currentRoute).subscribe(_ => this.signaler.signal('router-signal')))
+        .debounceTime(250), x => x.isApiBusy));
+      d(this.whenAnyValue(x => x.currentRoute).subscribe(_ => this.signaler.signal("router-signal")));
       d(this.whenAnyValue(x => x.isNavigating)
         .skip(1)
         .filter(x => !x)
@@ -170,56 +170,56 @@ export class App extends ViewModel {
 
       d(this.whenAnyValue(x => x.overlayShown)
         .subscribe(x => {
-          if (x) $("body").addClass("overlay-shown")
+          if (x) $("body").addClass("overlay-shown");
           else $("body").removeClass("overlay-shown");
         }));
 
       let changed = this.appEvents.gameChanged;
       d(changed.flatMap(x => this.setActiveGame(x)).concat().subscribe());
       d(changed.startWith(this.w6.activeGame)
-        .subscribe(this.gameChanged))
+        .subscribe(this.gameChanged));
       d(this.clientWrapper.stateChanged
-        .startWith(<StateChanged>{ newState: this.client.isConnected ? ConnectionState.connected : null })
+        .startWith(<StateChanged> { newState: this.client.isConnected ? ConnectionState.connected : null })
         .subscribe(state => {
           if (state.newState === ConnectionState.connected) this.infoReceived(this.client.clientInfo);
         }));
       let userErrors = this.whenAnyValue(x => x.userErrors).filter(x => x != null);
       d(userErrors.subscribe(x => {
         // close all open dialogs
-        this.dialogMap.forEach(x => { this.eventBus.publish("client.userErrorResolved", { id: x }); this.tools.removeEl(this.dialogMap, x); })
+        this.dialogMap.forEach(x => { this.eventBus.publish("client.userErrorResolved", { id: x }); this.tools.removeEl(this.dialogMap, x); });
       }));
       d(userErrors.flatMap(x => x)
         .merge(this.clientWrapper.userErrorAdded.map(x => x.userError))
-        .subscribe(x => { if (!this.dialogMap.some(x => x == x.id)) this.showUserErrorDialog(x) }));
+        .subscribe(x => { if (!this.dialogMap.some(x => x === x.id)) this.showUserErrorDialog(x); }));
     });
     // TODO: this adds accept application/json, and authorize header to EVERY request. we only want to do that to actualy JSON endpoints, and definitely not to CDN!
-    //this.httpClientConfig.configure();
+    // this.httpClientConfig.configure();
 
     this.loginLegacyClient({ accessToken: this.w6.userInfo.id ? window.localStorage.getItem(LoginBase.token) : null });
-    if (this.w6.enableBasket) this.client.getInfo(); // instead of connection.promise();
-    $('body').attr('style', '');
+    if (this.w6.enableBasket) { this.client.getInfo().catch(x => { /* Ignore */ }); } // instead of connection.promise();
+    $("body").attr("style", "");
 
     if (this.w6.url.version) this.checkVersion();
     this.newVersionInterval = setInterval(() => this.checkVersion(), 10 * 60 * 1000);
 
-    this.ls.on('w6.event', (v, old, url) => this.raiseCrossEvent(v.name, v.data));
-    window.addEventListener('keydown', this.myKeypressCallback, false);
+    this.ls.on("w6.event", (v, old, url) => this.raiseCrossEvent(v.name, v.data));
+    window.addEventListener("keydown", this.myKeypressCallback, false);
 
     if (this.shouldFinalizeAccount && !this.w6.settings.remindedFinalize) {
       this.w6.updateSettings(x => {
         this.finalizeAccount();
         x.remindedFinalize = true;
-      })
+      });
     }
   }
 
-  redirectToError(statusCode: number) { return this.router.navigate(`/errors/${statusCode}?resource=${encodeURIComponent(window.location.href)}#initial=1`) }
+  redirectToError(statusCode: number) { return this.router.navigate(`/errors/${statusCode}?resource=${encodeURIComponent(window.location.href)}#initial=1`); }
 
   dialogMap = [];
 
   finalizeAccount = () => this.dialog.open({ viewModel: Finalize });
 
-  get clientInfo() { return this.gameInfo.clientInfo };
+  get clientInfo() { return this.gameInfo.clientInfo; };
   get userErrors() { return this.clientInfo.userErrors; }
 
   async showUserErrorDialog(userError: IUserError) {
@@ -231,18 +231,18 @@ export class App extends ViewModel {
 
   async setActiveGame(info: GameChanged) {
     this.w6.setActiveGame({ id: info.id, slug: info.slug });
-    if (info && info.id && info.isPageChange) await this.client.selectGame(info.id)
+    if (info && info.id && info.isPageChange) await this.client.selectGame(info.id);
   }
 
   myKeypressCallback = ($event: KeyboardEvent) => {
-    if ($event.keyCode == 27) // escape
+    if ($event.keyCode === 27) // escape
       this.eventBus.publish(new CloseTabs());
   }
 
   game: { id: string; slug: string } = { id: null, slug: null };
 
   gameChanged = async (info: GameChanged) => {
-    if (this.game.id == info.id) return;
+    if (this.game.id === info.id) return;
     this.game.id = info.id;
     this.game.slug = info.slug;
     if (this.game.id) {
@@ -252,10 +252,10 @@ export class App extends ViewModel {
 
   raiseCrossEvent(name: string, data: any) {
     switch (name) {
-      case 'content-deleted': { this.eventBus.publish(new ContentDeleted(data.gameId, data.id)); break; }
-      case 'login': { if (!this.w6.userInfo) this.login.handleUserUpgrade(); break; }
-      case 'logout': { if (this.w6.userInfo) this.w6.reload(); break; }
-      case 'refresh-playlist': { this.basketService.refresh(); this.sideBar.refreshPlaylist(); }
+      case "content-deleted": { this.eventBus.publish(new ContentDeleted(data.gameId, data.id)); break; }
+      case "login": { if (!this.w6.userInfo) this.login.handleUserUpgrade(); break; }
+      case "logout": { if (this.w6.userInfo) this.w6.reload(); break; }
+      case "refresh-playlist": { this.basketService.refresh(); this.sideBar.refreshPlaylist(); }
     }
   }
 
@@ -267,13 +267,13 @@ export class App extends ViewModel {
   openClientSettings = (evt: OpenSettings) => this.dialog.open({ viewModel: SettingsIndex, model: evt.model })
 
   deactivate() {
-    window.removeEventListener('keypress', this.myKeypressCallback);
+    window.removeEventListener("keypress", this.myKeypressCallback);
   }
 
   get overlayShown() {
     return (this.topBar && this.topBar.search.showResults)
-      || (this.sideBar && this.sideBar.selectedTab && this.sideBar.selectedTab.type != 'dropdown')
-      || (this.topBar && this.topBar.selectedTab && this.topBar.selectedTab.type != 'dropdown');
+      || (this.sideBar && this.sideBar.selectedTab && this.sideBar.selectedTab.type != "dropdown")
+      || (this.topBar && this.topBar.selectedTab && this.topBar.selectedTab.type != "dropdown");
   }
 
   activateNg() {
@@ -281,11 +281,11 @@ export class App extends ViewModel {
       let iv = setInterval(() => {
         if (this.w6.aureliaReady) return;
         let row = angular.element("#root-content-row");
-        if (row.length == 0) return;
+        if (row.length === 0) return;
         clearInterval(iv);
         this.tools.Debug.log("activating ng from app..");
         let el = angular.element("#content");
-        row.append(el)
+        row.append(el);
         this.w6.aureliaReady = true;
       }, 100);
       this.first = true;
@@ -293,12 +293,12 @@ export class App extends ViewModel {
     return null;
   }
 
-  get classes() { return `${this.w6.renderAds ? null : 'no-adds'} ${this.w6.miniClient.isConnected ? 'client-active' : null} ${this.w6.miniClient.isConnected && this.gameInfo.isLocked ? 'client-busy' : null} ${this.isApiBusy ? 'api-busy' : ''} ${this.w6.userInfo.id ? 'logged-in' : null} ${window.location.pathname.startsWith('/errors') ? 'is-error' : ''} `}
+  get classes() { return `${this.w6.renderAds ? null : "no-adds"} ${this.w6.miniClient.isConnected ? "client-active" : null} ${this.w6.miniClient.isConnected && this.gameInfo.isLocked ? "client-busy" : null} ${this.isApiBusy ? "api-busy" : ""} ${this.w6.userInfo.id ? "logged-in" : null} ${window.location.pathname.startsWith("/errors") ? "is-error" : ""} `;}
 
   isApiBusy = false;
 
-  get isNavigating() { return this.router.isNavigating }
-  get isRequesting() { return this.login.isRequesting }
+  get isNavigating() { return this.router.isNavigating; }
+  get isRequesting() { return this.login.isRequesting; }
 
   get showSidebar() { return this.w6.enableBasket; }
 
@@ -306,7 +306,7 @@ export class App extends ViewModel {
   get tabAsTabActive() {
     let side = this.sideBar && this.sideBar.selectedTab;
     let top = this.topBar && this.topBar.selectedTab;
-    return (side && side.type != 'dropdown') || (top && top.type != 'dropdown');
+    return (side && side.type != "dropdown") || (top && top.type != "dropdown");
   }
 
   openSettings = uiCommand2("Settings", async () => this.navigateInternal("/me/settings"));
@@ -333,7 +333,7 @@ export class App extends ViewModel {
     }
   }
 
-  refresh() { this.w6.reload() }
+  refresh() { this.w6.reload(); }
 
   newAppVersionAvailable: boolean;
 
@@ -342,9 +342,9 @@ export class App extends ViewModel {
     // TODO: Retrieve and store latest infos for each branch, by periodically getting the info from the withsix.com CDN?
     // TODO: Perhaps use this rather as last resort. but rather have the info query include if the client is uptodate ;-)
     // newVersion = "1.0.0-beta201507091";
-    //if (info.version != newVersion) {
+    // if (info.version != newVersion) {
     // this.newVersionAvailable(newVersion);
-    //}
+    // }
     if (this.client.currentVersion >= "3") this.client.login({ accessToken: this.w6.userInfo.id ? window.localStorage.getItem(LoginBase.token) : null });
 
     if (info.newVersionAvailable != null)
@@ -353,7 +353,7 @@ export class App extends ViewModel {
 
   get obsoleteClientVersion() {
     let mc = this.w6.miniClient;
-    return mc.isConnected && mc.clientInfo.updateState <= 1 && mc.clientInfo.version && (this.tools.versionCompare(mc.clientInfo.version, '1.0.15') == -1);
+    return mc.isConnected && mc.clientInfo.updateState <= 1 && mc.clientInfo.version && (this.tools.versionCompare(mc.clientInfo.version, "1.0.15") === -1);
   }
 
   newVersionAvailable = newVersion => {
@@ -363,14 +363,14 @@ export class App extends ViewModel {
       this.toastr.info(
         `Client v${newVersion} is available for download, click here to update now.`,
         "Sync Update available!", {
-          timeOut: 10 * 1000
-        }).then(x => x ? this.navigateInternal("/update") : '');
+          timeOut: 10 * 1000,
+        }).then(x => x ? this.navigateInternal("/update") : "");
     }, 3000);
   };
 
   requireLoggedIn = async (act: () => Promise<any>) => {
     if (this.w6.isLoggedIn) return await act();
-    if (await this.toastr.warning("To continue this action you have to login", "Login Required")) this.w6.openLoginDialog(null)
+    if (await this.toastr.warning("To continue this action you have to login", "Login Required")) this.w6.openLoginDialog(null);
   }
 
   openCreateCollectionDialog = (event: OpenCreateCollectionDialog) => this.requireLoggedIn(() => this.dialog.open({ viewModel: CreateCollectionDialog, model: { game: event.game } }));
@@ -399,27 +399,27 @@ export class App extends ViewModel {
   }
 
   setupBreadcrumbs() {
-    var path = [];
-    var breadcrumbs = [];
+    let path = [];
+    let breadcrumbs = [];
 
-    if (this.w6.url.site && this.w6.url.site != 'main') {
+    if (this.w6.url.site && this.w6.url.site != "main") {
       breadcrumbs.push({
         title: this.w6.url.siteTitle,
-        path: this.w6.url[this.w6.url.site]
+        path: this.w6.url[this.w6.url.site],
       });
     }
 
-    var pathname = window.location.pathname.trim();
-    if (pathname == "/")
+    let pathname = window.location.pathname.trim();
+    if (pathname === "/")
       return breadcrumbs;
 
-    pathname.split('/').forEach(x => {
+    pathname.split("/").forEach(x => {
       if (!x) return;
       path.push(x);
-      var joinedPath = "/" + path.join("/");
+      let joinedPath = "/" + path.join("/");
       breadcrumbs.push({
         title: x,
-        path: pathname == joinedPath ? null : joinedPath
+        path: pathname === joinedPath ? null : joinedPath,
       });
     });
 
@@ -427,50 +427,50 @@ export class App extends ViewModel {
   }
 
 
-  get showSlogan() { return this.w6.url.site == 'main' && this.w6.url.isRoot; }
+  get showSlogan() { return this.w6.url.site === "main" && this.w6.url.isRoot; }
 
   async configureRouter(config: RouterConfiguration, router: Router) {
-    config.title = 'withSIX';
+    config.title = "withSIX";
     config.options.pushState = true;
     config
-      .addPipelineStep('authorize', SslStep)
-      .addPipelineStep('authorize', AuthorizeStep)
-      .addPipelineStep('postcomplete', {
+      .addPipelineStep("authorize", SslStep)
+      .addPipelineStep("authorize", AuthorizeStep)
+      .addPipelineStep("postcomplete", {
         run: (context, next) => {
           this.breadcrumbs = this.setupBreadcrumbs();
           return next();
-        }
+        },
       });
 
-    var site = this.w6.url.site || "main";
+    let site = this.w6.url.site || "main";
     await this.routeHandler.configure(site);
     let map = (instruction: NavigationInstruction): any => {
       this.tools.Debug.log("$$ AURELIA: Mapping unknown route for site: " + site, instruction);
       let match = this.routeHandler.getRouteMatch(instruction.fragment);
       if (!match) {
         this.tools.Debug.warn("$$ AURELIA: did not found match in routing map! 404", instruction, this.routeHandler.routingData[site]);
-        return 'errors/404';
+        return "errors/404";
       }
 
-      if (match.type == "aurelia") {
+      if (match.type === "aurelia") {
         this.tools.Debug.error("$$$ AURELIA: Found aurelia unmatched route, must be error?!", match, instruction);
-        return 'errors/404';
+        return "errors/404";
       }
 
-      if (!match.type || match.type == "angular") {
+      if (!match.type || match.type === "angular") {
         this.tools.Debug.log("$$ AURELIA: found angular match!", instruction);
         return "features/pages/angular";
       }
-      if (match.type == "static") {
+      if (match.type === "static") {
         if (match.redirectTo) {
           this.tools.Debug.log("$$ AURELIA: found static redirect!", instruction);
-          return { redirect: match.redirectTo }
+          return { redirect: match.redirectTo };
         }
         this.tools.Debug.log("$$ AURELIA: found static page!", instruction);
         return "features/pages/static";
       }
       throw new Error("Unsupported routing state");
-    }
+    };
     config.mapUnknownRoutes(map);
     this.modules.forEach(m => m.configureRouter(config, router));
     this.router = router;
@@ -479,18 +479,18 @@ export class App extends ViewModel {
 
 @inject(Login, TaskQueue)
 class AuthorizeStep {
-  get tools() { return Tools }
+  get tools() { return Tools; }
   constructor(public login: Login, private taskQueue: TaskQueue) { }
   run(routingContext: NavigationInstruction, next) {
     if (routingContext.getAllInstructions().some((i: any) => {
       return i.config.auth;
     })) {
-      var isLoggedIn = this.login.authService.isAuthenticated();
+      let isLoggedIn = this.login.authService.isAuthenticated();
       if (!isLoggedIn) {
-        //var loginRoute = this.auth.getLoginRoute();
-        //return next.cancel(new Redirect(loginRoute));
+        // var loginRoute = this.auth.getLoginRoute();
+        // return next.cancel(new Redirect(loginRoute));
         this.taskQueue.queueMicroTask(() => {
-          //var lastInstruction = routingContext.nextInstructions.asEnumerable().last();
+          // var lastInstruction = routingContext.nextInstructions.asEnumerable().last();
           this.login.login(); // lastInstruction.fragment + lastInstruction.queryString
         });
         return next.cancel();
@@ -505,14 +505,14 @@ class AuthorizeStep {
 class SslStep extends AuthorizeStep {
   constructor(private routeHandler: RouteHandler, private w6: W6, login: Login, taskQueue: TaskQueue) { super(login, taskQueue); }
   run(routingContext: NavigationInstruction, next) {
-    var matches = routingContext.getAllInstructions().map(x => this.routeHandler.getRouteMatch(x.fragment)).filter(x => x != null);
-    if (matches.length == 0) return next();
+    let matches = routingContext.getAllInstructions().map(x => this.routeHandler.getRouteMatch(x.fragment)).filter(x => x != null);
+    if (matches.length === 0) return next();
 
     let isLoggedIn = this.w6.userInfo.id ? true : false;
     if (!isLoggedIn && matches.some(x => x.auth)) {
       // We only do this here because we have also non Aurelia routes with auth requirements..
       setTimeout(() => {
-        //var lastInstruction = routingContext.nextInstructions.asEnumerable().last();
+        // var lastInstruction = routingContext.nextInstructions.asEnumerable().last();
         this.login.login(); // lastInstruction.fragment + lastInstruction.queryString
       });
       return next.cancel();
@@ -520,25 +520,25 @@ class SslStep extends AuthorizeStep {
 
     if (this.w6.userInfo.failedLogin) {
       setTimeout(() => {
-        //var lastInstruction = routingContext.nextInstructions.asEnumerable().last();
+        // var lastInstruction = routingContext.nextInstructions.asEnumerable().last();
         this.login.login(); // lastInstruction.fragment + lastInstruction.queryString
       });
       return next();
     }
 
-    let isHttps = window.location.protocol == "https:";
+    let isHttps = window.location.protocol === "https:";
     let isPremium = this.w6.userInfo.isPremium;
     if (isHttps) {
       if (!isPremium && matches.every(x => !x.ssl)) {
         // Problem: We don't know if we got redirected for premium purposes, or because of required SSL, so hm
         if (this.w6.redirected && !isLoggedIn) {
           setTimeout(() => {
-            //var lastInstruction = routingContext.nextInstructions.asEnumerable().last();
+            // var lastInstruction = routingContext.nextInstructions.asEnumerable().last();
             this.login.login(); // lastInstruction.fragment + lastInstruction.queryString
           });
           return next.cancel();
-          //var loginRoute = this.auth.getLoginRoute();
-          //return next.cancel(new Redirect(loginRoute));
+          // var loginRoute = this.auth.getLoginRoute();
+          // return next.cancel(new Redirect(loginRoute));
         }
         this.tools.Debug.log("$$$ SslStep: Using SSL, but is not premium, nor page requires SSL. Switching to non-SSL");
         return next.cancel(this.getRedirect(LoginBase.toHttp(isLoggedIn)));
@@ -552,7 +552,7 @@ class SslStep extends AuthorizeStep {
     }
     if (this.w6.redirected && !isLoggedIn && this.w6.redirectedWasLoggedIn) {
       setTimeout(() => {
-        //var lastInstruction = routingContext.nextInstructions.asEnumerable().last();
+        // var lastInstruction = routingContext.nextInstructions.asEnumerable().last();
         this.login.login(); // lastInstruction.fragment + lastInstruction.queryString
       });
       return next.cancel();

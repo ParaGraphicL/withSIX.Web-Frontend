@@ -1,5 +1,9 @@
 <template>
   <header class="title"><a class="text-link shout" href="/me/library/${w6.activeGame.slug}/collections">Collections (${model.collections.length})</a></header>
 
-  <list-view is-virtual.one-time="features.uiVirtualization" items.bind="model.collections" view-path="features/profile/content/" view="features/side-bar/library/_item.html"></list-view>
+  <list-view is-virtual.one-time="features.uiVirtualization" items.bind="model.collections">
+    <template replace-part="item-template">
+      <compose view-model="features/profile/content/${item.type || itemType}" model.bind="item" view="features/side-bar/library/_item.html"></compose>
+    </template>
+  </list-view>
 </template>

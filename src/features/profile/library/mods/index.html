@@ -3,7 +3,11 @@
 		<compose view="../_header.html"></compose>
 		<filters filters.ref="filteredComponent" search-input-placeholder.bind="searchInputPlaceholder" typeahead-options.bind="typeahead" items.bind="items" filters.bind="filters" search-fields.bind="searchFields" sort.bind="sort" view-types.bind="availableViewTypes"></filters>
 
-		<card-view card-view.ref="cv" if.bind="filteredComponent.selectedViewType == 0" card-columns.one-time="[2,2,3,3]" items.bind="filteredComponent.filteredItems" view-path="features/profile/content/" item-type.bind="itemType">
+		<card-view 
+			card-view.ref="cv" if.bind="filteredComponent.selectedViewType == 0"
+			card-columns.one-time="[2,2,3,3]" items.bind="filteredComponent.filteredItems" view-path="features/profile/content/"
+			item-type.bind="itemType" index-offset.one-time="1"
+			>
 			<div class.bind="cv.cardContainerCls" slot="prepend-items"> 
 				<div class="card ${cv.cardCls} new-item">
 					<div class="button">
@@ -16,6 +20,10 @@
 				</div>
 			</div>
 		</card-view>
-		<list-view if.bind="filteredComponent.selectedViewType == 1" show-ads.one-time="true" items.bind="filteredComponent.filteredItems" view-path="features/profile/content/" item-type.bind="itemType"></list-view>
+		<list-view if.bind="filteredComponent.selectedViewType === 1" show-ads.one-time="true" items.bind="filteredComponent.filteredItems">
+			<template replace-part="item-template">
+			<compose view-model="features/profile/content/${item.type || itemType}" model.bind="item"></compose>
+			</template>
+		</list-view>
 	</section>
 </template>

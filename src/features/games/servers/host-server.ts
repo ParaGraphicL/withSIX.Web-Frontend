@@ -1,8 +1,9 @@
-import { Dialog, uiCommand2, Rx, IReactiveCommand, IDisposable, BusySignalCombiner, CollectionScope, ServerHelper } from '../../../framework';
-const { Subject } = Rx;
+import {
+    CollectionScope, DbClientQuery, Dialog, IReactiveCommand, ServerHelper, VoidCommand, handlerFor, uiCommand2,
+} from "../../../framework";
 
 interface IModel {
-    scope: string;
+    scope: CollectionScope;
     name: string;
     password: string;
     description: string;
@@ -10,7 +11,6 @@ interface IModel {
     homepageUrl: string;
     files: FileList;
     launchAsDedicated: boolean;
-   
     launch: Function;
     launchDedicated: Function;
 }
@@ -19,31 +19,36 @@ export class HostServer extends Dialog<IModel> {
   ServerScope = CollectionScope;
   scopes = ServerHelper.scopes;
   scopeHints = ServerHelper.scopeHints;
-  get scopeIcon() { return ServerHelper.scopeIcons[this.model.scope] }
-   get scopeHint() { return ServerHelper.scopeHints[this.model.scope] }
+  get scopeIcon() { return ServerHelper.scopeIcons[this.model.scope]; }
+   get scopeHint() { return ServerHelper.scopeHints[this.model.scope]; }
+    cancel: IReactiveCommand<void>;
+    launch: IReactiveCommand<void>;
 
     activate(model: IModel) {
         super.activate(Object.assign({
-            scope: "Public",
+            commsUrl: null,
+            description: null,
+            files: null,
+            homepageUrl: null,
             name: `${this.w6.userInfo.displayName}'s server`,
             password: null,
-            description: null,
-            commsUrl: null,
-            homepageUrl: null,
-            files: null
-        }, model))
+            scope: CollectionScope.Public,
+        }, model));
 
         this.subscriptions.subd(d => {
-            const changedObs = this.listFactory.getObserveAll(this.model).map(x => true)
-            d(this.toProperty(changedObs, x => x.changed))
-            d(this.cancel)
-            //var busyHandler: BusySignalCombiner
-            //d(busyHandler = new BusySignalCombiner())
-            d(this.launch = uiCommand2('Launch Server', 
-                () => this.model.launchAsDedicated ? this.performLaunchDedicated() : this.performLaunch(),
-                { cls: "ok", isVisibleObservable: this.whenAny(x => x.model.launch).map(x => x != null) }))
-        })
+            const changedObs = this.listFactory.getObserveAll(this.model).map(x => true);
+            d(this.toProperty(changedObs, x => x.changed));
+            d(this.cancel = uiCommand2("Cancel", this.performCancel, { cls: "cancel" }));
+            d(this.launch = uiCommand2("Launch Server",
+                this.handleLaunch,
+                { cls: "ok", isVisibleObservable: this.whenAny(x => x.model.launch).map(x => x != null) }));
+        });
     }
+    async close() {
+        this.changed = false;
+        await this.controller.ok();
+    }
+
     performCancel = async () => {
         this.changed = false;
         await this.controller.cancel(null);
@@ -56,10 +61,21 @@ export class HostServer extends Dialog<IModel> {
         await this.model.launchDedicated();
         await this.close();
     }
-    async close() {
-        this.changed = false;
-        await this.controller.ok();
+    handleLaunch = async () => {
+        const t = this.model.launchAsDedicated ? this.performLaunchDedicated() : this.performLaunch();
+        await new LaunchServer(this.w6.activeGame.id, this.model.scope).handle(this.mediator);
+        await t;
     }
-    cancel = uiCommand2('Cancel', this.performCancel, { cls: "cancel" });
-    launch: IReactiveCommand<void>;
+
+}
+
+class LaunchServer extends VoidCommand {
+    constructor(public gameId: string, public scope: CollectionScope) { super(); }
+}
+
+@handlerFor(LaunchServer)
+class LaunchServerHandler extends DbClientQuery<LaunchServer, void> {
+    handle(request: LaunchServer) {
+        return this.context.postCustom("servers", request);
+    }
 }
