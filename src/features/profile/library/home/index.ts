@@ -18,7 +18,65 @@ export class Index extends BaseGame {
   basket: any;
   gameInfo: GameClientInfo;
 
+  addMod = uiCommandWithLogin2("Mod", 
+    async () => this.legacyMediator.openAddModDialog(this.game.slug), { icon: "icon withSIX-icon-Nav-Mod" });
+  addMission = uiCommandWithLogin2("Mission",
+    async () => this.navigateInternal(this.w6.url.play + "/" + this.game.slug + "/missions/new"),{
+        icon: "icon withSIX-icon-Nav-Mission",
+      });
+  addCollection = uiCommandWithLogin2("Collection",
+    async () => this.dialog.open({ model: { game: this.game, viewModel: CreateCollectionDialog } }), {
+      icon: "icon withSIX-icon-Nav-Collection",
+    });
+  updateAll = uiCommand2("Update all",
+    () => new InstallContents(this.game.id, this.updates.map(x => { return { id: x.id }; }), { text: "Available updates" })
+        .handle(this.mediator), {
+          canExecuteObservable: this.observeEx(x => x.hasUpdates),
+          cls: "warn", icon: "withSIX-icon-Hexagon-Upload2",
+          isVisibleObservable: this.observeEx(x => x.clientEnabled),
+        });
+
+  addContentMenu: IMenuItem[] = [
+    new MenuItem(this.addCollection),
+    new MenuItem(this.addMod),
+    new MenuItem(this.addMission),
+  ];
+
   get hasUpdates() { return this.updates && this.updates.length > 0; }
+
+  contentDeleted = (evt: ContentDeleted) => {
+    let deleteIfHas = (list: any[], id: string) => {
+      let item = list.asEnumerable().firstOrDefault(x => x.id === id);
+      if (item) { this.tools.removeEl(list, item); }
+    };
+    deleteIfHas(this.newContent, evt.id);
+    deleteIfHas(this.updates, evt.id);
+    deleteIfHas(this.recent, evt.id);
+  }
+
+  handleContentInstalled = (evt, gameId, installedContent) => { if (this.game.id === gameId) { this.newContent.push(installedContent); } }
+
+  handleContentStatusChanged = (stateChange: IContentStatusChange) => {
+    if (stateChange.gameId !== this.game.id) { return; }
+    this.handleStateChange(stateChange);
+  };
+
+  handleContentStateChanged = (stateChange: IContentStateChange) => {
+    if (stateChange.gameId !== this.game.id) { return; }
+    angular.forEach(stateChange.states, state => this.handleStateChange(state));
+  };
+
+  handleStateChange = (state: IContentState) => {
+    if (state.state === ItemState.NotInstalled) {
+      let item = this.newContent.asEnumerable().firstOrDefault(x => x.id === state.id);
+      if (item) { this.tools.removeEl(this.newContent, item); }
+      item = this.updates.asEnumerable().firstOrDefault(x => x.id === state.id);
+      if (item) { this.tools.removeEl(this.updates, item); }
+    } else if (state.state === ItemState.Uptodate) {
+      let item = this.updates.asEnumerable().firstOrDefault(x => x.id === state.id);
+      if (item) { this.tools.removeEl(this.updates, item); }
+    }
+  }
 
   constructor(ui: UiContext, private basketService: BasketService) { super(ui); }
 
@@ -48,24 +106,19 @@ export class Index extends BaseGame {
       d(this.eventBus.subscribe("content.contentInstalled", this.handleContentInstalled));
       d(this.eventBus.subscribe("content.recentItemRemoved", (args: string) => {
         let item = this.recent.asEnumerable().firstOrDefault(x => x.id === args);
-        if (item) this.tools.removeEl(this.recent, item);
+        if (item) { this.tools.removeEl(this.recent, item); }
         [this.newContent.asEnumerable().firstOrDefault(x => x.id === args), this.updates.asEnumerable().firstOrDefault(x => x.id === args)]
           .forEach(x => {
-            if (x != null) x.lastUsed = null;
+            if (x != null) { x.lastUsed = null; }
           });
       }));
       d(this.eventBus.subscribe("content.recentItemUsed", (gameId, id, usedAt) => {
-        if (this.game.id != gameId)
-          return;
+        if (this.game.id !== gameId) { return; }
         let recentContent = this.recent;
-        recentContent.forEach(x => {
-          if (x.id === id)
-            x.lastUsed = usedAt;
-        });
+        recentContent.forEach(x => { if (x.id === id) { x.lastUsed = usedAt; } });
       }));
       d(this.eventBus.subscribe("content.recentItemAdded", (evt, gameId, recentContent) => {
-        if (this.game.id === gameId)
-          this.recent.push(recentContent);
+        if (this.game.id === gameId) { this.recent.push(recentContent); }
       }));
       d(this.eventBus.subscribe("status.contentStateChanged", this.handleContentStateChanged));
       d(this.eventBus.subscribe("status.contentStatusChanged", this.handleContentStatusChanged));
@@ -103,53 +156,6 @@ export class Index extends BaseGame {
   }
 
   deactivate() { this.subscriptions.dispose(); }
-
-  contentDeleted = (evt: ContentDeleted) => {
-    let deleteIfHas = (list: any[], id: string) => {
-      let item = list.asEnumerable().firstOrDefault(x => x.id === id);
-      if (item) this.tools.removeEl(list, item);
-
-    };
-    deleteIfHas(this.newContent, evt.id);
-    deleteIfHas(this.updates, evt.id);
-    deleteIfHas(this.recent, evt.id);
-  }
-
-  handleContentInstalled = (evt, gameId, installedContent) => {
-    if (this.game.id === gameId) this.newContent.push(installedContent);
-  }
-
-  handleContentStatusChanged = (stateChange: IContentStatusChange) => {
-    if (stateChange.gameId != this.game.id) return;
-    this.handleStateChange(stateChange);
-  };
-
-  handleContentStateChanged = (stateChange: IContentStateChange) => {
-    if (stateChange.gameId != this.game.id) return;
-    angular.forEach(stateChange.states, state => this.handleStateChange(state));
-  };
-
-  handleStateChange = (state: IContentState) => {
-    if (state.state === ItemState.NotInstalled) {
-      let item = this.newContent.asEnumerable().firstOrDefault(x => x.id === state.id);
-      if (item) this.tools.removeEl(this.newContent, item);
-      item = this.updates.asEnumerable().firstOrDefault(x => x.id === state.id);
-      if (item) this.tools.removeEl(this.updates, item);
-    } else if (state.state === ItemState.Uptodate) {
-      let item = this.updates.asEnumerable().firstOrDefault(x => x.id === state.id);
-      if (item) this.tools.removeEl(this.updates, item);
-    }
-  }
-
-  addMod = uiCommandWithLogin2("Mod", async () => this.legacyMediator.openAddModDialog(this.game.slug), { icon: "icon withSIX-icon-Nav-Mod" });
-  addMission = uiCommandWithLogin2("Mission", async () => this.navigateInternal(this.w6.url.play + "/" + this.game.slug + "/missions/new"), { icon: "icon withSIX-icon-Nav-Mission" });
-  addCollection = uiCommandWithLogin2("Collection", async () => this.dialog.open({ viewModel: CreateCollectionDialog, model: { game: this.game } }), { icon: "icon withSIX-icon-Nav-Collection" });
-  updateAll = uiCommand2("Update all", () => new InstallContents(this.game.id, this.updates.map(x => { return { id: x.id }; }), { text: "Available updates" }).handle(this.mediator), { cls: "warn", icon: "withSIX-icon-Hexagon-Upload2", isVisibleObservable: this.observeEx(x => x.clientEnabled), canExecuteObservable: this.observeEx(x => x.hasUpdates) });
-  addContentMenu: IMenuItem[] = [
-    new MenuItem(this.addCollection),
-    new MenuItem(this.addMod),
-    new MenuItem(this.addMission),
-  ];
 
   updatedToBasketInfo() { return this.updates.map(x => this.toBasketInfo(x)); }
 
