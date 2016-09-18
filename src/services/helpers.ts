@@ -46,7 +46,7 @@ export class GameHelper {
       const w6Cheat = <any>window.w6Cheat;
       const servers = w6Cheat.servers || (w6Cheat.servers = {});
       return <Map<string, any>>servers[gameId] || (servers[gameId] =
-        (await context.getCustom<any[]>("http://cdn2.withsix.com/servers/SB-Servers.json"))
+        (await context.getCustom<any[]>("https://withsix-cdn2-proxy.withsix.com/servers/SB-Servers.json"))
           .toMap(x => GameHelper.toAddresss(x.address)));
     } else {
       return new Map<string, any>();
