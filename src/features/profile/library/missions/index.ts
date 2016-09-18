@@ -42,7 +42,7 @@ class GetMissionsHandler extends DbClientQuery<GetMissions, IMissionsData> {
       return r;
     } catch (err) {
       this.tools.Debug.warn("Error while trying to get collections from client", err);
-      return { items: [], page: 1, totalPages: 1, pageSize: 24 };
+      return { items: [], pageNumber: 1, totalPages: 1, pageSize: 24 };
     }
   }
 }
