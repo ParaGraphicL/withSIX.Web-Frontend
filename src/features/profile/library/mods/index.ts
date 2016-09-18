@@ -62,9 +62,9 @@ class GetModsHandler extends DbClientQuery<GetMods, IModsData> {
 
   async getAllClientMods(id: string) {
     const request = { id, page: 0 };
-    let pageInfo = { items: [], page: 0, pageSize: 24, totalPages: 1 };
+    let pageInfo = { items: [], pageNumber: 0, pageSize: 24, totalPages: 1 };
     let items = [];
-    while (pageInfo.page < pageInfo.totalPages) {
+    while (pageInfo.pageNumber < pageInfo.totalPages) {
       request.page++;
       pageInfo = await this.getClientMods(request);
       items = items.concat(pageInfo.items);
@@ -80,7 +80,7 @@ class GetModsHandler extends DbClientQuery<GetMods, IModsData> {
       return x;
     } catch (err) {
       this.tools.Debug.warn("Error while trying to get mods from client", err);
-      return {items: [], page: 1, pageSize: 24, totalPages: 1};
+      return {items: [], pageNumber: 1, pageSize: 24, totalPages: 1};
     }
   }
 
