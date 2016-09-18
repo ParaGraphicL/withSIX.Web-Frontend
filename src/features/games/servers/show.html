@@ -15,14 +15,26 @@
       </td>
       <td>${model.numPlayers} / ${model.maxPlayers} plyrs |</td>
       <td>
-        <i class="icon withSIX-icon-Lock" if.bind="model.passwordRequired"></i>
-        <a href="/p/Arma-3/servers/${slug}">${model.name}</a> [${model.gameState} | ${model.gameType}] | v${model.gameVersion} |
+        <i class="icon withSIX-icon-Lock" if.bind="model.passwordRequired"></i> ${model.name} [${model.gameState}
+        | ${model.gameType}] | v${model.gameVersion} |
       </td>
       <td>${model.mods.length} mods |</td>
       <td>[${model.missionName} @ ${model.mapName}]</td>
 
+      <div if.bind="model.additional">
+        <h2>External links</h2>
+        <ul>
+          <li if.bind="model.additional.info.homepage">
+            <a target="_blank" href.bind="model.additional.info.homepage">Homepage</a>
+          </li>
+          <li repeat.for="p of model.additional.publishers">
+            <a target="_blank" href.bind="getPublisherUrl(p)">${getPublisherName(p)}</a>
+          </li>
+        </ul>
+      </div>
+
       <div>
-        Players:
+        <h2>Players</h2>
         <ul>
           <li repeat.for="p of model.players">
             ${p.name} | ${p.score} | ${p.deaths}

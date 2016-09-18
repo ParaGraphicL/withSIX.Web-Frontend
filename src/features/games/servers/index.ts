@@ -1,10 +1,14 @@
 import { Router, RouterConfiguration } from "aurelia-router";
-import { ViewModel, handlerFor, Query, DbClientQuery, IGameSettingsEntry, IGamesSettings, IIPEndpoint } from "../../../framework";
+import { ViewModel, handlerFor, Query, DbClientQuery, IGameSettingsEntry, IGamesSettings, IIPEndpoint, GameHelper } from "../../../framework";
 
 export class Index extends ViewModel {
   model: IServers;
+  vm = "./server-item";
   async activate(params, routeConfig) {
     this.model = await new GetServers(this.w6.activeGame.id).handle(this.mediator);
+    if (this.w6.activeGame.id === GameHelper.gameIds.Starbound) {
+      this.vm = "./sb-server-item";
+    }
   }
 
   getSlug(addr: IIPEndpoint) { return addr.address.replace(/\./g, "-") + ":" + addr.port + "/test"; }
@@ -48,8 +52,12 @@ class GetServersQuery extends DbClientQuery<GetServers, IServers>  {
   }
 
   async getAddresses(request: GetServers) {
-    //if (this.tools.env > this.tools.Environment.Staging) { return this.arma3Bs(); }
-    await (<any>this.client).connection.promise(); // Puh todo
+    if (request.gameId === GameHelper.gameIds.Starbound) {
+      const gameServers = await GameHelper.getGameServers(request.gameId, this.context);
+      return { addresses: Array.from(gameServers.values()).map(x => x.address)};
+    }
+    // if (this.tools.env > this.tools.Environment.Staging) { return this.arma3Bs(); }
+    await (<any> this.client).connection.promise(); // Puh todo
     return await this.client.hubs.server
       .getServers({ gameId: request.gameId });
   }

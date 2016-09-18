@@ -13,7 +13,8 @@
     <div class="td">${model.numPlayers} / ${model.maxPlayers} plyrs</div>
     <div class="td">
       <i class="icon withSIX-icon-Lock" if.bind="model.passwordRequired"></i>
-      <a href="/p/Arma-3/servers/${slug}">${model.name}</a> [${model.gameState} ${model.gameType}] v${model.gameVersion}
+      <a href="/p/${w6.activeGame.slug}/servers/${slug}">${model.name}</a> [${model.gameState} ${model.gameType}]
+      v${model.gameVersion}
     </div>
     <div class="td">${model.mods.length} mods</div>
     <div class="td">[${model.missionName} @ ${model.mapName}]</div>
