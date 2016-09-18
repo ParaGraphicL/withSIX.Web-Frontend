@@ -31,6 +31,13 @@
             <a target="_blank" href.bind="getPublisherUrl(p)">${getPublisherName(p)}</a>
           </li>
         </ul>
+
+        <h2>External links</h2>
+        <ul>
+          <li repeat.for="t of model.additional.info.tags">
+            ${t.name}
+          </li>
+        </ul>
       </div>
 
       <div>
