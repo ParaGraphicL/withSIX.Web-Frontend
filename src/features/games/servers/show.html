@@ -32,12 +32,17 @@
           </li>
         </ul>
 
-        <h2>External links</h2>
+        <h2>Tags</h2>
         <ul>
           <li repeat.for="t of model.additional.info.tags">
             ${t.name}
           </li>
         </ul>
+
+        <div if.bind="model.additional.info.description">
+          <h2>Description</h2>
+          <div innerHTML.bind="model.additional.info.description"></div>
+        </div>
       </div>
 
       <div>
