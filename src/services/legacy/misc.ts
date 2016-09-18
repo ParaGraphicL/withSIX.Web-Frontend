@@ -3,6 +3,7 @@ import {IBasketItem, BasketItemType} from './baskets';
 import {Tools} from '../tools';
 import {W6} from '../withSIX';
 import breeze from 'breeze-client';
+import { GameHelper } from '../helpers';
 
 export interface IBreezeSaveError {
   entityErrors: breeze.EntityError[];
@@ -43,18 +44,16 @@ export interface IHttpResponseException {
 
 
 export class ModsHelper {
-  static arma2Id = "1947DE55-44ED-4D92-A62F-26CFBE48258B";
-  static arma3Id = "9DE199E3-7342-4495-AD18-195CF264BA5B";
   static a3MpCategories = ["Island", "Objects (Buildings, Foliage, Trees etc)"];
   static objectCategories = ["Objects (Buildings, Foliage, Trees etc)"];
   static getGameIds(id: string) {
-    if (id.toUpperCase() == this.arma3Id)
-      return [id, this.arma2Id];
+    if (id.toUpperCase() === GameHelper.gameIds.Arma3)
+      return [id, GameHelper.gameIds.Arma2Co];
     return [id];
   }
 
   static getCompatibilityModsFor(id: string, otherId: string, tags: string[] = []) {
-    if (id.toUpperCase() == this.arma3Id) {
+    if (id.toUpperCase() === GameHelper.gameIds.Arma3) {
       if (tags.some(x => this.objectCategories.some(x => x == x))) return [];
       if (tags.some(x => this.a3MpCategories.some(x => x == x))) return ["@cup_terrains_core"];
       return ["@AllInArmaStandaloneLite"];
