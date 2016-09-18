@@ -27,7 +27,7 @@
             <div class="td">Mission</div>
           </div>
           <div virtual-repeat.for="item of model.addresses" class="${item.loading ? '' : 'tr'} virtual-row" as-element="compose"
-            view-model="./server-item" model.bind="item">
+            view-model.bind="vm" model.bind="item">
           </div>
         </div>
       </div>

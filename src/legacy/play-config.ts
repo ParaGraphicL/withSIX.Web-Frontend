@@ -30,6 +30,7 @@ export const configure = (app: ng.IModule) => {
         when('/:gameSlug/stream', 'game.stream').
         //when('/:gameSlug/stream/:streamType?', 'game.stream').
         when('/:gameSlug/servers', 'game.servers').
+        when('/:gameSlug/servers/:serverIp/:serverSlug?', 'game.servers').
         when('/:gameSlug/mods', 'game.mods').
         when('/:gameSlug/mods/:modId/:modSlug?/download', 'game.modsShow.download').
         when('/:gameSlug/mods/:modId/:modSlug?/related', 'game.modsShow.related').
