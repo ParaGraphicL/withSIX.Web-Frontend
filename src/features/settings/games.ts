@@ -1,31 +1,31 @@
-import {Router} from 'aurelia-router';
-import {inject} from 'aurelia-framework';
-import {ViewModel, handlerFor, Query, DbClientQuery, IGameSettingsEntry, IGamesSettings} from '../../framework';
+import {Router} from "aurelia-router";
+import {inject} from "aurelia-framework";
+import {ViewModel, handlerFor, Query, DbClientQuery, IGameSettingsEntry, IGamesSettings} from "../../framework";
 
 export class General extends ViewModel {
   games: IGameSettingsEntry[];
+  router: Router;
+  selectedGame: IGameSettingsEntry;
 
   model;
 
   async activate(model) {
     this.model = model;
-    var r = await new GetGamesSettings().handle(this.mediator);
+    const r = await new GetGamesSettings().handle(this.mediator);
     this.games = r.games;
-    if (!this.model) this.model = {}
-    if (!this.model.id && !this.model.slug) this.model.slug = this.w6.activeGame.slug;
-    if (this.model.slug)
-      this.selectedGame = this.games.find(x => x.slug == this.model.slug);
-    else if (this.model.id)
-      this.selectedGame = this.games.find(x => x.id == this.model.id);
+    if (!this.model) { this.model = {}; }
+    if (!this.model.id && !this.model.slug) { this.model.slug = this.w6.activeGame.slug; }
+    if (this.model.slug) {
+      this.selectedGame = this.games.find(x => x.slug === this.model.slug);
+    } else {
+      if (this.model.id) { this.selectedGame = this.games.find(x => x.id === this.model.id); }
+    }
   }
 
   get gameViewModel() {
     let slug = this.selectedGame.slug.toLowerCase();
-    return slug == 'arma-3' || slug == 'arma-2' ? slug : 'general';
+    return slug === "arma-3" || slug === "arma-2" ? slug : "general";
   }
-
-  router: Router;
-  selectedGame: IGameSettingsEntry;
 
   // _selectedGame;
   // get selectedGame() {

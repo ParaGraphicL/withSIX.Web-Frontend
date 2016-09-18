@@ -25,25 +25,28 @@ export class Show extends ViewModel {
 
   async activate(params, routeConfig) {
     this.w6.libraryParent = this;
-    let x = await new GetGame(params['gameSlug']).handle(this.mediator)
-    this.model.game = x;
-    this.eventBus.publish(new GameChanged(x.id, x.slug, true));
+    const gameSlug = params['gameSlug'];
+    const game = await new GetGame(gameSlug).handle(this.mediator);
+    this.model.game = game;
+    this.eventBus.publish(new GameChanged(game.id, game.slug, true));
     try {
-      let x = await new GetGames().handle(this.mediator);
-      this.model.games = x.games;
+      const gInfo = await new GetGames().handle(this.mediator);
+      this.model.games = gInfo.games.toMap(x => x.id);
     } catch (err) {
       this.tools.Debug.warn("Error trying to fetch games", err);
       this.model.games = new Map<string, any>();
     }
     // always add the requested game..
-    if (!this.model.games.has(this.model.game.id)) this.model.games[this.model.game.id] = this.model.game;
+    if (!this.model.games.has(this.model.game.id)) {
+      this.model.games.set(this.model.game.id, this.model.game);
+    }
   }
 
   deactivate() {
     super.deactivate();
     this.w6.libraryParent = null;
-    //this.eventBus.publish(new GameChanged());
   }
+  getGame(gameId: string) { return this.model.games.get(gameId); }
 }
 
 export class GetGame extends Query<IBreezeGame> {

@@ -52,7 +52,6 @@ class GetModsHandler extends DbClientQuery<GetMods, IModsData> {
     const r = await this.getAllClientMods(request.id);
     r.items = r.items.concat(await authorMods);
     return r;
-    // return GetModsHandler.designTimeData(request);
   }
 
   async getAuthoredMods(request: GetMods) {
@@ -63,9 +62,9 @@ class GetModsHandler extends DbClientQuery<GetMods, IModsData> {
 
   async getAllClientMods(id: string) {
     const request = { id, page: 0 };
-    let pageInfo = { items: [], page: 0, pageSize: 24, totalPages: 1 };
+    let pageInfo = { items: [], pageNumber: 0, pageSize: 24, totalPages: 1 };
     let items = [];
-    while (pageInfo.page < pageInfo.totalPages) {
+    while (pageInfo.pageNumber < pageInfo.totalPages) {
       request.page++;
       pageInfo = await this.getClientMods(request);
       items = items.concat(pageInfo.items);
@@ -81,70 +80,25 @@ class GetModsHandler extends DbClientQuery<GetMods, IModsData> {
       return x;
     } catch (err) {
       this.tools.Debug.warn("Error while trying to get mods from client", err);
-      return {items: [], page: 1, pageSize: 24, totalPages: 1};
+      return {items: [], pageNumber: 1, pageSize: 24, totalPages: 1};
     }
   }
 
   convertOnlineMods(mod: IBreezeMod): IContent {
     return Object.assign(<IContent> {
-      id: mod.id,
       author: mod.author ? mod.author.displayName : mod.authorText,
       authorSlug: mod.author ? mod.author.slug : null,
-      image: this.w6.url.getContentAvatarUrl(mod.avatar, mod.avatarUpdatedAt),
-      slug: mod.slug,
-      name: mod.name,
-      packageName: mod.packageName,
       gameId: mod.game.id,
       gameSlug: mod.game.slug,
+      id: mod.id,
+      image: this.w6.url.getContentAvatarUrl(mod.avatar, mod.avatarUpdatedAt),
+      name: mod.name,
+      packageName: mod.packageName,
+      slug: mod.slug,
       type: "mod",
       version: mod.latestStableVersion,
     }, {
-            publishers: mod.publishers,
+      publishers: mod.publishers,
     });
-  }
-
-  static async designTimeData(request: GetMods) {
-    let testData = <any> [{
-      id: "x",
-      name: "Test mod",
-      slug: "test-mod",
-      type: "mod",
-      isFavorite: false,
-      gameId: request.id,
-      gameSlug: "arma-3",
-      author: "Some author",
-      image: "http://i.ytimg.com/vi/yaqe1qesQ8c/maxresdefault.jpg",
-    }, {
-        id: "x",
-        name: "Test mod 2",
-        slug: "test-mod-2",
-        type: "mod",
-        isFavorite: false,
-        gameId: request.id,
-        gameSlug: "arma-3",
-        author: "Some author",
-        image: "http://i.ytimg.com/vi/yaqe1qesQ8c/maxresdefault.jpg",
-						}, {
-        id: "x",
-        name: "Test mod 3",
-        slug: "test-mod-3",
-        type: "mod",
-        isFavorite: false,
-        gameId: request.id,
-        gameSlug: "arma-3",
-        author: "Some author",
-        image: "http://i.ytimg.com/vi/yaqe1qesQ8c/maxresdefault.jpg",
-						}, {
-        id: "x",
-        name: "Test mod 4",
-        slug: "test-mod-4",
-        type: "mod",
-        isFavorite: false,
-        gameId: request.id,
-        gameSlug: "arma-3",
-        author: "Some author",
-        image: "http://i.ytimg.com/vi/yaqe1qesQ8c/maxresdefault.jpg",
-						}];
-    return { mods: testData.concat(testData, testData) };
   }
 }

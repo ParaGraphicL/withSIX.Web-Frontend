@@ -77,6 +77,8 @@ export class W6Urls {
   }
   version: string;
 
+  get currentPath() { return window.location.pathname; }
+
   getCurrentPageWithoutHash() { return window.location.protocol + '//' + window.location.host + window.location.pathname + window.location.search; }
 
   get selectedSite() {
