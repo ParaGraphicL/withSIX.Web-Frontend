@@ -22,6 +22,7 @@
       <td>[${model.missionName} @ ${model.mapName}]</td>
 
       <div if.bind="model.additional">
+        <img if.bind="model.additional.info.avatarUrl" src.bind="model.additional.info.avatarUrl" />
         <h2>External links</h2>
         <ul>
           <li if.bind="model.additional.info.homepage">
