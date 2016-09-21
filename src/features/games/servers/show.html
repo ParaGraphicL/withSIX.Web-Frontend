@@ -21,6 +21,8 @@
       <td>${model.mods.length} mods |</td>
       <td>[${model.missionName} @ ${model.mapName}]</td>
 
+      <compose view-model="./external/index"></compose>
+
       <div if.bind="model.additional">
         <img if.bind="model.additional.info.avatarUrl" src.bind="model.additional.info.avatarUrl" />
         <h2>External links</h2>
