@@ -4,6 +4,7 @@ import {
 
 export class Show extends ViewModel {
   interval: number;
+  address: string;
   modelPartial: { address: IIPEndpoint; };
   gameId;
   model: IServerInfo;
@@ -11,7 +12,8 @@ export class Show extends ViewModel {
   join = uiCommand2("Join", async () => alert("TODO"), { icon: "withSIX-icon-Rocket" });
 
   async activate(params, routeConfig) {
-    let addr = params.serverId.replace(/-/g, ".").split(":");
+    this.address = params.serverId.replace(/-/g, ".")
+    const addr = this.address.split(":");
     this.gameId = this.w6.activeGame.id;
     this.modelPartial = { address: { address: addr[0], port: parseInt(addr[1]) } };
     this.model = await this.loadModel(this.modelPartial);
@@ -33,7 +35,7 @@ export class Show extends ViewModel {
 }
 
 export class GetServer extends Query<IServerInfo> {
-  constructor(public gameId: string, public address: IIPEndpoint) { super(); }
+  constructor(public gameId: string, public address: IIPEndpoint, public includePlayers = true) { super(); }
 }
 
 @handlerFor(GetServer)
@@ -41,7 +43,7 @@ class GetServerQuery extends DbClientQuery<GetServer, IServerInfo>  {
   async handle(request: GetServer) {
     await (<any> this.client).connection.promise(); // Puh todo
     let results = await this.client.hubs.server
-      .getServersInfo(<any> { gameId: request.gameId, addresses: [request.address], includePlayers: true });
+      .getServersInfo(<any> { gameId: request.gameId, addresses: [request.address], includePlayers: request.includePlayers });
     const gameServers = await GameHelper.getGameServers(request.gameId, this.context);
     return Object.assign({}, results.servers[0], { additional: gameServers.get(GameHelper.toAddresss(request.address)) });
   }
