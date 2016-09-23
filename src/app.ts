@@ -40,8 +40,8 @@ export class App extends ViewModel {
   first: boolean;
   firefoxTimeoutPassed = false;
   breadcrumbs: { title: string, path: string }[];
-  gameInfo: GameClientInfo = new GameClientInfo(null, null, null);
-  game: { id: string; slug: string } = { id: null, slug: null };
+  gameInfo: GameClientInfo = new GameClientInfo(undefined, undefined, undefined);
+  game: { id: string; slug: string } | { id: null; slug: null} = { id: null, slug: null };
   template = "v2";
   userMenuItems = [];
   dialogMap = [];

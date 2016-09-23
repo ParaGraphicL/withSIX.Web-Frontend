@@ -37,7 +37,7 @@ window.RedactorPlugins.bufferbuttons = () => {
     }
   };
 };
-export var globalRedactorOptions = { plugins: [], linebreaks: true }; // 'p', 'h1', 'h2', 'pre' // allowedTags: ['spoiler', 'code', 'p', 'h1', 'h2', 'pre']
+export var globalRedactorOptions: { plugins: string[], linebreaks: boolean } = { plugins: [], linebreaks: true }; // 'p', 'h1', 'h2', 'pre' // allowedTags: ['spoiler', 'code', 'p', 'h1', 'h2', 'pre']
 globalRedactorOptions.plugins = ['bufferbuttons', 'image', 'video', 'table', 'fullscreen'];
 
 /*
@@ -155,16 +155,15 @@ export class W6Urls {
     return this.tools.uriHasProtocol(asset) ? asset : this.contentCdn + '/' + asset;
   }
 
-  public getContentAvatarUrl(avatar: string, updatedAt?: Date): string {
-    if (!avatar || avatar == "")
-      return null;
+  public getContentAvatarUrl(avatar: string, updatedAt?: Date): string | null {
+    if (!avatar || avatar === "") { return null; }
     return this.getUsercontentUrl2(avatar, updatedAt);
   }
 
-  public processAssetVersion(avatar: string, updatedAt?: Date): string {
-    if (avatar == null) return null;
+  public processAssetVersion(avatar: string, updatedAt?: Date): string | null {
+    if (avatar == null) { return null; }
     if (!updatedAt) return avatar;
-    if (avatar.startsWith("blob:")) return avatar;
+    if (avatar.startsWith("blob:")) { return avatar; }
     return avatar + "?" + Math.round(updatedAt.getTime() / 1000);
   }
 
