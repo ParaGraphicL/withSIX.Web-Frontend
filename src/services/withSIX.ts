@@ -37,7 +37,7 @@ window.RedactorPlugins.bufferbuttons = () => {
     }
   };
 };
-export var globalRedactorOptions = { plugins: [], linebreaks: true }; // 'p', 'h1', 'h2', 'pre' // allowedTags: ['spoiler', 'code', 'p', 'h1', 'h2', 'pre']
+export var globalRedactorOptions: { plugins: string[], linebreaks: boolean } = { plugins: [], linebreaks: true }; // 'p', 'h1', 'h2', 'pre' // allowedTags: ['spoiler', 'code', 'p', 'h1', 'h2', 'pre']
 globalRedactorOptions.plugins = ['bufferbuttons', 'image', 'video', 'table', 'fullscreen'];
 
 /*
@@ -155,16 +155,15 @@ export class W6Urls {
     return this.tools.uriHasProtocol(asset) ? asset : this.contentCdn + '/' + asset;
   }
 
-  public getContentAvatarUrl(avatar: string, updatedAt?: Date): string {
-    if (!avatar || avatar == "")
-      return null;
+  public getContentAvatarUrl(avatar: string, updatedAt?: Date): string | null {
+    if (!avatar || avatar === "") { return null; }
     return this.getUsercontentUrl2(avatar, updatedAt);
   }
 
-  public processAssetVersion(avatar: string, updatedAt?: Date): string {
-    if (avatar == null) return null;
+  public processAssetVersion(avatar: string, updatedAt?: Date): string | null {
+    if (avatar == null) { return null; }
     if (!updatedAt) return avatar;
-    if (avatar.startsWith("blob:")) return avatar;
+    if (avatar.startsWith("blob:")) { return avatar; }
     return avatar + "?" + Math.round(updatedAt.getTime() / 1000);
   }
 
@@ -367,7 +366,11 @@ export class W6Ads {
     */
   };
 
-  get isPageExcluded() { return window.location.href.includes("QEDuk6uVNE2ecQyHMP_uXQ"); }
+  get isPageExcluded() {
+    return window.location.pathname.startsWith("/login")
+      || window.location.pathname.startsWith("/register")
+      || window.location.href.includes("QEDuk6uVNE2ecQyHMP_uXQ");
+  }
 
   public processAdSlots(previous, current) {
     var slots = [];
@@ -481,8 +484,7 @@ export class W6 {
   constructor(public url: W6Urls, public userInfo: IUserInfo, public miniClient: Client, public api: IApi) {
     this.chromeless = window.location.search.includes("chromeless") || this.isClient;
     this.enableBasket = !this.isClient;
-    if (this.isClient)
-      this.client = new W6Client(<IClient>window.six_client);
+    if (this.isClient) { this.client = new W6Client(<IClient>window.six_client); }
 
     let settings = window.localStorage.getItem('w6.settings');
     this.settings = settings ? JSON.parse(settings) : {};

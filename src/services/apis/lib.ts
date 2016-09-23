@@ -10,3 +10,5 @@ export * from './nexus';
 export * from './steam';
 export * from './parser';
 export * from './imgur';
+export * from './listforge';
+export * from './gametracker';

@@ -1,3 +1,21 @@
 <template>
-  <a href="${w6.url.currentPath}/${slug}">${address}: ${name}</a> ${numPlayers}/${maxPlayers} ${mission}
+  <template if.bind="loading">
+    <div class="td colspan">
+      Loading <a href="${w6.url.currentPath}/${slug}">${address | ipEndpoint}</a>
+    </div>
+  </template>
+  <template if.bind="!loading">
+    <div class="td">${model.ping}ms</div>
+    <div class="td">
+      <command-button model.bind="refresh"></command-button>
+      <command-button model.bind="join"></command-button>
+    </div>
+    <div class="td">${numPlayers} / ${maxPlayers} plyrs</div>
+    <div class="td">
+      <i class="icon withSIX-icon-Lock" if.bind="passwordRequired"></i>
+      <a href="${w6.url.currentPath}/${slug}">${name}</a> [${gameState} ${gameType}] v${gameVersion}
+    </div>
+    <div class="td">${mods.length} mods</div>
+    <div class="td">[${mission} @ ${mapName}]</div>
+  </template>
 </template>
