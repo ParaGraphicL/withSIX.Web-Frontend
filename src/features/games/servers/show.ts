@@ -1,5 +1,6 @@
 import {
-  GameHelper, uiCommand2, handlerFor, Query, DbClientQuery, IGameSettingsEntry, IGamesSettings, IServerInfo, IIPEndpoint, ViewModel,
+  DbClientQuery, GameHelper, IIPEndpoint, IServerInfo, LaunchAction, LaunchGame,
+  Query, ViewModel, handlerFor, uiCommand2
 } from "../../../framework";
 
 export class Show extends ViewModel {
@@ -9,7 +10,14 @@ export class Show extends ViewModel {
   gameId;
   model: IServerInfo;
   refresh = uiCommand2("Refresh", () => this.loadModel(this.modelPartial), { icon: "withSIX-icon-Reload" });
-  join = uiCommand2("Join", async () => alert("TODO"), { icon: "withSIX-icon-Rocket" });
+  join = uiCommand2("Join", () => this.launch(), { icon: "withSIX-icon-Rocket" });
+
+  launch() {
+    const act = new LaunchGame(this.w6.activeGame.id);
+    act.action = LaunchAction.Join;
+    act.serverAddress = this.address;
+    return act.handle(this.mediator);
+  }
 
   async activate(params, routeConfig) {
     this.address = params.serverId.replace(/-/g, ".")

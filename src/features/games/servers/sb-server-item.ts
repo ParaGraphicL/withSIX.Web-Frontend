@@ -1,4 +1,4 @@
-import { GameHelper, IIPEndpoint, IServerInfo, ViewModel, uiCommand2 } from "../../../framework";
+import { GameHelper,  IIPEndpoint, , IServerInfo, LaunchAction, LaunchGame, ViewModel, uiCommand2 } from "../../../framework";
 import { GetServer } from "./show";
 
 export class SbServerItem extends ViewModel {
@@ -17,7 +17,14 @@ export class SbServerItem extends ViewModel {
   mods = [];
 
   refresh = uiCommand2("", () => this.loadModel(this.modelPartial), {icon: "withSIX-icon-Reload"});
-  join = uiCommand2("", async () => alert("TODO"), {icon: "withSIX-icon-Rocket"});
+  join = uiCommand2("", () => this.launch(), { icon: "withSIX-icon-Rocket" });
+
+  launch() {
+    const act = new LaunchGame(this.w6.activeGame.id);
+    act.action = LaunchAction.Join;
+    act.serverAddress = this.address;
+    return act.handle(this.mediator);
+  }
 
   activate(model: { address: IIPEndpoint, gameId: string }) {
     this.modelPartial = model;

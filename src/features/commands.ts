@@ -44,6 +44,20 @@ export enum LaunchType {
   Editor
 }
 
+
+export class LaunchGame extends VoidCommand {
+  constructor(public id: string, public launchType: LaunchType = LaunchType.Default) { super(); }
+  public action?: LaunchAction;
+  public serverAddress?: string;
+}
+
+@handlerFor(LaunchGame)
+class LaunchGameHandler extends DbClientQuery<LaunchGame, void> {
+  public handle(request: LaunchGame): Promise<void> {
+    return this.client.launchGame(request);
+  }
+}
+
 @handlerFor(SubscribeCollection)
 class SubscribeCollectionHandler extends DbClientQuery<SubscribeCollection, void> {
   async handle(request: SubscribeCollection): Promise<void> {
