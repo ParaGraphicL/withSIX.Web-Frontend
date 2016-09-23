@@ -1,5 +1,5 @@
 import {MenuItem, ViewModel, uiCommand2, OpenFolder, ItemState, IMenuItem, IReactiveCommand} from '../../../framework';
-import {Query, DbClientQuery, handlerFor, VoidCommand, IGame, FolderType} from '../../../framework';
+import {Query, DbClientQuery, LaunchGame, handlerFor, VoidCommand, IGame, FolderType} from '../../../framework';
 import {Index as SettingsIndex} from '../../settings/index';
 
 export class Game extends ViewModel {
@@ -46,8 +46,10 @@ export class Game extends ViewModel {
 
   launch: IReactiveCommand<void>;
   openFolder: IReactiveCommand<void>;
-  openStream = uiCommand2('Stream', async () => this.navigateInternal(`/p/${this.model.slug}`), { icon: 'icon withSIX-icon-Nav-Stream' });
-  openLibrary = uiCommand2('Library', async () => this.navigateInternal(`/me/library/${this.model.slug}`), { icon: 'icon withSIX-icon-Nav-Collection' });
+  openStream = uiCommand2('Stream',
+    async () => this.navigateInternal(`/p/${this.model.slug}`), { icon: 'icon withSIX-icon-Nav-Stream' });
+  openLibrary = uiCommand2('Library',
+    async () => this.navigateInternal(`/me/library/${this.model.slug}`), { icon: 'icon withSIX-icon-Nav-Collection' });
   openSettings = uiCommand2('Settings', async () => {
     let model = { module: "games", games: { id: this.model.id } };
     this.dialog.open({ viewModel: SettingsIndex, model: model })
@@ -55,19 +57,4 @@ export class Game extends ViewModel {
 
   bottomActions: IMenuItem[];
   topMenuActions: IMenuItem[];
-}
-
-export enum LaunchType {
-  Default
-}
-
-export class LaunchGame extends VoidCommand {
-  constructor(public id: string, public launchType: LaunchType = LaunchType.Default) { super(); }
-}
-
-@handlerFor(LaunchGame)
-class LaunchGameHandler extends DbClientQuery<LaunchGame, void> {
-  public handle(request: LaunchGame): Promise<void> {
-    return this.client.launchGame({ id: request.id, launchType: request.launchType });
-  }
 }
