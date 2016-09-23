@@ -366,7 +366,11 @@ export class W6Ads {
     */
   };
 
-  get isPageExcluded() { return window.location.href.includes("QEDuk6uVNE2ecQyHMP_uXQ"); }
+  get isPageExcluded() {
+    return window.location.pathname.startsWith("/login")
+      || window.location.pathname.startsWith("/register")
+      || window.location.href.includes("QEDuk6uVNE2ecQyHMP_uXQ");
+  }
 
   public processAdSlots(previous, current) {
     var slots = [];
@@ -480,8 +484,7 @@ export class W6 {
   constructor(public url: W6Urls, public userInfo: IUserInfo, public miniClient: Client, public api: IApi) {
     this.chromeless = window.location.search.includes("chromeless") || this.isClient;
     this.enableBasket = !this.isClient;
-    if (this.isClient)
-      this.client = new W6Client(<IClient>window.six_client);
+    if (this.isClient) { this.client = new W6Client(<IClient>window.six_client); }
 
     let settings = window.localStorage.getItem('w6.settings');
     this.settings = settings ? JSON.parse(settings) : {};
