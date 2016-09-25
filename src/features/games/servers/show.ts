@@ -28,6 +28,9 @@ export class Show extends ViewModel {
     this.interval = setInterval(() => { if (this.refresh.canExecute) { this.refresh(); } }, 15 * 1000);
   }
 
+    get details() { return JSON.stringify((<any> this.model).details || {}, null, '  '); }
+
+
   getPublisherUrl(p) {
     return p.publisher === 2 ?
       `https://starbound-servers.net/server/${p.publisherId}/` : `https://www.gametracker.com/server_info/${p.publisherId}/`;
