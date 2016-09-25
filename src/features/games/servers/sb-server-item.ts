@@ -1,4 +1,4 @@
-import { GameHelper,  IIPEndpoint, , IServerInfo, LaunchAction, LaunchGame, ViewModel, uiCommand2 } from "../../../framework";
+import { GameHelper,  IIPEndpoint, IServerInfo, LaunchAction, LaunchGame, ViewModel, uiCommand2 } from "../../../framework";
 import { GetServer } from "./show";
 
 export class SbServerItem extends ViewModel {
@@ -13,7 +13,7 @@ export class SbServerItem extends ViewModel {
     info: {
       name; numPlayers; maxPlayers; mission;
     }
-  } = <any>{}
+  } = <any> {};
   mods = [];
 
   refresh = uiCommand2("", () => this.loadModel(this.modelPartial), {icon: "withSIX-icon-Reload"});
