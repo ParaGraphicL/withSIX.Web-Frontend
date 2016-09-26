@@ -28,10 +28,11 @@ export class Show extends ViewModel {
     this.model = await this.loadModel(this.modelPartial);
     const details = (<any> this.model).details;
     if (details && details.modList) {
-      const mappings = await new GetModInfo(this.gameId, details.modList).handle(this.mediator);
+      let l: {mappings: any[]} = await new GetModInfo(this.gameId, details.modList).handle(this.mediator);
+      const mappings = l.mappings.toMap(x => x.inputName);
       this.mods = details.modList.map(x => {
         return {
-          mapping: mappings.mappings[x.name],
+          mapping: mappings.get(x.name),
           name: x.name,
         };
       });
