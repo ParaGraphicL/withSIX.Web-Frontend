@@ -58,6 +58,19 @@
       </div>
 
       <div>
+        <h2>Mods</h2>
+        <ul>
+          <li repeat.for="m of mods">
+            ${m.name}
+            <div if.bind="m.mapping">
+              Recognized:
+              <a href="/p/Arma-3/mods/${m.mapping.id.toShortId()}/${m.mapping.name.sluggifyEntityName()}">${m.mapping.name}</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div>
         <h2>Players</h2>
         <ul>
           <li repeat.for="p of model.players">
