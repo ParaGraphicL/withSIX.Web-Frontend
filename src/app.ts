@@ -14,6 +14,7 @@ import { GameBaskets } from "./features/game-baskets";
 import { AddModsToCollections } from "./features/games/add-mods-to-collections";
 import { CreateCollectionDialog } from "./features/games/collections/create-collection-dialog";
 import { HostServer } from "./features/games/servers/host-server";
+import { ServerRender } from "./features/games/servers/server-render";
 import { FeaturesModule } from "./features/index";
 import { Finalize } from "./features/login/finalize";
 import { MessageDialog } from "./features/message-dialog";
@@ -148,7 +149,8 @@ export class App extends ViewModel {
     Origin.set(UserErrorDialog, { moduleId: "features/user-error-dialog", moduleMember: "UserErrorDialog" });
     Origin.set(MessageDialog, { moduleId: "features/message-dialog", moduleMember: "MessageDialog" });
     Origin.set(Finalize, { moduleId: "features/login/finalize", moduleMember: "Finalize" });
-    Origin.set(HostServer, { moduleId: "features/games/servers/host-server", moduleMember: "HostServer"});
+    Origin.set(HostServer, { moduleId: "features/games/servers/host-server", moduleMember: "HostServer" });
+    Origin.set(ServerRender, { moduleId: "features/games/servers/server-render", moduleMember: "ServerRender"});
 
     let isSync = window.location.search.includes("sync=1") ? true : false;
     if (isSync) { this.w6.updateSettings(x => x.hasSync = true); }

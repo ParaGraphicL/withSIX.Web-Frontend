@@ -15,6 +15,10 @@
           </tr>
         </tbody>
       </table>-->
+      <div>
+        <command-button model.bind="refresh"></command-button>
+        ${model.addresses.length} servers found
+      </div>
 
       <div class="tablewrapper">
         <div class="table virtual-container">
@@ -27,7 +31,7 @@
             <div class="td">Mission</div>
           </div>
           <div virtual-repeat.for="item of model.addresses" class="${item.loading ? '' : 'tr'} virtual-row" as-element="compose"
-            view-model.bind="vm" model.bind="item">
+            click.trigger="showServer(item)" view-model.bind="vm" model.bind="item">
           </div>
         </div>
       </div>
