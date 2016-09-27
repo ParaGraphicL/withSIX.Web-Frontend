@@ -9,7 +9,7 @@ Bluebird.config({
   //// Enable long stack traces
   // longStackTraces: true,
   //// Enable cancellation
-  // cancellation: true,
+  cancellation: true,
   //// Enable monitoring
   // monitoring: true,
   // Enable warnings
