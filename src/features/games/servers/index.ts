@@ -34,8 +34,7 @@ export class Index extends ViewModel {
     try {
       const req = new GetServers(this.w6.activeGame.id);
       const p = req.handle(this.mediator);
-      this.cancel = req;
-      console.log("$$$$ hmm", req, this.cancel);
+      this.cancel = uiCommand2("Cancel", async () => { try { await req.cancel() } catch (err) {} } );
       const r = await p;
     } finally {
       dsp.unsubscribe();
@@ -95,7 +94,6 @@ class GetServersQuery extends DbClientQuery<GetServers, IBatchResult>  {
     // }
     // if (this.tools.env > this.tools.Environment.Staging) { return this.arma3Bs(); }
     //return this.getAddresses(request); //{ addresses: results.addresses.map(x => { return { address: x, gameId: request.gameId }; }) };
-    await (<any>this.client).connection.promise(); // Puh todo
     const cp = this.client.hubs.server
       .getServers({ gameId: request.gameId });;
     request.cancel = cp.cancel;

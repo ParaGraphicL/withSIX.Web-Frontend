@@ -16,9 +16,8 @@
         </tbody>
       </table>-->
       <div>
-        <command-button model.bind="refresh"></command-button>
-        <button show.bind="cancel.cancel" click.delegate="cancel.cancel()"> (Cancel)</button> ${model.addresses.length}
-        servers found
+        <command-button model.bind="refresh" cancel.bind="cancel"></command-button>
+        ${model.addresses.length} servers found
       </div>
 
       <div class="tablewrapper">
