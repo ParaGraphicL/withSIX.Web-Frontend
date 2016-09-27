@@ -9,5 +9,9 @@
       </span>
       <span class="fa fa-spinner fa-spin" title.bind="name" if.bind="!noProcessing" show.bind="command.isExecuting"></span>
     </button>
+    <button if.bind="cancel" show.bind="command.isExecuting" click.delegate="cancel()" class="naked-button"
+      title="Cancel">
+    <span class="icon withSIX-icon-X"></span>
+    </button>
   </conditional-title>
 </template>
