@@ -5,8 +5,7 @@ import {
 
 import { ServerRenderBase } from './server-render-base';
 
-export class Show extends ServerRenderBase {
-  activate(params, routeConfig) {
-    return super.activateInternal(params.serverId.replace(/-/g, "."));
-  }
+export class ServerRender extends ServerRenderBase {
+  activate(model) { return this.activateInternal(model); }
 }
+

@@ -1,0 +1,85 @@
+<template>
+  <div class="tile">
+    <td>${model.ping}ms</td>
+    <td>
+      <command-button model.bind="refresh">
+        <span class="icon ${refresh.icon}"></span>
+      </command-button>
+    </td>
+    <td>
+      <command-button model.bind="join">
+        <span class="icon ${join.icon}"></span>
+      </command-button>
+    </td>
+    <td>${model.numPlayers} / ${model.maxPlayers} plyrs |</td>
+    <td>
+      <i class="icon withSIX-icon-Lock" if.bind="model.passwordRequired"></i> ${model.name} [${model.gameState}
+      | ${model.gameType}] | v${model.gameVersion} |
+    </td>
+    <td>${model.mods.length} mods |</td>
+    <td>[${model.missionName} @ ${model.mapName}]</td>
+
+    <compose view-model="./external/index"></compose>
+
+    <!-- ask for password otherwise, and add: /${password}.
+        only show if user has steam etc.
+       -->
+    <a if.bind="!model.passwordRequired" href="steam://connect/${address}">Join through Steam</a>
+
+    <div if.bind="!model.isClaimed">
+      This server is not yet claimed, is this your server? <button>claim it here</button>
+    </div>
+
+    <div if.bind="model.additional">
+      <img if.bind="model.additional.info.avatarUrl" src.bind="model.additional.info.avatarUrl" />
+      <h2>External links</h2>
+      <ul>
+        <li if.bind="model.additional.info.homepage">
+          <a target="_blank" href.bind="model.additional.info.homepage">Homepage</a>
+        </li>
+        <li repeat.for="p of model.additional.publishers">
+          <a target="_blank" href.bind="getPublisherUrl(p)">${getPublisherName(p)}</a>
+        </li>
+      </ul>
+
+      <h2>Tags</h2>
+      <ul>
+        <li repeat.for="t of model.additional.info.tags">
+          ${t.name}
+        </li>
+      </ul>
+
+      <div if.bind="model.additional.info.description">
+        <h2>Description</h2>
+        <div innerHTML.bind="model.additional.info.description"></div>
+      </div>
+    </div>
+
+    <div>
+      <h2>Mods</h2>
+      <ul>
+        <li repeat.for="m of mods">
+          ${m.name}
+          <div if.bind="m.mapping">
+            Recognized:
+            <a href="/p/Arma-3/mods/${m.mapping.id.toShortId()}/${m.mapping.name.sluggifyEntityName()}">${m.mapping.name}</a>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div>
+      <h2>Players</h2>
+      <ul>
+        <li repeat.for="p of model.players">
+          ${p.name} | ${p.score} | ${p.deaths}
+        </li>
+      </ul>
+    </div>
+
+    <h2>Extended details</h2>
+    <button click.delegate="detailsShown = !detailsShown">${detailsShown ? 'Hide' : 'Show'}</button>
+    <pre innerHTML.bind="details" show.bind="detailsShown"></pre>
+  </div>
+  </div>
+</template>

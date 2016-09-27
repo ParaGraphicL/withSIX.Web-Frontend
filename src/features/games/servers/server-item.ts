@@ -1,5 +1,6 @@
 import { IIPEndpoint, IServerInfo, ViewModel, uiCommand2 } from "../../../framework";
-import { GetServer } from "./show";
+import { GetServer } from "./server-render-base";
+import { ServerRender } from "./server-render";
 
 interface IServer {
   address: string;
@@ -22,6 +23,10 @@ export class ServerItem extends ViewModel {
     this.loading = true;
     this.refresh();
     //this.interval = setInterval(() => { if (this.refresh.canExecute) { this.refresh(); } }, 15 * 1000);
+  }
+
+  showServer() {
+    return this.dialog.open({model: this.model.address, viewModel: ServerRender})
   }
 
   deactivate() { clearInterval(this.interval); }

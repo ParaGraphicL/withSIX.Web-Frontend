@@ -1,6 +1,12 @@
 import { Router, RouterConfiguration } from "aurelia-router";
 import { ViewModel, handlerFor, Query, DbClientQuery, IGameSettingsEntry, IGamesSettings, IIPEndpoint, GameHelper } from "../../../framework";
 
+import { ServerRender } from './server-render';
+
+interface IServer {
+  address: string, gameId: string
+}
+
 export class Index extends ViewModel {
   model: IServers;
   vm = "./server-item";
@@ -11,11 +17,15 @@ export class Index extends ViewModel {
     }
   }
 
+  showServer(server: IServer) {
+    return this.dialog.open({model: server.address, viewModel: ServerRender})
+  }
+
   getSlug(addr: string) { return addr.replace(/\./g, "-") + "/test"; }
 }
 
 interface IServers {
-  addresses: { address: string, gameId: string }[];
+  addresses: IServer[];
 }
 
 export class ServersModule {

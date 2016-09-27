@@ -1,5 +1,6 @@
 import { GameHelper,  IIPEndpoint, IServerInfo, LaunchAction, LaunchGame, ViewModel, uiCommand2 } from "../../../framework";
-import { GetServer } from "./show";
+import { GetServer } from "./server-render-base";
+import { ServerRender } from "./server-render";
 
 export class SbServerItem extends ViewModel {
   model: {
@@ -19,6 +20,10 @@ export class SbServerItem extends ViewModel {
   refresh = uiCommand2("", () => this.loadModel(this.modelPartial), {icon: "withSIX-icon-Reload"});
   join = uiCommand2("", () => this.launch(), { icon: "withSIX-icon-Rocket" });
 
+  showServer() {
+    return this.dialog.open({model: this.address, viewModel: ServerRender})
+  }
+
   launch() {
     const act = new LaunchGame(this.w6.activeGame.id);
     act.action = LaunchAction.Join;
@@ -26,12 +31,12 @@ export class SbServerItem extends ViewModel {
     return act.handle(this.mediator);
   }
 
-  activate(model: { address: IIPEndpoint, gameId: string }) {
+  activate(model: { address: string, gameId: string }) {
     this.modelPartial = model;
     const w6Cheat = <any> window.w6Cheat;
     const servers = w6Cheat.servers || (w6Cheat.servers = {});
     const gameServers: Map<string, any> = servers[model.gameId];
-    this.model2 = gameServers.get(this.address = GameHelper.toAddresss(model.address));
+    this.model2 = gameServers.get(this.address = model.address);
     this.slug = `${this.address.replace(/\./g, "-")}/${this.name ? this.name.sluggifyEntityName() : "no-name"}`;
     this.refresh();
   }
@@ -49,6 +54,6 @@ export class SbServerItem extends ViewModel {
 }
 
 interface IServer {
-  address: IIPEndpoint;
+  address: string;
   gameId: string;
 }
