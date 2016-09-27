@@ -17,7 +17,8 @@
       </table>-->
       <div>
         <command-button model.bind="refresh"></command-button>
-        ${model.addresses.length} servers found
+        <button show.bind="cancel.cancel" click.delegate="cancel.cancel()"> (Cancel)</button> ${model.addresses.length}
+        servers found
       </div>
 
       <div class="tablewrapper">
