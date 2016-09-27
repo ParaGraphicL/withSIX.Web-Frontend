@@ -88,17 +88,13 @@ interface IBatchResult {
 @handlerFor(GetServers)
 class GetServersQuery extends DbClientQuery<GetServers, IBatchResult>  {
   async handle(request: GetServers) {
-    const results = await this.getAddresses(request);
-    return this.getAddresses(request); //{ addresses: results.addresses.map(x => { return { address: x, gameId: request.gameId }; }) };
-  }
-
-  async getAddresses(request: GetServers) {
     // TODO Move the starbound stuff to the client?
     // if (request.gameId === GameHelper.gameIds.Starbound) {
     //   const gameServers = await GameHelper.getGameServers(request.gameId, this.context);
     //   return { addresses: Array.from(gameServers.values()).map(x => x.address)};
     // }
     // if (this.tools.env > this.tools.Environment.Staging) { return this.arma3Bs(); }
+    //return this.getAddresses(request); //{ addresses: results.addresses.map(x => { return { address: x, gameId: request.gameId }; }) };
     await (<any>this.client).connection.promise(); // Puh todo
     const cp = this.client.hubs.server
       .getServers({ gameId: request.gameId });;
