@@ -11,11 +11,11 @@ export class Index extends ViewModel {
     }
   }
 
-  getSlug(addr: IIPEndpoint) { return addr.address.replace(/\./g, "-") + ":" + addr.port + "/test"; }
+  getSlug(addr: string) { return addr.replace(/\./g, "-") + "/test"; }
 }
 
 interface IServers {
-  addresses: { address: IIPEndpoint, gameId: string }[];
+  addresses: { address: string, gameId: string }[];
 }
 
 export class ServersModule {
