@@ -2,7 +2,7 @@ import { IIPEndpoint, IServerInfo, ViewModel, uiCommand2 } from "../../../framew
 import { GetServer } from "./show";
 
 interface IServer {
-  address: IIPEndpoint;
+  address: string;
   gameId: string;
 }
 
@@ -18,7 +18,7 @@ export class ServerItem extends ViewModel {
   activate(model: IServer) {
     this.modelPartial = model;
     this.model = model;
-    this.slug = model.address.address.replace(/\./g, "-") + ":" + model.address.port + "/test";
+    this.slug = model.address.replace(/\./g, "-") + "/test";
     this.loading = true;
     this.refresh();
     //this.interval = setInterval(() => { if (this.refresh.canExecute) { this.refresh(); } }, 15 * 1000);
