@@ -18,6 +18,11 @@ export class Index extends ViewModel {
     this.refresh();
   }
 
+  deactivate() {
+    if (this.cancel) this.cancel();
+    super.deactivate();
+  }
+
   refresh = uiCommand2("Refresh", () => this.refreshInternal())
 
   cancel;
