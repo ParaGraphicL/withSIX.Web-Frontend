@@ -20,6 +20,8 @@ export class Index extends ViewModel {
 
   refresh = uiCommand2("Refresh", () => this.refreshInternal())
 
+  cancel;
+
   async refreshInternal() {
     const dsp = this.observableFromEvent<{ items: string[], gameId: string }>('server.serversPageReceived')
       .filter(x => x.gameId === this.w6.activeGame.id)
@@ -30,9 +32,14 @@ export class Index extends ViewModel {
             .map(s => { return { gameId: x.gameId, address: s } }));
       })
     try {
-      const r = await new GetServers(this.w6.activeGame.id).handle(this.mediator);
+      const req = new GetServers(this.w6.activeGame.id);
+      const p = req.handle(this.mediator);
+      this.cancel = req;
+      console.log("$$$$ hmm", req, this.cancel);
+      const r = await p;
     } finally {
       dsp.unsubscribe();
+      this.cancel = null;
     }
   }
 
@@ -71,6 +78,7 @@ enum ServerPublisher {
 
 class GetServers extends Query<IBatchResult> {
   constructor(public gameId: string) { super(); }
+  public cancel: () => Promise<void>; // TODO: this is a bad approach
 }
 
 interface IBatchResult {
@@ -81,7 +89,7 @@ interface IBatchResult {
 class GetServersQuery extends DbClientQuery<GetServers, IBatchResult>  {
   async handle(request: GetServers) {
     const results = await this.getAddresses(request);
-    return results; //{ addresses: results.addresses.map(x => { return { address: x, gameId: request.gameId }; }) };
+    return this.getAddresses(request); //{ addresses: results.addresses.map(x => { return { address: x, gameId: request.gameId }; }) };
   }
 
   async getAddresses(request: GetServers) {
@@ -91,8 +99,10 @@ class GetServersQuery extends DbClientQuery<GetServers, IBatchResult>  {
     //   return { addresses: Array.from(gameServers.values()).map(x => x.address)};
     // }
     // if (this.tools.env > this.tools.Environment.Staging) { return this.arma3Bs(); }
-    await (<any> this.client).connection.promise(); // Puh todo
-    return await this.client.hubs.server
-      .getServers({ gameId: request.gameId });
+    await (<any>this.client).connection.promise(); // Puh todo
+    const cp = this.client.hubs.server
+      .getServers({ gameId: request.gameId });;
+    request.cancel = cp.cancel;
+    return await cp;
   }
 }
