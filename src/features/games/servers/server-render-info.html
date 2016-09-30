@@ -55,9 +55,10 @@
       </div>
     </div>
 
-    <div>
+    <div if.bind="model.details.modList">
       <h2>Mods</h2>
-      <ul>
+      <div if.bind="!mods">Loading..</div>
+      <ul if.bind="mods">
         <li repeat.for="m of mods">
           ${m.name}
           <div if.bind="m.mapping">
