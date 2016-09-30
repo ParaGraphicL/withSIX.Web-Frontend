@@ -27,18 +27,22 @@ export class ServerRenderBase extends ViewModel {
     this.gameId = this.w6.activeGame.id;
     this.modelPartial = { address: this.address };
     this.model = await this.loadModel(this.modelPartial);
-    const details = (<any> this.model).details;
-    if (details && details.modList) {
-      let l: {mappings: any[]} = await new GetModInfo(this.gameId, details.modList).handle(this.mediator);
-      const mappings = l.mappings.toMap(x => x.inputName);
-      this.mods = details.modList.map(x => {
-        return {
-          mapping: mappings.get(x.name),
-          name: x.name,
-        };
-      });
-    }
+    const details = (<any>this.model).details;
+    if (details && details.modList)
+      this.handleMods(details);
+
     this.interval = setInterval(() => { if (this.refresh.canExecute) { this.refresh(); } }, 15 * 1000);
+  }
+
+  async handleMods(details) {
+    let l: {mappings: any[]} = await new GetModInfo(this.gameId, details.modList).handle(this.mediator);
+    const mappings = l.mappings.toMap(x => x.inputName);
+    this.mods = details.modList.map(x => {
+      return {
+        mapping: mappings.get(x.name),
+        name: x.name,
+      };
+    });
   }
 
   get details() { return JSON.stringify((<any>this.model).details || {}, null, '  '); }
