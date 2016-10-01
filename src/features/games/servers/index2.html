@@ -1,0 +1,15 @@
+<template>
+  <div>
+    <filters custom-handler.call="handleFilter(info)" filters.ref="filteredComponent" items.bind="model.items"
+      filters.bind="filters" search-fields.bind="searchFields" sort.bind="sort" search-input-placeholder="search me..">
+    </filters>
+  </div>
+
+  <div infinite-scroll.bind="loadMore">
+    <ul>
+      <li repeat.for="s of model.items">
+        ${s.name} ${s.currentPlayers} / ${s.maxPlayers} ${s.mission}
+      </li>
+    </ul>
+  </div>
+</template>

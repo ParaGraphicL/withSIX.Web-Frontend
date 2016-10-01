@@ -89,7 +89,7 @@ export class Filters<T> extends ViewModel {
       const filterInfo: IFilterInfo<T> = { search: { input: this.searchInput, fields: this.searchFields }, sortOrder: this.sortOrder, enabledFilters: this.enabledFilters }
       const r = await this.customHandler({info: filterInfo})
       this.filteredItems = r.items
-      this.customCount = r.inlineCount
+      this.customCount = r.inlineCount || (<any>r).total;
     } else {
       this.filteredItems = this.orderItems(this.filterItems())
     }
@@ -165,9 +165,9 @@ export class Filters<T> extends ViewModel {
       e = e.filter(x => this.searchFields.some(v => x[v] && x[v].containsIgnoreCase(searchInput)));
     }
     if (this.filters && this.filters.some(x => true)) {
-      e = e.filter(x => this.enabledFilters.some(f => f.filter(x)));
+      e = e.filter(x => this.enabledFilters.some(f => f.filter(x, f.value)));
       if (this.enabledAndFilters.length > 0)
-        e = e.filter(x => this.enabledAndFilters.every(f => f.filter(x)));
+        e = e.filter(x => this.enabledAndFilters.every(f => f.filter(x, f.value)));
     }
     return e;
   }
