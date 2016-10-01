@@ -31,7 +31,7 @@
           <div class="squaredTwo ckInner">
             <label class="text-label" for="chk${filter.name}">
               <input type="checkbox" name="mod-version-unknown" id="chk${filter.name}" model.bind="filter" checked.bind="$parent.enabledFilters" />
-              ${filter.name}
+              ${filter.title || filter.name}
             </label>
           </div>
         </div>

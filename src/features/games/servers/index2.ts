@@ -21,6 +21,11 @@ export class Index extends FilteredBase<IServer> {
       name: "isDedicated",
       filter: () => true,
     },
+    {
+      title: "Open",
+      name: "isOpen",
+      filter: () => true,
+    },
   ]
   sort = [
     { name: "currentPlayers", title: "Players", direction: SortDirection.Desc },

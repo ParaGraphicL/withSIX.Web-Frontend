@@ -10,11 +10,28 @@
 
     <div infinite-scroll.bind="loadMore" class="tile">
       <table>
-        <tr repeat.for="s of model.items">
-          <td>${s.currentPlayers}/${s.maxPlayers}</td>
-          <td>${s.name}</td>
-          <td>${s.mission}</td>
-        </tr>
+        <thead>
+          <tr>
+            <td>#plrs</td>
+            <td>Info</td>
+            <td>Name</td>
+            <td>Mission</td>
+            <td>Version</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr repeat.for="s of model.items">
+            <td>${s.currentPlayers}/${s.maxPlayers}</td>
+            <td>
+              <span class="icon withSIX-icon-Cloud" title="Dedicated server" if.bind="s.isDedicated"></span>
+            </td>
+            <td>
+              <span class=" icon withSIX-icon-Lock " title="Password locked " if.bind="s.isPasswordProtected "></span>              ${s.name}
+            </td>
+            <td>${s.mission}</td>
+            <td>${s.version}</td>
+          </tr>
+        </tbody>
       </table>
     </div>
   </div>
