@@ -6,12 +6,16 @@
       </filters>
     </div>
 
-    <div infinite-scroll.bind="loadMore">
-      <ul>
-        <li repeat.for="s of model.items">
-          ${s.name} ${s.currentPlayers} / ${s.maxPlayers} ${s.mission}
-        </li>
-      </ul>
+    <div class="clearfix"></div>
+
+    <div infinite-scroll.bind="loadMore" class="tile">
+      <table>
+        <tr repeat.for="s of model.items">
+          <td>${s.currentPlayers}/${s.maxPlayers}</td>
+          <td>${s.name}</td>
+          <td>${s.mission}</td>
+        </tr>
+      </table>
     </div>
   </div>
 </template>
