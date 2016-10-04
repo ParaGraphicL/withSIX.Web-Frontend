@@ -12,6 +12,7 @@ export class Filters<T> extends ViewModel {
   @bindable typeaheadOptions: ITypeahead<T>;
   @bindable searchInputPlaceholder: string;
   @bindable customHandler: (arg: { info: IFilterInfo<T> }) => Promise<{ items: T[]; inlineCount: number }>;
+  @bindable autoEnableFilters: boolean;
   sortOrder: ISort<T>;
   searchInput: string;
   enabledFilters: IFilter<T>[] = [];
@@ -35,7 +36,7 @@ export class Filters<T> extends ViewModel {
     }
     this.selectedViewType = this.viewTypes[0];
     if (this.sort) this.sortOrder = this.sort[0];
-    if (this.filters) this.enabledFilters = Array.from(this.filters);
+    if (this.filters && this.autoEnableFilters) this.enabledFilters = Array.from(this.filters);
 
     this.updateFilteredItems();
 
