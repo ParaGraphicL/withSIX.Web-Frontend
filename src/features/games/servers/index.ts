@@ -4,7 +4,7 @@ import { ViewModel, handlerFor, Query, DbClientQuery, IGameSettingsEntry, IGames
 import { ServerRender } from './server-render';
 
 interface IServer {
-  address: string, gameId: string
+  queryAddress: string, gameId: string
 }
 
 export class Index extends ViewModel {
@@ -33,8 +33,8 @@ export class Index extends ViewModel {
       .subscribe(x => {
         this.model
           .addresses
-          .push(...x.items.filter(s => !this.model.addresses.some(s2 => s2.address === s))
-            .map(s => { return { gameId: x.gameId, address: s } }));
+          .push(...x.items.filter(s => !this.model.addresses.some(s2 => s2.queryAddress === s))
+            .map(s => { return { gameId: x.gameId, queryAddress: s } }));
       })
     try {
       const req = new GetServers(this.w6.activeGame.id);
@@ -48,7 +48,7 @@ export class Index extends ViewModel {
   }
 
   showServer(server: IServer) {
-    return this.dialog.open({model: server.address, viewModel: ServerRender})
+    return this.dialog.open({model: server.queryAddress, viewModel: ServerRender})
   }
 
   getSlug(addr: string) { return addr.replace(/\./g, "-") + "/test"; }
@@ -63,6 +63,7 @@ export class ServersModule {
     mount = mount + "servers";
     config.map([
       { route: `${routeMount}`, name: "servers", moduleId: `${mount}/index` },
+      { route: `${routeMount}2`, name: "servers2", moduleId: `${mount}/index2` },
       { route: `${routeMount}/:serverId/:serverSlug?`, name: "servers-show", moduleId: `${mount}/show` },
     ]);
   }

@@ -3,7 +3,7 @@ import { GetServer } from "./server-render-base";
 import { ServerRender } from "./server-render";
 
 interface IServer {
-  address: string;
+  queryAddress: string;
   gameId: string;
 }
 
@@ -17,22 +17,20 @@ export class ServerItem extends ViewModel {
   join = uiCommand2("", async () => alert("TODO"), {icon: "withSIX-icon-Rocket"});
 
   activate(model: IServer) {
+    console.log("Creating server-item", model);
     this.modelPartial = model;
     this.model = model;
-    this.slug = model.address.replace(/\./g, "-") + "/test";
+    this.slug = model.queryAddress.replace(/\./g, "-") + "/test";
     this.loading = true;
     this.refresh();
     //this.interval = setInterval(() => { if (this.refresh.canExecute) { this.refresh(); } }, 15 * 1000);
   }
 
-  showServer() {
-    return this.dialog.open({model: this.model.address, viewModel: ServerRender})
-  }
-
   deactivate() { clearInterval(this.interval); }
 
+  showServer() { return this.dialog.open({model: this.model.queryAddress, viewModel: ServerRender}) }
   async loadModel(model: IServer) {
-    this.model = await new GetServer(model.gameId, model.address, false).handle(this.mediator);
+    this.model = await new GetServer(model.gameId, model.queryAddress, false).handle(this.mediator);
     this.loading = false;
   }
 }

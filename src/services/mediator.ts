@@ -183,9 +183,11 @@ export enum SortDirection {
 }
 
 export interface IFilter<T> {
+  title?: string;
   name: string;
   isEnabled?: boolean;
-  filter: (item: T) => boolean;
+  value?;
+  filter: (item: T, value?) => boolean;
 }
 
 export interface IFilterInfo<T> {

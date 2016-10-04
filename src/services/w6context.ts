@@ -162,16 +162,23 @@ export class W6Context {
   getResponse = async (path, configOverride?) => {
     let url = this.getUrl(path);
     if (configOverride && configOverride.params) {
-      var params = Object.keys(configOverride.params)
+      const encode = (key: string, val, objKey?) => {
+        if (objKey) key = `${objKey}[${key}]`
+        if (val instanceof Array) {
+          return val.map((x, i) => encode(`${key}[${i}]`, x)).join("&")
+        } else if (val instanceof Object) {
+            return encodeObject(val, key);
+        } else {
+          return key + "=" + encodeURIComponent(val)
+        }
+      }
+      const encodeObject = (obj, objKey?) => Object.keys(obj)
+        .filter((key) => obj[key] !== undefined)
         .map((key) => {
-          var val = configOverride.params[key];
-          if (val instanceof Array) {
-            return val.map(x => encodeURIComponent(key) + "=" + encodeURIComponent(x)).join("&")
-          } else {
-            return encodeURIComponent(key) + "=" + encodeURIComponent(val)
-          }
+          return encode(encodeURIComponent(key), obj[key], objKey);
         })
         .join("&")
+      var params = encodeObject(configOverride.params)
         .replace(/%20/g, "+");
       url = url + "?" + params;
     }
