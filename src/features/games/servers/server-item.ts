@@ -17,7 +17,6 @@ export class ServerItem extends ViewModel {
   join = uiCommand2("", async () => alert("TODO"), {icon: "withSIX-icon-Rocket"});
 
   activate(model: IServer) {
-    console.log("Creating server-item", model);
     this.modelPartial = model;
     this.model = model;
     this.slug = model.queryAddress.replace(/\./g, "-") + "/test";
