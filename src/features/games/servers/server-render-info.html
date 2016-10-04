@@ -11,20 +11,20 @@
         <span class="icon ${join.icon}"></span>
       </command-button>
     </td>
-    <td>${model.numPlayers} / ${model.maxPlayers} plyrs |</td>
+    <td>${model.currentPlayers} / ${model.maxPlayers} plyrs |</td>
     <td>
-      <i class="icon withSIX-icon-Lock" if.bind="model.passwordRequired"></i> ${model.name} [${model.gameState}
-      | ${model.gameType}] | v${model.gameVersion} |
+      <i class="icon withSIX-icon-Lock" if.bind="model.isPasswordProtected"></i> ${model.name} [${model.gameState}
+      | ${model.gameType}] | v${model.version} |
     </td>
     <td>${model.mods.length} mods |</td>
-    <td>[${model.missionName} @ ${model.mapName}]</td>
+    <td>[${model.mission}]</td>
 
     <compose view-model="./external/index"></compose>
 
     <!-- ask for password otherwise, and add: /${password}.
         only show if user has steam etc.
        -->
-    <a if.bind="!model.passwordRequired" href="steam://connect/${address}">Join through Steam</a>
+    <a if.bind="!model.isPasswordProtected" href="steam://connect/${address}">Join through Steam</a>
 
     <div if.bind="!model.isClaimed">
       This server is not yet claimed, is this your server? <button>claim it here</button>

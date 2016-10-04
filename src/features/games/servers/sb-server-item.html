@@ -11,12 +11,11 @@
       <command-button model.bind="join"></command-button>
       <a target="_blank" href="${w6.url.currentPath}/${slug}">Ext</a>
     </div>
-    <div class="td">${numPlayers} / ${maxPlayers} plyrs</div>
+    <div class="td">${currentPlayers} / ${maxPlayers} plyrs</div>
     <div class="td">
-      <i class="icon withSIX-icon-Lock" if.bind="passwordRequired"></i> ${name} [${gameState} ${gameType}]
+      <i class="icon withSIX-icon-Lock" if.bind="isPasswordProtected"></i> ${name} [${gameState} ${gameType}]
       v${gameVersion}
     </div>
-    <div class="td">${mods.length} mods</div>
-    <div class="td">[${mission} @ ${mapName}]</div>
+    <div class="td">[${mission}]</div>
   </template>
 </template>
