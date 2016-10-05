@@ -16,11 +16,13 @@
             <td>Info</td>
             <td>Name</td>
             <td>Mission</td>
+            <td>Country</td>
+            <td>Distance</td>
             <td>Version</td>
           </tr>
         </thead>
         <tbody>
-          <tr repeat.for="s of model.items">
+          <tr repeat.for="s of model.items" click.trigger="showServer(s)">
             <td>${s.currentPlayers}/${s.maxPlayers}</td>
             <td>
               <span class="icon withSIX-icon-Cloud" title="Dedicated server" if.bind="s.isDedicated"></span>
@@ -29,6 +31,8 @@
               <span class=" icon withSIX-icon-Lock " title="Password locked " if.bind="s.isPasswordProtected "></span>              ${s.name}
             </td>
             <td>${s.mission}</td>
+            <td title="Inside ${s.continent}">${s.country}</td>
+            <td>${s.distance | amount}</td>
             <td>${s.version}</td>
           </tr>
         </tbody>

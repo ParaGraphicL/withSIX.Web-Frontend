@@ -1,13 +1,20 @@
 import { ViewModel, Query, DbQuery, IPaginated, handlerFor, SortDirection, IFilter } from '../../../framework';
 import { FilteredBase } from '../../filtered-base';
-
+import { ServerRender } from './server-render';
 
 interface IServer {
-  address: string;
+  queryAddress: string;
+  connectionAddress: string;
   name: string;
   mission: string;
   currentPlayers: number;
   maxPlayers: number;
+  country: string;
+  continent: string;
+  distance: number;
+  isPasswordProtected: boolean;
+  isDedicated: boolean;
+  version: string;
 }
 export class Index extends FilteredBase<IServer> {
   filters: IFilter<IServer>[] = [
@@ -26,10 +33,24 @@ export class Index extends FilteredBase<IServer> {
       name: "isOpen",
       filter: () => true,
     },
+    {
+      title: "Continent",
+      name: "areaLimit",
+      values: [
+        { title: "Europe", value: "EU" },
+        { title: "Norh America", value: "NA" },
+        { title: "South America", value: "SA" },
+        { title: "Oceania", value: "OC" },
+        { title: "Asia", value: "AS" }
+      ],
+      filter: () => true,
+    }
   ]
   sort = [
     { name: "currentPlayers", title: "Players", direction: SortDirection.Desc },
-    { name: "name", title: "Name", direction: SortDirection.Asc }
+    { name: "name", title: "Name", direction: SortDirection.Asc },
+    { name: "distance", title: "Distance", direction: SortDirection.Asc },
+    { name: "country", title: "Country", direction: SortDirection.Asc },
   ]
   searchFields = ["name"];
   // TODO Custom filters
@@ -42,7 +63,7 @@ export class Index extends FilteredBase<IServer> {
       if (search.input) f.search = search.input;
       this.filterInfo.enabledFilters.forEach(x => {
         if (x.name === "hasPlayers") f.minPlayers = 1;
-        else f[x.name] = x.value || true;
+        else f[x.name] = x.value ? x.value.value || x.value : true;
       })
       filters = f
     }
@@ -64,6 +85,10 @@ export class Index extends FilteredBase<IServer> {
   get totalPages() { return this.inlineCount / (<any> this.model).pageSize }
   get inlineCount() { return (<any> this.model).total }
   get page() { return (<any>this.model).pageNumber }
+
+    showServer(server: IServer) {
+    return this.dialog.open({model: server.queryAddress, viewModel: ServerRender})
+  }
 }
 
 class GetServers extends Query<IPaginated<IServer>> { 
