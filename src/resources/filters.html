@@ -34,6 +34,9 @@
             ${filter.title || filter.name}
           </label>
           <selectbox show.bind="filter.enabled" if.bind="filter.values" options.bind="filter.values" value.bind="filter.value">
+            <template replace-part="item-template">
+              <option model.bind="o">${o.title || o}</option>
+            </template>
           </selectbox>
         </div>
       </div>
