@@ -1,6 +1,6 @@
 import { ViewModel, Query, DbQuery, IPaginated, handlerFor, SortDirection, IFilter } from '../../../framework';
 import { FilteredBase } from '../../filtered-base';
-
+import { ServerRender } from './server-render';
 
 interface IServer {
   address: string;
@@ -78,6 +78,10 @@ export class Index extends FilteredBase<IServer> {
   get totalPages() { return this.inlineCount / (<any> this.model).pageSize }
   get inlineCount() { return (<any> this.model).total }
   get page() { return (<any>this.model).pageNumber }
+
+    showServer(server: IServer) {
+    return this.dialog.open({model: server.address, viewModel: ServerRender})
+  }
 }
 
 class GetServers extends Query<IPaginated<IServer>> { 
