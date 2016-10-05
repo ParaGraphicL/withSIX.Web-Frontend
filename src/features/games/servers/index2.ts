@@ -3,11 +3,18 @@ import { FilteredBase } from '../../filtered-base';
 import { ServerRender } from './server-render';
 
 interface IServer {
-  address: string;
+  queryAddress: string;
+  connectionAddress: string;
   name: string;
   mission: string;
   currentPlayers: number;
   maxPlayers: number;
+  country: string;
+  continent: string;
+  distance: number;
+  isPasswordProtected: boolean;
+  isDedicated: boolean;
+  version: string;
 }
 export class Index extends FilteredBase<IServer> {
   filters: IFilter<IServer>[] = [
@@ -80,7 +87,7 @@ export class Index extends FilteredBase<IServer> {
   get page() { return (<any>this.model).pageNumber }
 
     showServer(server: IServer) {
-    return this.dialog.open({model: server.address, viewModel: ServerRender})
+    return this.dialog.open({model: server.queryAddress, viewModel: ServerRender})
   }
 }
 
