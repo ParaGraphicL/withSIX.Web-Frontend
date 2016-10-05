@@ -28,11 +28,13 @@
       <span class="show-title">Show:</span>
       <div class="show-boxes">
         <div class="checkbox-container" repeat.for="filter of filters">
-          <input type="checkbox" name="mod-version-unknown" id="chk${filter.name}" model.bind="filter" checked.bind="$parent.enabledFilters"
-          />
+          <input type="checkbox" change.trigger="filter.enabled = !filter.enabled" name="mod-version-unknown" id="chk${filter.name}"
+            model.bind="filter" checked.bind="$parent.enabledFilters" />
           <label class="text-label" for="chk${filter.name}">
             ${filter.title || filter.name}
           </label>
+          <selectbox show.bind="filter.enabled" if.bind="filter.values" options.bind="filter.values" value.bind="filter.value">
+          </selectbox>
         </div>
       </div>
     </div>

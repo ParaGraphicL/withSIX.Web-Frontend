@@ -187,6 +187,7 @@ export interface IFilter<T> {
   name: string;
   isEnabled?: boolean;
   value?;
+  values?: (string | { title: string; value;})[]
   filter: (item: T, value?) => boolean;
 }
 

@@ -26,10 +26,18 @@ export class Index extends FilteredBase<IServer> {
       name: "isOpen",
       filter: () => true,
     },
+    {
+      title: "Continent",
+      name: "areaLimit",
+      values: ["Europe", "NA", "SA", "Asia", "Oceania"],
+      filter: () => true,
+    }
   ]
   sort = [
     { name: "currentPlayers", title: "Players", direction: SortDirection.Desc },
-    { name: "name", title: "Name", direction: SortDirection.Asc }
+    { name: "name", title: "Name", direction: SortDirection.Asc },
+    { name: "distance", title: "Distance", direction: SortDirection.Asc },
+    { name: "country", title: "Country", direction: SortDirection.Asc },
   ]
   searchFields = ["name"];
   // TODO Custom filters
