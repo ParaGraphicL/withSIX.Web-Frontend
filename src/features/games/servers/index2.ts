@@ -50,7 +50,8 @@ export class Index extends FilteredBase < IServer > {
     }, {
       title: "Has no Mods",
       value: false
-    }]
+    }],
+    filter: () => true
   }, {
     title: "Continent",
     name: "areaLimit",
@@ -104,7 +105,8 @@ export class Index extends FilteredBase < IServer > {
       if (search.input) f.search = search.input;
       this.filterInfo.enabledFilters.forEach(x => {
         if (x.name === "hasPlayers") f.minPlayers = 1;
-        else f[x.name] = x.value ? x.value.value || x.value : true;
+        else f[x.name] = x.value != null ? (x.value.value != null ? x.value.value : x.value) :
+          true;
       })
       filters = f
     }
