@@ -50,7 +50,8 @@ export class Index extends FilteredBase < IServer > {
     }, {
       title: "Has no Mods",
       value: false
-    }]
+    }],
+    filter: () => true
   }, {
     title: "Continent",
     name: "areaLimit",
