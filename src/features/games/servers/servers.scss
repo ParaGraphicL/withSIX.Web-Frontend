@@ -1,8 +1,27 @@
+@import "_base";
+
 #servers {
   .virtual-container {
     max-height: 33vh;
   }
   .virtual-row {
     height: 50px;
+  }
+}
+
+.server-list {
+  td {
+    icon {
+      color: $colorSixLightGray;
+      span.active {
+        color: $colorSixDarkGray;
+      }
+      span.withSIX-icon-Download.ready {
+        color: $colorSixGreen;
+      }
+    }
+    span.connection-quality {
+      color: $colorSixGreen;
+    }
   }
 }

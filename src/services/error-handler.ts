@@ -7,11 +7,14 @@ import {W6} from './withSIX';
 import { Toastr } from './toastr';
 import {Router} from 'aurelia-router';
 import {EventAggregator} from 'aurelia-event-aggregator';
-import { ClientConnectionFailed, OperationCanceledError } from 'withsix-sync-api';
+import { ClientConnectionFailed, OperationCanceledError, ConnectionState } from 'withsix-sync-api';
+import { ClientWrapper } from './client-wrapper';
 
 @inject(W6, Toastr, Router, EventAggregator)
 export class ClientMissingHandler {
-  constructor(private w6: W6, private toastr: Toastr, private router: Router, private eventBus: EventAggregator) { }
+  constructor(private w6: W6, private toastr: Toastr, private router: Router, private eventBus: EventAggregator, private clientWrapper: ClientWrapper) {}
+
+  p: Promise<void>;
 
   get hasActiveGame() { return this.w6.activeGame.id != null };
   get isClientConnected() { return this.w6.miniClient.isConnected; }
@@ -24,10 +27,8 @@ export class ClientMissingHandler {
   }
 
   async handleClientMissing() {
-    if (this.w6.settings.hasSync) {
-      this.addClientIframe();
-      await this.handleMessage("Trying to start the client, or click here to download the Sync client");
-    } else await this.handleMessage("Click here to download the Sync client");
+    if (this.w6.settings.hasSync) this.addClientIframe();
+    else await this.handleMessage("Click here to download the Sync client");
   }
 
   async handleActiveGameMissing() {
@@ -45,11 +46,35 @@ export class ClientMissingHandler {
 
   addClientIframe() {
     if (window.___prerender___) return;
+    if (this.p) return this.p;
+    return this.p = new Promise((res, rej) => {
+      this.addClientIframeInternal();
+      const t = setTimeout(() => {
+        $('.client-frame').remove()
+        sub.unsubscribe();
+        this.p = null;
+        rej(new Error("Timed out"));
+      }, 15 * 1000);
+      const sub = this.clientWrapper.stateChanged
+        .filter(x => x.newState === ConnectionState.connected)
+        .take(1)
+        .subscribe(x => {
+          clearTimeout(t);
+          this.p = null;
+          $('.client-frame').remove();
+          res();
+        });
+    })
+  }
+
+  async addClientIframeInternal() {
     var i = document.createElement('iframe');
     i.style.display = 'none';
+    i.classList.add('client-frame');
     i.onload = function () { i.parentNode.removeChild(i); };
     i.src = 'syncws://?launch=1';
     document.body.appendChild(i);
+    await this.handleMessage("Trying to start the client, or click here to download the Sync client");
   }
 }
 

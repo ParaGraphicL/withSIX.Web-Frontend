@@ -1,5 +1,11 @@
-import {customAttribute, valueConverter} from 'aurelia-framework';
+import {
+  customAttribute,
+  valueConverter
+} from 'aurelia-framework';
 import numeral from 'numbro';
+import {
+  sanitizeHtml
+} from '../helpers/utils/string';
 
 enum FileSize {
   B,
@@ -55,11 +61,25 @@ export class HighlightValueConverter {
 
 @valueConverter('text')
 export class TextValueConverter {
-  toView = text => text ? this.parseText(text) : text;
+  toView = text => text ? this.parseText(sanitizeHtml(text)) : text;
   parseText = text => this.replaceBreaks(this.replaceSpecial(this.replaceLinks(text)))
   replaceBreaks = text => text.replace(/(\r\n)|\n/g, "<br />")
-  replaceSpecial = text => text.replace(/configure the game first in the Settings/, (whole) => `<a href="#" onclick="w6Cheat.api.openSettings({module: 'games'})">${whole}</a>`)
-  replaceLinks = text => text.replace(/(\b(https?|ftp|file):\/\/([-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|]))/gi, (whole, m1, m2, m3) => `<a target="_blank" href="${whole}">${m3}</a>`);
+  replaceSpecial = text => text.replace(/configure the game first in the Settings/, (whole) =>
+    `<a href="#" onclick="w6Cheat.api.openSettings({module: 'games'})">${whole}</a>`)
+  replaceLinks = text => text.replace(
+    /(\b(https?|ftp|file):\/\/([-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|]))/gi, (whole, m1,
+      m2, m3) => `<a target="_blank" href="${whole}">${m3}</a>`);
+}
+
+@valueConverter('links')
+export class LinkValueConverter {
+  toView = text => text ? this.parseText(sanitizeHtml(text)) : text;
+  parseText = text => this.replaceLinks(text);
+  replaceLinks = text => text.replace(
+      /(\b(https?|ftp|file):\/\/([-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|]))/gi,
+      (whole, m1, m2, m3) => `<a target="_blank" href="${whole}">${m3}</a>`)
+    .replace(/([\s\t\[])?(www\.[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi,
+      (whole, m1, m2, m3) => `${m1 ? m1 : ''}<a target="_blank" href="http://${m2}">${m2}</a>`);
 }
 
 // This only converts the ary on first use, and then becomes static.
@@ -103,8 +123,10 @@ export class SortValueConverter {
 export class SizeValueConverter extends NumeralValueConverter {
   static sizeFormat = NumeralValueConverter.defaultFormat + ' b';
   handleNegative = (n: number) => n < 0 ? '-' : '';
-  sizeConvert = (n: number) => this.handleNegative(n) + this.convert(Math.abs(n), SizeValueConverter.sizeFormat);
-  includeMarkup = (r: string) => r.replace(/(.*) (.*)/, (full, count, unit) => `<span class="count">${count}</span> <span class="unit">${unit}</span>`);
+  sizeConvert = (n: number) => this.handleNegative(n) + this.convert(Math.abs(n),
+    SizeValueConverter.sizeFormat);
+  includeMarkup = (r: string) => r.replace(/(.*) (.*)/, (full, count, unit) =>
+    `<span class="count">${count}</span> <span class="unit">${unit}</span>`);
   toView = (size: number, format = 'B', includeMarkup = true) => {
     size = this.upsize(FileSize[format], size);
     let r = this.sizeConvert(size);
@@ -139,7 +161,8 @@ export class SizeValueConverter extends NumeralValueConverter {
         break;
       case FileSize.YB:
         curFormat = FileSize.ZB;
-      default: return size;
+      default:
+        return size;
     }
     size = size * 1024;
     return this.upsize(curFormat, size);
@@ -226,7 +249,9 @@ export class FileListToArrayValueConverter {
 
 @valueConverter('blobToUrl')
 export class BlobToUrlValueConverter {
-  toView(blob) { return URL.createObjectURL(blob); }
+  toView(blob) {
+    return URL.createObjectURL(blob);
+  }
 }
 
 // TODO
