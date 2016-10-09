@@ -24,7 +24,7 @@
         <td innerHTML.bind="s.name | links"></td>
         <td><span innerHTML.bind="s.game | links"></span> <span>on ${s.map}</span></td>
         <td>${s.gameType}</td>
-        <td>${s.currentPlayers}/${s.maxPlayers}</td>
+        <td style="text-align: right">${s.currentPlayers}/${s.maxPlayers}</td>
         <td title="Inside ${s.continent}">${s.country}</td>
         <td>${s.distance | amount}</td>
         <!-- TODO: Version should be locked to the user's version -->

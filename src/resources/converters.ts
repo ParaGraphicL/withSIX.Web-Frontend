@@ -79,7 +79,7 @@ export class LinkValueConverter {
       /(\b(https?|ftp|file):\/\/([-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|]))/gi,
       (whole, m1, m2, m3) => `<a target="_blank" href="${whole}">${m3}</a>`)
     .replace(/([\s\t\[])?(www\.[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi,
-      (whole, m1, m2, m3) => `${m1}<a target="_blank" href="http://${m2}">${m2}</a>`);
+      (whole, m1, m2, m3) => `${m1 ? m1 : ''}<a target="_blank" href="http://${m2}">${m2}</a>`);
 }
 
 // This only converts the ary on first use, and then becomes static.
