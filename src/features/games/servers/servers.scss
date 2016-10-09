@@ -16,6 +16,12 @@
       span.active {
         color: $colorSixDarkGray;
       }
+      span.withSIX-icon-Download.ready {
+        color: $colorSixGreen;
+      }
+    }
+    span.connection-quality {
+      color: $colorSixGreen;
     }
   }
 }

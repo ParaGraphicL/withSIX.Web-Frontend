@@ -9,24 +9,25 @@
         <td>Mode</td>
         <td>#plrs</td>
         <td>Country</td>
-        <td>Distance</td>
+        <td></td>
         <td>Version</td>
       </tr>
     </thead>
     <tbody>
       <tr repeat.for="s of model.items" click.trigger="showServer(s)">
-        <td width="104">
-          <icon cls="withSIX-icon-Star" title="Favorite" model.bind="s.isFavorite"></icon>
-          <icon cls="withSIX-icon-Lock" title="Password required" model.bind="s.isPasswordProtected"></icon>
-          <icon cls="withSIX-icon-Cloud" title="Dedicated" model.bind="s.isDedicated"></icon>
-          <icon cls="${s.battlEye && s.verifySignatures ? 'withSIX-icon-Protection-Full' : 'withSIX-icon-Protection-Med'}" title="${s.battlEye ? 'BattlEye' : ''} ${s.verifySignatures ? 'Signatures' : ''} protected" model.bind="s.battlEye || s.verifySignatures"></icon>
+        <td width="120">
+          <icon cls="withSIX-icon-Star" optional-title="Favorite" model.bind="s.isFavorite"></icon>
+          <icon cls="withSIX-icon-Lock" optional-title="Password required" model.bind="s.isPasswordProtected"></icon>
+          <icon cls="withSIX-icon-Cloud" optional-title="Dedicated" model.bind="s.isDedicated"></icon>
+          <icon cls="${s.battlEye && s.verifySignatures ? 'withSIX-icon-Protection-Full' : 'withSIX-icon-Protection-Med'}" optional-title="${s.battlEye ? 'BattlEye' : ''} ${s.verifySignatures ? 'Signatures' : ''} protected" model.bind="s.battlEye || s.verifySignatures"></icon>
+          <icon cls="withSIX-icon-Download ${s.hasAllMods ? 'ready' : ''}" optional-title="Requires mods" model.bind="s.modList.length > 0"></icon>
         </td>
         <td innerHTML.bind="s.name | links"></td>
         <td><span innerHTML.bind="s.game | links"></span> <span>on ${s.map}</span></td>
         <td>${s.gameType}</td>
         <td style="text-align: right">${s.currentPlayers}/${s.maxPlayers}</td>
         <td title="Inside ${s.continent}">${s.country}</td>
-        <td>${s.distance | amount}</td>
+        <td title="${s.distance | amount} meters"><span class="icon ${s.distance | distance} connection-quality"></span></td>
         <!-- TODO: Version should be locked to the user's version -->
         <td>${s.serverVersion}</td>
       </tr>
