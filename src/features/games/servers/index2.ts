@@ -42,6 +42,16 @@ export class Index extends FilteredBase < IServer > {
     name: "isOpen",
     filter: () => true,
   }, {
+    title: "Mods",
+    name: "hasMods",
+    values: [{
+      title: "Has Mods",
+      value: true,
+    }, {
+      title: "Has no Mods",
+      value: false
+    }]
+  }, {
     title: "Continent",
     name: "areaLimit",
     values: [{
