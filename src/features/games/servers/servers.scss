@@ -1,8 +1,21 @@
+@import "_base";
+
 #servers {
   .virtual-container {
     max-height: 33vh;
   }
   .virtual-row {
     height: 50px;
+  }
+}
+
+.server-list {
+  td {
+    icon {
+      color: $colorSixLightGray;
+      span.active {
+        color: $colorSixDarkGray;
+      }
+    }
   }
 }
