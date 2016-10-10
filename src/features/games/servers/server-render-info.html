@@ -1,23 +1,23 @@
 <template>
   <div class="tile">
-    <td>${model.ping}ms</td>
-    <td>
+    <span show.bind="clientLoaded">${model.ping}ms</span>
+    <span>
       <command-button model.bind="refresh">
         <span class="icon ${refresh.icon}"></span>
-      </command-button>
-    </td>
-    <td>
+    </command-button>
+    </span>
+    <span>
       <command-button model.bind="join">
         <span class="icon ${join.icon}"></span>
-      </command-button>
-    </td>
-    <td>${model.currentPlayers} / ${model.maxPlayers} plyrs |</td>
-    <td>
-      <i class="icon withSIX-icon-Lock" if.bind="model.isPasswordProtected"></i> ${model.name} [${model.gameState}
+    </command-button>
+    </span>
+    <span>${model.currentPlayers} / ${model.maxPlayers} plyrs |</span>
+    <span>
+      <i class="icon withSIX-icon-Lock" if.bind="model.isPasswordProtected"></i> ${model.name} [${model.serverState}
       | ${model.gameType}] | v${model.version} |
-    </td>
-    <td>${model.mods.length} mods |</td>
-    <td>[${model.mission}]</td>
+    </span>
+    <span>${model.modList.length} mods |</span>
+    <span>[${model.game} on ${model.map}]</span>
 
     <compose view-model="./external/index"></compose>
 
@@ -55,23 +55,20 @@
       </div>
     </div>
 
-    <div if.bind="model.details.modList">
+    <div if.bind="model.modList && model.modList.length > 0">
       <h2>Mods</h2>
-      <div if.bind="!mods">Loading..</div>
-      <ul if.bind="mods">
-        <li repeat.for="m of mods">
-          ${m.name}
-          <div if.bind="m.mapping">
-            Recognized:
-            <a href="/p/${w6.activeGame.slug}/mods/${m.mapping.id.toShortId()}/${m.mapping.name.sluggifyEntityName()}"
-              click.delegate="cancel()">${m.mapping.name}</a>
-            <a href="/p/${w6.activeGame.slug}/servers2/?modId=${m.mapping.id.toShortId()}" click.delegate="cancel()">(Find more servers with this)</a>
+      <ul>
+        <li repeat.for="m of model.modList">
+          <div if.bind="m.modId">
+            <a href="/p/${w6.activeGame.slug}/mods/${m.modId.toShortId()}/${m.name.sluggifyEntityName()}" click.delegate="cancel()">${m.name}</a>
+            <a href="/p/${w6.activeGame.slug}/servers2/?modId=${m.modId.toShortId()}" click.delegate="cancel()">(Find more servers with this)</a>
           </div>
+          <span if.bind="!m.modId">${m.name}</span>
         </li>
       </ul>
     </div>
 
-    <div>
+    <div if.bind="model.players && model.players.length > 0">
       <h2>Players</h2>
       <ul>
         <li repeat.for="p of model.players">
@@ -79,10 +76,6 @@
         </li>
       </ul>
     </div>
-
-    <h2>Extended details</h2>
-    <button click.delegate="detailsShown = !detailsShown">${detailsShown ? 'Hide' : 'Show'}</button>
-    <pre innerHTML.bind="details" show.bind="detailsShown"></pre>
   </div>
   </div>
 </template>

@@ -172,7 +172,7 @@ export class Index extends FilteredBase<IServer> {
 
   showServer(server: IServer) {
     return this.dialog.open({
-      model: server.queryAddress,
+      model: server,
       viewModel: ServerRender
     })
   }
