@@ -109,9 +109,11 @@ export class Index extends FilteredBase<IServer> {
           filter: () => true
         })
       } else if (params.modId) {
+        let modId;
+        try { modId = params.modId.fromShortId() } catch (err) { modId = params.modId };
         this.defaultEnabled.push({
           name: "mod",
-          value: { id: params.modId.fromShortId(), type: "withSIX" },
+          value: { id: modId , type: "withSIX" },
           filter: () => true
         })
       }
