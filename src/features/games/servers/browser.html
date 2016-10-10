@@ -1,0 +1,16 @@
+<template>
+  <require from="./servers.scss"></require>
+  <div class="container-fluid">
+    <div>
+      <filters custom-handler.call="handleFilter(info)" filters.ref="filteredComponent" items.bind="model.items"
+        filters.bind="filters" search-fields.bind="searchFields" sort.bind="sort" search-input-placeholder="search me..">
+      </filters>
+    </div>
+
+    <div class="clearfix"></div>
+
+    <div infinite-scroll.bind="loadMore" class="tile server-list">
+      <compose view="./arma/servers.html"></compose>
+    </div>
+  </div>
+</template>
