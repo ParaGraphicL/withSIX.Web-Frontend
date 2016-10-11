@@ -1,10 +1,12 @@
 import {
-  DbClientQuery, GameHelper, IIPEndpoint, IServerInfo, LaunchAction, LaunchGame,
-  Query, ViewModel, handlerFor, uiCommand2
+  DbClientQuery, GameHelper, IServerInfo, LaunchAction, LaunchGame,
+  Query, ViewModel, handlerFor, uiCommand2,
 } from "../../../framework";
 
 export interface ExtendedServerInfo extends IServerInfo {
   modList: any[];
+  game: string;
+  map: string;
 }
 
 export class ServerRenderBase extends ViewModel {
@@ -25,12 +27,41 @@ export class ServerRenderBase extends ViewModel {
     return act.handle(this.mediator);
   }
 
+  extractInfo(text: string) {
+    let servers = [];
+    text.replace(/(TS3\s*:?\s*)(([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}|\w+\.[-\.\w]+)(:[0-9]{1,6})?)/ig,
+      (whole, m1, m2) => {
+        if (!servers.some(x => x.title === m2)) { servers.push({ url: `ts3server://${m2}`, title: m2, type: "Teamspeak3" }); }
+        return whole;
+      })
+      .replace(/ts3?\.[-\w.]+/ig, (whole) => {
+        if (!servers.some(x => x.title === whole)) { servers.push({ url: `ts3server://${whole}`, title: whole, type: "Teamspeak3" }); };
+        return whole;
+      });
+    
+    return servers;
+    // TS: hia3.net
+    // ts3.moh-gaming.fr
+    // TS arma3.zp.ua
+    // TS: 138.201.206.146
+    // TS3: 89.22.150.168
+    // TS:109.70.149.5:9019
+    // TS3:5.9.23.52
+    // ts.combinedarms.co.uk
+    // [TS3: ts3.our-army.su]
+    // MAKO:62.210.169.9:9987
+    //  | ts.legion-revival.fr
+    // BUT NOT!: TS3 Co-op
+  }
+
   async activateInternal(model) {
     this.model = model;
     this.gameId = this.w6.activeGame.id;
     // await this.loadModel();
     // const details = (<any> this.model).details;
     // if (details && details.modList) { this.handleMods(details); }
+
+    this.updateLinks();
 
     this.interval = setInterval(() => {
       if (!this.w6.miniClient.isConnected) { return; }
@@ -49,8 +80,6 @@ export class ServerRenderBase extends ViewModel {
     });
   }
 
-  get details() { return JSON.stringify((<any>this.model).details || {}, null, '  '); }
-
   getPublisherUrl(p) {
     return p.publisher === 2 ?
       `https://starbound-servers.net/server/${p.publisherId}/` : `https://www.gametracker.com/server_info/${p.publisherId}/`;
@@ -66,7 +95,12 @@ export class ServerRenderBase extends ViewModel {
     const modList = this.model.modList;
     Object.assign(this.model, m, { modList });
     this.clientLoaded = true;
+    this.updateLinks();
   }
+  updateLinks() {
+    this.links = this.extractInfo(this.model.name + " " + this.model.game);
+  }
+  links;
   clientLoaded;
 }
 

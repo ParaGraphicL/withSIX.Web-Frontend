@@ -1,5 +1,6 @@
 <template>
   <require from="../icon"></require>
+  <require from="../flag"></require>
   <table>
     <thead>
       <tr>
@@ -29,7 +30,9 @@
         <td><span innerHTML.bind="s.game | links"></span> <span>on ${s.map}</span></td>
         <td>${s.gameType}</td>
         <td style="text-align: right">${s.currentPlayers}/${s.maxPlayers}</td>
-        <td title="Inside ${s.continent}" title.bind="s.country"><span class="flag-icon flag-icon-${s.country.toLowerCase()}"></span></td>
+        <td>
+          <flag s.bind="s"></flag>
+        </td>
         <td title="${s.distance | amount} meters"><span class="icon ${s.distance | distance} connection-quality"></span></td>
         <!-- TODO: Version should be locked to the user's version -->
         <td>${s.serverVersion}</td>
