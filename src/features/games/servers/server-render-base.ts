@@ -31,9 +31,9 @@ export class ServerRenderBase extends ViewModel {
 
   extractInfo(text: string) {
     let servers = [];
-    text.replace(/(TS3\s*:?\s*)(([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}|\w+\.[-\.\w]+)(:[0-9]{1,6})?)/ig,
-      (whole, m1, m2) => {
-        if (!servers.some(x => x.title === m2)) { servers.push({ url: `ts3server://${m2}`, title: m2, type: "Teamspeak3" }); }
+    text.replace(/(TS3?\s*(ip\s*)?:?\s*)(([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}|\w+\.[-\.\w]+)(:[0-9]{1,6})?)/ig,
+      (whole, m1, m2, m3) => {
+        if (!servers.some(x => x.title === m2)) { servers.push({ url: `ts3server://${m3}`, title: m3, type: "Teamspeak3" }); }
         return whole;
       })
       .replace(/ts3?\.[-\w.]+/ig, (whole) => {
@@ -47,6 +47,7 @@ export class ServerRenderBase extends ViewModel {
     // TS arma3.zp.ua
     // TS: 138.201.206.146
     // TS3: 89.22.150.168
+    // Ts3 ip : 149.202.195.113
     // TS:109.70.149.5:9019
     // TS3:5.9.23.52
     // ts.combinedarms.co.uk
