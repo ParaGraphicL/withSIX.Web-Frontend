@@ -12,6 +12,7 @@ export class Filters<T> extends ViewModel {
   @bindable typeaheadOptions: ITypeahead<T>;
   @bindable searchInputPlaceholder: string;
   @bindable customHandler: (arg: { info: IFilterInfo<T> }) => Promise<{ items: T[]; inlineCount: number }>;
+  @bindable autoEnableFilters: boolean;
   sortOrder: ISort<T>;
   searchInput: string;
   enabledFilters: IFilter<T>[] = [];
@@ -35,7 +36,7 @@ export class Filters<T> extends ViewModel {
     }
     this.selectedViewType = this.viewTypes[0];
     if (this.sort) this.sortOrder = this.sort[0];
-    if (this.filters) this.enabledFilters = Array.from(this.filters);
+    if (this.filters && this.autoEnableFilters) this.enabledFilters = Array.from(this.filters);
 
     this.updateFilteredItems();
 
@@ -53,7 +54,8 @@ export class Filters<T> extends ViewModel {
         .skip(1)
         .subscribe(x => this.initiateUpdate()));
       d(() => this.collectionObserver ? this.collectionObserver.unsubscribe() : null);
-      d(ViewModel.observeCollection(this.enabledFilters)
+      d(this.listFactory.getList(this.enabledFilters)
+        .modified
         .subscribe(x => this.initiateUpdate()));
     });
   }
@@ -89,7 +91,7 @@ export class Filters<T> extends ViewModel {
       const filterInfo: IFilterInfo<T> = { search: { input: this.searchInput, fields: this.searchFields }, sortOrder: this.sortOrder, enabledFilters: this.enabledFilters }
       const r = await this.customHandler({info: filterInfo})
       this.filteredItems = r.items
-      this.customCount = r.inlineCount
+      this.customCount = r.inlineCount || (<any>r).total;
     } else {
       this.filteredItems = this.orderItems(this.filterItems())
     }
@@ -165,9 +167,9 @@ export class Filters<T> extends ViewModel {
       e = e.filter(x => this.searchFields.some(v => x[v] && x[v].containsIgnoreCase(searchInput)));
     }
     if (this.filters && this.filters.some(x => true)) {
-      e = e.filter(x => this.enabledFilters.some(f => f.filter(x)));
+      e = e.filter(x => this.enabledFilters.some(f => f.filter(x, f.value)));
       if (this.enabledAndFilters.length > 0)
-        e = e.filter(x => this.enabledAndFilters.every(f => f.filter(x)));
+        e = e.filter(x => this.enabledAndFilters.every(f => f.filter(x, f.value)));
     }
     return e;
   }

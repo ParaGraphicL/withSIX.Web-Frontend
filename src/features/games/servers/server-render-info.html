@@ -1,0 +1,95 @@
+<template>
+  <require from="./flag"></require>
+  <div class="tile">
+    <span show.bind="clientLoaded">${model.ping}ms</span>
+    <flag s.bind="model"></flag>
+    <span>
+      <command-button model.bind="refresh">
+        <span class="icon ${refresh.icon}"></span>
+    </command-button>
+    </span>
+    <span>
+      <command-button model.bind="join">
+        <span class="icon ${join.icon}"></span>
+    </command-button>
+    </span>
+    <span><a href.bind="url"><span class="icon withSIX-icon-Follow"></span></a>
+    </span>
+    <span>${model.currentPlayers} / ${model.maxPlayers} plyrs |</span>
+    <span>
+      <i class="icon withSIX-icon-Lock" if.bind="model.isPasswordProtected"></i>
+      [${model.serverState}
+      | ${model.gameType}] | v${model.version} |
+    </span>
+    <span>${model.modList.length} mods |</span>
+    <span>[<span innerHTML.bind="model.game | links"></span> on ${model.map}]</span>
+
+    <compose view-model="./external/index"></compose>
+
+    <!-- ask for password otherwise, and add: /${password}.
+        only show if user has steam etc.
+       -->
+    <a if.bind="!model.isPasswordProtected" href="steam://connect/${address}">Join through Steam</a>
+
+    <div if.bind="!model.isClaimed">
+      This server is not yet claimed, is this your server? <button>claim it here</button>
+    </div>
+
+    <div if.bind="links.length > 0">
+      Links
+      <ul>
+        <li repeat.for="l of links">
+          <a href.bind="l.url">${l.title} (${l.type})</a>
+        </li>
+      </ul>
+    </div>
+
+    <div if.bind="model.additional">
+      <img if.bind="model.additional.info.avatarUrl" src.bind="model.additional.info.avatarUrl" />
+      <h2>External links</h2>
+      <ul>
+        <li if.bind="model.additional.info.homepage">
+          <a target="_blank" href.bind="model.additional.info.homepage">Homepage</a>
+        </li>
+        <li repeat.for="p of model.additional.publishers">
+          <a target="_blank" href.bind="getPublisherUrl(p)">${getPublisherName(p)}</a>
+        </li>
+      </ul>
+
+      <h2>Tags</h2>
+      <ul>
+        <li repeat.for="t of model.additional.info.tags">
+          ${t.name}
+        </li>
+      </ul>
+
+      <div if.bind="model.additional.info.description">
+        <h2>Description</h2>
+        <div innerHTML.bind="model.additional.info.description"></div>
+      </div>
+    </div>
+
+    <div if.bind="model.modList && model.modList.length > 0">
+      <h2>Mods</h2>
+      <ul>
+        <li repeat.for="m of model.modList">
+          <div if.bind="m.modId">
+            <a href="/p/${w6.activeGame.slug}/mods/${m.modId.toShortId()}/${m.name.sluggifyEntityName()}" click.delegate="cancel()">${m.name}</a>            (
+            <a href="/p/${w6.activeGame.slug}/servers2/?modId=${m.modId.toShortId()}" click.delegate="cancel()">Find more servers with this</a>)
+          </div>
+          <span if.bind="!m.modId">${m.name}</span>
+        </li>
+      </ul>
+    </div>
+
+    <div if.bind="model.players && model.players.length > 0">
+      <h2>Players</h2>
+      <ul>
+        <li repeat.for="p of model.players">
+          ${p.name} | ${p.score} | ${p.deaths}
+        </li>
+      </ul>
+    </div>
+  </div>
+  </div>
+</template>

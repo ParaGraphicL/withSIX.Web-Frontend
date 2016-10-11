@@ -1,5 +1,5 @@
-import {ViewModel,Query, DbClientQuery, handlerFor, VoidCommand,IGame} from '../../../framework';
-import {LaunchGame,Game} from './game';
+import {ViewModel,Query, DbClientQuery, handlerFor, VoidCommand,IGame, LaunchGame} from '../../../framework';
+import {Game} from './game';
 
 export interface IGameBox extends IGame {}
 

@@ -2,7 +2,7 @@
   <div class="filters-area">
     <div class="pull-right">
       Displaying
-      <span show.bind="filteredItems.length != totalCount">${filteredItems.length} /</span> <span title.bind="totalCount">${totalCount | amount} results</span>
+      <span show.bind="filteredItems.length !== totalCount">${filteredItems.length} /</span> <span title.bind="totalCount">${totalCount | amount} results</span>
       <span if.bind="sort.length > 0">
           <select class="filter-sort" id="select-sort" name="select-sort" value.bind="sortOrder">
             <option repeat.for="item of sort" model.bind="item">Sort by ${item.title || item.name.toUpperCaseFirst()}</option>
@@ -18,21 +18,26 @@
     </div>
 
     <div>
-      <input if.bind="typeaheadOptions" style="position: relative;" typeahead="substring-matcher.bind: typeaheadOptions.substringMatcher; display.bind: typeaheadOptions.display; selected.bind: typeaheadSelect" class="form-control" type="text" value.bind="searchInput"
-          placeholder.bind="searchInputPlaceholder"></input>
-      <input if.bind="!typeaheadOptions" style="position: relative;" class="form-control" type="text" value.bind="searchInput" placeholder.bind="searchInputPlaceholder"></input>
+      <input if.bind="typeaheadOptions" style="position: relative;" typeahead="substring-matcher.bind: typeaheadOptions.substringMatcher; display.bind: typeaheadOptions.display; selected.bind: typeaheadSelect"
+        class="form-control" type="text" value.bind="searchInput" placeholder.bind="searchInputPlaceholder"></input>
+      <input if.bind="!typeaheadOptions" style="position: relative;" class="form-control" type="text" value.bind="searchInput"
+        placeholder.bind="searchInputPlaceholder"></input>
     </div>
 
     <div class="show-filter" if.bind="filters && filters.length > 0">
       <span class="show-title">Show:</span>
       <div class="show-boxes">
         <div class="checkbox-container" repeat.for="filter of filters">
-          <div class="squaredTwo ckInner">
-            <label class="text-label" for="chk${filter.name}">
-              <input type="checkbox" name="mod-version-unknown" id="chk${filter.name}" model.bind="filter" checked.bind="$parent.enabledFilters" />
-              ${filter.name}
-            </label>
-          </div>
+          <input type="checkbox" change.trigger="filter.enabled = !filter.enabled" name="mod-version-unknown" id="chk${filter.name}"
+            model.bind="filter" checked.bind="$parent.enabledFilters" />
+          <label class="text-label" for="chk${filter.name}">
+            ${filter.title || filter.name}
+          </label>
+          <selectbox show.bind="filter.enabled" if.bind="filter.values" options.bind="filter.values" value.bind="filter.value">
+            <template replace-part="item-template">
+              <option model.bind="o">${o.title || o}</option>
+            </template>
+          </selectbox>
         </div>
       </div>
     </div>

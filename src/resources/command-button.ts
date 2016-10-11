@@ -4,6 +4,10 @@ export class CommandButtonCustomElement {
   @bindable model = <any>{};
   @bindable noProcessing;
   @bindable type = "button";
+  private _cancel;
+  @bindable   
+  get cancel() { return this._cancel || this.model.cancel; }
+  set cancel(value) { this._cancel = value; }
 
   get name() { return this.model.name; }
   get command() { return this.model; }

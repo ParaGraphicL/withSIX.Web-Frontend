@@ -1,21 +1,61 @@
 import { Router, RouterConfiguration } from "aurelia-router";
-import { ViewModel, handlerFor, Query, DbClientQuery, IGameSettingsEntry, IGamesSettings, IIPEndpoint, GameHelper } from "../../../framework";
+import { ViewModel, handlerFor, Query, DbClientQuery, IGameSettingsEntry, IGamesSettings, IIPEndpoint, GameHelper, uiCommand2 } from "../../../framework";
+
+import { ServerRender } from './server-render';
+
+interface IServer {
+  queryAddress: string, gameId: string
+}
 
 export class Index extends ViewModel {
-  model: IServers;
+  model: IServers = { addresses: [] }
   vm = "./server-item";
   async activate(params, routeConfig) {
-    this.model = await new GetServers(this.w6.activeGame.id).handle(this.mediator);
     if (this.w6.activeGame.id === GameHelper.gameIds.Starbound) {
       this.vm = "./sb-server-item";
     }
+
+    this.refresh();
   }
 
-  getSlug(addr: IIPEndpoint) { return addr.address.replace(/\./g, "-") + ":" + addr.port + "/test"; }
+  deactivate() {
+    if (this.cancel) this.cancel();
+    super.deactivate();
+  }
+
+  refresh = uiCommand2("Refresh", () => this.refreshInternal())
+
+  cancel;
+
+  async refreshInternal() {
+    const dsp = this.observableFromEvent<{ items: string[], gameId: string }>('server.serversPageReceived')
+      .filter(x => x.gameId === this.w6.activeGame.id)
+      .subscribe(x => {
+        this.model
+          .addresses
+          .push(...x.items.filter(s => !this.model.addresses.some(s2 => s2.queryAddress === s))
+            .map(s => { return { gameId: x.gameId, queryAddress: s } }));
+      })
+    try {
+      const req = new GetServers(this.w6.activeGame.id);
+      const p = req.handle(this.mediator);
+      this.cancel = uiCommand2("Cancel", async () => { try { await req.cancel() } catch (err) {} } );
+      const r = await p;
+    } finally {
+      dsp.unsubscribe();
+      this.cancel = null;
+    }
+  }
+
+  showServer(server: IServer) {
+    return this.dialog.open({model: server.queryAddress, viewModel: ServerRender})
+  }
+
+  getSlug(addr: string) { return addr.replace(/\./g, "-") + "/test"; }
 }
 
 interface IServers {
-  addresses: { address: IIPEndpoint, gameId: string }[];
+  addresses: IServer[];
 }
 
 export class ServersModule {
@@ -23,6 +63,7 @@ export class ServersModule {
     mount = mount + "servers";
     config.map([
       { route: `${routeMount}`, name: "servers", moduleId: `${mount}/index` },
+      { route: `${routeMount}2`, name: "servers2", moduleId: `${mount}/index2` },
       { route: `${routeMount}/:serverId/:serverSlug?`, name: "servers-show", moduleId: `${mount}/show` },
     ]);
   }
@@ -40,33 +81,28 @@ enum ServerPublisher {
   Gametracker
 }
 
-class GetServers extends Query<IServers> {
+class GetServers extends Query<IBatchResult> {
   constructor(public gameId: string) { super(); }
+  public cancel: () => Promise<void>; // TODO: this is a bad approach
+}
+
+interface IBatchResult {
+  count: number;
 }
 
 @handlerFor(GetServers)
-class GetServersQuery extends DbClientQuery<GetServers, IServers>  {
+class GetServersQuery extends DbClientQuery<GetServers, IBatchResult>  {
   async handle(request: GetServers) {
-    const results = await this.getAddresses(request);
-    return { addresses: results.addresses.map(x => { return { address: x, gameId: request.gameId }; }) };
-  }
-
-  async getAddresses(request: GetServers) {
-    if (request.gameId === GameHelper.gameIds.Starbound) {
-      const gameServers = await GameHelper.getGameServers(request.gameId, this.context);
-      return { addresses: Array.from(gameServers.values()).map(x => x.address)};
-    }
+    // TODO Move the starbound stuff to the client?
+    // if (request.gameId === GameHelper.gameIds.Starbound) {
+    //   const gameServers = await GameHelper.getGameServers(request.gameId, this.context);
+    //   return { addresses: Array.from(gameServers.values()).map(x => x.address)};
+    // }
     // if (this.tools.env > this.tools.Environment.Staging) { return this.arma3Bs(); }
-    await (<any> this.client).connection.promise(); // Puh todo
-    return await this.client.hubs.server
-      .getServers({ gameId: request.gameId });
-  }
-
-  arma3Bs = () => {
-    const addrs = [
-      { "address": "213.136.91.14", "port": 2303 }, { "address": "213.136.91.14", "port": 2323 }, { "address": "85.131.163.77", "port": 2303 }, { "address": "85.10.211.100", "port": 2631 }, { "address": "213.136.77.161", "port": 2303 }, { "address": "80.241.222.167", "port": 2331 }, { "address": "85.10.196.54", "port": 2303 }, { "address": "193.200.241.45", "port": 2303 }, { "address": "5.189.173.177", "port": 2313 }, { "address": "213.133.111.8", "port": 2303 }, { "address": "5.189.177.199", "port": 2303 }, { "address": "5.189.138.2", "port": 2303 }, { "address": "85.10.192.241", "port": 2303 }, { "address": "5.189.149.245", "port": 2303 }, { "address": "5.189.170.46", "port": 27416 }, { "address": "85.10.204.28", "port": 2341 }, { "address": "213.136.79.148", "port": 2303 }, { "address": "213.136.72.197", "port": 2303 }, { "address": "188.104.122.174", "port": 2303 }, { "address": "5.189.138.85", "port": 2303 }];
-    return {
-      addresses: addrs.concat(addrs).concat(addrs).concat(addrs),
-    };
+    //return this.getAddresses(request); //{ addresses: results.addresses.map(x => { return { address: x, gameId: request.gameId }; }) };
+    const cp = this.client.hubs.server
+      .getServers({ gameId: request.gameId });;
+    request.cancel = cp.cancel;
+    return await cp;
   }
 }
