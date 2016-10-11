@@ -16,7 +16,7 @@
     </thead>
     <tbody>
       <tr repeat.for="s of model.items" click.trigger="showServer(s)">
-        <td width="104">
+        <td width="120">
           <icon cls="withSIX-icon-Star" optional-title="Favorite" model.bind="s.isFavorite"></icon>
           <icon cls="withSIX-icon-Lock" optional-title="Password required" model.bind="s.isPasswordProtected"></icon>
           <!--<icon cls="withSIX-icon-Cloud" optional-title="Dedicated" model.bind="s.isDedicated"></icon>-->
@@ -25,6 +25,8 @@
             model.bind="s.battlEye || s.verifySignatures"></icon>
           <icon cls="withSIX-icon-Download ${s.hasAllMods ? 'ready' : ''}" optional-title="Requires ${s.modList.length} mods"
             model.bind="s.modList.length > 0"></icon>
+          <span><a href.bind="getUrl(s)"><span class="icon withSIX-icon-Follow"></span></a>
+          </span>
         </td>
         <td innerHTML.bind="s.name | links"></td>
         <td><span innerHTML.bind="s.game | links"></span> <span>on ${s.map}</span></td>

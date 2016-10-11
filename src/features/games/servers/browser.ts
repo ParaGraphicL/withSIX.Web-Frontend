@@ -121,6 +121,8 @@ export class Index extends FilteredBase<IServer> {
     await super.activate(params);
   }
 
+  getUrl = (s) => `/p/${this.w6.activeGame.slug}/servers/${s.queryAddress.replace(/\./g, '-')}/${s.name.sluggifyEntityName()}`
+
   // TODO Custom filters
   getMore(page = 1) {
     // todo; filters and order
