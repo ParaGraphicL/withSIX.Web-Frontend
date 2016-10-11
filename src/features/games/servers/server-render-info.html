@@ -1,6 +1,8 @@
 <template>
+  <require from="./flag"></require>
   <div class="tile">
     <span show.bind="clientLoaded">${model.ping}ms</span>
+    <flag s.bind="model"></flag>
     <span>
       <command-button model.bind="refresh">
         <span class="icon ${refresh.icon}"></span>
@@ -13,7 +15,8 @@
     </span>
     <span>${model.currentPlayers} / ${model.maxPlayers} plyrs |</span>
     <span>
-      <i class="icon withSIX-icon-Lock" if.bind="model.isPasswordProtected"></i> ${model.name} [${model.serverState}
+      <i class="icon withSIX-icon-Lock" if.bind="model.isPasswordProtected"></i>
+      [${model.serverState}
       | ${model.gameType}] | v${model.version} |
     </span>
     <span>${model.modList.length} mods |</span>
@@ -60,8 +63,8 @@
       <ul>
         <li repeat.for="m of model.modList">
           <div if.bind="m.modId">
-            <a href="/p/${w6.activeGame.slug}/mods/${m.modId.toShortId()}/${m.name.sluggifyEntityName()}" click.delegate="cancel()">${m.name}</a>
-            <a href="/p/${w6.activeGame.slug}/servers2/?modId=${m.modId.toShortId()}" click.delegate="cancel()">(Find more servers with this)</a>
+            <a href="/p/${w6.activeGame.slug}/mods/${m.modId.toShortId()}/${m.name.sluggifyEntityName()}" click.delegate="cancel()">${m.name}</a>            (
+            <a href="/p/${w6.activeGame.slug}/servers2/?modId=${m.modId.toShortId()}" click.delegate="cancel()">Find more servers with this</a>)
           </div>
           <span if.bind="!m.modId">${m.name}</span>
         </li>
