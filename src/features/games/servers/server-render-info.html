@@ -20,7 +20,7 @@
       | ${model.gameType}] | v${model.version} |
     </span>
     <span>${model.modList.length} mods |</span>
-    <span>[${model.game} on ${model.map}]</span>
+    <span>[${model.game | links} on ${model.map}]</span>
 
     <compose view-model="./external/index"></compose>
 
