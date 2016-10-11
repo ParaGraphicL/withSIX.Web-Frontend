@@ -20,6 +20,8 @@ export class ServerRenderBase extends ViewModel {
 
   get address() { return this.model.queryAddress; }
 
+  url;
+
   launch() {
     const act = new LaunchGame(this.w6.activeGame.id);
     act.action = LaunchAction.Join;
@@ -62,6 +64,8 @@ export class ServerRenderBase extends ViewModel {
     // if (details && details.modList) { this.handleMods(details); }
 
     this.updateLinks();
+
+    this.url = `/p/${this.w6.activeGame.slug}/servers/${this.address.replace(/\./g, '-')}`;
 
     this.interval = setInterval(() => {
       if (!this.w6.miniClient.isConnected) { return; }
