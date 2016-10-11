@@ -31,11 +31,11 @@ export class ServerRenderBase extends ViewModel {
     let servers = [];
     text.replace(/(TS3\s*:?\s*)(([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}|\w+\.[-\.\w]+)(:[0-9]{1,6})?)/ig,
       (whole, m1, m2) => {
-        if (!servers.some(x => x.url === m2)) { servers.push({ url: `ts3server://${m2}`, title: m2, type: "Teamspeak3" }); }
+        if (!servers.some(x => x.title === m2)) { servers.push({ url: `ts3server://${m2}`, title: m2, type: "Teamspeak3" }); }
         return whole;
       })
       .replace(/ts3?\.[-\w.]+/ig, (whole) => {
-        if (!servers.some(x => x.url === whole)) { servers.push({ url: `ts3server://${whole}`, title: whole, type: "Teamspeak3" }); };
+        if (!servers.some(x => x.title === whole)) { servers.push({ url: `ts3server://${whole}`, title: whole, type: "Teamspeak3" }); };
         return whole;
       });
     
