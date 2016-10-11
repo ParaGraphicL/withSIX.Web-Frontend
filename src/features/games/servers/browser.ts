@@ -42,6 +42,10 @@ export class Index extends FilteredBase<IServer> {
     name: "isOpen",
     filter: () => true,
   }, {
+    title: "Has free slots",
+    name: "hasFreeSlots",
+    filter: () => true
+  }, {
     title: "Mods",
     name: "hasMods",
     values: [{
