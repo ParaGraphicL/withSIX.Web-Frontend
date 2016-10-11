@@ -75,7 +75,7 @@ export class TextValueConverter {
 export class LinkValueConverter {
   toView = text => text ? this.parseText(sanitizeHtml(text)) : text;
   parseText = text => this.replaceLinks(text);
-  // removed (:0-9{1,6})? as web urls generally have no ports!
+  // removed (:[0-9]{1,6})? as web urls generally have no ports!
   replaceLinks = text => text.replace(
       /(https?:\/\/)?((www\.)?[-a-zA-Z0-9@%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*))/ig,
       (whole, m1, m2, m3) => {

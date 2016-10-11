@@ -33,6 +33,15 @@
       This server is not yet claimed, is this your server? <button>claim it here</button>
     </div>
 
+    <div if.bind="links.length > 0">
+      Links
+      <ul>
+        <li repeat.for="l of links">
+          <a href.bind="l.url">${l.title} (${l.type})</a>
+        </li>
+      </ul>
+    </div>
+
     <div if.bind="model.additional">
       <img if.bind="model.additional.info.avatarUrl" src.bind="model.additional.info.avatarUrl" />
       <h2>External links</h2>
