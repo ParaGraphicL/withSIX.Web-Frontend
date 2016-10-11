@@ -34,7 +34,7 @@ export class ServerRenderBase extends ViewModel {
         if (!servers.some(x => x.url === m2)) { servers.push({ url: `ts3server://${m2}`, title: m2, type: "Teamspeak3" }); }
         return whole;
       })
-      .replace(/ts3?\.[\w.]+/ig, (whole) => {
+      .replace(/ts3?\.[-\w.]+/ig, (whole) => {
         if (!servers.some(x => x.url === whole)) { servers.push({ url: `ts3server://${whole}`, title: whole, type: "Teamspeak3" }); };
         return whole;
       });
