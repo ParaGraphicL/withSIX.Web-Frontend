@@ -75,11 +75,12 @@ export class TextValueConverter {
 export class LinkValueConverter {
   toView = text => text ? this.parseText(sanitizeHtml(text)) : text;
   parseText = text => this.replaceLinks(text);
+  // removed (:0-9{1,6})? as web urls generally have no ports!
   replaceLinks = text => text.replace(
-      /(\b(https?|ftp|file):\/\/([-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|]))/gi,
-      (whole, m1, m2, m3) => `<a target="_blank" href="${whole}">${m3}</a>`)
-    .replace(/([\s\t\[])?(www\.[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi,
-      (whole, m1, m2, m3) => `${m1 ? m1 : ''}<a target="_blank" href="http://${m2}">${m2}</a>`);
+      /(https?:\/\/)?((www\.)?[-a-zA-Z0-9@%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*))/ig,
+      (whole, m1, m2, m3) => {
+        return `<a target="_blank" href="${whole.startsWith('http') ? whole : `http://${whole}`}">${m2}</a>`;
+      });
 }
 
 // This only converts the ary on first use, and then becomes static.
