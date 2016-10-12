@@ -5,7 +5,8 @@ import {
   IPaginated,
   handlerFor,
   SortDirection,
-  IFilter
+  IFilter,
+  DbClientQuery
 } from '../../../framework';
 import {
   FilteredBase
@@ -27,6 +28,7 @@ interface IServer {
   isPasswordProtected: boolean;
   isDedicated: boolean;
   version: string;
+  modList;
 }
 export class Index extends FilteredBase<IServer> {
   static getStandardFilters = () => [{
@@ -128,7 +130,7 @@ export class Index extends FilteredBase<IServer> {
   getUrl = (s) => `/p/${this.w6.activeGame.slug}/servers/${s.queryAddress.replace(/\./g, '-')}/${s.name.sluggifyEntityName()}`
 
   // TODO Custom filters
-  getMore(page = 1) {
+  async getMore(page = 1) {
     // todo; filters and order
     const search = this.filterInfo.search;
     let filters = undefined;
@@ -151,9 +153,36 @@ export class Index extends FilteredBase<IServer> {
         direction: so.direction
       }]
     } : undefined;
-    return new GetServers(this.w6.activeGame.id, filters, sort, {
+    const servers = await new GetServers(this.w6.activeGame.id, filters, sort, {
       page
     }).handle(this.mediator);
+    if (this.w6.miniClient.isConnected) this.refreshServerInfo(servers.items);
+    return servers;
+  }
+
+  async refreshServerInfo(servers: IServer[]) {
+    const dsp = this.observableFromEvent<{ items: IServer[], gameId: string }>('server.serverInfoReceived')
+      .subscribe(evt => {
+        evt.items.forEach(x => {
+          let s = servers.filter(f => f.queryAddress === x.queryAddress)[0];
+          if (s == null) return;
+          Object.assign(s, x, { country: s.country, distance: s.distance, modList: s.modList });
+        });
+      });
+      // --- TODO: We currently retrieve the custom info because requesting the Steam servers seems to be broken
+    // We have to slice it into pieces of 15 or the Steam Query will return 0
+    try {
+      const array = servers.map(x => x.queryAddress);
+      var p = [];
+      var i,j,temparray,chunk = 15;
+      for (i = 0, j = array.length; i < j; i += chunk) {
+        temparray = array.slice(i, i + chunk);
+        p.push(new GetServer(this.w6.activeGame.id, temparray).handle(this.mediator))
+      }
+        await Promise.all(p);
+      } finally {
+        dsp.unsubscribe();
+      }
   }
 
   addPage = async () => {
@@ -204,5 +233,18 @@ class GetServersHandler extends DbQuery<GetServers, IPaginated<IServer>> {
     return this.context.getCustom("servers", {
       params: request
     })
+  }
+}
+
+export class GetServer extends Query<IServer[]> {
+  constructor(public gameId: string, public addresses: string[], public includePlayers = true) { super(); }
+}
+
+@handlerFor(GetServer)
+class GetServerQuery extends DbClientQuery<GetServer, IServer[]>  {
+  async handle(request: GetServer) {
+    let results = await this.client.hubs.server
+      .getServersInfo(<any> { addresses: request.addresses, gameId: request.gameId, includePlayers: request.includePlayers });
+    return results.servers;
   }
 }
