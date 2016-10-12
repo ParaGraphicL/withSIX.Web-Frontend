@@ -161,12 +161,19 @@ export class Index extends FilteredBase<IServer> {
   }
 
   async refreshServerInfo(servers: IServer[]) {
-    const r = await new GetServer(this.w6.activeGame.id, servers.map(x => x.queryAddress), false).handle(this.mediator);
-    r.forEach(x => {
-      let s = servers.filter(f => f.queryAddress === x.queryAddress)[0];
-      if (s == null) return;
-      Object.assign(s, x, { country: s.country, distance: s.distance, modList: s.modList });
-    });
+    const dsp = this.observableFromEvent<{ items: IServer[], gameId: string }>('server.serverInfoReceived')
+      .subscribe(evt => {
+        evt.items.forEach(x => {
+          let s = servers.filter(f => f.queryAddress === x.queryAddress)[0];
+          if (s == null) return;
+          Object.assign(s, x, { country: s.country, distance: s.distance, modList: s.modList });
+        });
+      });
+      try {
+        await new GetServer(this.w6.activeGame.id, servers.map(x => x.queryAddress), false).handle(this.mediator);
+      } finally {
+        dsp.unsubscribe();
+      }    
   }
 
   addPage = async () => {
