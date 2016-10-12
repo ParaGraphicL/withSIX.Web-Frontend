@@ -70,6 +70,7 @@ export class ServerRenderBase extends ViewModel {
 
     this.url = `/p/${this.w6.activeGame.slug}/servers/${this.address.replace(/\./g, "-")}/${this.model.name.sluggifyEntityName()}`;
 
+    if (this.w6.miniClient.isConnected) { this.refresh(); }
     this.interval = setInterval(() => {
       if (!this.w6.miniClient.isConnected) { return; }
       if (this.refresh.canExecute) { this.refresh(); }
