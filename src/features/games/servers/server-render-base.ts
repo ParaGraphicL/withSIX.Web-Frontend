@@ -14,6 +14,8 @@ export class ServerRenderBase extends ViewModel {
   gameId;
   model: ExtendedServerInfo;
   mods;
+  links;
+  clientLoaded;
   refresh = uiCommand2("Refresh", () => this.loadModel(), { icon: "withSIX-icon-Reload" });
   join = uiCommand2("Join", () => this.launch(), { icon: "withSIX-icon-Rocket" });
   detailsShown = false;
@@ -33,14 +35,14 @@ export class ServerRenderBase extends ViewModel {
     let servers = [];
     text.replace(/(TS3?\s*(ip\s*)?:?\s*)(([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}|\w+\.[-\.\w]+)(:[0-9]{1,6})?)/ig,
       (whole, m1, m2, m3) => {
-        if (!servers.some(x => x.title === m2)) { servers.push({ url: `ts3server://${m3}`, title: m3, type: "Teamspeak3" }); }
+        if (!servers.some(x => x.title === m2)) { servers.push({ title: m3, type: "Teamspeak3", url: `ts3server://${m3}` }); }
         return whole;
       })
       .replace(/ts3?\.[-\w.]+/ig, (whole) => {
-        if (!servers.some(x => x.title === whole)) { servers.push({ url: `ts3server://${whole}`, title: whole, type: "Teamspeak3" }); };
+        if (!servers.some(x => x.title === whole)) { servers.push({ title: whole, type: "Teamspeak3", url: `ts3server://${whole}` }); };
         return whole;
       });
-    
+
     return servers;
     // TS: hia3.net
     // ts3.moh-gaming.fr
@@ -66,7 +68,7 @@ export class ServerRenderBase extends ViewModel {
 
     this.updateLinks();
 
-    this.url = `/p/${this.w6.activeGame.slug}/servers/${this.address.replace(/\./g, '-')}/${this.model.name.sluggifyEntityName()}`;
+    this.url = `/p/${this.w6.activeGame.slug}/servers/${this.address.replace(/\./g, "-")}/${this.model.name.sluggifyEntityName()}`;
 
     this.interval = setInterval(() => {
       if (!this.w6.miniClient.isConnected) { return; }
@@ -105,8 +107,6 @@ export class ServerRenderBase extends ViewModel {
   updateLinks() {
     this.links = this.extractInfo(this.model.name + " " + this.model.game);
   }
-  links;
-  clientLoaded;
 }
 
 export class GetServer extends Query<IServerInfo> {
@@ -116,9 +116,8 @@ export class GetServer extends Query<IServerInfo> {
 @handlerFor(GetServer)
 class GetServerQuery extends DbClientQuery<GetServer, IServerInfo>  {
   async handle(request: GetServer) {
-    await (<any>this.client).connection.promise(); // Puh todo
     let results = await this.client.hubs.server
-      .getServersInfo(<any>{ gameId: request.gameId, addresses: [request.address], includePlayers: request.includePlayers });
+      .getServersInfo(<any> { addresses: [request.address], gameId: request.gameId, includePlayers: request.includePlayers });
     const gameServers = await GameHelper.getGameServers(request.gameId, this.context);
     return Object.assign({}, results.servers[0], { additional: gameServers.get(request.address) });
   }
@@ -131,6 +130,6 @@ export class GetModInfo extends Query<any> {
 @handlerFor(GetModInfo)
 class GetModInfoQuery extends DbClientQuery<GetModInfo, any>  {
   handle(request: GetModInfo) {
-    return this.context.postCustom("mods/get-mod-mappings", { gameId: request.gameId, inputMappings: request.inputMappings })
+    return this.context.postCustom("mods/get-mod-mappings", { gameId: request.gameId, inputMappings: request.inputMappings });
   }
 }
