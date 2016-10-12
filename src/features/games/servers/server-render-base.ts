@@ -120,7 +120,9 @@ class GetServerQuery extends DbClientQuery<GetServer, IServerInfo>  {
     let results = await this.client.hubs.server
       .getServersInfo(<any> { addresses: [request.address], gameId: request.gameId, includePlayers: request.includePlayers });
     const gameServers = await GameHelper.getGameServers(request.gameId, this.context);
-    return Object.assign({}, results.servers[0], { additional: gameServers.get(request.address) });
+    let s = results.servers[0];
+    if (s == null) { throw new Error("server could not be refreshed"); }
+    return Object.assign({}, s, { additional: gameServers.get(request.address) });
   }
 }
 
