@@ -7,7 +7,8 @@ import {
   SortDirection,
   IFilter,
   DbClientQuery,
-  uiCommand2
+  uiCommand2,
+  InstallContents, LaunchAction, LaunchContents, LaunchGame,
 } from '../../../framework';
 import {
   FilteredBase
@@ -164,6 +165,33 @@ export class Index extends FilteredBase<IServer> {
 
   refresh = uiCommand2("Refresh", () => this.refreshServerInfo(this.model.items));
   reload = uiCommand2("Reload", async () => this.model = await this.getMore());
+  join = uiCommand2("Join", () => this.launch(this.selectedServer), { icon: "withSIX-icon-Rocket" });
+
+  selectedServer: IServer;
+
+  async launch(s: IServer) {
+    const contents = s.modList ? s.modList.map(x => x.modId).filter(x => x).map(x => {
+        return { id: x };
+      }) : [];
+    if (contents.length > 0) {
+      const noteInfo = {
+        text: `Server: ${s.name}`,
+        url: this.getUrl(s),
+      };
+
+      // TODO: Don't install if already has
+      const installAct = new InstallContents(this.w6.activeGame.id, contents, noteInfo, true);
+      await installAct.handle(this.mediator);
+      const launchAct = new LaunchContents(this.w6.activeGame.id, contents, noteInfo, LaunchAction.Join);
+      (<any> launchAct).serverAddress = s.connectionAddress || s.queryAddress;
+      await launchAct.handle(this.mediator);
+    } else {
+      const act = new LaunchGame(this.w6.activeGame.id);
+      act.action = LaunchAction.Join;
+      act.serverAddress = s.connectionAddress || s.queryAddress;
+      await act.handle(this.mediator);
+    }
+  }
 
   async refreshServerInfo(servers: IServer[]) {
     const dsp = this.observableFromEvent<{ items: IServer[], gameId: string }>('server.serverInfoReceived')

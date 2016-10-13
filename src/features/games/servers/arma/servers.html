@@ -5,6 +5,7 @@
     <thead>
       <tr>
         <td>Info</td>
+        <td></td>
         <td>Name</td>
         <td>Mission</td>
         <td>Mode</td>
@@ -27,6 +28,11 @@
             model.bind="s.modList.length > 0"></icon>
           <span><a href.bind="getUrl(s)"><span class="icon withSIX-icon-Follow"></span></a>
           </span>
+        </td>
+        <td>
+          <command-button model.bind="join" click.trigger="selectedServer = s">
+            <span class="icon ${join.icon}"></span>
+          </command-button>
         </td>
         <td innerHTML.bind="s.name | links"></td>
         <td><span innerHTML.bind="s.game | links"></span> <span>on ${s.map}</span></td>
