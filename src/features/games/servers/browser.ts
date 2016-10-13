@@ -119,7 +119,7 @@ export class Index extends FilteredBase<IServer> {
         try { modId = params.modId.fromShortId() } catch (err) { modId = params.modId };
         this.defaultEnabled.push({
           name: "mod",
-          value: { id: modId , type: "withSIX" },
+          value: { id: modId, type: "withSIX" },
           filter: () => true
         })
       }
@@ -169,20 +169,11 @@ export class Index extends FilteredBase<IServer> {
           Object.assign(s, x, { country: s.country, distance: s.distance, modList: s.modList });
         });
       });
-      // --- TODO: We currently retrieve the custom info because requesting the Steam servers seems to be broken
-    // We have to slice it into pieces of 15 or the Steam Query will return 0
     try {
-      const array = servers.map(x => x.queryAddress);
-      var p = [];
-      var i,j,temparray,chunk = 15;
-      for (i = 0, j = array.length; i < j; i += chunk) {
-        temparray = array.slice(i, i + chunk);
-        p.push(new GetServer(this.w6.activeGame.id, temparray).handle(this.mediator))
-      }
-        await Promise.all(p);
-      } finally {
-        dsp.unsubscribe();
-      }
+      await new GetServer(this.w6.activeGame.id, servers.map(x => x.queryAddress)).handle(this.mediator);
+    } finally {
+      dsp.unsubscribe();
+    }
   }
 
   addPage = async () => {
@@ -244,7 +235,7 @@ export class GetServer extends Query<IServer[]> {
 class GetServerQuery extends DbClientQuery<GetServer, IServer[]>  {
   async handle(request: GetServer) {
     let results = await this.client.hubs.server
-      .getServersInfo(<any> { addresses: request.addresses, gameId: request.gameId, includePlayers: request.includePlayers });
+      .getServersInfo(<any>{ addresses: request.addresses, gameId: request.gameId, includePlayers: request.includePlayers });
     return results.servers;
   }
 }
