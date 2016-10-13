@@ -1,5 +1,5 @@
 import {
-  DbClientQuery, GameHelper, IServerInfo, LaunchAction, LaunchGame,
+  DbClientQuery, GameHelper, IServerInfo, InstallContents, LaunchAction, LaunchContents, LaunchGame,
   Query, ViewModel, handlerFor, uiCommand2,
 } from "../../../framework";
 
@@ -7,6 +7,7 @@ export interface ExtendedServerInfo extends IServerInfo {
   modList: any[];
   game: string;
   map: string;
+  connectionAddress: string;
 }
 
 export class ServerRenderBase extends ViewModel {
@@ -24,11 +25,31 @@ export class ServerRenderBase extends ViewModel {
 
   url;
 
-  launch() {
-    const act = new LaunchGame(this.w6.activeGame.id);
-    act.action = LaunchAction.Join;
-    act.serverAddress = this.address;
-    return act.handle(this.mediator);
+  async launch() {
+    const contents = this.model.modList ? this.model.modList.map(x => x.modId).filter(x => x).map(x => {
+        return { id: x };
+      }) : [];
+    if (contents.length > 0) {
+      const contents = this.model.modList.map(x => x.modId).filter(x => x).map(x => {
+        return { id: x };
+      });
+      const noteInfo = {
+        text: `Server: ${this.model.name}`,
+        url: this.url,
+      };
+
+      // TODO: Don't install if already has
+      const installAct = new InstallContents(this.w6.activeGame.id, contents, noteInfo, true);
+      await installAct.handle(this.mediator);
+      const launchAct = new LaunchContents(this.w6.activeGame.id, contents, noteInfo, LaunchAction.Join);
+      (<any> launchAct).serverAddress = this.model.connectionAddress || this.model.queryAddress;
+      await launchAct.handle(this.mediator);
+    } else {
+      const act = new LaunchGame(this.w6.activeGame.id);
+      act.action = LaunchAction.Join;
+      act.serverAddress = this.model.connectionAddress || this.model.queryAddress;
+      await act.handle(this.mediator);
+    }
   }
 
   extractInfo(text: string) {
