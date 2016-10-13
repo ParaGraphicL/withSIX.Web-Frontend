@@ -6,7 +6,8 @@ import {
   handlerFor,
   SortDirection,
   IFilter,
-  DbClientQuery
+  DbClientQuery,
+  uiCommand2
 } from '../../../framework';
 import {
   FilteredBase
@@ -124,6 +125,7 @@ export class Index extends FilteredBase<IServer> {
         })
       }
     }
+    setInterval(() => { if (this.w6.miniClient.isConnected) { this.refresh(); } }, 60 * 1000);
     await super.activate(params);
   }
 
@@ -159,6 +161,9 @@ export class Index extends FilteredBase<IServer> {
     if (this.w6.miniClient.isConnected) this.refreshServerInfo(servers.items);
     return servers;
   }
+
+  refresh = uiCommand2("Refresh", () => this.refreshServerInfo(this.model.items));
+  reload = uiCommand2("Reload", async () => this.model = await this.getMore());
 
   async refreshServerInfo(servers: IServer[]) {
     const dsp = this.observableFromEvent<{ items: IServer[], gameId: string }>('server.serverInfoReceived')
