@@ -30,8 +30,8 @@
           </span>
         </td>
         <td>
-          <command-button model.bind="join" click.trigger="selectedServer = s">
-            <span class="icon ${join.icon}"></span>
+          <command-button model.bind="join">
+            <span class="icon ${join.icon}" click.trigger="selectServer(s)"></span>
           </command-button>
         </td>
         <td innerHTML.bind="s.name | links"></td>

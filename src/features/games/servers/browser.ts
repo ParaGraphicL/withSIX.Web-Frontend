@@ -168,6 +168,8 @@ export class Index extends FilteredBase<IServer> {
   join = uiCommand2("Join", () => this.launch(this.selectedServer), { icon: "withSIX-icon-Rocket" });
 
   selectedServer: IServer;
+  
+  selectServer = (s: IServer) => this.selectedServer = s;
 
   async launch(s: IServer) {
     const contents = s.modList ? s.modList.map(x => x.modId).filter(x => x).map(x => {
