@@ -212,7 +212,7 @@ export class LoggingEventAggregator extends EventAggregator {
     super.publish(x, y);
   }
   subscribe(x, y) {
-    Tools.Debug.log("$AUR.EA.subscribe", x, y);
+    Tools.Debug.log("$AUR.EA.subscribe", x.name || x, y.name);
     return super.subscribe(x, y);
   }
 }
