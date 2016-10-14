@@ -23,6 +23,7 @@ interface JQueryStatic {
 
 interface Array<T> {
   flatten: <T2>() => Array<T2>;
+  uniq: () => this;
   removeEl: (el: T) => void;
   toMap: <K>(keySelector: (x: T) => K) => Map<K, T>;
   includes: (el: T) => boolean;
