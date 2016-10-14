@@ -1,4 +1,4 @@
-import {flatten, entries, removeEl, aryToMap, includes, move} from './utils/iterable'
+import {flatten, entries, removeEl, aryToMap, includes, move, uniq} from './utils/iterable'
 import {indexOfIgnoreCase, endsWithIgnoreCase, startsWithIgnoreCase, toUpperCaseFirst, toLowerCaseFirst, containsIgnoreCase, equalsIgnoreCase, truncate, sluggify, sluggifyEntityName, toShortId, fromShortId} from './utils/string'
 import {defineFunctions} from './utils/extenders'
 import Linq from 'linq4es2015'
@@ -26,6 +26,7 @@ defineFunctions(Array.prototype, {
    'toMap': aryToMap,
    'includes': includes,
    'move': move,
+   'uniq': uniq,
 });
 defineFunctions(Object.prototype, {
    'entries': entries

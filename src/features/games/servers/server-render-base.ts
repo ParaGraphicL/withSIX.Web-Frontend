@@ -7,6 +7,8 @@ export interface ExtendedServerInfo extends IServerInfo {
   modList: any[];
   game: string;
   map: string;
+  country: string;
+  location: string;
   connectionAddress: string;
 }
 
@@ -26,7 +28,7 @@ export class ServerRenderBase extends ViewModel {
   url;
 
   async launch() {
-    const contents = this.model.modList ? this.model.modList.map(x => x.modId).filter(x => x).map(x => {
+    const contents = this.model.modList ? this.model.modList.map(x => x.modId).filter(x => x).uniq().map(x => {
         return { id: x };
       }) : [];
     if (contents.length > 0) {
@@ -122,7 +124,7 @@ export class ServerRenderBase extends ViewModel {
     const m = await new GetServer(this.gameId, this.address).handle(this.mediator);
     // for now keep modlist from server as it has modID linked in..
     const modList = this.model.modList;
-    Object.assign(this.model, m, { modList });
+    Object.assign(this.model, m, { modList, country: this.model.country, location: this.model.location });
     this.clientLoaded = true;
     this.updateLinks();
   }
