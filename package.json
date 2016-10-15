@@ -186,7 +186,7 @@
     "uuid-js": "^0.7.5",
     "version_compare": "0.0.3",
     "whatwg-fetch": "^1.0.0",
-    "withsix-sync-api": "git+https://github.com/SIXNetworks/withsix-sync-api-js.git#v0.8.1"
+    "withsix-sync-api": "git+https://github.com/SIXNetworks/withsix-sync-api-js.git#v0.9.1"
   },
   "aurelia": {
     "build": {
