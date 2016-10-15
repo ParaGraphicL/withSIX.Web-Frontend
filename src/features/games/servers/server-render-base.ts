@@ -29,8 +29,8 @@ export class ServerRenderBase extends ViewModel {
 
   async launch() {
     const contents = this.model.modList ? this.model.modList.map(x => x.modId).filter(x => x).uniq().map(x => {
-        return { id: x };
-      }) : [];
+      return { id: x };
+    }) : [];
     if (contents.length > 0) {
       const contents = this.model.modList.map(x => x.modId).filter(x => x).map(x => {
         return { id: x };
@@ -44,7 +44,7 @@ export class ServerRenderBase extends ViewModel {
       const installAct = new InstallContents(this.w6.activeGame.id, contents, noteInfo, true);
       await installAct.handle(this.mediator);
       const launchAct = new LaunchContents(this.w6.activeGame.id, contents, noteInfo, LaunchAction.Join);
-      (<any> launchAct).serverAddress = this.model.connectionAddress || this.model.queryAddress;
+      launchAct.serverAddress = this.model.connectionAddress || this.model.queryAddress;
       await launchAct.handle(this.mediator);
     } else {
       const act = new LaunchGame(this.w6.activeGame.id);
@@ -141,7 +141,7 @@ export class GetServer extends Query<IServerInfo> {
 class GetServerQuery extends DbClientQuery<GetServer, IServerInfo>  {
   async handle(request: GetServer) {
     let results = await this.client.hubs.server
-      .getServersInfo(<any> { addresses: [request.address], gameId: request.gameId, includePlayers: request.includePlayers });
+      .getServersInfo(<any>{ addresses: [request.address], gameId: request.gameId, includePlayers: request.includePlayers });
     const gameServers = await GameHelper.getGameServers(request.gameId, this.context);
     let s = results.servers[0];
     if (s == null) { throw new Error("server could not be refreshed"); }
