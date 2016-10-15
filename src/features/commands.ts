@@ -65,7 +65,10 @@ class SubscribeCollectionHandler extends DbClientQuery<SubscribeCollection, void
   }
 }
 
-export class LaunchContent extends VoidCommand { constructor(public gameId: string, public id: string, public noteInfo: INoteInfo, public action = LaunchAction.Launch) { super(); } }
+export class LaunchContent extends VoidCommand {
+  public serverAddress?: string;
+  constructor(public gameId: string, public id: string, public noteInfo: INoteInfo, public action = LaunchAction.Launch) { super(); }
+}
 
 @handlerFor(LaunchContent)
 class LaunchContentHandler extends ClientQuery<LaunchContent, void> {
@@ -73,7 +76,8 @@ class LaunchContentHandler extends ClientQuery<LaunchContent, void> {
     //this.raiseDownloadNotification('Launching', null, request.noteInfo);
     await this.client.launchContent(<any>{
       gameId: request.gameId, content: { id: request.id }, action: request.action,
-      name: request.noteInfo.text, href: request.noteInfo.href
+      name: request.noteInfo.text, href: request.noteInfo.href,
+      serverAddress: request.serverAddress
     });
     // TODO: Add delay?
     //this.raiseDownloadNotification('Launched', null, request.noteInfo);
@@ -81,7 +85,11 @@ class LaunchContentHandler extends ClientQuery<LaunchContent, void> {
   }
 }
 
-export class LaunchContents extends VoidCommand { constructor(public gameId: string, public contents: IContentGuidSpec[], public noteInfo: INoteInfo, public action = LaunchAction.Launch) { super(); } }
+export class LaunchContents extends VoidCommand {
+  public serverAddress?: string;
+  constructor(public gameId: string, public contents: IContentGuidSpec[], public noteInfo: INoteInfo,
+    public action = LaunchAction.Launch) { super(); }
+}
 
 @handlerFor(LaunchContents)
 class LaunchContentsHandler extends ClientQuery<LaunchContents, void> {
@@ -92,7 +100,8 @@ class LaunchContentsHandler extends ClientQuery<LaunchContents, void> {
       contents: request.contents,
       name: request.noteInfo.text,
       href: request.noteInfo.href,
-      action: request.action
+      action: request.action,
+      serverAddress: request.serverAddress
     });
     // TODO: Add delay?
     //this.raiseDownloadNotification('Launched', null, request.noteInfo);
