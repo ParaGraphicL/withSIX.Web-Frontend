@@ -3,6 +3,16 @@ import {
   Query, ViewModel, handlerFor, uiCommand2,
 } from "../../../framework";
 
+enum Dlcs {
+  Apex = 1 << 4,
+  Helicopters = 1 << 2,
+  Karts = 1 << 1,
+  Marksmen = 1 << 3,
+  None = 0,
+  Tanoa = 1 << 5,
+  Zeus = 1 << 0
+}
+
 export interface ExtendedServerInfo extends IServerInfo {
   modList: any[];
   game: string;
@@ -10,9 +20,46 @@ export interface ExtendedServerInfo extends IServerInfo {
   country: string;
   location: string;
   connectionAddress: string;
+  downloadableContent: Dlcs;
+}
+
+enum HelicopterFlightModel {
+  Basic,
+  Advanced
+}
+
+enum Difficulty {
+  Recruit,
+  Regular,
+  Veteran,
+  Custom
+}
+
+enum AiLevel {
+  Novice,
+  Normal,
+  Expert,
+  Custom
+}
+
+enum SessionState {
+  None,
+  SelectingMission,
+  EditingMission,
+  AssigningRoles,
+  SendingMission,
+  LoadingGame,
+  Briefing,
+  Playing,
+  Debriefing,
+  MissionAborted
 }
 
 export class ServerRenderBase extends ViewModel {
+  SessionState = SessionState;
+  AiLevel = AiLevel;
+  Difficulty = Difficulty;
+  HelicopterFlightModel = HelicopterFlightModel;
   interval: number;
   gameId;
   model: ExtendedServerInfo;
@@ -82,12 +129,27 @@ export class ServerRenderBase extends ViewModel {
     // BUT NOT!: TS3 Co-op
   }
 
+  dlcs = [];
+
   async activateInternal(model) {
     this.model = model;
     this.gameId = this.w6.activeGame.id;
     // await this.loadModel();
     // const details = (<any> this.model).details;
     // if (details && details.modList) { this.handleMods(details); }
+
+
+    var e = this.model.downloadableContent;
+    if (e === Dlcs.None) {
+
+    } else {
+      if (e & Dlcs.Apex) { this.dlcs.push(Dlcs[Dlcs.Apex]); }
+      if (e & Dlcs.Helicopters) { this.dlcs.push(Dlcs[Dlcs.Helicopters]); }
+      if (e & Dlcs.Karts) { this.dlcs.push(Dlcs[Dlcs.Karts]); }
+      if (e & Dlcs.Marksmen) { this.dlcs.push(Dlcs[Dlcs.Marksmen]); }
+      if (e & Dlcs.Tanoa) { this.dlcs.push(Dlcs[Dlcs.Tanoa]); }
+      if (e & Dlcs.Zeus) { this.dlcs.push(Dlcs[Dlcs.Zeus]); }
+    }
 
     this.updateLinks();
 
