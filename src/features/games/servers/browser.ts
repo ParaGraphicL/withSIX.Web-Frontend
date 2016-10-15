@@ -173,8 +173,8 @@ export class Index extends FilteredBase<IServer> {
 
   async launch(s: IServer) {
     const contents = s.modList ? s.modList.map(x => x.modId).filter(x => x).uniq().map(x => {
-        return { id: x };
-      }) : [];
+      return { id: x };
+    }) : [];
     if (contents.length > 0) {
       const noteInfo = {
         text: `Server: ${s.name}`,
@@ -185,7 +185,7 @@ export class Index extends FilteredBase<IServer> {
       const installAct = new InstallContents(this.w6.activeGame.id, contents, noteInfo, true);
       await installAct.handle(this.mediator);
       const launchAct = new LaunchContents(this.w6.activeGame.id, contents, noteInfo, LaunchAction.Join);
-      (<any> launchAct).serverAddress = s.connectionAddress || s.queryAddress;
+      launchAct.serverAddress = s.connectionAddress || s.queryAddress;
       await launchAct.handle(this.mediator);
     } else {
       const act = new LaunchGame(this.w6.activeGame.id);
@@ -263,14 +263,16 @@ class GetServersHandler extends DbQuery<GetServers, IPaginated<IServer>> {
 }
 
 export class GetServer extends Query<IServer[]> {
-  constructor(public gameId: string, public addresses: string[], public includePlayers = true) { super(); }
+  constructor(public gameId: string, public addresses: string[], public includeRules = false, public includePlayers = false) { super(); }
 }
 
 @handlerFor(GetServer)
 class GetServerQuery extends DbClientQuery<GetServer, IServer[]>  {
   async handle(request: GetServer) {
     let results = await this.client.hubs.server
-      .getServersInfo(<any>{ addresses: request.addresses, gameId: request.gameId, includePlayers: request.includePlayers });
+      .getServersInfo(<any>{
+        addresses: request.addresses, gameId: request.gameId, includePlayers: request.includePlayers, request: request.includeRules
+      });
     return results.servers;
   }
 }

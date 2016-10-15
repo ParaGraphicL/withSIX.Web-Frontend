@@ -1,13 +1,13 @@
-import {Base, ReactiveBase, Subscriptions, IDisposable, ISubscription, IPromiseFunction, bindingEngine} from './base';
-import {LegacyMediator, Mediator} from './mediator';
-import {W6} from './withSIX';
-import {Toastr} from './toastr';
+import { Base, ReactiveBase, Subscriptions, IDisposable, ISubscription, IPromiseFunction, bindingEngine } from './base';
+import { LegacyMediator, Mediator } from './mediator';
+import { W6 } from './withSIX';
+import { Toastr } from './toastr';
 import * as Rx from 'rxjs/Rx';
 import * as RxUi from 'rxui';
-import {Container, inject, PropertyObserver} from 'aurelia-framework';
-import {EventAggregator} from 'aurelia-event-aggregator';
-import {Validation, ValidationResult} from 'aurelia-validation';
-import {GlobalErrorHandler} from './legacy/logger';
+import { Container, inject, PropertyObserver } from 'aurelia-framework';
+import { EventAggregator } from 'aurelia-event-aggregator';
+import { Validation, ValidationResult } from 'aurelia-validation';
+import { GlobalErrorHandler } from './legacy/logger';
 import { ErrorHandler } from './error-handler';
 
 const { Subject } = Rx;
@@ -332,35 +332,35 @@ export class EditConfig extends ReactiveBase {
 }
 
 export class BusySignalCombiner implements IDisposable {
-    public readonly signal = new Subject<boolean>(); // TODO: protect
-    subscribe<T>(...commands: IReactiveCommand<T>[]) { return this.combineBusySignal(...commands).subscribe(x => this.signal.next(x)); }
+  public readonly signal = new Subject<boolean>(); // TODO: protect
+  subscribe<T>(...commands: IReactiveCommand<T>[]) { return this.combineBusySignal(...commands).subscribe(x => this.signal.next(x)); }
 
-    private combineBusySignal<T>(...commands: IReactiveCommand<T>[]) { return this.combineBusySignalBools(...commands.map(x => x.isExecutingObservable)); }
-    private combineBusySignalBools(...bools: Rx.Observable<boolean>[]) {
-        var obs: Rx.Observable<boolean> = null;
-        bools.forEach(x => {
-            if (obs == null) obs = x;
-            else obs = obs.combineLatest<boolean>(x, (x, y) => x || y);
-        })
-        return obs;
-    }
+  private combineBusySignal<T>(...commands: IReactiveCommand<T>[]) { return this.combineBusySignalBools(...commands.map(x => x.isExecutingObservable)); }
+  private combineBusySignalBools(...bools: Rx.Observable<boolean>[]) {
+    var obs: Rx.Observable<boolean> = null;
+    bools.forEach(x => {
+      if (obs == null) obs = x;
+      else obs = obs.combineLatest(x, (x, y) => x || y);
+    })
+    return obs;
+  }
 
-    dispose() { this.signal.unsubscribe() }
+  dispose() { this.signal.unsubscribe(); }
 }
 
 export class AllSignalCombiner implements IDisposable {
-    public readonly signal = new Subject<boolean>(); // TODO: protect
-    subscribe<T>(...commands: IReactiveCommand<T>[]) { return this.combineBusySignal(...commands).subscribe(x => this.signal.next(x)); }
+  public readonly signal = new Subject<boolean>(); // TODO: protect
+  subscribe<T>(...commands: IReactiveCommand<T>[]) { return this.combineBusySignal(...commands).subscribe(x => this.signal.next(x)); }
 
-    private combineBusySignal<T>(...commands: IReactiveCommand<T>[]) { return this.combineBusySignalBools(...commands.map(x => x.isExecutingObservable)); }
-    private combineBusySignalBools(...bools: Rx.Observable<boolean>[]) {
-        var obs: Rx.Observable<boolean> = null;
-        bools.forEach(x => {
-            if (obs == null) obs = x;
-            else obs = obs.combineLatest<boolean>(x, (x, y) => x && y);
-        })
-        return obs;
-    }
+  private combineBusySignal<T>(...commands: IReactiveCommand<T>[]) { return this.combineBusySignalBools(...commands.map(x => x.isExecutingObservable)); }
+  private combineBusySignalBools(...bools: Rx.Observable<boolean>[]) {
+    var obs: Rx.Observable<boolean> = null;
+    bools.forEach(x => {
+      if (obs == null) obs = x;
+      else obs = obs.combineLatest(x, (x, y) => x && y);
+    })
+    return obs;
+  }
 
-    dispose() { this.signal.unsubscribe() }
+  dispose() { this.signal.unsubscribe(); }
 }

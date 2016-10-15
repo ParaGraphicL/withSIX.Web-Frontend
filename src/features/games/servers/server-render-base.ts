@@ -134,14 +134,16 @@ export class ServerRenderBase extends ViewModel {
 }
 
 export class GetServer extends Query<IServerInfo> {
-  constructor(public gameId: string, public address: string, public includePlayers = true) { super(); }
+  constructor(public gameId: string, public address: string, public includeRules = false, public includePlayers = false) { super(); }
 }
 
 @handlerFor(GetServer)
 class GetServerQuery extends DbClientQuery<GetServer, IServerInfo>  {
   async handle(request: GetServer) {
     let results = await this.client.hubs.server
-      .getServersInfo(<any>{ addresses: [request.address], gameId: request.gameId, includePlayers: request.includePlayers });
+      .getServersInfo(<any>{
+        addresses: [request.address], gameId: request.gameId, includePlayers: request.includePlayers, includeRules: request.includeRules
+      });
     const gameServers = await GameHelper.getGameServers(request.gameId, this.context);
     let s = results.servers[0];
     if (s == null) { throw new Error("server could not be refreshed"); }
