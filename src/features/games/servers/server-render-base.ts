@@ -4,13 +4,13 @@ import {
 } from "../../../framework";
 
 enum Dlcs {
-  Apex = 1 << 4,
-  Helicopters = 1 << 2,
-  Karts = 1 << 1,
-  Marksmen = 1 << 3,
+  Apex = 16,
+  Helicopters = 4,
+  Karts = 2,
+  Marksmen = 8,
   None = 0,
-  Tanoa = 1 << 5,
-  Zeus = 1 << 0
+  Tanoa = 32,
+  Zeus = 1
 }
 
 export interface ExtendedServerInfo extends IServerInfo {
