@@ -1,50 +1,48 @@
 <template>
-  <require from="../icon"></require>
-  <require from="../flag"></require>
-  <table>
-    <thead>
-      <tr>
-        <td>Info</td>
-        <td></td>
-        <td>Name</td>
-        <td>Mission</td>
-        <td>Mode</td>
-        <td>#plrs</td>
-        <td></td>
-        <td></td>
-        <td>Version</td>
-      </tr>
-    </thead>
-    <tbody>
-      <tr repeat.for="s of model.items" click.trigger="showServer(s)">
-        <td width="120">
-          <icon cls="withSIX-icon-Star" optional-title="Favorite" model.bind="s.isFavorite"></icon>
-          <icon cls="withSIX-icon-Lock" optional-title="Password required" model.bind="s.isPasswordProtected"></icon>
-          <!--<icon cls="withSIX-icon-Cloud" optional-title="Dedicated" model.bind="s.isDedicated"></icon>-->
-          <icon cls="${s.battlEye && s.verifySignatures ? 'withSIX-icon-Protection-Full' : 'withSIX-icon-Protection-Med'}"
-            optional-title="${s.battlEye ? 'BattlEye' : ''} ${s.verifySignatures ? 'Signatures' : ''} protected"
-            model.bind="s.battlEye || s.verifySignatures"></icon>
-          <icon cls="withSIX-icon-Download ${s.hasAllMods ? 'ready' : ''}" optional-title="Requires ${s.modList.length} mods"
-            model.bind="s.modList.length > 0"></icon>
-          <span><a href.bind="getUrl(s)"><span class="icon withSIX-icon-Follow"></span></a>
-          </span>
-        </td>
-        <td>
-          <command-button model.bind="join">
-            <span class="icon ${join.icon}" click.trigger="selectServer(s)"></span>
-          </command-button>
-        </td>
-        <td innerHTML.bind="s.name | links"></td>
-        <td><span innerHTML.bind="s.game | links"></span> <span>on ${s.map}</span></td>
-        <td>${s.gameType}</td>
-        <td style="text-align: right">${s.currentPlayers}/${s.maxPlayers}</td>
-        <td>
-          <flag s.bind="s"></flag>
-        </td>
-        <td title="${s.distance | amount} meters"><span class="icon ${s.distance | distance} connection-quality"></span></td>
-        <!-- TODO: Version should be locked to the user's version -->
-        <td>${s.serverVersion}</td>
-      </tr>
-    </tbody>
-  </table>
+	<require from="../icon"></require>
+	<require from="../flag"></require>
+	<table>
+		<thead>
+			<tr>
+				<td>Info</td>
+				<td></td>
+				<td>Name</td>
+				<td>Mission</td>
+				<td>Mode</td>
+				<td>#plrs</td>
+				<td></td>
+				<td></td>
+				<td>Version</td>
+			</tr>
+		</thead>
+		<tbody>
+			<tr repeat.for="s of filteredComponent.filteredItems" click.trigger="showServer(s)">
+				<td width="120">
+					<icon cls="withSIX-icon-Star" optional-title="Favorite" model.bind="s.isFavorite"></icon>
+					<icon cls="withSIX-icon-Lock" optional-title="Password required" model.bind="s.isPasswordProtected"></icon>
+					<!--<icon cls="withSIX-icon-Cloud" optional-title="Dedicated" model.bind="s.isDedicated"></icon>-->
+					<icon cls="${s.battlEye && s.verifySignatures ? 'withSIX-icon-Protection-Full' : 'withSIX-icon-Protection-Med'}" optional-title="${s.battlEye ? 'BattlEye' : ''} ${s.verifySignatures ? 'Signatures' : ''} protected"
+						model.bind="s.battlEye || s.verifySignatures"></icon>
+					<icon cls="withSIX-icon-Download ${s.hasAllMods ? 'ready' : ''}" optional-title="Requires ${s.modList.length} mods" model.bind="s.modList.length > 0"></icon>
+					<span><a href.bind="getUrl(s)"><span class="icon withSIX-icon-Follow"></span></a>
+					</span>
+				</td>
+				<td>
+					<command-button model.bind="join">
+						<span class="icon ${join.icon}" click.trigger="selectServer(s)"></span>
+					</command-button>
+				</td>
+				<td innerHTML.bind="s.name | links"></td>
+				<td><span innerHTML.bind="s.game | links"></span> <span>on ${s.map}</span></td>
+				<td>${s.gameType}</td>
+				<td style="text-align: right">${s.currentPlayers}/${s.maxPlayers}</td>
+				<td>
+					<flag s.bind="s"></flag>
+				</td>
+				<td title="${s.distance | amount} meters"><span class="icon ${s.distance | distance} connection-quality"></span></td>
+				<!-- TODO: Version should be locked to the user's version -->
+				<td>${s.serverVersion}</td>
+			</tr>
+		</tbody>
+	</table>
 </template>
