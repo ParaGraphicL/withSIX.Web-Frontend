@@ -101,7 +101,7 @@ export class Filters<T> extends ViewModel {
     this.tools.Debug.log("updatedFilteredItems", this.filteredItems.length);
   }
 
-  refresh() { this.filteredItems = this.filterInternal(this.original); }
+  refresh() { this.filteredItems = this.orderItems(this.filterInternal(this.original)); }
 
   public toggleDirection(): void {
     this.sortOrder.direction = this.sortOrder.direction == SortDirection.Desc ? SortDirection.Asc : SortDirection.Desc;
