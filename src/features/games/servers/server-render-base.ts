@@ -200,7 +200,7 @@ export class ServerRenderBase extends ViewModel {
     const m = await new GetServer(this.gameId, this.address).handle(this.mediator);
     // for now keep modlist from server as it has modID linked in..
     const modList = this.model.modList;
-    Object.assign(this.model, m, { modList, country: this.model.country, location: this.model.location, created: this.model.created });
+    Object.assign(this.model, m, { modList, country: this.model.country, location: this.model.location, created: this.model.created, updatedAt: new Date() });
     this.clientLoaded = true;
     this.updateLinks();
   }
