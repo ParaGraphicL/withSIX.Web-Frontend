@@ -1,7 +1,9 @@
 import {
-  DbClientQuery, GameHelper, IServerInfo, InstallContents, LaunchAction, LaunchContents, LaunchGame,
-  Query, ViewModel, handlerFor, uiCommand2,
+  BasketService, DbClientQuery, GameClientInfo, GameHelper, IServerInfo, InstallContents, LaunchAction, LaunchContents, LaunchGame,
+  Query, UiContext, ViewModel, handlerFor, uiCommand2,
 } from "../../../framework";
+
+import { inject } from "aurelia-framework";
 
 enum Dlcs {
   Apex = 16,
@@ -55,6 +57,7 @@ enum SessionState {
   MissionAborted
 }
 
+@inject(UiContext, BasketService)
 export class ServerRenderBase extends ViewModel {
   SessionState = SessionState;
   AiLevel = AiLevel;
@@ -69,6 +72,12 @@ export class ServerRenderBase extends ViewModel {
   refresh = uiCommand2("Refresh", () => this.loadModel(), { icon: "withSIX-icon-Reload" });
   join = uiCommand2("Join", () => this.launch(), { icon: "withSIX-icon-Rocket" });
   detailsShown = false;
+  dlcs = [];
+  gameInfo: GameClientInfo;
+
+  constructor(ui: UiContext, protected basketService: BasketService) {
+    super(ui);
+  }
 
   get address() { return this.model.queryAddress; }
 
@@ -129,11 +138,13 @@ export class ServerRenderBase extends ViewModel {
     // BUT NOT!: TS3 Co-op
   }
 
-  dlcs = [];
+  isDlcInstalled(dlc: string) { return this.gameInfo.isDlcInstalled(dlc); }
+  addDlc(dlc: Dlcs) { this.dlcs.push({ isInstalled: this.isDlcInstalled(Dlcs[dlc]), name: Dlcs[dlc] }); }
 
   async activateInternal(model) {
     this.model = model;
     this.gameId = this.w6.activeGame.id;
+    this.gameInfo = await this.basketService.getGameInfo(this.gameId); // hack
     // await this.loadModel();
     // const details = (<any> this.model).details;
     // if (details && details.modList) { this.handleMods(details); }
@@ -143,13 +154,14 @@ export class ServerRenderBase extends ViewModel {
     if (e === Dlcs.None) {
 
     } else {
-      if (e & Dlcs.Apex) { this.dlcs.push(Dlcs[Dlcs.Apex]); }
-      if (e & Dlcs.Helicopters) { this.dlcs.push(Dlcs[Dlcs.Helicopters]); }
-      if (e & Dlcs.Karts) { this.dlcs.push(Dlcs[Dlcs.Karts]); }
-      if (e & Dlcs.Marksmen) { this.dlcs.push(Dlcs[Dlcs.Marksmen]); }
-      if (e & Dlcs.Tanoa) { this.dlcs.push(Dlcs[Dlcs.Tanoa]); }
-      if (e & Dlcs.Zeus) { this.dlcs.push(Dlcs[Dlcs.Zeus]); }
+      if (e & Dlcs.Apex) { this.addDlc(Dlcs.Apex); }
+      if (e & Dlcs.Helicopters) { this.addDlc(Dlcs.Helicopters); }
+      if (e & Dlcs.Karts) { this.addDlc(Dlcs.Karts); }
+      if (e & Dlcs.Marksmen) { this.addDlc(Dlcs.Marksmen); }
+      if (e & Dlcs.Tanoa) { this.addDlc(Dlcs.Tanoa); }
+      if (e & Dlcs.Zeus) { this.addDlc(Dlcs.Zeus); }
     }
+
 
     this.updateLinks();
 

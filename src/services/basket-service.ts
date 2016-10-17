@@ -1,16 +1,18 @@
-import {EventAggregator} from 'aurelia-event-aggregator';
-import {inject} from 'aurelia-framework';
-import {ReactiveBase} from './base';
-import {_Indexer} from './legacy/base';
-import {Toastr} from './toastr';
-import {ObservableEventAggregator} from './reactive';
-import {W6} from './withSIX';
-import {BasketType, IBasketModel, IBasketItem, BasketState, IBasketCollection, IBaskets} from './legacy/baskets';
-import {W6Context} from './w6context';
-import {ContentHelper} from './helpers';
-import {ActionType, IActionNotification, Client, ConnectionState, IContentState, ItemState, IContentStateChange, IContentStatusChange, IClientInfo, IActionTabStateUpdate, IContentGuidSpec, IContentsBase, IContentBase,
-  IUserErrorAdded, IUserErrorResolved} from 'withsix-sync-api';
-import {ClientWrapper, AppEventsWrapper, StateChanged} from './client-wrapper';
+import { EventAggregator } from 'aurelia-event-aggregator';
+import { inject } from 'aurelia-framework';
+import { ReactiveBase } from './base';
+import { _Indexer } from './legacy/base';
+import { Toastr } from './toastr';
+import { ObservableEventAggregator } from './reactive';
+import { W6 } from './withSIX';
+import { BasketType, IBasketModel, IBasketItem, BasketState, IBasketCollection, IBaskets } from './legacy/baskets';
+import { W6Context } from './w6context';
+import { ContentHelper } from './helpers';
+import {
+  ActionType, IActionNotification, Client, ConnectionState, IContentState, ItemState, IContentStateChange, IContentStatusChange, IClientInfo, IActionTabStateUpdate, IContentGuidSpec, IContentsBase, IContentBase,
+  IUserErrorAdded, IUserErrorResolved
+} from 'withsix-sync-api';
+import { ClientWrapper, AppEventsWrapper, StateChanged } from './client-wrapper';
 
 @inject(EventAggregator, W6, Client, Toastr, ClientWrapper, AppEventsWrapper)
 export class BasketService extends ReactiveBase {
@@ -202,16 +204,26 @@ export class BasketService extends ReactiveBase {
   }
 }
 
+interface IDlc {
+  packageName: string;
+  name: string;
+}
+
+interface IExtendedClientInfo extends IClientInfo {
+  dlcs: IDlc[];
+}
+
 export class GameClientInfo extends ReactiveBase {
   defaults: { speed: number; progress: number; };
-  clientInfo: IClientInfo = {
+  clientInfo: IExtendedClientInfo = {
     content: {},
     globalLock: false, //obsolete
     gameLock: false,
     isRunning: false,
     canAbort: false,
     actionInfo: null,
-    userErrors: []
+    userErrors: [],
+    dlcs: []
   }
 
   game: { id: string }
@@ -286,6 +298,8 @@ export class GameClientInfo extends ReactiveBase {
       d(this.clientWrapper.userErrorResolved.subscribe(x => this.tools.removeEl(this.clientInfo.userErrors, this.clientInfo.userErrors.asEnumerable().firstOrDefault(e => e.id == x.id))));
     });
   }
+
+  isDlcInstalled(dlc: string) { return this.clientInfo.dlcs && this.clientInfo.dlcs.some(x => x.packageName === dlc || x.name === dlc); }
 
   handleActionNotification = (x: IActionNotification) => {
     let childAction = {

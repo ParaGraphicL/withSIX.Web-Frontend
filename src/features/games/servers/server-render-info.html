@@ -62,7 +62,7 @@
 			<h2>Official DLC/expansions</h2>
 			<div if.bind="model.requiresExpansionTerrain">Requires ExpansionTerrain</div>
 			<ul if.bind="dlcs.length > 0">
-				<li repeat.for="dlc of dlcs">${dlc}</li>
+				<li repeat.for="dlc of dlcs">${dlc.name} <span if.bind="!dlc.isInstalled">(missing)</span></li>
 			</ul>
 		</div>
 
