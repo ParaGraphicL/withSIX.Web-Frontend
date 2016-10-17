@@ -53,7 +53,7 @@ export class Filters<T> extends ViewModel {
         .skip(1)
         .subscribe(x => this.initiateUpdate()));
       d(() => this.collectionObserver ? this.collectionObserver.unsubscribe() : null);
-      d(this.listFactory.getList(this.enabledFilters)
+      d(this.listFactory.getList(this.enabledFilters, ["value"])
         .modified
         .subscribe(x => this.initiateUpdate()));
     });

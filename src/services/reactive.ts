@@ -113,12 +113,12 @@ export class ReactiveList<T> extends ReactiveBase implements IDisposable {
         });
       d(sub);
       d(this.itemsAdded.subscribe(evt => evt.filter(x => x != null).forEach(x => this.observeItem(x))));
-      d(this.itemsRemoved.subscribe(evt => evt.filter(x => x != null).forEach(x => { this.changedSubs.get(x).unsubscribe(); this.changedSubs.delete(x); })));
-      d(() => this.changedSubs.forEach((v, k) => { v.unsubscribe(); this.changedSubs.delete(k) }));
+      d(this.itemsRemoved.subscribe(evt => evt.filter(x => x != null).forEach(x => { let s = this.changedSubs.get(x); if (s) { s.unsubscribe(); this.changedSubs.delete(x); } })));
+      d(() => this.changedSubs.forEach((v, k) => { v.unsubscribe(); this.changedSubs.delete(k); }));
     });
   }
 
-  observeItem = (x: T) => this.changedSubs.set(x, this.observeItemInternal(x));
+  observeItem = (x: T) => { if (!this.changedSubs.get(x)) { this.changedSubs.set(x, this.observeItemInternal(x)); } }
   observeItemInternal = (x: T) => this.allObservable.generateObservable(x).subscribe(evt => { try { this._itemChanged.next(evt) } catch (err) { this.tools.Debug.warn("uncaught err handling observable", err) } });
 
   dispose() {
@@ -128,7 +128,7 @@ export class ReactiveList<T> extends ReactiveBase implements IDisposable {
     this._itemChanged.unsubscribe();
   }
 
-  get modified() { return Rx.Observable.merge(this.itemsAdded.map(x => 0), this.itemsRemoved.map(x => 0), this.itemChanged.map(x => 0)) }
+  get modified() { return Rx.Observable.merge(this.itemsAdded.map(x => 1), this.itemsRemoved.map(x => 1), this.itemChanged.map(x => 1)); }
 
   private _itemsAdded = new Subject<T[]>();
   private _itemsRemoved = new Subject<T[]>();
