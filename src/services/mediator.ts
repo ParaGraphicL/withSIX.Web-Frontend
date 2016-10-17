@@ -5,15 +5,15 @@ import { BasketService } from "./basket-service";
 import { Toastr } from "./toastr";
 import { Client, IContent } from "withsix-sync-api";
 import { defineProperties } from "../helpers/utils/extenders";
-import {inject} from "aurelia-framework";
-import {Router} from "aurelia-router";
-import {EventAggregator} from "aurelia-event-aggregator";
-import {Validation, ValidationResult} from "aurelia-validation";
-import {Mediator, IMediator, IRequest, IRequestHandler} from "mediatr";
-import {GlobalErrorHandler} from "./legacy/logger";
-import {Tools} from "./tools";
-import {W6} from "./withSIX";
-import {Container} from "aurelia-framework";
+import { inject } from "aurelia-framework";
+import { Router } from "aurelia-router";
+import { EventAggregator } from "aurelia-event-aggregator";
+import { Validation, ValidationResult } from "aurelia-validation";
+import { Mediator, IMediator, IRequest, IRequestHandler } from "mediatr";
+import { GlobalErrorHandler } from "./legacy/logger";
+import { Tools } from "./tools";
+import { W6 } from "./withSIX";
+import { Container } from "aurelia-framework";
 export * from "mediatr";
 
 // App specific starts
@@ -22,7 +22,7 @@ export class ErrorLoggingMediatorDecorator implements IMediator {
   constructor(private mediator: IMediator, private toastr: Toastr) { }
 
   request<T>(request: IRequest<T>): Promise<T> {
-    let action = (<any> request.constructor).action;
+    let action = (<any>request.constructor).action;
     return this.mediator.request<T>(request)
       .then(x => {
         if (action) {
@@ -38,8 +38,8 @@ export class ErrorLoggingMediatorDecorator implements IMediator {
 export class InjectingMediatorDecorator implements IMediator {
   constructor(private mediator: IMediator, private w6: W6) { }
   request<T>(request: IRequest<T>): Promise<T> {
-    if ((<any> request).$requireUser)
-      (<any> request).user = this.w6.userInfo;
+    if ((<any>request).$requireUser)
+      (<any>request).user = this.w6.userInfo;
     return this.mediator.request<T>(request);
   }
 }
@@ -55,7 +55,7 @@ export function requireUser() {
   };
 }
 
-let ls = <{ on: (key: string, fn) => void; set: (key: string, value) => void }> <any> require("local-storage");
+let ls = <{ on: (key: string, fn) => void; set: (key: string, value) => void }><any>require("local-storage");
 
 @inject(W6Context)
 export class DbQuery<TRequest, TResponse> implements IRequestHandler<TRequest, TResponse> {
@@ -67,7 +67,7 @@ export class DbQuery<TRequest, TResponse> implements IRequestHandler<TRequest, T
   constructor(protected context: W6Context) { }
   handle(request: TRequest): Promise<TResponse> { throw "must implement handle method"; }
 
-  protected get w6(): W6 { return <any> this.context.w6; }
+  protected get w6(): W6 { return <any>this.context.w6; }
 
   public publishCrossEvent(eventName: string, data: any) {
     this.context.eventBus.publish(data);
@@ -187,8 +187,9 @@ export interface IFilter<T> {
   name: string;
   isEnabled?: boolean;
   value?: (any | { title: string; value; })
-  values?: (any | { title: string; value;})[]
+  values?: (any | { title: string; value; })[]
   filter: (item: T, value?) => boolean;
+  type?: 'and' | 'or';
 }
 
 export interface IFilterInfo<T> {

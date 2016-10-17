@@ -30,25 +30,26 @@ interface IServer {
   isPasswordProtected: boolean;
   isDedicated: boolean;
   version: string;
+  updatedAt: Date;
   modList;
 }
 export class Index extends FilteredBase<IServer> {
   static getStandardFilters = () => [{
     title: "Has Players",
     name: "hasPlayers",
-    filter: () => true,
+    filter: _ => true,
   }, {
     title: "Dedicated",
     name: "isDedicated",
-    filter: () => true,
+    filter: _ => true,
   }, {
     title: "Open",
     name: "isOpen",
-    filter: () => true,
+    filter: _ => true,
   }, {
     title: "Has free slots",
     name: "hasFreeSlots",
-    filter: () => true
+    filter: _ => true
   }, {
     title: "Mods",
     name: "hasMods",
@@ -59,7 +60,7 @@ export class Index extends FilteredBase<IServer> {
       title: "Has no Mods",
       value: false
     }],
-    filter: () => true
+    filter: _ => true
   }, {
     title: "Continent",
     name: "areaLimit",
@@ -79,7 +80,7 @@ export class Index extends FilteredBase<IServer> {
       title: "Asia",
       value: "AS"
     }],
-    filter: () => true,
+    filter: _ => true,
   }]
   static getStandardSort = () => [{
     name: "currentPlayers",
@@ -102,11 +103,14 @@ export class Index extends FilteredBase<IServer> {
   sort = Index.getStandardSort();
   searchFields = ["name"];
 
-  getEnabledFilters() {
-    return this.defaultEnabled;
-  }
 
-  defaultEnabled = [];
+  defaultEnabled: IFilter<IServer>[] = [
+    {
+      name: "Fresh",
+      filter: item => moment().subtract("hours", 1).isBefore(item.updatedAt),
+      type: 'and'
+    }
+  ];
 
   async activate(params) {
     if (params) {
@@ -127,6 +131,7 @@ export class Index extends FilteredBase<IServer> {
       }
     }
     setInterval(() => { if (this.w6.miniClient.isConnected) { this.refresh(); } }, 60 * 1000);
+    this.enabledFilters = this.defaultEnabled;
     await super.activate(params);
   }
 
@@ -201,13 +206,14 @@ export class Index extends FilteredBase<IServer> {
         evt.items.forEach(x => {
           let s = servers.filter(f => f.queryAddress === x.queryAddress)[0];
           if (s == null) return;
-          Object.assign(s, x, { country: s.country, distance: s.distance, modList: s.modList });
+          Object.assign(s, x, { country: s.country, distance: s.distance, modList: s.modList, updatedAt: new Date() });
         });
       });
     try {
       await new GetServer(this.w6.activeGame.id, servers.map(x => x.queryAddress)).handle(this.mediator);
     } finally {
       dsp.unsubscribe();
+      this.filteredComponent.refresh();
     }
   }
 
