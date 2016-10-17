@@ -34,6 +34,13 @@ interface IServer {
   created: Date;
   modList;
 }
+
+enum ModLevel {
+  Default,
+  Supported,
+  withSIX
+}
+
 export class Index extends FilteredBase<IServer> {
   static getStandardFilters = () => [{
     title: "Has Players",
@@ -50,7 +57,7 @@ export class Index extends FilteredBase<IServer> {
   }, {
     title: "Has free slots",
     name: "hasFreeSlots",
-    filter: _ => true
+    filter: _ => true,
   }, {
     title: "Mods",
     name: "hasMods",
@@ -59,46 +66,63 @@ export class Index extends FilteredBase<IServer> {
       value: true,
     }, {
       title: "Has no Mods",
-      value: false
+      value: false,
     }],
-    filter: _ => true
-  }, {
+    filter: _ => true,
+    value: null,
+  },
+  {
+    filter: _ => true,
+    name: "modLevel",
+    title: "Mod support level",
+    values: [{
+      title: "Supported mods only",
+      value: ModLevel.Supported,
+    },
+    {
+      title: "withSIX mods only",
+      value: ModLevel.withSIX,
+    }],
+    value: null,
+  },
+  {
     title: "Continent",
     name: "areaLimit",
     values: [{
       title: "Europe",
-      value: "EU"
+      value: "EU",
     }, {
       title: "Norh America",
-      value: "NA"
+      value: "NA",
     }, {
       title: "South America",
-      value: "SA"
+      value: "SA",
     }, {
       title: "Oceania",
-      value: "OC"
+      value: "OC",
     }, {
       title: "Asia",
-      value: "AS"
+      value: "AS",
     }],
+    value: null,
     filter: _ => true,
   }]
   static getStandardSort = () => [{
     name: "currentPlayers",
     title: "Players",
-    direction: SortDirection.Desc
+    direction: SortDirection.Desc,
   }, {
     name: "name",
     title: "Name",
-    direction: SortDirection.Asc
+    direction: SortDirection.Asc,
   }, {
     name: "distance",
     title: "Distance",
-    direction: SortDirection.Asc
+    direction: SortDirection.Asc,
   }, {
     name: "country",
     title: "Country",
-    direction: SortDirection.Asc
+    direction: SortDirection.Asc,
   },]
   filters: IFilter<IServer>[] = Index.getStandardFilters();
   sort = Index.getStandardSort();
