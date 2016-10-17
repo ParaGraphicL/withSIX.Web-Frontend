@@ -23,6 +23,8 @@ export interface ExtendedServerInfo extends IServerInfo {
   location: string;
   connectionAddress: string;
   downloadableContent: Dlcs;
+  created: Date;
+  updatedAt: Date;
 }
 
 enum HelicopterFlightModel {
@@ -198,7 +200,7 @@ export class ServerRenderBase extends ViewModel {
     const m = await new GetServer(this.gameId, this.address).handle(this.mediator);
     // for now keep modlist from server as it has modID linked in..
     const modList = this.model.modList;
-    Object.assign(this.model, m, { modList, country: this.model.country, location: this.model.location });
+    Object.assign(this.model, m, { modList, country: this.model.country, location: this.model.location, created: this.model.created });
     this.clientLoaded = true;
     this.updateLinks();
   }

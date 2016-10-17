@@ -25,6 +25,13 @@
 		<span>${SessionState[model.serverState]}</span>
 		<span>[<span innerHTML.bind="model.game | links"></span> on ${model.map}]</span>
 
+		<div>
+			Last Updated
+			<time-ago time.bind="model.updatedAt"></time-ago>
+			First appearance
+			<time-ago time.bind="model.created"></time-ago>
+		</div>
+
 		<compose view-model="./external/index"></compose>
 
 		<!-- ask for password otherwise, and add: /${password}.
