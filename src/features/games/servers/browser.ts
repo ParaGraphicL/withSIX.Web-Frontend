@@ -31,6 +31,7 @@ interface IServer {
   isDedicated: boolean;
   version: string;
   updatedAt: Date;
+  created: Date;
   modList;
 }
 export class Index extends FilteredBase<IServer> {
@@ -206,7 +207,7 @@ export class Index extends FilteredBase<IServer> {
         evt.items.forEach(x => {
           let s = servers.filter(f => f.queryAddress === x.queryAddress)[0];
           if (s == null) return;
-          Object.assign(s, x, { country: s.country, distance: s.distance, modList: s.modList, updatedAt: new Date() });
+          Object.assign(s, x, { country: s.country, distance: s.distance, modList: s.modList, updatedAt: new Date(), created: s.created });
         });
       });
     try {
