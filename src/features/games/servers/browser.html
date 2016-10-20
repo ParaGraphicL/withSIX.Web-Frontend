@@ -2,6 +2,9 @@
 	<require from="./servers.scss"></require>
 	<div class="container-fluid" id="server-browser">
 		<div class="server-filters">
+			<div class="pull-right"> <button>Clear</button> </div>
+			<div>SERVER FILTERS</div>
+			<div>Keyword</div>
 			<filters custom-handler.call="handleFilter(info)" filters.ref="filteredComponent" items.bind="model.items" filters.bind="filters"
 				enabled-filters.bind="enabledFilters" search-fields.bind="searchFields" sort.bind="sort" search-input-placeholder="search me..">
 			</filters>
@@ -12,6 +15,10 @@
 				<div class="pull-right">
 					<command-button model.bind="refresh"></command-button>
 					<command-button model.bind="reload"></command-button>
+				</div>
+				<div>
+					${totalPlayers} players on <b>
+						<span>${totalCount}</span> results</b> <span show.bind="totalTotalCount !=== totalCount" title.bind="totalTotalCount"> (${totalTotalCount | amount} total)</span>
 				</div>
 			</div>
 			<div infinite-scroll.bind="loadMore" class="server-list-content">

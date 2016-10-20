@@ -4,9 +4,8 @@
 	<table>
 		<thead>
 			<tr>
-				<td>Info</td>
-				<td></td>
-				<td></td>
+				<td><span class="icon withSIX-icon-Download"></span></td>
+				<td><span class="icon withSIX-icon-Connection-Med"></span></td>
 				<td>Name</td>
 				<td>#plrs</td>
 				<td><span class="icon withSIX-icon-Star"></span></td>
@@ -14,30 +13,30 @@
 		</thead>
 		<tbody>
 			<tr repeat.for="s of filteredComponent.filteredItems" click.trigger="showServer(s)">
-				<td width="120">
-					<icon cls="withSIX-icon-Lock" optional-title="Password required" model.bind="s.isPasswordProtected"></icon>
+				<td hover.bind="hovering">
 					<!--<icon cls="withSIX-icon-Cloud" optional-title="Dedicated" model.bind="s.isDedicated"></icon>-->
-					<icon cls="${s.battlEye && s.verifySignatures ? 'withSIX-icon-Protection-Full' : 'withSIX-icon-Protection-Med'}" optional-title="${s.battlEye ? 'BattlEye' : ''} ${s.verifySignatures ? 'Signatures' : ''} protected"
-						model.bind="s.battlEye || s.verifySignatures"></icon>
-					<icon cls="withSIX-icon-Download ${s.hasAllMods ? 'ready' : ''}" optional-title="Requires ${s.modList.length} mods" model.bind="s.modList.length > 0"></icon>
-					<span><a href.bind="getUrl(s)"><span class="icon withSIX-icon-Follow"></span></a>
-					</span>
-				</td>
-				<td title="${s.distance | amount} meters"><span class="icon ${s.distance | distance} connection-quality"></span></td>
-				<td>
-					<command-button model.bind="join">
+					<!--<icon cls="${s.battlEye && s.verifySignatures ? 'withSIX-icon-Protection-Full' : 'withSIX-icon-Protection-Med'}" optional-title="${s.battlEye ? 'BattlEye' : ''} ${s.verifySignatures ? 'Signatures' : ''} protected"
+						model.bind="s.battlEye || s.verifySignatures"></icon>-->
+					<icon hide.bind="hovering" cls="withSIX-icon-Download ${s.hasAllMods ? 'ready' : ''}" optional-title="Requires ${s.modList.length} mods"
+						model.bind="s.modList.length > 0"></icon>
+					<command-button model.bind="join" show.bind="hovering">
 						<span class="icon ${join.icon}" click.trigger="selectServer(s)"></span>
 					</command-button>
 				</td>
+				<td title="${s.distance | amount} meters"><span class="icon ${s.distance | distance} connection-quality"></span></td>
 				<td>
-					<div innerHTML.bind="s.name | links"></div>
+					<div class="name">
+						<icon cls="withSIX-icon-Lock" optional-title="Password required" model.bind="s.isPasswordProtected"></icon>
+						<span innerHTML.bind="s.name | links"></span>
+					</div>
 					<div>
+						[${s.gameType}]
 						<span innerHTML.bind="s.game | links"></span> <span>on ${s.map}</span>
 					</div>
 				</td>
 				<td>
-					<div style="text-align: right">${s.currentPlayers}/${s.maxPlayers}</div>
-					<div style="text-align: center">${s.gameType}</div>>
+					<div><b>${s.currentPlayers}</b>/${s.maxPlayers}</div>
+					<div>${SessionState[s.serverState]}</div>
 				</td>
 				<td>
 					<icon cls="withSIX-icon-Star" optional-title="Favorite" model.bind="s.isFavorite"></icon>

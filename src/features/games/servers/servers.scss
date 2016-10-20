@@ -30,10 +30,57 @@
     margin-left: $filter-width + $gutter-width;
     .server-list-info {
       height: 40px;
+      color: white;
     }
     .server-list-content {
       background-color: white;
       border: 1px solid $colorSixMediumGray;
+      a {
+        color: inherit;
+      }
+      table {
+        width: 100%;
+        table-layout: fixed
+      }
+      tr {
+        &:hover {
+          background-color: $colorSixSoftGray;
+        }
+      }
+      td {
+        .name {
+          font-size: 20px;
+        }
+      }
+      td:nth-child(1) {
+        span {
+          display: inline-block;
+          width: 48px;
+        }
+        width: 32px;
+        text-align: center;
+      }
+      td:nth-child(2) {
+        span {
+          display: inline-block;
+          width: 48px;
+        }
+        width: 48px;
+        text-align: center;
+      }
+      td:nth-child(4) {
+        div {
+          width: 104px;
+        }
+        width: 104px;
+      }
+      td:nth-child(5) {
+        span {
+          display: inline-block;
+          width: 32px;
+        }
+        width: 32px;
+      }
       td {
         icon {
           color: $colorSixLightGray;
