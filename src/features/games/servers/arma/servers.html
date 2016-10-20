@@ -26,7 +26,7 @@
 				<td title="${s.distance | amount} meters"><span class="icon ${s.distance | distance} connection-quality"></span></td>
 				<td>
 					<div class="name">
-						<icon cls="withSIX-icon-Lock" optional-title="Password required" model.bind="s.isPasswordProtected"></icon>
+						<span class="icon withSIX-icon-Lock" title="Password required" if.bind="s.isPasswordProtected"></span>
 						<span innerHTML.bind="s.name | links"></span>
 					</div>
 					<div>
@@ -35,8 +35,8 @@
 					</div>
 				</td>
 				<td>
-					<div><b>${s.currentPlayers}</b>/${s.maxPlayers}</div>
-					<div>${SessionState[s.serverState]}</div>
+					<div class="playerCount"><b>${s.currentPlayers}</b>/${s.maxPlayers}</div>
+					<div class="serverState">${SessionState[s.serverState]}</div>
 				</td>
 				<td>
 					<icon cls="withSIX-icon-Star" optional-title="Favorite" model.bind="s.isFavorite"></icon>

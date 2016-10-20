@@ -18,7 +18,8 @@
 				</div>
 				<div>
 					${totalPlayers} players on <b>
-						<span>${totalCount}</span> results</b> <span show.bind="totalTotalCount !=== totalCount" title.bind="totalTotalCount"> (${totalTotalCount | amount} total)</span>
+						<span>${filteredComponent.totalCount}</span> results</b>
+					<span show.bind="totalTotalCount !== filteredComponent.totalCount" title.bind="totalTotalCount"> (${totalTotalCount} total)</span>
 				</div>
 			</div>
 			<div infinite-scroll.bind="loadMore" class="server-list-content">
