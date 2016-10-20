@@ -1,5 +1,4 @@
 @import "_base";
-
 #servers {
   .virtual-container {
     max-height: 33vh;
@@ -9,19 +8,47 @@
   }
 }
 
-.server-list {
-  td {
-    icon {
-      color: $colorSixLightGray;
-      span.active {
-        color: $colorSixDarkGray;
-      }
-      span.withSIX-icon-Download.ready {
-        color: $colorSixGreen;
-      }
+#wrapper.v3 {
+  #content-view {
+    // TODO: make nice and custom per game
+    background-color: #696969;
+  }
+}
+
+#server-browser {
+  $filter-width: 300px;
+  $gutter-width: 32px;
+  .server-filters {
+    float: left;
+    padding: 16px;
+    width: $filter-width;
+    background-color: $colorSixSoftGray;
+    min-height: 600px;
+    border: 1px solid $colorSixMediumGray;
+  }
+  .server-list {
+    margin-left: $filter-width + $gutter-width;
+    .server-list-info {
+      height: 40px;
     }
-    span.connection-quality {
-      color: $colorSixGreen;
+    .server-list-content {
+      background-color: white;
+      border: 1px solid $colorSixMediumGray;
+      td {
+        icon {
+          color: $colorSixLightGray;
+          span.active {
+            color: $colorSixDarkGray;
+          }
+          span.withSIX-icon-Download.ready {
+            color: $colorSixGreen;
+          }
+        }
+        span.connection-quality {
+          color: $colorSixGreen;
+        }
+      }
     }
   }
 }
+

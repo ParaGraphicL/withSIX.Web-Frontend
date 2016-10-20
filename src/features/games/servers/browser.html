@@ -1,19 +1,22 @@
 <template>
 	<require from="./servers.scss"></require>
-	<div class="container-fluid">
-		<div>
+	<div class="container-fluid" id="server-browser">
+		<div class="server-filters">
 			<filters custom-handler.call="handleFilter(info)" filters.ref="filteredComponent" items.bind="model.items" filters.bind="filters"
 				enabled-filters.bind="enabledFilters" search-fields.bind="searchFields" sort.bind="sort" search-input-placeholder="search me..">
 			</filters>
 		</div>
 
-		<command-button model.bind="refresh"></command-button>
-		<command-button model.bind="reload"></command-button>
-
-		<div class="clearfix"></div>
-
-		<div infinite-scroll.bind="loadMore" class="tile server-list">
-			<compose view="./arma/servers.html"></compose>
+		<div class="server-list">
+			<div class="server-list-info">
+				<div class="pull-right">
+					<command-button model.bind="refresh"></command-button>
+					<command-button model.bind="reload"></command-button>
+				</div>
+			</div>
+			<div infinite-scroll.bind="loadMore" class="server-list-content">
+				<compose view="./arma/servers.html"></compose>
+			</div>
 		</div>
 	</div>
 </template>
