@@ -1,35 +1,37 @@
 import breeze from 'breeze-client';
 
-import {IBreezeMod, IBreezeUser, IBreezeCollection, IBreezeMission, IBreezeCollectionVersionDependency, IBreezePost, IBreezeModUpdate, IBreezeCollectionVersion, IBreezeGame, IBreezeAWSUploadPolicy,
+import {
+  IBreezeMod, IBreezeUser, IBreezeCollection, IBreezeMission, IBreezeCollectionVersionDependency, IBreezePost, IBreezeModUpdate, IBreezeCollectionVersion, IBreezeGame, IBreezeAWSUploadPolicy,
   IBreezeMissionComment, IBreezeMissionVersion, IBreezeCollectionImageFileTransferPolicy, IBreezeModInfo,
   IBreezeCollectionComment, IBreezePostComment, AbstractDefs, BreezeInitialzation, IBreezeModUserGroup, IBreezeModComment, IBreezeModImageFileTransferPolicy,
   IBreezeModMediaItem, IUserInfo, Resource, Permission, Role,
-  EntityExtends, BreezeEntityGraph, _IntDefs} from '../services/dtos';
+  EntityExtends, BreezeEntityGraph, _IntDefs
+} from '../services/dtos';
 
-import {LegacyMediator} from '../services/mediator';
-import {ModHelper, CollectionHelper, MissionHelper} from '../services/helpers';
+import { LegacyMediator } from '../services/mediator';
+import { ModHelper, CollectionHelper, MissionHelper } from '../services/helpers';
 
-import {RestoreBasket, OpenCreateCollectionDialog, OpenAddModDialog, OpenAddModsToCollectionsDialog} from '../services/api';
-import {ForkCollection} from '../features/profile/content/collection';
-import {W6, W6Urls, globalRedactorOptions} from '../services/withSIX';
-import {Tools} from '../services/tools';
-import {W6Context, IQueryResult, BooleanResult, Result} from '../services/w6context';
-import {Tk} from '../services/legacy/tk'
-import {IRootScope, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHaveModel, DialogQueryBase, DbCommandBase, DbQueryBase, BaseController, BaseQueryController, DialogControllerBase, ModelDialogControllerBase } from './app-base'
-import {ITagKey, ICreateComment, ICQWM, IModel, IMenuItem, IHandleCommentsScope} from '../services/legacy/base'
+import { RestoreBasket, OpenCreateCollectionDialog, OpenAddModDialog, OpenAddModsToCollectionsDialog } from '../services/api';
+import { ForkCollection } from '../features/profile/content/collection';
+import { W6, W6Urls, globalRedactorOptions } from '../services/withSIX';
+import { Tools } from '../services/tools';
+import { W6Context, IQueryResult, BooleanResult, Result } from '../services/w6context';
+import { Tk } from '../services/legacy/tk'
+import { IRootScope, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHaveModel, DialogQueryBase, DbCommandBase, DbQueryBase, BaseController, BaseQueryController, DialogControllerBase, ModelDialogControllerBase } from './app-base'
+import { ITagKey, ICreateComment, ICQWM, IModel, IMenuItem, IHandleCommentsScope } from '../services/legacy/base'
 import { Publisher } from '../services/apis/lib';
-import {EventAggregator} from 'aurelia-event-aggregator';
+import { EventAggregator } from 'aurelia-event-aggregator';
 
-import {Client, IClientInfo, ItemState, TypeScope} from 'withsix-sync-api';
+import { Client, IClientInfo, ItemState, TypeScope } from 'withsix-sync-api';
 
 import { ForwardService } from './components';
-import {IBasketItem, BasketItemType} from '../services/legacy/baskets';
-import {BasketService} from '../services/basket-service';
-import {ModsHelper, Helper} from '../services/legacy/misc';
-import {ToastLogger} from '../services/legacy/logger';
+import { IBasketItem, BasketItemType } from '../services/legacy/baskets';
+import { BasketService } from '../services/basket-service';
+import { ModsHelper, Helper } from '../services/legacy/misc';
+import { ToastLogger } from '../services/legacy/logger';
 
-import {registerCommands, getFactory, skyscraperSlotSizes, rectangleSlotSizes, leaderboardSlotSizes} from './app-base';
-import {joinUri} from '../helpers/utils/url'
+import { registerCommands, getFactory, skyscraperSlotSizes, rectangleSlotSizes, leaderboardSlotSizes } from './app-base';
+import { joinUri } from '../helpers/utils/url'
 
 import { registerCQ, registerService, registerController, IContentScopeT, ContentModelController, IContentHeader, ContentDownloads, HelpItem, ContentController, IContentIndexScope, IEditConfiguration } from './play'
 import { GetModTagsQuery } from './mods';
@@ -262,19 +264,20 @@ export class CollectionController extends ContentModelController<IBreezeCollecti
   unsubscribe() {
     return this.requestAndProcessResponse(UnsubscribeCollectionCommand, { model: this.$scope.model })
       .then(r => this.applyIfNeeded(() => {
-          delete this.$scope.subscribedCollections[this.$scope.model.id];
-          this.$scope.model.subscribersCount -= 1;
-          if (window.six_client.unsubscribedFromCollection)
-            window.six_client.unsubscribedFromCollection(this.$scope.model.id);
-        }));
+        delete this.$scope.subscribedCollections[this.$scope.model.id];
+        this.$scope.model.subscribersCount -= 1;
+        if (window.six_client && window.six_client.unsubscribedFromCollection)
+          window.six_client.unsubscribedFromCollection(this.$scope.model.id);
+      }));
   }
 
   subscribe() {
     return this.requestAndProcessResponse(SubscribeCollectionCommand, { model: this.$scope.model })
-      .then(r => this.applyIfNeeded(() => {
+      .then(r => {
+        this.applyIfNeeded(() => {
           this.$scope.subscribedCollections[this.$scope.model.id] = true;
           this.$scope.model.subscribersCount += 1;
-          if (window.six_client.subscribedToCollection)
+          if (window.six_client && window.six_client.subscribedToCollection)
             window.six_client.subscribedToCollection(this.$scope.model.id)
 
           if (this.w6.client && this.w6.client.clientFound) {
@@ -291,7 +294,7 @@ export class CollectionController extends ContentModelController<IBreezeCollecti
             //Downloads.startDownload(url);
           }
         })
-      );
+      });
   }
 
   setupContentHeader(content: IBreezeCollection): IContentHeader {
@@ -738,7 +741,7 @@ export class CollectionInfoController extends ContentController {
         );
       };
       this.$scope.unlikeComment = comment => {
-        return this.$scope.request(UnlikeCollectionCommentCommand, { collectionId: this.$scope.model.id, id: comment.id }).then(() => 
+        return this.$scope.request(UnlikeCollectionCommentCommand, { collectionId: this.$scope.model.id, id: comment.id }).then(() =>
           this.applyIfNeeded(() => {
             comment.likesCount -= 1;
             this.$scope.commentLikeStates[comment.id] = false;
@@ -944,6 +947,8 @@ export class SubscribeCollectionCommand extends DbCommandBase {
   public execute = [
     'model', (model: IBreezeCollection) =>
       this.context.postCustom("collections/" + model.id + "/subscribe")
+        .then(x => this.respondSuccess(x))
+        .catch(x => this.respondError(x))
   ];
 }
 
@@ -954,6 +959,8 @@ export class UnsubscribeCollectionCommand extends DbCommandBase {
   public execute = [
     'model', (model: IBreezeCollection) =>
       this.context.postCustom("collections/" + model.id + "/unsubscribe")
+        .then(x => this.respondSuccess(x))
+        .catch(x => this.respondError(x))
   ];
 }
 
