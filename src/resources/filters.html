@@ -1,47 +1,47 @@
 <template>
-  <div class="filters-area">
-    <div class="pull-right">
-      Displaying
-      <span show.bind="filteredItems.length !== totalCount">${filteredItems.length} /</span> <span title.bind="totalCount">${totalCount | amount} results</span>
-      <span if.bind="sort.length > 0">
+	<div class="filters-area">
+		<div class="pull-right">
+			Displaying
+			<span show.bind="filteredItems.length !== totalCount">${filteredItems.length} /</span> <span title.bind="totalCount">${totalCount | amount} results</span>
+			<span if.bind="sort.length > 0">
           <select class="filter-sort" id="select-sort" name="select-sort" value.bind="sortOrder">
             <option repeat.for="item of sort" model.bind="item">Sort by ${item.title || item.name.toUpperCaseFirst()}</option>
           </select>
           <button class="filter-order" click.delegate="toggleDirection()"><span class="icon withSIX-icon-Arrow-${sortOrder.direction == 1 ? 'Down' : 'Up'}-Dir"></span></button>
-      </span>
+			</span>
 
-      <div class="views grid-select" if.bind="viewTypes.length > 1">
-        <select size="2" class="my-select horizontal grid-type" value.bind="selectedViewType">
+			<div class="views grid-select" if.bind="viewTypes.length > 1">
+				<select size="2" class="my-select horizontal grid-type" value.bind="selectedViewType">
           <option model.bind="item" repeat.for="item of viewTypes" class="${$parent.getIconForViewType(item)} icon"></option>
         </select>
-      </div>
-    </div>
+			</div>
+		</div>
 
-    <div>
-      <input if.bind="typeaheadOptions" style="position: relative;" typeahead="substring-matcher.bind: typeaheadOptions.substringMatcher; display.bind: typeaheadOptions.display; selected.bind: typeaheadSelect"
-        class="form-control" type="text" value.bind="searchInput" placeholder.bind="searchInputPlaceholder"></input>
-      <input if.bind="!typeaheadOptions" style="position: relative;" class="form-control" type="text" value.bind="searchInput"
-        placeholder.bind="searchInputPlaceholder"></input>
-    </div>
+		<div>
+			<input if.bind="typeaheadOptions" style="position: relative;" typeahead="substring-matcher.bind: typeaheadOptions.substringMatcher; display.bind: typeaheadOptions.display; selected.bind: typeaheadSelect"
+				class="form-control" type="text" value.bind="searchInput" placeholder.bind="searchInputPlaceholder"></input>
+			<input if.bind="!typeaheadOptions" style="position: relative;" class="form-control" type="text" value.bind="searchInput"
+				placeholder.bind="searchInputPlaceholder"></input>
+		</div>
 
-    <div class="show-filter" if.bind="filters && filters.length > 0">
-      <span class="show-title">Show:</span>
-      <div class="show-boxes">
-        <div class="checkbox-container" repeat.for="filter of filters">
-          <input type="checkbox" change.trigger="filter.enabled = !filter.enabled" name="mod-version-unknown" id="chk${filter.name}"
-            model.bind="filter" checked.bind="$parent.enabledFilters" />
-          <label class="text-label" for="chk${filter.name}">
+		<div class="show-filter" if.bind="filters && filters.length > 0">
+			<span class="show-title">Show:</span>
+			<div class="show-boxes">
+				<div class="checkbox-container" repeat.for="filter of filters">
+					<input type="checkbox" change.trigger="filter.enabled = !filter.enabled" name="mod-version-unknown" id="chk${filter.name}"
+						model.bind="filter" checked.bind="enabledFilters" />
+					<label class="text-label" for="chk${filter.name}">
             ${filter.title || filter.name}
           </label>
-          <selectbox show.bind="filter.enabled" if.bind="filter.values" options.bind="filter.values" value.bind="filter.value">
-            <template replace-part="item-template">
-              <option model.bind="o">${o.title || o}</option>
-            </template>
-          </selectbox>
-        </div>
-      </div>
-    </div>
-    <div class="clearfix"></div>
-    <slot></slot>
-  </div>
+					<selectbox show.bind="filter.enabled" if.bind="filter.values" options.bind="filter.values" value.bind="filter.value">
+						<template replace-part="item-template">
+							<option model.bind="o">${o.title || o}</option>
+						</template>
+					</selectbox>
+				</div>
+			</div>
+		</div>
+		<div class="clearfix"></div>
+		<slot></slot>
+	</div>
 </template>

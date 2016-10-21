@@ -1,121 +1,117 @@
 <div itemscope itemtype="http://schema.org/CreativeWork" ng-class="{'has-servers': model.latestVersion.hasServers, 'editing': editConfig.isEditing}"
-  class="not-editing">
-  <div sx-content-header ng-class="{'content-stateable': w6.enableBasket}" class="sx-content-header content-basketable {{getItemClass(model)}}">
-    <sx-header-name class="editable-half">
-      <span ng-class="{'edit-border-blue edit-field': editConfig.canEdit() || editConfig.canManage()}" sx-editable-text="model.name"
-        buttons="no" can-edit="editConfig.isEditing && (editConfig.canEdit() || editConfig.canManage())"
-        blur-saves>
+	class="not-editing">
+	<div sx-content-header ng-class="{'content-stateable': w6.enableBasket}" class="sx-content-header content-basketable {{getItemClass(model)}}">
+		<sx-header-name class="editable-half">
+			<span ng-class="{'edit-border-blue edit-field': editConfig.canEdit() || editConfig.canManage()}" sx-editable-text="model.name"
+				buttons="no" can-edit="editConfig.isEditing && (editConfig.canEdit() || editConfig.canManage())" blur-saves>
                 {{model.name | characters:54 :true}}<span style="display: inline-flex; vertical-align: top"><span ng-if="editConfig.isEdited('name')" class="withSIX-icon-Alert" style="color: red; font-size: 20px;"></span></span>
-      </span>
-    </sx-header-name>
+			</span>
+		</sx-header-name>
 
-    <sx-header-type>
-      <a ng-href="{{header.contentRootUrl}}">
-        <span class="withSIX-icon-Folder"></span> Collection
-      </a>
-      (<span ng-if="model.groupId">Group</span> <span ng-class="{'edit-border-blue edit-field': (editConfig.canEdit() || editConfig.canManage()) && !model.groupId}"
-        can-edit="editConfig.isEditing && (editConfig.canEdit() || editConfig.canManage()) && !model.groupId"
-        blur-saves buttons="no" sx-editable-select="model.scope" e-ng-options="s.text as s.text for s in $parent.scopes">{{model.scope}}</span>)
+		<sx-header-type>
+			<a ng-href="{{header.contentRootUrl}}">
+				<span class="withSIX-icon-Folder"></span> Collection
+			</a>
+			(<span ng-if="model.groupId">Group</span> <span ng-class="{'edit-border-blue edit-field': (editConfig.canEdit() || editConfig.canManage()) && !model.groupId}"
+				can-edit="editConfig.isEditing && (editConfig.canEdit() || editConfig.canManage()) && !model.groupId" blur-saves buttons="no"
+				sx-editable-select="model.scope" e-ng-options="s.text as s.text for s in $parent.scopes">{{model.scope}}</span>)
 
-      <!-- <button ng-if="w6.userInfo.id" class="default" ng-click="vm.fork()" ng-disabled="vm.forking">
+			<!-- <button ng-if="w6.userInfo.id" class="default" ng-click="vm.fork()" ng-disabled="vm.forking">
       <i class="fa fa-code-fork"></i> Save as copy
     </button> -->
-    </sx-header-type>
+		</sx-header-type>
 
-    <sx-header-tags>
-      <span style="display: inline-flex; vertical-align: middle"><span ng-if="editConfig.isEdited('tags')" class="withSIX-icon-Alert" style="color: red; font-size: 20px;"></span></span>
-      <span ng-repeat="tag in header.tags" class="tag" style="margin-left: 4px" itemprop="keywords">
+		<sx-header-tags>
+			<span style="display: inline-flex; vertical-align: middle"><span ng-if="editConfig.isEdited('tags')" class="withSIX-icon-Alert" style="color: red; font-size: 20px;"></span></span>
+			<span ng-repeat="tag in header.tags" class="tag" style="margin-left: 4px" itemprop="keywords">
                 <a ng-href="{{header.contentRootUrl}}/?tag={{tag}}">{{tag}}</a>
                 <span ng-if="editConfig.isEditing">
                     &nbsp;
                     <a href="#" ng-click="removeTag(tag)">
                         <span class="withSIX-icon-X" style="color: red; font-size: 10px;"></span>
-      </a>
-      </span>
-      </span>
-      <span ng-if="header.tags.length != 0">&nbsp;&nbsp;</span>
-      <span ng-if="header.tags.length == 0" style="color: gray; font-style: italic">No Tags&nbsp;&nbsp;</span>
-      <!--
+			</a>
+			</span>
+			</span>
+			<span ng-if="header.tags.length != 0">&nbsp;&nbsp;</span>
+			<span ng-if="header.tags.length == 0" style="color: gray; font-style: italic">No Tags&nbsp;&nbsp;</span>
+			<!--
                 source="getCategories($query)"
             -->
-      <a id="addCollectionTag" ng-if="editConfig.isEditing" href="#" editable-tag-auto-complete="temporaryTag"
-        inline on-tag-added="addTag($data)" buttons="no" style="color: green;" tags="getCurrentTags()"
-        placeholder="add a category" add-from-autocomplete-only="false" display-property="key" can-edit="editConfig.isEditing"
-        min-length="0" load-on-focus="true" load-on-empty="true" max-results-to-show="32">
-        <span class="withSIX-icon-Add" style="color: green; font-size: 10px;"></span>
-      </a>
-    </sx-header-tags>
+			<a id="addCollectionTag" ng-if="editConfig.isEditing" href="#" editable-tag-auto-complete="temporaryTag" inline on-tag-added="addTag($data)"
+				buttons="no" style="color: green;" tags="getCurrentTags()" placeholder="add a category" add-from-autocomplete-only="false"
+				display-property="key" can-edit="editConfig.isEditing" min-length="0" load-on-focus="true" load-on-empty="true" max-results-to-show="32">
+				<span class="withSIX-icon-Add" style="color: green; font-size: 10px;"></span>
+			</a>
+		</sx-header-tags>
 
-    <sx-header-logo>
-      <sx-aurelia ng-if="!editConfig.isEditing" sx-view-model="'features/profile/content/collection'" sx-view="'features/profile/content/_logo2.html'"
-        sx-model="auModel"></sx-aurelia>
+		<sx-header-logo>
+			<sx-aurelia ng-if="!editConfig.isEditing && w6.enableBasket" sx-view-model="'features/profile/content/collection'" sx-view="'features/profile/content/_logo2.html'"
+				sx-model="auModel"></sx-aurelia>
 
-      <div ng-if="editConfig.isEditing" ngf-drop2="" ngf-drag-over-class="{accept:'drag-over', reject:'dragover-err', delay:100}"
-        ngf-change="fileDropped($files, $event, $rejectedFiles)" ngf-accept="accept($file, $event)" data-multiple="false">
-        <!-- ngf-accept="image/*"-->
-        <div itemprop="image" class="imageholder" ng-style="{'background-image': ('url('+ header.getAvatar(w6.imageSizes.smallRectangle.w, w6.imageSizes.smallRectangle.h) +')'), position: 'relative'}">
-          <div class="edit-border-blue edit-field" style="height: 100%">
-            <div class="row edit-section" ng-if="editConfig.isEditing">
-              <div class="col-md-4">
-                &nbsp;
-                <span class="sx-edit-button-left-orange hovering bold sx-uploading-image" ng-show="uploadingCollectionImage"
-                  data-container="body" data-title="We are currently processing your logo" bs-tooltip>Processing</span>
-              </div>
-              <div class="col-md-4 col-md-offset-4">
-                &nbsp;
-                <span class="withSIX-icon-Edit-Field sx-edit-button-blue" ng-disabled="uploadingCollectionImage" id="uploadBanner"
-                  ng-click="showUploadBanner()" data-container="body" data-title="Click me to upload a new banner"
-                  bs-tooltip></span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </sx-header-logo>
+			<div ng-if="editConfig.isEditing || !w6.enableBasket" ngf-drop2="" ngf-drag-over-class="{accept:'drag-over', reject:'dragover-err', delay:100}"
+				ngf-change="fileDropped($files, $event, $rejectedFiles)" ngf-accept="accept($file, $event)" data-multiple="false">
+				<!-- ngf-accept="image/*"-->
+				<div itemprop="image" class="imageholder" ng-style="{'background-image': ('url('+ header.getAvatar(w6.imageSizes.smallRectangle.w, w6.imageSizes.smallRectangle.h) +')'), position: 'relative'}">
+					<div class="edit-border-blue edit-field" style="height: 100%">
+						<div class="row edit-section" ng-if="editConfig.isEditing">
+							<div class="col-md-4">
+								&nbsp;
+								<span class="sx-edit-button-left-orange hovering bold sx-uploading-image" ng-show="uploadingCollectionImage" data-container="body"
+									data-title="We are currently processing your logo" bs-tooltip>Processing</span>
+							</div>
+							<div class="col-md-4 col-md-offset-4">
+								&nbsp;
+								<span class="withSIX-icon-Edit-Field sx-edit-button-blue" ng-disabled="uploadingCollectionImage" id="uploadBanner" ng-click="showUploadBanner()"
+									data-container="body" data-title="Click me to upload a new banner" bs-tooltip></span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</sx-header-logo>
 
-    <sx-header-info>
-      <ul>
-        <li>
-          <span class="main" itemprop="version" title="v{{model.latestVersion.version}}">v{{model.latestVersion.version}}</span>          <span itemprop="dateModified">{{model.latestVersion.releasedOn | date:"dd MMM 'yy"}}</span></li>
-        <li title="{{model.latestVersion.size | size:'B':false}} unpacked" ng-bind-html="model.latestVersion.sizePacked | size"></li>
-        <li>
-          <span class="main">{{model.subscribersCount | amount}}</span> <span>subscribers</span>
-        </li>
-      </ul>
-    </sx-header-info>
-    <sx-header-download>
-      <div ng-if="w6.enableBasket" class="action download content-state-c-bgd">
-        <sx-aurelia sx-view-model="'features/profile/content/collection'" sx-view="'features/profile/content/_action.html'"
-          sx-model="auModel"></sx-aurelia>
-      </div>
-      <div ng-if="!w6.enableBasket">
-        <div ng-if="!w6.userInfo.id" class="action download">
-          <button ng-click="openLoginDialog($event)" class="anchor calltoactionBase btn-block">
+		<sx-header-info>
+			<ul>
+				<li>
+					<span class="main" itemprop="version" title="v{{model.latestVersion.version}}">v{{model.latestVersion.version}}</span>					<span itemprop="dateModified">{{model.latestVersion.releasedOn | date:"dd MMM 'yy"}}</span></li>
+				<li title="{{model.latestVersion.size | size:'B':false}} unpacked" ng-bind-html="model.latestVersion.sizePacked | size"></li>
+				<li>
+					<span class="main">{{model.subscribersCount | amount}}</span> <span>subscribers</span>
+				</li>
+			</ul>
+		</sx-header-info>
+		<sx-header-download>
+			<div ng-if="w6.enableBasket" class="action download content-state-c-bgd">
+				<sx-aurelia sx-view-model="'features/profile/content/collection'" sx-view="'features/profile/content/_action.html'" sx-model="auModel"></sx-aurelia>
+			</div>
+			<div ng-if="!w6.enableBasket">
+				<div ng-if="!w6.userInfo.id" class="action download">
+					<button ng-click="openLoginDialog($event)" class="anchor calltoactionBase btn-block">
             <span class="icon withSIX-icon-Follow" title="Login to Subscribe"></span>
             <span class="text">Login to Subscribe</span>
           </button>
-        </div>
-        <div ng-if="w6.userInfo.id && w6.userInfo.id == model.author.id" class="action download processing-button">
-          <button disabled class="anchor calltoactionBase btn-block">
+				</div>
+				<div ng-if="w6.userInfo.id && w6.userInfo.id == model.author.id" class="action download processing-button">
+					<button disabled class="anchor calltoactionBase btn-block">
             <span class="icon withSIX-icon-Synq-Follow" title="You are the author"></span>
             <span class="text">You are the author</span>
           </button>
-        </div>
-        <div ng-if="w6.userInfo.id && w6.userInfo.id != model.author.id" class="action download">
-          <button class="anchor btn-block calltoactionBase" ng-click="toggleSubscribe()" ng-disabled="!subscribedCollections[model.id]"
-            type="button" collapse="!subscribedCollections[model.id]">
+				</div>
+				<div ng-if="w6.userInfo.id && w6.userInfo.id != model.author.id" class="action download">
+					<button class="anchor btn-block calltoactionBase" ng-click="toggleSubscribe()" ng-disabled="!subscribedCollections[model.id]"
+						type="button" collapse="!subscribedCollections[model.id]">
             <span class="icon withSIX-icon-Follow" title="Unsubscribe"></span>
             <span class="text">Unsubscribe</span>
           </button>
-          <button class="anchor btn-block calltoactionBase" ng-click="toggleSubscribe()" ng-disabled="subscribedCollections[model.id]"
-            type="button" collapse="subscribedCollections[model.id]">
+					<button class="anchor btn-block calltoactionBase" ng-click="toggleSubscribe()" ng-disabled="subscribedCollections[model.id]"
+						type="button" collapse="subscribedCollections[model.id]">
             <span class="icon withSIX-icon-Follow" title="Subscribe"></span>
             <span class="text">Subscribe</span>
           </button>
-        </div>
-      </div>
-    </sx-header-download>
-  </div>
+				</div>
+			</div>
+		</sx-header-download>
+	</div>
 
-  <div id="collection-contents" app-view-segment="2"></div>
+	<div id="collection-contents" app-view-segment="2"></div>
 </div>

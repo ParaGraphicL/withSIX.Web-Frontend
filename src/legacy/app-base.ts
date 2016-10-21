@@ -1,22 +1,22 @@
-import {W6, W6Urls, globalRedactorOptions} from '../services/withSIX';
-import {FeatureToggles} from '../services/features';
-import {Tools} from '../services/tools';
-import {W6Context, IQueryResult} from '../services/w6context';
-import {Tk} from '../services/legacy/tk'
-import {ITagKey, ICreateComment, ICQWM, IModel, IMenuItem} from '../services/legacy/base'
-import {EventAggregator} from 'aurelia-event-aggregator';
-import {HttpClient} from 'aurelia-fetch-client';
-import {ToastLogger, GlobalErrorHandler} from '../services/legacy/logger';
+import { W6, W6Urls, globalRedactorOptions } from '../services/withSIX';
+import { FeatureToggles } from '../services/features';
+import { Tools } from '../services/tools';
+import { W6Context, IQueryResult } from '../services/w6context';
+import { Tk } from '../services/legacy/tk'
+import { ITagKey, ICreateComment, ICQWM, IModel, IMenuItem } from '../services/legacy/base'
+import { EventAggregator } from 'aurelia-event-aggregator';
+import { HttpClient } from 'aurelia-fetch-client';
+import { ToastLogger, GlobalErrorHandler } from '../services/legacy/logger';
 import { ErrorHandler } from '../services/error-handler';
-import {Container} from 'aurelia-framework';
+import { Container } from 'aurelia-framework';
 import breeze from 'breeze-client';
 
-import {BasketService} from '../services/basket-service';
+import { BasketService } from '../services/basket-service';
 
-import {SpeedValueConverter, SizeValueConverter, AmountValueConverter} from '../resources/converters';
-import {CollectionDataService, ModDataService, MissionDataService} from '../services/legacy/data-services';
-import {LegacyMediator, Mediator} from '../services/mediator';
-import {Client, PromiseCache} from 'withsix-sync-api';
+import { SpeedValueConverter, SizeValueConverter, AmountValueConverter } from '../resources/converters';
+import { CollectionDataService, ModDataService, MissionDataService } from '../services/legacy/data-services';
+import { LegacyMediator, Mediator } from '../services/mediator';
+import { Client, PromiseCache } from 'withsix-sync-api';
 
 declare var commangular;
 
@@ -272,8 +272,7 @@ export class BaseController extends Tk.Controller {
     return Tools.uriHasProtocol(img) ? img : this.$scope.url.getUsercontentUrl(img, updatedAt);
   };
   subscriptionQuerySucceeded = (result, d) => {
-    for (var v in result.data)
-      d[result.data[v]] = true;
+    result.forEach(x => d[x] = true);
   }
 
   public requestAndProcessResponse = async <T>(command, data?) => {
@@ -290,7 +289,7 @@ export class BaseController extends Tk.Controller {
   }
 
   private successResponse = (r) => {
-    Tools.Debug.log("success response");
+    Tools.Debug.log("success response", r);
     this.$scope.response = r;
     this.logger.success(r.message, "Action completed");
     return r;
@@ -299,6 +298,7 @@ export class BaseController extends Tk.Controller {
   private errorResponse = (result) => {
     this.$scope.response = result;
     var httpFailed = result.httpFailed;
+    if (!httpFailed) throw new Error("Invalid response to process");
     this.logger.error(httpFailed[1], httpFailed[0]);
   }
   // TODO: Make this available on the root $scope ??
@@ -451,13 +451,13 @@ class AppModule extends Tk.Module {
             .setPrefix('withSIX'); // production vs staging etc?
         }
       ])
-      .config(['$provide', function($provide) {
-        $provide.decorator('ngClickDirective', ['$delegate', '$parse', 'errorHandler', function($delegate, $parse, errorHandler: ErrorHandler) {
-          $delegate[0].compile = function($element, attr) {
+      .config(['$provide', function ($provide) {
+        $provide.decorator('ngClickDirective', ['$delegate', '$parse', 'errorHandler', function ($delegate, $parse, errorHandler: ErrorHandler) {
+          $delegate[0].compile = function ($element, attr) {
             var fn = $parse(attr.ngClick, null, true);
 
-            return function(scope: ng.IScope, element) {
-              element.on('click', function(event) {
+            return function (scope: ng.IScope, element) {
+              element.on('click', function (event) {
                 let el = element[0];
                 if (el.disabled) return;
                 var result, d;

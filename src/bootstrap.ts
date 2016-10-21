@@ -1,21 +1,23 @@
-import {bootstrap} from "aurelia-bootstrapper-webpack";
-import {Aurelia, LogManager, Container, inject, transient, singleton, Lazy, All, Optional, Parent} from "aurelia-framework";
-import {Router} from "aurelia-router";
-import {EventAggregator} from "aurelia-event-aggregator";
-import {HttpClient} from "aurelia-http-client";
-import {HttpClient as FetchClient} from "aurelia-fetch-client";
+import { bootstrap } from "aurelia-bootstrapper-webpack";
+import { Aurelia, LogManager, Container, inject, transient, singleton, Lazy, All, Optional, Parent } from "aurelia-framework";
+import { Router } from "aurelia-router";
+import { EventAggregator } from "aurelia-event-aggregator";
+import { HttpClient } from "aurelia-http-client";
+import { HttpClient as FetchClient } from "aurelia-fetch-client";
 import numeral from "numbro";
 import breeze from "breeze-client";
 
-import {bootAngular} from "./legacy";
+import { bootAngular } from "./legacy";
 
-import {Toastr, UiContext, Mediator, ErrorLoggingMediatorDecorator, InjectingMediatorDecorator, BasketService, Client,
+import {
+  Toastr, UiContext, Mediator, ErrorLoggingMediatorDecorator, InjectingMediatorDecorator, BasketService, Client,
   CollectionDataService, ModDataService, MissionDataService, PromiseCache,
   IUserInfo, W6Context, ClientMissingHandler, EntityExtends,
-  W6Urls, W6, Tools, Environment, StateChanged} from "./services/lib";
-import {ToastLogger, GlobalErrorHandler, LogAppender} from "./services/legacy/logger";
+  W6Urls, W6, Tools, Environment, StateChanged
+} from "./services/lib";
+import { ToastLogger, GlobalErrorHandler, LogAppender } from "./services/legacy/logger";
 import { AbortError, LoginBase, UserInfo } from "./services/auth-base";
-import {Api} from "./services/api";
+import { Api } from "./services/api";
 
 // hack for electron cant communicate with popup
 if (window.location.search.startsWith("?code=")) {
@@ -24,7 +26,7 @@ if (window.location.search.startsWith("?code=")) {
   throw new Error("Window was used for auth code handling");
 }
 
-const getInstance = <T>(o) => <T> Container.instance.get(o);
+const getInstance = <T>(o) => <T>Container.instance.get(o);
 
 export async function configure(aurelia: Aurelia) {
   Tools.Debug.log("AURELIA: configuring aurelia");
@@ -32,7 +34,7 @@ export async function configure(aurelia: Aurelia) {
   require("breeze-client-labs/breeze.getEntityGraph");
   require("breeze-client-labs/breeze.saveErrorExtensions");
   breeze.NamingConvention.camelCase.setAsDefault();
-  breeze.DataType.parseDateFromServer = function(source) {
+  breeze.DataType.parseDateFromServer = function (source) {
     // if (typeof(source) === 'string' && !source.endsWith("Z")) source = source + "Z"
     let date = moment(source);
     return date.toDate();
@@ -75,8 +77,8 @@ export async function configure(aurelia: Aurelia) {
 
   function configureApp(site: string, useRouter: boolean, authConfig) {
     Tools.Debug.log("AURELIA: configuring app");
-       new ContainerSetup(aurelia.use.container);
- 
+    new ContainerSetup(aurelia.use.container);
+
     aurelia.use
       .standardConfiguration()
       .plugin("aurelia-auth", baseConfig => baseConfig.configure(authConfig))
@@ -150,11 +152,13 @@ export async function configure(aurelia: Aurelia) {
       userInfo.failedLogin = true;
     }
 
+    // TODO: Address, and devise approach to persist (e.g when specified from clientLanding endpoint, then make it persistent)
+    // also remove it from the QS afterwards
     let rx = /[&\?]port=(\d+)/;
     let match = window.location.search.match(rx);
     let port = match ? parseInt(match[1]) : null;
     Container.instance.registerSingleton(Client, () => {
-      const client = new Client(getInstance<PromiseCache>(PromiseCache), getInstance<FetchClient>(FetchClient), port ? port : undefined);
+      const client = new Client(getInstance<PromiseCache>(PromiseCache), getInstance<FetchClient>(FetchClient), port ? `https://127.0.0.66:${port}` : undefined);
       const eventBus: EventAggregator = Container.instance.get(EventAggregator);
       const debug = Tools.env > Tools.Environment.Staging;
       client.onAny((event, ...args) => {
@@ -170,7 +174,7 @@ export async function configure(aurelia: Aurelia) {
       });
 
       // Rx.Observable.fromEvent(client, 'command.executed', (commandName, command, result) => { return  { commandName, command, result} } ) // or, if unknown (...args) => args
-        // .subscribe(x => console.log("$$$$ Received ", x))
+      // .subscribe(x => console.log("$$$$ Received ", x))
       return client;
     });
 
@@ -189,10 +193,10 @@ export async function configure(aurelia: Aurelia) {
     let existing = window.onerror;
     window.onerror = (message, file, line, col, error?) => {
       eh.handleWindowError(message, file, line, col, error);
-      if (existing) (<any> existing)(message, file, line, col, error);
+      if (existing) (<any>existing)(message, file, line, col, error);
     };
 
-    if (w6.enableBasket) { (<any> client).connection.promise().catch(x => { /* Ignore */ }); } // kick off the connection early
+    if (w6.enableBasket) { (<any>client).connection.promise().catch(x => { /* Ignore */ }); } // kick off the connection early
 
     await bootAngular(w6);
   }
@@ -212,7 +216,7 @@ export class LoggingEventAggregator extends EventAggregator {
     super.publish(x, y);
   }
   subscribe(x, y) {
-    Tools.Debug.log("$AUR.EA.subscribe", x, y);
+    Tools.Debug.log("$AUR.EA.subscribe", x.name || x, y.name);
     return super.subscribe(x, y);
   }
 }

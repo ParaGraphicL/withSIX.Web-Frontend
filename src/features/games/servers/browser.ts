@@ -5,14 +5,14 @@ import {
   IPaginated,
   handlerFor,
   SortDirection,
-  IFilter
-} from '../../../framework';
-import {
-  FilteredBase
-} from '../../filtered-base';
-import {
-  ServerRender
-} from './server-render';
+  IFilter,
+  DbClientQuery,
+  uiCommand2,
+  InstallContents, LaunchAction, LaunchContents, LaunchGame,
+} from "../../../framework";
+import { FilteredBase } from "../../filtered-base";
+import { ServerRender } from "./server-render";
+import { SessionState } from "./server-render-base";
 
 interface IServer {
   queryAddress: string;
@@ -27,20 +27,34 @@ interface IServer {
   isPasswordProtected: boolean;
   isDedicated: boolean;
   version: string;
+  updatedAt: Date;
+  created: Date;
+  modList;
 }
+
+enum ModLevel {
+  Default,
+  Supported,
+  withSIX
+}
+
 export class Index extends FilteredBase<IServer> {
   static getStandardFilters = () => [{
     title: "Has Players",
     name: "hasPlayers",
-    filter: () => true,
+    filter: _ => true,
   }, {
     title: "Dedicated",
     name: "isDedicated",
-    filter: () => true,
+    filter: _ => true,
   }, {
     title: "Open",
     name: "isOpen",
-    filter: () => true,
+    filter: _ => true,
+  }, {
+    title: "Has free slots",
+    name: "hasFreeSlots",
+    filter: _ => true,
   }, {
     title: "Mods",
     name: "hasMods",
@@ -49,56 +63,78 @@ export class Index extends FilteredBase<IServer> {
       value: true,
     }, {
       title: "Has no Mods",
-      value: false
+      value: false,
     }],
-    filter: () => true
-  }, {
+    filter: _ => true,
+    value: null,
+  },
+  {
+    filter: _ => true,
+    name: "modLevel",
+    title: "Mod support level",
+    values: [{
+      title: "Supported mods only",
+      value: ModLevel.Supported,
+    },
+    {
+      title: "withSIX mods only",
+      value: ModLevel.withSIX,
+    }],
+    value: null,
+  },
+  {
     title: "Continent",
     name: "areaLimit",
     values: [{
       title: "Europe",
-      value: "EU"
+      value: "EU",
     }, {
       title: "Norh America",
-      value: "NA"
+      value: "NA",
     }, {
       title: "South America",
-      value: "SA"
+      value: "SA",
     }, {
       title: "Oceania",
-      value: "OC"
+      value: "OC",
     }, {
       title: "Asia",
-      value: "AS"
+      value: "AS",
     }],
-    filter: () => true,
+    value: null,
+    filter: _ => true,
   }]
   static getStandardSort = () => [{
     name: "currentPlayers",
     title: "Players",
-    direction: SortDirection.Desc
+    direction: SortDirection.Desc,
   }, {
     name: "name",
     title: "Name",
-    direction: SortDirection.Asc
+    direction: SortDirection.Asc,
   }, {
     name: "distance",
     title: "Distance",
-    direction: SortDirection.Asc
+    direction: SortDirection.Asc,
   }, {
     name: "country",
     title: "Country",
-    direction: SortDirection.Asc
+    direction: SortDirection.Asc,
   },]
   filters: IFilter<IServer>[] = Index.getStandardFilters();
   sort = Index.getStandardSort();
   searchFields = ["name"];
 
-  getEnabledFilters() {
-    return this.defaultEnabled;
-  }
+  SessionState = SessionState;
 
-  defaultEnabled = [];
+
+  defaultEnabled: IFilter<IServer>[] = [
+    {
+      name: "Fresh",
+      filter: item => moment().subtract("hours", 1).isBefore(item.updatedAt),
+      type: "and"
+    }
+  ];
 
   async activate(params) {
     if (params) {
@@ -113,18 +149,20 @@ export class Index extends FilteredBase<IServer> {
         try { modId = params.modId.fromShortId() } catch (err) { modId = params.modId };
         this.defaultEnabled.push({
           name: "mod",
-          value: { id: modId , type: "withSIX" },
+          value: { id: modId, type: "withSIX" },
           filter: () => true
         })
       }
     }
+    setInterval(() => { if (this.w6.miniClient.isConnected) { this.refresh(); } }, 60 * 1000);
+    this.enabledFilters = this.defaultEnabled;
     await super.activate(params);
   }
 
-  getUrl = (s) => `/p/${this.w6.activeGame.slug}/servers/${s.queryAddress.replace(/\./g, '-')}/${s.name.sluggifyEntityName()}`
+  getUrl = (s) => `/p/${this.w6.activeGame.slug}/servers/${s.queryAddress.replace(/\./g, "-")}/${s.name.sluggifyEntityName()}`
 
   // TODO Custom filters
-  getMore(page = 1) {
+  async getMore(page = 1) {
     // todo; filters and order
     const search = this.filterInfo.search;
     let filters = undefined;
@@ -147,9 +185,60 @@ export class Index extends FilteredBase<IServer> {
         direction: so.direction
       }]
     } : undefined;
-    return new GetServers(this.w6.activeGame.id, filters, sort, {
+    const servers = await new GetServers(this.w6.activeGame.id, filters, sort, {
       page
     }).handle(this.mediator);
+    if (this.w6.miniClient.isConnected) this.refreshServerInfo(servers.items);
+    return servers;
+  }
+
+  refresh = uiCommand2("Refresh", () => this.refreshServerInfo(this.model.items));
+  reload = uiCommand2("Reload", async () => this.model = await this.getMore());
+  join = uiCommand2("Join", () => this.launch(this.selectedServer), { icon: "withSIX-icon-Rocket" });
+
+  selectedServer: IServer;
+
+  selectServer = (s: IServer) => this.selectedServer = s;
+
+  async launch(s: IServer) {
+    const contents = s.modList ? s.modList.map(x => x.modId).filter(x => x).uniq().map(x => {
+      return { id: x };
+    }) : [];
+    if (contents.length > 0) {
+      const noteInfo = {
+        text: `Server: ${s.name}`,
+        url: this.getUrl(s),
+      };
+
+      // TODO: Don't install if already has
+      const installAct = new InstallContents(this.w6.activeGame.id, contents, noteInfo, true);
+      await installAct.handle(this.mediator);
+      const launchAct = new LaunchContents(this.w6.activeGame.id, contents, noteInfo, LaunchAction.Join);
+      launchAct.serverAddress = s.connectionAddress || s.queryAddress;
+      await launchAct.handle(this.mediator);
+    } else {
+      const act = new LaunchGame(this.w6.activeGame.id);
+      act.action = LaunchAction.Join;
+      act.serverAddress = s.connectionAddress || s.queryAddress;
+      await act.handle(this.mediator);
+    }
+  }
+
+  async refreshServerInfo(servers: IServer[]) {
+    const dsp = this.observableFromEvent<{ items: IServer[], gameId: string }>("server.serverInfoReceived")
+      .subscribe(evt => {
+        evt.items.forEach(x => {
+          let s = servers.filter(f => f.queryAddress === x.queryAddress)[0];
+          if (s == null) return;
+          Object.assign(s, x, { country: s.country, distance: s.distance, modList: s.modList, updatedAt: new Date(), created: s.created });
+        });
+      });
+    try {
+      await new GetServer(this.w6.activeGame.id, servers.map(x => x.queryAddress)).handle(this.mediator);
+    } finally {
+      dsp.unsubscribe();
+      this.filteredComponent.refresh();
+    }
   }
 
   addPage = async () => {
@@ -200,5 +289,20 @@ class GetServersHandler extends DbQuery<GetServers, IPaginated<IServer>> {
     return this.context.getCustom("servers", {
       params: request
     })
+  }
+}
+
+export class GetServer extends Query<IServer[]> {
+  constructor(public gameId: string, public addresses: string[], public includeRules = false, public includePlayers = false) { super(); }
+}
+
+@handlerFor(GetServer)
+class GetServerQuery extends DbClientQuery<GetServer, IServer[]>  {
+  async handle(request: GetServer) {
+    let results = await this.client.hubs.server
+      .getServersInfo(<any>{
+        addresses: request.addresses, gameId: request.gameId, includePlayers: request.includePlayers, request: request.includeRules
+      });
+    return results.servers;
   }
 }

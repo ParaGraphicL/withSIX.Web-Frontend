@@ -1,5 +1,5 @@
-import {bindable, inject} from 'aurelia-framework';
-import {ViewModel, bindingEngine, ReactiveList, ListFactory, IFilterInfo, SortDirection, IFilter, ISort, Tools,  Rx} from '../services/lib';
+import { bindable, inject } from 'aurelia-framework';
+import { ViewModel, bindingEngine, ReactiveList, ListFactory, IFilterInfo, SortDirection, IFilter, ISort, Tools, Rx } from '../services/lib';
 
 export class Filters<T> extends ViewModel {
   @bindable items: T[] = [];
@@ -15,8 +15,7 @@ export class Filters<T> extends ViewModel {
   @bindable autoEnableFilters: boolean;
   sortOrder: ISort<T>;
   searchInput: string;
-  enabledFilters: IFilter<T>[] = [];
-  enabledAndFilters: IFilter<T>[] = [];
+  @bindable enabledFilters: IFilter<T>[] = [];
   filteredItems: T[] = [];
   _searchInput: string;
   _debouncer = new Debouncer(v => this.updateFilteredItems(), 250);
@@ -54,7 +53,7 @@ export class Filters<T> extends ViewModel {
         .skip(1)
         .subscribe(x => this.initiateUpdate()));
       d(() => this.collectionObserver ? this.collectionObserver.unsubscribe() : null);
-      d(this.listFactory.getList(this.enabledFilters)
+      d(this.listFactory.getList(this.enabledFilters, ["value"])
         .modified
         .subscribe(x => this.initiateUpdate()));
     });
@@ -62,13 +61,15 @@ export class Filters<T> extends ViewModel {
 
   itemsChanged(value) {
     this.handleItemsChange(value);
-    if (!this.customHandler) this.initiateUpdate();
+    this.handleChange();
   }
+
+  handleChange() { if (!this.customHandler) { this.initiateUpdate(); } else { this.refresh(); } }
 
   handleItemsChange(value) {
     let old = this.collectionObserver;
     this.collectionObserver = value
-      ? ViewModel.observeCollection(value).subscribe(x => { if (!this.customHandler) this.initiateUpdate() })
+      ? ViewModel.observeCollection(value).subscribe(x => this.handleChange())
       : null;
     if (old) old.unsubscribe();
   }
@@ -85,18 +86,22 @@ export class Filters<T> extends ViewModel {
   customCount: number;
   get totalCount() { return this.customCount == null ? this.items.length : this.customCount }
 
+  original: T[];
 
   public async updateFilteredItems() {
     if (this.customHandler) {
       const filterInfo: IFilterInfo<T> = { search: { input: this.searchInput, fields: this.searchFields }, sortOrder: this.sortOrder, enabledFilters: this.enabledFilters }
-      const r = await this.customHandler({info: filterInfo})
-      this.filteredItems = r.items
+      const r = await this.customHandler({ info: filterInfo })
+      this.original = r.items;
+      this.refresh();
       this.customCount = r.inlineCount || (<any>r).total;
     } else {
       this.filteredItems = this.orderItems(this.filterItems())
     }
     this.tools.Debug.log("updatedFilteredItems", this.filteredItems.length);
   }
+
+  refresh() { this.filteredItems = this.orderItems(this.filterInternal(this.original)); }
 
   public toggleDirection(): void {
     this.sortOrder.direction = this.sortOrder.direction == SortDirection.Desc ? SortDirection.Asc : SortDirection.Desc;
@@ -166,10 +171,21 @@ export class Filters<T> extends ViewModel {
     if (searchInput) {
       e = e.filter(x => this.searchFields.some(v => x[v] && x[v].containsIgnoreCase(searchInput)));
     }
+    return this.filterInternal(e);
+  }
+
+  filterInternal(e: T[]) {
     if (this.filters && this.filters.some(x => true)) {
-      e = e.filter(x => this.enabledFilters.some(f => f.filter(x, f.value)));
-      if (this.enabledAndFilters.length > 0)
-        e = e.filter(x => this.enabledAndFilters.every(f => f.filter(x, f.value)));
+      if (this.enabledFilters.length > 0) {
+        const andFilters = this.enabledFilters.filter(x => x.type === 'and');
+        const orFilters = this.enabledFilters.filter(x => x.type !== 'and');
+        if (andFilters.length > 0) {
+          const filters = [x => andFilters.every(f => f.filter(x, f.value))];
+          if (orFilters.length > 0) { filters.push(x => orFilters.some(f => f.filter(x, f.value))); }
+          e = e.filter(x => filters.every(f => f(x)));
+        } else
+          e = e.filter(x => orFilters.some(f => f.filter(x, f.value)));
+      }
     }
     return e;
   }
@@ -199,7 +215,7 @@ export class Debouncer {
 
   static debouncePromise<T>(fn: (...args) => Promise<T>, wait, immediate?): (...args) => Promise<T> {
     var timer = null;
-    return function() {
+    return function () {
       var context = this;
       var args = arguments;
       var resolve;
