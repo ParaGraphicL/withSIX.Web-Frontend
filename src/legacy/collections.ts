@@ -225,49 +225,14 @@ export class CollectionController extends ContentModelController<IBreezeCollecti
 
   static hasChanges(editConfig) { return editConfig.hasChanges() }
 
-  private setupCategoriesAutoComplete() {
-    var $scope = this.$scope;
-
-    var saveOriginalTags = () => {
-      if (!$scope.model.entityAspect.originalValues.hasOwnProperty("tags")) {
-        (<any>$scope.model.entityAspect.originalValues).tags = $scope.model.tags.slice(0);
-        $scope.model.entityAspect.setModified();
-      }
-    };
-
-    $scope.addTag = (data) => {
-      var index = $scope.model.tags.indexOf(data.key);
-      if (index == -1) {
-        saveOriginalTags();
-        $scope.model.tags.push(data.key);
-      }
-      $scope.header.tags = $scope.model.tags;
-      return true;
-    };
-    $scope.getCurrentTags = () => {
-      var list = [];
-      for (var tag in $scope.model.tags) {
-        list.push({ key: $scope.model.tags[tag], text: $scope.model.tags[tag] });
-      }
-      return list;
-    };
-    $scope.removeTag = (data) => {
-      var index = $scope.model.tags.indexOf(data);
-      if (index > -1) {
-        saveOriginalTags();
-        $scope.model.tags.splice(index, 1);
-      }
-      $scope.header.tags = $scope.model.tags;
-    };
-  }
-
   unsubscribe() {
     return this.requestAndProcessResponse(UnsubscribeCollectionCommand, { model: this.$scope.model })
       .then(r => this.applyIfNeeded(() => {
         delete this.$scope.subscribedCollections[this.$scope.model.id];
         this.$scope.model.subscribersCount -= 1;
-        if (window.six_client && window.six_client.unsubscribedFromCollection)
+        if (window.six_client && window.six_client.unsubscribedFromCollection) {
           window.six_client.unsubscribedFromCollection(this.$scope.model.id);
+        }
       }));
   }
 
@@ -277,11 +242,9 @@ export class CollectionController extends ContentModelController<IBreezeCollecti
         this.applyIfNeeded(() => {
           this.$scope.subscribedCollections[this.$scope.model.id] = true;
           this.$scope.model.subscribersCount += 1;
-          if (window.six_client && window.six_client.subscribedToCollection)
-            window.six_client.subscribedToCollection(this.$scope.model.id)
-
+          if (window.six_client && window.six_client.subscribedToCollection) { window.six_client.subscribedToCollection(this.$scope.model.id) }
           if (this.w6.client && this.w6.client.clientFound) {
-            this.w6.client.openPwsUri("pws://?c=" + this.$scope.toShortId(this.$scope.model.id));
+            setTimeout(() => this.w6.client.openPwsUri("pws://?c=" + this.$scope.toShortId(this.$scope.model.id)), 5 * 1000);
             return;
           }
           if (this.localStorageService.get('clientInstalled') == null
@@ -340,6 +303,43 @@ export class CollectionController extends ContentModelController<IBreezeCollecti
 
     return header;
   }
+
+  private setupCategoriesAutoComplete() {
+    var $scope = this.$scope;
+
+    var saveOriginalTags = () => {
+      if (!$scope.model.entityAspect.originalValues.hasOwnProperty("tags")) {
+        (<any>$scope.model.entityAspect.originalValues).tags = $scope.model.tags.slice(0);
+        $scope.model.entityAspect.setModified();
+      }
+    };
+
+    $scope.addTag = (data) => {
+      var index = $scope.model.tags.indexOf(data.key);
+      if (index == -1) {
+        saveOriginalTags();
+        $scope.model.tags.push(data.key);
+      }
+      $scope.header.tags = $scope.model.tags;
+      return true;
+    };
+    $scope.getCurrentTags = () => {
+      var list = [];
+      for (var tag in $scope.model.tags) {
+        list.push({ key: $scope.model.tags[tag], text: $scope.model.tags[tag] });
+      }
+      return list;
+    };
+    $scope.removeTag = (data) => {
+      var index = $scope.model.tags.indexOf(data);
+      if (index > -1) {
+        saveOriginalTags();
+        $scope.model.tags.splice(index, 1);
+      }
+      $scope.header.tags = $scope.model.tags;
+    };
+  }
+
   private setupDependencyAutoComplete() {
     this.$scope.getDependencies = (query) => this.$scope.request(GetModTagsQuery, { gameId: this.$scope.game.id, query: query })
       .then((d) => this.processModNames(d))
