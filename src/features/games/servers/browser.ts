@@ -39,8 +39,6 @@ enum ModLevel {
 }
 
 export class Index extends FilteredBase<IServer> {
-  totalPlayers = 666; // TODO
-  totalTotalCount = 7200; // TODO
   static getStandardFilters = () => [{
     title: "Has Players",
     name: "hasPlayers",

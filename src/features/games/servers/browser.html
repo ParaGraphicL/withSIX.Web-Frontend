@@ -17,9 +17,9 @@
 					<command-button model.bind="reload"></command-button>
 				</div>
 				<div>
-					${totalPlayers} players on <b>
+					${model.playerCount} players on <b>
 						<span>${filteredComponent.totalCount}</span> results</b>
-					<span show.bind="totalTotalCount !== filteredComponent.totalCount" title.bind="totalTotalCount"> (${totalTotalCount} total)</span>
+					<span show.bind="model.totalServers !== filteredComponent.totalCount" title="${model.totalPlayers} players on ${model.totalServers} servers total"> (${model.totalServers} total)</span>
 				</div>
 			</div>
 			<div infinite-scroll.bind="loadMore" class="server-list-content">
