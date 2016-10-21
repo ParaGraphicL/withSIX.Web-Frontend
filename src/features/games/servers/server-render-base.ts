@@ -46,7 +46,7 @@ enum AiLevel {
   Custom
 }
 
-enum SessionState {
+export enum SessionState {
   None,
   SelectingMission,
   EditingMission,
