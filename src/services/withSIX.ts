@@ -1,7 +1,7 @@
-import {Tools} from './tools';
-import {Client, IMiniClientInfo, PreferredClient, CollectionScope} from 'withsix-sync-api';
+import { Tools } from './tools';
+import { Client, IMiniClientInfo, PreferredClient, CollectionScope } from 'withsix-sync-api';
 import breeze from 'breeze-client';
-import {IUserInfo} from './dtos';
+import { IUserInfo } from './dtos';
 
 export interface IAvatarInfo {
   avatarURL?: string;
@@ -18,7 +18,7 @@ enum Sites {
 }
 
 
-export interface IExternalInfo { 
+export interface IExternalInfo {
   forumUrl?: string; steamInfo; gitHubRepo?: string; armaholicUrl?: string; chucklefishUrl?: string; nmsmUrl?: string; nexusUrl?: string; description?: string; homepageUrl?: string;
   mdbUrl?: string; curseUrl?: string;
 }
@@ -28,7 +28,7 @@ if (!window.RedactorPlugins) window.RedactorPlugins = <any>{};
 
 window.RedactorPlugins.bufferbuttons = () => {
   return {
-    init: function() {
+    init: function () {
       var undo = this.button.addFirst('undo', 'Undo');
       var redo = this.button.addAfter('undo', 'redo', 'Redo');
 
@@ -467,6 +467,7 @@ export class W6 {
   libraryParent;
   collection;
   redirected: boolean;
+  classes?: string;
   redirectedWasLoggedIn: boolean;
   public w6OBot = "60f61960-23a3-11e4-8c21-0800200c9a66";
 
@@ -572,7 +573,7 @@ export class W6 {
       if (convertPropertyNames) angular.forEach(obj, (v, p) => newObj[converter.serverPropertyNameToClient(p)] = this.convertToClient(v, convertPropertyNames));
       else angular.forEach(obj, (v, p) => newObj[p] = this.convertToClient(v, convertPropertyNames));
       return <T>newObj;
-    } else if (typeof(obj) === 'string') {
+    } else if (typeof (obj) === 'string') {
       if (this.iso8601RegEx.test(obj)) return <T><any>breeze.DataType.parseDateFromServer(obj);
     } else if (obj instanceof String) {
       if (this.iso8601RegEx.test(obj.toString())) return <T><any>breeze.DataType.parseDateFromServer(obj);

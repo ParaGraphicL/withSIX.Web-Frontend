@@ -9,13 +9,10 @@ import {
   DbClientQuery,
   uiCommand2,
   InstallContents, LaunchAction, LaunchContents, LaunchGame,
-} from '../../../framework';
-import {
-  FilteredBase
-} from '../../filtered-base';
-import {
-  ServerRender
-} from './server-render';
+} from "../../../framework";
+import { FilteredBase } from "../../filtered-base";
+import { ServerRender } from "./server-render";
+import { SessionState } from "./server-render-base";
 
 interface IServer {
   queryAddress: string;
@@ -128,12 +125,14 @@ export class Index extends FilteredBase<IServer> {
   sort = Index.getStandardSort();
   searchFields = ["name"];
 
+  SessionState = SessionState;
+
 
   defaultEnabled: IFilter<IServer>[] = [
     {
       name: "Fresh",
       filter: item => moment().subtract("hours", 1).isBefore(item.updatedAt),
-      type: 'and'
+      type: "and"
     }
   ];
 
@@ -160,7 +159,7 @@ export class Index extends FilteredBase<IServer> {
     await super.activate(params);
   }
 
-  getUrl = (s) => `/p/${this.w6.activeGame.slug}/servers/${s.queryAddress.replace(/\./g, '-')}/${s.name.sluggifyEntityName()}`
+  getUrl = (s) => `/p/${this.w6.activeGame.slug}/servers/${s.queryAddress.replace(/\./g, "-")}/${s.name.sluggifyEntityName()}`
 
   // TODO Custom filters
   async getMore(page = 1) {
@@ -226,7 +225,7 @@ export class Index extends FilteredBase<IServer> {
   }
 
   async refreshServerInfo(servers: IServer[]) {
-    const dsp = this.observableFromEvent<{ items: IServer[], gameId: string }>('server.serverInfoReceived')
+    const dsp = this.observableFromEvent<{ items: IServer[], gameId: string }>("server.serverInfoReceived")
       .subscribe(evt => {
         evt.items.forEach(x => {
           let s = servers.filter(f => f.queryAddress === x.queryAddress)[0];
