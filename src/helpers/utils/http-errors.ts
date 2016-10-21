@@ -1,5 +1,5 @@
 export const createHttpError = (name: string, proto = Error.prototype): HttpErrorConstructor<any> => {
-  var f = function(message: string, requestInfo: IRequestInfo<any>) {
+  var f = function (message: string, requestInfo: IRequestInfo<any>) {
     Object.defineProperty(this, 'name', {
       enumerable: false,
       writable: false,
@@ -33,7 +33,7 @@ export const createHttpError = (name: string, proto = Error.prototype): HttpErro
     Object.defineProperty(this, 'requestID', {
       enumerable: false,
       writable: true,
-      value: requestInfo.headers ? requestInfo.headers['withSIX-RequestID'] : null
+      value: requestInfo.headers ? requestInfo.headers.get('x-withsix-requestid') : null
     });
 
     if (requestInfo.body && requestInfo.body.modelState) {

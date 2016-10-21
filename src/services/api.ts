@@ -1,23 +1,23 @@
-import {Base, LS, IDisposable} from './base';
-import {W6} from './withSIX';
-import {Mediator, LegacyMediator} from './mediator';
-import {Toastr} from './toastr';
-import {ListFactory, uiCommand2, IReactiveCommand} from './reactive';
-import {Tools} from './tools';
-import {IBreezeErrorReason, IBreezeSaveError} from './legacy/misc';
-import {ContentHelper} from './helpers';
-import {InvalidShortIdException} from '../helpers/utils/string';
-import {IHttpException, ErrorResponseBody} from '../helpers/utils/http-errors';
+import { Base, LS, IDisposable } from './base';
+import { W6 } from './withSIX';
+import { Mediator, LegacyMediator } from './mediator';
+import { Toastr } from './toastr';
+import { ListFactory, uiCommand2, IReactiveCommand } from './reactive';
+import { Tools } from './tools';
+import { IBreezeErrorReason, IBreezeSaveError } from './legacy/misc';
+import { ContentHelper } from './helpers';
+import { InvalidShortIdException } from '../helpers/utils/string';
+import { IHttpException, ErrorResponseBody } from '../helpers/utils/http-errors';
 
 import * as Rx from 'rxjs/Rx';
 
 import breeze from 'breeze-client';
-import {HttpClient} from 'aurelia-http-client';
-import {Client} from 'withsix-sync-api';
-import {EventAggregator} from 'aurelia-event-aggregator';
-import {inject, Container} from 'aurelia-framework';
-import {Validation, ValidationResult} from 'aurelia-validation';
-import {Router} from 'aurelia-router';
+import { HttpClient } from 'aurelia-http-client';
+import { Client } from 'withsix-sync-api';
+import { EventAggregator } from 'aurelia-event-aggregator';
+import { inject, Container } from 'aurelia-framework';
+import { Validation, ValidationResult } from 'aurelia-validation';
+import { Router } from 'aurelia-router';
 
 const routing = require('../../data/routing.json');
 
@@ -142,7 +142,7 @@ export class Api extends Base {
   }
 
   handleBreezeErrorResponse(r: IBreezeErrorReason) {
-    let requestId = r.httpResponse.status ? r.httpResponse.getHeaders('withSIX-RequestID') : 'FAIL';
+    let requestId = r.httpResponse.status ? r.httpResponse.getHeaders('x-withsix-requestid') : 'FAIL';
     Tools.Debug.error('ERROR during request, Request ID: ' + requestId, r);
     let d = r.httpResponse.data;
     if (!d) return ["Site down?!", 'Unknown Error'];
@@ -156,7 +156,7 @@ export class Api extends Base {
   }
 
   handleHttpError(r: IHttpException<ErrorResponseBody>) {
-    Tools.Debug.error('ERROR during request, Request ID: ' + r.headers['withSIX-RequestID'], r);
+    Tools.Debug.error('ERROR during request, Request ID: ' + r.headers.get('x-withsix-requestid'), r);
     let message = r.body && r.body.message || '';
     if (r instanceof Tools.ValidationError && r.modelState) angular.forEach(r.modelState, (v, k) => message += "\n" + v);
     let status = r.status && r.statusText ? "\n(" + r.status + ": " + r.statusText + ")" : '';
@@ -186,7 +186,7 @@ export class Notifier {
   }
 }
 
-export class OpenSettings { constructor(public model = {}) {} }
+export class OpenSettings { constructor(public model = {}) { } }
 
 
 class Ipc<T> {

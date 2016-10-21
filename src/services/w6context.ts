@@ -1,13 +1,13 @@
 import breeze from 'breeze-client';
-import {EntityExtends, BreezeEntityGraph, _IntDefs, BreezeInitialzation, IBreezeUser, IBreezeAWSUploadPolicy} from './dtos';
-import {EventAggregator} from 'aurelia-event-aggregator';
-import {Tools} from './tools';
-import {W6} from './withSIX';
-import {Toastr} from './toastr';
-import {inject} from 'aurelia-framework';
-import {PromiseCache} from 'withsix-sync-api';
-import {IRequestInfo} from '../helpers/utils/http-errors';
-import {HttpClient, json} from 'aurelia-fetch-client';
+import { EntityExtends, BreezeEntityGraph, _IntDefs, BreezeInitialzation, IBreezeUser, IBreezeAWSUploadPolicy } from './dtos';
+import { EventAggregator } from 'aurelia-event-aggregator';
+import { Tools } from './tools';
+import { W6 } from './withSIX';
+import { Toastr } from './toastr';
+import { inject } from 'aurelia-framework';
+import { PromiseCache } from 'withsix-sync-api';
+import { IRequestInfo } from '../helpers/utils/http-errors';
+import { HttpClient, json } from 'aurelia-fetch-client';
 
 const metadata = require('../../data/metadata.json');
 
@@ -64,7 +64,7 @@ export class W6Context {
 
   constructor(private http: HttpClient, public logger: Toastr, private promiseCache: PromiseCache, public w6: W6, public eventBus: EventAggregator) {
 
-    breeze.DataType.parseDateFromServer = function(source) {
+    breeze.DataType.parseDateFromServer = function (source) {
       var date = moment(source);
       return date.toDate();
     };
@@ -167,7 +167,7 @@ export class W6Context {
         if (val instanceof Array) {
           return val.map((x, i) => encode(`${key}[${i}]`, x)).join("&")
         } else if (val instanceof Object) {
-            return encodeObject(val, key);
+          return encodeObject(val, key);
         } else {
           return key + "=" + encodeURIComponent(val)
         }
@@ -486,7 +486,7 @@ export class W6Context {
     // TODO: Investigate if we could somehow generate this from Breeze WithsixController
     store.setEntityTypeForResourceName('ModsInCollection', 'Mod');
 
-    var mission = function() {
+    var mission = function () {
       this.avatar = ""; // "" or instance of whatever type is is supposed to be
     };
 
@@ -584,8 +584,8 @@ export class W6Context {
       case 401: throw isLoggedIn ? new Tools.LoginNoLongerValid("The login is no longer valid, please retry after logging in again", requestInfo) : new Tools.RequiresLogin("The requested action requires you to be logged-in", requestInfo);
       case 403: throw new Tools.Forbidden("You do not have access to this resource", requestInfo);
       case 404: throw new Tools.NotFoundException("The requested resource does not appear to exist", requestInfo);
-      case 500: throw new Tools.HttpException(`Internal server error. We've been notified about the problem and will investigate. For your reference: ${requestInfo.headers['withSIX-RequestID']}`, requestInfo);
+      case 500: throw new Tools.HttpException(`Internal server error. We've been notified about the problem and will investigate. For your reference: ${requestInfo.headers.get('x-withsix-requestid')}`, requestInfo);
     }
-    throw new Tools.HttpException(`Unknown error. For your reference: ${requestInfo.headers['withSIX-RequestID']}`, requestInfo);
+    throw new Tools.HttpException(`Unknown error. For your reference: ${requestInfo.headers.get('x-withsix-requestid')}`, requestInfo);
   }
 }
