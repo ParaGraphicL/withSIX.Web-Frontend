@@ -1,21 +1,21 @@
-import {ReactiveBase} from './base';
-import {Mediator, LegacyMediator, DbQuery} from './mediator';
-import {Toastr} from './toastr';
-import {ListFactory, ObservableEventAggregator, EventWrapper, uiCommand2} from './reactive';
-import {Tools} from './tools';
+import { ReactiveBase } from './base';
+import { Mediator, LegacyMediator, DbQuery } from './mediator';
+import { Toastr } from './toastr';
+import { ListFactory, ObservableEventAggregator, EventWrapper, uiCommand2 } from './reactive';
+import { Tools } from './tools';
 
-import {Client} from 'withsix-sync-api';
-import {EventAggregator} from 'aurelia-event-aggregator';
-import {DialogService, DialogController} from 'aurelia-dialog';
-import {inject} from 'aurelia-framework';
-import {Validation, ValidationResult} from 'aurelia-validation';
-import {Router} from 'aurelia-router';
+import { Client } from 'withsix-sync-api';
+import { EventAggregator } from 'aurelia-event-aggregator';
+import { DialogService, DialogController } from 'aurelia-dialog';
+import { inject } from 'aurelia-framework';
+import { Validation, ValidationResult } from 'aurelia-validation';
+import { Router } from 'aurelia-router';
 
-import {Api, Notifier, CloseDialogs} from './api';
-import {ClientWrapper, AppEventsWrapper} from './client-wrapper';
-import {InlineViewStrategy} from 'aurelia-framework';
+import { Api, Notifier, CloseDialogs } from './api';
+import { ClientWrapper, AppEventsWrapper } from './client-wrapper';
+import { InlineViewStrategy } from 'aurelia-framework';
 
-import {UiContext} from './uicontext'
+import { UiContext } from './uicontext'
 
 import * as clipboard from 'clipboard-js';
 
@@ -138,7 +138,7 @@ export class ViewModel extends ReactiveBase {
   getViewStrategy;
   protected accessDenied() { this.setErrorView(403) }
   setErrorView = (errorCode: number) => {
-    this.__errorCode = errorCode; 
+    this.__errorCode = errorCode;
     this.getViewStrategy = () => new InlineViewStrategy(`<template><compose view-model="errors/${errorCode}"></compose><router-view show.bind="false"></router-view></template>`, undefined, '/') // () => `/dist/errors/${err}.html`
   }
 
@@ -148,15 +148,15 @@ export class ViewModel extends ReactiveBase {
     try {
       await act();
     } catch (err) {
-        Tools.Debug.error("Catched error, rendering error page", err);
-        if (err instanceof Tools.NotFoundException) return this.setErrorView(404);
-        if (err instanceof Tools.Forbidden) return this.setErrorView(403);
-        if (err instanceof Tools.RequiresLogin || err instanceof Tools.LoginNoLongerValid) {
-          await this.w6.openLoginDialog();
-          return this.setErrorView(403)
-        }
-        
-        return this.handleUnknownError(err);
+      Tools.Debug.error("Catched error, rendering error page", err);
+      if (err instanceof Tools.NotFoundException) return this.setErrorView(404);
+      if (err instanceof Tools.Forbidden) return this.setErrorView(403);
+      if (err instanceof Tools.RequiresLogin || err instanceof Tools.LoginNoLongerValid) {
+        await this.w6.openLoginDialog();
+        return this.setErrorView(403)
+      }
+
+      return this.handleUnknownError(err);
     }
   }
 
@@ -303,11 +303,12 @@ export class PaginatedViewModel<T> extends ViewModel {
   morePagesAvailable = this.whenAnyValue(x => x.inlineCount).combineLatest(this.whenAnyValue(x => x.page), (c, p) => p < this.totalPages);
 
   addPage = async () => {
-    if (!this.morePagesAvailable) return;
-    let r = await this.getMore(this.model.page + 1);
-    this.model.inlineCount = r.inlineCount;
-    this.model.page = r.page;
-    this.model.items.push(...r.items);
+    if (!this.morePagesAvailable) { return; }
+    const r = await this.getMore(this.model.page + 1);
+    for (let o in r) {
+      if (!r.hasOwnProperty(o) || o === "items") { continue; }
+      this.model[o] = r[o];
+    }
   }
 
   async getMore(page = 1): Promise<IPaginated<T>> { return null }
