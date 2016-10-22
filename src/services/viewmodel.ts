@@ -305,11 +305,11 @@ export class PaginatedViewModel<T> extends ViewModel {
   addPage = async () => {
     if (!this.morePagesAvailable) { return; }
     const r = await this.getMore(this.model.page + 1);
+    this.model.items.push(...r.items);
     for (let o in r) {
       if (!r.hasOwnProperty(o) || o === "items") { continue; }
       this.model[o] = r[o];
     }
-    this.model.items.push(...r.items);
   }
 
   async getMore(page = 1): Promise<IPaginated<T>> { return null }
