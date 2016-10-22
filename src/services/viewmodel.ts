@@ -309,6 +309,7 @@ export class PaginatedViewModel<T> extends ViewModel {
       if (!r.hasOwnProperty(o) || o === "items") { continue; }
       this.model[o] = r[o];
     }
+    this.model.items.push(...r.items);
   }
 
   async getMore(page = 1): Promise<IPaginated<T>> { return null }
