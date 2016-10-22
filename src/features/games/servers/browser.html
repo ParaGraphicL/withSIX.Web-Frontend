@@ -8,6 +8,8 @@
 			<filters custom-handler.call="handleFilter(info)" filters.ref="filteredComponent" items.bind="model.items" filters.bind="filters"
 				enabled-filters.bind="enabledFilters" search-fields.bind="searchFields" sort.bind="sort" search-input-placeholder="search me..">
 			</filters>
+			<div class="clearfix"></div>
+			<rangeboxadv min.bind="-1" max.bind="300" value.bind="[-0, -0]">Players</rangebox>
 		</div>
 
 		<div class="server-list">
