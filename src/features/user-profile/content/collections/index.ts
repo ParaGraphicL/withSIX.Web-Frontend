@@ -1,5 +1,5 @@
-import {breeze, IPaginated, PaginatedViewModel, SortDirection, IFilterInfo, Query, DbQuery, handlerFor, uiCommandWithLogin2, IMenuItem, MenuItem, IBreezeCollection, ModsHelper, ICollection, CollectionHelper, TypeScope} from '../../../../framework';
-import {FilteredBase} from '../../../filtered-base';
+import { breeze, IPaginated, PaginatedViewModel, SortDirection, IFilterInfo, Query, DbQuery, handlerFor, uiCommandWithLogin2, IMenuItem, MenuItem, IBreezeCollection, ModsHelper, ICollection, CollectionHelper, TypeScope } from '../../../../framework';
+import { FilteredBase } from '../../../filtered-base';
 
 export class Index extends FilteredBase<ICollection> {
   sort = [{ title: "Subscribers", name: "subscribersCount", direction: SortDirection.Desc }, { name: "updatedAt", title: "Updated", direction: SortDirection.Desc }, { name: "createdAt", title: "Created", direction: SortDirection.Desc }, { name: "name" }, { name: "packageName" }]
@@ -19,7 +19,7 @@ class GetCollectionsHandler extends DbQuery<GetCollections, IPaginated<ICollecti
     var jsonQuery = {
       from: 'Collections',
       where: {
-        'author.slug': { in: [request.authorSlug] }
+        'author.slug': request.authorSlug // TODO: get the ID instead!
       }
     }
     var query = new breeze.EntityQuery(jsonQuery).expand(["stat"]);

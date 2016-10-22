@@ -1,36 +1,38 @@
 import breeze from 'breeze-client';
 
-import {IBreezeMod, IBreezeUser, IBreezeCollection, IBreezeMission, IBreezeCollectionVersionDependency, IBreezePost, IBreezeModUpdate, IBreezeCollectionVersion, IBreezeGame, IBreezeAWSUploadPolicy,
+import {
+  IBreezeMod, IBreezeUser, IBreezeCollection, IBreezeMission, IBreezeCollectionVersionDependency, IBreezePost, IBreezeModUpdate, IBreezeCollectionVersion, IBreezeGame, IBreezeAWSUploadPolicy,
   IBreezeMissionComment, IBreezeMissionVersion, IBreezeCollectionImageFileTransferPolicy, IBreezeModInfo,
   IBreezeCollectionComment, IBreezePostComment, AbstractDefs, BreezeInitialzation, IBreezeModUserGroup, IBreezeModComment, IBreezeModImageFileTransferPolicy,
   IBreezeModMediaItem, IUserInfo, Resource, Permission, Role,
-  EntityExtends, BreezeEntityGraph, _IntDefs} from '../services/dtos';
+  EntityExtends, BreezeEntityGraph, _IntDefs
+} from '../services/dtos';
 
 import { ProcessingState } from '../services/basket-service';
 
-import {LegacyMediator} from '../services/mediator';
-import {ModHelper, CollectionHelper, MissionHelper} from '../services/helpers';
+import { LegacyMediator } from '../services/mediator';
+import { ModHelper, CollectionHelper, MissionHelper } from '../services/helpers';
 
-import {RestoreBasket, OpenCreateCollectionDialog, OpenAddModDialog, OpenAddModsToCollectionsDialog} from '../services/api';
-import {ForkCollection} from '../features/profile/content/collection';
-import {W6, W6Urls, globalRedactorOptions, IExternalInfo} from '../services/withSIX';
-import {Tools} from '../services/tools';
-import {W6Context, IQueryResult, BooleanResult, Result} from '../services/w6context';
-import {Tk} from '../services/legacy/tk'
-import {IRootScope, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHaveModel, DialogQueryBase, DbCommandBase, DbQueryBase, BaseController, BaseQueryController, DialogControllerBase, ModelDialogControllerBase } from './app-base'
-import {ITagKey, ICreateComment, ICQWM, IModel, IMenuItem, IHandleCommentsScope} from '../services/legacy/base'
+import { RestoreBasket, OpenCreateCollectionDialog, OpenAddModDialog, OpenAddModsToCollectionsDialog } from '../services/api';
+import { ForkCollection } from '../features/profile/content/collection';
+import { W6, W6Urls, globalRedactorOptions, IExternalInfo } from '../services/withSIX';
+import { Tools } from '../services/tools';
+import { W6Context, IQueryResult, BooleanResult, Result } from '../services/w6context';
+import { Tk } from '../services/legacy/tk'
+import { IRootScope, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHaveModel, DialogQueryBase, DbCommandBase, DbQueryBase, BaseController, BaseQueryController, DialogControllerBase, ModelDialogControllerBase } from './app-base'
+import { ITagKey, ICreateComment, ICQWM, IModel, IMenuItem, IHandleCommentsScope } from '../services/legacy/base'
 import { Publisher } from '../services/apis/lib';
-import {EventAggregator} from 'aurelia-event-aggregator';
+import { EventAggregator } from 'aurelia-event-aggregator';
 
-import {Client, IClientInfo, ItemState} from 'withsix-sync-api';
+import { Client, IClientInfo, ItemState } from 'withsix-sync-api';
 
-import {IBasketItem, BasketItemType} from '../services/legacy/baskets';
-import {BasketService} from '../services/basket-service';
-import {ModsHelper, Helper} from '../services/legacy/misc';
-import {ToastLogger} from '../services/legacy/logger';
+import { IBasketItem, BasketItemType } from '../services/legacy/baskets';
+import { BasketService } from '../services/basket-service';
+import { ModsHelper, Helper } from '../services/legacy/misc';
+import { ToastLogger } from '../services/legacy/logger';
 
-import {registerCommands, getFactory, skyscraperSlotSizes, rectangleSlotSizes, leaderboardSlotSizes} from './app-base';
-import {joinUri} from '../helpers/utils/url'
+import { registerCommands, getFactory, skyscraperSlotSizes, rectangleSlotSizes, leaderboardSlotSizes } from './app-base';
+import { joinUri } from '../helpers/utils/url'
 
 import { registerCQ, registerService, registerController, IContentScope, IContentScopeT, ContentModelController, IContentHeader, ContentDownloads, HelpItem, ContentController, IContentIndexScope, IEditConfiguration, GetUserTagsQuery, GetUsersQuery } from './play'
 
@@ -85,7 +87,7 @@ export class ClaimDialogController extends DialogControllerBase {
 
   private ok = () => {
     return this.$scope.request<{ token; formatProvider; data }>(GetClaimQuery, { modId: this.$scope.model.id })
-      .then((result) => 
+      .then((result) =>
         this.applyIfNeeded(() => {
           this.$scope.claimToken = result.token;
           this.$scope.formatProvider = result.formatProvider;
@@ -426,7 +428,7 @@ registerCQ(ModVersionHistoryDialogQuery);
 
 export class NewModVersionCommand extends DbCommandBase {
   static $name = 'NewModVersion';
-  public execute = ['data', data => this.context.postCustom<{result: string}>("mods/" + data.modId + "/versions", data, { requestName: 'postNewModUpload' }).then(x => x.result)];
+  public execute = ['data', data => this.context.postCustom<{ result: string }>("mods/" + data.modId + "/versions", data, { requestName: 'postNewModUpload' }).then(x => x.result)];
 }
 
 registerCQ(NewModVersionCommand);
@@ -517,32 +519,6 @@ export class GetModTagsQuery extends DbQueryBase {
 }
 
 registerCQ(GetModTagsQuery);
-
-export class GetModTagsQueryByUser extends DbQueryBase {
-  static $name = "GetModTagsByUser";
-
-  public execute = [
-    'userSlug', 'query', (userSlug, name) => {
-      Tools.Debug.log("getting mods by user: " + userSlug + ", " + name);
-
-      var op = this.context.getOpByKeyLength(name);
-      var key = name.toLowerCase();
-
-      var query = breeze.EntityQuery.from("Mods")
-        .where(new breeze.Predicate("author.slug", breeze.FilterQueryOp.Equals, userSlug).and(
-          new breeze.Predicate("toLower(packageName)", op, key)
-            .or(new breeze.Predicate("toLower(name)", op, key))))
-        .orderBy("packageName")
-        .select(["packageName", "name", "id"])
-        .take(this.context.defaultTakeTag);
-
-      return this.context.executeQuery(query)
-        .then((data) => data.results);
-    }
-  ];
-}
-
-registerCQ(GetModTagsQueryByUser);
 
 interface IGameTag { tagId: string, contentCount: number }
 export class GetCategoriesQuery extends DbQueryBase {
@@ -1035,15 +1011,15 @@ export class ModController extends ContentModelController<IBreezeMod> {
           .then((result) => {
             $scope.request(GetModUpdatesQuery, { modId: $scope.model.id });
             setTimeout(() => this.applyIfNeeded(() => {
-                setCancelConfirmState(false, force);
-                setCancelState(false, force);
-              }), 1000 * 2);
+              setCancelConfirmState(false, force);
+              setCancelState(false, force);
+            }), 1000 * 2);
           }).catch(reason => {
             $scope.request(GetModUpdatesQuery, { modId: $scope.model.id });
             setTimeout(() => this.applyIfNeeded(() => {
-                setCancelConfirmState(false, force);
-                setCancelState(false, force);
-              }), 1000 * 2);
+              setCancelConfirmState(false, force);
+              setCancelState(false, force);
+            }), 1000 * 2);
             this.httpFailed(reason);
           });
       } else {
@@ -1320,9 +1296,9 @@ export class ModController extends ContentModelController<IBreezeMod> {
   unfollow() {
     this.requestAndProcessResponse(UnfollowModCommand, { model: this.$scope.model })
       .then(r => this.applyIfNeeded(() => {
-          delete this.$scope.followedMods[this.$scope.model.id];
-          this.$scope.model.followersCount -= 1;
-        })
+        delete this.$scope.followedMods[this.$scope.model.id];
+        this.$scope.model.followersCount -= 1;
+      })
       );
   }
 
@@ -1629,12 +1605,12 @@ export class ModInfoController extends ModEditBaseController {
 
   handleApis() {
     let externalInfo = <IExternalInfo>{};
-    if (this.$scope.model.homepageUrl) externalInfo.homepageUrl =this.$scope.model.homepageUrl;
+    if (this.$scope.model.homepageUrl) externalInfo.homepageUrl = this.$scope.model.homepageUrl;
 
     const gameSlug = this.$scope.game.slug.toLowerCase();
 
     // TODO: Game slugs for multi-game hosts (game.publishers)
-     this.$scope.model.publishers.forEach(x => {
+    this.$scope.model.publishers.forEach(x => {
       switch (x.publisherType) {
         case Publisher[Publisher.Chucklefish]:
           externalInfo.chucklefishUrl = `http://community.playstarbound.com/resources/${this.$scope.model.name.sluggify()}.${x.publisherId}/`;
