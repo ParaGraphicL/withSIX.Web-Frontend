@@ -1,7 +1,9 @@
-import {BaseGame} from "../../lib";
-import {W6Context, IBreezeMod, IUserInfo, Client, ModDataService, IModsData, ISort, Query, DbClientQuery, handlerFor, requireUser, IRequireUser, IContent, TypeScope, BasketService,
-  ContentDeleted, breeze, IGamePagingRequest} from "../../../../framework";
-import {inject} from "aurelia-framework";
+import { BaseGame } from "../../lib";
+import {
+  W6Context, IBreezeMod, IUserInfo, Client, ModDataService, IModsData, ISort, Query, DbClientQuery, handlerFor, requireUser, IRequireUser, IContent, TypeScope, BasketService,
+  ContentDeleted, breeze, IGamePagingRequest
+} from "../../../../framework";
+import { inject } from "aurelia-framework";
 
 export class Index extends BaseGame {
   heading = "Mods";
@@ -45,7 +47,7 @@ class GetModsHandler extends DbClientQuery<GetMods, IModsData> {
   }
 
   public async handle(request: GetMods): Promise<IModsData> {
-    let authorMods = request.user.slug ? this.getAuthoredMods(request) : Promise.resolve<IContent[]>([]);
+    let authorMods = request.user.id ? this.getAuthoredMods(request) : Promise.resolve<IContent[]>([]);
 
     // TODO: only if client connected get client info.. w6.miniClient.isConnected // but we dont wait for it so bad idea for now..
     // we also need to refresh then when the client is connected later?
@@ -56,8 +58,8 @@ class GetModsHandler extends DbClientQuery<GetMods, IModsData> {
 
   async getAuthoredMods(request: GetMods) {
     const optionsTodo = {};
-    return this.modDataService.getAllModsByAuthorAndGame(request.user.slug, request.id, optionsTodo)
-        .then(x => x.results.map(x => this.convertOnlineMods(x)))
+    return this.modDataService.getAllModsByAuthorAndGame(request.user.id, request.id, optionsTodo)
+      .then(x => x.results.map(x => this.convertOnlineMods(x)))
   }
 
   async getAllClientMods(id: string) {
@@ -80,12 +82,12 @@ class GetModsHandler extends DbClientQuery<GetMods, IModsData> {
       return x;
     } catch (err) {
       this.tools.Debug.warn("Error while trying to get mods from client", err);
-      return {items: [], pageNumber: 1, pageSize: 24, totalPages: 1};
+      return { items: [], pageNumber: 1, pageSize: 24, totalPages: 1 };
     }
   }
 
   convertOnlineMods(mod: IBreezeMod): IContent {
-    return Object.assign(<IContent> {
+    return Object.assign(<IContent>{
       author: mod.author ? mod.author.displayName : mod.authorText,
       authorSlug: mod.author ? mod.author.slug : null,
       gameId: mod.game.id,
@@ -98,7 +100,7 @@ class GetModsHandler extends DbClientQuery<GetMods, IModsData> {
       type: "mod",
       version: mod.latestStableVersion,
     }, {
-      publishers: mod.publishers,
-    });
+        publishers: mod.publishers,
+      });
   }
 }

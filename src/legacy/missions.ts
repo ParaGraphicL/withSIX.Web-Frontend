@@ -1,34 +1,36 @@
 import breeze from 'breeze-client';
 
-import {IBreezeMod, IBreezeUser, IBreezeCollection, IBreezeMission, IBreezeCollectionVersionDependency, IBreezePost, IBreezeModUpdate, IBreezeCollectionVersion, IBreezeGame, IBreezeAWSUploadPolicy,
+import {
+  IBreezeMod, IBreezeUser, IBreezeCollection, IBreezeMission, IBreezeCollectionVersionDependency, IBreezePost, IBreezeModUpdate, IBreezeCollectionVersion, IBreezeGame, IBreezeAWSUploadPolicy,
   IBreezeMissionComment, IBreezeMissionVersion, IBreezeCollectionImageFileTransferPolicy, IBreezeModInfo,
   IBreezeCollectionComment, IBreezePostComment, AbstractDefs, BreezeInitialzation, IBreezeModUserGroup, IBreezeModComment, IBreezeModImageFileTransferPolicy,
   IBreezeModMediaItem, IUserInfo, Resource, Permission, Role,
-  EntityExtends, BreezeEntityGraph, _IntDefs} from '../services/dtos';
+  EntityExtends, BreezeEntityGraph, _IntDefs
+} from '../services/dtos';
 
-import {LegacyMediator} from '../services/mediator';
-import {ModHelper, CollectionHelper, MissionHelper} from '../services/helpers';
+import { LegacyMediator } from '../services/mediator';
+import { ModHelper, CollectionHelper, MissionHelper } from '../services/helpers';
 
-import {RestoreBasket, OpenCreateCollectionDialog, OpenAddModDialog, OpenAddModsToCollectionsDialog} from '../services/api';
-import {ForkCollection} from '../features/profile/content/collection';
-import {W6, W6Urls, globalRedactorOptions} from '../services/withSIX';
-import {Tools} from '../services/tools';
-import {W6Context, IQueryResult, BooleanResult, Result} from '../services/w6context';
-import {Tk} from '../services/legacy/tk'
-import {IRootScope, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHaveModel, DialogQueryBase, DbCommandBase, DbQueryBase, BaseController, BaseQueryController, DialogControllerBase, ModelDialogControllerBase } from './app-base'
-import {ITagKey, ICreateComment, ICQWM, IModel, IMenuItem, IHandleCommentsScope} from '../services/legacy/base'
+import { RestoreBasket, OpenCreateCollectionDialog, OpenAddModDialog, OpenAddModsToCollectionsDialog } from '../services/api';
+import { ForkCollection } from '../features/profile/content/collection';
+import { W6, W6Urls, globalRedactorOptions } from '../services/withSIX';
+import { Tools } from '../services/tools';
+import { W6Context, IQueryResult, BooleanResult, Result } from '../services/w6context';
+import { Tk } from '../services/legacy/tk'
+import { IRootScope, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHaveModel, DialogQueryBase, DbCommandBase, DbQueryBase, BaseController, BaseQueryController, DialogControllerBase, ModelDialogControllerBase } from './app-base'
+import { ITagKey, ICreateComment, ICQWM, IModel, IMenuItem, IHandleCommentsScope } from '../services/legacy/base'
 import { Publisher } from '../services/apis/lib';
-import {EventAggregator} from 'aurelia-event-aggregator';
+import { EventAggregator } from 'aurelia-event-aggregator';
 
-import {Client, IClientInfo, ItemState} from 'withsix-sync-api';
+import { Client, IClientInfo, ItemState } from 'withsix-sync-api';
 
-import {IBasketItem, BasketItemType} from '../services/legacy/baskets';
-import {BasketService} from '../services/basket-service';
-import {ModsHelper, Helper} from '../services/legacy/misc';
-import {ToastLogger} from '../services/legacy/logger';
+import { IBasketItem, BasketItemType } from '../services/legacy/baskets';
+import { BasketService } from '../services/basket-service';
+import { ModsHelper, Helper } from '../services/legacy/misc';
+import { ToastLogger } from '../services/legacy/logger';
 
-import {registerCommands, getFactory, skyscraperSlotSizes, rectangleSlotSizes, leaderboardSlotSizes} from './app-base';
-import {joinUri} from '../helpers/utils/url'
+import { registerCommands, getFactory, skyscraperSlotSizes, rectangleSlotSizes, leaderboardSlotSizes } from './app-base';
+import { joinUri } from '../helpers/utils/url'
 
 import { registerCQ, registerService, registerController, IContentScopeT, ContentModelController, IContentHeader, ContentDownloads, HelpItem, ContentController, IContentIndexScope, IEditConfiguration } from './play'
 import { ForwardService } from './components';
@@ -121,9 +123,9 @@ export class NewMissionQuery extends DbQueryBase {
 
   public execute = [
     () => {
-      Tools.Debug.log("getting missions by author: " + this.context.w6.userInfo.slug);
+      Tools.Debug.log("getting missions by author: " + this.context.w6.userInfo.id);
       var query = breeze.EntityQuery.from("Missions")
-        .where("author.slug", breeze.FilterQueryOp.Equals, this.context.w6.userInfo.slug)
+        .where("author.id", breeze.FilterQueryOp.Equals, this.context.w6.userInfo.id)
         .select(["name", "slug", "id"]);
       return this.context.executeQuery(query)
         .then((data) => data.results);
@@ -375,9 +377,9 @@ class MissionController extends ContentModelController<IBreezeMission> {
   unfollow() {
     return this.requestAndProcessResponse(UnfollowMissionCommand, { model: this.$scope.model })
       .then(r => this.applyIfNeeded(() => {
-          delete this.$scope.followedMissions[this.$scope.model.id];
-          this.$scope.model.followersCount -= 1;
-        })
+        delete this.$scope.followedMissions[this.$scope.model.id];
+        this.$scope.model.followersCount -= 1;
+      })
       );
   }
 
@@ -556,7 +558,7 @@ export class UploadNewmissionController extends BaseController {
       if (model.length == 0)
         $('#w6-mission-upload-new').show().removeClass('hidden');
 
-      $(document).on('change', 'select#missionSelect', function() {
+      $(document).on('change', 'select#missionSelect', function () {
         switch ($(this).val()) {
           case '---':
             break;
@@ -565,7 +567,7 @@ export class UploadNewmissionController extends BaseController {
         }
       });
 
-      $('#w6-mission-upload-choice').find('input:radio').on('change', function(e) {
+      $('#w6-mission-upload-choice').find('input:radio').on('change', function (e) {
         if ($(this).is(":checked")) {
           if ($(this).val() == 'new') {
             $('#w6-mission-upload-update').hide().removeClass('hidden');

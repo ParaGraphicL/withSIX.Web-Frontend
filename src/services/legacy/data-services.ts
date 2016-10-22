@@ -1,11 +1,11 @@
-import {W6Context, IQueryResult} from '../w6context';
+import { W6Context, IQueryResult } from '../w6context';
 import breeze from 'breeze-client';
-import {Tools} from '../tools'
-import {ModHelper} from '../helpers';
-import {IBreezeCollection, IBreezeMod, IBreezeMission} from '../dtos';
-import {inject} from 'aurelia-framework';
+import { Tools } from '../tools'
+import { ModHelper } from '../helpers';
+import { IBreezeCollection, IBreezeMod, IBreezeMission } from '../dtos';
+import { inject } from 'aurelia-framework';
 
-import {Toastr} from '../toastr';
+import { Toastr } from '../toastr';
 
 @inject(Toastr, W6Context)
 abstract class W6ContextWrapper {
@@ -74,30 +74,23 @@ export class CollectionDataService extends W6ContextWrapper {
     return this.query(query, options);
   }
 
-  public getCollectionsByAuthor(userSlug, options): Promise<IQueryResult<IBreezeCollection>> {
-    Tools.Debug.log("getting collections by author: " + userSlug + ", " + options);
-    var query = breeze.EntityQuery.from("Collections")
-      .where("author.slug", breeze.FilterQueryOp.Equals, userSlug);
-    return this.query(query, options);
-  }
-
   public getCollectionsByMe(options): Promise<IQueryResult<IBreezeCollection>> {
-    var userSlug = this.context.w6.userInfo.slug;
-    Tools.Debug.log("getting collections by me: " + userSlug + ", " + options);
-    var query = breeze.EntityQuery.from("Collections")
-      .where("author.slug", breeze.FilterQueryOp.Equals, userSlug)
+    const userId = this.context.w6.userInfo.id;
+    Tools.Debug.log("getting collections by me: " + userId + ", " + options);
+    const query = breeze.EntityQuery.from("Collections")
+      .where("author.id", breeze.FilterQueryOp.Equals, userId)
       .withParameters({ myPage: true });
     return this.query(query, options);
   }
 
   public async getCollectionsByMeByGame(gameId, options): Promise<IBreezeCollection[]> {
-    var userSlug = this.context.w6.userInfo.slug;
-    Tools.Debug.log("getting collections by me: " + userSlug + ", " + options);
-    var query = breeze.EntityQuery.from("Collections")
-      .where("author.slug", breeze.FilterQueryOp.Equals, userSlug)
+    const userId = this.context.w6.userInfo.id;
+    Tools.Debug.log("getting collections by me: " + userId + ", " + options);
+    const query = breeze.EntityQuery.from("Collections")
+      .where("author.id", breeze.FilterQueryOp.Equals, userId)
       .where("gameId", breeze.FilterQueryOp.Equals, gameId)
       .withParameters({ myPage: true });
-    var r = await this.query(query, options);
+    const r = await this.query(query, options);
     return r.results;
   }
 
@@ -185,19 +178,6 @@ export class CollectionDataService extends W6ContextWrapper {
 
     return this.context.buildPreds(query, [pred, pred2, pred3]);
   }
-
-  getCollectionTagsByAuthor(userSlug, name: string) {
-    Tools.Debug.log("getting collection names: " + userSlug);
-    var op = this.context.getOpByKeyLength(name);
-    var key = name.toLowerCase();
-
-    var query = breeze.EntityQuery.from("Collections")
-      .where(new breeze.Predicate("author.slug", breeze.FilterQueryOp.Equals, userSlug).and(new breeze.Predicate("toLower(name)", op, key)))
-      .orderBy("name")
-      .select(["name"])
-      .take(this.context.defaultTakeTag);
-    return this.context.executeQuery(query);
-  }
 }
 
 // DEPRECATED: Convert to Queries/Commands
@@ -265,23 +245,6 @@ export class MissionDataService extends W6ContextWrapper {
 
     query = this.context.applyPaging(query, options.pagination);
 
-    //query = this.getDesiredFields(query);
-    return this.context.executeQueryT<IBreezeMission>(query);
-  }
-
-  public getAllMissionsByAuthor(authorSlug, options): Promise<IQueryResult<IBreezeMission>> {
-    Tools.Debug.log("getting missions by author: " + authorSlug);
-    var query = breeze.EntityQuery.from("Missions")
-      .where("author.slug", breeze.FilterQueryOp.Equals, authorSlug);
-
-    query = this.applyFiltering(query, options.filter, true);
-
-    if (query == null)
-      throw new Error("invalid query");
-
-    query = query.orderBy(this.context.generateOrderable(options.sort));
-
-    query = this.context.applyPaging(query, options.pagination);
     //query = this.getDesiredFields(query);
     return this.context.executeQueryT<IBreezeMission>(query);
   }
@@ -359,31 +322,11 @@ export class ModDataService extends W6ContextWrapper {
 
   private getDesiredFields = query => query.select(ModHelper.interestingFields);
 
-    public getAllModsByAuthorAndGame(authorSlug: string, gameId: string, options): Promise<IQueryResult<IBreezeMod>> {
-    Tools.Debug.log("getting mods by author: " + authorSlug);
+  public getAllModsByAuthorAndGame(authorId: string, gameId: string, options): Promise<IQueryResult<IBreezeMod>> {
+    Tools.Debug.log("getting mods by author: " + authorId);
     var query = breeze.EntityQuery.from("Mods")
-      .where("author.slug", breeze.FilterQueryOp.Equals, authorSlug)
+      .where("author.id", breeze.FilterQueryOp.Equals, authorId)
       .where("gameId", breeze.FilterQueryOp.Equals, gameId);
-
-    if (options.filter)
-      query = this.applyFiltering(query, options.filter, true);
-
-    if (query == null)
-      throw new Error("invalid query");
-
-    if (options.sort && options.sort.fields.length > 0)
-      query = query.orderBy(this.context.generateOrderable(options.sort));
-
-    if (options.pagination)
-      query = this.context.applyPaging(query, options.pagination);
-    query = this.getDesiredFields(query);
-    return this.context.executeQueryT<IBreezeMod>(query);
-  }
-
-  public getAllModsByAuthor(authorSlug: string, options): Promise<IQueryResult<IBreezeMod>> {
-    Tools.Debug.log("getting mods by author: " + authorSlug);
-    var query = breeze.EntityQuery.from("Mods")
-      .where("author.slug", breeze.FilterQueryOp.Equals, authorSlug);
 
     if (options.filter)
       query = this.applyFiltering(query, options.filter, true);
