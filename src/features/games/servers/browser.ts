@@ -286,9 +286,9 @@ class GetServers extends Query<IPaginated<IServer>> {
 @handlerFor(GetServers)
 class GetServersHandler extends DbQuery<GetServers, IPaginated<IServer>> {
   handle(request: GetServers) {
-    return this.context.getCustom("servers", {
-      params: request
-    })
+    //return this.context.getCustom("servers", { params: request })
+    // TODO: we prefer Get, but need some plumbing on the server ;-)
+    return this.context.postCustom("/servers", request)
   }
 }
 
