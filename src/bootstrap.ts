@@ -51,7 +51,7 @@ export async function configure(aurelia: Aurelia) {
       localIdentityServer: {
         clientId: LoginBase.localClientId,
         authorizationEndpoint: w6Urls.authSsl + "/identity/connect/authorize/",
-        url: w6Urls.authSsl + "/api/login/auth",
+        url: w6Urls.authSsl + "/login/auth",
         redirectUri: window.location.protocol + "//" + window.location.host + "/",
         scope: ["openid", "profile", "extended_profile", "roles", "api", "offline_access", "premium"],
         scopePrefix: "",

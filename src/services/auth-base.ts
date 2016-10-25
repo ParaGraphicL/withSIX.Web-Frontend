@@ -1,15 +1,15 @@
-import {HttpClient, HttpRequestMessage, HttpResponseMessage} from 'aurelia-http-client';
-import {HttpClient as FetchClient, json} from 'aurelia-fetch-client';
-import {EventAggregator} from 'aurelia-event-aggregator';
-import {inject, Container} from 'aurelia-framework';
+import { HttpClient, HttpRequestMessage, HttpResponseMessage } from 'aurelia-http-client';
+import { HttpClient as FetchClient, json } from 'aurelia-fetch-client';
+import { EventAggregator } from 'aurelia-event-aggregator';
+import { inject, Container } from 'aurelia-framework';
 
-import {EntityExtends, IUserInfo} from './dtos';
-import {W6Urls} from './withSIX';
-import {Tools} from './tools';
-import {Toastr} from './toastr';
-import {LS} from './base';
+import { EntityExtends, IUserInfo } from './dtos';
+import { W6Urls } from './withSIX';
+import { Tools } from './tools';
+import { Toastr } from './toastr';
+import { LS } from './base';
 import { buildUrl } from '../helpers/utils/url';
-import {createError} from '../helpers/utils/errors';
+import { createError } from '../helpers/utils/errors';
 
 export var AbortError = createError('AbortError');
 
@@ -46,7 +46,7 @@ export class LoginBase {
     if (!refreshToken) return false;
     if (this.shouldLog) Tools.Debug.log(`[HTTP] Trying to refresh token`);
     try {
-      var r = await this.httpFetch.fetch(this.w6Url.authSsl + "/api/login/refresh", { method: 'post', body: json({ refreshToken: refreshToken, clientId: LoginBase.localClientId, idToken: window.localStorage[LoginBase.idToken] }) }); /* authConfig.providers.localIdentityServer.clientId */
+      var r = await this.httpFetch.fetch(this.w6Url.authSsl + "/login/refresh", { method: 'post', body: json({ refreshToken: refreshToken, clientId: LoginBase.localClientId, idToken: window.localStorage[LoginBase.idToken] }) }); /* authConfig.providers.localIdentityServer.clientId */
       let c = await r.json();
       this.updateAuthInfo(c.refresh_token, c.token, c.id_token);
       return true;
@@ -338,5 +338,5 @@ export class UserInfo extends EntityExtends.UserBase implements IUserInfo {
   avatarUpdatedAt: Date;
   emailConfirmed: boolean;
   passwordSet: boolean;
-  hasGroups: boolean;    
+  hasGroups: boolean;
 }

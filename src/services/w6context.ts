@@ -108,7 +108,7 @@ export class W6Context {
     return new breeze.EntityKey(t, id);
   }
 
-  public getUrl(path) { return Tools.uriHasProtocol(path) || path.startsWith("/") ? path : this.w6.url.api + "/" + path; }
+  public getUrl(path) { return Tools.uriHasProtocol(path) ? path : (path.startsWith("/") ? this.w6.url.authSsl + path : this.w6.url.api + "/" + path); }
 
   public getMd(subPath) { return this.getText(this.w6.url.getSerialUrl("docs/" + subPath)); }
 
