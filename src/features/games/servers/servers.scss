@@ -77,51 +77,22 @@
         }
         border: 1px solid $colorSixBlue;
       }
-      td {
-        border: 1px solid $colorSixSoftGray;
-      }
       tr {
+        padding: 4px 0px;
         &:hover {
           background-color: $colorSixSoftGray;
         }
       }
+      button {
+        width: 64px;
+        height: 60px;
+      }
       td {
+        padding: 0px;
+        border: 1px solid $colorSixSoftGray;
         .name {
           font-size: 20px;
         }
-      }
-      td:nth-child(1) {
-        span {
-          display: inline-block;
-          width: 48px;
-        }
-        width: 32px;
-        text-align: center;
-      }
-      td:nth-child(2) {
-        span {
-          display: inline-block;
-          width: 48px;
-        }
-        width: 48px;
-        text-align: center;
-      }
-      td:nth-child(4) {
-        div {
-          width: 104px;
-        }
-        width: 104px;
-        text-align: center;
-      }
-      td:nth-child(5) {
-        span {
-          display: inline-block;
-          width: 32px;
-        }
-        width: 32px;
-        text-align: center;
-      }
-      td {
         icon {
           color: $colorSixLightGray;
           span.active {
@@ -134,6 +105,45 @@
         span.connection-quality {
           color: $colorSixGreen;
         }
+      }
+      td:nth-child(1) {
+        $width: 32px;
+        span {
+          display: inline-block;
+          width: $width;
+        }
+        width: $width;
+        text-align: center;
+      }
+      td:nth-child(2) {
+        $width: 32px;
+        span {
+          display: inline-block;
+          width: $width;
+        }
+        width: $width;
+        text-align: center;
+      }
+      td:nth-child(3) {
+        padding: 4px;
+      }
+      td:nth-child(4) {
+        padding: 4px;
+        $width: 80px;
+        div {
+          width: $width;
+        }
+        width: $width;
+        text-align: center;
+      }
+      td:nth-child(5) {
+        $width: 32px;
+        span {
+          display: inline-block;
+          width: $width;
+        }
+        width: $width;
+        text-align: center;
       }
     }
   }
