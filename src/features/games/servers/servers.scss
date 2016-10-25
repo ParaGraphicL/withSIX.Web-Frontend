@@ -11,7 +11,7 @@
 #wrapper.v3 {
   #content-view {
     // TODO: make nice and custom per game
-    background-color: #696969;
+    //background-color: #696969;
   }
 }
 
@@ -22,9 +22,9 @@
     float: left;
     padding: 16px;
     width: $filter-width;
-    background-color: $colorSixSoftGray;
+    background-color: $colorSixLightGray;
     min-height: 600px;
-    border: 1px solid $colorSixMediumGray;
+    //border: 1px solid $colorSixGray;
     .show-more {
       color: $colorSixBlue;
       text-decoration: none;
@@ -58,7 +58,7 @@
     margin-left: $filter-width + $gutter-width;
     .server-list-info {
       height: 40px;
-      color: white;
+      color: $colorSixGray;
     }
     .server-list-content {
       background-color: white;
@@ -69,7 +69,7 @@
         width: 100%;
         table-layout: fixed;
         border-collapse: collapse;
-        border: 1px solid $colorSixMediumGray;
+        border: 1px solid $colorSixGray;
       }
       thead {
         tr {
@@ -79,8 +79,9 @@
       }
       tr {
         padding: 4px 0px;
+        cursor: pointer;
         &:hover {
-          background-color: $colorSixSoftGray;
+          background-color: $colorSixLightGray;
         }
       }
       button {
@@ -89,12 +90,12 @@
       }
       td {
         padding: 0px;
-        border: 1px solid $colorSixSoftGray;
+        border: 1px solid $colorSixLightGray;
         .name {
           font-size: 20px;
         }
         icon {
-          color: $colorSixLightGray;
+          color: $colorSixSoftGray;
           span.active {
             color: $colorSixDarkGray;
           }
