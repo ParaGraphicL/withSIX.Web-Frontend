@@ -107,6 +107,7 @@ const filterTest: IGroup<IServer>[] = [
   {
     title: "Players",
     items: [{
+      title: "",
       name: "playerRange",
       range: [0, 300],
       value: [0, 0]
