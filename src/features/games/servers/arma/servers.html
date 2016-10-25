@@ -1,14 +1,25 @@
 <template>
 	<require from="../icon"></require>
 	<require from="../flag"></require>
+	<require from="../order"></require>
 	<table>
 		<thead>
 			<tr>
-				<td><span class="icon withSIX-icon-Download"></span></td>
-				<td><span class="icon withSIX-icon-Connection-Med"></span></td>
-				<td>Name</td>
-				<td>#plrs</td>
-				<td><span class="icon withSIX-icon-Star"></span></td>
+				<td><span class="icon withSIX-icon-Download"></span>
+					<order></order>
+				</td>
+				<td><span class="icon withSIX-icon-Connection-Med"></span>
+					<order></order>
+				</td>
+				<td>Name
+					<order></order>
+				</td>
+				<td>#plrs
+					<order></order>
+				</td>
+				<td><span class="icon withSIX-icon-Star"></span>
+					<order></order>
+				</td>
 			</tr>
 		</thead>
 		<tbody>
@@ -27,11 +38,11 @@
 				<td>
 					<div class="name">
 						<span class="icon withSIX-icon-Lock" title="Password required" if.bind="s.isPasswordProtected"></span>
-						<span innerHTML.bind="s.name | links"></span>
+						<span>${s.name}</span>
 					</div>
 					<div>
 						[${s.gameType}]
-						<span innerHTML.bind="s.game | links"></span> <span>on ${s.map}</span>
+						<span>${s.game}</span> <span>on ${s.map}</span>
 					</div>
 				</td>
 				<td>
