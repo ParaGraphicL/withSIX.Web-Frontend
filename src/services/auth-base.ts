@@ -24,7 +24,10 @@ export class LoginBase {
   static localClientId = 'withsix-spa';
   static key = 'w6.refreshToken';
 
-  constructor(private http: HttpClient, private httpFetch: FetchClient, protected w6Url: W6Urls, private eventBus: EventAggregator, protected ls: LS) { }
+  refreshClient: FetchClient;
+  constructor(private http: HttpClient, private httpFetch: FetchClient, protected w6Url: W6Urls, private eventBus: EventAggregator, protected ls: LS) {
+    this.refreshClient = new FetchClient();
+  }
   static resetUnload() { window.onbeforeunload = undefined; }
   resetUnload() { LoginBase.resetUnload(); }
   refreshing: Promise<boolean>;
@@ -46,7 +49,7 @@ export class LoginBase {
     if (!refreshToken) return false;
     if (this.shouldLog) Tools.Debug.log(`[HTTP] Trying to refresh token`);
     try {
-      const r = await this.httpFetch.fetch(this.w6Url.authSsl + "/login/refresh",
+      const r = await this.refreshClient.fetch(this.w6Url.authSsl + "/login/refresh",
         {
           method: 'post', body: json({
             refreshToken: refreshToken,
