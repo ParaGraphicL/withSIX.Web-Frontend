@@ -25,6 +25,34 @@
     background-color: $colorSixSoftGray;
     min-height: 600px;
     border: 1px solid $colorSixMediumGray;
+    .show-more {
+      color: $colorSixBlue;
+      text-decoration: none;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      li {
+        list-style: none;
+        line-height: 1;
+        .title {
+          margin-top: 16px;
+          margin-bottom: 8px;
+        }
+        rangeboxadv {
+          // TODO: Make it look like the mockup ;-)
+          display: block;
+          margin-top: 24px;
+          margin-bottom: 32px;
+        }
+        .noUi-connect {
+          background: $colorSixGreen;
+        }
+        .form-group {
+          margin: 0;
+        }
+      }
+    }
   }
   .server-list {
     margin-left: $filter-width + $gutter-width;

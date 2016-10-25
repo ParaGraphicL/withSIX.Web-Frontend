@@ -1,9 +1,10 @@
-import {base64ToShort, base64ToGuid, shortToBase64, guidToBase64} from './base64';
-import {createError} from './errors';
+import { base64ToShort, base64ToGuid, shortToBase64, guidToBase64 } from './base64';
+import { createError } from './errors';
 
 export const endsWithIgnoreCase = (str: string, suffix: string) => str.toLowerCase().endsWith(suffix.toLowerCase())
 export const startsWithIgnoreCase = (str: string, prefix) => str.toLowerCase().startsWith(prefix.toLowerCase())
 export const indexOfIgnoreCase = (str: string, prefix: string) => str.toLowerCase().indexOf(prefix.toLowerCase())
+// This is doing it for every word, we should have it per string!
 export const toUpperCaseFirst = (str: string) => str.split(" ").map(i => i ? i[0].toUpperCase() + i.substring(1) : i).join(" ")
 export const toLowerCaseFirst = (str: string) => str.split(" ").map(i => i ? i[0].toLowerCase() + i.substring(1) : i).join(" ")
 export const containsIgnoreCase = (str: string, prefix: string) => str.toLowerCase().includes(prefix)
@@ -18,23 +19,23 @@ const sanitizeHtmlLib: Sanitizer = <any>require('sanitize-html');
 
 export const sanitizeHtml = (html: string, overrides?) => sanitizeHtmlLib(html, Object.assign({}, {
   allowedTags: sanitizeHtmlLib.defaults.allowedTags.concat(['img', 'iframe']),
-  exclusiveFilter: function(frame) {
+  exclusiveFilter: function (frame) {
     return frame.tag === 'iframe'
       && (!frame.src
         || !(frame.src.startsWith("https://youtube.com/") ||
-        frame.src.startsWith("http://youtube.com/") ||
-        frame.src.startsWith("//youtube.com/") ||
-        frame.src.startsWith("https://www.youtube-nocookie.com/") ||
-        frame.src.startsWith("http://www.youtube-nocookie.com/") ||
-        frame.src.startsWith("//www.youtube-nocookie.com/") ||
-        frame.startsWith('http://youtu.be/') ||
-        frame.startsWith('//youtu.be/') ||
-        frame.startsWith('https://youtu.be/')));
+          frame.src.startsWith("http://youtube.com/") ||
+          frame.src.startsWith("//youtube.com/") ||
+          frame.src.startsWith("https://www.youtube-nocookie.com/") ||
+          frame.src.startsWith("http://www.youtube-nocookie.com/") ||
+          frame.src.startsWith("//www.youtube-nocookie.com/") ||
+          frame.startsWith('http://youtu.be/') ||
+          frame.startsWith('//youtu.be/') ||
+          frame.startsWith('https://youtu.be/')));
   }
 }, overrides))
 
-import {BBTag} from './bbcode/bbTag';
-import {BBCodeParser} from './bbcode/bbCodeParser';
+import { BBTag } from './bbcode/bbTag';
+import { BBCodeParser } from './bbcode/bbCodeParser';
 
 var li = BBTag.createSimpleTag("*", true, 'li');
 li.noEndTag = true;

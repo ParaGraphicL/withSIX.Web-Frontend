@@ -71,16 +71,39 @@ export class TextValueConverter {
       m2, m3) => `<a target="_blank" href="${whole}">${m3}</a>`);
 }
 
+const toUpperCaseFirst = (str: string) => str ? str[0].toUpperCase() + str.substring(1) : str;
+const toLowerCaseFirst = (str: string) => str ? str[0].toLowerCase() + str.substring(1) : str;
+
+@valueConverter('camelCase')
+export class CamelCaseConverter {
+  toView = (text: string) => text ? toUpperCaseFirst(text.split(/(?=[A-Z])/).map(x => toLowerCaseFirst(x)).join(" ")) : text;
+}
+
+@valueConverter('take')
+export class TakeValueConverter {
+  toView(array, count) {
+    return array ? array.slice(0, count) : array;
+  }
+}
+
+@valueConverter('skip')
+export class SkipValueConverter {
+  toView(array, start) {
+    return array ? array.slice(start) : array;
+  }
+}
+
+
 @valueConverter('links')
 export class LinkValueConverter {
   toView = text => text ? this.parseText(sanitizeHtml(text)) : text;
   parseText = text => this.replaceLinks(text);
   // removed (:[0-9]{1,6})? as web urls generally have no ports!
   replaceLinks = text => text.replace(
-      /(https?:\/\/)?((www\.)?[-a-zA-Z0-9@%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*))/ig,
-      (whole, m1, m2, m3) => {
-        return `<a target="_blank" href="${whole.startsWith('http') ? whole : `http://${whole}`}">${m2}</a>`;
-      });
+    /(https?:\/\/)?((www\.)?[-a-zA-Z0-9@%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*))/ig,
+    (whole, m1, m2, m3) => {
+      return `<a target="_blank" href="${whole.startsWith('http') ? whole : `http://${whole}`}">${m2}</a>`;
+    });
 }
 
 // This only converts the ary on first use, and then becomes static.
