@@ -26,7 +26,15 @@ export class LoginBase {
 
   refreshClient: FetchClient;
   constructor(private http: HttpClient, private httpFetch: FetchClient, protected w6Url: W6Urls, private eventBus: EventAggregator, protected ls: LS) {
+    const headers = {
+      'Accept': 'application/json',
+      //'X-Requested-With': 'Fetch'
+    }
+
     this.refreshClient = new FetchClient();
+    this.refreshClient.configure(config =>  //.useStandardConfiguration()
+      config.withDefaults({ credentials: 'same-origin', headers })
+    );
   }
   static resetUnload() { window.onbeforeunload = undefined; }
   resetUnload() { LoginBase.resetUnload(); }
@@ -152,11 +160,6 @@ export class LoginBase {
     })
 
     this.httpFetch.configure(config => {
-      let headers = {
-        'Accept': 'application/json',
-        //'X-Requested-With': 'Fetch'
-      }
-
       const handleAt = async (request: Request, force = false) => {
         let at: string;
         if (at = await this.getAccessToken(request.url, force)) request.headers.set('Authorization', `Bearer ${at}`);
