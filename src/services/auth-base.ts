@@ -24,7 +24,10 @@ export class LoginBase {
   static localClientId = 'withsix-spa';
   static key = 'w6.refreshToken';
 
-  constructor(private http: HttpClient, private httpFetch: FetchClient, protected w6Url: W6Urls, private eventBus: EventAggregator, protected ls: LS) { }
+  refreshClient: FetchClient;
+  constructor(private http: HttpClient, private httpFetch: FetchClient, protected w6Url: W6Urls, private eventBus: EventAggregator, protected ls: LS) {
+    this.refreshClient = new FetchClient();
+  }
   static resetUnload() { window.onbeforeunload = undefined; }
   resetUnload() { LoginBase.resetUnload(); }
   refreshing: Promise<boolean>;
@@ -46,7 +49,14 @@ export class LoginBase {
     if (!refreshToken) return false;
     if (this.shouldLog) Tools.Debug.log(`[HTTP] Trying to refresh token`);
     try {
-      var r = await this.httpFetch.fetch(this.w6Url.authSsl + "/login/refresh", { method: 'post', body: json({ refreshToken: refreshToken, clientId: LoginBase.localClientId, idToken: window.localStorage[LoginBase.idToken] }) }); /* authConfig.providers.localIdentityServer.clientId */
+      const r = await this.refreshClient.fetch(this.w6Url.authSsl + "/login/refresh",
+        {
+          method: 'post', body: json({
+            refreshToken: refreshToken,
+            clientId: LoginBase.localClientId, idToken: window.localStorage[LoginBase.idToken]
+          })
+        });
+      /* authConfig.providers.localIdentityServer.clientId */
       let c = await r.json();
       this.updateAuthInfo(c.refresh_token, c.token, c.id_token);
       return true;
@@ -54,8 +64,8 @@ export class LoginBase {
       this.tools.Debug.error("[HTTP] Error trying to use refresh token", err);
       // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/7528873/
       if (err instanceof Response) {
-        let r: Response = err;
-        if (r.status == 401) {
+        const r: Response = err;
+        if (r.status === 401) {
           this.tools.Debug.warn("[HTTP] 401, refreshtoken probably invalid", err);
           window.localStorage.removeItem(LoginBase.refreshToken);
           return false;
