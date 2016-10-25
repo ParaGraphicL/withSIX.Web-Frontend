@@ -4,10 +4,36 @@
 		<div class="server-filters">
 			<div class="pull-right"> <button>Clear</button> </div>
 			<div>SERVER FILTERS</div>
-			<div>Keyword</div>
+
+			<div>
+				<div repeat.for="g of filterTest">
+					<b class="title">${g.title | camelCase}</b>
+					<ul>
+						<li repeat.for="i of g.items | take: (g.cutOffPoint || 99)">
+							<checkbox cls="" if.one-time="!i.range && !i.type" value.bind="i.value">${i.title | camelCase}</checkbox>
+							<textbox placeholder.bind="(i.placeholder || i.title) | camelCase" cls="" if.one-time="i.type === 'text'" value.bind="i.value">${i.title | camelCase}</textbox>
+							<rangeboxadv cls="" if.one-time="i.range" min.bind="i.range[0]" max.bind="i.range[1]" value.bind="i.value">${i.title | camelCase}</rangebox>
+						</li>
+					</ul>
+					<div if.bind="g.cutOffPoint && g.items.length > g.cutOffPoint">
+						<a class="show-more" href="#" click.delegate="showMore = !showMore">Show more options <span class="icon withSIX-icon-Arrow-Down-Dir"></span></a>
+						<ul if.bind="showMore">
+							<li repeat.for="i of g.items | skip: g.cutOffPoint">
+								<checkbox cls="" if.one-time="!i.range && !i.type" value.bind="i.value">${i.title | camelCase}</checkbox>
+								<textbox placeholder.bind="(i.placeholder || i.title) | camelCase" cls="" if.one-time="i.type === 'text'" value.bind="i.value">${i.title | camelCase}</textbox>
+								<rangeboxadv cls="" if.one-time="i.range" min.bind="i.range[0]" max.bind="i.range[1]" value.bind="i.value">${i.title | camelCase}</rangebox>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+
+			Legacy (ignore)
 			<filters custom-handler.call="handleFilter(info)" filters.ref="filteredComponent" items.bind="model.items" filters.bind="filters"
 				enabled-filters.bind="enabledFilters" search-fields.bind="searchFields" sort.bind="sort" search-input-placeholder="search me..">
 			</filters>
+			<div class="clearfix"></div>
 		</div>
 
 		<div class="server-list">

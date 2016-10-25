@@ -1,15 +1,15 @@
-import {HttpClient, HttpRequestMessage, HttpResponseMessage} from 'aurelia-http-client';
-import {HttpClient as FetchClient, json} from 'aurelia-fetch-client';
-import {EventAggregator} from 'aurelia-event-aggregator';
-import {inject, Container} from 'aurelia-framework';
+import { HttpClient, HttpRequestMessage, HttpResponseMessage } from 'aurelia-http-client';
+import { HttpClient as FetchClient, json } from 'aurelia-fetch-client';
+import { EventAggregator } from 'aurelia-event-aggregator';
+import { inject, Container } from 'aurelia-framework';
 
-import {EntityExtends, IUserInfo} from './dtos';
-import {W6Urls} from './withSIX';
-import {Tools} from './tools';
-import {Toastr} from './toastr';
-import {LS} from './base';
+import { EntityExtends, IUserInfo } from './dtos';
+import { W6Urls } from './withSIX';
+import { Tools } from './tools';
+import { Toastr } from './toastr';
+import { LS } from './base';
 import { buildUrl } from '../helpers/utils/url';
-import {createError} from '../helpers/utils/errors';
+import { createError } from '../helpers/utils/errors';
 
 export var AbortError = createError('AbortError');
 
@@ -24,7 +24,18 @@ export class LoginBase {
   static localClientId = 'withsix-spa';
   static key = 'w6.refreshToken';
 
-  constructor(private http: HttpClient, private httpFetch: FetchClient, protected w6Url: W6Urls, private eventBus: EventAggregator, protected ls: LS) { }
+  refreshClient: FetchClient;
+  constructor(private http: HttpClient, private httpFetch: FetchClient, protected w6Url: W6Urls, private eventBus: EventAggregator, protected ls: LS) {
+    const headers = {
+      'Accept': 'application/json',
+      //'X-Requested-With': 'Fetch'
+    }
+
+    this.refreshClient = new FetchClient();
+    this.refreshClient.configure(config =>  //.useStandardConfiguration()
+      config.withDefaults({ credentials: 'same-origin', headers })
+    );
+  }
   static resetUnload() { window.onbeforeunload = undefined; }
   resetUnload() { LoginBase.resetUnload(); }
   refreshing: Promise<boolean>;
@@ -46,7 +57,14 @@ export class LoginBase {
     if (!refreshToken) return false;
     if (this.shouldLog) Tools.Debug.log(`[HTTP] Trying to refresh token`);
     try {
-      var r = await this.httpFetch.fetch(this.w6Url.authSsl + "/api/login/refresh", { method: 'post', body: json({ refreshToken: refreshToken, clientId: LoginBase.localClientId, idToken: window.localStorage[LoginBase.idToken] }) }); /* authConfig.providers.localIdentityServer.clientId */
+      const r = await this.refreshClient.fetch(this.w6Url.authSsl + "/login/refresh",
+        {
+          method: 'post', body: json({
+            refreshToken: refreshToken,
+            clientId: LoginBase.localClientId, idToken: window.localStorage[LoginBase.idToken]
+          })
+        });
+      /* authConfig.providers.localIdentityServer.clientId */
       let c = await r.json();
       this.updateAuthInfo(c.refresh_token, c.token, c.id_token);
       return true;
@@ -54,8 +72,8 @@ export class LoginBase {
       this.tools.Debug.error("[HTTP] Error trying to use refresh token", err);
       // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/7528873/
       if (err instanceof Response) {
-        let r: Response = err;
-        if (r.status == 401) {
+        const r: Response = err;
+        if (r.status === 401) {
           this.tools.Debug.warn("[HTTP] 401, refreshtoken probably invalid", err);
           window.localStorage.removeItem(LoginBase.refreshToken);
           return false;
@@ -142,11 +160,6 @@ export class LoginBase {
     })
 
     this.httpFetch.configure(config => {
-      let headers = {
-        'Accept': 'application/json',
-        //'X-Requested-With': 'Fetch'
-      }
-
       const handleAt = async (request: Request, force = false) => {
         let at: string;
         if (at = await this.getAccessToken(request.url, force)) request.headers.set('Authorization', `Bearer ${at}`);
@@ -338,5 +351,5 @@ export class UserInfo extends EntityExtends.UserBase implements IUserInfo {
   avatarUpdatedAt: Date;
   emailConfirmed: boolean;
   passwordSet: boolean;
-  hasGroups: boolean;    
+  hasGroups: boolean;
 }

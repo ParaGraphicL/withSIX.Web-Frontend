@@ -38,7 +38,115 @@ enum ModLevel {
   withSIX
 }
 
+enum ModFlags {
+  All,
+  ModsInPlaylist = 1, // then we have to send the current items in playlist also with
+  NoMods = 2,
+  HostedOnWithSIX = 4,
+  HostedOnSteamworks = 8,
+  PrivateRepositories = 16
+}
+
+enum PlayerFilters {
+  HideFullServers,
+  ServersWithFriendsOnly
+}
+
+enum Distance {
+  All,
+  Nearby = 1,
+  Medium = 2,
+  Far = 4
+}
+
+enum MissionMode {
+  All,
+  COOP,
+  CTF, // (capture the flag)
+  KOTH // (king of the hill)
+}
+
+enum ServerFilter {
+  Verified,
+  Locked,
+  Dedicated,
+  Local
+}
+
+interface IGroup<T> {
+  title: string;
+  items: {
+    title: string;
+    name?: string
+    type?: string;
+    placeholder?: string;
+    value?;
+    range?: number[];
+  }[];
+  cutOffPoint?: number;
+}
+
+// Groups are AND, GroupItems are OR
+const filterTest: IGroup<IServer>[] = [
+  {
+    title: "Keyword",
+    items: [
+      { title: "", type: "text", placeholder: "Search" }
+    ]
+  },
+  {
+    title: "Mods",
+    items: [
+      { title: ModFlags[ModFlags.ModsInPlaylist] },
+      { title: ModFlags[ModFlags.NoMods] },
+      { title: ModFlags[ModFlags.HostedOnWithSIX] },
+      { title: ModFlags[ModFlags.HostedOnSteamworks] },
+      { title: ModFlags[ModFlags.PrivateRepositories] },
+    ]
+  },
+  {
+    title: "Players",
+    items: [{
+      name: "playerRange",
+      range: [0, 300],
+      value: [0, 0]
+    },
+    { title: PlayerFilters[PlayerFilters.HideFullServers] },
+    { title: PlayerFilters[PlayerFilters.ServersWithFriendsOnly] },
+    ]
+  },
+  {
+    title: "Location",
+    items: [
+      { title: "Nearby (< 100km)", value: Distance.Nearby },
+      { title: "Medium (< 500km)", value: Distance.Medium },
+      { title: "Far (> 500km)", value: Distance.Far },
+    ],
+  },
+  {
+    title: "Mission",
+    items: [
+      { title: MissionMode[MissionMode.COOP] },
+      { title: "CTF (capture the flag)" },
+      { title: "KOTH (king of the hill)" },
+      { title: "Some other mode 1" },
+      { title: "Some other mode 2" },
+    ],
+    cutOffPoint: 3
+  }, {
+    title: "Server",
+    items: [
+      { title: ServerFilter[ServerFilter.Verified] },
+      { title: ServerFilter[ServerFilter.Locked] },
+      { title: ServerFilter[ServerFilter.Dedicated] },
+      { title: ServerFilter[ServerFilter.Local] }
+    ]
+  },
+]
+
+
 export class Index extends FilteredBase<IServer> {
+  filterTest = filterTest;
   static getStandardFilters = () => [{
     title: "Has Players",
     name: "hasPlayers",
@@ -286,9 +394,9 @@ class GetServers extends Query<IPaginated<IServer>> {
 @handlerFor(GetServers)
 class GetServersHandler extends DbQuery<GetServers, IPaginated<IServer>> {
   handle(request: GetServers) {
-    return this.context.getCustom("servers", {
-      params: request
-    })
+    //return this.context.getCustom("servers", { params: request })
+    // TODO: we prefer Get, but need some plumbing on the server ;-)
+    return this.context.postCustom("/servers", request)
   }
 }
 
