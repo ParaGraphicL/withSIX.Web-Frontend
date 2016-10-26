@@ -25,10 +25,10 @@ $padding: 16px;
     left: 0;
     top: $padding;
     bottom: $padding;
-    width: 96px;
   }
   .join-button {
     button {
+      width: 96px;
       color: white;
       background-color: $colorSixGreen;
       .icon.withSIX-icon-Download {
