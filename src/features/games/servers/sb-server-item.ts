@@ -1,4 +1,4 @@
-import { GameHelper,  IIPEndpoint, IServerInfo, LaunchAction, LaunchGame, ViewModel, uiCommand2 } from "../../../framework";
+import { GameHelper, IIPEndpoint, IServerInfo, LaunchAction, LaunchGame, ViewModel, uiCommand2 } from "../../../framework";
 import { GetServer } from "./server-render-base";
 import { ServerRender } from "./server-render";
 
@@ -14,16 +14,16 @@ export class SbServerItem extends ViewModel {
   modelPartial;
   model2: {
     info: Info
-  } = <any> {};
+  } = <any>{};
   mods = [];
 
-  refresh = uiCommand2("", () => this.loadModel(this.modelPartial), {icon: "withSIX-icon-Reload"});
-  join = uiCommand2("", () => this.launch(), { icon: "withSIX-icon-Rocket" });
+  refresh = uiCommand2("", () => this.loadModel(this.modelPartial), { icon: "withSIX-icon-Reload" });
+  join = uiCommand2("", () => this.launch(), { icon: "withSIX-icon-Download" });
 
-  
+
   activate(model: { queryAddress: string, gameId: string }) {
     this.modelPartial = model;
-    const w6Cheat = <any> window.w6Cheat;
+    const w6Cheat = <any>window.w6Cheat;
     const servers = w6Cheat.servers || (w6Cheat.servers = {});
     const gameServers: Map<string, any> = servers[model.gameId];
     this.model2 = gameServers.get(this.queryAddress = model.queryAddress);
@@ -31,7 +31,7 @@ export class SbServerItem extends ViewModel {
     this.refresh();
   }
 
-  showServer() { return this.dialog.open({model: this.queryAddress, viewModel: ServerRender}) }
+  showServer() { return this.dialog.open({ model: this.queryAddress, viewModel: ServerRender }) }
 
   launch() {
     const act = new LaunchGame(this.w6.activeGame.id);

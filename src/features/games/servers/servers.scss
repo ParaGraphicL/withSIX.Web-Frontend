@@ -15,6 +15,63 @@
   }
 }
 
+$padding: 16px;
+#server-browser,
+#server-render {
+  .state {
+    border-left: 4px solid $colorSixGreen;
+    //margin: 0 $padding;
+    position: absolute;
+    left: 0;
+    top: $padding;
+    bottom: $padding;
+    width: 96px;
+  }
+  .join-button {
+    button {
+      color: white;
+      background-color: $colorSixGreen;
+      .icon.withSIX-icon-Download {
+        margin-top: 8px;
+        margin-left: 4px;
+        vertical-align: middle;
+      }
+      .text {
+        text-transform: uppercase;
+        text-align: right;
+        line-height: 1;
+        .join-text {
+          font-size: 16px;
+          font-weight: $font-weight-bold;
+        }
+      }
+    }
+  }
+  .has-mods {
+    // TODO: Realtime state
+    &.mod-state-update {
+      .state {
+        border-left: 4px solid $colorSixOrange;
+      }
+      .join-button {
+        button {
+          background-color: $colorSixOrange;
+        }
+      }
+    }
+    &.mod-state-install {
+      .state {
+        border-left: 4px solid $colorSixBlue;
+      }
+      .join-button {
+        button {
+          background-color: $colorSixBlue;
+        }
+      }
+    }
+  }
+}
+
 #server-browser {
   $filter-width: 300px;
   $gutter-width: 32px;
@@ -56,7 +113,6 @@
   }
   .server-list {
     margin-left: $filter-width + $gutter-width;
-    $padding: 16px;
     $border-color: $colorSixSoftGray;
     color: $colorSixGray;
     .server-list-info {
@@ -112,6 +168,15 @@
         width: 64px;
         height: 48px;
       }
+      .join-button {
+        position: absolute;
+        left: - bla(16px);
+        top: $padding;
+        bottom: $padding;
+        button {
+          width: bla(16px) + bla(16px);
+        }
+      }
       .td:nth-child(1) {
         $width: bla(16px);
         width: $width;
@@ -142,48 +207,6 @@
           font-size: 16px;
         }
         .tr {
-          .state {
-            border-left: 4px solid $colorSixGreen;
-            //margin: 0 $padding;
-            position: absolute;
-            left: 0;
-            top: $padding;
-            bottom: $padding;
-          }
-          .join-button {
-            position: absolute;
-            left: - bla(16px);
-            top: $padding;
-            bottom: $padding;
-            button {
-              color: white;
-              width: bla(16px) + bla(16px);
-              background-color: $colorSixGreen;
-              .icon.withSIX-icon-Download {
-                margin-top: 8px;
-                margin-left: 4px;
-                vertical-align: middle;
-              }
-              .text {
-                text-align: right;
-                line-height: 1;
-                .join-text {
-                  font-size: 16px;
-                  font-weight: $font-weight-bold;
-                }
-              }
-            }
-          }
-          .has-mods {
-            .state {
-              border-left: 4px solid $colorSixOrange;
-            }
-            .join-button {
-              button {
-                background-color: $colorSixOrange; // TODO: Realtime state
-              }
-            }
-          }
           .td {
             padding: $padding 0px;
             .icon.withSIX-icon-Star-Outline {
@@ -197,28 +220,28 @@
           &:hover {
             background-color: $border-color;
           }
-        }
-        .td {
-          .name {
-            font-size: 18px;
+          .td {
+            .name {
+              font-size: 18px;
+            }
+            .map {
+              font-weight: $font-weight-bold;
+            }
           }
-          .map {
-            font-weight: $font-weight-bold;
+          .td:nth-child(1) {
+            color: $colorSixLightGray;
+            &.has-mods {
+              color: $colorSixGray;
+            }
           }
-        }
-        .td:nth-child(1) {
-          color: $colorSixLightGray;
-          &.has-mods {
-            color: $colorSixGray;
+          .td:nth-child(3) {
+            padding: $padding;
           }
-        }
-        .td:nth-child(3) {
-          padding: $padding;
-        }
-        .td:nth-child(4) {
-          //padding: $padding;
-          .player-count {
-            font-size: 16px;
+          .td:nth-child(4) {
+            //padding: $padding;
+            .player-count {
+              font-size: 16px;
+            }
           }
         }
       }
