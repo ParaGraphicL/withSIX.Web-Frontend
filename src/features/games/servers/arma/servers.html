@@ -4,22 +4,11 @@
 	<div class="table">
 		<div class="thead">
 			<div class="tr">
-				<div class="td">
-					<span class="icon withSIX-icon-Nav-Mod"></span>
-					<order></order>
-				</div>
-				<div class="td"><span class="icon withSIX-icon-Connection-Med"></span>
-					<order></order>
-				</div>
-				<div class="td">Name
-					<order></order>
-				</div>
-				<div class="td">
-					<span class="icon withSIX-icon-Users-Group"></span> Players
-					<order></order>
-				</div>
-				<div class="td"><span class="icon withSIX-icon-Star-Outline"></span>
-					<order></order>
+				<div class="td" repeat.for="c of columns">
+					<order direction.bind="c.direction" active.one-way="activeOrder === c" click.delegate="toggleOrder(c)">
+						<span if.bind="c.icon" class="icon ${c.icon}"></span>
+						<span if.bind="c.text">${c.text}</span>
+					</order>
 				</div>
 			</div>
 		</div>

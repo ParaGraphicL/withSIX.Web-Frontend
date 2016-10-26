@@ -86,6 +86,31 @@ interface IGroup<T> {
   cutOffPoint?: number;
 }
 
+const columns = [
+  {
+    name: "mod",
+    icon: "withSIX-icon-Nav-Mod",
+  },
+  {
+    name: "connection",
+    icon: "withSIX-icon-Connection-Med",
+  },
+  {
+    name: "name",
+    text: "Name",
+  },
+  {
+    name: "players",
+    text: "Players",
+    icon: "withSIX-icon-Users-Group",
+    direction: 1
+  },
+  {
+    name: "favorites",
+    icon: "withSIX-icon-Star-Outline",
+  }
+]
+
 // Groups are AND, GroupItems are OR
 const filterTest: IGroup<IServer>[] = [
   {
@@ -148,6 +173,18 @@ const filterTest: IGroup<IServer>[] = [
 
 export class Index extends FilteredBase<IServer> {
   filterTest = filterTest;
+  columns = columns;
+  activeOrder = columns[3];
+  toggleOrder(c) {
+    if (this.activeOrder === c) {
+      c.direction = c.direction ? 0 : 1;
+      this.trigger++;
+    } else {
+      this.activeOrder = c;
+      this.trigger++;
+    }
+  }
+  trigger = 0;
   static getStandardFilters = () => [{
     title: "Has Players",
     name: "hasPlayers",
@@ -263,6 +300,16 @@ export class Index extends FilteredBase<IServer> {
         })
       }
     }
+    this.subscriptions.subd(d => {
+      const list = this.listFactory.getList(this.filterTest.map(x => x.items).flatten(), ["value"]);
+      d(list);
+      d(list.itemChanged.map(x => 1)
+        .merge(this.observeEx(x => x.trigger).map(x => 1))
+        .throttleTime(400).subscribe(x => {
+          // todo; update filter;
+          this.handleFilter(this.filterInfo);
+        }));
+    })
     setInterval(() => { if (this.w6.miniClient.isConnected) { this.refresh(); } }, 60 * 1000);
     this.enabledFilters = this.defaultEnabled;
     await super.activate(params);

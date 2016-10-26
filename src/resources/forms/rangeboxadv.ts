@@ -13,6 +13,7 @@ export class Rangeboxadv {
   constructor(private element: Element) { }
   bind() {
     const step = 1;
+    // TODO: Update bindings
     const slider = noUiSlider.create($(this.element).find(".slider")[0], {
       start: this.value,
       margin: this.margin, // Handles must be at least 300 apart
@@ -36,6 +37,6 @@ export class Rangeboxadv {
         density: 4
       }
     });
-    slider.on('set', () => this.value = slider.get())
+    slider.on('set', () => this.value = Array.from<number>(slider.get()))
   }
 }
