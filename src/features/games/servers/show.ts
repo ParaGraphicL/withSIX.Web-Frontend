@@ -22,7 +22,7 @@ class GetServer extends Query<IPaginated<IServer>> {
 @handlerFor(GetServer)
 class GetServersHandler extends DbQuery<GetServer, IPaginated<IServer>> {
   handle(request: GetServer) {
-    return this.context.getCustom("servers", {
+    return this.context.getCustom("/servers", {
       params: {
         gameId: request.gameId,
         filter: {
