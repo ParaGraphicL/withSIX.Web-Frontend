@@ -22,15 +22,13 @@ class GetServer extends Query<IPaginated<IServer>> {
 @handlerFor(GetServer)
 class GetServersHandler extends DbQuery<GetServer, IPaginated<IServer>> {
   handle(request: GetServer) {
-    return this.context.getCustom("servers", {
-      params: {
-        gameId: request.gameId,
-        filter: {
-          addresses: request.addresses,
-        },
-        pageInfo: {
-          pageSize: request.addresses.length
-        }
+    return this.context.postCustom("/servers", {
+      gameId: request.gameId,
+      filter: {
+        addresses: request.addresses,
+      },
+      pageInfo: {
+        pageSize: request.addresses.length
       }
     })
   }
