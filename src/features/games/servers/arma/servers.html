@@ -24,9 +24,9 @@
 			</div>
 		</div>
 		<div class="tbody">
-			<div class="tr" repeat.for="s of filteredComponent.filteredItems" click.trigger="showServer(s)" as-element="compose" model.bind="s"
-				view-model="./server">
+			<div class="tr ${s.modList.length > 0 ? 'has-mods' : ''} mod-state-${s.modState}" repeat.for="s of filteredComponent.filteredItems"
+				click.trigger="showServer(s)" as-element="compose" model.bind="s" view-model="./server">
 			</div>
 		</div>
-		</table>
+	</div>
 </template>

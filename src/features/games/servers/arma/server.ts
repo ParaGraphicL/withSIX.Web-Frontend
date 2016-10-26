@@ -11,15 +11,49 @@ import {
   DbClientQuery,
   uiCommand2,
   InstallContents, LaunchAction, LaunchContents, LaunchGame,
+  UiContext, BasketService, GameClientInfo, ItemState
 } from "../../../../framework";
 
+import { inject } from 'aurelia-framework';
+
+@inject(UiContext, BasketService)
 export class Server extends ViewModel {
+  constructor(ui, private basketService: BasketService) { super(ui); }
   model;
+  gameInfo: GameClientInfo;
   SessionState = SessionState;
-  activate(model) {
+  state;
+  async activate(model) {
     this.model = model;
+
+    this.gameInfo = await this.basketService.getGameInfo(this.w6.activeGame.id);
+    this.subscriptions.subd(d => {
+      this.updateState();
+      d(this.eventBus.subscribe('refreshContentInfo-' + this.w6.activeGame.id, _ => this.updateState()));
+      // TODO: should be able to get to events in a -* way...
+      this.model.modList.filter(x => x.modId).forEach(x => {
+        d(this.eventBus.subscribe('contentInfoStateChange-' + x.modId, _ => this.updateState()));
+      });
+    });
   }
+
   join = uiCommand2("Join", () => this.launch(), { icon: "withSIX-icon-Download" });
+  updateState() {
+    if (this.model.modList.length === 0) {
+      this.model.modState = "uptodate";
+      return;
+    }
+    const modStates = this.model.modList.map(x => this.gameInfo.clientInfo.content[x.modId]);
+    if (modStates.some(x => !x || x.state === ItemState.NotInstalled)) {
+      this.model.modState = "install";
+      return;
+    }
+    if (modStates.some(x => x && x.state === ItemState.UpdateAvailable)) {
+      this.model.modState = "update";
+      return;
+    }
+    this.model.modState = "uptodate";
+  }
 
   async launch() {
     const contents = this.model.modList ? this.model.modList.map(x => x.modId).filter(x => x).uniq().map(x => {
@@ -44,6 +78,10 @@ export class Server extends ViewModel {
       await act.handle(this.mediator);
     }
   }
+
+  // workaround for Table->Tr->Compose problem
+  get modState() { return this.model.modState; }
+  set modState(value) { this.model.modState = value; }
 
   isVerified;
 

@@ -13,8 +13,8 @@ export class ServerItem extends ViewModel {
   modelPartial: IServer;
   loading: boolean;
   model: IServerInfo | IServer;
-  refresh = uiCommand2("", () => this.loadModel(this.modelPartial), {icon: "withSIX-icon-Reload"});
-  join = uiCommand2("", async () => alert("TODO"), {icon: "withSIX-icon-Rocket"});
+  refresh = uiCommand2("", () => this.loadModel(this.modelPartial), { icon: "withSIX-icon-Reload" });
+  join = uiCommand2("", async () => alert("TODO"), { icon: "withSIX-icon-Download" });
 
   activate(model: IServer) {
     this.modelPartial = model;
@@ -27,7 +27,7 @@ export class ServerItem extends ViewModel {
 
   deactivate() { clearInterval(this.interval); }
 
-  showServer() { return this.dialog.open({model: this.model.queryAddress, viewModel: ServerRender}) }
+  showServer() { return this.dialog.open({ model: this.model.queryAddress, viewModel: ServerRender }) }
   async loadModel(model: IServer) {
     this.model = await new GetServer(model.gameId, model.queryAddress, false).handle(this.mediator);
     this.loading = false;

@@ -72,7 +72,7 @@ export class ServerRenderBase extends ViewModel {
   links;
   clientLoaded;
   refresh = uiCommand2("Refresh", () => this.loadModel(), { icon: "withSIX-icon-Reload" });
-  join = uiCommand2("Join", () => this.launch(), { icon: "withSIX-icon-Rocket" });
+  join = uiCommand2("Join", () => this.launch(), { icon: "withSIX-icon-Download" });
   detailsShown = false;
   dlcs = [];
   gameInfo: GameClientInfo;
