@@ -27,7 +27,7 @@ export class FilteredBase<T> extends PaginatedViewModel<T> {
       return this.model; // pff
     }
     this.filterInfo = info;
-    this.model = await this.getMore()
+    this.model = await this.getMore();
     return this.model;
   }
 }

@@ -150,9 +150,11 @@ $padding: 16px;
         .tr {
           //border: 1px solid $colorSixBlue;
           order {
-            color: $colorSixLightGray;
-            &:active {
-              color: $colorSixGray;
+            .icon.direction {
+              color: $colorSixLightGray;
+              &.active {
+                color: $colorSixGray;
+              }
             }
           }
           .td:nth-child(3) {

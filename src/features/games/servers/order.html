@@ -1,3 +1,4 @@
 <template>
-	<span class="icon withSIX-icon-Arrow-${dir ? 'Down' : 'Up'}-Dir ${active ? 'active' : ''}"></span>
+	<slot></slot>
+	<span class="icon direction withSIX-icon-Arrow-${direction ? 'Down' : 'Up'}-Dir ${active ? 'active' : ''}"></span>
 </template>
