@@ -57,9 +57,10 @@
   .server-list {
     margin-left: $filter-width + $gutter-width;
     $padding: 16px;
+    $border-color: $colorSixSoftGray;
+    color: $colorSixGray;
     .server-list-info {
       height: 40px;
-      color: $colorSixGray;
     }
     .server-list-content {
       background-color: white;
@@ -72,12 +73,12 @@
         border-collapse: collapse;
       }
       .td {
-        border-left: 1px solid $colorSixSoftGray;
-        border-right: 1px solid $colorSixSoftGray;
+        border-left: 1px solid $border-color;
+        border-right: 1px solid $border-color;
         vertical-align: middle;
         text-align: center;
         icon {
-          color: $colorSixSoftGray;
+          color: $colorSixLightGray;
           .active {
             color: $colorSixDarkGray;
           }
@@ -90,7 +91,6 @@
         }
       }
       .thead {
-        color: $colorSixLightGray;
         .tr {
           //border: 1px solid $colorSixBlue;
           order {
@@ -137,7 +137,7 @@
       }
       .tbody {
         color: $colorSixGray;
-        font-size: 13px;
+        font-size: 12px;
         .icon {
           font-size: 16px;
         }
@@ -169,7 +169,7 @@
                 line-height: 1;
                 .join-text {
                   font-size: 16px;
-                  font-weight: $font-weight-medium;
+                  font-weight: $font-weight-bold;
                 }
               }
             }
@@ -195,19 +195,19 @@
           }
           cursor: pointer;
           &:hover {
-            background-color: $colorSixLightGray;
+            background-color: $border-color;
           }
         }
         .td {
           .name {
-            font-size: 20px;
+            font-size: 18px;
           }
           .map {
-            font-weight: $font-weight-medium;
+            font-weight: $font-weight-bold;
           }
         }
         .td:nth-child(1) {
-          color: $colorSixSoftGray;
+          color: $colorSixLightGray;
           &.has-mods {
             color: $colorSixGray;
           }
