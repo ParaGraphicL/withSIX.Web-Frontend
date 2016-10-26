@@ -1,58 +1,32 @@
 <template>
-	<require from="../icon"></require>
-	<require from="../flag"></require>
+
 	<require from="../order"></require>
-	<table>
-		<thead>
-			<tr>
-				<td><span class="icon withSIX-icon-Download"></span>
+	<div class="table">
+		<div class="thead">
+			<div class="tr">
+				<div class="td">
+					<span class="icon withSIX-icon-Nav-Mod"></span>
 					<order></order>
-				</td>
-				<td><span class="icon withSIX-icon-Connection-Med"></span>
+				</div>
+				<div class="td"><span class="icon withSIX-icon-Connection-Med"></span>
 					<order></order>
-				</td>
-				<td>Name
+				</div>
+				<div class="td">Name
 					<order></order>
-				</td>
-				<td>#plrs
+				</div>
+				<div class="td">
+					<span class="icon withSIX-icon-Users-Group"></span> Players
 					<order></order>
-				</td>
-				<td><span class="icon withSIX-icon-Star"></span>
+				</div>
+				<div class="td"><span class="icon withSIX-icon-Star-Outline"></span>
 					<order></order>
-				</td>
-			</tr>
-		</thead>
-		<tbody>
-			<tr repeat.for="s of filteredComponent.filteredItems" click.trigger="showServer(s)">
-				<td hover.bind="hovering">
-					<!--<icon cls="withSIX-icon-Cloud" optional-title="Dedicated" model.bind="s.isDedicated"></icon>-->
-					<!--<icon cls="${s.battlEye && s.verifySignatures ? 'withSIX-icon-Protection-Full' : 'withSIX-icon-Protection-Med'}" optional-title="${s.battlEye ? 'BattlEye' : ''} ${s.verifySignatures ? 'Signatures' : ''} protected"
-						model.bind="s.battlEye || s.verifySignatures"></icon>-->
-					<icon hide.bind="hovering" cls="withSIX-icon-Download ${s.hasAllMods ? 'ready' : ''}" optional-title="Requires ${s.modList.length} mods"
-						model.bind="s.modList.length > 0"></icon>
-					<command-button model.bind="join" show.bind="hovering">
-						<span class="icon ${join.icon}" click.trigger="selectServer(s)"></span>
-					</command-button>
-				</td>
-				<td title="${s.distance | amount} meters"><span class="icon ${s.distance | distance} connection-quality"></span></td>
-				<td>
-					<div class="name">
-						<span class="icon withSIX-icon-Lock" title="Password required" if.bind="s.isPasswordProtected"></span>
-						<span>${s.name}</span>
-					</div>
-					<div>
-						[${s.gameType}]
-						<span>${s.game}</span> <span>on ${s.map}</span>
-					</div>
-				</td>
-				<td>
-					<div class="playerCount"><b>${s.currentPlayers}</b>/${s.maxPlayers}</div>
-					<div class="serverState">${SessionState[s.serverState]}</div>
-				</td>
-				<td>
-					<icon cls="withSIX-icon-Star" optional-title="Favorite" model.bind="s.isFavorite"></icon>
-				</td>
-			</tr>
-		</tbody>
-	</table>
+				</div>
+			</div>
+		</div>
+		<div class="tbody">
+			<div class="tr" repeat.for="s of filteredComponent.filteredItems" click.trigger="showServer(s)" as-element="compose" model.bind="s"
+				view-model="./server">
+			</div>
+		</div>
+		</table>
 </template>

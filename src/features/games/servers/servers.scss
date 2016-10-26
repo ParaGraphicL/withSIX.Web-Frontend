@@ -56,6 +56,7 @@
   }
   .server-list {
     margin-left: $filter-width + $gutter-width;
+    $padding: 16px;
     .server-list-info {
       height: 40px;
       color: $colorSixGray;
@@ -65,86 +66,161 @@
       a {
         color: inherit;
       }
-      table {
+      .table {
         width: 100%;
         table-layout: fixed;
         border-collapse: collapse;
-        border: 1px solid $colorSixGray;
       }
-      thead {
-        tr {
-          border: 1px solid $colorSixBlue;
-        }
-        border: 1px solid $colorSixBlue;
-      }
-      tr {
-        padding: 4px 0px;
-        cursor: pointer;
-        &:hover {
-          background-color: $colorSixLightGray;
-        }
-      }
-      button {
-        width: 64px;
-        height: 60px;
-      }
-      td {
-        padding: 0px;
-        border: 1px solid $colorSixLightGray;
-        .name {
-          font-size: 20px;
-        }
+      .td {
+        border-left: 1px solid $colorSixSoftGray;
+        border-right: 1px solid $colorSixSoftGray;
+        vertical-align: middle;
+        text-align: center;
         icon {
           color: $colorSixSoftGray;
-          span.active {
+          .active {
             color: $colorSixDarkGray;
           }
-          span.withSIX-icon-Download.ready {
+          .withSIX-icon-Download.ready {
             color: $colorSixGreen;
           }
         }
-        span.connection-quality {
+        .icon.connection-quality {
           color: $colorSixGreen;
         }
       }
-      td:nth-child(1) {
-        $width: 32px;
-        span {
-          display: inline-block;
-          width: $width;
+      .thead {
+        color: $colorSixLightGray;
+        .tr {
+          //border: 1px solid $colorSixBlue;
+          order {
+            color: $colorSixLightGray;
+            &:active {
+              color: $colorSixGray;
+            }
+          }
+          .td:nth-child(3) {
+            padding: 0 $padding;
+          }
         }
+        //border: 1px solid $colorSixBlue;
+      }
+      @function bla($w) {
+        @return $padding+$padding+$w;
+      }
+      button {
+        width: 64px;
+        height: 48px;
+      }
+      .td:nth-child(1) {
+        $width: bla(16px);
         width: $width;
         text-align: center;
       }
-      td:nth-child(2) {
-        $width: 32px;
-        span {
-          display: inline-block;
-          width: $width;
-        }
+      .td:nth-child(2) {
+        $width: bla(16px);
         width: $width;
         text-align: center;
       }
-      td:nth-child(3) {
-        padding: 4px;
+      .td:nth-child(3) {
+        text-align: left;
       }
-      td:nth-child(4) {
-        padding: 4px;
-        $width: 80px;
-        div {
-          width: $width;
-        }
+      .td:nth-child(4) {
+        $width: bla(80px);
         width: $width;
         text-align: center;
       }
-      td:nth-child(5) {
-        $width: 32px;
-        span {
-          display: inline-block;
-          width: $width;
-        }
+      .td:nth-child(5) {
+        $width: bla(16px);
         width: $width;
         text-align: center;
+      }
+      .tbody {
+        color: $colorSixGray;
+        font-size: 13px;
+        .icon {
+          font-size: 16px;
+        }
+        .tr {
+          .state {
+            border-left: 4px solid $colorSixGreen;
+            //margin: 0 $padding;
+            position: absolute;
+            left: 0;
+            top: $padding;
+            bottom: $padding;
+          }
+          .join-button {
+            position: absolute;
+            left: - bla(16px);
+            top: $padding;
+            bottom: $padding;
+            button {
+              color: white;
+              width: bla(16px) + bla(16px);
+              background-color: $colorSixGreen;
+              .icon.withSIX-icon-Download {
+                margin-top: 8px;
+                margin-left: 4px;
+                vertical-align: middle;
+              }
+              .text {
+                text-align: right;
+                line-height: 1;
+                .join-text {
+                  font-size: 16px;
+                  font-weight: $font-weight-medium;
+                }
+              }
+            }
+          }
+          .has-mods {
+            .state {
+              border-left: 4px solid $colorSixOrange;
+            }
+            .join-button {
+              button {
+                background-color: $colorSixOrange; // TODO: Realtime state
+              }
+            }
+          }
+          .td {
+            padding: $padding 0px;
+            .icon.withSIX-icon-Star-Outline {
+              color: $colorSixLightGray;
+            }
+            .icon.withSIX-icon-Star {
+              color: $colorSixOrange;
+            }
+          }
+          cursor: pointer;
+          &:hover {
+            background-color: $colorSixLightGray;
+          }
+        }
+        .td {
+          .name {
+            font-size: 20px;
+          }
+          .map {
+            font-weight: $font-weight-medium;
+          }
+        }
+        .td:nth-child(1) {
+          color: $colorSixSoftGray;
+          &.has-mods {
+            color: $colorSixGray;
+          }
+        }
+        .td:nth-child(3) {
+          padding: $padding;
+        }
+        .td:nth-child(4) {
+          //padding: $padding;
+          .player-count {
+            font-size: 16px;
+          }
+        }
       }
     }
   }
