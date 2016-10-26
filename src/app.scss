@@ -14,12 +14,22 @@
 .table {
   display: table;
   position: relative;
+  .thead {
+    display: table-header-group;
+  }
+  .tbody {
+    display: table-row-group;
+  }
+  .tfoot {
+    display: table-footer-group;
+  }
   .tr {
     display: table-row;
     position: relative;
   }
   .td {
     display: table-cell;
+    position: relative;
     &.rowspanned {
       position: absolute;
       top: 0;
@@ -518,3 +528,4 @@ menu {
     }
   }
 }
+

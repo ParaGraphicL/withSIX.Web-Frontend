@@ -14,7 +14,7 @@ import { FilteredBase } from "../../filtered-base";
 import { ServerRender } from "./server-render";
 import { SessionState } from "./server-render-base";
 
-interface IServer {
+export interface IServer {
   queryAddress: string;
   connectionAddress: string;
   name: string;
@@ -268,8 +268,6 @@ export class Index extends FilteredBase<IServer> {
     await super.activate(params);
   }
 
-  getUrl = (s) => `/p/${this.w6.activeGame.slug}/servers/${s.queryAddress.replace(/\./g, "-")}/${s.name.sluggifyEntityName()}`
-
   // TODO Custom filters
   async getMore(page = 1) {
     // todo; filters and order
@@ -303,35 +301,6 @@ export class Index extends FilteredBase<IServer> {
 
   refresh = uiCommand2("Refresh", () => this.refreshServerInfo(this.model.items));
   reload = uiCommand2("Reload", async () => this.model = await this.getMore());
-  join = uiCommand2("Join", () => this.launch(this.selectedServer), { icon: "withSIX-icon-Rocket" });
-
-  selectedServer: IServer;
-
-  selectServer = (s: IServer) => this.selectedServer = s;
-
-  async launch(s: IServer) {
-    const contents = s.modList ? s.modList.map(x => x.modId).filter(x => x).uniq().map(x => {
-      return { id: x };
-    }) : [];
-    if (contents.length > 0) {
-      const noteInfo = {
-        text: `Server: ${s.name}`,
-        url: this.getUrl(s),
-      };
-
-      // TODO: Don't install if already has
-      const installAct = new InstallContents(this.w6.activeGame.id, contents, noteInfo, true);
-      await installAct.handle(this.mediator);
-      const launchAct = new LaunchContents(this.w6.activeGame.id, contents, noteInfo, LaunchAction.Join);
-      launchAct.serverAddress = s.connectionAddress || s.queryAddress;
-      await launchAct.handle(this.mediator);
-    } else {
-      const act = new LaunchGame(this.w6.activeGame.id);
-      act.action = LaunchAction.Join;
-      act.serverAddress = s.connectionAddress || s.queryAddress;
-      await act.handle(this.mediator);
-    }
-  }
 
   async refreshServerInfo(servers: IServer[]) {
     const dsp = this.observableFromEvent<{ items: IServer[], gameId: string }>("server.serverInfoReceived")
