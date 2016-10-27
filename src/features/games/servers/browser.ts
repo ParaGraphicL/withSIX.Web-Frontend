@@ -333,7 +333,7 @@ export class Index extends FilteredBase<IServer> {
           const searchV = this.filterTest[0].items[0].value;
           return !searchV || searchV.length > 2;
         })
-        .debounceTime(600).subscribe(x => {
+        .debounceTime(400).subscribe(x => {
           // todo; update filter;
           this.handleFilter(this.filterInfo);
         }));
