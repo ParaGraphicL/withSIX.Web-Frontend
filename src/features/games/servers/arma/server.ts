@@ -44,12 +44,13 @@ export class Server extends ViewModel {
       return;
     }
     const modStates = this.model.modList.map(x => this.gameInfo.clientInfo.content[x.modId]);
-    if (modStates.some(x => !x || x.state === ItemState.NotInstalled)) {
-      this.model.modState = "install";
-      return;
-    }
     if (modStates.some(x => x && x.state === ItemState.UpdateAvailable)) {
       this.model.modState = "update";
+      return;
+    }
+
+    if (modStates.some(x => !x || x.state === ItemState.NotInstalled)) {
+      this.model.modState = "install";
       return;
     }
     this.model.modState = "uptodate";
