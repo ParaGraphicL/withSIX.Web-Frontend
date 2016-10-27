@@ -4,7 +4,7 @@ import {
 } from 'aurelia-framework';
 import numeral from 'numbro';
 import {
-  sanitizeHtml
+  sanitizeHtml, camelCase
 } from '../helpers/utils/string';
 
 enum FileSize {
@@ -71,16 +71,36 @@ export class TextValueConverter {
       m2, m3) => `<a target="_blank" href="${whole}">${m3}</a>`);
 }
 
+@valueConverter('camelCase')
+export class CamelCaseConverter {
+  toView = camelCase;
+}
+
+@valueConverter('take')
+export class TakeValueConverter {
+  toView(array, count) {
+    return array ? array.slice(0, count) : array;
+  }
+}
+
+@valueConverter('skip')
+export class SkipValueConverter {
+  toView(array, start) {
+    return array ? array.slice(start) : array;
+  }
+}
+
+
 @valueConverter('links')
 export class LinkValueConverter {
   toView = text => text ? this.parseText(sanitizeHtml(text)) : text;
   parseText = text => this.replaceLinks(text);
   // removed (:[0-9]{1,6})? as web urls generally have no ports!
   replaceLinks = text => text.replace(
-      /(https?:\/\/)?((www\.)?[-a-zA-Z0-9@%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*))/ig,
-      (whole, m1, m2, m3) => {
-        return `<a target="_blank" href="${whole.startsWith('http') ? whole : `http://${whole}`}">${m2}</a>`;
-      });
+    /(https?:\/\/)?((www\.)?[-a-zA-Z0-9@%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*))/ig,
+    (whole, m1, m2, m3) => {
+      return `<a target="_blank" href="${whole.startsWith('http') ? whole : `http://${whole}`}">${m2}</a>`;
+    });
 }
 
 // This only converts the ary on first use, and then becomes static.
@@ -95,11 +115,15 @@ export class IpEndpointValueConverter {
   toView = addr => addr ? `${addr.address}:${addr.port}` : '';
 }
 
-@valueConverter('numeral')
-export class NumeralValueConverter {
+abstract class NumeralValueConverter {
   static defaultFormat = '0[.][0]';
-  defaultToView = (n: number, format: string) => this.convert(n, format)
+  defaultToView = (n: number, format: string = NumeralValueConverter.defaultFormat) => this.convert(n, format)
   convert = (n: number, format: string) => numeral(n || 0).format(format);
+}
+
+@valueConverter('numeral')
+export class NumeralValueConverter2 extends NumeralValueConverter {
+  toView = (n, format) => this.defaultToView(n, format);
 }
 
 @valueConverter('progress')

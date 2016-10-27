@@ -11,7 +11,64 @@
 #wrapper.v3 {
   #content-view {
     // TODO: make nice and custom per game
-    background-color: #696969;
+    //background-color: #696969;
+  }
+}
+
+$padding: 16px;
+#server-browser,
+#server-render {
+  .state {
+    border-left: 4px solid $colorSixGreen;
+    //margin: 0 $padding;
+    position: absolute;
+    left: 0;
+    top: $padding;
+    bottom: $padding;
+  }
+  .join-button {
+    button {
+      width: 96px;
+      color: white;
+      background-color: $colorSixGreen;
+      .icon.withSIX-icon-Download {
+        margin-top: 8px;
+        margin-left: 4px;
+        vertical-align: middle;
+      }
+      .text {
+        text-transform: uppercase;
+        text-align: right;
+        line-height: 1;
+        .join-text {
+          font-size: 16px;
+          font-weight: $font-weight-bold;
+        }
+      }
+    }
+  }
+  .has-mods {
+    // TODO: Realtime state
+    &.mod-state-update {
+      .state {
+        border-left: 4px solid $colorSixOrange;
+      }
+      .join-button {
+        button {
+          background-color: $colorSixOrange;
+        }
+      }
+    }
+    &.mod-state-install {
+      .state {
+        border-left: 4px solid $colorSixBlue;
+      }
+      .join-button {
+        button {
+          background-color: $colorSixBlue;
+        }
+      }
+    }
   }
 }
 
@@ -22,89 +79,172 @@
     float: left;
     padding: 16px;
     width: $filter-width;
-    background-color: $colorSixSoftGray;
+    background-color: $colorSixLightGray;
     min-height: 600px;
-    border: 1px solid $colorSixMediumGray;
+    //border: 1px solid $colorSixGray;
+    .show-more {
+      color: $colorSixBlue;
+      text-decoration: none;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      li {
+        list-style: none;
+        line-height: 1;
+        .title {
+          margin-top: 16px;
+          margin-bottom: 8px;
+        }
+        rangeboxadv {
+          // TODO: Make it look like the mockup ;-)
+          display: block;
+          margin-top: 24px;
+          margin-bottom: 32px;
+        }
+        .noUi-connect {
+          background: $colorSixGreen;
+        }
+        .form-group {
+          margin: 0;
+        }
+      }
+    }
   }
   .server-list {
     margin-left: $filter-width + $gutter-width;
+    $border-color: $colorSixSoftGray;
+    color: $colorSixGray;
     .server-list-info {
       height: 40px;
-      color: white;
     }
     .server-list-content {
       background-color: white;
       a {
         color: inherit;
       }
-      table {
+      .table {
         width: 100%;
         table-layout: fixed;
         border-collapse: collapse;
-        border: 1px solid $colorSixMediumGray;
       }
-      thead {
-        tr {
-          border: 1px solid $colorSixBlue;
-        }
-        border: 1px solid $colorSixBlue;
-      }
-      td {
-        border: 1px solid $colorSixSoftGray;
-      }
-      tr {
-        &:hover {
-          background-color: $colorSixSoftGray;
-        }
-      }
-      td {
-        .name {
-          font-size: 20px;
-        }
-      }
-      td:nth-child(1) {
-        span {
-          display: inline-block;
-          width: 48px;
-        }
-        width: 32px;
+      .td {
+        border-left: 1px solid $border-color;
+        border-right: 1px solid $border-color;
+        vertical-align: middle;
         text-align: center;
-      }
-      td:nth-child(2) {
-        span {
-          display: inline-block;
-          width: 48px;
-        }
-        width: 48px;
-        text-align: center;
-      }
-      td:nth-child(4) {
-        div {
-          width: 104px;
-        }
-        width: 104px;
-        text-align: center;
-      }
-      td:nth-child(5) {
-        span {
-          display: inline-block;
-          width: 32px;
-        }
-        width: 32px;
-        text-align: center;
-      }
-      td {
         icon {
           color: $colorSixLightGray;
-          span.active {
+          .active {
             color: $colorSixDarkGray;
           }
-          span.withSIX-icon-Download.ready {
+          .withSIX-icon-Download.ready {
             color: $colorSixGreen;
           }
         }
-        span.connection-quality {
+        .icon.connection-quality {
           color: $colorSixGreen;
+        }
+      }
+      .thead {
+        .tr {
+          //border: 1px solid $colorSixBlue;
+          order {
+            .icon.direction {
+              color: $colorSixLightGray;
+              &.active {
+                color: $colorSixGray;
+              }
+            }
+          }
+          .td:nth-child(3) {
+            padding: 0 $padding;
+          }
+        }
+        //border: 1px solid $colorSixBlue;
+      }
+      @function bla($w) {
+        @return $padding+$padding+$w;
+      }
+      button {
+        width: 64px;
+        height: 48px;
+      }
+      .join-button {
+        position: absolute;
+        left: - bla(16px);
+        top: $padding;
+        bottom: $padding;
+        button {
+          width: bla(16px) + bla(16px);
+        }
+      }
+      .td:nth-child(1) {
+        $width: bla(16px);
+        width: $width;
+        text-align: center;
+      }
+      .td:nth-child(2) {
+        $width: bla(16px);
+        width: $width;
+        text-align: center;
+      }
+      .td:nth-child(3) {
+        text-align: left;
+      }
+      .td:nth-child(4) {
+        $width: bla(80px);
+        width: $width;
+        text-align: center;
+      }
+      .td:nth-child(5) {
+        $width: bla(16px);
+        width: $width;
+        text-align: center;
+      }
+      .tbody {
+        color: $colorSixGray;
+        font-size: 12px;
+        .icon {
+          font-size: 16px;
+        }
+        .tr {
+          .td {
+            padding: $padding 0px;
+            .icon.withSIX-icon-Star-Outline {
+              color: $colorSixLightGray;
+            }
+            .icon.withSIX-icon-Star {
+              color: $colorSixOrange;
+            }
+          }
+          cursor: pointer;
+          &:hover {
+            background-color: $border-color;
+          }
+          .td {
+            .name {
+              font-size: 18px;
+            }
+            .map {
+              font-weight: $font-weight-bold;
+            }
+          }
+          .td:nth-child(1) {
+            color: $colorSixLightGray;
+            &.has-mods {
+              color: $colorSixGray;
+            }
+          }
+          .td:nth-child(3) {
+            padding: $padding;
+          }
+          .td:nth-child(4) {
+            //padding: $padding;
+            .player-count {
+              font-size: 16px;
+            }
+          }
         }
       }
     }

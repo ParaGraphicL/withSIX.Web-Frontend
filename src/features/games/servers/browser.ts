@@ -8,13 +8,16 @@ import {
   IFilter,
   DbClientQuery,
   uiCommand2,
+  UiContext, BasketService, IBasketItem,
   InstallContents, LaunchAction, LaunchContents, LaunchGame,
 } from "../../../framework";
+import { inject } from 'aurelia-framework';
+import { camelCase } from '../../../helpers/utils/string';
 import { FilteredBase } from "../../filtered-base";
 import { ServerRender } from "./server-render";
 import { SessionState } from "./server-render-base";
 
-interface IServer {
+export interface IServer {
   queryAddress: string;
   connectionAddress: string;
   name: string;
@@ -38,7 +41,169 @@ enum ModLevel {
   withSIX
 }
 
+enum ModFlags {
+  All,
+  ModsInPlaylist = 1, // then we have to send the current items in playlist also with
+  NoMods = 2,
+  HostedOnWithSIX = 4,
+  HostedOnSteamworks = 8,
+  PrivateRepositories = 16
+}
+
+enum PlayerFilters {
+  All,
+  HideFullServers = 1,
+  ServersWithFriendsOnly = 2
+}
+
+enum Distance {
+  All,
+  Nearby = 1,
+  Medium = 2,
+  Far = 4
+}
+
+enum MissionMode {
+  All,
+  COOP = 1,
+  CTF = 2, // (capture the flag)
+  KOTH = 4 // (king of the hill)
+}
+
+enum ServerFilter {
+  All,
+  Verified = 1,
+  Locked = 2,
+  Dedicated = 4,
+  Local = 8
+}
+
+interface IGroup<T> {
+  title: string;
+  items: {
+    title: string;
+    titleOverride?: string;
+    name?: string
+    type?: string;
+    placeholder?: string;
+    value?;
+    useValue?;
+    range?: number[];
+  }[];
+  cutOffPoint?: number;
+}
+
+const columns = [
+  {
+    name: "mod",
+    icon: "withSIX-icon-Nav-Mod",
+  },
+  {
+    name: "connection",
+    icon: "withSIX-icon-Connection-Med",
+  },
+  {
+    name: "name",
+    text: "Name",
+  },
+  {
+    name: "players",
+    text: "Players",
+    icon: "withSIX-icon-Users-Group",
+    direction: 1
+  },
+  {
+    name: "favorites",
+    icon: "withSIX-icon-Star-Outline",
+  }
+]
+
+const buildFilter = (e, f, titleOverride?: string, icon?: string) => {
+  return { title: <string>camelCase(e[f]), useValue: f, titleOverride, icon }
+}
+
+// Groups are AND, GroupItems are OR
+const filterTest: IGroup<IServer>[] = [
+  {
+    title: "Keyword",
+    items: [
+      { title: "", name: "search", type: "text", placeholder: "Search" }
+    ]
+  },
+  {
+    title: "Mods",
+    items: [
+      buildFilter(ModFlags, ModFlags.ModsInPlaylist),
+      buildFilter(ModFlags, ModFlags.NoMods),
+      buildFilter(ModFlags, ModFlags.HostedOnWithSIX, "Hosted on withSIX"),
+      buildFilter(ModFlags, ModFlags.HostedOnSteamworks),
+      buildFilter(ModFlags, ModFlags.PrivateRepositories),
+    ]
+  },
+  {
+    title: "Players",
+    items: [{
+      title: "",
+      name: "playerRange",
+      range: [0, 300],
+      value: [0, 0]
+    },
+    buildFilter(PlayerFilters, PlayerFilters.HideFullServers),
+    buildFilter(PlayerFilters, PlayerFilters.ServersWithFriendsOnly),
+    ]
+  },
+  {
+    title: "Location",
+    items: [
+      buildFilter(Distance, Distance.Nearby, "Nearby (< 100km)"),
+      buildFilter(Distance, Distance.Medium, "Medium (< 500km)"),
+      buildFilter(Distance, Distance.Far, "Far (> 500km)"),
+    ],
+  },
+  {
+    title: "Mission",
+    items: [
+      buildFilter(MissionMode, MissionMode.COOP, "COOP"),
+      buildFilter(MissionMode, MissionMode.CTF, "CTF (capture the flag)"),
+      buildFilter(MissionMode, MissionMode.KOTH, "KOTH (king of the hill)"),
+      //{ title: "Some other mode 1" },
+      //{ title: "Some other mode 2" },
+    ],
+    cutOffPoint: 3
+  }, {
+    title: "Server",
+    items: [
+      buildFilter(ServerFilter, ServerFilter.Verified, undefined, "withSIX-icon-Verified"),
+      buildFilter(ServerFilter, ServerFilter.Locked, undefined, "withSIX-icon-Lock"),
+      buildFilter(ServerFilter, ServerFilter.Dedicated, undefined, "withSIX-icon-Cloud"),
+      buildFilter(ServerFilter, ServerFilter.Local),
+    ]
+  },
+]
+
+export interface IOrder {
+  name: string;
+  direction?: number;
+}
+
+
+@inject(UiContext, BasketService)
 export class Index extends FilteredBase<IServer> {
+  constructor(ui, private basketService: BasketService) { super(ui) }
+
+  filterTest = filterTest;
+  columns = columns;
+  activeOrder: IOrder = columns[3];
+  toggleOrder(c) {
+    if (this.activeOrder === c) {
+      c.direction = c.direction ? 0 : 1;
+      this.trigger++;
+    } else {
+      this.activeOrder = c;
+      this.trigger++;
+    }
+  }
+  trigger = 0;
   static getStandardFilters = () => [{
     title: "Has Players",
     name: "hasPlayers",
@@ -154,22 +319,30 @@ export class Index extends FilteredBase<IServer> {
         })
       }
     }
+    this.subscriptions.subd(d => {
+      const list = this.listFactory.getList(this.filterTest.map(x => x.items).flatten(), ["value"]);
+      d(list);
+      d(list.itemChanged.map(x => 1)
+        .merge(this.observeEx(x => x.trigger).map(x => 1))
+        .throttleTime(400).subscribe(x => {
+          // todo; update filter;
+          this.handleFilter(this.filterInfo);
+        }));
+    })
     setInterval(() => { if (this.w6.miniClient.isConnected) { this.refresh(); } }, 60 * 1000);
     this.enabledFilters = this.defaultEnabled;
+    this.baskets = this.basketService.getGameBaskets(this.w6.activeGame.id);
     await super.activate(params);
   }
 
-  getUrl = (s) => `/p/${this.w6.activeGame.slug}/servers/${s.queryAddress.replace(/\./g, "-")}/${s.name.sluggifyEntityName()}`
+  baskets: { active: { model: { items: IBasketItem[] } } }
 
-  // TODO Custom filters
   async getMore(page = 1) {
-    // todo; filters and order
+    /*
     const search = this.filterInfo.search;
     let filters = undefined;
     if (search.input || this.filterInfo.enabledFilters.length > 0) {
-      const f: {
-        search?: string; minPlayers?: number; isDedicated?: boolean
-      } = {};
+      const f: { search?: string; minPlayers?: number; isDedicated?: boolean } = {};
       if (search.input) f.search = search.input;
       this.filterInfo.enabledFilters.forEach(x => {
         if (x.name === "hasPlayers") f.minPlayers = 1;
@@ -185,7 +358,29 @@ export class Index extends FilteredBase<IServer> {
         direction: so.direction
       }]
     } : undefined;
-    const servers = await new GetServers(this.w6.activeGame.id, filters, sort, {
+    */
+
+    const filter = {}
+    this.filterTest.filter(x => x.items.some(f => f.value)).forEach(x => {
+      let flag = 0;
+      x.items.filter(f => f.value && !(f.value instanceof Array)).map(f => f.useValue).forEach(f => {
+        flag += f;
+      });
+      const filt = { flag };
+      const filters = x.items.filter(f => f.value && (f.value instanceof Array) || f.type === "text");
+      filters.forEach(f => filt[f.name] = f.value);
+      if (filt.flag > 0 || filters.length > 0) { filter[x.title] = filt; }
+    })
+
+    if (this.filterTest[1].items[0].value) {
+      filter["Mods"].modIds = this.baskets.active.model.items.map(x => x.id);
+    }
+
+    const orders = [];
+    if (this.activeOrder) { orders.push({ column: this.activeOrder.name, direction: this.activeOrder.direction }); }
+    const sort = { orders, }
+
+    const servers = await new GetServers(this.w6.activeGame.id, filter, sort, {
       page
     }).handle(this.mediator);
     if (this.w6.miniClient.isConnected) this.refreshServerInfo(servers.items);
@@ -194,35 +389,11 @@ export class Index extends FilteredBase<IServer> {
 
   refresh = uiCommand2("Refresh", () => this.refreshServerInfo(this.model.items));
   reload = uiCommand2("Reload", async () => this.model = await this.getMore());
-  join = uiCommand2("Join", () => this.launch(this.selectedServer), { icon: "withSIX-icon-Rocket" });
 
-  selectedServer: IServer;
-
-  selectServer = (s: IServer) => this.selectedServer = s;
-
-  async launch(s: IServer) {
-    const contents = s.modList ? s.modList.map(x => x.modId).filter(x => x).uniq().map(x => {
-      return { id: x };
-    }) : [];
-    if (contents.length > 0) {
-      const noteInfo = {
-        text: `Server: ${s.name}`,
-        url: this.getUrl(s),
-      };
-
-      // TODO: Don't install if already has
-      const installAct = new InstallContents(this.w6.activeGame.id, contents, noteInfo, true);
-      await installAct.handle(this.mediator);
-      const launchAct = new LaunchContents(this.w6.activeGame.id, contents, noteInfo, LaunchAction.Join);
-      launchAct.serverAddress = s.connectionAddress || s.queryAddress;
-      await launchAct.handle(this.mediator);
-    } else {
-      const act = new LaunchGame(this.w6.activeGame.id);
-      act.action = LaunchAction.Join;
-      act.serverAddress = s.connectionAddress || s.queryAddress;
-      await act.handle(this.mediator);
-    }
-  }
+  //get filteredItems() { return this.filteredComponent.filteredItems; }
+  //get filteredTotalCount() { return this.filteredComponent.totalCount; }
+  get filteredItems() { return this.model.items; }
+  get filteredTotalCount() { return this.model.total; }
 
   async refreshServerInfo(servers: IServer[]) {
     const dsp = this.observableFromEvent<{ items: IServer[], gameId: string }>("server.serverInfoReceived")

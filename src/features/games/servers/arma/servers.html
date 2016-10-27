@@ -1,47 +1,21 @@
 <template>
-	<require from="../icon"></require>
-	<require from="../flag"></require>
-	<table>
-		<thead>
-			<tr>
-				<td><span class="icon withSIX-icon-Download"></span></td>
-				<td><span class="icon withSIX-icon-Connection-Med"></span></td>
-				<td>Name</td>
-				<td>#plrs</td>
-				<td><span class="icon withSIX-icon-Star"></span></td>
-			</tr>
-		</thead>
-		<tbody>
-			<tr repeat.for="s of filteredComponent.filteredItems" click.trigger="showServer(s)">
-				<td hover.bind="hovering">
-					<!--<icon cls="withSIX-icon-Cloud" optional-title="Dedicated" model.bind="s.isDedicated"></icon>-->
-					<!--<icon cls="${s.battlEye && s.verifySignatures ? 'withSIX-icon-Protection-Full' : 'withSIX-icon-Protection-Med'}" optional-title="${s.battlEye ? 'BattlEye' : ''} ${s.verifySignatures ? 'Signatures' : ''} protected"
-						model.bind="s.battlEye || s.verifySignatures"></icon>-->
-					<icon hide.bind="hovering" cls="withSIX-icon-Download ${s.hasAllMods ? 'ready' : ''}" optional-title="Requires ${s.modList.length} mods"
-						model.bind="s.modList.length > 0"></icon>
-					<command-button model.bind="join" show.bind="hovering">
-						<span class="icon ${join.icon}" click.trigger="selectServer(s)"></span>
-					</command-button>
-				</td>
-				<td title="${s.distance | amount} meters"><span class="icon ${s.distance | distance} connection-quality"></span></td>
-				<td>
-					<div class="name">
-						<span class="icon withSIX-icon-Lock" title="Password required" if.bind="s.isPasswordProtected"></span>
-						<span innerHTML.bind="s.name | links"></span>
-					</div>
-					<div>
-						[${s.gameType}]
-						<span innerHTML.bind="s.game | links"></span> <span>on ${s.map}</span>
-					</div>
-				</td>
-				<td>
-					<div class="playerCount"><b>${s.currentPlayers}</b>/${s.maxPlayers}</div>
-					<div class="serverState">${SessionState[s.serverState]}</div>
-				</td>
-				<td>
-					<icon cls="withSIX-icon-Star" optional-title="Favorite" model.bind="s.isFavorite"></icon>
-				</td>
-			</tr>
-		</tbody>
-	</table>
+
+  <require from="../order"></require>
+  <div class="table">
+    <div class="thead">
+      <div class="tr">
+        <div class="td" repeat.for="c of columns">
+          <order direction.bind="c.direction" active.one-way="activeOrder === c" click.delegate="toggleOrder(c)">
+            <span if.bind="c.icon" class="icon ${c.icon}"></span>
+            <span if.bind="c.text">${c.text}</span>
+          </order>
+        </div>
+      </div>
+    </div>
+    <div class="tbody">
+      <div class="tr ${s.modList.length > 0 ? 'has-mods' : ''} mod-state-${s.modState}" repeat.for="s of filteredItems"
+        click.trigger="showServer(s)" as-element="compose" model.bind="s" view-model="./server">
+      </div>
+    </div>
+  </div>
 </template>

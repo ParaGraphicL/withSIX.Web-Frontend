@@ -7,4 +7,5 @@ export class Textbox extends Field {
     @bindable({ defaultBindingMode: bindingMode.twoWay }) value: string;
     @bindable label: string;
     @bindable useId = Field.generateId('text');
+    @bindable cls = "form-control";
 }

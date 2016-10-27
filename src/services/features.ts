@@ -11,7 +11,7 @@ export class FeatureToggles {
   // private isPreviewEnvironment = window.location.hostname === "preview.withsix.com";
   private testingFlag = window.location.search.includes("testmode=1");
   private groupTestingFlag = window.location.search.includes("testgroupmode=1")
-    || (!window.location.search.includes("testgroupmode=0") && this.isManager);
+  || (!window.location.search.includes("testgroupmode=0") && this.isManager);
   private groupsInternal = this.groupTestingFlag || this.w6.userInfo.hasGroups;
   private get clientInfo() { return this.w6.miniClient.clientInfo; }
   private get isPrereleaseClient() { return this.clientInfo && this.clientInfo.version.includes("-"); }
@@ -22,12 +22,12 @@ export class FeatureToggles {
   get managerFeatures() { return this.w6.userInfo.isManager || this.adminFeatures; }
   get adminFeatures() { return this.w6.userInfo.isAdmin; }
   get clientAutostart() { return !this.isTestEnvironment; }
-  get servers() { return this.isTestEnvironment; }
+  get servers() { return this.serverBrowser; }
   get groups() { return this.groupsInternal; }
   set groups(value) { this.groupsInternal = value; }
   get notifications() { return this.isManager; }
   get library() { return this.syncFeatures; }
   get quickActions() { return this.isTestEnvironment; }
   get uiVirtualization() { return this.testingFlag; }
-  get serverBrowser() { return this.isTestEnvironment; }
+  get serverBrowser() { return this.isTestEnvironment || this.isPrereleaseClient; }
 }
