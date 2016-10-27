@@ -1,18 +1,18 @@
-import {inject} from 'aurelia-framework';
-import {Validation, ValidationResult} from 'aurelia-validation';
-import {Mediator, IMediator, IRequest, IRequestHandler} from './mediator';
-import {GlobalErrorHandler} from './legacy/logger';
-import {Tools} from './tools';
-import {W6} from './withSIX';
+import { inject } from 'aurelia-framework';
+import { Validation, ValidationResult } from 'aurelia-validation';
+import { Mediator, IMediator, IRequest, IRequestHandler } from './mediator';
+import { GlobalErrorHandler } from './legacy/logger';
+import { Tools } from './tools';
+import { W6 } from './withSIX';
 import { Toastr } from './toastr';
-import {Router} from 'aurelia-router';
-import {EventAggregator} from 'aurelia-event-aggregator';
+import { Router } from 'aurelia-router';
+import { EventAggregator } from 'aurelia-event-aggregator';
 import { ClientConnectionFailed, OperationCanceledError, ConnectionState } from 'withsix-sync-api';
 import { ClientWrapper } from './client-wrapper';
 
 @inject(W6, Toastr, Router, EventAggregator)
 export class ClientMissingHandler {
-  constructor(private w6: W6, private toastr: Toastr, private router: Router, private eventBus: EventAggregator, private clientWrapper: ClientWrapper) {}
+  constructor(private w6: W6, private toastr: Toastr, private router: Router, private eventBus: EventAggregator, private clientWrapper: ClientWrapper) { }
 
   p: Promise<void>;
 
@@ -82,13 +82,13 @@ export class ClientMissingHandler {
 
 @inject(Toastr, ClientMissingHandler, W6, GlobalErrorHandler)
 export class ErrorHandler {
-  constructor(private toastr: Toastr, private clientMissingHandler: ClientMissingHandler, private w6: W6, private eh: GlobalErrorHandler) {}
+  constructor(private toastr: Toastr, private clientMissingHandler: ClientMissingHandler, private w6: W6, private eh: GlobalErrorHandler) { }
 
   handleError = (fail: Error, action?: string) => {
     let failStr = fail.toString();
     if (fail instanceof ValidationResult) this.handleValidationError(fail, action);
     else if (fail instanceof ClientConnectionFailed || failStr === 'Error: Error during negotiation request.') this.handleClientMissing(fail, action);
-    else if (fail instanceof OperationCanceledError || failStr === 'Error: The user cancelled the operation' || failStr === 'Error: Operation aborted' || failStr === 'Error: The operation was aborted') {
+    else if (fail instanceof OperationCanceledError || fail instanceof Tools.AbortedException || failStr === 'Error: The user cancelled the operation' || failStr === 'Error: Operation aborted' || failStr === 'Error: The operation was aborted') {
     } else {
       this.handleGeneralError(fail, action);
       this.eh.handleUseCaseError(fail, action);

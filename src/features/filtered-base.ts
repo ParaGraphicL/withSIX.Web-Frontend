@@ -20,7 +20,6 @@ export class FilteredBase<T> extends PaginatedViewModel<T> {
   enabledFilters = [];
 
   first = true;
-  getId = 0;
 
   async handleFilter(info: IFilterInfo<T>) {
     if (this.first) {
@@ -28,11 +27,7 @@ export class FilteredBase<T> extends PaginatedViewModel<T> {
       return this.model; // pff
     }
     this.filterInfo = info;
-    const id = ++this.getId;
-    const m = await this.getMore();
-    if (this.getId === id) {
-      this.model = m;
-    }
+    this.model = await this.getMore();
     return this.model;
   }
 }
