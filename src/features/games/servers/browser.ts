@@ -53,7 +53,8 @@ enum ModFlags {
 enum PlayerFilters {
   All,
   HideFullServers = 1,
-  ServersWithFriendsOnly = 2
+  HideEmptyServers = 2,
+  ServersWithFriendsOnly = 4
 }
 
 enum Distance {
@@ -73,7 +74,7 @@ enum MissionMode {
 enum ServerFilter {
   All,
   Verified = 1,
-  Locked = 2,
+  Open = 2,
   Dedicated = 4,
   Local = 8
 }
@@ -151,6 +152,7 @@ const filterTest: IGroup<IServer>[] = [
       value: [0, 300] // todo def value
     },
     buildFilter(PlayerFilters, PlayerFilters.HideFullServers),
+    buildFilter(PlayerFilters, PlayerFilters.HideEmptyServers),
       //buildFilter(PlayerFilters, PlayerFilters.ServersWithFriendsOnly),
     ]
   },
@@ -176,7 +178,8 @@ const filterTest: IGroup<IServer>[] = [
     title: "Server",
     items: [
       //buildFilter(ServerFilter, ServerFilter.Verified, undefined, "withSIX-icon-Verified"),
-      buildFilter(ServerFilter, ServerFilter.Locked, undefined, "withSIX-icon-Lock"),
+      //buildFilter(ServerFilter, ServerFilter.Locked, undefined, "withSIX-icon-Lock"),
+      buildFilter(ServerFilter, ServerFilter.Open, "No password", "withSIX-icon-Lock-Open"),
       buildFilter(ServerFilter, ServerFilter.Dedicated, undefined, "withSIX-icon-Cloud"),
       buildFilter(ServerFilter, ServerFilter.Local),
     ]
