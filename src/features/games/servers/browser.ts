@@ -86,6 +86,7 @@ interface IGroup<T> {
     name?: string
     type?: string;
     placeholder?: string;
+    defaultValue?: () => any;
     value?;
     useValue?;
     range?: number[];
@@ -146,6 +147,7 @@ const filterTest: IGroup<IServer>[] = [
       title: "",
       name: "playerRange",
       range: [0, 300],
+      defaultValue: () => [0, 300],
       value: [0, 300] // todo def value
     },
     buildFilter(PlayerFilters, PlayerFilters.HideFullServers),
@@ -397,10 +399,8 @@ export class Index extends FilteredBase<IServer> {
 
   clearFilters() {
     this.filterTest.forEach(x => {
-      x.items.forEach(f => {
-        f.value = f.range ? [0, 300] : null;
-      })
-    })
+      x.items.forEach(f => f.value = f.defaultValue ? f.defaultValue() : null)
+    });
   }
 
   //get filteredItems() { return this.filteredComponent.filteredItems; }
