@@ -335,13 +335,15 @@ export class Index extends FilteredBase<IServer> {
         })
         .debounceTime(400).subscribe(x => {
           // todo; update filter;
-          this.handleFilter(this.filterInfo);
+          this.handleFilter(this.filterInfo)
+            .then(x => this.filteredItems = this.order(this.model.items));
         }));
     })
     setInterval(() => { if (this.w6.miniClient.isConnected) { this.refresh(); } }, 60 * 1000);
     this.enabledFilters = this.defaultEnabled;
     this.baskets = this.basketService.getGameBaskets(this.w6.activeGame.id);
     await super.activate(params);
+    this.filteredItems = this.order(this.model.items)
   }
 
   baskets: { active: { model: { items: IBasketItem[] } } }
@@ -419,7 +421,7 @@ export class Index extends FilteredBase<IServer> {
 
   //get filteredItems() { return this.filteredComponent.filteredItems; }
   //get filteredTotalCount() { return this.filteredComponent.totalCount; }
-  get filteredItems() { return this.model.items; }
+  filteredItems;
   get filteredTotalCount() { return this.model.total; }
 
   async refreshServerInfo(servers: IServer[]) {
@@ -438,7 +440,29 @@ export class Index extends FilteredBase<IServer> {
     } finally {
       dsp.unsubscribe();
       //this.filteredComponent.refresh();
+      this.filteredItems = this.order(this.model.items)
     }
+  }
+
+  order(items) {
+    let sortOrders: any[] = [];
+    if (this.activeOrder && this.activeOrder.name === 'players') sortOrders.push({ name: 'currentPlayers', direction: this.activeOrder.direction });
+    let sortFunctions = sortOrders.map((x, i) => (a, b) => {
+      let order = x.direction == SortDirection.Desc ? -1 : 1;
+      if (x.customSort) return x.customSort(a, b) * order;
+      if (a[x.name] > b[x.name]) return 1 * order;
+      if (a[x.name] < b[x.name]) return (1 * -1) * order;
+      return 0;
+    });
+    //if (this.customSort != null) sortFunctions.unshift(this.customSort);
+
+    return Array.from(items).sort((a, b) => {
+      for (var i in sortFunctions) {
+        let r = sortFunctions[i](a, b);
+        if (r) return r;
+      }
+      return 0;
+    });
   }
 
   addPage = async () => {
@@ -448,6 +472,7 @@ export class Index extends FilteredBase<IServer> {
     m.total = r.total;
     m.pageNumber = r.pageNumber;
     m.items.push(...r.items);
+    this.filteredItems = this.order(this.model.items)
   }
 
   // adapt to pageModel instead of Breeze
