@@ -27,10 +27,9 @@
         </div>
       </div>
 
-
-      Legacy (ignore)
+      <!-- TODO: Get rid of -->
       <filters custom-handler.call="handleFilter(info)" filters.ref="filteredComponent" items.bind="model.items"
-        filters.bind="filters" enabled-filters.bind="enabledFilters" search-fields.bind="searchFields"
+        show.bind="false" filters.bind="filters" enabled-filters.bind="enabledFilters" search-fields.bind="searchFields"
         sort.bind="sort" search-input-placeholder="search me..">
       </filters>
       <div class="clearfix"></div>
