@@ -346,6 +346,9 @@ export class Index extends FilteredBase<IServer> {
 
   baskets: { active: { model: { items: IBasketItem[] } } }
 
+  getId = 0;
+
+
   async getMore(page = 1) {
     /*
     const search = this.filterInfo.search;
@@ -392,9 +395,13 @@ export class Index extends FilteredBase<IServer> {
     if (this.activeOrder) { orders.push({ column: this.activeOrder.name, direction: this.activeOrder.direction }); }
     const sort = { orders, }
 
+    const id = ++this.getId;
     const servers = await new GetServers(this.w6.activeGame.id, filter, sort, {
       page
     }).handle(this.mediator);
+
+    if (id !== this.getId) throw new this.tools.AbortedException("old data");
+
     if (this.w6.miniClient.isConnected) this.refreshServerInfo(servers.items);
     return servers;
   }
@@ -430,7 +437,7 @@ export class Index extends FilteredBase<IServer> {
       this.tools.Debug.warn("error while trying to refresh servers", err);
     } finally {
       dsp.unsubscribe();
-      this.filteredComponent.refresh();
+      //this.filteredComponent.refresh();
     }
   }
 
