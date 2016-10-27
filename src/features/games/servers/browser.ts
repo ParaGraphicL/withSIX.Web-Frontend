@@ -146,7 +146,7 @@ const filterTest: IGroup<IServer>[] = [
       title: "",
       name: "playerRange",
       range: [0, 300],
-      value: [0, 0]
+      value: [0, 300] // todo def value
     },
     buildFilter(PlayerFilters, PlayerFilters.HideFullServers),
     buildFilter(PlayerFilters, PlayerFilters.ServersWithFriendsOnly),
@@ -368,7 +368,10 @@ export class Index extends FilteredBase<IServer> {
       });
       const filt = { flag };
       const filters = x.items.filter(f => f.value && (f.value instanceof Array) || f.type === "text");
-      filters.forEach(f => filt[f.name] = f.value);
+      filters.forEach(f => {
+        // TODO!
+        if (!f.range || (f.value[0] !== 0 && f.value[1] !== 300)) { filt[f.name] = f.value; }
+      });
       if (filt.flag > 0 || filters.length > 0) { filter[x.title] = filt; }
     })
 
@@ -389,6 +392,16 @@ export class Index extends FilteredBase<IServer> {
 
   refresh = uiCommand2("Refresh", () => this.refreshServerInfo(this.model.items));
   reload = uiCommand2("Reload", async () => this.model = await this.getMore());
+
+  clear = uiCommand2("Clear", async () => this.clearFilters());
+
+  clearFilters() {
+    this.filterTest.forEach(x => {
+      x.items.forEach(f => {
+        f.value = f.range ? [0, 300] : null;
+      })
+    })
+  }
 
   //get filteredItems() { return this.filteredComponent.filteredItems; }
   //get filteredTotalCount() { return this.filteredComponent.totalCount; }
