@@ -180,8 +180,8 @@ const filterTest: IGroup<IServer>[] = [
       //buildFilter(ServerFilter, ServerFilter.Verified, undefined, "withSIX-icon-Verified"),
       //buildFilter(ServerFilter, ServerFilter.Locked, undefined, "withSIX-icon-Lock"),
       buildFilter(ServerFilter, ServerFilter.Open, "No password", "withSIX-icon-Lock-Open"),
-      buildFilter(ServerFilter, ServerFilter.Dedicated, undefined, "withSIX-icon-Cloud"),
-      buildFilter(ServerFilter, ServerFilter.Local),
+      //buildFilter(ServerFilter, ServerFilter.Dedicated, undefined, "withSIX-icon-Cloud"),
+      //buildFilter(ServerFilter, ServerFilter.Local),
     ]
   },
 ]

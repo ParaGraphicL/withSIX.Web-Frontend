@@ -14,6 +14,6 @@ export class Mod extends ContentViewModel<IMod> {
   }
 
   findServers = uiCommand2("Find servers with this",
-    async () => this.w6.navigate(`/p/${this.w6.activeGame.slug}/servers2/?modId=${this.model.id.toShortId()}`),
-    {icon: "withSIX-icon-Nav-Server"})
+    async () => this.w6.navigate(`/p/${this.w6.activeGame.slug}/servers/?modId=${this.model.id.toShortId()}`),
+    { icon: "withSIX-icon-Nav-Server" })
 }

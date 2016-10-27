@@ -1,10 +1,10 @@
 import { GetModFileQuery, GetModQuery, GetModRelatedQuery, GetModCreditsQuery } from './mods';
-import { NewMissionQuery, EditMissionQuery, GetPublishMissionVersionQuery, GetMissionQuery} from './missions'
+import { NewMissionQuery, EditMissionQuery, GetPublishMissionVersionQuery, GetMissionQuery } from './missions'
 import { GetCollectionQuery, GetForkedCollectionsQuery } from './collections'
 import { GetGameQuery } from './games';
-import {Tk} from '../services/legacy/tk'
-import {LegacyMediator} from '../services/mediator';
-import {Role} from '../services/dtos';
+import { Tk } from '../services/legacy/tk'
+import { LegacyMediator } from '../services/mediator';
+import { Role } from '../services/dtos';
 
 export const configure = (app: ng.IModule) => {
   function getModFileResolve(fileType) {
@@ -30,7 +30,6 @@ export const configure = (app: ng.IModule) => {
         when('/:gameSlug/stream', 'game.stream').
         //when('/:gameSlug/stream/:streamType?', 'game.stream').
         when('/:gameSlug/servers', 'game.servers').
-        when('/:gameSlug/servers2', 'game.servers').
         when('/:gameSlug/servers/:serverIp/:serverSlug?', 'game.serversShow').
         when('/:gameSlug/mods', 'game.mods').
         when('/:gameSlug/mods/:modId/:modSlug?/download', 'game.modsShow.download').
