@@ -63,7 +63,7 @@ export class ServersModule {
     mount = mount + "servers";
     config.map([
       //{ route: `${routeMount}`, name: "servers", moduleId: `${mount}/index` },
-      { route: `${routeMount}2`, name: "servers", moduleId: `${mount}/index2` },
+      { route: `${routeMount}`, name: "servers", moduleId: `${mount}/index2` },
       { route: `${routeMount}/:serverId/:serverSlug?`, name: "servers-show", moduleId: `${mount}/show` },
     ]);
   }
