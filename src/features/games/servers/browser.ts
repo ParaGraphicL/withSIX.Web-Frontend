@@ -8,8 +8,11 @@ import {
   IFilter,
   DbClientQuery,
   uiCommand2,
+  UiContext, BasketService, IBasketItem,
   InstallContents, LaunchAction, LaunchContents, LaunchGame,
 } from "../../../framework";
+import { inject } from 'aurelia-framework';
+import { camelCase } from '../../../helpers/utils/string';
 import { FilteredBase } from "../../filtered-base";
 import { ServerRender } from "./server-render";
 import { SessionState } from "./server-render-base";
@@ -48,8 +51,9 @@ enum ModFlags {
 }
 
 enum PlayerFilters {
-  HideFullServers,
-  ServersWithFriendsOnly
+  All,
+  HideFullServers = 1,
+  ServersWithFriendsOnly = 2
 }
 
 enum Distance {
@@ -61,26 +65,29 @@ enum Distance {
 
 enum MissionMode {
   All,
-  COOP,
-  CTF, // (capture the flag)
-  KOTH // (king of the hill)
+  COOP = 1,
+  CTF = 2, // (capture the flag)
+  KOTH = 4 // (king of the hill)
 }
 
 enum ServerFilter {
-  Verified,
-  Locked,
-  Dedicated,
-  Local
+  All,
+  Verified = 1,
+  Locked = 2,
+  Dedicated = 4,
+  Local = 8
 }
 
 interface IGroup<T> {
   title: string;
   items: {
     title: string;
+    titleOverride?: string;
     name?: string
     type?: string;
     placeholder?: string;
     value?;
+    useValue?;
     range?: number[];
   }[];
   cutOffPoint?: number;
@@ -111,22 +118,26 @@ const columns = [
   }
 ]
 
+const buildFilter = (e, f, titleOverride?: string, icon?: string) => {
+  return { title: <string>camelCase(e[f]), useValue: f, titleOverride, icon }
+}
+
 // Groups are AND, GroupItems are OR
 const filterTest: IGroup<IServer>[] = [
   {
     title: "Keyword",
     items: [
-      { title: "", type: "text", placeholder: "Search" }
+      { title: "", name: "search", type: "text", placeholder: "Search" }
     ]
   },
   {
     title: "Mods",
     items: [
-      { title: ModFlags[ModFlags.ModsInPlaylist] },
-      { title: ModFlags[ModFlags.NoMods] },
-      { title: ModFlags[ModFlags.HostedOnWithSIX] },
-      { title: ModFlags[ModFlags.HostedOnSteamworks] },
-      { title: ModFlags[ModFlags.PrivateRepositories] },
+      buildFilter(ModFlags, ModFlags.ModsInPlaylist),
+      buildFilter(ModFlags, ModFlags.NoMods),
+      buildFilter(ModFlags, ModFlags.HostedOnWithSIX, "Hosted on withSIX"),
+      buildFilter(ModFlags, ModFlags.HostedOnSteamworks),
+      buildFilter(ModFlags, ModFlags.PrivateRepositories),
     ]
   },
   {
@@ -137,44 +148,52 @@ const filterTest: IGroup<IServer>[] = [
       range: [0, 300],
       value: [0, 0]
     },
-    { title: PlayerFilters[PlayerFilters.HideFullServers] },
-    { title: PlayerFilters[PlayerFilters.ServersWithFriendsOnly] },
+    buildFilter(PlayerFilters, PlayerFilters.HideFullServers),
+    buildFilter(PlayerFilters, PlayerFilters.ServersWithFriendsOnly),
     ]
   },
   {
     title: "Location",
     items: [
-      { title: "Nearby (< 100km)", value: Distance.Nearby },
-      { title: "Medium (< 500km)", value: Distance.Medium },
-      { title: "Far (> 500km)", value: Distance.Far },
+      buildFilter(Distance, Distance.Nearby, "Nearby (< 100km)"),
+      buildFilter(Distance, Distance.Medium, "Medium (< 500km)"),
+      buildFilter(Distance, Distance.Far, "Far (> 500km)"),
     ],
   },
   {
     title: "Mission",
     items: [
-      { title: MissionMode[MissionMode.COOP] },
-      { title: "CTF (capture the flag)" },
-      { title: "KOTH (king of the hill)" },
-      { title: "Some other mode 1" },
-      { title: "Some other mode 2" },
+      buildFilter(MissionMode, MissionMode.COOP, "COOP"),
+      buildFilter(MissionMode, MissionMode.CTF, "CTF (capture the flag)"),
+      buildFilter(MissionMode, MissionMode.KOTH, "KOTH (king of the hill)"),
+      //{ title: "Some other mode 1" },
+      //{ title: "Some other mode 2" },
     ],
     cutOffPoint: 3
   }, {
     title: "Server",
     items: [
-      { title: ServerFilter[ServerFilter.Verified] },
-      { title: ServerFilter[ServerFilter.Locked] },
-      { title: ServerFilter[ServerFilter.Dedicated] },
-      { title: ServerFilter[ServerFilter.Local] }
+      buildFilter(ServerFilter, ServerFilter.Verified, undefined, "withSIX-icon-Verified"),
+      buildFilter(ServerFilter, ServerFilter.Locked, undefined, "withSIX-icon-Lock"),
+      buildFilter(ServerFilter, ServerFilter.Dedicated, undefined, "withSIX-icon-Cloud"),
+      buildFilter(ServerFilter, ServerFilter.Local),
     ]
   },
 ]
 
+export interface IOrder {
+  name: string;
+  direction?: number;
+}
 
+
+@inject(UiContext, BasketService)
 export class Index extends FilteredBase<IServer> {
+  constructor(ui, private basketService: BasketService) { super(ui) }
+
   filterTest = filterTest;
   columns = columns;
-  activeOrder = columns[3];
+  activeOrder: IOrder = columns[3];
   toggleOrder(c) {
     if (this.activeOrder === c) {
       c.direction = c.direction ? 0 : 1;
@@ -312,18 +331,18 @@ export class Index extends FilteredBase<IServer> {
     })
     setInterval(() => { if (this.w6.miniClient.isConnected) { this.refresh(); } }, 60 * 1000);
     this.enabledFilters = this.defaultEnabled;
+    this.baskets = this.basketService.getGameBaskets(this.w6.activeGame.id);
     await super.activate(params);
   }
 
-  // TODO Custom filters
+  baskets: { active: { model: { items: IBasketItem[] } } }
+
   async getMore(page = 1) {
-    // todo; filters and order
+    /*
     const search = this.filterInfo.search;
     let filters = undefined;
     if (search.input || this.filterInfo.enabledFilters.length > 0) {
-      const f: {
-        search?: string; minPlayers?: number; isDedicated?: boolean
-      } = {};
+      const f: { search?: string; minPlayers?: number; isDedicated?: boolean } = {};
       if (search.input) f.search = search.input;
       this.filterInfo.enabledFilters.forEach(x => {
         if (x.name === "hasPlayers") f.minPlayers = 1;
@@ -339,7 +358,29 @@ export class Index extends FilteredBase<IServer> {
         direction: so.direction
       }]
     } : undefined;
-    const servers = await new GetServers(this.w6.activeGame.id, filters, sort, {
+    */
+
+    const filter = {}
+    this.filterTest.filter(x => x.items.some(f => f.value)).forEach(x => {
+      let flag = 0;
+      x.items.filter(f => f.value && !(f.value instanceof Array)).map(f => f.useValue).forEach(f => {
+        flag += f;
+      });
+      const filt = { flag };
+      const filters = x.items.filter(f => f.value && (f.value instanceof Array) || f.type === "text");
+      filters.forEach(f => filt[f.name] = f.value);
+      if (filt.flag > 0 || filters.length > 0) { filter[x.title] = filt; }
+    })
+
+    if (this.filterTest[1].items[0].value) {
+      filter["Mods"].modIds = this.baskets.active.model.items.map(x => x.id);
+    }
+
+    const orders = [];
+    if (this.activeOrder) { orders.push({ column: this.activeOrder.name, direction: this.activeOrder.direction }); }
+    const sort = { orders, }
+
+    const servers = await new GetServers(this.w6.activeGame.id, filter, sort, {
       page
     }).handle(this.mediator);
     if (this.w6.miniClient.isConnected) this.refreshServerInfo(servers.items);
@@ -348,6 +389,11 @@ export class Index extends FilteredBase<IServer> {
 
   refresh = uiCommand2("Refresh", () => this.refreshServerInfo(this.model.items));
   reload = uiCommand2("Reload", async () => this.model = await this.getMore());
+
+  //get filteredItems() { return this.filteredComponent.filteredItems; }
+  //get filteredTotalCount() { return this.filteredComponent.totalCount; }
+  get filteredItems() { return this.model.items; }
+  get filteredTotalCount() { return this.model.total; }
 
   async refreshServerInfo(servers: IServer[]) {
     const dsp = this.observableFromEvent<{ items: IServer[], gameId: string }>("server.serverInfoReceived")

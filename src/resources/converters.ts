@@ -4,7 +4,7 @@ import {
 } from 'aurelia-framework';
 import numeral from 'numbro';
 import {
-  sanitizeHtml
+  sanitizeHtml, camelCase
 } from '../helpers/utils/string';
 
 enum FileSize {
@@ -71,12 +71,9 @@ export class TextValueConverter {
       m2, m3) => `<a target="_blank" href="${whole}">${m3}</a>`);
 }
 
-const toUpperCaseFirst = (str: string) => str ? str[0].toUpperCase() + str.substring(1) : str;
-const toLowerCaseFirst = (str: string) => str ? str[0].toLowerCase() + str.substring(1) : str;
-
 @valueConverter('camelCase')
 export class CamelCaseConverter {
-  toView = (text: string) => text ? toUpperCaseFirst(text.split(/(?=[A-Z])/).map(x => toLowerCaseFirst(x)).join(" ")) : text;
+  toView = camelCase;
 }
 
 @valueConverter('take')

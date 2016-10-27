@@ -1,49 +1,57 @@
 <template>
-	<require from="./servers.scss"></require>
-	<div class="container-fluid" id="server-browser">
-		<div class="server-filters">
-			<div class="pull-right"> <button>Clear</button> </div>
-			<div>SERVER FILTERS</div>
+  <require from="./servers.scss"></require>
+  <div class="container-fluid" id="server-browser">
+    <div class="server-filters">
+      <div class="pull-right"> <button>Clear</button> </div>
+      <div>SERVER FILTERS</div>
 
-			<div>
-				<div repeat.for="g of filterTest">
-					<b class="title">${g.title | camelCase}</b>
-					<ul>
-						<li repeat.for="i of g.items | take: (showMore || !g.cutOffPoint ? 99 : g.cutOffPoint)">
-							<checkbox cls="" if.one-time="!i.range && !i.type" value.bind="i.value">${i.title | camelCase}</checkbox>
-							<textbox placeholder.bind="(i.placeholder || i.title) | camelCase" cls="" if.one-time="i.type === 'text'" value.bind="i.value">${i.title | camelCase}</textbox>
-							<rangeboxadv cls="" if.one-time="i.range" min.bind="i.range[0]" max.bind="i.range[1]" value.two-way="i.value">${i.title | camelCase}</rangebox>
-						</li>
-						<li if.bind="g.cutOffPoint && g.items.length > g.cutOffPoint">
-							<a class="show-more" href="#" click.delegate="showMore = !showMore">Show <span>${showMore ? 'less' : 'more'}</span> options <span class="icon withSIX-icon-Arrow-Down-Dir"></span></a>
-						</li>
-					</ul>
-				</div>
-			</div>
+      <div>
+        <div repeat.for="g of filterTest">
+          <b class="title">${g.titleOverride || g.title}</b>
+          <ul>
+            <li repeat.for="i of g.items | take: (showMore || !g.cutOffPoint ? 99 : g.cutOffPoint)">
+              <checkbox cls="" if.one-time="!i.range && !i.type" value.bind="i.value">
+                <span class="icon ${i.icon}" if.bind="i.icon"></span> ${i.titleOverride || i.title}
+              </checkbox>
+              <textbox placeholder.bind="i.placeholder || i.titleOverride || i.title" cls="" if.one-time="i.type === 'text'"
+                value.bind="i.value">
+                <span class="icon ${i.icon}" if.bind="i.icon"></span> ${i.titleOverride || i.title}</textbox>
+              <rangeboxadv cls="" if.one-time="i.range" min.bind="i.range[0]" max.bind="i.range[1]" value.two-way="i.value">
+                <span class="icon ${i.icon}" if.bind="i.icon"></span> ${i.titleOverride || i.title}
+                </rangebox>
+            </li>
+            <li if.bind="g.cutOffPoint && g.items.length > g.cutOffPoint">
+              <a class="show-more" href="#" click.delegate="showMore = !showMore">Show <span>${showMore ? 'less' : 'more'}</span> options <span class="icon withSIX-icon-Arrow-Down-Dir"></span></a>
+            </li>
+          </ul>
+        </div>
+      </div>
 
 
-			Legacy (ignore)
-			<filters custom-handler.call="handleFilter(info)" filters.ref="filteredComponent" items.bind="model.items" filters.bind="filters"
-				enabled-filters.bind="enabledFilters" search-fields.bind="searchFields" sort.bind="sort" search-input-placeholder="search me..">
-			</filters>
-			<div class="clearfix"></div>
-		</div>
+      Legacy (ignore)
+      <filters custom-handler.call="handleFilter(info)" filters.ref="filteredComponent" items.bind="model.items"
+        filters.bind="filters" enabled-filters.bind="enabledFilters" search-fields.bind="searchFields"
+        sort.bind="sort" search-input-placeholder="search me..">
+      </filters>
+      <div class="clearfix"></div>
+    </div>
 
-		<div class="server-list">
-			<div class="server-list-info">
-				<div class="pull-right">
-					<command-button model.bind="refresh"></command-button>
-					<command-button model.bind="reload"></command-button>
-				</div>
-				<div>
-					${model.playerCount} players on <b>
-						<span>${filteredComponent.totalCount}</span> results</b>
-					<span show.bind="model.totalServers !== filteredComponent.totalCount" title="${model.totalPlayers} players on ${model.totalServers} servers total"> (${model.totalServers} total)</span>
-				</div>
-			</div>
-			<div infinite-scroll.bind="loadMore" class="server-list-content">
-				<compose view="./arma/servers.html"></compose>
-			</div>
-		</div>
-	</div>
+    <div class="server-list">
+      <div class="server-list-info">
+        <div class="pull-right">
+          <command-button model.bind="refresh"></command-button>
+          <command-button model.bind="reload"></command-button>
+        </div>
+        <div>
+          ${model.playerCount} players on <b>
+						<span>${filteredTotalCount}</span> results</b>
+          <span show.bind="model.totalServers !== filteredTotalCount" title="${model.totalPlayers} players on ${model.totalServers} servers total"> (${model.totalServers} total)</span>
+        </div>
+      </div>
+      <div infinite-scroll.bind="loadMore" class="server-list-content">
+        <compose view="./arma/servers.html"></compose>
+      </div>
+    </div>
+  </div>
 </template>
+

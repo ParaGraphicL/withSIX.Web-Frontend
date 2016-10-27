@@ -280,7 +280,7 @@ export class Dialog<T> extends ViewModelOf<T> {
 }
 
 export interface IPaginated<T> {
-  items: T[], inlineCount: number, page: number
+  items: T[], inlineCount: number, page: number, total: number;
 }
 
 

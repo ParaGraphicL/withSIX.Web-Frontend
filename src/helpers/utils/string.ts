@@ -78,6 +78,11 @@ const r3 = new RegExp("[-]+$");
 
 export const toShortId = (id: string): string => base64ToShort(guidToBase64(id, true));
 
+const toUpperCaseFirst2 = (str: string) => str ? str[0].toUpperCase() + str.substring(1) : str;
+const toLowerCaseFirst2 = (str: string) => str ? str[0].toLowerCase() + str.substring(1) : str;
+
+export const camelCase = (text: string) => text ? toUpperCaseFirst2(text.split(/(?=[A-Z])/).map(x => toLowerCaseFirst2(x)).join(" ")) : text;
+
 export const fromShortId = (shortId: string): string => {
   try {
     return base64ToGuid(shortToBase64(shortId), true);

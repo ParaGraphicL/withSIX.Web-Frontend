@@ -31,12 +31,16 @@ export class Rangeboxadv {
         'min': this.min,
         'max': this.max
       },
+      /*
       pips: { // Show a scale with the slider
         mode: 'steps',
         stepped: true,
         density: 4
-      }
+      }*/
     });
-    slider.on('set', () => this.value = Array.from<number>(slider.get()))
+    slider.on('set', () => {
+      const value = slider.get();
+      this.value = (value.some(x => x > 0)) ? Array.from<number>(value) : null;
+    })
   }
 }
