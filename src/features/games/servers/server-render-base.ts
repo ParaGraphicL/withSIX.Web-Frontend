@@ -71,7 +71,7 @@ export class ServerRenderBase extends ViewModel {
   mods;
   links;
   clientLoaded;
-  refresh = uiCommand2("Refresh", () => this.loadModel(), { icon: "withSIX-icon-Reload" });
+  refresh = uiCommand2("", () => this.loadModel(), { icon: "withSIX-icon-Reload" });
   join = uiCommand2("Join", () => this.launch(), { icon: "withSIX-icon-Download" });
   detailsShown = false;
   dlcs = [];

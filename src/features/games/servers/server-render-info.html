@@ -3,6 +3,7 @@
   <div class="tile ${model.modList.length > 0 ? 'has-mods' : ''} mod-state-${model.modState}">
     <span show.bind="clientLoaded">${model.ping}ms</span>
     <flag s.bind="model"></flag>
+    <command-button model.bind="refresh"></command-button>
     <span><a href.bind="url"><span class="icon withSIX-icon-Follow"></span></a>
     </span>
     <span>${model.currentPlayers} / ${model.maxPlayers} plyrs |</span>
@@ -121,3 +122,4 @@
   </div>
 
 </template>
+
