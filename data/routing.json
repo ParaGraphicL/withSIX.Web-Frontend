@@ -12,12 +12,10 @@
     "/errors/403": {
       "type": "aurelia"
     },
-
     "/plugin": {
       "type": "aurelia",
       "ssl": 1
     },
-
     "/getting-started": {
       "type": "static",
       "redirectTo": "http://withsix.readthedocs.org/en/latest/general/get_started"
@@ -99,7 +97,6 @@
     "/me": {
       "type": "aurelia"
     },
-
     "/me/groups": {
       "type": "aurelia"
     },
@@ -121,7 +118,6 @@
     "/me/groups/:id/:slug/servers": {
       "type": "aurelia"
     },
-
     "/me/library": {
       "type": "aurelia"
     },
@@ -225,7 +221,6 @@
     "/errors/403": {
       "type": "aurelia"
     },
-
     "/:gameSlug": {},
     "/:gameSlug/order": {},
     "/:gameSlug/stream": {
@@ -269,9 +264,6 @@
     },
     "/:gameSlug/collections/:collectionId/:collectionSlug?": {},
     "/:gameSlug/servers": {
-      "type": "aurelia"
-    },
-    "/:gameSlug/servers2": {
       "type": "aurelia"
     },
     "/:gameSlug/servers/:serverId/:serverSlug?": {

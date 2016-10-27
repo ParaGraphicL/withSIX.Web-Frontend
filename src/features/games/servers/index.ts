@@ -39,7 +39,7 @@ export class Index extends ViewModel {
     try {
       const req = new GetServers(this.w6.activeGame.id);
       const p = req.handle(this.mediator);
-      this.cancel = uiCommand2("Cancel", async () => { try { await req.cancel() } catch (err) {} } );
+      this.cancel = uiCommand2("Cancel", async () => { try { await req.cancel() } catch (err) { } });
       const r = await p;
     } finally {
       dsp.unsubscribe();
@@ -48,7 +48,7 @@ export class Index extends ViewModel {
   }
 
   showServer(server: IServer) {
-    return this.dialog.open({model: server.queryAddress, viewModel: ServerRender})
+    return this.dialog.open({ model: server.queryAddress, viewModel: ServerRender })
   }
 
   getSlug(addr: string) { return addr.replace(/\./g, "-") + "/test"; }
@@ -62,8 +62,8 @@ export class ServersModule {
   configureRouter(config: RouterConfiguration, router: Router, mount: string, routeMount: string) {
     mount = mount + "servers";
     config.map([
-      { route: `${routeMount}`, name: "servers", moduleId: `${mount}/index` },
-      { route: `${routeMount}2`, name: "servers2", moduleId: `${mount}/index2` },
+      //{ route: `${routeMount}`, name: "servers", moduleId: `${mount}/index` },
+      { route: `${routeMount}2`, name: "servers", moduleId: `${mount}/index2` },
       { route: `${routeMount}/:serverId/:serverSlug?`, name: "servers-show", moduleId: `${mount}/show` },
     ]);
   }
