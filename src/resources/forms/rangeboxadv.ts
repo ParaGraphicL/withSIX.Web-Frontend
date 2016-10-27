@@ -11,10 +11,18 @@ export class Rangeboxadv {
   @bindable margin: number = 0;
   @bindable limit: number;
   constructor(private element: Element) { }
+
+  slider;
+
+  valueChanged(value: number[]) {
+    // todo; suppress own ?
+    const currentValue = this.slider.get();
+    if (value !== null && (currentValue == null || currentValue[0] != value[0] || currentValue[1] != value[1])) this.slider.set(value);
+  }
   bind() {
     const step = 1;
     // TODO: Update bindings
-    const slider = noUiSlider.create($(this.element).find(".slider")[0], {
+    this.slider = noUiSlider.create($(this.element).find(".slider")[0], {
       start: this.value,
       margin: this.margin, // Handles must be at least 300 apart
       limit: this.limit, // ... but no more than 600
@@ -38,8 +46,8 @@ export class Rangeboxadv {
         density: 4
       }*/
     });
-    slider.on('set', () => {
-      const value = slider.get();
+    this.slider.on('set', () => {
+      const value = this.slider.get();
       this.value = (value.some(x => x > 0)) ? Array.from<number>(value) : null;
     })
   }
