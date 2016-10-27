@@ -174,6 +174,7 @@ export class ServerRenderBase extends ViewModel {
       if (!this.w6.miniClient.isConnected) { return; }
       if (this.refresh.canExecute) { this.refresh(); }
     }, 15 * 1000);
+    this.subscriptions.subd(d => { clearTimeout(this.interval); });
   }
 
   async handleMods(details) {
@@ -193,8 +194,6 @@ export class ServerRenderBase extends ViewModel {
   }
 
   getPublisherName(p) { return `${p.publisher === 2 ? "Starbound-Servers.net" : "GameTracker.com"}`; }
-
-  deactivate() { clearInterval(this.interval); }
 
   async loadModel() {
     try {
