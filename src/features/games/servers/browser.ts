@@ -138,7 +138,7 @@ const filterTest: IGroup<IServer>[] = [
       buildFilter(ModFlags, ModFlags.NoMods),
       buildFilter(ModFlags, ModFlags.HostedOnWithSIX, "Hosted on withSIX"),
       buildFilter(ModFlags, ModFlags.HostedOnSteamworks),
-      buildFilter(ModFlags, ModFlags.PrivateRepositories),
+      //buildFilter(ModFlags, ModFlags.PrivateRepositories),
     ]
   },
   {
@@ -151,7 +151,7 @@ const filterTest: IGroup<IServer>[] = [
       value: [0, 300] // todo def value
     },
     buildFilter(PlayerFilters, PlayerFilters.HideFullServers),
-    buildFilter(PlayerFilters, PlayerFilters.ServersWithFriendsOnly),
+      //buildFilter(PlayerFilters, PlayerFilters.ServersWithFriendsOnly),
     ]
   },
   {
@@ -175,7 +175,7 @@ const filterTest: IGroup<IServer>[] = [
   }, {
     title: "Server",
     items: [
-      buildFilter(ServerFilter, ServerFilter.Verified, undefined, "withSIX-icon-Verified"),
+      //buildFilter(ServerFilter, ServerFilter.Verified, undefined, "withSIX-icon-Verified"),
       buildFilter(ServerFilter, ServerFilter.Locked, undefined, "withSIX-icon-Lock"),
       buildFilter(ServerFilter, ServerFilter.Dedicated, undefined, "withSIX-icon-Cloud"),
       buildFilter(ServerFilter, ServerFilter.Local),
