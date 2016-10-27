@@ -115,11 +115,15 @@ export class IpEndpointValueConverter {
   toView = addr => addr ? `${addr.address}:${addr.port}` : '';
 }
 
-@valueConverter('numeral')
-export class NumeralValueConverter {
+abstract class NumeralValueConverter {
   static defaultFormat = '0[.][0]';
-  defaultToView = (n: number, format: string) => this.convert(n, format)
+  defaultToView = (n: number, format: string = NumeralValueConverter.defaultFormat) => this.convert(n, format)
   convert = (n: number, format: string) => numeral(n || 0).format(format);
+}
+
+@valueConverter('numeral')
+export class NumeralValueConverter2 extends NumeralValueConverter {
+  toView = (n, format) => this.defaultToView(n, format);
 }
 
 @valueConverter('progress')

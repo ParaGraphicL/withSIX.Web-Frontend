@@ -13,8 +13,8 @@
       <div>${model.modList.length ? model.modList.length : 'none'}</div>
     </div>
   </div>
-  <div class="td" title="${model.distance / 1000} km" hover.bind="hovering">
-    <div class="icon ${model.distance | distance} connection-quality"></div>
+  <div class="td">
+    <div class="icon ${model.distance | distance} connection-quality" title="${(model.distance / 1000) | numeral} km"></div>
     <div>${serverType}</div>
     <command-button class="join-button" model.bind="join" show.bind="hovering" hover.bind="hovering">
       <div class="pull-left icon ${join.icon}"></div>
@@ -42,3 +42,4 @@
     <!--<icon cls="withSIX-icon-Star-Outline" 			cls-on="withSIX-icon-Star" optional-title="Favorite" model.bind="model.isFavorite"></icon>-->
   </div>
 </template>
+
