@@ -197,12 +197,16 @@ export class ServerRenderBase extends ViewModel {
   deactivate() { clearInterval(this.interval); }
 
   async loadModel() {
-    const m = await new GetServer(this.gameId, this.address).handle(this.mediator);
-    // for now keep modlist from server as it has modID linked in..
-    const modList = this.model.modList;
-    Object.assign(this.model, m, { modList, country: this.model.country, location: this.model.location, created: this.model.created, updatedAt: new Date() });
-    this.clientLoaded = true;
-    this.updateLinks();
+    try {
+      const m = await new GetServer(this.gameId, this.address).handle(this.mediator);
+      // for now keep modlist from server as it has modID linked in..
+      const modList = this.model.modList;
+      Object.assign(this.model, m, { modList, country: this.model.country, location: this.model.location, created: this.model.created, updatedAt: new Date() });
+      this.clientLoaded = true;
+      this.updateLinks();
+    } catch (err) {
+      this.tools.Debug.warn("error while trying to refresh server", err);
+    }
   }
   updateLinks() {
     this.links = this.extractInfo(this.model.name + " " + this.model.game);
@@ -222,7 +226,7 @@ class GetServerQuery extends DbClientQuery<GetServer, IServerInfo>  {
       });
     const gameServers = await GameHelper.getGameServers(request.gameId, this.context);
     let s = results.servers[0];
-    if (s == null) { throw new Error("server could not be refreshed"); }
+    if (s == null) { throw new Error("server could not be refreshed"); } // TODO: Not found error?
     return Object.assign({}, s, { additional: gameServers.get(request.address) });
   }
 }

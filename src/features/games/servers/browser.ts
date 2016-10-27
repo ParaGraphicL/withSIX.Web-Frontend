@@ -426,6 +426,8 @@ export class Index extends FilteredBase<IServer> {
       });
     try {
       await new GetServer(this.w6.activeGame.id, servers.map(x => x.queryAddress)).handle(this.mediator);
+    } catch (err) {
+      this.tools.Debug.warn("error while trying to refresh servers", err);
     } finally {
       dsp.unsubscribe();
       this.filteredComponent.refresh();
