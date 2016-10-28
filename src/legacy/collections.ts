@@ -294,13 +294,6 @@ export class CollectionController extends ContentModelController<IBreezeCollecti
       shortContentUrl: this.$scope.url.play + "/" + shortPath,
       tags: content.tags || []
     };
-
-    this.$scope.scopes = [
-      { text: "Public" },
-      { text: "Unlisted" },
-      { text: "Private" }
-    ];
-
     return header;
   }
 

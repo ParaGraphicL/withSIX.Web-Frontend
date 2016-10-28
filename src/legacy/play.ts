@@ -2,35 +2,37 @@ import { register } from './binder';
 
 import breeze from 'breeze-client';
 
-import {IBreezeMod, IBreezeUser, IBreezeCollection, IBreezeMission, IBreezeCollectionVersionDependency, IBreezePost, IBreezeModUpdate, IBreezeCollectionVersion, IBreezeGame, IBreezeAWSUploadPolicy,
+import {
+  IBreezeMod, IBreezeUser, IBreezeCollection, IBreezeMission, IBreezeCollectionVersionDependency, IBreezePost, IBreezeModUpdate, IBreezeCollectionVersion, IBreezeGame, IBreezeAWSUploadPolicy,
   IBreezeMissionComment, IBreezeMissionVersion, IBreezeCollectionImageFileTransferPolicy, IBreezeModInfo,
   IBreezeCollectionComment, IBreezePostComment, AbstractDefs, BreezeInitialzation, IBreezeModUserGroup, IBreezeModComment, IBreezeModImageFileTransferPolicy,
   IBreezeModMediaItem, IUserInfo, Resource, Permission, Role,
-  EntityExtends, BreezeEntityGraph, _IntDefs} from '../services/dtos';
+  EntityExtends, BreezeEntityGraph, _IntDefs
+} from '../services/dtos';
 
-import {LegacyMediator} from '../services/mediator';
-import {ModHelper, CollectionHelper, MissionHelper} from '../services/helpers';
+import { LegacyMediator } from '../services/mediator';
+import { ModHelper, CollectionHelper, MissionHelper } from '../services/helpers';
 
-import {RestoreBasket, OpenCreateCollectionDialog, OpenAddModDialog, OpenAddModsToCollectionsDialog} from '../services/api';
-import {ForkCollection} from '../features/profile/content/collection';
-import {W6, W6Urls, globalRedactorOptions} from '../services/withSIX';
-import {Tools} from '../services/tools';
-import {W6Context, IQueryResult, BooleanResult, Result} from '../services/w6context';
-import {Tk} from '../services/legacy/tk'
-import {IRootScope, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHaveModel, DialogQueryBase, DbCommandBase, DbQueryBase, BaseController, BaseQueryController, DialogControllerBase, ModelDialogControllerBase } from './app-base'
-import {ITagKey, ICreateComment, ICQWM, IModel, IMenuItem, IHandleCommentsScope} from '../services/legacy/base'
+import { RestoreBasket, OpenCreateCollectionDialog, OpenAddModDialog, OpenAddModsToCollectionsDialog } from '../services/api';
+import { ForkCollection } from '../features/profile/content/collection';
+import { W6, W6Urls, globalRedactorOptions } from '../services/withSIX';
+import { Tools } from '../services/tools';
+import { W6Context, IQueryResult, BooleanResult, Result } from '../services/w6context';
+import { Tk } from '../services/legacy/tk'
+import { IRootScope, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHaveModel, DialogQueryBase, DbCommandBase, DbQueryBase, BaseController, BaseQueryController, DialogControllerBase, ModelDialogControllerBase } from './app-base'
+import { ITagKey, ICreateComment, ICQWM, IModel, IMenuItem, IHandleCommentsScope } from '../services/legacy/base'
 import { Publisher } from '../services/apis/lib';
-import {EventAggregator} from 'aurelia-event-aggregator';
+import { EventAggregator } from 'aurelia-event-aggregator';
 
-import {Client, IClientInfo, ItemState} from 'withsix-sync-api';
+import { Client, IClientInfo, ItemState } from 'withsix-sync-api';
 
-import {IBasketItem, BasketItemType} from '../services/legacy/baskets';
-import {BasketService} from '../services/basket-service';
-import {ModsHelper, Helper} from '../services/legacy/misc';
-import {ToastLogger} from '../services/legacy/logger';
+import { IBasketItem, BasketItemType } from '../services/legacy/baskets';
+import { BasketService } from '../services/basket-service';
+import { ModsHelper, Helper } from '../services/legacy/misc';
+import { ToastLogger } from '../services/legacy/logger';
 
-import {registerCommands, getFactory, skyscraperSlotSizes, rectangleSlotSizes, leaderboardSlotSizes} from './app-base';
-import {joinUri} from '../helpers/utils/url'
+import { registerCommands, getFactory, skyscraperSlotSizes, rectangleSlotSizes, leaderboardSlotSizes } from './app-base';
+import { joinUri } from '../helpers/utils/url'
 
 import { OpenReportDialogQuery } from './components';
 
@@ -204,6 +206,12 @@ export class ContentModelController<TModel extends breeze.Entity> extends Conten
 
     $scope.model = model;
     $scope.header = this.setupContentHeader(model);
+    this.$scope.scopes = [
+      { text: "Public" },
+      { text: "Unlisted" },
+      { text: "Private" }
+    ];
+
     var anyModel = (<any>model);
     var keyWords = (anyModel.game ? anyModel.game.name + ", " : null)
       + $scope.header.contentType + ", " + $scope.header.title + ", "
