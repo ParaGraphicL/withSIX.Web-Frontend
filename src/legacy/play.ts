@@ -142,6 +142,7 @@ export interface IContentScopeT<TModel> extends IContentScope, IHaveModel<TModel
   trustedDescriptionFullHtml: string;
   callToAction: () => void;
   auModel;
+  scopes: { text: string }[];
 }
 
 

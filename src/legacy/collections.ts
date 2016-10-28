@@ -45,7 +45,6 @@ export interface ICollectionScope extends IContentScopeT<IBreezeCollection>, IHa
   addTag: (data: any) => boolean;
   getCurrentTags: () => any[];
   removeTag: (data: any) => void;
-  scopes: any[];
   uploadingCollectionImage: boolean;
   onFileSelectLogo: (files: any, $event: any) => void;
   onFileSelectGallery: (files: any, $event: any) => void;
