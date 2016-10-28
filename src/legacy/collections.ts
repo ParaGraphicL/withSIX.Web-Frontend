@@ -45,7 +45,6 @@ export interface ICollectionScope extends IContentScopeT<IBreezeCollection>, IHa
   addTag: (data: any) => boolean;
   getCurrentTags: () => any[];
   removeTag: (data: any) => void;
-  scopes: any[];
   uploadingCollectionImage: boolean;
   onFileSelectLogo: (files: any, $event: any) => void;
   onFileSelectGallery: (files: any, $event: any) => void;
@@ -294,13 +293,6 @@ export class CollectionController extends ContentModelController<IBreezeCollecti
       shortContentUrl: this.$scope.url.play + "/" + shortPath,
       tags: content.tags || []
     };
-
-    this.$scope.scopes = [
-      { text: "Public" },
-      { text: "Unlisted" },
-      { text: "Private" }
-    ];
-
     return header;
   }
 
