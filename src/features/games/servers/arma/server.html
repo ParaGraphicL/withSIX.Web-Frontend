@@ -14,7 +14,11 @@
     </div>
   </div>
   <div class="td">
-    <div class="icon ${model.distance | distance} connection-quality" title="${(model.distance / 1000) | numeral} km"></div>
+
+    <div>
+      <span show.bind="!model.ping" class="flag-icon flag-icon-${model.country.toLowerCase()}" title="${model.country} inside ${model.continent}. ${(model.distance / 1000) | numeral} km from you"></span>
+      <span show.bind="model.ping" class="icon ${model.ping | ping} connection-quality" title="${model.ping}ms ${model.country} inside ${model.continent}. ${(model.distance / 1000) | numeral} km from you"></span>
+    </div>
     <div>${serverType}</div>
     <command-button class="join-button" model.bind="join" show.bind="hovering" hover.bind="hovering">
       <div class="pull-left icon ${join.icon}"></div>

@@ -159,9 +159,9 @@ const filterTest: IGroup<IServer>[] = [
   {
     title: "Location",
     items: [
-      buildFilter(Distance, Distance.Nearby, "Nearby (< 100km)"),
-      buildFilter(Distance, Distance.Medium, "Medium (< 500km)"),
-      buildFilter(Distance, Distance.Far, "Far (> 500km)"),
+      buildFilter(Distance, Distance.Nearby, "Nearby (< 500km)"),
+      buildFilter(Distance, Distance.Medium, "Medium (< 2000km)"),
+      buildFilter(Distance, Distance.Far, "Far (> 2000km)"),
     ],
   },
   {
