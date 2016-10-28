@@ -150,6 +150,7 @@ $padding: 16px;
         .tr {
           //border: 1px solid $colorSixBlue;
           order {
+            cursor: pointer;
             .icon.direction {
               color: $colorSixLightGray;
               &.active {

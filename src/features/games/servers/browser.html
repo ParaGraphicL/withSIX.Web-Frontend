@@ -16,7 +16,7 @@
                 <span class="icon ${i.icon}" if.bind="i.icon"></span> ${i.titleOverride || i.title}
               </checkbox>
               <textbox placeholder.bind="i.placeholder || i.titleOverride || i.title" cls="" if.one-time="i.type === 'text'"
-                value.bind="i.value">
+                value.bind="i.value & debounce">
                 <span class="icon ${i.icon}" if.bind="i.icon"></span> ${i.titleOverride || i.title}</textbox>
               <rangeboxadv cls="" if.one-time="i.range" min.bind="i.range[0]" max.bind="i.range[1]" value.two-way="i.value">
                 <span class="icon ${i.icon}" if.bind="i.icon"></span> ${i.titleOverride || i.title}
