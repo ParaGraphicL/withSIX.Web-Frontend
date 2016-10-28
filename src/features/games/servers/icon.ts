@@ -13,3 +13,11 @@ export class DistanceValueConverter {
     return "withSIX-icon-Connection-Med";
   }
 }
+
+export class PingValueConverter {
+  toView = (ping?: number) => {
+    if (!ping || ping > 500) { return "withSIX-icon-Connection-Low"; }
+    if (ping < 100) { return "withSIX-icon-Connection-High"; }
+    return "withSIX-icon-Connection-Med";
+  }
+}
