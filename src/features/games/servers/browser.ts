@@ -329,12 +329,10 @@ export class Index extends FilteredBase<IServer> {
       d(list);
       d(list.itemChanged.map(x => 1)
         .merge(this.observeEx(x => x.trigger).map(x => 1))
-        .filter(x => {
-          const searchV = this.filterTest[0].items[0].value;
-          return !searchV || searchV.length > 2;
-        })
-        .debounceTime(400).subscribe(x => {
-          // todo; update filter;
+        .subscribe(x => {
+          // todo: rather just ignore the keyword!
+          const f = this.filterTest[0].items[0];
+          if (f.value && f.value.trim().length < 2) { f.value = null; }
           this.handleFilter(this.filterInfo)
             .then(x => this.filteredItems = this.order(this.model.items));
         }));
