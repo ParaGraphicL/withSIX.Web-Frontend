@@ -60,7 +60,7 @@
       <div ng-if="editConfig.canManage()">
         Scope: <span ng-class="{'edit-border-blue edit-field': (editConfig.canManage()) && !model.groupId}"
           can-edit="editConfig.isEditing && (editConfig.canManage()) && !model.groupId" blur-saves buttons="no"
-          sx-editable-select="model.scope" e-ng-options="s.text as s.text for s in $parent.scopes">{{model.scope}}</span>        PackageName: <span ng-class="{'edit-border-blue edit-field': (editConfig.canManage())}" can-edit="editConfig.isEditing && (editConfig.canManage())"
+          sx-editable-select="model.scope" e-ng-options="s.text as s.text for s in $parent.scopes">{{model.scope}}</span>        PackageName: <span ng-class="{'edit-border-blue edit-field': false}" can-edit="editConfig.isEditing && false"
           blur-saves buttons="no" sx-editable-text="model.packageName">{{model.packageName}}</span>)
       </div>
     </sx-header-type>
