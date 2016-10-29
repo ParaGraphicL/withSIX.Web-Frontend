@@ -1937,6 +1937,7 @@ export interface IUploadVersionDialogScope extends IContentScope {
       version?: string;
       download?: string;
       isIncremental?: boolean;
+      packageName?: string;
     };
     downloadLinkAvailable?: boolean;
     info: {
@@ -1977,7 +1978,7 @@ export class UploadVersionDialogController extends ModelDialogControllerBase<IBr
       mod: {
         modId: model.id,
         download: dlUrl,
-        isIncremental: null
+        isIncremental: null,
       },
       info: {
         type: info,
@@ -1986,6 +1987,10 @@ export class UploadVersionDialogController extends ModelDialogControllerBase<IBr
         password: Tools.Password.generate(128)
       }
     };
+
+    if ($scope.w6.userInfo.isManager) {
+      $scope.model.mod.packageName = model.packageName.startsWith("@") ? model.packageName : `@${model.name.replace(/[\s\t]/g, "_")}`;
+    }
 
     $scope.branches = AddModDialogController.branches;
     $scope.hints = AddModDialogController.hints;
