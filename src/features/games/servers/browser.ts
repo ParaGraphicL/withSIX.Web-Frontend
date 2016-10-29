@@ -89,6 +89,7 @@ interface IGroup<T> {
     placeholder?: string;
     defaultValue?: () => any;
     value?;
+    items?: { title: string; value: any }[]
     useValue?;
     range?: number[];
   }[];
@@ -123,6 +124,17 @@ const columns = [
 const buildFilter = (e, f, titleOverride?: string, icon?: string) => {
   return { title: <string>camelCase(e[f]), useValue: f, titleOverride, icon }
 }
+
+const defaultBoolItems = () => [{
+  title: "Any",
+  value: null,
+}, {
+  title: "On",
+  value: true,
+}, {
+  title: "Off",
+  value: false,
+}];
 
 // Groups are AND, GroupItems are OR
 const filterTest: IGroup<IServer>[] = [
@@ -183,7 +195,37 @@ const filterTest: IGroup<IServer>[] = [
       //buildFilter(ServerFilter, ServerFilter.Dedicated, undefined, "withSIX-icon-Cloud"),
       //buildFilter(ServerFilter, ServerFilter.Local),
     ]
-  },
+  }, {
+    title: "Advanced",
+    cutOffPoint: 0,
+    items: [
+      {
+        title: "Weapon Crosshair",
+        items: defaultBoolItems()
+      },
+      {
+        title: "BattlEye",
+        items: defaultBoolItems()
+      },
+      {
+        title: "3rd Person Camera",
+        items: defaultBoolItems()
+      },
+      {
+        title: "Flight Model",
+        items: [{
+          title: "Any",
+          value: 0,
+        }, {
+          title: "Standard",
+          value: 1,
+        }, {
+          title: "Advanced",
+          value: 2,
+        }]
+      },
+    ]
+  }
 ]
 
 export interface IOrder {

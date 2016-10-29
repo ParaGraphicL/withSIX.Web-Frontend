@@ -11,18 +11,28 @@
         <div repeat.for="g of filterTest">
           <b class="title">${g.titleOverride || g.title}</b>
           <ul>
-            <li repeat.for="i of g.items | take: (showMore || !g.cutOffPoint ? 99 : g.cutOffPoint)">
-              <checkbox cls="" if.one-time="!i.range && !i.type" value.bind="i.value">
-                <span class="icon ${i.icon}" if.bind="i.icon"></span> ${i.titleOverride || i.title}
-              </checkbox>
-              <textbox placeholder.bind="i.placeholder || i.titleOverride || i.title" cls="" if.one-time="i.type === 'text'"
-                value.bind="i.value & debounce">
-                <span class="icon ${i.icon}" if.bind="i.icon"></span> ${i.titleOverride || i.title}</textbox>
-              <rangeboxadv cls="" if.one-time="i.range" min.bind="i.range[0]" max.bind="i.range[1]" value.two-way="i.value">
-                <span class="icon ${i.icon}" if.bind="i.icon"></span> ${i.titleOverride || i.title}
-                </rangebox>
+            <li repeat.for="i of g.items | take: (showMore || g.cutOffPoint == null ? 99 : g.cutOffPoint)">
+              <template if.bind="i.items">
+                <selectbox options.bind="i.items" value.bind="i.value" cls="pull-right">
+                  ${i.titleOverride || i.title}
+                  <template replace-part="item-template">
+                    <option model.bind="o">${o.title || o}</option>
+                  </template>
+                </selectbox>
+              </template>
+              <template if.bind="!i.items">
+                <checkbox cls="" if.one-time="!i.range && !i.type" value.bind="i.value">
+                  <span class="icon ${i.icon}" if.bind="i.icon"></span> ${i.titleOverride || i.title}
+                </checkbox>
+                <textbox placeholder.bind="i.placeholder || i.titleOverride || i.title" cls="" if.one-time="i.type === 'text'"
+                  value.bind="i.value & debounce">
+                  <span class="icon ${i.icon}" if.bind="i.icon"></span> ${i.titleOverride || i.title}</textbox>
+                <rangeboxadv cls="" if.one-time="i.range" min.bind="i.range[0]" max.bind="i.range[1]" value.two-way="i.value">
+                  <span class="icon ${i.icon}" if.bind="i.icon"></span> ${i.titleOverride || i.title}
+                  </rangebox>
+              </template>
             </li>
-            <li if.bind="g.cutOffPoint && g.items.length > g.cutOffPoint">
+            <li if.bind="g.cutOffPoint != null && g.items.length > g.cutOffPoint">
               <a class="show-more" href="#" click.delegate="showMore = !showMore">Show <span>${showMore ? 'less' : 'more'}</span> options <span class="icon withSIX-icon-Arrow-Down-Dir"></span></a>
             </li>
           </ul>
