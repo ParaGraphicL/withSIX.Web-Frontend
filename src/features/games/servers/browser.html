@@ -16,7 +16,7 @@
                 <selectbox options.bind="i.items" value.bind="i.value" cls="pull-right" style="display: block; height: 28px">
                   ${i.titleOverride || i.title}
                   <template replace-part="item-template">
-                    <option model.bind="o">${o.title || o}</option>
+                    <option model.bind="o.value">${o.title || o}</option>
                   </template>
                 </selectbox>
               </template>

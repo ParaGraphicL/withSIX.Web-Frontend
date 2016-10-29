@@ -200,21 +200,25 @@ const filterTest: IGroup<IServer>[] = [
     items: [
       {
         name: "crosshair",
+        type: "value",
         title: "Weapon Crosshair",
         items: defaultBoolItems()
       },
       {
         name: "battleye",
+        type: "value",
         title: "BattlEye",
         items: defaultBoolItems()
       },
       {
         name: "thirdPerson",
+        type: "value",
         title: "3rd Person Camera",
         items: defaultBoolItems()
       },
       {
         name: "flightModel",
+        type: "value",
         title: "Flight Model",
         items: [{
           title: "Any",
@@ -230,6 +234,7 @@ const filterTest: IGroup<IServer>[] = [
       {
         name: "aiLevel",
         title: "AI Level",
+        type: "value",
         items: [{
           title: "Any",
           value: null,
@@ -250,6 +255,7 @@ const filterTest: IGroup<IServer>[] = [
       {
         name: "difficulty",
         title: "Difficulty",
+        type: "value",
         items: [
           {
             title: "Any",
@@ -461,13 +467,13 @@ export class Index extends FilteredBase<IServer> {
     */
 
     const filter = {}
-    this.filterTest.filter(x => x.items.some(f => f.value)).forEach(x => {
+    this.filterTest.filter(x => x.items.some(f => f.value != null)).forEach(x => {
       let flag = 0;
-      x.items.filter(f => f.value && !(f.value instanceof Array)).map(f => f.useValue).forEach(f => {
+      x.items.filter(f => f.value && !(f.value instanceof Array) && !f.type).map(f => f.useValue).forEach(f => {
         flag += f;
       });
       const filt = { flag };
-      const filters = x.items.filter(f => f.value && (f.value instanceof Array) || f.type === "text");
+      const filters = x.items.filter(f => f.value != null && (f.value instanceof Array) || f.type !== "text" || f.type !== "value");
       filters.forEach(f => {
         // TODO!
         if (!f.range || (f.value[0] !== 0 && f.value[1] !== 300)) { filt[f.name] = f.value; }
