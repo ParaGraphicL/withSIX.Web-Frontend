@@ -268,6 +268,7 @@ const filterTest: IGroup<IServer>[] = [
             value: 3,
           }
         ]
+      }
     ]
   }
 ]
