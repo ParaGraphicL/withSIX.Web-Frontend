@@ -89,6 +89,7 @@ interface IGroup<T> {
     placeholder?: string;
     defaultValue?: () => any;
     value?;
+    items?: { title: string; value: any }[]
     useValue?;
     range?: number[];
   }[];
@@ -123,6 +124,17 @@ const columns = [
 const buildFilter = (e, f, titleOverride?: string, icon?: string) => {
   return { title: <string>camelCase(e[f]), useValue: f, titleOverride, icon }
 }
+
+const defaultBoolItems = () => [{
+  title: "Any",
+  value: null,
+}, {
+  title: "On",
+  value: true,
+}, {
+  title: "Off",
+  value: false,
+}];
 
 // Groups are AND, GroupItems are OR
 const filterTest: IGroup<IServer>[] = [
@@ -183,7 +195,82 @@ const filterTest: IGroup<IServer>[] = [
       //buildFilter(ServerFilter, ServerFilter.Dedicated, undefined, "withSIX-icon-Cloud"),
       //buildFilter(ServerFilter, ServerFilter.Local),
     ]
-  },
+  }, {
+    title: "Gameplay",
+    items: [
+      {
+        name: "crosshair",
+        title: "Weapon Crosshair",
+        items: defaultBoolItems()
+      },
+      {
+        name: "battleye",
+        title: "BattlEye",
+        items: defaultBoolItems()
+      },
+      {
+        name: "thirdPerson",
+        title: "3rd Person Camera",
+        items: defaultBoolItems()
+      },
+      {
+        name: "flightModel",
+        title: "Flight Model",
+        items: [{
+          title: "Any",
+          value: null,
+        }, {
+          title: "Standard",
+          value: 0,
+        }, {
+          title: "Advanced",
+          value: 1,
+        }]
+      },
+      {
+        name: "aiLevel",
+        title: "AI Level",
+        items: [{
+          title: "Any",
+          value: null,
+        }, {
+          title: "Novice",
+          value: 0,
+        }, {
+          title: "Normal",
+          value: 1,
+        }, {
+          title: "Expert",
+          value: 2,
+        }, {
+          title: "Custom",
+          value: 1,
+        }]
+      },
+      {
+        name: "difficulty",
+        title: "Difficulty",
+        items: [
+          {
+            title: "Any",
+            value: null,
+          }, {
+            title: "Recruit",
+            value: 0,
+          }, {
+            title: "Regular",
+            value: 1,
+          }, {
+            title: "Veteran",
+            value: 2,
+          }, {
+            title: "Custom",
+            value: 3,
+          }
+        ]
+      }
+    ]
+  }
 ]
 
 export interface IOrder {
@@ -196,6 +283,7 @@ export interface IOrder {
 export class Index extends FilteredBase<IServer> {
   constructor(ui, private basketService: BasketService) { super(ui) }
 
+  cutOffPoint = 6;
   filterTest = filterTest;
   columns = columns;
   activeOrder: IOrder = columns[3];
