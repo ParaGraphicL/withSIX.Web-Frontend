@@ -283,6 +283,7 @@ export interface IOrder {
 export class Index extends FilteredBase<IServer> {
   constructor(ui, private basketService: BasketService) { super(ui) }
 
+  cutOffPoint = 5;
   filterTest = filterTest;
   columns = columns;
   activeOrder: IOrder = columns[3];

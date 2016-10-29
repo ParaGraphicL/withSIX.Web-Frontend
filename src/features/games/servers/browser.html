@@ -8,12 +8,12 @@
       <div>SERVER FILTERS</div>
 
       <div>
-        <div repeat.for="g of filterTest">
+        <div repeat.for="g of filterTest | take: (showMoreGroups || cutOffPoint == null ? 99 : cutOffPoint)">
           <b class="title">${g.titleOverride || g.title}</b>
           <ul>
             <li repeat.for="i of g.items | take: (showMore || g.cutOffPoint == null ? 99 : g.cutOffPoint)">
               <template if.bind="i.items">
-                <selectbox options.bind="i.items" value.bind="i.value" cls="pull-right">
+                <selectbox options.bind="i.items" value.bind="i.value" cls="pull-right" style="display: block; height: 28px">
                   ${i.titleOverride || i.title}
                   <template replace-part="item-template">
                     <option model.bind="o">${o.title || o}</option>
@@ -37,6 +37,10 @@
             </li>
           </ul>
         </div>
+        <div if.bind="cutOffPoint != null && filterTest.length > cutOffPoint">
+          <a class="show-more" href="#" click.delegate="showMoreGroups = !showMoreGroups">Show <span>${showMoreGroups ? 'less' : 'more'}</span> options <span class="icon withSIX-icon-Arrow-Down-Dir"></span></a>
+        </div>
+
       </div>
 
       <!-- TODO: Get rid of -->
