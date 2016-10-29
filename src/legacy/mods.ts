@@ -2069,7 +2069,7 @@ export class UploadVersionDialogController extends ModelDialogControllerBase<IBr
 
   private cancel = () => this.$modalInstance.close();
   private ok = () => {
-    if (this.$scope.model.cmod.modVersion != null && this.validateVersion(this.$scope.model.mod.version, this.$scope.model.cmod.modVersion) <= 0) {
+    if (this.$scope.model.cmod.modVersion != null && this.$scope.model.cmod.scope !== 'Unlisted' && this.validateVersion(this.$scope.model.mod.version, this.$scope.model.cmod.modVersion) <= 0) {
       this.logger.error("The new mod version must be greater than the current version", "Bad Version");
       return;
     }
