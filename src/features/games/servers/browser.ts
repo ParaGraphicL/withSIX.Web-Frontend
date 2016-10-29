@@ -196,34 +196,78 @@ const filterTest: IGroup<IServer>[] = [
       //buildFilter(ServerFilter, ServerFilter.Local),
     ]
   }, {
-    title: "Advanced",
-    cutOffPoint: 0,
+    title: "Gameplay",
     items: [
       {
+        name: "crosshair",
         title: "Weapon Crosshair",
         items: defaultBoolItems()
       },
       {
+        name: "battleye",
         title: "BattlEye",
         items: defaultBoolItems()
       },
       {
+        name: "thirdPerson",
         title: "3rd Person Camera",
         items: defaultBoolItems()
       },
       {
+        name: "flightModel",
         title: "Flight Model",
         items: [{
           title: "Any",
-          value: 0,
+          value: null,
         }, {
           title: "Standard",
-          value: 1,
+          value: 0,
         }, {
           title: "Advanced",
-          value: 2,
+          value: 1,
         }]
       },
+      {
+        name: "aiLevel",
+        title: "AI Level",
+        items: [{
+          title: "Any",
+          value: null,
+        }, {
+          title: "Novice",
+          value: 0,
+        }, {
+          title: "Normal",
+          value: 1,
+        }, {
+          title: "Expert",
+          value: 2,
+        }, {
+          title: "Custom",
+          value: 1,
+        }]
+      },
+      {
+        name: "difficulty",
+        title: "Difficulty",
+        items: [
+          {
+            title: "Any",
+            value: null,
+          }, {
+            title: "Recruit",
+            value: 0,
+          }, {
+            title: "Regular",
+            value: 1,
+          }, {
+            title: "Veteran",
+            value: 2,
+          }, {
+            title: "Custom",
+            value: 3,
+          }
+        ]
     ]
   }
 ]
