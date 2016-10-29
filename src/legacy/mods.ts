@@ -1989,7 +1989,8 @@ export class UploadVersionDialogController extends ModelDialogControllerBase<IBr
     };
 
     if ($scope.w6.userInfo.isManager) {
-      $scope.model.mod.packageName = model.packageName.startsWith("@") ? model.packageName : `@${model.name.replace(/[\s\t]/g, "_")}`;
+      $scope.model.mod.packageName =
+        model.packageName.startsWith("@") ? model.packageName : `@${model.name.replace(/[\s\t]/g, "_").sluggifyEntityName()}`;
     }
 
     $scope.branches = AddModDialogController.branches;
