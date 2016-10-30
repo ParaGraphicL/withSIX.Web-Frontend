@@ -428,8 +428,9 @@ export class Index extends FilteredBase<IServer> {
           await this.handleFilter(this.filterInfo)
           this.filteredItems = this.order(this.model.items);
         }));
+      const ival = setInterval(() => { if (this.w6.miniClient.isConnected) { this.refresh(); } }, 60 * 1000);
+      d(() => clearInterval(ival));
     })
-    setInterval(() => { if (this.w6.miniClient.isConnected) { this.refresh(); } }, 60 * 1000);
     this.enabledFilters = this.defaultEnabled;
     this.baskets = this.basketService.getGameBaskets(this.w6.activeGame.id);
     await super.activate(params);
