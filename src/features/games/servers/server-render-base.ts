@@ -65,7 +65,6 @@ export class ServerRenderBase extends ViewModel {
   AiLevel = AiLevel;
   Difficulty = Difficulty;
   HelicopterFlightModel = HelicopterFlightModel;
-  interval: number;
   gameId;
   model: ExtendedServerInfo;
   mods;
@@ -170,11 +169,13 @@ export class ServerRenderBase extends ViewModel {
     this.url = `/p/${this.w6.activeGame.slug}/servers/${this.address.replace(/\./g, "-")}/${this.model.name.sluggifyEntityName()}`;
 
     if (this.w6.miniClient.isConnected) { this.refresh(); }
-    this.interval = setInterval(() => {
-      if (!this.w6.miniClient.isConnected) { return; }
-      if (this.refresh.canExecute) { this.refresh(); }
-    }, 15 * 1000);
-    this.subscriptions.subd(d => { clearTimeout(this.interval); });
+    this.subscriptions.subd(d => {
+      const interval = setInterval(() => {
+        if (!this.w6.miniClient.isConnected) { return; }
+        if (this.refresh.canExecute) { this.refresh(); }
+      }, 15 * 1000);
+      clearTimeout(interval);
+    });
   }
 
   async handleMods(details) {
