@@ -1,6 +1,6 @@
-import {inject} from 'aurelia-framework';
-import {Query, DbClientQuery, handlerFor, ISort, IContent, IMissionsData, IMission, TypeScope, ContentDeleted} from '../../../../framework';
-import {BaseGame} from '../../lib';
+import { inject } from 'aurelia-framework';
+import { Query, DbClientQuery, handlerFor, ISort, IContent, IMissionsData, IMission, TypeScope, ContentDeleted } from '../../../../framework';
+import { BaseGame } from '../../lib';
 
 export class Index extends BaseGame {
   heading = "Missions"
@@ -39,10 +39,10 @@ class GetMissionsHandler extends DbClientQuery<GetMissions, IMissionsData> {
   public async handle(request: GetMissions): Promise<IMissionsData> {
     try {
       let r = await this.client.getGameMissions(request)
-      return r;
+      return <any>r;
     } catch (err) {
       this.tools.Debug.warn("Error while trying to get collections from client", err);
-      return { items: [], pageNumber: 1, totalPages: 1, pageSize: 24 };
+      return <any>{ items: [], pageNumber: 1, total: 0, pageSize: 24 };
     }
   }
 }
