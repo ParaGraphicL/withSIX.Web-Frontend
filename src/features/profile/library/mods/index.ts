@@ -53,7 +53,7 @@ class GetModsHandler extends DbClientQuery<GetMods, IModsData> {
     // we also need to refresh then when the client is connected later?
     const r = await this.getAllClientMods(request.id);
     r.items = r.items.concat(await authorMods);
-    return r;
+    return <any>r;
   }
 
   async getAuthoredMods(request: GetMods) {
