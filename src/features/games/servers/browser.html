@@ -33,12 +33,12 @@
               </template>
             </li>
             <li if.bind="g.cutOffPoint != null && g.items.length > g.cutOffPoint">
-              <a class="show-more" href="#" click.delegate="showMore = !showMore">Show <span>${showMore ? 'less' : 'more'}</span> options <span class="icon withSIX-icon-Arrow-Down-Dir"></span></a>
+              <a class="show-more" href="#" click.delegate="showMore = !showMore">Show <span>${showMore ? 'less' : 'more'}</span> options <span class="icon withSIX-icon-Arrow-${showMore ? 'Up' : 'Down'}-Dir"></span></a>
             </li>
           </ul>
         </div>
         <div if.bind="cutOffPoint != null && filterTest.length > cutOffPoint">
-          <a class="show-more" href="#" click.delegate="showMoreGroups = !showMoreGroups">Show <span>${showMoreGroups ? 'less' : 'more'}</span> options <span class="icon withSIX-icon-Arrow-Down-Dir"></span></a>
+          <a class="show-more" href="#" click.delegate="showMoreGroups = !showMoreGroups">Show <span>${showMoreGroups ? 'less' : 'more'}</span> options <span class="icon withSIX-icon-Arrow-${showMoreGroups ? 'Up' : 'Down'}-Dir"></span></a>
         </div>
 
       </div>
