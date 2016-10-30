@@ -141,7 +141,8 @@ const filterTest: IGroup<IServer>[] = [
   {
     title: "Keyword",
     items: [
-      { title: "", name: "search", type: "text", placeholder: "Search" }
+      { title: "", name: "search", type: "text", placeholder: "Search" },
+      //{ title: "ip", name: "ipSearch", type: "text", placeholder: "ip(:port)" },
     ]
   },
   {
@@ -423,12 +424,9 @@ export class Index extends FilteredBase<IServer> {
       d(list);
       d(list.itemChanged.map(x => 1)
         .merge(this.observeEx(x => x.trigger).map(x => 1))
-        .subscribe(x => {
-          // todo: rather just ignore the keyword!
-          const f = this.filterTest[0].items[0];
-          if (f.value && f.value.trim().length < 2) { f.value = null; }
-          this.handleFilter(this.filterInfo)
-            .then(x => this.filteredItems = this.order(this.model.items));
+        .subscribe(async x => {
+          await this.handleFilter(this.filterInfo)
+          this.filteredItems = this.order(this.model.items);
         }));
     })
     setInterval(() => { if (this.w6.miniClient.isConnected) { this.refresh(); } }, 60 * 1000);
@@ -467,7 +465,12 @@ export class Index extends FilteredBase<IServer> {
     */
 
     const filter = {}
-    this.filterTest.filter(x => x.items.some(f => f.value != null)).forEach(x => {
+    const searchFilter = this.filterTest[0].items[0].value;
+    const filterValid = !searchFilter || searchFilter.length > 2;
+    const filters = filterValid ? this.filterTest : JSON.parse(JSON.stringify(this.filterTest));
+    if (!filterValid) filters[0].items[0].value = null;
+
+    filters.filter(x => x.items.some(f => f.value != null)).forEach(x => {
       let flag = 0;
       x.items.filter(f => f.value && !(f.value instanceof Array) && !f.type).map(f => f.useValue).forEach(f => {
         flag += f;
