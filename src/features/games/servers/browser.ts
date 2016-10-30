@@ -467,7 +467,7 @@ export class Index extends FilteredBase<IServer> {
     const filter = {}
     const searchFilter = this.filterTest[0].items[0].value;
     const filterValid = !searchFilter || searchFilter.length > 2;
-    const filters = filterValid ? this.filterTest : Object.assign({}, this.filterTest);
+    const filters = filterValid ? this.filterTest : JSON.parse(JSON.stringify(this.filterTest));
     if (!filterValid) filters[0].items[0].value = null;
 
     filters.filter(x => x.items.some(f => f.value != null)).forEach(x => {
