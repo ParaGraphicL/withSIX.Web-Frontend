@@ -1,7 +1,7 @@
-import {inject, autoinject, customAttribute} from 'aurelia-framework';
-import {Router} from 'aurelia-router';
-import {Subscriptions} from '../services/lib';
-import {Base} from '../services/base'
+import { inject, autoinject, customAttribute } from 'aurelia-framework';
+import { Router } from 'aurelia-router';
+import { Subscriptions } from '../services/lib';
+import { Base } from '../services/base'
 
 @inject(Element)
 export class CommandCustomAttribute {
@@ -20,6 +20,7 @@ export class CommandCustomAttribute {
     var f = $evt => {
       // TODO: when disabled (cant execute) we shouldn't receive the event anyway..
       if (value.canExecute) value();
+      $evt.stopPropagation();
     };
     this.subscriptions.subd(d => {
       this.el.addEventListener('click', f);
