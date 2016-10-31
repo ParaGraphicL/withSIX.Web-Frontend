@@ -7,7 +7,7 @@ export class FeatureToggles {
   loggedIn = this.w6.userInfo.id != null;
   private isManager = this.w6.userInfo.isManager || this.w6.userInfo.isAdmin;
   private syncFeatures = !this.w6.isClient;
-  private isTestEnvironment = EnvironmentHost.env !== Environment.Production;
+  isTestEnvironment = EnvironmentHost.env !== Environment.Production;
   // private isPreviewEnvironment = window.location.hostname === "preview.withsix.com";
   private testingFlag = window.location.search.includes("testmode=1");
   private groupTestingFlag = window.location.search.includes("testgroupmode=1")

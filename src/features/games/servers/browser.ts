@@ -545,6 +545,8 @@ export class Index extends FilteredBase<IServer> {
   filteredItems;
   get filteredTotalCount() { return this.model.total; }
 
+  getGroupLength = (g: IGroup<IServer>) => g.items.filter(x => !x.test || this.features.isTestEnvironment).length;
+
   async refreshServerInfo(servers: IServer[]) {
     const dsp = this.observableFromEvent<{ items: IServer[], gameId: string }>("server.serverInfoReceived")
       .subscribe(evt => {
