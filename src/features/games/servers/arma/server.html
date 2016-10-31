@@ -42,7 +42,8 @@
     <div class="serverState">${SessionState[model.serverState]}</div>
   </div>
   <div class="td">
-    <span class="icon ${model.isFavorite ? 'withSIX-icon-Star' : 'withSIX-icon-Star-Outline'}"></span>
+    <command-button class="favorite-button" model.bind="toggleFavorite" icon="${model.isFavorite ? 'withSIX-icon-Star' : 'withSIX-icon-Star-Outline'}">
+    </command-button>
     <!--<icon cls="withSIX-icon-Star-Outline" 			cls-on="withSIX-icon-Star" optional-title="Favorite" model.bind="model.isFavorite"></icon>-->
   </div>
 </template>

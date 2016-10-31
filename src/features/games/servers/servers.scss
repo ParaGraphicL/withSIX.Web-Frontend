@@ -122,6 +122,11 @@ $padding: 16px;
     margin-left: $filter-width + $gutter-width;
     $border-color: $colorSixSoftGray;
     color: $colorSixGray;
+    .favorite-button {
+      .naked-button {
+        background-color: transparent;
+      }
+    }
     .server-list-info {
       height: 40px;
     }
@@ -174,11 +179,11 @@ $padding: 16px;
       @function bla($w) {
         @return $padding+$padding+$w;
       }
-      button {
-        width: 64px;
-        height: 48px;
-      }
       .join-button {
+        // button {
+        //   width: 64px;
+        //   height: 48px;
+        // }
         position: absolute;
         left: - bla(16px);
         top: $padding;

@@ -15,7 +15,7 @@
     </div>
     <div class="tbody">
       <div class="tr ${s.modList.length > 0 ? 'has-mods' : ''} mod-state-${s.modState}" repeat.for="s of filteredItems"
-        click.trigger="showServer(s)" as-element="compose" model.bind="s" view-model="./server">
+        click.delegate="showServer(s)" as-element="compose" model.bind="s" view-model="./server">
       </div>
     </div>
   </div>

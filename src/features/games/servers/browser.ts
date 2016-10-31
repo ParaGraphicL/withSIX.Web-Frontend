@@ -76,7 +76,8 @@ enum ServerFilter {
   Verified = 1,
   Open = 2,
   Dedicated = 4,
-  Local = 8
+  Local = 8,
+  Favorite = 16
 }
 
 interface IGroup<T> {
@@ -120,6 +121,7 @@ const columns = [
   {
     name: "favorites",
     icon: "withSIX-icon-Star-Outline",
+    direction: 1
   }
 ]
 
@@ -211,6 +213,7 @@ const filterTest: IGroup<IServer>[] = [
       //buildFilter(ServerFilter, ServerFilter.Verified, undefined, "withSIX-icon-Verified"),
       //buildFilter(ServerFilter, ServerFilter.Locked, undefined, "withSIX-icon-Lock"),
       buildFilter(ServerFilter, ServerFilter.Open, "No password", "withSIX-icon-Lock-Open"),
+      buildFilter(ServerFilter, ServerFilter.Favorite, "Favorits only", "withSIX-icon-Star"),
       //buildFilter(ServerFilter, ServerFilter.Dedicated, undefined, "withSIX-icon-Cloud"),
       //buildFilter(ServerFilter, ServerFilter.Local),
       { title: "", name: "ipendpoint", type: "text", placeholder: "IP address" },
@@ -458,9 +461,12 @@ export class Index extends FilteredBase<IServer> {
     })
     this.enabledFilters = this.defaultEnabled;
     this.baskets = this.basketService.getGameBaskets(this.w6.activeGame.id);
+    this.favorites = this.w6.userInfo.id ? (await new GetFavorites(this.w6.activeGame.id).handle(this.mediator)).servers : [];
     await super.activate(params);
     this.filteredItems = this.order(this.model.items)
   }
+
+  favorites: string[];
 
   baskets: { active: { model: { items: IBasketItem[] } } }
 
@@ -568,12 +574,24 @@ export class Index extends FilteredBase<IServer> {
   }
 
   order(items) {
+
+    items.forEach(x => {
+      const s = (<any>x);
+      if (!s.favorites) {
+        s.favorites = this.favorites
+        s.isFavorite = this.favorites.some(f => f === s.connectionAddress);
+      }
+    });
     const anHourAgo = moment().subtract("hours", 1);
     items = items.filter(x => x.isFavorite || moment(x.updatedAt).isAfter(anHourAgo));
     let sortOrders: any[] = [];
-    if (this.activeOrder && this.activeOrder.name === 'players') sortOrders.push({ name: 'currentPlayers', direction: this.activeOrder.direction });
+    if (this.activeOrder && this.activeOrder.name === 'players')
+      sortOrders.push({ name: 'currentPlayers', direction: this.activeOrder.direction });
+
+    if (sortOrders.length === 0) return items;
+
     let sortFunctions = sortOrders.map((x, i) => (a, b) => {
-      let order = x.direction == SortDirection.Desc ? -1 : 1;
+      let order = x.direction === SortDirection.Desc ? -1 : 1;
       if (x.customSort) return x.customSort(a, b) * order;
       if (a[x.name] > b[x.name]) return 1 * order;
       if (a[x.name] < b[x.name]) return (1 * -1) * order;
@@ -644,6 +662,22 @@ class GetServersHandler extends DbQuery<GetServers, IPaginated<IServer>> {
 
 export class GetServer extends Query<IServer[]> {
   constructor(public gameId: string, public addresses: string[], public includeRules = false, public includePlayers = false) { super(); }
+}
+
+interface IServerFavorites {
+  servers: string[];
+}
+
+
+class GetFavorites extends Query<IServerFavorites> {
+  constructor(public gameId) { super(); }
+}
+
+@handlerFor(GetFavorites)
+class GetFavoritesHandler extends DbClientQuery<GetFavorites, IServerFavorites> {
+  handle(message: GetFavorites) {
+    return this.context.getCustom(`games/${message.gameId}/favorite-servers`);
+  }
 }
 
 @handlerFor(GetServer)
