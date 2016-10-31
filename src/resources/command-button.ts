@@ -5,17 +5,16 @@ export class CommandButtonCustomElement {
   @bindable noProcessing;
   @bindable type = "button";
   private _cancel;
-  private _icon: string;
   @bindable
   get cancel() { return this._cancel || this.model.cancel; }
   set cancel(value) { this._cancel = value; }
+
+  @bindable icon: string;
 
   get name() { return this.model.name; }
   get command() { return this.model; }
   get cls() { return this.model.cls; }
   get textCls() { return this.model.textCls; }
-  @bindable
-  get icon() { return this._icon || this.model.icon; }
   get isVisible() { return this.model.isVisible; }
   get tooltip() { return this.model.tooltip; }
 }

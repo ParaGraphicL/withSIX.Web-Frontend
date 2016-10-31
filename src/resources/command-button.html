@@ -3,8 +3,8 @@
     <button command.bind="command" type.bind="type" class.bind="cls" class="naked-button" show.bind="isVisible">
       <span>
         <slot>
-          <span class="icon ${icon} ${name ? 'with-text' : ''}" if.bind="icon" show.bind="name || !command.isExecuting"></span>
-          <span class="text" class.bind="textCls" innerHTML.bind="name | text"></span>
+          <span class="icon ${icon || model.icon} ${name ? 'with-text' : ''}" if.bind="icon || model.icon" show.bind="name || !command.isExecuting"></span>
+          <span class="text" class.bind="textCls" innerHTML.bind="name | text" if.bind="name"></span>
         </slot>
       </span>
       <span class="fa fa-spinner fa-spin" title.bind="name" if.bind="!noProcessing" show.bind="command.isExecuting"></span>
@@ -14,3 +14,4 @@
     </button>
   </conditional-title>
 </template>
+
