@@ -10,6 +10,7 @@ import {
   IFilter,
   DbClientQuery,
   uiCommand2,
+  VoidCommand,
   InstallContents, LaunchAction, LaunchContents, LaunchGame,
   UiContext, BasketService, GameClientInfo, ItemState
 } from "../../../../framework";
@@ -38,6 +39,24 @@ export class Server extends ViewModel {
   }
 
   join = uiCommand2("Join", () => this.launch(), { icon: "withSIX-icon-Download" });
+  toggleFavorite = uiCommand2("", () => this.toggleFavoriteInternal());
+
+  async toggleFavoriteInternal() {
+    if (!this.w6.userInfo.id) {
+      this.w6.openLoginDialog();
+      return;
+    }
+    if (this.model.isFavorite) {
+      await new RemoveFavorite(this.w6.activeGame.id, this.model.connectionAddress).handle(this.mediator);
+      this.model.isFavorite = false;
+      this.tools.removeEl(this.model.favorites, this.model.connectionAddress);
+    } else {
+      await new AddFavorite(this.w6.activeGame.id, this.model.connectionAddress).handle(this.mediator);
+      this.model.isFavorite = true;
+      this.model.favorites.push(this.model.connectionAddress);
+    }
+  }
+
   updateState() {
     if (this.model.modList.length === 0) {
       this.model.modState = "uptodate";
@@ -93,4 +112,24 @@ export class Server extends ViewModel {
   }
 
   getUrl = () => `/p/${this.w6.activeGame.slug}/servers/${this.model.queryAddress.replace(/\./g, "-")}/${this.model.name.sluggifyEntityName()}`
+}
+
+class AddFavorite extends VoidCommand {
+  constructor(public gameId: string, public endpoint: string) { super(); }
+}
+
+@handlerFor(AddFavorite)
+class AddFavoriteHandler extends DbClientQuery<AddFavorite, void> {
+  handle(message: AddFavorite) { return this.context.postCustom(`games/${message.gameId}/favorite-servers`, message); }
+}
+
+class RemoveFavorite extends VoidCommand {
+  constructor(public gameId: string, public endpoint: string) { super(); }
+}
+
+@handlerFor(RemoveFavorite)
+class RemoveFavoriteHandler extends DbClientQuery<RemoveFavorite, void> {
+  handle(message: RemoveFavorite) {
+    return this.context.deleteCustom(`games/${message.gameId}/favorite-servers/${message.endpoint}`);
+  }
 }

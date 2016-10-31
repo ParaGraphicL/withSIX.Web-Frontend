@@ -11,9 +11,7 @@
       <div>
         <div repeat.for="g of filterTest">
           <a class="toggle-group" href="#" click.delegate="g.hide = !g.hide">
-            <div class="pull-right">
-              <span class="icon withSIX-icon-Arrow-${!g.hide ? 'Up' : 'Down'}-Dir"></span>
-            </div>
+            <span class="icon withSIX-icon-Arrow-${!g.hide ? 'Down' : 'Right'}-Dir"></span>
             <b class="title">${g.titleOverride || g.title}</b>
           </a>
 
