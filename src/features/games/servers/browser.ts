@@ -85,6 +85,7 @@ interface IGroup<T> {
     title: string;
     titleOverride?: string;
     name?: string
+    test?: boolean;
     type?: string;
     placeholder?: string;
     defaultValue?: () => any;
@@ -93,6 +94,7 @@ interface IGroup<T> {
     useValue?;
     range?: number[];
   }[];
+  hide?: boolean;
   cutOffPoint?: number;
 }
 
@@ -188,8 +190,8 @@ const filterTest: IGroup<IServer>[] = [
       buildFilter(Distance, Distance.Medium, "Medium (< 2000km)"),
       buildFilter(Distance, Distance.Far, "Far (> 2000km)"),
       // TODO: Auto complete or selector?
-      { title: "Country", name: "country", type: "text", placeholder: "Country Code" },
-      { title: "Continent", name: "continent", type: "text", placeholder: "Continent Code" },
+      { title: "Country", name: "country", type: "text", placeholder: "Country Code", test: true },
+      { title: "Continent", name: "continent", type: "text", placeholder: "Continent Code", test: true },
     ],
   },
   {
@@ -204,15 +206,18 @@ const filterTest: IGroup<IServer>[] = [
     cutOffPoint: 3
   }, {
     title: "Server",
+    hide: true,
     items: [
       //buildFilter(ServerFilter, ServerFilter.Verified, undefined, "withSIX-icon-Verified"),
       //buildFilter(ServerFilter, ServerFilter.Locked, undefined, "withSIX-icon-Lock"),
       buildFilter(ServerFilter, ServerFilter.Open, "No password", "withSIX-icon-Lock-Open"),
       //buildFilter(ServerFilter, ServerFilter.Dedicated, undefined, "withSIX-icon-Cloud"),
       //buildFilter(ServerFilter, ServerFilter.Local),
+      { title: "", name: "ipendpoint", type: "text", placeholder: "IP address" },
     ]
   }, {
     title: "Gameplay",
+    hide: true,
     items: [
       {
         name: "crosshair",
@@ -293,12 +298,12 @@ const filterTest: IGroup<IServer>[] = [
       }
     ]
   },
+  /*
   {
     title: "Advanced",
     items: [
-      { title: "IP", name: "ipendpoint", type: "text", placeholder: "IP address" },
     ]
-  }
+  }*/
 ]
 
 export interface IOrder {
@@ -311,7 +316,6 @@ export interface IOrder {
 export class Index extends FilteredBase<IServer> {
   constructor(ui, private basketService: BasketService) { super(ui) }
 
-  cutOffPoint = 6;
   filterTest = filterTest;
   columns = columns;
   activeOrder: IOrder = columns[3];

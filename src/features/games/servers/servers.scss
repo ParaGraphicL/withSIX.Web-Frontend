@@ -82,6 +82,13 @@ $padding: 16px;
     background-color: $colorSixLightGray;
     min-height: 600px;
     //border: 1px solid $colorSixGray;
+    select {
+      width: 100px;
+    }
+    .toggle-group {
+      color: inherit;
+      text-decoration: none;
+    }
     .show-more {
       color: $colorSixBlue;
       text-decoration: none;
