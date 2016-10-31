@@ -125,14 +125,25 @@ const buildFilter = (e, f, titleOverride?: string, icon?: string) => {
   return { title: <string>camelCase(e[f]), useValue: f, titleOverride, icon }
 }
 
+const defaultBoolTechItems = () => [{
+  title: "Any",
+  value: null,
+}, {
+  title: "Enabled",
+  value: true,
+}, {
+  title: "Disabled",
+  value: false,
+}];
+
 const defaultBoolItems = () => [{
   title: "Any",
   value: null,
 }, {
-  title: "On",
+  title: "Yes",
   value: true,
 }, {
-  title: "Off",
+  title: "No",
   value: false,
 }];
 
@@ -171,10 +182,14 @@ const filterTest: IGroup<IServer>[] = [
   },
   {
     title: "Location",
+    cutOffPoint: 3,
     items: [
       buildFilter(Distance, Distance.Nearby, "Nearby (< 500km)"),
       buildFilter(Distance, Distance.Medium, "Medium (< 2000km)"),
       buildFilter(Distance, Distance.Far, "Far (> 2000km)"),
+      // TODO: Auto complete or selector?
+      { title: "Country", name: "country", type: "text", placeholder: "Country Code" },
+      { title: "Continent", name: "continent", type: "text", placeholder: "Continent Code" },
     ],
   },
   {
@@ -203,7 +218,7 @@ const filterTest: IGroup<IServer>[] = [
         name: "crosshair",
         type: "value",
         title: "Weapon Crosshair",
-        items: defaultBoolItems()
+        items: defaultBoolTechItems()
       },
       {
         name: "battleye",
@@ -215,7 +230,7 @@ const filterTest: IGroup<IServer>[] = [
         name: "thirdPerson",
         type: "value",
         title: "3rd Person Camera",
-        items: defaultBoolItems()
+        items: defaultBoolTechItems()
       },
       {
         name: "flightModel",
@@ -276,6 +291,12 @@ const filterTest: IGroup<IServer>[] = [
           }
         ]
       }
+    ]
+  },
+  {
+    title: "Advanced",
+    items: [
+      { title: "IP", name: "ipendpoint", type: "text", placeholder: "IP address" },
     ]
   }
 ]
@@ -541,6 +562,8 @@ export class Index extends FilteredBase<IServer> {
   }
 
   order(items) {
+    const anHourAgo = moment().subtract("hours", 1);
+    items = items.filter(x => x.isFavorite || moment(x.updatedAt).isAfter(anHourAgo));
     let sortOrders: any[] = [];
     if (this.activeOrder && this.activeOrder.name === 'players') sortOrders.push({ name: 'currentPlayers', direction: this.activeOrder.direction });
     let sortFunctions = sortOrders.map((x, i) => (a, b) => {
