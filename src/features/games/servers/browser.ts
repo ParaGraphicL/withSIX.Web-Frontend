@@ -430,6 +430,7 @@ export class Index extends FilteredBase<IServer> {
   ];
 
   async activate(params) {
+    this.params = params;
     if (params) {
       if (params.steamId) {
         this.defaultEnabled.push({
@@ -447,6 +448,7 @@ export class Index extends FilteredBase<IServer> {
         })
       }
     }
+    if (this.params.modId) { this.filterTest[1].items.removeEl(this.filterTest[1].items[1]); }
     this.subscriptions.subd(d => {
       const list = this.listFactory.getList(this.filterTest.map(x => x.items).flatten(), ["value"]);
       d(list);
@@ -519,6 +521,8 @@ export class Index extends FilteredBase<IServer> {
     if (this.filterTest[1].items[0].value) {
       filter["Mods"].modIds = this.baskets.active.model.items.map(x => x.id);
     }
+
+    if (this.params.modId) { (<any>filter).mod = { id: this.params.modId, type: "withSIX" } }
 
     const orders = [];
     if (this.activeOrder) { orders.push({ column: this.activeOrder.name, direction: this.activeOrder.direction }); }

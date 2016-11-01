@@ -34,6 +34,7 @@ export const configure = (app: ng.IModule) => {
         when('/:gameSlug/mods', 'game.mods').
         when('/:gameSlug/mods/:modId/:modSlug?/download', 'game.modsShow.download').
         when('/:gameSlug/mods/:modId/:modSlug?/related', 'game.modsShow.related').
+        when('/:gameSlug/mods/:modId/:modSlug?/servers', 'game.modsShow.servers').
         when('/:gameSlug/mods/:modId/:modSlug?/credits', 'game.modsShow.credits').
         when('/:gameSlug/mods/:modId/:modSlug?/readme', 'game.modsShow.readme').
         when('/:gameSlug/mods/:modId/:modSlug?/license', 'game.modsShow.license').
@@ -107,7 +108,7 @@ export const configure = (app: ng.IModule) => {
           controller: 'ModRelatedController',
           templateUrl: '/src_legacy/app/play/mods/show/related.html',
           resolve: setupQuery(GetModRelatedQuery)
-        }).segment('download', {
+        }).segment('servers', {}).segment('download', {
           templateUrl: '/src_legacy/app/play/mods/show/download.html',
         }).segment('credits', {
           controller: 'ModCreditsController',
