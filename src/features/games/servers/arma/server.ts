@@ -1,4 +1,4 @@
-import { SessionState } from "../server-render-base";
+import { SessionState, SavePlayedServer } from "../server-render-base";
 import { IServer } from "../browser";
 import {
   ViewModel,
