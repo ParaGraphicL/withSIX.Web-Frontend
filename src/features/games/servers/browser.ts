@@ -213,7 +213,7 @@ const filterTest: IGroup<IServer>[] = [
       //buildFilter(ServerFilter, ServerFilter.Verified, undefined, "withSIX-icon-Verified"),
       //buildFilter(ServerFilter, ServerFilter.Locked, undefined, "withSIX-icon-Lock"),
       buildFilter(ServerFilter, ServerFilter.Open, "No password", "withSIX-icon-Lock-Open"),
-      buildFilter(ServerFilter, ServerFilter.Favorite, "Favorits only", "withSIX-icon-Star"),
+      buildFilter(ServerFilter, ServerFilter.Favorite, "Favorites only", "withSIX-icon-Star"),
       //buildFilter(ServerFilter, ServerFilter.Dedicated, undefined, "withSIX-icon-Cloud"),
       //buildFilter(ServerFilter, ServerFilter.Local),
       { title: "", name: "ipendpoint", type: "text", placeholder: "IP address" },
@@ -463,12 +463,20 @@ export class Index extends FilteredBase<IServer> {
     })
     this.enabledFilters = this.defaultEnabled;
     this.baskets = this.basketService.getGameBaskets(this.w6.activeGame.id);
-    this.favorites = this.w6.userInfo.id ? (await new GetFavorites(this.w6.activeGame.id).handle(this.mediator)).servers : [];
+    if (this.w6.userInfo.id) {
+      const info = await new GetFavorites(this.w6.activeGame.id).handle(this.mediator);
+      this.favorites = info.servers;
+      this.history = info.history;
+    } else {
+      this.favorites = [];
+      this.history = [];
+    }
     await super.activate(params);
     this.filteredItems = this.order(this.model.items)
   }
 
   favorites: string[];
+  history: string[];
 
   baskets: { active: { model: { items: IBasketItem[] } } }
 
@@ -582,7 +590,8 @@ export class Index extends FilteredBase<IServer> {
     items.forEach(x => {
       const s = (<any>x);
       if (!s.favorites) {
-        s.favorites = this.favorites
+        s.favorites = this.favorites;
+        s.hasPlayed = this.history.some(h => h === s.connectionAddress);
         s.isFavorite = this.favorites.some(f => f === s.connectionAddress);
       }
     });

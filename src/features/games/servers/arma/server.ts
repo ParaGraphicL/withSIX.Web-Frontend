@@ -97,6 +97,8 @@ export class Server extends ViewModel {
       act.serverAddress = this.model.connectionAddress || this.model.queryAddress;
       await act.handle(this.mediator);
     }
+
+    if (this.w6.userInfo.id) await new SavePlayedServer(this.w6.activeGame.id, this.model.connectionAddress).handle(this.mediator);
   }
 
   // workaround for Table->Tr->Compose problem
@@ -133,3 +135,4 @@ class RemoveFavoriteHandler extends DbClientQuery<RemoveFavorite, void> {
     return this.context.deleteCustom(`games/${message.gameId}/favorite-servers/${message.endpoint}`);
   }
 }
+

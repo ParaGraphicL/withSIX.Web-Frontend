@@ -1,6 +1,6 @@
 import {
   BasketService, DbClientQuery, GameClientInfo, GameHelper, IServerInfo, InstallContents, LaunchAction, LaunchContents, LaunchGame,
-  Query, UiContext, ViewModel, handlerFor, uiCommand2,
+  Query, UiContext, ViewModel, handlerFor, uiCommand2, VoidCommand
 } from "../../../framework";
 
 import { inject } from "aurelia-framework";
@@ -109,6 +109,7 @@ export class ServerRenderBase extends ViewModel {
       act.serverAddress = this.model.connectionAddress || this.model.queryAddress;
       await act.handle(this.mediator);
     }
+    if (this.w6.userInfo.id) await new SavePlayedServer(this.w6.activeGame.id, this.model.connectionAddress).handle(this.mediator);
   }
 
   extractInfo(text: string) {
@@ -240,4 +241,13 @@ class GetModInfoQuery extends DbClientQuery<GetModInfo, any>  {
   handle(request: GetModInfo) {
     return this.context.postCustom("mods/get-mod-mappings", { gameId: request.gameId, inputMappings: request.inputMappings });
   }
+}
+
+export class SavePlayedServer extends VoidCommand {
+  constructor(public gameId: string, public endpoint: string) { super(); }
+}
+
+@handlerFor(SavePlayedServer)
+class SavePlayedServerHandler extends DbClientQuery<SavePlayedServer, void> {
+  handle(message: SavePlayedServer) { return this.context.postCustom(`games/${message.gameId}/favorite-servers/played`, message); }
 }

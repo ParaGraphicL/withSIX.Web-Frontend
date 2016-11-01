@@ -1,5 +1,5 @@
 import { GameHelper, IIPEndpoint, IServerInfo, LaunchAction, LaunchGame, ViewModel, uiCommand2 } from "../../../framework";
-import { GetServer } from "./server-render-base";
+import { GetServer, SavePlayedServer } from "./server-render-base";
 import { ServerRender } from "./server-render";
 
 interface Info {
@@ -33,11 +33,12 @@ export class SbServerItem extends ViewModel {
 
   showServer() { return this.dialog.open({ model: this.queryAddress, viewModel: ServerRender }) }
 
-  launch() {
+  async launch() {
     const act = new LaunchGame(this.w6.activeGame.id);
     act.action = LaunchAction.Join;
     act.serverAddress = this.queryAddress;
-    return act.handle(this.mediator)
+    await act.handle(this.mediator)
+    //if (this.w6.userInfo.id) await new SavePlayedServer(this.w6.activeGame.id, this.model.connectionAddress).handle(this.mediator);
   }
 
   get name() { return this.model.name || this.model2.info.name; };
