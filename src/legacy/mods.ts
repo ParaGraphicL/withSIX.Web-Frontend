@@ -11,7 +11,7 @@ import {
 import { ProcessingState } from '../services/basket-service';
 
 import { LegacyMediator } from '../services/mediator';
-import { ModHelper, CollectionHelper, MissionHelper } from '../services/helpers';
+import { GameHelper, ModHelper } from '../services/helpers';
 
 import { RestoreBasket, OpenCreateCollectionDialog, OpenAddModDialog, OpenAddModsToCollectionsDialog } from '../services/api';
 import { ForkCollection } from '../features/profile/content/collection';
@@ -1110,6 +1110,10 @@ export class ModController extends ContentModelController<IBreezeMod> {
 
     if (this.$scope.model.dependentsCount > 0 || this.$scope.model.collectionsCount > 0)
       menuItems.push({ header: "Related", segment: "related" });
+
+    if (this.$scope.features.serverBrowser && this.$scope.game.id.toLowerCase() === GameHelper.gameIds.Arma3.toLowerCase()) {
+      menuItems.push({ header: "Servers", segment: "servers" })
+    }
 
     if (this.$scope.environment !== Tools.Environment.Production) {
       menuItems.push({ header: "Credits", segment: "credits" });
