@@ -512,7 +512,7 @@ export class Index extends ViewModel {
       d(this.reload = uiCommand2("Reload", async () => this.trigger++, {
         canExecuteObservable: hasPending.map(x => !x),
       }));
-      const ival = setInterval(() => { if (this.w6.miniClient.isConnected) { this.refresh(); } }, 60 * 1000);
+      const ival = setInterval(() => { if (this.w6.miniClient.isConnected && this.features.serverFeatures) { this.refresh(); } }, 60 * 1000);
       d(() => clearInterval(ival));
     });
     this.handleBetaDialog();
@@ -575,11 +575,13 @@ export class Index extends ViewModel {
       page
     }).handle(this.mediator);
 
-    if (this.w6.miniClient.isConnected) this.refreshServerInfo(servers.items);
+    if (this.w6.miniClient.isConnected && this.features.serverFeatures) this.refreshServerInfo(servers.items);
     return servers;
   }
 
-  refresh = uiCommand2("Refresh", () => this.refreshServerInfo(this.model.items));
+  refresh = uiCommand2("Refresh", () => this.refreshServerInfo(this.model.items), {
+    canExecuteObservable: this.observeEx(x => x.features.serverFeatures)
+  });
   reload;
 
   clear = uiCommand2("Clear", async () => this.clearFilters());

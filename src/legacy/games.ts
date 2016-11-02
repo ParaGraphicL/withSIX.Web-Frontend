@@ -775,7 +775,7 @@ class GameController extends BaseQueryController<IBreezeGame> {
     if (model.supportsCollections)
       items.push({ header: "Collections", segment: "collections", icon: "icon withSIX-icon-Nav-Collection" });
 
-    if (model.supportsServers && $scope.features.serverBrowser)
+    if (model.supportsServers)
       items.push({ header: "Servers", segment: "servers", icon: "icon withSIX-icon-Nav-Server" });
 
     if ($scope.w6.enableBasket)
