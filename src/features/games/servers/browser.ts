@@ -535,7 +535,7 @@ export class Index extends ViewModel {
 
   async handleBetaDialog() {
     if (this.w6.settings.serversBetaDialog) { return; }
-    const r = await this.dialog.open({ viewModel: BetaDialog, model: {} });
+    const r = await this.dialog.open({ viewModel: BetaDialog, model: { dontShowAgain: false } });
     if (r.output) { this.w6.updateSettings(s => s.serversBetaDialog = true); }
   }
 
