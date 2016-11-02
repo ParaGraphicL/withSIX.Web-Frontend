@@ -453,6 +453,7 @@ enum UpdateState {
 
 interface ISettings {
   template?: string; hasSync?: boolean; downloadedSync?: boolean; downloadedPWS?: boolean; remindedFinalize?: boolean;
+  serversBetaDialog?: boolean;
 }
 
 export class W6 {

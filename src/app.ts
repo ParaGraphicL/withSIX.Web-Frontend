@@ -13,6 +13,7 @@ import { RenderService } from "./services/renderer/render-service";
 import { GameBaskets } from "./features/game-baskets";
 import { AddModsToCollections } from "./features/games/add-mods-to-collections";
 import { CreateCollectionDialog } from "./features/games/collections/create-collection-dialog";
+import { BetaDialog } from "./features/games/servers/beta-dialog";
 import { HostServer } from "./features/games/servers/host-server";
 import { ServerRender } from "./features/games/servers/server-render";
 import { FeaturesModule } from "./features/index";
@@ -149,6 +150,7 @@ export class App extends ViewModel {
     Origin.set(UserErrorDialog, { moduleId: "features/user-error-dialog", moduleMember: "UserErrorDialog" });
     Origin.set(MessageDialog, { moduleId: "features/message-dialog", moduleMember: "MessageDialog" });
     Origin.set(Finalize, { moduleId: "features/login/finalize", moduleMember: "Finalize" });
+    Origin.set(BetaDialog, { moduleId: "features/games/servers/beta-dialog", moduleMember: "BetaDialog" });
     Origin.set(HostServer, { moduleId: "features/games/servers/host-server", moduleMember: "HostServer" });
     Origin.set(ServerRender, { moduleId: "features/games/servers/server-render", moduleMember: "ServerRender" });
 

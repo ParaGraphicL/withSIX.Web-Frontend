@@ -12,6 +12,7 @@ import {
   UiContext, BasketService, IBasketItem,
   InstallContents, LaunchAction, LaunchContents, LaunchGame,
 } from "../../../framework";
+import { BetaDialog } from './beta-dialog';
 import { inject } from 'aurelia-framework';
 import { camelCase } from '../../../helpers/utils/string';
 import { FilteredBase } from "../../filtered-base";
@@ -528,7 +529,14 @@ export class Index extends ViewModel {
       }));
       const ival = setInterval(() => { if (this.w6.miniClient.isConnected) { this.refresh(); } }, 60 * 1000);
       d(() => clearInterval(ival));
-    })
+    });
+    this.handleBetaDialog();
+  }
+
+  async handleBetaDialog() {
+    if (this.w6.settings.serversBetaDialog) { return; }
+    const r = await this.dialog.open({ viewModel: BetaDialog, model: {} });
+    if (r.output) { this.w6.updateSettings(s => s.serversBetaDialog = true); }
   }
 
   favorites: string[];
