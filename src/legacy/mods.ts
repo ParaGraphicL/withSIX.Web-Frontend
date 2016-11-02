@@ -1111,7 +1111,7 @@ export class ModController extends ContentModelController<IBreezeMod> {
     if (this.$scope.model.dependentsCount > 0 || this.$scope.model.collectionsCount > 0)
       menuItems.push({ header: "Related", segment: "related" });
 
-    if (this.$scope.features.serverBrowser && this.$scope.game.id.toLowerCase() === GameHelper.gameIds.Arma3.toLowerCase()) {
+    if (this.$scope.game.id.toLowerCase() === GameHelper.gameIds.Arma3.toLowerCase()) {
       menuItems.push({ header: "Servers", segment: "servers" })
     }
 

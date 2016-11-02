@@ -71,8 +71,8 @@ export class ServerRenderBase extends ViewModel {
   mods;
   links;
   clientLoaded;
-  refresh = uiCommand2("", () => this.loadModel(), { icon: "withSIX-icon-Reload" });
-  join = uiCommand2("Join", () => this.launch(), { icon: "withSIX-icon-Download" });
+  refresh = uiCommand2("", () => this.loadModel(), { icon: "withSIX-icon-Reload", canExecuteObservable: this.observeEx(x => x.features.serverFeatures) });
+  join = uiCommand2("Join", () => this.launch(), { icon: "withSIX-icon-Download", canExecuteObservable: this.observeEx(x => x.features.serverFeatures) });
   detailsShown = false;
   dlcs = [];
   gameInfo: GameClientInfo;
@@ -171,10 +171,10 @@ export class ServerRenderBase extends ViewModel {
 
     this.url = `/p/${this.w6.activeGame.slug}/servers/${this.address.replace(/\./g, "-")}/${this.model.name.sluggifyEntityName()}`;
 
-    if (this.w6.miniClient.isConnected) { this.refresh(); }
+    if (this.w6.miniClient.isConnected && this.features.serverFeatures) { this.refresh(); }
     this.subscriptions.subd(d => {
       const interval = setInterval(() => {
-        if (!this.w6.miniClient.isConnected) { return; }
+        if (!this.w6.miniClient.isConnected || !this.features.serverFeatures) { return; }
         if (this.refresh.canExecute) { this.refresh(); }
       }, 15 * 1000);
       clearTimeout(interval);
