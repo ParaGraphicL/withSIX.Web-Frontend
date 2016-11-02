@@ -4,21 +4,25 @@
       <h2>Server-browser withSIX (BETA)</h2>
     </ai-dialog-header>
     <ai-dialog-body>
-      <p>Here you can find and join any server, while we download and install all required mods <br /> for
-        you.
-      </p>
-      <p>
-        This new feature is currently in development. As we add new functions<br/> and apply design improvements,
-        your experience might change.
-      </p>
-      <p>Please share your feedback with us and report any issues you encounter,<br /> so we can provide
-        you with a top notch server-browser.</p>
+      <b>Key Features</b>
+      <ul>
+        <li>Hyper fast Server list, filtering and ordering</li>
+        <li>Select servers by mod and playlist</li>
+        <li>Advanced filter</li>
+        <li>Click and join</li>
+        <li>Automatically download and install required mods</li>
+        <li>Steam Workshop Support</li>
+      </ul>
+
+      <p>This is a preview release, so expect many more improvements to come.</p>
+      <p>If you encounter a BUG, or if we missed any feature that matters to you, share your feedback with
+        us.</p>
     </ai-dialog-body>
     <ai-dialog-footer>
       <div class="pull-left">
         &nbsp;
         <label for="cb" style="margin-top: 4px">
-          <input name="cb" id="cb" type="checkbox" value.bind="model.dontShowAgain" />
+          <input name="cb" id="cb" type="checkbox" checked.bind="model.dontShowAgain" />
           Don't show again
         </label>
       </div>
@@ -26,4 +30,3 @@
     </ai-dialog-footer>
   </ai-dialog>
 </template>
-
