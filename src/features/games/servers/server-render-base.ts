@@ -25,6 +25,7 @@ export interface ExtendedServerInfo extends IServerInfo {
   downloadableContent: Dlcs;
   created: Date;
   updatedAt: Date;
+  hasPlayed: boolean;
 }
 
 enum HelicopterFlightModel {
@@ -110,6 +111,7 @@ export class ServerRenderBase extends ViewModel {
       await act.handle(this.mediator);
     }
     if (this.w6.userInfo.id) await new SavePlayedServer(this.w6.activeGame.id, this.model.connectionAddress).handle(this.mediator);
+    this.model.hasPlayed = true;
   }
 
   extractInfo(text: string) {

@@ -77,7 +77,8 @@ enum ServerFilter {
   Open = 2,
   Dedicated = 4,
   Local = 8,
-  Favorite = 16
+  Favorite = 16,
+  Played = 32,
 }
 
 interface IGroup<T> {
@@ -214,6 +215,7 @@ const filterTest: IGroup<IServer>[] = [
       //buildFilter(ServerFilter, ServerFilter.Locked, undefined, "withSIX-icon-Lock"),
       buildFilter(ServerFilter, ServerFilter.Open, "No password", "withSIX-icon-Lock-Open"),
       buildFilter(ServerFilter, ServerFilter.Favorite, "Favorites only", "withSIX-icon-Star"),
+      buildFilter(ServerFilter, ServerFilter.Played, "Played only", "withSIX-icon-Joystick"),
       //buildFilter(ServerFilter, ServerFilter.Dedicated, undefined, "withSIX-icon-Cloud"),
       //buildFilter(ServerFilter, ServerFilter.Local),
       { title: "", name: "ipendpoint", type: "text", placeholder: "IP address" },
@@ -678,7 +680,7 @@ export class GetServer extends Query<IServer[]> {
 }
 
 interface IServerFavorites {
-  servers: string[];
+  servers: string[]; history: string[];
 }
 
 

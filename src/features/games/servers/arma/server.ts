@@ -97,8 +97,8 @@ export class Server extends ViewModel {
       act.serverAddress = this.model.connectionAddress || this.model.queryAddress;
       await act.handle(this.mediator);
     }
-
     if (this.w6.userInfo.id) await new SavePlayedServer(this.w6.activeGame.id, this.model.connectionAddress).handle(this.mediator);
+    this.model.hasPlayed = true;
   }
 
   // workaround for Table->Tr->Compose problem
