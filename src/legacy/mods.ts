@@ -868,7 +868,7 @@ export class ModController extends ContentModelController<IBreezeMod> {
       }
     };
 
-    var timeout = 0;
+    var timeout;
     var _updating = false;
 
     var getCurrentChange = () => {

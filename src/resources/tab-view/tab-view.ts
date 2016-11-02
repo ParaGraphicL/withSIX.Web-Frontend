@@ -1,6 +1,6 @@
-import {bindable, inject, bindingMode} from 'aurelia-framework';
-import {ViewModel} from '../../services/viewmodel';
-import {ShowTabNotification, SelectTab, ITabNotification} from '../../services/api';
+import { bindable, inject, bindingMode } from 'aurelia-framework';
+import { ViewModel } from '../../services/viewmodel';
+import { ShowTabNotification, SelectTab, ITabNotification } from '../../services/api';
 
 interface IProgressInfo {
   progress?: number;
@@ -21,7 +21,7 @@ export interface ITab {
   notificationCount?: number;
   progressInfo?: IProgressInfo;
   notification?: ITabNotification;
-  notificationTimeOut?: number;
+  notificationTimeOut?; // Timer;
   instant?: boolean;
   disabledAction?: Function;
 }
