@@ -1,4 +1,5 @@
 import {
+  Rx,
   ViewModel,
   Query,
   DbQuery,
@@ -32,7 +33,10 @@ export interface IServer {
   version: string;
   updatedAt: Date;
   created: Date;
+  isFavorite?: boolean;
+  hasPlayed?: boolean;
   modList;
+  favorites;
 }
 
 enum ModLevel {
@@ -228,24 +232,28 @@ const filterTest: IGroup<IServer>[] = [
         name: "crosshair",
         type: "value",
         title: "Weapon Crosshair",
+        value: null,
         items: defaultBoolTechItems()
       },
       {
         name: "battleye",
         type: "value",
         title: "BattlEye",
+        value: null,
         items: defaultBoolItems()
       },
       {
         name: "thirdPerson",
         type: "value",
         title: "3rd Person Camera",
+        value: null,
         items: defaultBoolTechItems()
       },
       {
         name: "flightModel",
         type: "value",
         title: "Flight Model",
+        value: null,
         items: [{
           title: "Any",
           value: null,
@@ -261,6 +269,7 @@ const filterTest: IGroup<IServer>[] = [
         name: "aiLevel",
         title: "AI Level",
         type: "value",
+        value: null,
         items: [{
           title: "Any",
           value: null,
@@ -282,6 +291,7 @@ const filterTest: IGroup<IServer>[] = [
         name: "difficulty",
         title: "Difficulty",
         type: "value",
+        value: null,
         items: [
           {
             title: "Any",
@@ -316,10 +326,18 @@ export interface IOrder {
   direction?: number;
 }
 
+interface IPageModel<T> {
+  pageNumber: number;
+  total: number;
+  items: T[];
+  pageSize: number;
+}
+
 
 @inject(UiContext, BasketService)
-export class Index extends FilteredBase<IServer> {
+export class Index extends ViewModel {
   constructor(ui, private basketService: BasketService) { super(ui) }
+  model: IPageModel<IServer>;
 
   filterTest = filterTest;
   columns = columns;
@@ -431,6 +449,10 @@ export class Index extends FilteredBase<IServer> {
     }
   ];
 
+  triggerPage = 1;
+
+  params;
+
   async activate(params) {
     this.params = params;
     if (params) {
@@ -451,19 +473,7 @@ export class Index extends FilteredBase<IServer> {
       }
     }
     if (this.params.modId) { this.filterTest[1].items.removeEl(this.filterTest[1].items[1]); }
-    this.subscriptions.subd(d => {
-      const list = this.listFactory.getList(this.filterTest.map(x => x.items).flatten(), ["value"]);
-      d(list);
-      d(list.itemChanged.map(x => 1)
-        .merge(this.observeEx(x => x.trigger).map(x => 1))
-        .subscribe(async x => {
-          await this.handleFilter(this.filterInfo)
-          this.filteredItems = this.order(this.model.items);
-        }));
-      const ival = setInterval(() => { if (this.w6.miniClient.isConnected) { this.refresh(); } }, 60 * 1000);
-      d(() => clearInterval(ival));
-    })
-    this.enabledFilters = this.defaultEnabled;
+
     this.baskets = this.basketService.getGameBaskets(this.w6.activeGame.id);
     if (this.w6.userInfo.id) {
       const info = await new GetFavorites(this.w6.activeGame.id).handle(this.mediator);
@@ -473,8 +483,52 @@ export class Index extends FilteredBase<IServer> {
       this.favorites = [];
       this.history = [];
     }
-    await super.activate(params);
-    this.filteredItems = this.order(this.model.items)
+    //this.trigger++; // todo; Command, awaitable, observable
+    this.model = {
+      items: [], pageNumber: 1, total: 0, pageSize: 24
+    }
+    this.filteredItems = this.order(this.model.items);
+
+    this.subscriptions.subd(d => {
+      const list = this.listFactory.getList(this.filterTest.map(x => x.items).flatten(), ["value"]);
+      d(list);
+      const hasPending: Rx.Subject<boolean> = new Rx.BehaviorSubject(false);
+
+      let page = 0;
+      const pageStream = this.observeEx(x => x.triggerPage)
+        .map(x => page++)
+        .do<number>((pageNumber) => hasPending.next(true))
+        .concatMap((pageNumber) => this.getMore(pageNumber))
+        .do<IPageModel<IServer>>((response) => hasPending.next(false));
+      d(list.itemChanged
+        .map(x => 0)
+        .merge(this.observeEx(x => x.trigger))
+        .switchMap((e) => {
+          page = 0;
+          return pageStream;
+        })
+        .subscribe(x => {
+          if (page > 1) {
+            const m = this.model;
+            m.total = x.total;
+            m.pageNumber = x.pageNumber;
+            m.items.push(...x.items);
+          } else {
+            this.model = x;
+          }
+          this.filteredItems = this.order(this.model.items);
+        }));
+
+      d(this.loadMore = uiCommand2("Load more", this.addPage, {
+        canExecuteObservable: this.morePagesAvailable.merge(hasPending.map(x => !x)),
+        isVisibleObservable: this.morePagesAvailable,
+      }));
+      d(this.reload = uiCommand2("Reload", async () => this.trigger++, {
+        canExecuteObservable: hasPending.map(x => !x),
+      }));
+      const ival = setInterval(() => { if (this.w6.miniClient.isConnected) { this.refresh(); } }, 60 * 1000);
+      d(() => clearInterval(ival));
+    })
   }
 
   favorites: string[];
@@ -482,32 +536,7 @@ export class Index extends FilteredBase<IServer> {
 
   baskets: { active: { model: { items: IBasketItem[] } } }
 
-  getId = 0;
-
-
   async getMore(page = 1) {
-    /*
-    const search = this.filterInfo.search;
-    let filters = undefined;
-    if (search.input || this.filterInfo.enabledFilters.length > 0) {
-      const f: { search?: string; minPlayers?: number; isDedicated?: boolean } = {};
-      if (search.input) f.search = search.input;
-      this.filterInfo.enabledFilters.forEach(x => {
-        if (x.name === "hasPlayers") f.minPlayers = 1;
-        else f[x.name] = x.value != null ? (x.value.value != null ? x.value.value : x.value) :
-          true;
-      })
-      filters = f
-    }
-    const so = this.filterInfo.sortOrder;
-    const sort = so ? {
-      orders: [{
-        column: so.name,
-        direction: so.direction
-      }]
-    } : undefined;
-    */
-
     const filter = {}
     const searchFilter = this.filterTest[0].items[0].value;
     const filterValid = !searchFilter || searchFilter.length > 2;
@@ -538,19 +567,16 @@ export class Index extends FilteredBase<IServer> {
     if (this.activeOrder) { orders.push({ column: this.activeOrder.name, direction: this.activeOrder.direction }); }
     const sort = { orders, }
 
-    const id = ++this.getId;
     const servers = await new GetServers(this.w6.activeGame.id, filter, sort, {
       page
     }).handle(this.mediator);
-
-    if (id !== this.getId) throw new this.tools.AbortedException("old data");
 
     if (this.w6.miniClient.isConnected) this.refreshServerInfo(servers.items);
     return servers;
   }
 
   refresh = uiCommand2("Refresh", () => this.refreshServerInfo(this.model.items));
-  reload = uiCommand2("Reload", async () => this.model = await this.getMore());
+  reload;
 
   clear = uiCommand2("Clear", async () => this.clearFilters());
 
@@ -587,14 +613,12 @@ export class Index extends FilteredBase<IServer> {
     }
   }
 
-  order(items) {
-
+  order(items: IServer[]): IServer[] {
     items.forEach(x => {
-      const s = (<any>x);
-      if (!s.favorites) {
-        s.favorites = this.favorites;
-        s.hasPlayed = this.history.some(h => h === s.connectionAddress);
-        s.isFavorite = this.favorites.some(f => f === s.connectionAddress);
+      if (!x.favorites) {
+        x.favorites = this.favorites;
+        x.hasPlayed = this.history.some(h => h === x.connectionAddress);
+        x.isFavorite = this.favorites.some(f => f === x.connectionAddress);
       }
     });
     const anHourAgo = moment().subtract("hours", 1);
@@ -623,25 +647,31 @@ export class Index extends FilteredBase<IServer> {
     });
   }
 
+  morePagesAvailable = this.whenAnyValue(x => x.inlineCount).combineLatest(this.whenAnyValue(x => x.page), (c, p) => p < this.totalPages);
+  loadMore;
+
   addPage = async () => {
-    if (!this.morePagesAvailable) return;
+    if (!this.morePagesAvailable) return; // TODO: makes no sense, its an obvservable!
+    this.triggerPage++;
+    /*
     const m = <any>this.model;
     let r = <any>await this.getMore(m.pageNumber + 1);
     m.total = r.total;
     m.pageNumber = r.pageNumber;
     m.items.push(...r.items);
     this.filteredItems = this.order(this.model.items)
+    */
   }
 
   // adapt to pageModel instead of Breeze
   get totalPages() {
-    return this.inlineCount / (<any>this.model).pageSize
+    return this.inlineCount / this.model.pageSize
   }
   get inlineCount() {
-    return (<any>this.model).total
+    return this.model.total
   }
   get page() {
-    return (<any>this.model).pageNumber
+    return this.model.pageNumber
   }
 
   showServer(server: IServer) {
@@ -652,7 +682,7 @@ export class Index extends FilteredBase<IServer> {
   }
 }
 
-class GetServers extends Query<IPaginated<IServer>> {
+class GetServers extends Query<IPageModel<IServer>> {
   constructor(public gameId: string, public filter?: {
     name?: string; currentPlayers?: number; isDedicated?: boolean
   }, public order?: {
@@ -667,7 +697,7 @@ class GetServers extends Query<IPaginated<IServer>> {
 }
 
 @handlerFor(GetServers)
-class GetServersHandler extends DbQuery<GetServers, IPaginated<IServer>> {
+class GetServersHandler extends DbQuery<GetServers, IPageModel<IServer>> {
   handle(request: GetServers) {
     //return this.context.getCustom("servers", { params: request })
     // TODO: we prefer Get, but need some plumbing on the server ;-)

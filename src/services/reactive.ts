@@ -301,6 +301,7 @@ class ReactiveCommand<T> extends ReactiveBase {
   public dispose() { this.subscriptions.dispose(); }
 
   public async execute(...args): Promise<T> {
+    if (!this.canExecute) return;
     this._isExecuting = true;
     try {
       return await this.action(...args);
