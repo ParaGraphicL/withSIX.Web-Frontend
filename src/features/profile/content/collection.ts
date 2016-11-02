@@ -1,12 +1,14 @@
-import {ContentViewModel} from './base';
-import {ContentDeleted, Command, BasketItemType, IBasketItem, Base, IPromiseFunction, uiCommand2, MenuItem, VoidCommand, DbQuery, DbClientQuery, handlerFor, IContent, TypeScope, ICollection} from '../../../framework';
-import {ViewModel, Query, IGame, ITab, IMenuItem, LaunchContent, LaunchAction,
+import { ContentViewModel } from './base';
+import { ContentDeleted, Command, BasketItemType, IBasketItem, Base, IPromiseFunction, uiCommand2, MenuItem, VoidCommand, DbQuery, DbClientQuery, handlerFor, IContent, TypeScope, ICollection } from '../../../framework';
+import {
+  ViewModel, Query, IGame, ITab, IMenuItem, LaunchContent, LaunchAction,
   CollectionScope, IBreezeCollectionVersion, IBreezeCollectionVersionDependency, UiContext, CollectionHelper, UninstallContent,
   ReactiveList, FindModel, ActionType, BasketState, BasketType, ConnectionState, Debouncer, GameChanged, uiCommandWithLogin2, GameClientInfo, MessageDialog, Confirmation,
   IBreezeCollection, IRequireUser, IUserInfo, W6Context, Client, BasketService, CollectionDataService, requireUser, SelectTab,
-  breeze, IReactiveCommand, DependencyType} from '../../../framework';
-import {Basket, GameBaskets} from '../../game-baskets';
-import {inject} from 'aurelia-framework';
+  breeze, IReactiveCommand, DependencyType
+} from '../../../framework';
+import { Basket, GameBaskets } from '../../game-baskets';
+import { inject } from 'aurelia-framework';
 
 export class Collection extends ContentViewModel<ICollection> {
   fork: () => Promise<any>;
@@ -59,28 +61,28 @@ export class Collection extends ContentViewModel<ICollection> {
         icon: "withSIX-icon-Hexagon-Play"
       }));
 
-      
-      d(this.launchAsDedicatedServer = uiCommand2("Launch as Dedicated server", () => 
+
+      d(this.launchAsDedicatedServer = uiCommand2("Launch as Dedicated server", () =>
         new LaunchContent(this.model.gameId, this.model.id, this.getNoteInfo(), LaunchAction.LaunchAsDedicatedServer)
-        .handle(this.mediator), {
-            isVisibleObservable: this.isInstalledObservable,
-            canExecuteObservable: this.canExecuteObservable,
-        //isVisibleObservable: // if the game supports launching as server
-      }));
+          .handle(this.mediator), {
+          isVisibleObservable: this.isInstalledObservable,
+          canExecuteObservable: this.canExecuteObservable,
+          //isVisibleObservable: // if the game supports launching as server
+        }));
 
 
-      d(this.launchAsServer = uiCommand2("Launch as server", () => 
+      d(this.launchAsServer = uiCommand2("Launch as server", () =>
         new LaunchContent(this.model.gameId, this.model.id, this.getNoteInfo(), LaunchAction.LaunchAsServer)
-        .handle(this.mediator), {
-            isVisibleObservable: this.isInstalledObservable,
-            canExecuteObservable: this.canExecuteObservable,
-        //isVisibleObservable: // if the game supports launching as server
-      }));
+          .handle(this.mediator), {
+          isVisibleObservable: this.isInstalledObservable,
+          canExecuteObservable: this.canExecuteObservable,
+          //isVisibleObservable: // if the game supports launching as server
+        }));
 
       this.topMenuActions.push(new MenuItem(this.launch2));
-      
-      if (this.features.serverBrowser) {
-        this.topMenuActions.push(new MenuItem(this.launchAsDedicatedServer)); 
+
+      if (this.features.createServers) {
+        this.topMenuActions.push(new MenuItem(this.launchAsDedicatedServer));
         this.topMenuActions.push(new MenuItem(this.launchAsServer));
       }
 

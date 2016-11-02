@@ -18,16 +18,17 @@ export class FeatureToggles {
 
   constructor(private w6: W6) { }
 
+  get serverBrowser() { return this.isTestEnvironment || this.isPrereleaseClient; }
+  get servers() { return this.serverBrowser; }
+  get createServers() { return this.isTestEnvironment; }
   get listAvailable() { return this.isTestEnvironment; }
   get managerFeatures() { return this.w6.userInfo.isManager || this.adminFeatures; }
   get adminFeatures() { return this.w6.userInfo.isAdmin; }
   get clientAutostart() { return !this.isTestEnvironment; }
-  get servers() { return this.serverBrowser; }
   get groups() { return this.groupsInternal; }
   set groups(value) { this.groupsInternal = value; }
   get notifications() { return this.isManager; }
   get library() { return this.syncFeatures; }
   get quickActions() { return this.isTestEnvironment; }
   get uiVirtualization() { return this.testingFlag; }
-  get serverBrowser() { return this.isTestEnvironment || this.isPrereleaseClient; }
 }
