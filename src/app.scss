@@ -1,6 +1,49 @@
 @import "_base";
 @import '_content';
 @include scrollbars(0.5em, rgb(213, 213, 213), rgb(60, 60, 60));
+.is-error {
+  .loading-failed {
+    display: none;
+  }
+}
+
+.tablewrapper {
+  position: relative;
+}
+
+.table {
+  display: table;
+  position: relative;
+  .thead {
+    display: table-header-group;
+  }
+  .tbody {
+    display: table-row-group;
+  }
+  .tfoot {
+    display: table-footer-group;
+  }
+  .tr {
+    display: table-row;
+    position: relative;
+  }
+  .td {
+    display: table-cell;
+    position: relative;
+    &.rowspanned {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 100px;
+    }
+    &.colspan {
+      position: absolute;
+      left: 0;
+      right: 0;
+    }
+  }
+}
+
 virtual-list {
   height: 500px;
   display: block;
@@ -11,19 +54,25 @@ virtual-list {
   //   }
   // }
 }
+
 .virtual-table {
   height: 500px;
 }
+
 .virtual-container {
   overflow-y: auto;
   max-height: 55vh;
+  display: block;
 }
+
 .virtual-row {
   display: block;
 }
-.user-error-dialog {
-  max-width: 800px;
+
+tr.virtual-row {
+  display: table-row;
 }
+
 filters {
   .filters-area {
     //height: 92px;
@@ -62,20 +111,19 @@ filters {
     }
   }
 }
-.message-dialog {
+
+.message-dialog,
+.user-error-dialog {
   max-width: 800px;
-  .buttons {
-    button {
-      &.yes {
-        background-color: $colorSixBlue;
-      }
-      &.cancel,
-      &.no {
-        background-color: $colorSixSoftRed;
-      }
+  button {
+    padding: 8px;
+    &.continue,
+    &.retry {
+      @include color-button($colorSixGreen);
     }
   }
 }
+
 card-view {
   .details-overlay-footer {
     padding: 0;
@@ -119,10 +167,10 @@ card-view {
         }
       }
       @media (max-width: 1280px) and (min-width: 990px) {
-         @include small;
+        @include small;
       }
       @media (max-width: 768px) {
-         @include small;
+        @include small;
       }
       &.small-card {
         div.img {
@@ -174,13 +222,15 @@ card-view {
     }
   }
 }
+
 #changelog {
-  .entries > ul {
+  .entries>ul {
     font-size: $font-size-small;
     padding: 20px 20px 20px 40px !important;
     background: white;
   }
 }
+
 #update-page {
   .changelog {
     font-size: $font-size-small;
@@ -257,6 +307,7 @@ card-view {
     }
   }
 }
+
 #download-page {
   iframe {
     margin: 0 auto;
@@ -349,6 +400,7 @@ card-view {
     }
   }
 }
+
 .content-basketable {
   .content-basketable-button,
   action-bar.basketable-action button {
@@ -420,14 +472,17 @@ card-view {
     }
   }
 }
+
 menu {
   margin: 0;
   padding: 0;
 }
+
 .page-title {
   font-size: 2.5em;
   margin-top: 0;
 }
+
 .library-menu {
   .well {
     background-color: initial;
@@ -473,3 +528,4 @@ menu {
     }
   }
 }
+

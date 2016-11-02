@@ -1,19 +1,19 @@
-import {ViewModel, Query, DbClientQuery, handlerFor, IGame, ItemState} from '../../../framework';
-import {Index as SettingsIndex} from '../../settings/index';
+import {ViewModel, Query, DbClientQuery, handlerFor, IGame, ItemState} from "../../../framework";
+import {Index as SettingsIndex} from "../../settings/index";
 
 export class Games extends ViewModel {
-  heading = "library"
+  heading = "library";
   model: IGamesData;
   clientEnabled: boolean;
 
   openGameSettings() {
     let model = { module: "games" };
-    this.dialog.open({ viewModel: SettingsIndex, model: model })
+    this.dialog.open({ model, viewModel: SettingsIndex });
   }
 
   async activate(params, routeConfig) {
     try {
-      this.model = await new GetGames().handle(this.mediator)
+      this.model = await new GetGames().handle(this.mediator);
       this.clientEnabled = true;
     } catch (err) {
       this.tools.Debug.warn("Error trying to fetch games library", err);
@@ -24,7 +24,7 @@ export class Games extends ViewModel {
 
 
 export interface IGamesData {
-  games: Map<string, IGame>;
+  games: IGame[];
 }
 export class GetGames extends Query<IGamesData> { }
 
@@ -33,46 +33,17 @@ class GetGamesHandler extends DbClientQuery<GetGames, IGamesData> {
   public async handle(request: GetGames): Promise<IGamesData> {
     try {
       let d: { games: IGame[] } = await this.client.getGames();
-      d.games.forEach(x => (<any>x).state = ItemState.Uptodate)
-      return { games: d.games.toMap(x => x.id) }
+      d.games.forEach(x => (<any> x).state = ItemState.Uptodate);
+      return d;
     } catch (err) {
       this.tools.Debug.warn(err);
       let ary: IGame[];
       if (this.w6.userInfo.id) {
         let r = await this.context.getCustom<{ games: IGame[] }>("games");
-        r.games.forEach(x => (<any>x).state = ItemState.NotInstalled)
+        r.games.forEach(x => (<any> x).state = ItemState.NotInstalled);
         ary = r.games;
-      } else ary = [];
-      return { games: ary.toMap(x => x.id) }
+      } else { ary = []; }
+      return { games: ary };
     }
-    // return GetGamesHandler.designTimeData(request);
-  }
-
-  static async designTimeData(request: GetGames) {
-    return {
-      games: [
-        {
-          slug: 'arma-3',
-          name: 'ARMA 3',
-          isInstalled: true,
-          author: "Some author",
-          image: "http://i.ytimg.com/vi/yaqe1qesQ8c/maxresdefault.jpg"
-        },
-        {
-          slug: 'arma-2',
-          name: 'ARMA 2',
-          isInstalled: true,
-          author: "Some author",
-          image: "http://i.ytimg.com/vi/yaqe1qesQ8c/maxresdefault.jpg"
-        },
-        {
-          slug: 'GTA-5',
-          name: 'GTA 5',
-          isInstalled: true,
-          author: "Some author",
-          image: "http://i.ytimg.com/vi/yaqe1qesQ8c/maxresdefault.jpg"
-        }
-      ]
-    };
   }
 }

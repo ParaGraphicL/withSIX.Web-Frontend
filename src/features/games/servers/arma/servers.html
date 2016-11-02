@@ -1,0 +1,23 @@
+<template>
+
+  <require from="../order"></require>
+
+  <div class="table">
+    <div class="thead">
+      <div class="tr">
+        <div class="td" repeat.for="c of columns">
+          <order direction.bind="c.direction" active.one-way="activeOrder === c" click.delegate="toggleOrder(c)">
+            <span if.bind="c.icon" class="icon ${c.icon}"></span>
+            <span if.bind="c.text">${c.text}</span>
+          </order>
+        </div>
+      </div>
+    </div>
+    <div class="tbody">
+      <div class="tr ${s.modList.length > 0 ? 'has-mods' : ''} mod-state-${s.modState}" repeat.for="s of filteredItems"
+        click.delegate="showServer(s)" as-element="compose" model.bind="s" view-model="./server">
+      </div>
+    </div>
+  </div>
+</template>
+

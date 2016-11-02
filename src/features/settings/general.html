@@ -1,27 +1,35 @@
 <template>
   <div>
     <div class="form-group">
-      <label for="start-with-windows">Start with Windows</label>
-      <input name="start-with-windows" id="start-with-windows" type="checkbox" checked.bind="model.launchWithWindows"></input>
+      <label for="start-with-windows">
+        <input name="start-with-windows" id="start-with-windows" type="checkbox" checked.bind="model.launchWithWindows"></input>
+        Start with Windows
+      </label>
     </div>
     <div class="form-group">
-      <label for="opt-out-error-reports">Opt-out automatic error reporting</label>
-      <input name="opt-out-error-reports" id="opt-out-error-reports" type="checkbox" checked.bind="model.optOutErrorReports"></input>
+      <label for="opt-out-error-reports">
+        <input name="opt-out-error-reports" id="opt-out-error-reports" type="checkbox" checked.bind="model.optOutErrorReports"></input>
+        Opt-out automatic error reporting
+      </label>
     </div>
     <div class="form-group">
-      <label for="enable-desktop-notifications">Enable desktop notifications</label>
-      <input name="enable-desktop-notifications" id="enable-desktop-notifications" type="checkbox" checked.bind="model.enableDesktopNotifications"></input>
+      <label for="enable-desktop-notifications">
+        <input name="enable-desktop-notifications" id="enable-desktop-notifications" type="checkbox" checked.bind="model.enableDesktopNotifications"></input>
+        Enable desktop notifications
+      </label>
     </div>
   </div>
 
   <div>
     <h3>Mod upload</h3>
-    <command-button model.bind="installExtension"></command-button>
-    <command-button model.bind="uninstallExtension"></command-button>
+    <div class="form-group">
+      <command-button model.bind="installExtension"></command-button>
+      <command-button model.bind="uninstallExtension"></command-button>
+    </div>
   </div>
 
   <div>
-    v${model.version}
+    <div class="pull-right">v${model.version}</div>
     <a href="/legal" click.delegate="cancel()">License</a>
   </div>
 

@@ -1,21 +1,30 @@
 <template>
-	<section class="au-animate">
-		<compose view="../_header.html"></compose>
-		<filters filters.ref="filteredComponent" search-input-placeholder.bind="searchInputPlaceholder" typeahead-options.bind="typeahead" items.bind="items" filters.bind="filters" search-fields.bind="searchFields" sort.bind="sort" view-types.bind="availableViewTypes"></filters>
+  <section class="au-animate">
+    <compose view="../_header.html"></compose>
+    <filters filters.ref="filteredComponent" search-input-placeholder.bind="searchInputPlaceholder" typeahead-options.bind="typeahead"
+      items.bind="items" filters.bind="filters" search-fields.bind="searchFields" sort.bind="sort" view-types.bind="availableViewTypes"
+      auto-enable-filters.one-time="true">
+    </filters>
 
-		<card-view card-view.ref="cv" if.bind="filteredComponent.selectedViewType == 0" card-columns.one-time="[2,2,3,3]" show-ads.one-time="true" items.bind="filteredComponent.filteredItems" view-path="features/profile/content/" item-type.bind="itemType">
-			<div class.bind="cv.cardContainerCls" slot="prepend-items">
-				<div class="card ${cv.cardCls} new-item">
-					<div class="button">
-						<span class="new-icon withSIX-icon-Nav-Collection icon" au-target-id="4"></span>
-						<br />
-						<span class="new-title">New <b>Collection</b></span>
-						<br />
-						<button class="btn" click.delegate="createNew()">Create</a>
+    <card-view card-view.ref="cv" if.bind="filteredComponent.selectedViewType == 0" card-columns.one-time="[2,2,3,3]"
+      show-ads.one-time="true" items.bind="filteredComponent.filteredItems" view-path="features/profile/content/"
+      item-type.bind="itemType" index-offset.one-time="1">
+      <div class.bind="cv.cardContainerCls" slot="prepend-items">
+        <div class="card ${cv.cardCls} new-item">
+          <div class="button">
+            <span class="new-icon withSIX-icon-Nav-Collection icon" au-target-id="4"></span>
+            <br />
+            <span class="new-title">New <b>Collection</b></span>
+            <br />
+            <button class="btn" click.delegate="createNew()">Create</a>
 					</div>
 				</div>
 			</div>
 		</card-view>
-		<list-view if.bind="filteredComponent.selectedViewType == 1" show-ads.one-time="true" items.bind="filteredComponent.filteredItems" view-path="features/profile/content/" item-type.bind="itemType"></list-view>
+		<list-view if.bind="filteredComponent.selectedViewType === 1" show-ads.one-time="true" items.bind="filteredComponent.filteredItems">
+			<template replace-part="item-template">
+			<compose view-model="features/profile/content/${item.type || itemType}" model.bind="item"></compose>
+			</template>
+		</list-view>
 	</section>
 </template>

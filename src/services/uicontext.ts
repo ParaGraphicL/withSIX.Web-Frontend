@@ -17,6 +17,7 @@ import {Api, Notifier, CloseDialogs, ITabNotification} from './api';
 import {ClientWrapper, AppEventsWrapper} from './client-wrapper';
 
 import {MessageDialog} from '../features/message-dialog'
+import { ErrorHandler } from './error-handler';
 
 export {MessageDialog, Confirmation}
 
@@ -29,9 +30,9 @@ export class Assets {
   defaultPlaylistUrl = this.w6.url.getAssetUrl("img/play.withSIX/placeholders/Playlist-placeholder.png");
 }
 
-@inject(Mediator, EventAggregator, LegacyMediator, Toastr, W6, ListFactory, DialogService, Validation, Router, Api, Notifier, ClientWrapper, AppEventsWrapper, FeatureToggles, Assets)
+@inject(Mediator, EventAggregator, LegacyMediator, Toastr, W6, ListFactory, DialogService, Validation, Router, Api, Notifier, ClientWrapper, AppEventsWrapper, FeatureToggles, Assets, ErrorHandler)
 export class UiContext {
-  constructor(public mediator: Mediator, public eventBus: EventAggregator, public legacyMediator: LegacyMediator, public toastr: Toastr, public w6: W6, public listFactory: ListFactory, public dialog: DialogService, public validator: Validation, public router: Router, public api: Api, public notifier: Notifier, public clientWrapper: ClientWrapper, public appEvents: AppEventsWrapper, public features: FeatureToggles, public assets: Assets) { }
+  constructor(public mediator: Mediator, public eventBus: EventAggregator, public legacyMediator: LegacyMediator, public toastr: Toastr, public w6: W6, public listFactory: ListFactory, public dialog: DialogService, public validator: Validation, public router: Router, public api: Api, public notifier: Notifier, public clientWrapper: ClientWrapper, public appEvents: AppEventsWrapper, public features: FeatureToggles, public assets: Assets, public errorHandler: ErrorHandler) { }
 
   confirm = async (message: string, title = 'Please confirm'): Promise<boolean> => (await this.showMessageDialog(message, title, MessageDialog.YesNo)).output == "yes";
   showMessageDialog = <T>(message: string, title = 'Please confirm', buttons = MessageDialog.Ok, confirmations: Confirmation[] = null): Promise<DialogResultT<string>> => this.showMessageDialogInternal({ title, message, buttons, confirmations })

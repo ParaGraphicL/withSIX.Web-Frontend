@@ -1,4 +1,4 @@
-import {ViewModel, GitHub, Query, DbQuery, W6Context, handlerFor, UiContext, Post, ForumUrl} from '../../../../framework';
+import {ViewModel, GitHub, Query, DbQuery, W6Context, handlerFor, UiContext, Post, GithubUrl} from '../../../../framework';
 import { UpdateInterestingLinks } from '../mod-gallery';
 import {inject} from 'aurelia-framework';
 
@@ -10,7 +10,7 @@ export class GitHubInfo extends ViewModel {
     try {
       this.repo = repo;
       this.model = await new GetGitHubInfo(repo).handle(this.mediator);
-      this.eventBus.publish(new UpdateInterestingLinks([new ForumUrl(`https://github.com/${repo}`)]));
+      this.eventBus.publish(new UpdateInterestingLinks([new GithubUrl(`https://github.com/${repo}`)]));
     } catch (ex) { }
   }
 }

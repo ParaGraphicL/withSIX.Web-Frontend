@@ -22,6 +22,7 @@ export interface IUserInfo {
   profileUrl: string; // computed
   emailConfirmed: boolean;
   passwordSet: boolean;
+  hasGroups: boolean;
   clearAvatars(): void;
   getAvatarUrl(size: number): string;
   isInRole(role: string): boolean;
@@ -32,7 +33,7 @@ export interface IUserInfo {
   failedLogin: boolean;
 }
 
-export class Role {
+export abstract class Role {
   static admin = "admin";
   static user = "user";
   static bot = "bot";
@@ -42,24 +43,24 @@ export class Role {
   static author = "author";
 }
 
-export class Resource {
+export abstract class Resource {
   static admin = "admin";
   static mods = "mods";
 }
 
-export class Permission {
+export abstract class Permission {
   static Create = "create"; // new
   static Read = "read"; // view, list
   static Update = "update"; // edit
   static Delete = "delete"; // destroy
 }
 
-export class ModPermission {
+export abstract class ModPermission {
   static CreateReport = 'create_report';
 }
 
 // TODO: See if we can somehow sync up with the C# PermissionManager somehow
-export class Permissions {
+export abstract class Permissions {
   static write = [Permission.Create, Permission.Update, Permission.Delete];
   static read = [Permission.Read];
   static readAndWrite = Permissions.read.concat(Permissions.write);
@@ -99,12 +100,12 @@ export module EntityExtends {
     public static $namespace: string = "EntityExtends";
   }
 
-  export class BaseEntity {
+  export abstract class BaseEntity {
     // BAH
     static w6;
   }
 
-  export class CollectionVersion implements ICollectionVersion {
+  export abstract class CollectionVersion implements ICollectionVersion {
     static $name = 'CollectionVersion';
     versionRevision: number;
     versionBuild: number;
@@ -130,10 +131,9 @@ export module EntityExtends {
     version: string;
   }
 
-  export class Collection { }
+  export abstract class Collection { }
 
-  export class User implements IUser {
-    static $name = 'User';
+  export abstract class UserBase implements IUser {
     private _avatars = {};
     private _profileUrl: string;
     public slug: string;
@@ -169,6 +169,10 @@ export module EntityExtends {
     roles: string[] = [];
   }
 
+  export abstract class User extends UserBase {
+    static $name = 'User';
+  }
+
   export interface IUser {
     clearAvatars(): void;
     getAvatarUrl(size: number): string;
@@ -180,7 +184,7 @@ export module EntityExtends {
     roles: string[];
   }
 
-  export class Weather implements IWeather {
+  export abstract class Weather implements IWeather {
     static $name = 'Weather';
 
     getStartWeatherText() {
@@ -259,7 +263,7 @@ export module EntityExtends {
     getForecastWeatherText();
   }
 
-  export class Mod {
+  export abstract class Mod {
     public mediaItems: IBreezeModMediaItem[];
     constraint: string
 
@@ -278,7 +282,7 @@ export module EntityExtends {
     constraint?: string
   }
 
-  export class Game implements IGame {
+  export abstract class Game implements IGame {
     get supportsStream() {
       return this.supportsMods || this.supportsMissions || this.supportsCollections;
     }
@@ -292,7 +296,7 @@ export module EntityExtends {
     supportsStream: boolean;
   }
 
-  export class Mission {
+  export abstract class Mission {
   }
 
   export interface IMission {
@@ -304,7 +308,7 @@ export module EntityExtends {
   }
 
   // Please note, do not inherit multiple breeze entities from the same class/constructor/prototype!
-  export class Comment implements IComment {
+  export abstract class Comment implements IComment {
     public replies: Comment[];
     public replyTo: IComment;
 
@@ -326,63 +330,39 @@ export module EntityExtends {
     //replies: Comment[];
   }
 
-  export class PostComment extends Comment {
+  export abstract class PostComment extends Comment {
   }
 
   export interface IPostComment extends IComment {
   }
 
-  export class MissionComment extends Comment {
+  export abstract class MissionComment extends Comment {
   }
 
   export interface IMissionComment extends IComment {
   }
 
-  export class ModComment extends Comment {
+  export abstract class ModComment extends Comment {
   }
 
   export interface IModComment extends IComment {
   }
 
-  export class CollectionComment extends Comment {
+  export abstract class CollectionComment extends Comment {
   }
 
   export interface ICollectionComment extends IComment {
   }
 
-  export class ServerComment extends Comment {
+  export abstract class ServerComment extends Comment {
   }
 
   export interface IServerComment extends IComment {
   }
 
-  export class AppComment extends Comment {
+  export abstract class AppComment extends Comment {
   }
 
   export interface IAppComment extends IComment {
-  }
-
-  export class UserInfo extends User implements IUserInfo {
-    // TODO: Instead use dynamic getters that use isInRole internally and cache the result?
-    isPremium: boolean;
-    // TODO: Instead use dynamic getters that use isInRole internally and cache the result?
-    isAdmin: boolean;
-    // TODO: Instead use dynamic getters that use isInRole internally and cache the result?
-    isManager: boolean;
-    id: string;
-    slug: string;
-    avatarURL: string;
-    hasAvatar: boolean;
-    emailMd5: string;
-    firstName: string;
-    lastName: string;
-    userName: string;
-    displayName: string;
-    failedLogin: boolean;
-    avatarUpdatedAt: Date;
-    emailConfirmed: boolean;
-    passwordSet: boolean;
-
-    // TODO: Listen to avatar changes at a global place and ClearAvatars() so that the next calls will refresh the info. Already implemented for the updateUserInfo calls...
   }
 }

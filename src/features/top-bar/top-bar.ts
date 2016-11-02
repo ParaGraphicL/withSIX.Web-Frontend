@@ -1,4 +1,4 @@
-import {Base, ViewModel, UiContext, MenuItem, uiCommand2, Debouncer, IMenuItem, ITab, ClientMissingHandler, CloseTabs} from '../../framework';
+import {Base, ViewModel, UiContext, MenuItem, uiCommand2, Debouncer, IMenuItem, ITab, ClientMissingHandler, CloseTabs, Rx} from '../../framework';
 import {SideBar} from '../side-bar/side-bar';
 import {Login} from '../../services/auth';
 import {inject, bindable} from 'aurelia-framework'
@@ -15,20 +15,21 @@ export class TopBar extends ViewModel {
 
   bind() {
     let notLoggedInObs = this.whenAnyValue(x => x.isLoggedin).map(x => !x);
-    if (this.features.groups) {
-      let groupTab: ITab = {
-        header: "Your groups",
-        name: "groups",
-        icon: "icon withSIX-icon-Users-Group",
-        viewModel: `${TopBar.root}groups/groups`,
-        type: 'dropdown',
-        location: "middle"
-      };
-      this.tabs.push(groupTab)
-      this.subscriptions.subd(d => {
-        d(TopBar.bindObservableTo(notLoggedInObs, groupTab, x => x.disabled));
-      });
-    }
+
+    let groupTab: ITab = {
+      header: "Your groups",
+      name: "groups",
+      icon: "icon withSIX-icon-Users-Group",
+      viewModel: `${TopBar.root}groups/groups`,
+      type: 'dropdown',
+      location: "middle",
+      hidden: !this.features.groups
+    };
+    this.tabs.push(groupTab);
+    this.subscriptions.subd(d => {
+      d(TopBar.bindObservableTo(notLoggedInObs, groupTab, x => x.disabled));
+      d(this.whenAnyValue(x => x.features.groups).filter(x => x).take(1).subscribe(x => groupTab.hidden = false));
+    });
 
     let uploadContent: ITab = {
       header: "Upload content",

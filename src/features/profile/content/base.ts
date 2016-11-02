@@ -1,9 +1,12 @@
 import {inject} from 'aurelia-framework';
 import {IContentGuidSpec, BasketItemType, IBasketItem, BasketService, Base, GameClientInfo, uiCommand, uiCommand2, UiContext, MenuItem, ViewModel, Mediator, Query, DbQuery, DbClientQuery, handlerFor, VoidCommand, IContent, ItemState, IContentState,
-  RemoveRecent, Abort, UninstallContent, LaunchContent, OpenFolder, InstallContent, UnFavoriteContent, FavoriteContent, GameChanged, IMenuItem, FolderType, LaunchAction, IReactiveCommand} from '../../../framework';
+  RemoveRecent, Abort, UninstallContent, LaunchContent, OpenFolder, InstallContent, UnFavoriteContent, FavoriteContent, GameChanged, IMenuItem, FolderType, LaunchAction, IReactiveCommand, Publisher,
+ModsHelper} from '../../../framework';
 import {Router} from 'aurelia-router';
 import {GameBaskets, Basket} from '../../game-baskets';
 import {AddModsToCollections} from '../../games/add-mods-to-collections';
+
+interface ISource {img: string; text: string}
 
 @inject(UiContext, BasketService)
 export class ContentViewModel<TContent extends IContent> extends ViewModel {
@@ -33,7 +36,7 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
   state: IContentState = this.getDefaultState();
   bottomMenuActions = [];
   url: string;
-  source?: {img: string; text: string};
+  sources: ISource[] = [];
 
   isForActiveGame: boolean;
   launchMenuItem: MenuItem<any>;
@@ -108,8 +111,22 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
 
     this.url = '/p/' + this.getPath();
 
-    if (this.image && this.image.includes('steamusercontent.com')) {
-      this.source = { img: this.w6.url.img.steam, text: 'Steam' }
+    let publishers = <{publisherId: string; publisherType: string}[]> (<any>model).publishers || [];
+    // TODO: Add Group Owned and Custom Repository icons
+    if (publishers.length > 0) {
+      // Don't show the indicators on mods that are (also) hosted on our network
+      if (!publishers.some(x => x.publisherType === Publisher[Publisher.withSIX]))
+        publishers.forEach(x => {
+          var pInfo = this.getPinfo(Publisher[x.publisherType]);
+          if (pInfo) this.sources.push(pInfo);
+        })
+    } else if (this.image) {
+      if (this.image.includes('steamusercontent.com')) this.sources.push(this.getPinfo(Publisher.Steam))
+      else if (this.image.includes('community.playstarbound.com')) this.sources.push(this.getPinfo(Publisher.Chucklefish))
+      else if (this.image.includes('nomansskymods.com')) this.sources.push(this.getPinfo(Publisher.NoMansSkyMods))
+      else if (this.image.includes('nexusmods.com')) this.sources.push(this.getPinfo(Publisher.NexusMods))
+      else if (this.image.includes('moddb.com')) this.sources.push(this.getPinfo(Publisher.ModDb))
+      else if (this.image.includes('curse.com')) this.sources.push(this.getPinfo(Publisher.Curse))
     }
 
     //this.tools.Debug.log("Mod State: " + this.model.packageName, this.model.version, this.model.id, this.state);
@@ -191,10 +208,13 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
     this.handleUpdateAvailable(this.hasUpdateAvailable);
     let m = <any>this.model;
     this.installs = this.type === 'collection' ? m.subscribers : m.statInstall;
+    this.totalInstalls = this.type === 'collection' ? m.subscribers : m.statTotalInstall;
     this.updatedAt = m.updated || m.updatedAt || this.model.updatedVersion || this.model.lastUpdated || this.model.lastInstalled;
 
     this.hasRealAuthor = model.authorSlug != 'withSIX-o-bot';
   }
+
+  get name() { return this.model.name || this.model.packageName || this.model.id }
 
   get shouldAddConfigAction() { return this.model.gameSlug.startsWith('Arma'); }
   hasRealAuthor: boolean;
@@ -202,6 +222,7 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
   updatedAt: Date;
 
   installs: number;
+  totalInstalls: number;
 
   getInstallSpec() { return { id: this.model.id } }
 
@@ -211,8 +232,21 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
   protected diagnoseInternal = async () => { this.emitGameChanged(); await new InstallContent(this.model.gameId, { id: this.model.id }, this.getNoteInfo(), true, true).handle(this.mediator) }
   protected emitGameChanged = () => this.eventBus.publish(new GameChanged(this.model.gameId, this.model.gameSlug)); // incase we are on Home..
 
-  getNoteInfo() { return { text: this.model.name || this.model.packageName, href: this.url } };
+  getNoteInfo() { return { text: this.model.name || this.model.packageName, href: this.url ? (this.url.startsWith("http") ? this.url : `https://withsix.com${this.url}` ) : this.url } };
   updateState() { this.state = (this.gameInfo.clientInfo.content[this.model.id] || this.getDefaultState()); }
+
+  
+  getPinfo(p: Publisher) {
+      switch (p) {
+        case Publisher.Steam: return { img: this.w6.url.img.steam, text: 'Steam Workshop' }
+        case Publisher.Chucklefish: return { img: this.w6.url.img.chucklefish, text: 'Starbound Community Forums' }
+        case Publisher.NoMansSkyMods: return { img: this.w6.url.img.unknown, text: 'NoMansSkyMods' }
+        case Publisher.NexusMods: return { img: this.w6.url.img.unknown, text: 'Nexus Mods' }
+        case Publisher.ModDb: return { img: this.w6.url.img.unknown, text: 'ModDB' }
+        case Publisher.Curse: return { img: this.w6.url.img.unknown, text: 'Curse' }
+      }
+    return null;
+  }
 
   handleUpdateAvailable(updateAvailable: boolean) {
     if (updateAvailable) {

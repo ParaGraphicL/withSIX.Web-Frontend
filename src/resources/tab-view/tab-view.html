@@ -5,19 +5,19 @@
   <nav class="tab-strip ${orientation}">
     <div class="tab-component start">
       <slot name="start"></slot>
-      <tab-view-items tabs.bind="tabs" toggle-tab.bind="toggleTab" selected-tab.bind="selectedTab"></tab-view-items>
+      <tab-view-items tabs.bind="tabs" toggle-tab.call="toggleTab(tab, event)" selected-tab.bind="selectedTab"></tab-view-items>
 
       <div class="line"></div>
     </div>
 
     <div class="tab-component middle">
       <slot name="middle"></slot>
-      <tab-view-items tabs.bind="tabs" location="middle" toggle-tab.bind="toggleTab" selected-tab.bind="selectedTab"></tab-view-items>
+      <tab-view-items tabs.bind="tabs" location="middle" toggle-tab.call="toggleTab(tab, event)" selected-tab.bind="selectedTab"></tab-view-items>
     </div>
 
     <div class="tab-component end">
       <div class="line"></div>
-      <tab-view-items tabs.bind="tabs" location="end" toggle-tab.bind="toggleTab" selected-tab.bind="selectedTab"></tab-view-items>
+      <tab-view-items tabs.bind="tabs" location="end" toggle-tab.call="toggleTab(tab, event)" selected-tab.bind="selectedTab"></tab-view-items>
       <slot name="end"></slot>
     </div>
   </nav>
@@ -27,19 +27,19 @@
   <nav class="tab-strip ${orientation}" if.bind="orientation == 'bottom'">
     <div class="tab-component start">
       <slot name="start2"></slot>
-      <tab-view-items tabs.bind="tabs" toggle-tab.bind="toggleTab" selected-tab.bind="selectedTab"></tab-view-items>
+      <tab-view-items tabs.bind="tabs" toggle-tab.call="toggleTab(tab, $event)" selected-tab.bind="selectedTab"></tab-view-items>
 
       <div class="line"></div>
     </div>
 
     <div class="tab-component middle">
       <slot name="middle"></slot>
-      <tab-view-items tabs.bind="tabs" location="middle" toggle-tab.bind="toggleTab" selected-tab.bind="selectedTab"></tab-view-items>
+      <tab-view-items tabs.bind="tabs" location="middle" toggle-tab.call="toggleTab(tab, $event)" selected-tab.bind="selectedTab"></tab-view-items>
     </div>
 
     <div class="tab-component end">
       <div class="line"></div>
-      <tab-view-items tabs.bind="tabs" location="end" toggle-tab.bind="toggleTab" selected-tab.bind="selectedTab"></tab-view-items>
+      <tab-view-items tabs.bind="tabs" location="end" toggle-tab.call="toggleTab(tab, $event)" selected-tab.bind="selectedTab"></tab-view-items>
       <slot name="end"></slot>
     </div>
   </nav> -->

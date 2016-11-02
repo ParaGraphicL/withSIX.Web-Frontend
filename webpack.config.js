@@ -56,7 +56,7 @@ const coreBundles = {
     'aurelia-templating-resources',
     // custom
     'aurelia-dialog',
-    'aurelia-mediator',
+    'mediatr',
     'aurelia-fetch-client',
     'aurelia-validation',
     //'aurelia-ui-virtualization',
@@ -82,27 +82,27 @@ switch (ENV) {
         }
       },
       require('@easy-webpack/config-env-production')
-      ({
-        compress: true
-      }),
+        ({
+          compress: true
+        }),
 
       require('@easy-webpack/config-aurelia')
-      ({
-        root: rootDir,
-        src: srcDir,
-        title: title,
-        baseUrl: baseUrl
-      }),
+        ({
+          root: rootDir,
+          src: srcDir,
+          title: title,
+          baseUrl: baseUrl
+        }),
 
       require('@easy-webpack/config-typescript')(),
       require('@easy-webpack/config-html')(),
 
       require('@easy-webpack/config-css')
-      ({
-        filename: '[name]-[contenthash].css',
-        allChunks: !!ELECTRON,
-        sourceMap: false
-      }),
+        ({
+          filename: '[name]-[contenthash].css',
+          allChunks: !!ELECTRON,
+          sourceMap: false
+        }),
       require('@easy-webpack/config-sass')({
         filename: '[name]-[contenthash].css',
         allChunks: !!ELECTRON,
@@ -117,18 +117,18 @@ switch (ENV) {
       //require('@easy-webpack/config-global-jquery')(),
       require('@easy-webpack/config-global-regenerator')(),
       require('@easy-webpack/config-generate-index-html')
-      ({
-        minify: true,
-      }),
+        ({
+          minify: true,
+        }),
       require('@easy-webpack/config-common-chunks-simple')
-      ({
-        appChunkName: 'app',
-        firstChunk: 'aurelia-bootstrap'
-      }),
+        ({
+          appChunkName: 'app',
+          firstChunk: 'aurelia-bootstrap'
+        }),
       require('@easy-webpack/config-uglify')
-      ({
-        debug: false
-      })
+        ({
+          debug: false
+        })
     );
     break;
 
@@ -146,27 +146,27 @@ switch (ENV) {
         // }
       },
       require('@easy-webpack/config-env-development')
-      ({
-        devtool: 'inline-source-map'
-      }),
+        ({
+          devtool: 'inline-source-map'
+        }),
 
       require('@easy-webpack/config-aurelia')
-      ({
-        root: rootDir,
-        src: srcDir,
-        title: title,
-        baseUrl: baseUrl
-      }),
+        ({
+          root: rootDir,
+          src: srcDir,
+          title: title,
+          baseUrl: baseUrl
+        }),
 
       require('@easy-webpack/config-typescript')(),
       require('@easy-webpack/config-html')(),
 
       require('@easy-webpack/config-css')
-      ({
-        filename: '[name]-[contenthash].css',
-        allChunks: !!ELECTRON,
-        sourceMap: false
-      }),
+        ({
+          filename: '[name]-[contenthash].css',
+          allChunks: !!ELECTRON,
+          sourceMap: false
+        }),
       require('@easy-webpack/config-sass')({
         filename: '[name]-[contenthash].css',
         allChunks: !!ELECTRON,
@@ -203,22 +203,22 @@ switch (ENV) {
       require('@easy-webpack/config-env-development')(),
 
       require('@easy-webpack/config-aurelia')
-      ({
-        root: rootDir,
-        src: srcDir,
-        title: title,
-        baseUrl: baseUrl
-      }),
+        ({
+          root: rootDir,
+          src: srcDir,
+          title: title,
+          baseUrl: baseUrl
+        }),
 
       require('@easy-webpack/config-typescript')(),
       require('@easy-webpack/config-html')(),
 
       require('@easy-webpack/config-css')
-      ({
-        filename: '[name].css',
-        allChunks: !!ELECTRON,
-        sourceMap: true
-      }),
+        ({
+          filename: '[name].css',
+          allChunks: !!ELECTRON,
+          sourceMap: true
+        }),
       require('@easy-webpack/config-sass')({
         filename: '[name].css',
         allChunks: !!ELECTRON,
@@ -233,9 +233,13 @@ switch (ENV) {
       //require('@easy-webpack/config-global-jquery')(),
       require('@easy-webpack/config-global-regenerator')(),
       require('@easy-webpack/config-generate-index-html')
-      ({
-        minify: false
-      })
+        ({
+          minify: false
+        })
+      /*,
+      require('@easy-webpack/config-copy-files')
+        ({patterns: [{ from: 'favicon.ico', to: 'favicon.ico' }]}),
+      */
       /*,
            require('@easy-webpack/config-common-chunks-simple')
            ({
@@ -253,7 +257,7 @@ if (ELECTRON) {
     },
     require('@easy-webpack/config-electron')(),
     ELECTRON == 'main' ?
-    require('@easy-webpack/config-electron-main')() : require('@easy-webpack/config-electron-renderer')()
+      require('@easy-webpack/config-electron-main')() : require('@easy-webpack/config-electron-renderer')()
   );
 }
 
@@ -265,7 +269,8 @@ if (ENV === 'test') {
 }
 
 config.externals = {
-  jquery: "jQuery"
+  jquery: "jQuery",
+  'aurelia-webpack-plugin': true
 }
 config.module.loaders.push(...[
   /*{

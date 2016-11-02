@@ -1,37 +1,38 @@
 import breeze from 'breeze-client';
 
-import {IBreezeMod, IBreezeUser, IBreezeCollection, IBreezeMission, IBreezeCollectionVersionDependency, IBreezePost, IBreezeModUpdate, IBreezeCollectionVersion, IBreezeGame, IBreezeAWSUploadPolicy,
+import {
+  IBreezeMod, IBreezeUser, IBreezeCollection, IBreezeMission, IBreezeCollectionVersionDependency, IBreezePost, IBreezeModUpdate, IBreezeCollectionVersion, IBreezeGame, IBreezeAWSUploadPolicy,
   IBreezeMissionComment, IBreezeMissionVersion, IBreezeCollectionImageFileTransferPolicy, IBreezeModInfo,
   IBreezeCollectionComment, IBreezePostComment, AbstractDefs, BreezeInitialzation, IBreezeModUserGroup, IBreezeModComment, IBreezeModImageFileTransferPolicy,
   IBreezeModMediaItem, IUserInfo, Resource, Permission, Role,
-  EntityExtends, BreezeEntityGraph, _IntDefs} from '../services/dtos';
+  EntityExtends, BreezeEntityGraph, _IntDefs
+} from '../services/dtos';
 
-import {LegacyMediator} from '../services/mediator';
-import {ModHelper, CollectionHelper, MissionHelper} from '../services/helpers';
+import { LegacyMediator } from '../services/mediator';
+import { ModHelper, CollectionHelper, MissionHelper } from '../services/helpers';
 
-import {RestoreBasket, OpenCreateCollectionDialog, OpenAddModDialog, OpenAddModsToCollectionsDialog} from '../services/api';
-import {ForkCollection} from '../features/profile/content/collection';
-import {W6, W6Urls, globalRedactorOptions} from '../services/withSIX';
-import {Tools} from '../services/tools';
-import {W6Context, IQueryResult, BooleanResult, Result} from '../services/w6context';
-import {Tk} from '../services/legacy/tk'
-import {IRootScope, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHaveModel, DialogQueryBase, DbCommandBase, DbQueryBase, BaseController, BaseQueryController, DialogControllerBase, ModelDialogControllerBase } from './app-base'
-import {ITagKey, ICreateComment, ICQWM, IModel, IMenuItem, IHandleCommentsScope} from '../services/legacy/base'
+import { RestoreBasket, OpenCreateCollectionDialog, OpenAddModDialog, OpenAddModsToCollectionsDialog } from '../services/api';
+import { ForkCollection } from '../features/profile/content/collection';
+import { W6, W6Urls, globalRedactorOptions } from '../services/withSIX';
+import { Tools } from '../services/tools';
+import { W6Context, IQueryResult, BooleanResult, Result } from '../services/w6context';
+import { Tk } from '../services/legacy/tk'
+import { IRootScope, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHaveModel, DialogQueryBase, DbCommandBase, DbQueryBase, BaseController, BaseQueryController, DialogControllerBase, ModelDialogControllerBase } from './app-base'
+import { ITagKey, ICreateComment, ICQWM, IModel, IMenuItem, IHandleCommentsScope } from '../services/legacy/base'
 import { Publisher } from '../services/apis/lib';
-import {EventAggregator} from 'aurelia-event-aggregator';
+import { EventAggregator } from 'aurelia-event-aggregator';
 
-import {Mediator} from 'aurelia-mediator';
-import {Client, IClientInfo, ItemState} from 'withsix-sync-api';
+import { Client, IClientInfo, ItemState } from 'withsix-sync-api';
 
-import {IBasketItem, BasketItemType} from '../services/legacy/baskets';
-import {BasketService} from '../services/basket-service';
-import {ModsHelper, Helper} from '../services/legacy/misc';
-import {ToastLogger} from '../services/legacy/logger';
+import { IBasketItem, BasketItemType } from '../services/legacy/baskets';
+import { BasketService } from '../services/basket-service';
+import { ModsHelper, Helper } from '../services/legacy/misc';
+import { ToastLogger } from '../services/legacy/logger';
 
-import {registerCommands, getFactory, skyscraperSlotSizes, rectangleSlotSizes, leaderboardSlotSizes} from './app-base';
-import {joinUri} from '../helpers/utils/url'
+import { registerCommands, getFactory, skyscraperSlotSizes, rectangleSlotSizes, leaderboardSlotSizes } from './app-base';
+import { joinUri } from '../helpers/utils/url'
 
-import { app, registerCQ, registerService, registerController, IBaseGameScope, IContentScopeT } from './play.ts'
+import { app, registerCQ, registerService, registerController, IBaseGameScope, IContentScopeT } from './play'
 import { GetForumPostQuery, ModExistsQuery, ModNameExistsQuery, GetLatestInfo, GetModTagsQuery } from './mods';
 import { OpenTermsDialogQuery } from './components';
 
@@ -119,7 +120,7 @@ export class AddCollectionDialogController extends DialogControllerBase {
     var data = this.$scope.model;
     if ((<string>data.uri).endsWithIgnoreCase("config.yml")) {
       await this.$scope.request<{ data: any[] }>(NewImportedCollectionCommand, { data: data })
-        .then(result => {
+        .then(result =>
           this.applyIfNeeded(() => {
             if (result.data.length == 1) {
               var modId = result.data[0].toShortId();
@@ -133,8 +134,8 @@ export class AddCollectionDialogController extends DialogControllerBase {
               }
               this.$scope.page = this.$newViewBaseFolder + 'add-collection-3.html';
             }
-          });
-        })
+          })
+        )
         .catch(this.httpFailed);
     } else {
       await this.$scope.request<{ data: string }>(NewMultiImportedCollectionCommand, { data: data })
@@ -322,13 +323,13 @@ export class AddModDialogController extends DialogControllerBase {
     });
 
     $scope.getForumPost = () => this.requestAndProcessCommand<{ title; author; body }>(GetForumPostQuery, { forumUrl: $scope.model.mod.homepage }, 'fetch first post') // "http://forums.bistudio.com/showthread.php?171722-Discover-Play-Promote-missions-and-mods-withSIX"
-      .then(r => {
+      .then(r =>
         this.applyIfNeeded(() => {
           $scope.model.mod.name = r.title;
           $scope.model.mod.author = r.author;
-          $scope.model.mod.description = r.body;
-        });
-      });
+          //$scope.model.mod.description = r.body;
+        })
+      );
 
     //if (info.folder) {
     if ($scope.w6.userInfo.isAdmin) this.ok_user();
@@ -364,13 +365,13 @@ export class AddModDialogController extends DialogControllerBase {
     this.$scope.checkingPackageName = true;
     this.$scope.model.packageNameAvailable = false;
     return this.$scope.request<boolean>(ModExistsQuery, { packageName: packageName, groupId: this.$scope.model.mod.groupId, gameId: this.model.id })
-      .then((result) => {
+      .then((result) =>
         this.applyIfNeeded(() => {
           this.$scope.checkingPackageName = false;
           Tools.Debug.log(result);
           this.$scope.model.packageNameAvailable = !result;
-        });
-      })
+        })
+      )
       .catch(this.httpFailed);
   }
 
@@ -381,13 +382,13 @@ export class AddModDialogController extends DialogControllerBase {
     this.$scope.checkingName = true;
     this.$scope.model.nameAvailable = false;
     return this.$scope.request<boolean>(ModNameExistsQuery, { name: name, authorId: this.getAuthorId(), gameId: this.model.id })
-      .then((result) => {
+      .then((result) =>
         this.applyIfNeeded(() => {
           this.$scope.checkingName = false;
           Tools.Debug.log(result);
           this.$scope.model.nameAvailable = !result;
-        });
-      })
+        })
+      )
       .catch(this.httpFailed);
   }
 
@@ -395,13 +396,13 @@ export class AddModDialogController extends DialogControllerBase {
     this.$scope.checkingDownloadLink = true;
     this.$scope.model.downloadLinkAvailable = false;
     return this.$scope.request<boolean>(GetCheckLinkQuery, { linkToCheck: uri })
-      .then((result) => {
+      .then((result) =>
         this.applyIfNeeded(() => {
           this.$scope.checkingDownloadLink = false;
           Tools.Debug.log(result);
           this.$scope.model.downloadLinkAvailable = result;
-        });
-      })
+        })
+      )
       .catch(this.httpFailed);
   }
 
@@ -416,18 +417,18 @@ export class AddModDialogController extends DialogControllerBase {
 
   getLatestInfo() {
     let model = this.$scope.model;
-    return this.$scope.request<IModVersionInfo>(GetLatestInfo, { data: { downloadUri: model.mod.download } }).then(r => {
+    return this.$scope.request<IModVersionInfo>(GetLatestInfo, { data: { downloadUri: model.mod.download } }).then(r =>
       this.applyIfNeeded(() => {
         model.mod.version = r.version;
         model.mod.branch = r.branch;
         if (!model.mod.name) model.mod.name = r.name;
         if (!model.mod.author) model.mod.author = r.author;
         if (!model.mod.homepage) model.mod.homepage = r.url;
-        if (!model.mod.description) model.mod.description = r.description;
+        //if (!model.mod.description) model.mod.description = r.description;
         if (!model.mod.homepage) model.mod.download;
         model.mod.tags = r.tags;
-      });
-    });
+      })
+    );
   }
 
   private ok = async () => {
@@ -722,7 +723,7 @@ class GameController extends BaseQueryController<IBreezeGame> {
           return "install";
         }
       }
-      //if ($scope.clientInfo.gameLock || $scope.clientInfo.globalLock) {
+      //if ($scope.clientInfo.gameLock) {
       //    return "busy";
       //}
       if ($scope.showBusyState())
@@ -774,7 +775,7 @@ class GameController extends BaseQueryController<IBreezeGame> {
     if (model.supportsCollections)
       items.push({ header: "Collections", segment: "collections", icon: "icon withSIX-icon-Nav-Collection" });
 
-    if (model.supportsServers && $scope.environment != Tools.Environment.Production)
+    if (model.supportsServers && $scope.features.serverBrowser)
       items.push({ header: "Servers", segment: "servers", icon: "icon withSIX-icon-Nav-Server" });
 
     if ($scope.w6.enableBasket)
@@ -805,7 +806,7 @@ class GameController extends BaseQueryController<IBreezeGame> {
 
     $scope.showBusyState = (): boolean => {
       //isInitBusy ||
-      return $scope.clientInfo.gameLock || $scope.clientInfo.globalLock;
+      return $scope.clientInfo.gameLock;
     };
 
     $scope.isActive = (mod: IBreezeMod) => $scope.showBusyState() && basketService.lastActiveItem == mod.id;
@@ -813,7 +814,7 @@ class GameController extends BaseQueryController<IBreezeGame> {
     $scope.abort = (mod: IBreezeMod) => basketService.abort(mod.gameId)
 
     $scope.directDownload = async (item: any) => {
-      if ($scope.clientInfo.gameLock || $scope.clientInfo.globalLock) {
+      if ($scope.clientInfo.gameLock) {
         logger.error("Client is currently busy");
         return;
       }
@@ -826,7 +827,7 @@ class GameController extends BaseQueryController<IBreezeGame> {
     // };
 
     $scope.directDownloadCollection = async (item: IBreezeCollection) => {
-      if ($scope.clientInfo.gameLock || $scope.clientInfo.globalLock) {
+      if ($scope.clientInfo.gameLock) {
         logger.error("Client is currently busy");
         return null;
       }
@@ -845,10 +846,7 @@ class GameController extends BaseQueryController<IBreezeGame> {
     $('#wrapper').addClass('play-game');
   }
 
-  subscriptionQuerySucceeded = (result, d) => {
-    for (var v in result.data)
-      d[result.data[v]] = true;
-  };
+  subscriptionQuerySucceeded = (result, d) => result.forEach(x => d[x] = true);
 }
 
 registerController(GameController);

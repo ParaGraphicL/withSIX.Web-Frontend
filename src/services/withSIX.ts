@@ -1,7 +1,7 @@
-import {Tools} from './tools';
-import {Client, IMiniClientInfo, PreferredClient, CollectionScope} from 'withsix-sync-api';
+import { Tools } from './tools';
+import { Client, IMiniClientInfo, PreferredClient, CollectionScope } from 'withsix-sync-api';
 import breeze from 'breeze-client';
-import {IUserInfo} from './dtos';
+import { IUserInfo } from './dtos';
 
 export interface IAvatarInfo {
   avatarURL?: string;
@@ -18,11 +18,17 @@ enum Sites {
 }
 
 
+export interface IExternalInfo {
+  forumUrl?: string; steamInfo; gitHubRepo?: string; armaholicUrl?: string; chucklefishUrl?: string; nmsmUrl?: string; nexusUrl?: string; description?: string; homepageUrl?: string;
+  mdbUrl?: string; curseUrl?: string;
+}
+
+
 if (!window.RedactorPlugins) window.RedactorPlugins = <any>{};
 
 window.RedactorPlugins.bufferbuttons = () => {
   return {
-    init: function() {
+    init: function () {
       var undo = this.button.addFirst('undo', 'Undo');
       var redo = this.button.addAfter('undo', 'redo', 'Redo');
 
@@ -31,7 +37,7 @@ window.RedactorPlugins.bufferbuttons = () => {
     }
   };
 };
-export var globalRedactorOptions = { plugins: [], linebreaks: true }; // 'p', 'h1', 'h2', 'pre' // allowedTags: ['spoiler', 'code', 'p', 'h1', 'h2', 'pre']
+export var globalRedactorOptions: { plugins: string[], linebreaks: boolean } = { plugins: [], linebreaks: true }; // 'p', 'h1', 'h2', 'pre' // allowedTags: ['spoiler', 'code', 'p', 'h1', 'h2', 'pre']
 globalRedactorOptions.plugins = ['bufferbuttons', 'image', 'video', 'table', 'fullscreen'];
 
 /*
@@ -44,7 +50,7 @@ globalRedactorOptions.plugins = ['bufferbuttons', 'image', 'video', 'table', 'fu
 
 export class W6Urls {
   imageCdn = "https://withsix-img.azureedge.net";
-  static proxy = 'https://proxy.withsix.com'
+  static getProxyUrl = (site: string) => `https://${site}-proxy.withsix.com/`
   urlNonSsl: string;
   constructor(urls) {
     Object.assign(this, urls);
@@ -59,12 +65,19 @@ export class W6Urls {
     this.docsCdn = "//withsix-cdn.azureedge.net";
     this.img = {
       play: this.getAssetUrl('img/play-icon.png'),
-      steam: this.getAssetUrl('img/steam-512.gif'),
+
+      steam: this.getAssetUrl('img/hosts/steam-512.gif'),
+      chucklefish: this.getAssetUrl('img/hosts/chucklefish.png'),
+      unknown: this.getAssetUrl('img/avatar/noava_72.jpg')
     }
     this.version = this.getAssetHashed("version");
   }
-  img;
+  img: {
+    play: string; chucklefish: string; steam: string; unknown: string;
+  }
   version: string;
+
+  get currentPath() { return window.location.pathname; }
 
   getCurrentPageWithoutHash() { return window.location.protocol + '//' + window.location.host + window.location.pathname + window.location.search; }
 
@@ -142,16 +155,15 @@ export class W6Urls {
     return this.tools.uriHasProtocol(asset) ? asset : this.contentCdn + '/' + asset;
   }
 
-  public getContentAvatarUrl(avatar: string, updatedAt?: Date): string {
-    if (!avatar || avatar == "")
-      return null;
+  public getContentAvatarUrl(avatar: string, updatedAt?: Date): string | null {
+    if (!avatar || avatar === "") { return null; }
     return this.getUsercontentUrl2(avatar, updatedAt);
   }
 
-  public processAssetVersion(avatar: string, updatedAt?: Date): string {
-    if (avatar == null) return null;
+  public processAssetVersion(avatar: string, updatedAt?: Date): string | null {
+    if (avatar == null) { return null; }
     if (!updatedAt) return avatar;
-    if (avatar.startsWith("blob:")) return avatar;
+    if (avatar.startsWith("blob:")) { return avatar; }
     return avatar + "?" + Math.round(updatedAt.getTime() / 1000);
   }
 
@@ -354,7 +366,11 @@ export class W6Ads {
     */
   };
 
-  get isPageExcluded() { return window.location.href.includes("QEDuk6uVNE2ecQyHMP_uXQ"); }
+  get isPageExcluded() {
+    return window.location.pathname.startsWith("/login")
+      || window.location.pathname.startsWith("/register")
+      || window.location.href.includes("QEDuk6uVNE2ecQyHMP_uXQ");
+  }
 
   public processAdSlots(previous, current) {
     var slots = [];
@@ -451,6 +467,7 @@ export class W6 {
   libraryParent;
   collection;
   redirected: boolean;
+  classes?: string;
   redirectedWasLoggedIn: boolean;
   public w6OBot = "60f61960-23a3-11e4-8c21-0800200c9a66";
 
@@ -468,8 +485,7 @@ export class W6 {
   constructor(public url: W6Urls, public userInfo: IUserInfo, public miniClient: Client, public api: IApi) {
     this.chromeless = window.location.search.includes("chromeless") || this.isClient;
     this.enableBasket = !this.isClient;
-    if (this.isClient)
-      this.client = new W6Client(<IClient>window.six_client);
+    if (this.isClient) { this.client = new W6Client(<IClient>window.six_client); }
 
     let settings = window.localStorage.getItem('w6.settings');
     this.settings = settings ? JSON.parse(settings) : {};
@@ -551,33 +567,35 @@ export class W6 {
       angular.forEach(obj, (v, i) => newAr[i] = this.convertToClient(v, convertPropertyNames));
       return <T><any>newAr;
     } else if (obj instanceof Date) {
-      return <T>obj;
+      return <T><any>obj;
     } else if (obj instanceof Object) {
       var newObj = {};
       if (convertPropertyNames) angular.forEach(obj, (v, p) => newObj[converter.serverPropertyNameToClient(p)] = this.convertToClient(v, convertPropertyNames));
       else angular.forEach(obj, (v, p) => newObj[p] = this.convertToClient(v, convertPropertyNames));
       return <T>newObj;
-    } else if (typeof(obj) === 'string' || obj instanceof String) {
+    } else if (typeof (obj) === 'string') {
       if (this.iso8601RegEx.test(obj)) return <T><any>breeze.DataType.parseDateFromServer(obj);
+    } else if (obj instanceof String) {
+      if (this.iso8601RegEx.test(obj.toString())) return <T><any>breeze.DataType.parseDateFromServer(obj);
     }
 
     return <T>obj;
   }
 
-  private convertToServer<T>(obj) {
+  private convertToServer<T>(obj: T) {
     var converter = breeze.NamingConvention.defaultInstance;
     if (obj instanceof Array) {
       var newAr = [];
       angular.forEach(obj, (v, i) => newAr[i] = this.convertToServer(v));
       return <T><any>newAr;
     } else if (obj instanceof Date) {
-      return <T>obj;
+      return <T><any>obj;
     } else if (obj instanceof Object) {
       var newObj = {};
       angular.forEach(obj, (v, p) => newObj[converter.clientPropertyNameToServer(p)] = v instanceof Object ? this.convertToServer(v) : v);
       return <T>newObj;
     }
-    return <T>obj;
+    return obj;
   }
   // Divisable by 8! Keep in sync with C#: ImageConstants
   public imageSizes = {

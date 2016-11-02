@@ -1,4 +1,4 @@
-import {ViewModel, Seditio, Query, DbQuery, W6Context, handlerFor, UiContext, W6Urls, ForumUrl} from '../../../../framework';
+import {ViewModel, Seditio, Query, DbQuery, W6Context, handlerFor, UiContext, W6Urls, ArmaholicUrl} from '../../../../framework';
 import {inject} from 'aurelia-framework';
 
 import { UpdateGallery, UpdateInterestingLinks } from '../mod-gallery';
@@ -14,7 +14,7 @@ export class ArmaholicInfo extends ViewModel {
     try {
       this.model = await new GetArmaholicInfo(url).handle(this.mediator);
       if (this.model.images.length > 0) this.eventBus.publish(new UpdateGallery(this.model.images));
-      this.eventBus.publish(new UpdateInterestingLinks([new ForumUrl(url)].concat(this.model.interestingLinks)));
+      this.eventBus.publish(new UpdateInterestingLinks([new ArmaholicUrl(url)].concat(this.model.interestingLinks)));
     } catch (ex) { }
   }
 }
@@ -28,6 +28,6 @@ class GetArmaholicInfo extends Query<{ body: string }> {
 class GetArmaholicInfoHandler extends DbQuery<GetArmaholicInfo, { body: string }> {
   constructor(private sed: Seditio, ctx) { super(ctx) }
   handle(request: GetArmaholicInfo) {
-    return this.sed.getPost(request.url.replace(/https?:\/\/(www\.)?armaholic.com\//, `${W6Urls.proxy}/api5/`), "http://www.armaholic.com/")
+    return this.sed.getPost(request.url.replace(/https?:\/\/(www\.)?armaholic.com\//, W6Urls.getProxyUrl('armaholic')), "http://www.armaholic.com/")
   }
 }

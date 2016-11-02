@@ -12,7 +12,7 @@ export class ChucklefishInfo extends ViewModel {
     this.url = url;
 
     try {
-      this.model = await new GetChucklefishInfo(url).handle(this.mediator);
+      this.model = await new GetChucklefishInfo(url.endsWith("/") ? url : url + '/').handle(this.mediator);
       if (this.model.images.length > 0) this.eventBus.publish(new UpdateGallery(this.model.images));
       this.eventBus.publish(new UpdateInterestingLinks([new ForumUrl(url)].concat(this.model.interestingLinks)));
     } catch (ex) { }
@@ -28,6 +28,6 @@ class GetChucklefishInfo extends Query<{ body: string }> {
 class GetChucklefishInfoHandler extends DbQuery<GetChucklefishInfo, { body: string }> {
   constructor(private xen: XenForo, ctx) { super(ctx) }
   handle(request: GetChucklefishInfo) {
-    return this.xen.getPost(request.url.replace(/https?:\/\/community.playstarbound.com\//, `${W6Urls.proxy}/api8/`), "http://community.playstarbound.com/")
+    return this.xen.getPost(request.url.replace(/https?:\/\/community.playstarbound.com\//, W6Urls.getProxyUrl('starbound')), "http://community.playstarbound.com/")
   }
 }

@@ -7,7 +7,6 @@ import {Tk} from '../services/legacy/tk'
 
 import {EventAggregator} from 'aurelia-event-aggregator';
 
-import {Mediator} from 'aurelia-mediator';
 import {Client} from 'withsix-sync-api';
 
 import {IRootScope, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHaveModel, DialogQueryBase, DbCommandBase, DbQueryBase, BaseController, BaseQueryController } from './app-base'
@@ -116,14 +115,14 @@ class RootModule extends Tk.Module {
 
 export class MainAppController extends BaseController {
   static $name = "MainAppController";
-  static $inject = ['$scope', 'usSpinnerService', 'logger', 'w6', '$location', '$q', '$timeout', '$rootScope', '$anchorScroll', 'aur.eventBus', 'DoubleClick'];
+  static $inject = ['$scope', 'usSpinnerService', 'logger', '$location', '$q', '$timeout', '$rootScope', '$anchorScroll', 'aur.eventBus', 'DoubleClick'];
 
-  constructor($scope, private $spinner, logger, private w6: W6, private $location: ng.ILocationService, $q: ng.IQService, private $timeout: ng.ITimeoutService, private $rootScope: IRootScope, $anchorScroll, private eventBus: EventAggregator, private dfpForLoading) {
+  constructor($scope, private $spinner, logger, private $location: ng.ILocationService, $q: ng.IQService, private $timeout: ng.ITimeoutService, private $rootScope: IRootScope, $anchorScroll, private eventBus: EventAggregator, private dfpForLoading) {
     super($scope, logger, $q);
 
-    $rootScope.logout = () => w6.logout();
-    $rootScope.openLoginDialog = (evt?) => w6.openLoginDialog(evt);
-    w6.openRegisterDialog = (event?) => this.openRegisterDialog(event);
+    $rootScope.logout = () => this.w6.logout();
+    $rootScope.openLoginDialog = (evt?) => this.w6.openLoginDialog(evt);
+    this.w6.openRegisterDialog = (event?) => this.openRegisterDialog(event);
 
     $rootScope.ready = () => {
       Tools.Debug.log('ready');
@@ -138,12 +137,12 @@ export class MainAppController extends BaseController {
             this.w6.ads.check();
         }
         $rootScope.status = 'ready';
+        window.prerenderReady = true;
       }, $rootScope);
-      window.prerenderReady = true;
     };
     $rootScope.startLoading = () => {
       $rootScope.status = 'loading';
-      $scope.$evalAsync();
+      this.applyIfNeeded();
     };
 
     $rootScope.initialLoad = true;

@@ -1,67 +1,70 @@
 <template>
-  <require from="./v2.scss"></require>
-  <require from="features/top-bar/search/search-results"></require>
-  <require from="features/side-bar/side-bar"></require>
-  <require from="features/top-bar/top-bar"></require>
+	<require from="./v2.scss"></require>
+	<require from="features/top-bar/search/search-results"></require>
+	<require from="features/side-bar/side-bar"></require>
+	<require from="features/top-bar/top-bar"></require>
 
-  <div id="wrapper" class.bind="classes" class="${w6.url.site} ${showSidebar ? 'show-sidebar' : 'hide-sidebar'} ${w6.url.site == 'main' && w6.url.isRoot ? 'home' : null} ${w6.chromeless ? 'chromeless' : null}">
-    <a name="top" id="top"></a>
+	<div id="wrapper" class.bind="classes" class="${w6.url.site} ${showSidebar ? 'show-sidebar' : 'hide-sidebar'} ${w6.url.site == 'main' && w6.url.isRoot ? 'home' : null} ${w6.chromeless ? 'chromeless' : null} ${w6.classes}">
+		<a name="top" id="top"></a>
 
-    <top-bar view-model.ref="topBar" id="top-menu" class="shell-bar ${topBar.selectedTab ? 'active' : 'inactive'}" side-bar.bind="sideBar" show-sidebar.bind="showSidebar"></top-bar>
-    <side-bar view-model.ref="sideBar" id="sidebar" class="shell-bar ${sideBar.selectedTab ? 'active' : 'inactive'}" show.bind="showSidebar"></side-bar>
+		<top-bar view-model.ref="topBar" id="top-menu" class="shell-bar ${topBar.selectedTab ? 'active' : 'inactive'}" side-bar.bind="sideBar"
+			show-sidebar.bind="showSidebar"></top-bar>
+		<side-bar view-model.ref="sideBar" id="sidebar" class="shell-bar ${sideBar.selectedTab ? 'active' : 'inactive'}" show.bind="showSidebar"></side-bar>
 
-    <section id="content-view" scroll.trigger="closeDropdowns()">
-      <div click.delegate="closeTabs()">
-        <div class="preview-header" if.bind="features.isTestEnvironment">This is a preview page, please visit the production site at <a href="http://withsix.com">withSIX.com</a></div>
-        <div class="update-header" if.bind="showFirefoxNotice">
-          We notice you are running FireFox. If you have issues connecting with the Sync client. Please allow a security exception by clicking <a target="_blank" href.bind="w6.client.endpoint">here</a> and following the instructions.
-        </div>
-        <div class="update-header" if.bind="newAppVersionAvailable">A new version of the site is available, please
-          <button class="anchor" click.delegate="refresh()">refresh</button> to update</div>
-        <div class="update-header" if.bind="obsoleteClientVersion">
-          <span>Please update to the latest client by redownloading (one-time) from the <a href="/download">download</a> page. [Close Sync before starting installation]</span>
-        </div>
-        <div class="update-header" if.bind="w6.miniClient.isConnected && w6.miniClient.clientInfo.updateState > 1">
-          <span if.bind="w6.miniClient.clientInfo.updateState == 2">New Client version available, please visit the <a href="/update">update</a> page to install</span>
-          <span if.bind="w6.miniClient.clientInfo.updateState == 3">Downloading new client version...</span>
-          <span if.bind="w6.miniClient.clientInfo.updateState == 4">Installing new client version...</span>
-        </div>
+		<section id="content-view" scroll.trigger="closeDropdowns()">
+			<div click.delegate="closeTabs()">
+				<div class="preview-header" if.bind="features.isTestEnvironment">This is a preview page, please visit the production site at <a href="http://withsix.com">withSIX.com</a></div>
+				<div class="update-header" if.bind="showFirefoxNotice">
+					We notice you are running FireFox. If you have issues connecting with the Sync client. Please allow a security exception
+					by clicking <a target="_blank" href.bind="w6.client.endpoint">here</a> and following the instructions.
+				</div>
+				<div class="update-header" if.bind="newAppVersionAvailable">A new version of the site is available, please
+					<button class="anchor" click.delegate="refresh()">refresh</button> to update</div>
+				<div class="update-header" if.bind="obsoleteClientVersion">
+					<span>Please update to the latest client by redownloading (one-time) from the <a href="/download">download</a> page. [Close Sync before starting installation]</span>
+				</div>
+				<div class="update-header" if.bind="w6.miniClient.isConnected && w6.miniClient.clientInfo.updateState > 1">
+					<span if.bind="w6.miniClient.clientInfo.updateState == 2">New Client version available, please visit the <a href="/update">update</a> page to install</span>
+					<span if.bind="w6.miniClient.clientInfo.updateState == 3">Downloading new client version...</span>
+					<span if.bind="w6.miniClient.clientInfo.updateState == 4">Installing new client version...</span>
+				</div>
 
-        <div class="update-header" if.bind="shouldConfirmEmail">Please confirm your account. Check your Email or click <a href="/me/settings/credentials">here</a></div>
+				<div class="update-header" if.bind="shouldConfirmEmail">Please confirm your account. Check your Email or click <a href="/me/settings/credentials">here</a></div>
 
-        <div class="update-header" if.bind="shouldFinalizeAccount">Please finalize your account
-          <button class="anchor" click.delegate="finalizeAccount()">here</button>
-        </div>
+				<div class="update-header" if.bind="shouldFinalizeAccount">Please finalize your account
+					<button class="anchor" click.delegate="finalizeAccount()">here</button>
+				</div>
 
 
-        <header id="header-row" css.bind="w6.headerImage">
-          <div class="overlay">
-            <ad-unit class="container-fluid header-add" unit-class="add-leaderboard" unit-id="angular-ad-leader" if.bind="!w6.url.isRoot && w6.renderAds"></ad-unit>
+				<header id="header-row" css.bind="w6.headerImage">
+					<div class="overlay">
+						<ad-unit class="container-fluid header-add" unit-class="add-leaderboard" unit-id="angular-ad-leader" if.bind="!w6.url.isRoot && w6.renderAds"></ad-unit>
 
-            <div class="container-fluid" if.bind="showSlogan">
-              <compose view="./_slogan.html"></compose>
-            </div>
-          </div>
-        </header>
+						<div class="container-fluid" if.bind="showSlogan">
+							<compose view="./_slogan.html"></compose>
+						</div>
+					</div>
+				</header>
 
-        <section id="root-content-row">
-          <router-view></router-view>
+				<section id="root-content-row">
+					<router-view></router-view>
 
-        </section>
+				</section>
 
-        <footer id="footer-row" show.bind="w6.showFooter">
-          <compose view="./_footer.html"></compose>
-        </footer>
+				<footer id="footer-row" show.bind="w6.showFooter">
+					<compose view="./_footer.html"></compose>
+				</footer>
 
-        <div id="tab-overlay" if.bind="tabActive && tabAsTabActive" class="${tabAsTabActive ? 'tab' : ''}"></div>
+				<div id="tab-overlay" if.bind="tabActive && tabAsTabActive" class="${tabAsTabActive ? 'tab' : ''}"></div>
 
-        <search-results open.bind="topBar.search.showResults" game-slug.one-way="topBar.search.gameSlug" results.bind="topBar.search.results" result-q.bind="topBar.search.resultQ" search-one-type.one-way="topBar.search.searchOneType" full-view.one-way="topBar.search.fullView"
-            go-back-to-overview.one-way="topBar.search.goBackToOverview" close-now.one-way="topBar.search.closeNow"></search-results>
-        <!-- if.bind="topBar.search.open && topBar.search.results.length > 0" -->
-      </div>
+				<search-results open.bind="topBar.search.showResults" game-slug.one-way="topBar.search.gameSlug" results.bind="topBar.search.results"
+					result-q.bind="topBar.search.resultQ" search-one-type.one-way="topBar.search.searchOneType" full-view.one-way="topBar.search.fullView"
+					go-back-to-overview.call="topBar.search.goBackToOverview()" close-now.call="topBar.search.closeNow()"></search-results>
+				<!-- if.bind="topBar.search.open && topBar.search.results.length > 0" -->
+			</div>
 
-      <tab-view-render id="left-tabs" selected-tab.bind="sideBar.selectedTab" close.bind="sideBar.tabView.close"></tab-view-render>
-      <tab-view-render id="right-tabs" selected-tab.bind="topBar.selectedTab" close.bind="topBar.tabView.close"></tab-view-render>
-    </section>
-  </div>
+			<tab-view-render id="left-tabs" selected-tab.bind="sideBar.selectedTab" close.call="sideBar.tabView.close()"></tab-view-render>
+			<tab-view-render id="right-tabs" selected-tab.bind="topBar.selectedTab" close.call="topBar.tabView.close()"></tab-view-render>
+		</section>
+	</div>
 </template>

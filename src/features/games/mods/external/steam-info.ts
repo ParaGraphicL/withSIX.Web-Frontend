@@ -1,4 +1,4 @@
-import {ViewModel, SteamService, Query, DbQuery, W6Context, handlerFor, UiContext, ForumUrl} from '../../../../framework';
+import {ViewModel, SteamService, Query, DbQuery, W6Context, handlerFor, UiContext, WorkshopUrl} from '../../../../framework';
 import {inject} from 'aurelia-framework';
 
 import { UpdateGallery, UpdateInterestingLinks } from '../mod-gallery';
@@ -27,7 +27,7 @@ export class SteamInfo extends ViewModel {
         this.steamUrl = `https://steamcommunity.com/sharedfiles/filedetails/${this.model.steamId}`;
         //this.url = `http://withsix.com/p/Arma-3/mods/${model.id.toShortId()}/${model.name.sluggify()}`;
         if (info.images.length > 0) this.eventBus.publish(new UpdateGallery(info.images));
-        this.eventBus.publish(new UpdateInterestingLinks([new ForumUrl(this.steamUrl)].concat(info.interestingLinks)));
+        this.eventBus.publish(new UpdateInterestingLinks([new WorkshopUrl(this.steamUrl)].concat(info.interestingLinks)));
       }
     } catch (ex) { }
   }

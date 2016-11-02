@@ -1,13 +1,13 @@
-<div itemscope itemtype="http://schema.org/CreativeWork" ng-class="{'editing': editConfig.isEditing}" class="not-editing">
+<div itemscope itemtype="http://schema.org/CreativeWork" ng-class="{'editing': editConfig.isEditing}"
+  class="not-editing">
   <div sx-content-header ng-class="{'content-stateable': w6.enableBasket, 'in-basket': isInBasket()}" class="sx-content-header content-basketable {{getItemClass(model)}}">
     <sx-header-name class="editable-half">
-      <span ng-if="model.group" class="icon withSIX-icon-Lock"></span>
-
       <div ng-if="!vm.isForActiveGame" class="alternative-game" title="This content was made for ARMA 2">
         <img ng-src="{{w6.url.cdn}}/img/play.withSIX/games/Arma-2/arma2-blck.png" />
       </div>
-      <span ng-class="{'edit-border-blue edit-field': editConfig.canManage()}" title="{{model.name}} ({{model.packageName}})" sx-editable-text="model.name" buttons="no" can-edit="editConfig.isEditing" blur-saves>
-                  <span ng-if="model.group" class="icon withSIX-icon-Lock" title="This is a private mod"></span> {{model.name | characters:54 :true}}<span style="display: inline-flex; vertical-align: top"><span ng-if="editConfig.isEdited('name')" class="withSIX-icon-Alert" style="color: red; font-size: 20px;"></span></span>
+      <span ng-class="{'edit-border-blue edit-field': (editConfig.canEdit() || editConfig.canManage())}" title="{{model.name}} ({{model.packageName}})"
+        sx-editable-text="model.name" buttons="no" can-edit="editConfig.isEditing" blur-saves>
+                  {{model.name | characters:54 :true}}<span style="display: inline-flex; vertical-align: top"><span ng-if="editConfig.isEdited('name')" class="withSIX-icon-Alert" style="color: red; font-size: 20px;"></span></span>
       </span>
     </sx-header-name>
 
@@ -39,10 +39,11 @@
     </sx-header-author>
 
     <div name="follow-info">
-      {{model.stat.install | amount}} Installs.
+      <span title="{{model.stat.totalInstall}}">{{model.stat.totalInstall | amount}} <i ng-if="w6.userInfo.isManager" title="{{model.stat.install}}"> ({{model.stat.install | amount}})</i></span>      Installs.
       <span ng-if="w6.userInfo.id">
                 <button class="anchor" ng-click="toggleFollow() && $event.stopPropagation()">
-                    <span class="icon withSIX-icon-Follow"></span> {{followedMods[model.id] ? 'Unfollow' : 'Follow'}}
+                    <span class="icon withSIX-icon-Follow"></span> {{followedMods[model.id] ? 'Unfollow'
+      : 'Follow'}}
       </button>
       </span>
 
@@ -55,6 +56,13 @@
       <a ng-href="{{header.contentRootUrl}}">
         <span class="withSIX-icon-Nav-Mod"></span> Mod
       </a>
+
+      <div ng-if="editConfig.canManage()">
+        Scope: <span ng-class="{'edit-border-blue edit-field': (editConfig.canManage()) && !model.groupId}"
+          can-edit="editConfig.isEditing && (editConfig.canManage()) && !model.groupId" blur-saves buttons="no"
+          sx-editable-select="model.scope" e-ng-options="s.text as s.text for s in $parent.scopes">{{model.scope}}</span>        PackageName: <span ng-class="{'edit-border-blue edit-field': false}" can-edit="editConfig.isEditing && false"
+          blur-saves buttons="no" sx-editable-text="model.packageName">{{model.packageName}}</span>)
+      </div>
     </sx-header-type>
 
     <sx-header-tags>
@@ -70,22 +78,27 @@
       </span>
       <span ng-if="header.tags.length != 0">&nbsp;&nbsp;</span>
       <span ng-if="header.tags.length == 0" style="color: gray; font-style: italic">No Tags&nbsp;&nbsp;</span>
-      <a id="addModTag" ng-if="editConfig.isEditing" href="#" editable-tag-auto-complete="temporaryTag" inline on-tag-added="addTag($data)" buttons="no" style="color: green;" tags="getCurrentTags()" source="getCategories($query)" placeholder="add a category"
-          add-from-autocomplete-only="true" display-property="key" can-edit="editConfig.isEditing" min-length="0" load-on-focus="true" load-on-empty="true" max-results-to-show="32">
+      <a id="addModTag" ng-if="editConfig.isEditing" href="#" editable-tag-auto-complete="temporaryTag" inline
+        on-tag-added="addTag($data)" buttons="no" style="color: green;" tags="getCurrentTags()" source="getCategories($query)"
+        placeholder="add a category" add-from-autocomplete-only="true" display-property="key" can-edit="editConfig.isEditing"
+        min-length="0" load-on-focus="true" load-on-empty="true" max-results-to-show="32">
         <span class="withSIX-icon-Add" style="color: green; font-size: 10px;"></span>
       </a>
     </sx-header-tags>
 
     <sx-header-logo>
-      <sx-aurelia ng-if="!editConfig.isEditing" sx-view-model="'features/profile/content/mod'" sx-view="'features/profile/content/_logo2.html'" sx-model="auModel"></sx-aurelia>
-      <div ng-if="editConfig.isEditing" ngf-drop2="" ngf-drag-over-class="{accept:'drag-over', reject:'dragover-err', delay:100}" ngf-change="fileDropped($files, $event, $rejectedFiles)" ngf-accept="accept($file, $event)" data-multiple="false">
+      <sx-aurelia ng-if="!editConfig.isEditing && w6.enableBasket" sx-view-model="'features/profile/content/mod'"
+        sx-view="'features/profile/content/_logo2.html'" sx-model="auModel"></sx-aurelia>
+      <div ng-if="editConfig.isEditing || !w6.enableBasket" ngf-drop2="" ngf-drag-over-class="{accept:'drag-over', reject:'dragover-err', delay:100}"
+        ngf-change="fileDropped($files, $event, $rejectedFiles)" ngf-accept="accept($file, $event)" data-multiple="false">
         <!-- ngf-accept="image/*"-->
         <div itemprop="image" class="imageholder" ng-style="{'background-image': ('url('+ header.getAvatar(w6.imageSizes.smallRectangle.w, w6.imageSizes.smallRectangle.h) +')'), position: 'relative'}">
           <button ng-if="w6.enableBasket && canAddToBasket()" class="content-basketable-button pull-left" ng-click="addToBasket(model) && $event.stopPropagation()">
             <span class="content-basketable-icon"></span><span class="content-basketable-text"></span>
           </button>
           <div class="dropdown std-dropdown pull-right" ng-if="w6.userInfo.id">
-            <button class="dropdown-toggle text-button" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" ng-click="$event.preventDefault()">
+            <button class="dropdown-toggle text-button" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true"
+              aria-expanded="true" ng-click="$event.preventDefault()">
               <span class="icon withSIX-icon-Share-Dots-V"></span>
             </button>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
@@ -98,11 +111,14 @@
             <div class="row edit-section" ng-if="editConfig.isEditing">
               <div class="col-md-4">
                 &nbsp;
-                <span class="sx-edit-button-left-orange hovering bold sx-uploading-image" ng-show="uploadingModImage" data-container="body" data-title="We are currently processing your logo" bs-tooltip>Processing</span>
+                <span class="sx-edit-button-left-orange hovering bold sx-uploading-image" ng-show="uploadingModImage"
+                  data-container="body" data-title="We are currently processing your logo" bs-tooltip>Processing</span>
               </div>
               <div class="col-md-4 col-md-offset-4">
                 &nbsp;
-                <span class="withSIX-icon-Edit-Field sx-edit-button-blue" ng-disabled="uploadingModImage" id="uploadBanner" ng-click="showUploadBanner() && $event.stopPropagation()" data-container="body" data-title="Click me to upload a new banner" bs-tooltip></span>
+                <span class="withSIX-icon-Edit-Field sx-edit-button-blue" ng-disabled="uploadingModImage" id="uploadBanner"
+                  ng-click="showUploadBanner() && $event.stopPropagation()" data-container="body" data-title="Click me to upload a new banner"
+                  bs-tooltip></span>
               </div>
             </div>
           </div>
@@ -114,10 +130,10 @@
     <sx-header-info>
       <ul ng-if="model.modVersion != null">
         <li>
-          <span class="main" itemprop="version" title="{{formatVersion()}} {{model.latestStableVersion && model.latestStableVersion != model.modVersion ? 'newer dev version: ' + model.modVersion : ''}}">{{formatVersion()}}</span> <span itemprop="dateModified">{{model.updatedAt | date:"dd MMM 'yy"}}</span></li>
+          <span class="main" itemprop="version" title="{{formatVersion()}} {{model.latestStableVersion && model.latestStableVersion != model.modVersion ? 'newer dev version: ' + model.modVersion : ''}}">{{formatVersion()}}</span>          <span itemprop="dateModified">{{model.updatedAt | date:"dd MMM 'yy"}}</span></li>
         <li title="{{model.size | size:'B':false}} unpacked" ng-bind-html="model.sizePacked | size"></li>
         <li>
-          <span class="main">{{model.stat.install | amount}}</span> <span>Installs</span></li>
+          <span class="main" title="{{model.stat.totalInstall}}">{{model.stat.totalInstall | amount}}<i ng-if="w6.userInfo.isManager" title="{{model.stat.install}}"> ({{model.stat.install | amount}})</i></span>          <span>Installs</span></li>
       </ul>
       <div ng-if="model.modVersion == null">
         <span class="main">Waiting on Network</span><span class="tiny">Please be patient</span>
@@ -126,10 +142,12 @@
 
     <sx-header-download>
       <div ng-if="model.modVersion != null && !model.group" class="action download content-state-c-bgd">
-        <sx-aurelia ng-if="w6.enableBasket" sx-view-model="'features/profile/content/mod'" sx-view="'features/profile/content/_action.html'" sx-model="auModel"></sx-aurelia>
+        <sx-aurelia ng-if="w6.enableBasket" sx-view-model="'features/profile/content/mod'" sx-view="'features/profile/content/_action.html'"
+          sx-model="auModel"></sx-aurelia>
         <div ng-if="!w6.enableBasket" ng-class="{'processing-button': model.modVersion == null, 'add-to-button-override': model.group != null}">
-          <button ng-click="(callToAction() && $event.stopPropagation())" class="anchor calltoactionBase btn-block" type="button" ng-disabled="processing || (clientInfo.globalLock || clientInfo.gameLock)" http-progress="content.installContent" http-processing="processing"
-              http-pending="Installing..." http-success="Installed!" http-error="Failed...">
+          <button ng-click="(callToAction() && $event.stopPropagation())" class="anchor calltoactionBase btn-block"
+            type="button" ng-disabled="processing || clientInfo.gameLock" http-progress="content.installContent"
+            http-processing="processing" http-pending="Installing..." http-success="Installed!" http-error="Failed...">
             <span class="icon withSIX-icon-Download" title="Download"></span>
             <span class="text">Download</span>
           </button>
@@ -144,3 +162,4 @@
 
   <div id="mod-contents" app-view-segment="2"></div>
 </div>
+

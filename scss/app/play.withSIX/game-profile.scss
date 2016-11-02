@@ -27,6 +27,11 @@ $downloadButtonHeight: 74px;
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
+  .logo {
+    div.img {
+      position: relative;
+    }
+  }
   .overlay {
     padding-top: 64px;
     padding-bottom: 64px;
@@ -183,6 +188,11 @@ $downloadButtonHeight: 74px;
           background-repeat: no-repeat;
           background-position: center;
         }
+        .logo2 {
+          div.source {
+            width: $logoWidth;
+          }
+        }
         float: left;
       }
     }
@@ -196,8 +206,8 @@ $downloadButtonHeight: 74px;
         display: none;
       }
       > .bottom {
-        color: white;
         .left {
+          color: white;
           width: 180px;
           float: left;
         }

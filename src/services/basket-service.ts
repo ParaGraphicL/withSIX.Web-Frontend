@@ -1,16 +1,18 @@
-import {EventAggregator} from 'aurelia-event-aggregator';
-import {inject} from 'aurelia-framework';
-import {ReactiveBase} from './base';
-import {_Indexer} from './legacy/base';
-import {Toastr} from './toastr';
-import {ObservableEventAggregator} from './reactive';
-import {W6} from './withSIX';
-import {BasketType, IBasketModel, IBasketItem, BasketState, IBasketCollection, IBaskets} from './legacy/baskets';
-import {W6Context} from './w6context';
-import {ContentHelper} from './helpers';
-import {ActionType, IActionNotification, Client, ConnectionState, IContentState, ItemState, IContentStateChange, IContentStatusChange, IClientInfo, IActionTabStateUpdate, StateChanged, IContentGuidSpec, IContentsBase, IContentBase,
-  IUserErrorAdded, IUserErrorResolved} from 'withsix-sync-api';
-import {ClientWrapper, AppEventsWrapper} from './client-wrapper';
+import { EventAggregator } from 'aurelia-event-aggregator';
+import { inject } from 'aurelia-framework';
+import { ReactiveBase } from './base';
+import { _Indexer } from './legacy/base';
+import { Toastr } from './toastr';
+import { ObservableEventAggregator } from './reactive';
+import { W6 } from './withSIX';
+import { BasketType, IBasketModel, IBasketItem, BasketState, IBasketCollection, IBaskets } from './legacy/baskets';
+import { W6Context } from './w6context';
+import { ContentHelper } from './helpers';
+import {
+  ActionType, IActionNotification, Client, ConnectionState, IContentState, ItemState, IContentStateChange, IContentStatusChange, IClientInfo, IActionTabStateUpdate, IContentGuidSpec, IContentsBase, IContentBase,
+  IUserErrorAdded, IUserErrorResolved
+} from 'withsix-sync-api';
+import { ClientWrapper, AppEventsWrapper, StateChanged } from './client-wrapper';
 
 @inject(EventAggregator, W6, Client, Toastr, ClientWrapper, AppEventsWrapper)
 export class BasketService extends ReactiveBase {
@@ -152,7 +154,7 @@ export class BasketService extends ReactiveBase {
     //if (this.client.state != ConnectionState.connected) return Promise.resolve(ci);
     //return this.clientPromises[gameId] = this.Int(ci);
     this.tools.Debug.log("$$$ Getting game info", gameId);
-    return this.clientPromises[gameId] = this.client.state == ConnectionState.connected ? this.Int(ci) : Promise.resolve(ci);
+    return this.clientPromises[gameId] = this.client.state === ConnectionState.connected ? this.Int(ci) : Promise.resolve(ci);
     // we update the info later on
   }
 
@@ -202,22 +204,31 @@ export class BasketService extends ReactiveBase {
   }
 }
 
+interface IDlc {
+  packageName: string;
+  name: string;
+}
+
+interface IExtendedClientInfo extends IClientInfo {
+  dlcs: IDlc[];
+}
+
 export class GameClientInfo extends ReactiveBase {
   defaults: { speed: number; progress: number; };
-  clientInfo: IClientInfo = {
+  clientInfo: IExtendedClientInfo = {
     content: {},
-    // TODO: status is currently in the client something global.., must be made per game
-    globalLock: false,
+    globalLock: false, //obsolete
     gameLock: false,
     isRunning: false,
     canAbort: false,
     actionInfo: null,
-    userErrors: []
+    userErrors: [],
+    dlcs: []
   }
 
   game: { id: string }
 
-  get isLocked() { return this.clientInfo.globalLock || this.clientInfo.gameLock; }
+  get isLocked() { return this.clientInfo.gameLock; }
   get canExecute() { return !this.isLocked; }
 
   constructor(private eventBus?: EventAggregator, private appEvents?: AppEventsWrapper, private clientWrapper?: ClientWrapper, gameId?: string) {
@@ -230,8 +241,6 @@ export class GameClientInfo extends ReactiveBase {
     let withInform = (fnc) => { let r = fnc(); this.informAngular(); return r; }
 
     this.subscriptions.subd(d => {
-      d(this.eventBus.subscribe("status.locked", () => withInform(() => this.clientInfo.globalLock = true)));
-      d(this.eventBus.subscribe("status.unlocked", () => withInform(() => this.clientInfo.globalLock = false)));
       d(this.eventBus.subscribe("status.launchedGame", (id: string) => {
         if (this.game.id != id) return;
         this.clientInfo.isRunning = true;
@@ -290,6 +299,8 @@ export class GameClientInfo extends ReactiveBase {
     });
   }
 
+  isDlcInstalled(dlc: string) { return this.clientInfo.dlcs && this.clientInfo.dlcs.some(x => x.packageName === dlc || x.name === dlc); }
+
   handleActionNotification = (x: IActionNotification) => {
     let childAction = {
       title: x.title,
@@ -320,7 +331,7 @@ export class GameClientInfo extends ReactiveBase {
   informAngular = () => this.appEvents.emitBasketChanged();
 
   handleStateChange(state: IContentState) {
-    if (state.state == ItemState.NotInstalled) {
+    if (state.state === ItemState.NotInstalled) {
       delete this.clientInfo.content[state.id];
       this.eventBus.publish('contentInfoStateChange-' + state.id, null);
     } else if (this.clientInfo.content[state.id]) Object.assign(this.clientInfo.content[state.id], this.defaults, state);
@@ -372,5 +383,6 @@ export enum ProcessingState {
   PreparingNetworkFailed = 401,
   Syncing = 410,
   SyncFailed = 411,
+  NoChangesFound = 412,
   SignalFailed = 420
 }

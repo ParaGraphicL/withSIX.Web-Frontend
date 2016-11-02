@@ -1,23 +1,23 @@
-import {Base, LS, IDisposable} from './base';
-import {W6} from './withSIX';
-import {Mediator, LegacyMediator} from './mediator';
-import {Toastr} from './toastr';
-import {ListFactory, uiCommand2, IReactiveCommand} from './reactive';
-import {Tools} from './tools';
-import {IBreezeErrorReason, IBreezeSaveError} from './legacy/misc';
-import {ContentHelper} from './helpers';
-import {InvalidShortIdException} from '../helpers/utils/string';
-import {IHttpException, ErrorResponseBody} from '../helpers/utils/http-errors';
+import { Base, LS, IDisposable } from './base';
+import { W6 } from './withSIX';
+import { Mediator, LegacyMediator } from './mediator';
+import { Toastr } from './toastr';
+import { ListFactory, uiCommand2, IReactiveCommand } from './reactive';
+import { Tools } from './tools';
+import { IBreezeErrorReason, IBreezeSaveError } from './legacy/misc';
+import { ContentHelper } from './helpers';
+import { InvalidShortIdException } from '../helpers/utils/string';
+import { IHttpException, ErrorResponseBody } from '../helpers/utils/http-errors';
 
 import * as Rx from 'rxjs/Rx';
 
 import breeze from 'breeze-client';
-import {HttpClient} from 'aurelia-http-client';
-import {Client} from 'withsix-sync-api';
-import {EventAggregator} from 'aurelia-event-aggregator';
-import {inject, Container} from 'aurelia-framework';
-import {Validation, ValidationResult} from 'aurelia-validation';
-import {Router} from 'aurelia-router';
+import { HttpClient } from 'aurelia-http-client';
+import { Client } from 'withsix-sync-api';
+import { EventAggregator } from 'aurelia-event-aggregator';
+import { inject, Container } from 'aurelia-framework';
+import { Validation, ValidationResult } from 'aurelia-validation';
+import { Router } from 'aurelia-router';
 
 const routing = require('../../data/routing.json');
 
@@ -111,7 +111,7 @@ export class Api extends Base {
   closeDropdowns = () => this.subj.next(null);
   refreshPlaylist = () => this.ls.set('w6.event', { name: 'refresh-playlist' });
   get tools() { return Tools }
-  openSettings = (model?) => this.eventBus.publish(new OpenSettings());
+  openSettings = (model = {}) => this.eventBus.publish(new OpenSettings(model));
   getContentStateInitial = ContentHelper.getConstentStateInitial;
   render: (options) => Promise<IDisposable>;
   logout;// = () => this.w6.logout();
@@ -119,7 +119,7 @@ export class Api extends Base {
   navigate; // = (url) => this.w6.navigate(url);
   errorMsg = (reason) => {
     try {
-      this.tools.Debug.log("$$$ err reason", JSON.stringify(reason));
+      this.tools.Debug.log("$$$ err reason", reason, JSON.stringify(reason));
     } catch (err) { this.tools.Debug.warn("Err while converting error reason", err) }
 
     if (!reason) { this.tools.Debug.error("undefined/null error, fix!"); return [reason, 'Unknown error']; }
@@ -131,7 +131,7 @@ export class Api extends Base {
     if (reason instanceof Tools.RequireNonSslException) return [reason.message, "please wait until you are redirected", "Requires NO-SSL"];
     if (reason.entityErrors && reason.entityErrors.length > 0) return this.handleBreezeSaveError(reason);
     if (reason.httpResponse != null) return this.handleBreezeErrorResponse(reason);
-    return [reason, 'Unknown error'];
+    return [reason.toString(), 'Unknown error'];
   }
 
   openGeneralDialog: (model: { model; viewModel: string }) => Promise<any>;
@@ -142,7 +142,7 @@ export class Api extends Base {
   }
 
   handleBreezeErrorResponse(r: IBreezeErrorReason) {
-    let requestId = r.httpResponse.status ? r.httpResponse.getHeaders('withSIX-RequestID') : 'FAIL';
+    let requestId = r.httpResponse.status ? r.httpResponse.getHeaders('x-withsix-requestid') : 'FAIL';
     Tools.Debug.error('ERROR during request, Request ID: ' + requestId, r);
     let d = r.httpResponse.data;
     if (!d) return ["Site down?!", 'Unknown Error'];
@@ -156,7 +156,7 @@ export class Api extends Base {
   }
 
   handleHttpError(r: IHttpException<ErrorResponseBody>) {
-    Tools.Debug.error('ERROR during request, Request ID: ' + r.headers['withSIX-RequestID'], r);
+    Tools.Debug.error('ERROR during request, Request ID: ' + r.headers.get('x-withsix-requestid'), r);
     let message = r.body && r.body.message || '';
     if (r instanceof Tools.ValidationError && r.modelState) angular.forEach(r.modelState, (v, k) => message += "\n" + v);
     let status = r.status && r.statusText ? "\n(" + r.status + ": " + r.statusText + ")" : '';
@@ -186,7 +186,7 @@ export class Notifier {
   }
 }
 
-export class OpenSettings { }
+export class OpenSettings { constructor(public model = {}) { } }
 
 
 class Ipc<T> {

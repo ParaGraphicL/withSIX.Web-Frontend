@@ -1,9 +1,10 @@
-import {ViewModel, Query, DbQuery, handlerFor, IGame, ITab, IMenuItem, MenuItem, uiCommand2, VoidCommand, IReactiveCommand, IDisposable, Rx,
+import {ViewModel, Query, DbQuery, handlerFor, IGame, ITab, IMenuItem, MenuItem, uiCommand2, VoidCommand, IReactiveCommand, IDisposable, Rx, LaunchAction,
   CollectionScope, IBreezeCollectionVersion, IBreezeCollectionVersionDependency, BasketItemType, TypeScope, UiContext, CollectionHelper, Confirmation, MessageDialog,
   ReactiveList, IBasketItem, FindModel, ActionType, BasketState, BasketType, ConnectionState, Debouncer, GameChanged, uiCommandWithLogin2, GameClientInfo, UninstallContent,
   IBreezeCollection, IRequireUser, IUserInfo, W6Context, Client, BasketService, CollectionDataService, DbClientQuery, requireUser, ICollection, Base, DependencyType,
   breeze} from '../../../framework';
 import {CreateCollectionDialog} from '../../games/collections/create-collection-dialog';
+import { HostServer } from '../../games/servers/host-server';
 import {Basket, GameBaskets} from '../../game-baskets';
 import {inject} from 'aurelia-framework';
 import {DeleteCollection, ForkCollection, LoadCollectionIntoBasket, GetDependencies} from '../../profile/content/collection';
@@ -77,7 +78,8 @@ export class Playlist extends ViewModel {
 
   async activate(model) {
     if (this.model === model) return;
-    if (this.w6.activeGame.id) await this.gameChanged(this.w6.activeGame);
+    if (!this.w6.activeGame.id) throw new Error("There appears to be no active game");
+    await this.gameChanged(this.w6.activeGame);
     this.model = model;
 
     this.subscriptions.subd(d => {
@@ -127,6 +129,13 @@ export class Playlist extends ViewModel {
         cls: 'cancel ignore-close',
         isVisibleObservable: this.whenAnyValue(x => x.collectionChanged)
       }));
+      d(this.launchAsServer = uiCommand2("Host Server", () => this.dialog.open({viewModel: HostServer, model: {
+        launchDedicated: () => this.launch(this.activeBasket, LaunchAction.LaunchAsDedicatedServer),
+        launch: () => this.launch(this.activeBasket, LaunchAction.LaunchAsServer)
+      }}), {
+        canExecuteObservable: this.whenAnyValue(x => x.hasItems)
+        //isVisibleObservable: // if the game supports launching as server
+      }))
       d(this.appEvents.gameChanged.subscribe(this.gameChanged));
       d(this.findModel = new FindModel(this.findCollections, (col: IPlaylistCollection) => this.selectCollection(col), e => e.name));
       d(Playlist.bindObservableTo(this.whenAnyValue(x => x.isCollection).map(x => x ? "Save as new collection" : "Save as collection"), this.saveBasket, x => x.name));
@@ -135,6 +144,8 @@ export class Playlist extends ViewModel {
 
     this.menuItems.push(new MenuItem(this.saveBasket));
     this.menuItems.push(new MenuItem(this.clearBasket));
+
+    if (this.features.serverBrowser) this.menuItems.push(new MenuItem(this.launchAsServer));
 
     if (this.basket.collectionId) {
       let c = await new GetMyCollection(this.basket.collectionId).handle(this.mediator);
@@ -180,7 +191,8 @@ export class Playlist extends ViewModel {
     return searchItem ? this.collections.filter(x => x.name && x.name.containsIgnoreCase(searchItem)) : this.collections
   }
 
-  toggleSearch = () => {
+  toggleSearch = ($evt) => {
+    $evt.stopPropagation();
     this.isSearchOpen = !this.isSearchOpen;
     if (this.isSearchOpen) {
       let si = this.findModel.searchItem || '';
@@ -245,7 +257,7 @@ export class Playlist extends ViewModel {
     if (this.overrideBasketState != "") return this.overrideBasketState;
     let cInfo = this.gameInfo.clientInfo;
     if (this.action.isExecuting && cInfo.actionInfo && cInfo.actionInfo.type == ActionType.Start) return "busy-active";
-    if (cInfo.gameLock || cInfo.globalLock) return "busy";
+    if (cInfo.gameLock) return "busy";
 
     if (basket == null) return "install";
     if (this.locked) return "busy";
@@ -294,27 +306,23 @@ export class Playlist extends ViewModel {
   unloadCollection;
   saveCollection;
   undoCollection;
-  action = uiCommand2("Execute", () => this.executeBasket(this.activeBasket), { canExecuteObservable: this.whenAnyValue(x => x.isNotLocked) });
+  launchAsServer;
+  action = uiCommand2("Execute", () => this.executeBasket(), { canExecuteObservable: this.whenAnyValue(x => x.isNotLocked) });
 
   gameChanged = async (info: GameChanged) => {
     let equal = this.game.id === info.id;
-    this.tools.Debug.log("$$$ ClientBar Game Changed: ", info, equal);
+    this.tools.Debug.log("$$$ ClientBar Game Changing: ", info, equal);
     if (equal) return;
-    // TODO: All this data should actually change at once!
-    this.baskets = null;
+    if (info.id) this.gameInfo = await this.basketService.getGameInfo(info.id);
     this.game.id = info.id;
     this.game.slug = info.slug;
     this.collections = [];
-    //this.gameInfo = null;
-    if (this.game.id) this.gameInfo = await this.basketService.getGameInfo(this.game.id);
     this.baskets = this.game.id ? this.basketService.getGameBaskets(this.game.id) : null;
+    this.tools.Debug.log("$$$ ClientBar Game Changed: ", info);
   }
 
-  async executeBasket(basket: Basket) {
-    if (this.client.state == ConnectionState.disconnected) {
-      //await this.client.getInfo(); // TODO: this shouyld not be needed! // instead of connection.promise();
-      return;
-    }
+  async executeBasket() {
+    const basket = this.activeBasket;
     if (this.locked) {
       this.toastr.error("Client is currently busy", "Busy");
       return;
@@ -341,14 +349,7 @@ export class Playlist extends ViewModel {
         };
         return;
       case BasketState.Launch:
-        this.overrideBasketState = "launching";
-        this.lockBasket = true;
-        try {
-          await basket.launch();
-        } finally {
-          this.overrideBasketState = "";
-          this.lockBasket = false;
-        };
+        await this.launch(this.activeBasket);
         return;
       case BasketState.Syncing:
         return;
@@ -361,13 +362,24 @@ export class Playlist extends ViewModel {
     }
   }
 
+  launch = async (basket: Basket, action?: LaunchAction) => {
+    this.overrideBasketState = "launching";
+    this.lockBasket = true;
+    try {
+      await basket.launch(action);
+    } finally {
+      this.overrideBasketState = "";
+      this.lockBasket = false;
+    };
+  }
+
   get isNotLocked() { return !this.locked; }
 
   selectCollection = async (col: IPlaylistCollection) => {
     if (this.basket.items.length == 0 || (this.collection != null && !this.collectionChanged) || await this.confirm("Do you want to overwrite your current Playlist?")) {
       await this.loadCollection(col);
       this.findModel.searchItem = '';
-      this.isSearchOpen = false;
+      this.closeSearch();
     }
   }
   visitCollection = (col: ICollection) => this.navigateInternal(`/p/${col.gameSlug}/collections/${col.id.toShortId()}/${col.name.sluggifyEntityName()}`)
@@ -554,11 +566,10 @@ class GetMyCollectionsHandler extends DbClientQuery<GetMyCollections, ICollectio
 
     if (request.user.id) {
       p.push(this.getMyCollections(request, optionsTodo));
-      if (request.includeSubscribed) p.push(this.getSubscribedCollections(request, optionsTodo));
+      if (request.includeSubscribed) { p.push(this.getSubscribedCollections(request, optionsTodo)); }
     }
     var results = await Promise.all(p)
     return { collections: results.flatten<IPlaylistCollection>() };
-    // return GetCollectionsHandler.designTimeData(request);
   }
 
   async getClientCollections(request: GetMyCollections) {

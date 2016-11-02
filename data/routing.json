@@ -1,10 +1,21 @@
 {
   "main": {
-    "/": { "type": "aurelia" },
-    "/errors/500": { "type": "aurelia" },
-    "/errors/404": { "type": "aurelia" },
-    "/errors/403": { "type": "aurelia" },
-
+    "/": {
+      "type": "aurelia"
+    },
+    "/errors/500": {
+      "type": "aurelia"
+    },
+    "/errors/404": {
+      "type": "aurelia"
+    },
+    "/errors/403": {
+      "type": "aurelia"
+    },
+    "/plugin": {
+      "type": "aurelia",
+      "ssl": 1
+    },
     "/getting-started": {
       "type": "static",
       "redirectTo": "http://withsix.readthedocs.org/en/latest/general/get_started"
@@ -13,7 +24,9 @@
       "type": "static",
       "redirectTo": "http://withsix.readthedocs.org/en/latest/general/get_started_publishing"
     },
-    "/legal": { "type": "aurelia" },
+    "/legal": {
+      "type": "aurelia"
+    },
     "/community": {
       "type": "static",
       "redirectTo": "https://community.withsix.com"
@@ -22,23 +35,47 @@
       "type": "static",
       "redirectTo": "https://community.withsix.com"
     },
-    "/orders/:orderId/:action?": { "type": "aurelia", "ssl": 1, "auth": true },
-    "/orders/:orderId/:action/:subaction": { "type": "aurelia", "ssl": 1, "auth": true },
-    "/changelog/:nolayout?": { },
+    "/orders/:orderId/:action?": {
+      "type": "aurelia",
+      "ssl": 1,
+      "auth": true
+    },
+    "/orders/:orderId/:action/:subaction": {
+      "type": "aurelia",
+      "ssl": 1,
+      "auth": true
+    },
+    "/changelog/:nolayout?": {},
     "/gopremium": {},
-    "/download": { "type": "aurelia" },
-    "/download/start": { },
-    "/blog": { },
-    "/update": { "type": "aurelia" },
-    "/blog/team": { },
-    "/blog/archive/:year/:month": { },
-    "/blog/team/archive/:year/:month": { },
-    "/blog/:slug": { }
+    "/download": {
+      "type": "aurelia"
+    },
+    "/download/start": {},
+    "/blog": {},
+    "/update": {
+      "type": "aurelia"
+    },
+    "/blog/team": {},
+    "/blog/archive/:year/:month": {},
+    "/blog/team/archive/:year/:month": {},
+    "/blog/:slug": {},
+    "/thanks": {
+      "type": "aurelia"
+    },
+    "/thankyou": {
+      "type": "aurelia"
+    }
   },
   "connect": {
-    "/errors/500": { "type": "aurelia" },
-    "/errors/404": { "type": "aurelia" },
-    "/errors/403": { "type": "aurelia" },
+    "/errors/500": {
+      "type": "aurelia"
+    },
+    "/errors/404": {
+      "type": "aurelia"
+    },
+    "/errors/403": {
+      "type": "aurelia"
+    },
     "/login/verify": {
       "ssl": 1
     },
@@ -57,59 +94,141 @@
     "/login/forgot-password/reset/:resetCode": {
       "ssl": 1
     },
-    "/me": { "type": "aurelia" },
-
-    "/me/groups": { "type": "aurelia" },
-    "/me/groups/:id/:slug": { "type": "aurelia" },
-    "/me/groups/:id/:slug/members": { "type": "aurelia" },
-    "/me/groups/:id/:slug/collections": { "type": "aurelia" },
-    "/me/groups/:id/:slug/collections/:collectionId/:collectionSlug?": { "type": "aurelia" },
-    "/me/groups/:id/:slug/mods": { "type": "aurelia" },
-    "/me/groups/:id/:slug/servers": { "type": "aurelia" },
-
-    "/me/library": { "type": "aurelia" },
-    "/me/library/:gameSlug": { "type": "aurelia" },
-    "/me/library/:gameSlug/collections": { "type": "aurelia" },
-    "/me/library/:gameSlug/collections/:collectionId/:collectionSlug?": { "type": "aurelia" },
-    "/me/library/:gameSlug/mods": { "type": "aurelia" },
-    "/me/library/:gameSlug/missions": { "type": "aurelia" },
-    "/me/settings": { "auth": true },
-    "/me/settings/personal": { "auth": true },
-    "/me/settings/avatar": { "auth": true },
-    "/me/settings/credentials": { "auth": true },
-    "/me/settings/premium": { "auth": true },
-    "/me/blog": { "auth": true },
-    "/me/blog/create": { "auth": true },
-    "/me/blog/:slug": { "auth": true },
-    "/me/content": { "auth": true, "type": "aurelia" },
-    "/me/content/mods": { "auth": true, "type": "aurelia" },
-    "/me/content/missions": { "auth": true, "type": "aurelia" },
-    "/me/content/collections": { "auth": true, "type": "aurelia" },
-    "/me/content/servers": { "auth": true, "type": "aurelia" },
-    "/me/friends": { "auth": true },
-    "/me/offers": { },
-    "/me/messages": { "auth": true },
-    "/me/messages/:slug": { "auth": true },
-    "/u/:userSlug": { },
-    "/u/:userSlug/blogposts": { },
-    "/u/:userSlug/content": { "type": "aurelia" },
-    "/u/:userSlug/content/mods": { "type": "aurelia" },
-    "/u/:userSlug/content/missions": { "type": "aurelia" },
-    "/u/:userSlug/content/collections": { "type": "aurelia"  },
-    "/u/:userSlug/content/servers": { "type": "aurelia" },
-    "/u/:userSlug/friends": { },
-    "/u/:userSlug/messages": { }
+    "/me": {
+      "type": "aurelia"
+    },
+    "/me/groups": {
+      "type": "aurelia"
+    },
+    "/me/groups/:id/:slug": {
+      "type": "aurelia"
+    },
+    "/me/groups/:id/:slug/members": {
+      "type": "aurelia"
+    },
+    "/me/groups/:id/:slug/collections": {
+      "type": "aurelia"
+    },
+    "/me/groups/:id/:slug/collections/:collectionId/:collectionSlug?": {
+      "type": "aurelia"
+    },
+    "/me/groups/:id/:slug/mods": {
+      "type": "aurelia"
+    },
+    "/me/groups/:id/:slug/servers": {
+      "type": "aurelia"
+    },
+    "/me/library": {
+      "type": "aurelia"
+    },
+    "/me/library/:gameSlug": {
+      "type": "aurelia"
+    },
+    "/me/library/:gameSlug/collections": {
+      "type": "aurelia"
+    },
+    "/me/library/:gameSlug/collections/:collectionId/:collectionSlug?": {
+      "type": "aurelia"
+    },
+    "/me/library/:gameSlug/mods": {
+      "type": "aurelia"
+    },
+    "/me/library/:gameSlug/missions": {
+      "type": "aurelia"
+    },
+    "/me/settings": {
+      "auth": true
+    },
+    "/me/settings/personal": {
+      "auth": true
+    },
+    "/me/settings/avatar": {
+      "auth": true
+    },
+    "/me/settings/credentials": {
+      "auth": true
+    },
+    "/me/settings/premium": {
+      "auth": true
+    },
+    "/me/blog": {
+      "auth": true
+    },
+    "/me/blog/create": {
+      "auth": true
+    },
+    "/me/blog/:slug": {
+      "auth": true
+    },
+    "/me/content": {
+      "auth": true,
+      "type": "aurelia"
+    },
+    "/me/content/mods": {
+      "auth": true,
+      "type": "aurelia"
+    },
+    "/me/content/missions": {
+      "auth": true,
+      "type": "aurelia"
+    },
+    "/me/content/collections": {
+      "auth": true,
+      "type": "aurelia"
+    },
+    "/me/content/servers": {
+      "auth": true,
+      "type": "aurelia"
+    },
+    "/me/friends": {
+      "auth": true
+    },
+    "/me/offers": {},
+    "/me/messages": {
+      "auth": true
+    },
+    "/me/messages/:slug": {
+      "auth": true
+    },
+    "/u/:userSlug": {},
+    "/u/:userSlug/blogposts": {},
+    "/u/:userSlug/content": {
+      "type": "aurelia"
+    },
+    "/u/:userSlug/content/mods": {
+      "type": "aurelia"
+    },
+    "/u/:userSlug/content/missions": {
+      "type": "aurelia"
+    },
+    "/u/:userSlug/content/collections": {
+      "type": "aurelia"
+    },
+    "/u/:userSlug/content/servers": {
+      "type": "aurelia"
+    },
+    "/u/:userSlug/friends": {},
+    "/u/:userSlug/messages": {}
   },
   "play": {
-    "/": { },
-    "/errors/500": { "type": "aurelia" },
-    "/errors/404": { "type": "aurelia" },
-    "/errors/403": { "type": "aurelia" },
-
+    "/": {},
+    "/errors/500": {
+      "type": "aurelia"
+    },
+    "/errors/404": {
+      "type": "aurelia"
+    },
+    "/errors/403": {
+      "type": "aurelia"
+    },
     "/:gameSlug": {},
     "/:gameSlug/order": {},
-    "/:gameSlug/stream": { "type": "aurelia" },
-    "/:gameSlug/mods": {"type": "aurelia"},
+    "/:gameSlug/stream": {
+      "type": "aurelia"
+    },
+    "/:gameSlug/mods": {
+      "type": "aurelia"
+    },
     "/:gameSlug/mods/category/:category": {},
     "/:gameSlug/mods/category/:category/page/:page": {},
     "/:gameSlug/mods/:modId/:modSlug?/edit": {},
@@ -120,23 +239,35 @@
     "/:gameSlug/mods/:modId/:modSlug?/license": {},
     "/:gameSlug/mods/:modId/:modSlug?/changelog": {},
     "/:gameSlug/mods/:modId/:modSlug?/settings": {},
-    "/:gameSlug/mods/:modId/:modSlug?/blog": {},
     "/:gameSlug/mods/:modId/:modSlug?": {},
-    "/:gameSlug/missions": {"type": "aurelia"},
+    "/:gameSlug/missions": {
+      "type": "aurelia"
+    },
     "/:gameSlug/missions/new": {},
     "/:gameSlug/missions/:missionId/:missionSlug?/edit": {},
     "/:gameSlug/missions/:missionId/:missionSlug?/versions/new": {},
     "/:gameSlug/missions/:missionId/:missionSlug?/versions/:versionSlug/publish": {},
     "/:gameSlug/missions/:missionId/:missionSlug?/download": {},
     "/:gameSlug/missions/:missionId/:missionSlug?": {},
-    "/:gameSlug/collections": {"type": "aurelia"},
-    "/:gameSlug/collections/:collectionId/:collectionSlug?/content": { "type": "aurelia" },
-    "/:gameSlug/collections/:collectionId/:collectionSlug?/conten/editt": { "type": "aurelia" },
-    "/:gameSlug/collections/:collectionId/:collectionSlug?/comments": {},
+    "/:gameSlug/collections": {
+      "type": "aurelia"
+    },
+    "/:gameSlug/collections/:collectionId/:collectionSlug?/content": {
+      "type": "aurelia"
+    },
+    "/:gameSlug/collections/:collectionId/:collectionSlug?/conten/editt": {
+      "type": "aurelia"
+    },
     "/:gameSlug/collections/:collectionId/:collectionSlug?/related": {},
-    "/:gameSlug/collections/:collectionId/:collectionSlug?/edit": {"type": "static"},
+    "/:gameSlug/collections/:collectionId/:collectionSlug?/edit": {
+      "type": "static"
+    },
     "/:gameSlug/collections/:collectionId/:collectionSlug?": {},
-    "/:gameSlug/servers": { "type": "aurelia"},
-    "/:gameSlug/servers/:serverId/:serverSlug?": { "type": "aurelia"}
+    "/:gameSlug/servers": {
+      "type": "aurelia"
+    },
+    "/:gameSlug/servers/:serverId/:serverSlug?": {
+      "type": "aurelia"
+    }
   }
 }

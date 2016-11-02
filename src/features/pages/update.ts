@@ -1,5 +1,5 @@
-import {Base, uiCommand2, VoidCommand, DbClientQuery, handlerFor} from '../../framework';
-import {MainBase} from './index';
+import { Base, uiCommand2, VoidCommand, DbClientQuery, handlerFor, UpdateState } from '../../framework';
+import { MainBase } from './index';
 
 import {GetMiniChangelogQuery, GetBlogsQuery} from '../../legacy/main';
 
@@ -25,11 +25,24 @@ export class Update extends MainBase {
       .then(x => this.model.blogPosts = x.slice(0, 4));
   }
 
+  get hasUpdates() { return this.updateState === UpdateState.UpdateAvailable; }
+  get isProcessingUpdates() { return this.updateState === UpdateState.UpdateDownloading || this.updateState === UpdateState.Updating }
+  get isUptodate() { return this.updateState < UpdateState.UpdateAvailable; }
+  get updateState() { return this.clientInfo && this.clientInfo.updateState; }
   get clientInfo() { return this.w6.miniClient.clientInfo; }
-  get updateState() { return this.clientInfo && <UpdateState>(<any>this.w6.miniClient.clientInfo).updateState; }
-  get hasUpdates() { return this.updateState == 2; }
-  get isUptodate() { return this.updateState < 2; }
   get isConnected() { return this.w6.miniClient.isConnected; }
+
+  get updateMessage() {
+    if (!this.isConnected) {
+      if (this.model.updated) return "Waiting for client restart.."
+      else return "No Client detected"
+    }
+    if (this.isUptodate) return "Your client is uptodate!"
+    if (this.updateState === UpdateState.UpdateDownloading) return "Downloading update"
+    if (this.updateState === UpdateState.Updating) return "Installing update" 
+    if (this.hasUpdates) return `Update Sync withSIX to ${this.clientInfo.newVersionAvailable}`
+    return ''
+  }
 
   updateClient = uiCommand2("Update", async () => {
     this.model.isUpdating = true;
@@ -42,16 +55,10 @@ export class Update extends MainBase {
       this.model.isUpdating = false;
     }
   }, {
-      canExecuteObservable: this.whenAnyValue(x => x.hasUpdates).combineLatest(this.whenAnyValue(x => x.isConnected), (hasUpdates, isConnected) => hasUpdates && isConnected)
+      canExecuteObservable: this.whenAnyValue(x => x.hasUpdates)
+        .combineLatest(this.whenAnyValue(x => x.isConnected),
+          (hasUpdates, isConnected) => hasUpdates && isConnected)
     })
-}
-
-export enum UpdateState {
-  Uptodate, // 0
-  UpdateInstalled, // 1
-  UpdateAvailable, // 2
-  UpdateDownloading, // 3
-  Updating // 4
 }
 
 class UpdateClient extends VoidCommand {

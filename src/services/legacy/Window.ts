@@ -23,6 +23,7 @@ interface JQueryStatic {
 
 interface Array<T> {
   flatten: <T2>() => Array<T2>;
+  uniq: () => this;
   removeEl: (el: T) => void;
   toMap: <K>(keySelector: (x: T) => K) => Map<K, T>;
   includes: (el: T) => boolean;
@@ -64,6 +65,7 @@ interface IApi {
 interface ISettings { model?; view?; viewModel?; targetElement}
 
 interface Window {
+  ___prerender___?: boolean;
   // from legacy client
   six_client: {
     open_pws_uri: (url) => void;
@@ -79,7 +81,8 @@ interface Window {
   w6Cheat: {
     api: IApi; // for modern client
     navigate: (string) => void; // for legacy client
-  }
+  },
+  w6Debug: any,
   assetHash: { [asset: string]: string }
   prerenderReady: boolean;
   RedactorPlugins;

@@ -2,7 +2,7 @@ import {breeze, IPaginated, ModHelper, PaginatedViewModel, IFilterInfo, SortDire
 import {FilteredBase} from '../../../filtered-base';
 
 export class Index extends FilteredBase<IMod> {
-  sort = [{ name: "stat.install", title: "Installs", direction: SortDirection.Desc }, { name: "updatedAt", title: "Updated", direction: SortDirection.Desc }, { name: "createdAt", title: "Created", direction: SortDirection.Desc }, { name: "name" }, { name: "packageName" }]
+  sort = [{ name: "stat.totalInstall", title: "Installs", direction: SortDirection.Desc }, { name: "updatedAt", title: "Updated", direction: SortDirection.Desc }, { name: "createdAt", title: "Created", direction: SortDirection.Desc }, { name: "name" }, { name: "packageName" }]
   searchFields = ["name", "packageName"];
 
   getMore(page = 1) { return new GetMods(this.w6.userInfo.id, page, this.filterInfo).handle(this.mediator); }

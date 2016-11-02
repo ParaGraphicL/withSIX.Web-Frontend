@@ -175,8 +175,8 @@
       color: $color5;
     }
   }
-  a.socialSignIn.battlenet,
-  button.socialSignIn-battlenet {
+  a.socialSignIn.Discord,
+  button.socialSignIn-discord {
     .icon {
       width: 40px;
       background-position: right -645px;
@@ -186,6 +186,17 @@
       color: $color5;
     }
   }
+  // a.socialSignIn.battlenet,
+  // button.socialSignIn-battlenet {
+  //   .icon {
+  //     width: 40px;
+  //     background-position: right -645px;
+  //   }
+  //   &:hover {
+  //     background-color: #bbb;
+  //     color: $color5;
+  //   }
+  // }
   a.socialSignIn.OpenIdConnect,
   button.socialSignIn-OpenIdConnect {
     .icon {

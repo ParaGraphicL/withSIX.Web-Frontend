@@ -58,6 +58,10 @@ class SaveGameSettings<T extends IGameSettingsBase> extends VoidCommand {
 @handlerFor(SaveGameSettings)
 class SaveGameSettingsHandler<T extends IGameSettingsBase> extends DbClientQuery<SaveGameSettings<T>, void> {
   handle(request: SaveGameSettings<T>) {
+    let t = <IGameSettingsPackage><any>request.model;
+    if (t.packageDirectory === "") t.packageDirectory = null;
+    if (request.model.gameDirectory === "") request.model.gameDirectory = null;
+    if (request.model.repoDirectory === "") request.model.repoDirectory = null;
     return this.client.saveGameSettings(request.gameId, request.model);
   }
 }

@@ -1,13 +1,16 @@
 <template>
   <compose view="../_header.html"></compose>
 
-  <card-view card-view.ref="cv" items.bind="group.members" view-path="features/profile/groups/members/" item-type="member">
-    <div class.bind="cv.cardContainerCls" if.bind="isAdmin">
+  <card-view 
+    card-view.ref="cv" items.bind="group.members" view-path="features/profile/groups/members/" item-type="member"
+    index-offset.one-time="isAdmin ? 1 : 0"
+    >
+    <div class.bind="cv.cardContainerCls" if.bind="isAdmin" slot="prepend-items">
       <div class="card ${cv.cardCls} new-item">
         <header>ADD Member</header>
         <div class="add">
-          <finder placeholder="search user (min 3 chars)" show-button="true" text="" icon="withSIX-icon-Add" model.bind="$parent.addUserModel"></finder>
-          <finder-results model.bind="$parent.addUserModel" text="" icon="withSIX-icon-Add"></finder-results>
+          <finder placeholder="search user (min 3 chars)" show-button="true" text="" icon="withSIX-icon-Add" model.bind="addUserModel"></finder>
+          <finder-results model.bind="addUserModel" text="" icon="withSIX-icon-Add"></finder-results>
         </div>
       </div>
   </card-view>

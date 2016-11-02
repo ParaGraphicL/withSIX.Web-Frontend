@@ -1,0 +1,26 @@
+{
+  "indent_size": 2,
+  "indent_char": " ",
+  "end_with_newline": true,
+  "wrap_attributes": "auto",
+  "wrap_line_length": 100,
+  //"wrap_attributes_indent_size": 4,
+  "unformatted": [
+    // REMOVED template: https://github.com/beautify-web/js-beautify/issues/1032
+    // https://www.w3.org/TR/html5/dom.html#phrasing-content
+    "a", "abbr", "area", "audio", "b", "bdi", "bdo", "br", "button", "canvas",
+    "cite",
+    "code", "data", "datalist", "del", "dfn", "em", "embed", "i", "iframe",
+    "img",
+    "input", "ins", "kbd", "keygen", "label", "map", "mark", "math", "meter",
+    "noscript",
+    "object", "output", "progress", "q", "ruby", "s", "samp", /* "script", */
+    "select", "small",
+    "span", "strong", "sub", "sup", "svg", /* "template", */ "textarea",
+    "time", "u", "var",
+    "video", "wbr", "text",
+    // prexisting - not sure of full effect of removing, leaving in
+    "acronym", "address", "big", "dt", "ins", "small", "strike", "tt",
+    "pre"
+  ]
+}

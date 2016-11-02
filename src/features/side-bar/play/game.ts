@@ -1,6 +1,5 @@
-import {ViewModel, Query, DbClientQuery, handlerFor, IGame, IMenuItem, MenuItem, uiCommand2, OpenFolder, FolderType, IReactiveCommand} from '../../../framework';
+import {ViewModel, Query, DbClientQuery, handlerFor, IGame, IMenuItem, MenuItem, uiCommand2, OpenFolder, FolderType, IReactiveCommand, LaunchGame} from '../../../framework';
 import {Index as SettingsIndex} from '../../settings/index';
-import {LaunchGame} from '../../profile/content/game';
 
 export class Game extends ViewModel {
   model: IGame;

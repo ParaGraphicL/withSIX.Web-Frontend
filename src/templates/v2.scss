@@ -319,10 +319,45 @@
   }
 }
 
-img.source {
+$awesome: rgba(255,255,255, 0.83);
+
+
+div.source {
+  left: 10px;
   position: absolute;
-  bottom: 64px;
-  max-height: 32px;
-  max-width: 32px;
-  right: 32px;
+  bottom: 0;
+  background-color: $awesome;
+  img.source {
+    max-height: 16px;
+    max-width: 16px;
+    margin: 8px;
+  }
+}
+
+.card.horizontal {
+  .basketable-dropdown button.dropdown-toggle {
+    right: 0;
+  } 
+  action-bar.basketable-action {
+    button {
+      left: 0;
+    }
+  }
+  div.source {
+    left: 0;
+  }
+}
+
+.logo2 {
+  div.source {
+    left: 0;
+    img.source {
+      float: left;
+      margin-left: 8px;
+    }
+    .text {
+      float: left;
+      margin: 4px;
+    }
+  }
 }

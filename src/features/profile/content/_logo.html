@@ -16,6 +16,8 @@
     </span>
     </span>
     </span>
-    <img src.one-time="source.img" class="source" if.one-time="source" title="This content is provided by ${source.text}" />
+    <div class="source" if.one-time="sources.length > 0">
+      <img src.one-time="source.img" class="source" title="Hosted on ${source.text}" repeat.for="source of sources" />
+    </div>
   </div>
 </template>

@@ -1,0 +1,23 @@
+  lightbox {
+    overflow-x: auto;
+    white-space: nowrap;
+    display: block;
+  }
+
+.image-gallery {
+  div.imageholder {
+    display: inline-block;
+    height: 80px;
+    width: 80px;
+    .video {
+      position: relative;
+      img {
+        position: absolute;
+        max-height: 48px;
+        max-width: 48px;
+        margin-left: 16px;
+        margin-top: 16px;
+      }
+    }
+  }
+}

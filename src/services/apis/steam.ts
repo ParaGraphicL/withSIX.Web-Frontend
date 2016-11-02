@@ -23,7 +23,7 @@ export class SteamService {
   async getW6Mods() {
     // todo; cache differently
     if (!this.w6Mods) {
-      let addr = `${W6Urls.proxy}/api2/api/v2/mods.json`;
+      let addr = `${W6Urls.getProxyUrl('withsix')}api/v2/mods.json`;
       let r = await this.http.fetch(addr, { method: 'GET' });
       if (!r.ok) throw r;
       let mods = this.w6.convertToClient<IW6Mod[]>(await r.json());
@@ -47,8 +47,8 @@ export class SteamService {
   }
 
   async getSteamInfo(...contentIds: (string | number)[]) {
-    let filesUrl = `${W6Urls.proxy}/api/ISteamRemoteStorage/GetPublishedFileDetails/v1/`
-    let galleryUrl = `${W6Urls.proxy}/api6/sharedfiles/filedetails/`
+    let filesUrl = `${W6Urls.getProxyUrl('steam-api')}ISteamRemoteStorage/GetPublishedFileDetails/v1/`
+    let galleryUrl = `${W6Urls.getProxyUrl('steam')}sharedfiles/filedetails/`
 
     let q = {
       itemcount: contentIds.length,
@@ -88,7 +88,7 @@ export class SteamService {
   }
 
   async getSteamFiles(gameId: number) {
-    let apiUrl = `${W6Urls.proxy}/api/IPublishedFileService/QueryFiles/v1/`;
+    let apiUrl = `${W6Urls.getProxyUrl('steam-api')}IPublishedFileService/QueryFiles/v1/`;
 
     let q = {
       appid: gameId

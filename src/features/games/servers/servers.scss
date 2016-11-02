@@ -1,0 +1,272 @@
+@import "_base";
+#servers {
+  .virtual-container {
+    max-height: 33vh;
+  }
+  .virtual-row {
+    height: 50px;
+  }
+}
+
+#wrapper.v3 {
+  #content-view {
+    // TODO: make nice and custom per game
+    //background-color: #696969;
+  }
+}
+
+$padding: 16px;
+#server-browser,
+#server-render {
+  .state {
+    border-left: 4px solid $colorSixGreen;
+    //margin: 0 $padding;
+    position: absolute;
+    left: 0;
+    top: $padding;
+    bottom: $padding;
+  }
+  .join-button {
+    button {
+      width: 96px;
+      color: white;
+      background-color: $colorSixGreen;
+      .icon.withSIX-icon-Download {
+        margin-top: 8px;
+        margin-left: 4px;
+        vertical-align: middle;
+      }
+      .text {
+        text-transform: uppercase;
+        text-align: right;
+        line-height: 1;
+        .join-text {
+          font-size: 16px;
+          font-weight: $font-weight-bold;
+        }
+      }
+    }
+  }
+  .has-mods {
+    // TODO: Realtime state
+    &.mod-state-update {
+      .state {
+        border-left: 4px solid $colorSixOrange;
+      }
+      .join-button {
+        button {
+          background-color: $colorSixOrange;
+        }
+      }
+    }
+    &.mod-state-install {
+      .state {
+        border-left: 4px solid $colorSixBlue;
+      }
+      .join-button {
+        button {
+          background-color: $colorSixBlue;
+        }
+      }
+    }
+  }
+}
+
+#server-browser {
+  $filter-width: 300px;
+  $gutter-width: 32px;
+  .server-filters {
+    float: left;
+    padding: 16px;
+    width: $filter-width;
+    background-color: $colorSixLightGray;
+    min-height: 600px;
+    //border: 1px solid $colorSixGray;
+    select {
+      width: 100px;
+    }
+    .toggle-group {
+      color: inherit;
+      text-decoration: none;
+    }
+    .show-more {
+      color: $colorSixBlue;
+      text-decoration: none;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      li {
+        list-style: none;
+        line-height: 1;
+        .title {
+          margin-top: 16px;
+          margin-bottom: 8px;
+        }
+        rangeboxadv {
+          // TODO: Make it look like the mockup ;-)
+          display: block;
+          margin-top: 24px;
+          margin-bottom: 32px;
+        }
+        .noUi-connect {
+          background: $colorSixGreen;
+        }
+        .form-group {
+          margin: 0;
+        }
+      }
+    }
+  }
+  .server-list {
+    margin-left: $filter-width + $gutter-width;
+    $border-color: $colorSixSoftGray;
+    color: $colorSixGray;
+    .server-list-info {
+      height: 40px;
+      button {
+        display: inline-block;
+      }
+    }
+    .server-list-content {
+      .favorite-button {
+        .naked-button {
+          background-color: transparent;
+        }
+      }
+      button {
+        height: 48px;
+      }
+      background-color: white;
+      a {
+        color: inherit;
+      }
+      .table {
+        width: 100%;
+        table-layout: fixed;
+        border-collapse: collapse;
+      }
+      .td {
+        border-left: 1px solid $border-color;
+        border-right: 1px solid $border-color;
+        vertical-align: middle;
+        text-align: center;
+        icon {
+          color: $colorSixLightGray;
+          .active {
+            color: $colorSixDarkGray;
+          }
+          .withSIX-icon-Download.ready {
+            color: $colorSixGreen;
+          }
+        }
+        .icon.connection-quality {
+          color: $colorSixGreen;
+        }
+      }
+      .thead {
+        .tr {
+          //border: 1px solid $colorSixBlue;
+          order {
+            cursor: pointer;
+            .icon.direction {
+              color: $colorSixLightGray;
+              &.active {
+                color: $colorSixGray;
+              }
+            }
+          }
+          .td:nth-child(3) {
+            padding: 0 $padding;
+          }
+        }
+        //border: 1px solid $colorSixBlue;
+      }
+      @function bla($w) {
+        @return $padding+$padding+$w;
+      }
+      .join-button {
+        // button {
+        //   width: 64px;
+        //   height: 48px;
+        // }
+        position: absolute;
+        left: - bla(16px);
+        top: $padding;
+        bottom: $padding;
+        button {
+          width: bla(16px) + bla(16px);
+        }
+      }
+      .td:nth-child(1) {
+        $width: bla(16px);
+        width: $width;
+        text-align: center;
+      }
+      .td:nth-child(2) {
+        $width: bla(16px);
+        width: $width;
+        text-align: center;
+      }
+      .td:nth-child(3) {
+        text-align: left;
+      }
+      .td:nth-child(4) {
+        $width: bla(80px);
+        width: $width;
+        text-align: center;
+      }
+      .td:nth-child(5) {
+        $width: bla(16px);
+        width: $width;
+        text-align: center;
+      }
+      .tbody {
+        color: $colorSixGray;
+        font-size: 12px;
+        .icon {
+          font-size: 16px;
+        }
+        .tr {
+          .td {
+            padding: $padding 0px;
+            .icon.withSIX-icon-Star-Outline {
+              color: $colorSixLightGray;
+            }
+            .icon.withSIX-icon-Star {
+              color: $colorSixOrange;
+            }
+          }
+          cursor: pointer;
+          &:hover {
+            background-color: $border-color;
+          }
+          .td {
+            .name {
+              font-size: 18px;
+            }
+            .map {
+              font-weight: $font-weight-bold;
+            }
+          }
+          .td:nth-child(1) {
+            color: $colorSixLightGray;
+            &.has-mods {
+              color: $colorSixGray;
+            }
+          }
+          .td:nth-child(3) {
+            padding: $padding;
+          }
+          .td:nth-child(4) {
+            //padding: $padding;
+            .player-count {
+              font-size: 16px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+

@@ -24,7 +24,7 @@ export class Finalize extends Dialog<IInput> {
     let initialEmail: string = model.email.toLowerCase();
 
     this.save = uiCommand2("Submit", this.saveInternal, { cls: 'ok' });
-    this.cancel = uiCommand2('Abort', async () => this.controller.cancel(false), { cls: "cancel" });
+    this.cancel = uiCommand2('Abort', () => this.controller.cancel(false), { cls: "cancel" });
     this.validation = this.validator.on(this)
       .ensure('model.email')
       .isNotEmpty()

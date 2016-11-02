@@ -1,5 +1,6 @@
 <template>
-  <div class="container-fluid">
+  <require from="./servers.scss"></require>
+  <div class="container-fluid" id="servers">
     Server index
     <labs lab-link="https://community.withsix.com/topic/85/add-a-server-browser-to-sync-web-vote-here/2"></labs>
     <!-- <table class="virtual-table">
@@ -8,11 +9,40 @@
       </tr>
     </table> -->
     <div class="tile">
-      <ul>
-        <li virtual-repeat.for="item of model.addresses">
+      <!--<table>
+        <tbody class="virtual-container" style="display: block">
+          <tr virtual-repeat.for="item of model.addresses" as-element="compose" view-model="./server-item" model.bind="item">
+          </tr>
+        </tbody>
+      </table>-->
+      <div>
+        <command-button model.bind="refresh" cancel.bind="cancel"></command-button>
+        ${model.addresses.length} servers found
+      </div>
+
+      <div class="tablewrapper">
+        <div class="table virtual-container">
+          <div class="tr">
+            <div class="td">Ping</div>
+            <div class="td"></div>
+            <div class="td"># plyrs</div>
+            <div class="td">Info</div>
+            <div class="td">Mods</div>
+            <div class="td">Mission</div>
+          </div>
+          <div virtual-repeat.for="item of model.addresses" class="${item.loading ? '' : 'tr'} virtual-row" as-element="compose"
+            click.trigger="showServer(item)" view-model.bind="vm" model.bind="item">
+          </div>
+        </div>
+      </div>
+      <!--<table-view is-virtual.one-time="true" items.bind="model.addresses" view-path="features/games/servers/" item-type="server-item"></table-view>-->
+
+      <!--<list-view is-virtual.one-time="true" items.bind="model.addresses">
+        <template replace-part="item-template">
           <compose view-model="./server-item" model.bind="item"></compose>
-        </li>
-      </ul>
+        </template>
+      </list-view>-->
+
     </div>
   </div>
 </template>

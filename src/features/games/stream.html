@@ -104,9 +104,11 @@
                 </li>
               </ul>
 
-              <list-view items.bind="model.postItems" if.bind="model.postItems.length > 0" item-type="post" view-path="features/games/">
+              <list-view items.bind="model.postItems" if.bind="model.postItems.length > 0">
+                <template replace-part="item-template">
+                  <compose view-model="features/games/${item.type || 'post'}" model.bind="item"></compose>
+                </template>
               </list-view>
-
 
               <div class="archive">
                 <h3>Archive</h3>

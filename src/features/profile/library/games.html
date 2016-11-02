@@ -1,15 +1,16 @@
 <template>
-	<section class="au-animate" id="my-games">
-		<h2 class="page-title">${heading | usertitle}</h2>
-		<button click.delegate="openGameSettings()" class="default row-header-button">Settings</button>
+  <section class="au-animate" id="my-games">
+    <h2 class="page-title">${heading | usertitle}</h2>
+    <button click.delegate="openGameSettings()" class="default row-header-button">Settings</button>
 
-		<div class="tile" if.bind="!clientEnabled">
-			<compose view="features/_get_client.html"></compose>
-		</div>
+    <div class="tile" if.bind="!clientEnabled">
+      <compose view="features/_get_client.html"></compose>
+    </div>
 
-		<div if.bind="clientEnabled">
-			<h3>Select game</h3>
-			<card-view items-map.bind="model.games" card-columns.one-time="[2,3,4,4]" card-cls="content-basketable" item-type="game" view-path="features/profile/content/"></card-view>
-		</div>
-	</section>
+    <div if.bind="clientEnabled">
+      <h3>Select game</h3>
+      <card-view items.bind="model.games" card-columns.one-time="[2,3,4,4]" card-cls="content-basketable" item-type="game"
+        view-path="features/profile/content/"></card-view>
+    </div>
+  </section>
 </template>

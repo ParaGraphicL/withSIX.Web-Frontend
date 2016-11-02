@@ -1,5 +1,10 @@
 import Linq from 'linq4es2015';
 
+export const uniq = <T>(items: T[]) => {
+  let u = [];
+  items.forEach(x => { if (u.indexOf(x) === -1) u.push(x) });
+  return u;
+}
 
 export const flatten = <T>([first, ...rest]): T[] => {
   if (first === undefined)

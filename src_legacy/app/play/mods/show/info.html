@@ -1,6 +1,6 @@
 <sx-info-page>
   <sx-info-main>
-    <sx-aurelia ng-if="features.steam" id="gallery" sx-view-model="'features/games/mods/mod-gallery'" sx-model="galleryInfo"></sx-aurelia>
+    <sx-aurelia id="gallery" sx-view-model="'features/games/mods/mod-gallery'" sx-model="galleryInfo"></sx-aurelia>
 
     <div class="tile">
       <section>
@@ -10,7 +10,10 @@
               <span id="modDescription">Description</span>
             </h3>
 
-            <div class="editable-full">
+            <sx-aurelia ng-hide="editConfig.isEditing" sx-view-model="'features/games/mods/external/index'" sx-model="externalInfo"></sx-aurelia>
+
+
+            <div class="editable-full" ng-if="editConfig.isEditing">
               <span ng-if="editConfig.isEdited('descriptionFull')" class="withSIX-icon-Alert pull-right" style="color: red; font-size: 20px;"></span>
 
               <div ng-if="editConfig.isEditing" class="editable-full" style="margin-bottom: 10px;">
@@ -79,7 +82,6 @@
               </button>
             </div>
           </div>
-          <sx-aurelia ng-if="features.steam" sx-view-model="'features/games/mods/external/index'" sx-model="externalInfo"></sx-aurelia>
           <div>
             <sx-comments ng-if="model.comments" comments="model.comments" can-manage="editConfig.canManage() || editConfig.canEdit()" add-comment="addComment(comment)" delete-comment="deleteComment(comment)" save-comment="saveComment(comment)" report-comment="reportComment(comment)"
                 like-comment="likeComment(comment)" unlike-comment="unlikeComment(comment)" like-states="commentLikeStates">

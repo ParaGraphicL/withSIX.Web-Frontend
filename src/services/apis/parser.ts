@@ -33,14 +33,16 @@ export class HtmlParser {
 
   handleAttr = (el: JQuery, attr: string, baseUrl: string) => {
     let src = el.attr(attr);
-    let updatedUrl = src && this.handleRelativeUrl(src, baseUrl);
+    let updatedUrl = src && (this.cleanupUrl(this.handleRelativeUrl(src, baseUrl)));
     if (updatedUrl) el.attr(attr, updatedUrl);
   }
+
+  cleanupUrl(url: string) { return url.replace(/\/+$/, "") }
 
   handleRelativeUrl = (url: string, baseUrl: string) =>
     !url.match(/^(\/\/)|(https?:\/)\//) //url.match(/^((\.)?\/[^\/\?#\s]/)
       ? this.combineUrls(baseUrl, url)
-      : null;
+      : url;
 
   combineUrls = (baseUrl: string, url: string) => {
     if (url.startsWith(".")) url = url.substring(1);
@@ -62,19 +64,26 @@ export class HtmlParser {
     '//www.bistudio.com/assets/img/licenses',
     '//www.bistudio.com/license',
 
+    // both www. and main
     'armaholic.com/images/pfs/',
     'armaholic.com/datas/users/news_download',
     'armaholic.com/skins/',
 
     '//button.moddb.com/',
+    '//staticdelivery.nexusmods.com/contents/images',
 
-    'wmtransfer.com/',
-    'paypalobjects.com/',
-    'creativecommons.org/',
-    'patreon.com/'
+    '/noimage.',
+    '//steamcommunity-a.akamaihd.net/public/shared/images/',
+    '//store.akamai.steamstatic.com/public/shared/images/',
+    '//cfl.dropboxstatic.com/static/images/',
+    '//wmtransfer.com/',
+    '//paypalobjects.com/',
+    '//www.paypal.com/',
+    '//creativecommons.org/',
+    '//patreon.com/'
   ]
 
-  static filterHref(href: string) { return this.shouldFilterHref.some(x => href.includes(x)); }
+  static filterHref(href: string) { return this.shouldFilterHref.some(x => href.toLowerCase().includes(x)); }
 
   static compareImage = (x, i) => {
     return (i.href && i.href === x.href)
@@ -95,26 +104,75 @@ export class HtmlParser {
 
 // TODO: Pickup Publishers
 export abstract class InterestingLink {
-  displayImage: string; 
-  constructor(public url: string, public images: string[] = []) {
+  displayImage: string;
+  title: string;
+  url: string;
+  get displayName() { return this.title || this.url; }
+  constructor(url: string, public images: string[] = []) {
+    this.url = url.replace(/\/+$/, "");
     if (images && images.length > 0) this.displayImage = images[0];
     if (!this.displayImage) this.displayImage = this.getDisplayImage();
  }
  protected getDisplayImage() { return null; }
 }
 export class ImgurGallery extends InterestingLink {
+  title = "Imgur Gallery"
   constructor(url, images) { super(url, images); this.displayImage = null }
 }
-export class SocialMedia extends InterestingLink { }
-export class ForumUrl extends InterestingLink { }
-export class DonationUrl extends InterestingLink { 
+export class SocialMedia extends InterestingLink {
+  title = "Social Media"
+  constructor(url: string, public images: string[] = []) {
+    super(url, images);
+    if (this.url.includes("facebook.com")) this.title = "Facebook";
+    else if (this.url.includes("twitter.com")) this.title = "Twitter";
+    else if (this.url.includes("plus.google.com")) this.title = "Google Plus";
+  }
+
+ }
+ export class GithubUrl extends InterestingLink {
+   title = "GitHub Repo"
+ }
+export class WorkshopUrl extends InterestingLink {
+  title = "Steam Workshop"
+}
+export class ArmaholicUrl extends InterestingLink {
+  title = "Armaholic"
+}
+export class ForumUrl extends InterestingLink {
+  title = "Community Forum"
+  constructor(url: string, public images: string[] = []) {
+    super(url, images);
+    if (this.url.includes("armaholic.com")) this.title = "Armaholic Forums";
+    else if (this.url.includes("www.reddit.com")) this.title = "Reddit";
+  }
+}
+export class ProfileUrl extends InterestingLink {
+  title = "User Profile"
+  constructor(url: string, public images: string[] = []) {
+    super(url, images);
+    if (this.url.includes("www.reddit.com")) this.title = "Reddit Profile";
+  }
+}
+export class CommsUrl extends InterestingLink {
+  title = "(voice) chat"
+}
+export class HomepageUrl extends InterestingLink {
+  title = "Homepage"
+}
+export class VideoUrl extends InterestingLink {
+  title = "Video Channel";
+}
+export class DonationUrl extends InterestingLink {
+  title = "Support the Author"
   protected getDisplayImage() {
     if (this.url.includes('patreon.com/')) return 'https://s3.amazonaws.com/patreon_public_assets/toolbox/patreon_logo.png';
     else if (this.url.includes('paypal.com/')) return 'https://www.paypalobjects.com/webstatic/mktg/logo-center/PP_Acceptance_Marks_for_LogoCenter_266x142.png';
     return super.getDisplayImage();
   }
 }
-export class LicenseUrl extends InterestingLink { }
+export class LicenseUrl extends InterestingLink {
+  title = "License"
+ }
 
 export class Parser {
   constructor(private doc: JQuery, private baseUrl: string, private p: HtmlParser) { }
@@ -161,13 +219,37 @@ export class Parser {
       || url.startsWith('https://twitter.com/'))
       return new SocialMedia(url, images);
 
+    if (url.startsWith('https://www.reddit.com/r/')
+        || url.startsWith('http://www.reddit.com/r/'))
+      return new ForumUrl(url, images);
+
+    if (url.startsWith('https://www.reddit.com/u/')
+        || url.startsWith('http://www.reddit.com/u/'))
+      return new ProfileUrl(url, images);
+
+    if (url.startsWith('ts3server://')
+        || url.startsWith('http://discord.gg/')
+        || url.startsWith('https://discord.gg/')
+        || url.startsWith('https://gitter.im/')
+        || url.startsWith('http://gitter.im/')
+        || url.includes('.slack.com/'))
+      return new CommsUrl(url, images);
+
+// TODO: better distinguishing...
+/*
     if (url.startsWith('https://forums.bistudio.com/')
+      || url.startsWith('http://community.playstarbound.com/')
       || url.startsWith('http://www.armaholic.com/forums.php'))
       return new ForumUrl(url, images);
 
+    if (url.startsWith('http://www.armaholic.com/page.php?id='))
+      return new ArmaholicUrl(url, images);
+*/
     if (url.startsWith('http://www.youtube.com/playlist')
-      || url.startsWith('https://www.youtube.com/playlist'))
-      return new ForumUrl(url, images); // TODO
+      || url.startsWith('https://www.youtube.com/playlist')
+      || url.startsWith('http://www.youtube.com/user')
+      || url.startsWith('https://www.youtube.com/user'))
+      return new VideoUrl(url, images); // TODO
 
     if (url.includes('patreon.com/') || url.includes('paypal.com/') || url.includes('wmtransfer.com/') || url.includes('webmoney.ru'))
       return new DonationUrl(url, images);
@@ -262,11 +344,8 @@ export class Parser {
 
   tryVideo = (src: string) => {
     if (!src) return null;
-    let m;
-    if (
-      (src.includes('youtube.com/embed/') || src.includes('youtu.be/embed/') || src.includes('youtube-nocookie.com/embed/'))
-        && (m = src.match(/embed\/([^\/\?#\s]+)/))) {
-      let id = m[1];
+    let id;
+    if (id = this.parseYoutubeId(src)) {
       return {
         href: src,
         title: 'Video',
@@ -277,7 +356,18 @@ export class Parser {
     }
     return null;
   }
+
+  parseYoutubeId(src: string) {
+      let m;
+      // https://www.youtube.com/watch?v=icXoLobjUEg
+      if ((src.includes('youtube.com/embed/') || src.includes('youtu.be/embed/') || src.includes('youtube-nocookie.com/embed/'))
+        && (m = src.match(/embed\/([^\/\?#\s]+)/))) return m[1];
+      if (src.includes('youtube.com/watch?v=') && (m = src.match(/v=([^&#]+)/))) return m[1];
+      return null;
+  }
+
   isImage = (url: string) => {
+    if (!url) return false;
     // TODO: improve
     const imageExt = [".png", ".gif", ".jpg"];
     let safeUrl = createUrlSafe(url);

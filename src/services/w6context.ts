@@ -1,13 +1,13 @@
 import breeze from 'breeze-client';
-import {EntityExtends, BreezeEntityGraph, _IntDefs, BreezeInitialzation, IBreezeUser, IBreezeAWSUploadPolicy} from './dtos';
-import {EventAggregator} from 'aurelia-event-aggregator';
-import {Tools} from './tools';
-import {W6} from './withSIX';
-import {Toastr} from './toastr';
-import {inject} from 'aurelia-framework';
-import {PromiseCache} from 'withsix-sync-api';
-import {IRequestInfo} from '../helpers/utils/http-errors';
-import {HttpClient, json} from 'aurelia-fetch-client';
+import { EntityExtends, BreezeEntityGraph, _IntDefs, BreezeInitialzation, IBreezeUser, IBreezeAWSUploadPolicy } from './dtos';
+import { EventAggregator } from 'aurelia-event-aggregator';
+import { Tools } from './tools';
+import { W6 } from './withSIX';
+import { Toastr } from './toastr';
+import { inject } from 'aurelia-framework';
+import { PromiseCache } from 'withsix-sync-api';
+import { IRequestInfo } from '../helpers/utils/http-errors';
+import { HttpClient, json } from 'aurelia-fetch-client';
 
 const metadata = require('../../data/metadata.json');
 
@@ -64,7 +64,7 @@ export class W6Context {
 
   constructor(private http: HttpClient, public logger: Toastr, private promiseCache: PromiseCache, public w6: W6, public eventBus: EventAggregator) {
 
-    breeze.DataType.parseDateFromServer = function(source) {
+    breeze.DataType.parseDateFromServer = function (source) {
       var date = moment(source);
       return date.toDate();
     };
@@ -108,7 +108,7 @@ export class W6Context {
     return new breeze.EntityKey(t, id);
   }
 
-  public getUrl(path) { return Tools.uriHasProtocol(path) || path.startsWith("/") ? path : this.w6.url.api + "/" + path; }
+  public getUrl(path) { return Tools.uriHasProtocol(path) ? path : (path.startsWith("/") ? this.w6.url.authSsl + path : this.w6.url.api + "/" + path); }
 
   public getMd(subPath) { return this.getText(this.w6.url.getSerialUrl("docs/" + subPath)); }
 
@@ -141,7 +141,7 @@ export class W6Context {
     Tools.Debug.log("postCustomFormData", path, fd, configOverrides);
     return this.handleJson<T>(path, Object.assign({ body: fd, method: 'POST' }, configOverrides));
   }
-  public deleteCustom = <T>(path, configOverrides?: IRequestShortcutConfig) => this.handleJson(path, { method: 'DELETE' })
+  public deleteCustom = <T>(path, configOverrides?: IRequestShortcutConfig) => this.handleJson<T>(path, Object.assign({ method: 'DELETE' }, configOverrides))
 
   handleJsonWithBody = <T>(path, data, configOverride?) => this.handleJson<T>(path, Object.assign({
     body: data ? json(data) : null
@@ -162,16 +162,23 @@ export class W6Context {
   getResponse = async (path, configOverride?) => {
     let url = this.getUrl(path);
     if (configOverride && configOverride.params) {
-      var params = Object.keys(configOverride.params)
+      const encode = (key: string, val, objKey?) => {
+        if (objKey) key = `${objKey}[${key}]`
+        if (val instanceof Array) {
+          return val.map((x, i) => encode(`${key}[${i}]`, x)).join("&")
+        } else if (val instanceof Object) {
+          return encodeObject(val, key);
+        } else {
+          return key + "=" + encodeURIComponent(val)
+        }
+      }
+      const encodeObject = (obj, objKey?) => Object.keys(obj)
+        .filter((key) => obj[key] !== undefined)
         .map((key) => {
-          var val = configOverride.params[key];
-          if (val instanceof Array) {
-            return val.map(x => encodeURIComponent(key) + "=" + encodeURIComponent(x)).join("&")
-          } else {
-            return encodeURIComponent(key) + "=" + encodeURIComponent(val)
-          }
+          return encode(encodeURIComponent(key), obj[key], objKey);
         })
         .join("&")
+      var params = encodeObject(configOverride.params)
         .replace(/%20/g, "+");
       url = url + "?" + params;
     }
@@ -479,7 +486,7 @@ export class W6Context {
     // TODO: Investigate if we could somehow generate this from Breeze WithsixController
     store.setEntityTypeForResourceName('ModsInCollection', 'Mod');
 
-    var mission = function() {
+    var mission = function () {
       this.avatar = ""; // "" or instance of whatever type is is supposed to be
     };
 
@@ -572,11 +579,13 @@ export class W6Context {
 
   handleResponseErrorStatus(requestInfo: IRequestInfo<any>, isLoggedIn: boolean) {
     const {status} = requestInfo;
-    if (status == 400) throw new Tools.ValidationError("Input not valid", requestInfo);
-    if (status == 401) throw isLoggedIn ? new Tools.LoginNoLongerValid("The login is no longer valid, please retry after logging in again", requestInfo) : new Tools.RequiresLogin("The requested action requires you to be logged-in", requestInfo);
-    if (status == 403) throw new Tools.Forbidden("You do not have access to this resource", requestInfo);
-    if (status == 404) throw new Tools.NotFoundException("The requested resource does not appear to exist", requestInfo);
-    if (status == 500) throw new Tools.HttpException(`Internal server error. We've been notified about the problem and will investigate. For your reference: ${requestInfo.headers['withSIX-RequestID']}`, requestInfo);
-    throw new Tools.HttpException(`Unknown error. For your reference: ${requestInfo.headers['withSIX-RequestID']}`, requestInfo);
+    switch (status) {
+      case 400: throw new Tools.ValidationError("Input not valid", requestInfo);
+      case 401: throw isLoggedIn ? new Tools.LoginNoLongerValid("The login is no longer valid, please retry after logging in again", requestInfo) : new Tools.RequiresLogin("The requested action requires you to be logged-in", requestInfo);
+      case 403: throw new Tools.Forbidden("You do not have access to this resource", requestInfo);
+      case 404: throw new Tools.NotFoundException("The requested resource does not appear to exist", requestInfo);
+      case 500: throw new Tools.HttpException(`Internal server error. We've been notified about the problem and will investigate. For your reference: ${requestInfo.headers.get('x-withsix-requestid')}`, requestInfo);
+    }
+    throw new Tools.HttpException(`Unknown error. For your reference: ${requestInfo.headers.get('x-withsix-requestid')}`, requestInfo);
   }
 }

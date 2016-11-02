@@ -1,8 +1,8 @@
-import {breeze, IPaginated, MissionHelper, PaginatedViewModel, Query, SortDirection, IFilterInfo, DbQuery, handlerFor, uiCommandWithLogin2, IMenuItem, MenuItem, IBreezeMission, ModsHelper, IMission} from '../../../../framework';
-import {FilteredBase} from '../../../filtered-base';
+import { breeze, IPaginated, MissionHelper, PaginatedViewModel, Query, SortDirection, IFilterInfo, DbQuery, handlerFor, uiCommandWithLogin2, IMenuItem, MenuItem, IBreezeMission, ModsHelper, IMission } from '../../../../framework';
+import { FilteredBase } from '../../../filtered-base';
 
 export class Index extends FilteredBase<IMission> {
-  // { name: "stat.install", title: "installs", direction: SortDirection.Desc },
+  // { name: "stat.totalInstall", title: "installs", direction: SortDirection.Desc },
   sort = [{ name: "updatedAt", title: "Updated", direction: SortDirection.Desc }, { name: "createdAt", title: "Created", direction: SortDirection.Desc }, { name: "name" }, { name: "packageName" }]
 
   searchFields = ["name", "packageName"];
@@ -20,7 +20,7 @@ class GetMissionsHandler extends DbQuery<GetMissions, IPaginated<IMission>> {
     var jsonQuery = {
       from: 'Missions',
       where: {
-        'author.slug': { in: [request.authorSlug] }
+        'author.slug': request.authorSlug // TODO: get the ID instead!
       }
     }
     var query = new breeze.EntityQuery(jsonQuery).expand(["stat"]);

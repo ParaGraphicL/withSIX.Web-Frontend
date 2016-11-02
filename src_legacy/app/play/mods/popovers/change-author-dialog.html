@@ -37,7 +37,7 @@
                        bs-typeahead data-min-length="0" data-label="displayName">
             </span>
         </div>
-        <div collapse="changeAuthorCheck(this)">
+        <div collapse="changeAuthorCheck(newAuthor)">
             <strong>Selected Author</strong><br/>
             <sx-account-card account="newAuthor"></sx-account-card>
         </div>
@@ -46,7 +46,7 @@
         <div class="btn" style="visibility: hidden">&nbsp;</div>
         <div class="pull-right">
             <button class="btn btn-sx-save"
-                    ng-disabled="changeAuthorCheck(this)"
+                    ng-disabled="changeAuthorCheck(newAuthor)"
                     ng-click="setAuthor(newAuthor); newAuthor = undefined; $hide()">
                 Accept
             </button>

@@ -1,5 +1,11 @@
-import {customAttribute, valueConverter} from 'aurelia-framework';
+import {
+  customAttribute,
+  valueConverter
+} from 'aurelia-framework';
 import numeral from 'numbro';
+import {
+  sanitizeHtml, camelCase
+} from '../helpers/utils/string';
 
 enum FileSize {
   B,
@@ -55,10 +61,53 @@ export class HighlightValueConverter {
 
 @valueConverter('text')
 export class TextValueConverter {
-  toView = text => text ? this.parseText(text) : text;
-  parseText = text => this.replaceBreaks(this.replaceLinks(text))
+  toView = text => text ? this.parseText(sanitizeHtml(text)) : text;
+  parseText = text => this.replaceBreaks(this.replaceSpecial(this.replaceLinks(text)))
   replaceBreaks = text => text.replace(/(\r\n)|\n/g, "<br />")
-  replaceLinks = text => text.replace(/(\b(https?|ftp|file):\/\/([-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|]))/gi, (whole, m1, m2, m3) => `<a target="_blank" href="${whole}">${m3}</a>`);
+  replaceSpecial = text => text.replace(/configure the game first in the Settings/, (whole) =>
+    `<a href="#" onclick="w6Cheat.api.openSettings({module: 'games'})">${whole}</a>`)
+  replaceLinks = text => text.replace(
+    /(\b(https?|ftp|file):\/\/([-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|]))/gi, (whole, m1,
+      m2, m3) => `<a target="_blank" href="${whole}">${m3}</a>`);
+}
+
+@valueConverter('camelCase')
+export class CamelCaseConverter {
+  toView = camelCase;
+}
+
+@valueConverter('take')
+export class TakeValueConverter {
+  toView(array, count) {
+    return array ? array.slice(0, count) : array;
+  }
+}
+
+@valueConverter('skip')
+export class SkipValueConverter {
+  toView(array, start) {
+    return array ? array.slice(start) : array;
+  }
+}
+
+
+@valueConverter('links')
+export class LinkValueConverter {
+  toView = text => text ? this.parseText(sanitizeHtml(text)) : text;
+  parseText = text => this.replaceLinks(text);
+  // removed (:[0-9]{1,6})? as web urls generally have no ports!
+  replaceLinks = text => text.replace(
+    /(https?:\/\/)?((www\.)?[-a-zA-Z0-9@%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*))/ig,
+    (whole, m1, m2, m3) => {
+      return `<a target="_blank" href="${whole.startsWith('http') ? whole : `http://${whole}`}">${m2}</a>`;
+    });
+}
+
+// This only converts the ary on first use, and then becomes static.
+// better is to bind to arrays directly..
+@valueConverter('mapToAry')
+export class MapToAryValueConverter {
+  toView = map => map == null ? null : Array.from(map, (x, i) => x[1]);
 }
 
 @valueConverter('ipEndpoint')
@@ -66,11 +115,15 @@ export class IpEndpointValueConverter {
   toView = addr => addr ? `${addr.address}:${addr.port}` : '';
 }
 
-@valueConverter('numeral')
-export class NumeralValueConverter {
+abstract class NumeralValueConverter {
   static defaultFormat = '0[.][0]';
-  defaultToView = (n: number, format: string) => this.convert(n, format)
+  defaultToView = (n: number, format: string = NumeralValueConverter.defaultFormat) => this.convert(n, format)
   convert = (n: number, format: string) => numeral(n || 0).format(format);
+}
+
+@valueConverter('numeral')
+export class NumeralValueConverter2 extends NumeralValueConverter {
+  toView = (n, format) => this.defaultToView(n, format);
 }
 
 @valueConverter('progress')
@@ -79,12 +132,26 @@ export class ProgressValueConverter extends NumeralValueConverter {
   toView = (n: number) => this.convert(n / 100, ProgressValueConverter.procentFormat);
 }
 
+@valueConverter('sort')
+export class SortValueConverter {
+  toView(array, propertyName, direction = 'ascending') {
+    var factor = direction === 'ascending' ? 1 : -1;
+    return array
+      .slice(0)
+      .sort((a, b) => {
+        return (a[propertyName] - b[propertyName]) * factor
+      });
+  }
+}
+
 @valueConverter('size')
 export class SizeValueConverter extends NumeralValueConverter {
   static sizeFormat = NumeralValueConverter.defaultFormat + ' b';
   handleNegative = (n: number) => n < 0 ? '-' : '';
-  sizeConvert = (n: number) => this.handleNegative(n) + this.convert(Math.abs(n), SizeValueConverter.sizeFormat);
-  includeMarkup = (r: string) => r.replace(/(.*) (.*)/, (full, count, unit) => `<span class="count">${count}</span> <span class="unit">${unit}</span>`);
+  sizeConvert = (n: number) => this.handleNegative(n) + this.convert(Math.abs(n),
+    SizeValueConverter.sizeFormat);
+  includeMarkup = (r: string) => r.replace(/(.*) (.*)/, (full, count, unit) =>
+    `<span class="count">${count}</span> <span class="unit">${unit}</span>`);
   toView = (size: number, format = 'B', includeMarkup = true) => {
     size = this.upsize(FileSize[format], size);
     let r = this.sizeConvert(size);
@@ -119,7 +186,8 @@ export class SizeValueConverter extends NumeralValueConverter {
         break;
       case FileSize.YB:
         curFormat = FileSize.ZB;
-      default: return size;
+      default:
+        return size;
     }
     size = size * 1024;
     return this.upsize(curFormat, size);
@@ -206,7 +274,9 @@ export class FileListToArrayValueConverter {
 
 @valueConverter('blobToUrl')
 export class BlobToUrlValueConverter {
-  toView(blob) { return URL.createObjectURL(blob); }
+  toView(blob) {
+    return URL.createObjectURL(blob);
+  }
 }
 
 // TODO

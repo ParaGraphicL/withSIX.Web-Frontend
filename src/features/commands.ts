@@ -32,7 +32,9 @@ class ClientQuery<T, T2> extends DbClientQuery<T, T2> {
 export enum LaunchAction {
   Default,
   Launch,
-  Join
+  Join,
+  LaunchAsServer,
+  LaunchAsDedicatedServer
 }
 
 export enum LaunchType {
@@ -42,6 +44,20 @@ export enum LaunchType {
   Editor
 }
 
+
+export class LaunchGame extends VoidCommand {
+  constructor(public id: string, public launchType: LaunchType = LaunchType.Default) { super(); }
+  public action?: LaunchAction;
+  public serverAddress?: string;
+}
+
+@handlerFor(LaunchGame)
+class LaunchGameHandler extends DbClientQuery<LaunchGame, void> {
+  public handle(request: LaunchGame): Promise<void> {
+    return this.client.launchGame(request);
+  }
+}
+
 @handlerFor(SubscribeCollection)
 class SubscribeCollectionHandler extends DbClientQuery<SubscribeCollection, void> {
   async handle(request: SubscribeCollection): Promise<void> {
@@ -49,20 +65,31 @@ class SubscribeCollectionHandler extends DbClientQuery<SubscribeCollection, void
   }
 }
 
-export class LaunchContent extends VoidCommand { constructor(public gameId: string, public id: string, public noteInfo: INoteInfo, public action = LaunchAction.Launch) { super(); } }
+export class LaunchContent extends VoidCommand {
+  public serverAddress?: string;
+  constructor(public gameId: string, public id: string, public noteInfo: INoteInfo, public action = LaunchAction.Launch) { super(); }
+}
 
 @handlerFor(LaunchContent)
 class LaunchContentHandler extends ClientQuery<LaunchContent, void> {
   async handle(request: LaunchContent): Promise<void> {
     //this.raiseDownloadNotification('Launching', null, request.noteInfo);
-    await this.client.launchContent(<any>{ gameId: request.gameId, content: { id: request.id }, action: request.action });
+    await this.client.launchContent(<any>{
+      gameId: request.gameId, content: { id: request.id }, action: request.action,
+      name: request.noteInfo.text, href: request.noteInfo.href,
+      serverAddress: request.serverAddress
+    });
     // TODO: Add delay?
     //this.raiseDownloadNotification('Launched', null, request.noteInfo);
     //this.context.eventBus.publish(new ContentLaunched(request.gameId, request.id));
   }
 }
 
-export class LaunchContents extends VoidCommand { constructor(public gameId: string, public contents: IContentGuidSpec[], public noteInfo: INoteInfo, public action = LaunchAction.Launch) { super(); } }
+export class LaunchContents extends VoidCommand {
+  public serverAddress?: string;
+  constructor(public gameId: string, public contents: IContentGuidSpec[], public noteInfo: INoteInfo,
+    public action = LaunchAction.Launch) { super(); }
+}
 
 @handlerFor(LaunchContents)
 class LaunchContentsHandler extends ClientQuery<LaunchContents, void> {
@@ -72,7 +99,9 @@ class LaunchContentsHandler extends ClientQuery<LaunchContents, void> {
       gameId: request.gameId,
       contents: request.contents,
       name: request.noteInfo.text,
-      action: request.action
+      href: request.noteInfo.href,
+      action: request.action,
+      serverAddress: request.serverAddress
     });
     // TODO: Add delay?
     //this.raiseDownloadNotification('Launched', null, request.noteInfo);
@@ -124,6 +153,11 @@ class InstallContentHandler extends ClientQuery<InstallContent, void> {
     this.basketService.lastActiveItem = request.content.id;
     //this.raiseDownloadNotification(request.force ? 'Diagnosing' : 'Installing', null, request.noteInfo);
     //try {
+
+    let req = Object.assign({}, request, {
+      name: request.noteInfo.text,
+      href: request.noteInfo.href
+    });
     if (request.content.isOnlineCollection) {
       if (this.w6.isLoggedIn) {
         // TODO: Don't subscribe when it's our own..
@@ -135,10 +169,10 @@ class InstallContentHandler extends ClientQuery<InstallContent, void> {
           }
         }
       }
-      await this.client.installCollection(request);
+      await this.client.installCollection(req);
     }
     else
-      await this.client.installContent(request);
+      await this.client.installContent(req);
     //this.context.eventBus.publish(new ContentInstalled(request.gameId, request.content.id));
     //this.raiseDownloadNotification(request.force ? 'Diagnosed' : 'Installed', null, Object.assign({}, request.noteInfo, { command: this.createLaunchCommand(new LaunchContent(request.gameId, request.content.id, request.noteInfo)) }));
     //} catch (err) { this.handleFailure(request.noteInfo, request, err); }
@@ -152,10 +186,11 @@ class InstallContentsHandler extends ClientQuery<InstallContents, void> {
   public async handle(request: InstallContents) {
     //this.raiseDownloadNotification(request.force ? 'Diagnosing' : 'Installing', null, request.noteInfo);
     //try {
-    await this.client.installContents({
+    await this.client.installContents(<any>{
       gameId: request.gameId,
       contents: request.contents,
-      name: request.noteInfo.text
+      name: request.noteInfo.text,
+      href: request.noteInfo.href
     });
     //this.raiseDownloadNotification(request.force ? 'Diagnosed' : 'Installed', null, Object.assign({}, request.noteInfo, { command: this.createLaunchCommand(new LaunchContents(request.gameId, request.contents, request.noteInfo)) }));
     //} catch (err) { this.handleFailure(request.noteInfo, request, err); }
@@ -170,7 +205,11 @@ class UninstallContentHandler extends ClientQuery<UninstallContent, void> {
     this.basketService.lastActiveItem = request.id;
     //this.raiseDownloadNotification('Uninstalling', name);
     //try {
-    await this.client.uninstallContent({ gameId: request.gameId, content: { id: request.id } });
+    let req = Object.assign({}, { gameId: request.gameId, content: { id: request.id } }, {
+      name: request.noteInfo.text,
+      href: request.noteInfo.href
+    })
+    await this.client.uninstallContent(req);
     //this.raiseDownloadNotification('Uninstalled', name);
     //} catch (err) { this.handleFailure(request.noteInfo, request, err); }
     //this.context.eventBus.publish(new ContentDeleted(request.gameId, request.id)); // these states are already auto maanged by the complete state engine?

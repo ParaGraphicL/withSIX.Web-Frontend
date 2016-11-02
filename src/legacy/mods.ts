@@ -1,35 +1,38 @@
 import breeze from 'breeze-client';
 
-import {IBreezeMod, IBreezeUser, IBreezeCollection, IBreezeMission, IBreezeCollectionVersionDependency, IBreezePost, IBreezeModUpdate, IBreezeCollectionVersion, IBreezeGame, IBreezeAWSUploadPolicy,
+import {
+  IBreezeMod, IBreezeUser, IBreezeCollection, IBreezeMission, IBreezeCollectionVersionDependency, IBreezePost, IBreezeModUpdate, IBreezeCollectionVersion, IBreezeGame, IBreezeAWSUploadPolicy,
   IBreezeMissionComment, IBreezeMissionVersion, IBreezeCollectionImageFileTransferPolicy, IBreezeModInfo,
   IBreezeCollectionComment, IBreezePostComment, AbstractDefs, BreezeInitialzation, IBreezeModUserGroup, IBreezeModComment, IBreezeModImageFileTransferPolicy,
   IBreezeModMediaItem, IUserInfo, Resource, Permission, Role,
-  EntityExtends, BreezeEntityGraph, _IntDefs} from '../services/dtos';
+  EntityExtends, BreezeEntityGraph, _IntDefs
+} from '../services/dtos';
 
-import {LegacyMediator} from '../services/mediator';
-import {ModHelper, CollectionHelper, MissionHelper} from '../services/helpers';
+import { ProcessingState } from '../services/basket-service';
 
-import {RestoreBasket, OpenCreateCollectionDialog, OpenAddModDialog, OpenAddModsToCollectionsDialog} from '../services/api';
-import {ForkCollection} from '../features/profile/content/collection';
-import {W6, W6Urls, globalRedactorOptions} from '../services/withSIX';
-import {Tools} from '../services/tools';
-import {W6Context, IQueryResult, BooleanResult, Result} from '../services/w6context';
-import {Tk} from '../services/legacy/tk'
-import {IRootScope, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHaveModel, DialogQueryBase, DbCommandBase, DbQueryBase, BaseController, BaseQueryController, DialogControllerBase, ModelDialogControllerBase } from './app-base'
-import {ITagKey, ICreateComment, ICQWM, IModel, IMenuItem, IHandleCommentsScope} from '../services/legacy/base'
+import { LegacyMediator } from '../services/mediator';
+import { GameHelper, ModHelper } from '../services/helpers';
+
+import { RestoreBasket, OpenCreateCollectionDialog, OpenAddModDialog, OpenAddModsToCollectionsDialog } from '../services/api';
+import { ForkCollection } from '../features/profile/content/collection';
+import { W6, W6Urls, globalRedactorOptions, IExternalInfo } from '../services/withSIX';
+import { Tools } from '../services/tools';
+import { W6Context, IQueryResult, BooleanResult, Result } from '../services/w6context';
+import { Tk } from '../services/legacy/tk'
+import { IRootScope, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHaveModel, DialogQueryBase, DbCommandBase, DbQueryBase, BaseController, BaseQueryController, DialogControllerBase, ModelDialogControllerBase } from './app-base'
+import { ITagKey, ICreateComment, ICQWM, IModel, IMenuItem, IHandleCommentsScope } from '../services/legacy/base'
 import { Publisher } from '../services/apis/lib';
-import {EventAggregator} from 'aurelia-event-aggregator';
+import { EventAggregator } from 'aurelia-event-aggregator';
 
-import {Mediator} from 'aurelia-mediator';
-import {Client, IClientInfo, ItemState} from 'withsix-sync-api';
+import { Client, IClientInfo, ItemState } from 'withsix-sync-api';
 
-import {IBasketItem, BasketItemType} from '../services/legacy/baskets';
-import {BasketService} from '../services/basket-service';
-import {ModsHelper, Helper} from '../services/legacy/misc';
-import {ToastLogger} from '../services/legacy/logger';
+import { IBasketItem, BasketItemType } from '../services/legacy/baskets';
+import { BasketService } from '../services/basket-service';
+import { ModsHelper, Helper } from '../services/legacy/misc';
+import { ToastLogger } from '../services/legacy/logger';
 
-import {registerCommands, getFactory, skyscraperSlotSizes, rectangleSlotSizes, leaderboardSlotSizes} from './app-base';
-import {joinUri} from '../helpers/utils/url'
+import { registerCommands, getFactory, skyscraperSlotSizes, rectangleSlotSizes, leaderboardSlotSizes } from './app-base';
+import { joinUri } from '../helpers/utils/url'
 
 import { registerCQ, registerService, registerController, IContentScope, IContentScopeT, ContentModelController, IContentHeader, ContentDownloads, HelpItem, ContentController, IContentIndexScope, IEditConfiguration, GetUserTagsQuery, GetUsersQuery } from './play'
 
@@ -84,32 +87,32 @@ export class ClaimDialogController extends DialogControllerBase {
 
   private ok = () => {
     return this.$scope.request<{ token; formatProvider; data }>(GetClaimQuery, { modId: this.$scope.model.id })
-      .then((result) => {
+      .then((result) =>
         this.applyIfNeeded(() => {
           this.$scope.claimToken = result.token;
           this.$scope.formatProvider = result.formatProvider;
           this.$scope.ctModel = result.data;
           this.$scope.page = '/src_legacy/app/play/mods/dialogs/_claim-page2.html';
-        });
-      })
+        })
+      )
       .catch(this.httpFailed);
   };
 
   private verifyToken = () => {
     this.$scope.verificationFailed = false;
     return this.$scope.request(VerifyClaimCommand, { modId: this.$scope.model.id })
-      .then((result) => {
+      .then((result) =>
         this.applyIfNeeded(() => {
           this.$scope.page = '/src_legacy/app/play/mods/dialogs/_claim-page3.html';
           this.$scope.error = undefined;
-        });
-      })
-      .catch((reason) => {
+        })
+      )
+      .catch((reason) =>
         this.applyIfNeeded(() => {
           this.httpFailed(reason);
           this.$scope.error = reason.data.message;
-        });
-      });
+        })
+      );
   };
 }
 
@@ -425,7 +428,7 @@ registerCQ(ModVersionHistoryDialogQuery);
 
 export class NewModVersionCommand extends DbCommandBase {
   static $name = 'NewModVersion';
-  public execute = ['data', data => this.context.postCustom("mods/" + data.modId + "/versions", data, { requestName: 'postNewModUpload' })];
+  public execute = ['data', data => this.context.postCustom<{ result: string }>("mods/" + data.modId + "/versions", data, { requestName: 'postNewModUpload' }).then(x => x.result)];
 }
 
 registerCQ(NewModVersionCommand);
@@ -516,32 +519,6 @@ export class GetModTagsQuery extends DbQueryBase {
 }
 
 registerCQ(GetModTagsQuery);
-
-export class GetModTagsQueryByUser extends DbQueryBase {
-  static $name = "GetModTagsByUser";
-
-  public execute = [
-    'userSlug', 'query', (userSlug, name) => {
-      Tools.Debug.log("getting mods by user: " + userSlug + ", " + name);
-
-      var op = this.context.getOpByKeyLength(name);
-      var key = name.toLowerCase();
-
-      var query = breeze.EntityQuery.from("Mods")
-        .where(new breeze.Predicate("author.slug", breeze.FilterQueryOp.Equals, userSlug).and(
-          new breeze.Predicate("toLower(packageName)", op, key)
-            .or(new breeze.Predicate("toLower(name)", op, key))))
-        .orderBy("packageName")
-        .select(["packageName", "name", "id"])
-        .take(this.context.defaultTakeTag);
-
-      return this.context.executeQuery(query)
-        .then((data) => data.results);
-    }
-  ];
-}
-
-registerCQ(GetModTagsQueryByUser);
 
 interface IGameTag { tagId: string, contentCount: number }
 export class GetCategoriesQuery extends DbQueryBase {
@@ -660,48 +637,6 @@ export interface IModScope extends IContentScopeT<IBreezeMod> {
   isInBasket: () => boolean;
 }
 
-enum ProcessingState {
-  //General,
-  RequiresApprovalUploadFinished = -5,
-  ManagerAbandoned = -4,
-  RequiresApproval = -3,
-  UserCancelled = -2,
-  UnknownFailure = -1,
-  Uninitialized = 0,
-  Initializing = 1,
-  Finished = 2,
-  Yanked = 3,
-
-  //ProcessingQueue
-  QueuedForProcessing = 50,
-
-  //Downloading
-  AddingToDownloadService = 100,
-  DownloadServiceUnavailible = 101,
-  LinkUnavailible = 102,
-  WaitingForDownloadStart = 110,
-  Downloading = 120,
-  DownloadingFailed = 121,
-  Downloaded = 199,
-
-  //Extraction
-  Extracting = 200,
-  ExtractFailed = 201,
-  Extracted = 299,
-
-  //RestructureTool
-  Restructuring = 300,
-  RestructureFailed = 301,
-  RestructureWaitingOnAdmin = 310,
-
-  //Network
-  PreparingNetwork = 400,
-  PreparingNetworkFailed = 401,
-  Syncing = 410,
-  SyncFailed = 411,
-  SignalFailed = 420
-}
-
 export function getEnum<TEnum>(enu: TEnum, name: string): number {
   return enu[name];
 }
@@ -728,6 +663,8 @@ export class ModController extends ContentModelController<IBreezeMod> {
       forwardService.forward(joinUri([$scope.url.play, model.game.slug, "mods", model.id.toShortId(), model.slug]));
       return;
     }
+
+    if (model.groupId != null) this.$scope.features.groups = true;
 
     this.isForActiveGame = $scope.model.gameId == $scope.game.id;
 
@@ -845,10 +782,10 @@ export class ModController extends ContentModelController<IBreezeMod> {
         await this.$scope.editConfig.saveChanges();
     };
 
-    this.$scope.changeAuthorCheck = (scope: any): boolean => {
-      if (!scope.newAuthor)
+    this.$scope.changeAuthorCheck = (newAuthor): boolean => {
+      if (!newAuthor)
         return true;
-      if ((typeof scope.newAuthor === 'string' || scope.newAuthor instanceof String))
+      if ((typeof newAuthor === 'string' || newAuthor instanceof String))
         return true;
       return false;
     };
@@ -918,6 +855,7 @@ export class ModController extends ContentModelController<IBreezeMod> {
         case ProcessingState.RestructureFailed:
         case ProcessingState.PreparingNetworkFailed:
         case ProcessingState.SyncFailed:
+        case ProcessingState.NoChangesFound:
         case ProcessingState.UnknownFailure:
         case ProcessingState.Finished:
         case ProcessingState.Yanked:
@@ -930,7 +868,7 @@ export class ModController extends ContentModelController<IBreezeMod> {
       }
     };
 
-    var timeout = 0;
+    var timeout;
     var _updating = false;
 
     var getCurrentChange = () => {
@@ -972,7 +910,7 @@ export class ModController extends ContentModelController<IBreezeMod> {
           setTimeout(() => $scope.approving = false, 1000 * 2);
           await $scope.request(GetModUpdatesQuery, { modId: $scope.model.id });
         }).catch(async (reason) => {
-          this.applyIfNeeded(() => {
+          await this.applyIfNeeded(() => {
             $scope.approving = false;
             this.httpFailed(reason);
           });
@@ -991,7 +929,7 @@ export class ModController extends ContentModelController<IBreezeMod> {
           setTimeout(() => $scope.approving = false, 1000 * 2);
           await $scope.request(GetModUpdatesQuery, { modId: $scope.model.id });
         }).catch(async (reason) => {
-          this.applyIfNeeded(() => {
+          await this.applyIfNeeded(() => {
             $scope.approving = false;
           });
           await $scope.request(GetModUpdatesQuery, { modId: $scope.model.id });
@@ -1072,20 +1010,16 @@ export class ModController extends ContentModelController<IBreezeMod> {
         await $scope.request(CancelUploadRequestQuery, { requestId: getCurrentChange().id, force: force })
           .then((result) => {
             $scope.request(GetModUpdatesQuery, { modId: $scope.model.id });
-            setTimeout(() => {
-              this.applyIfNeeded(() => {
-                setCancelConfirmState(false, force);
-                setCancelState(false, force);
-              });
-            }, 1000 * 2);
+            setTimeout(() => this.applyIfNeeded(() => {
+              setCancelConfirmState(false, force);
+              setCancelState(false, force);
+            }), 1000 * 2);
           }).catch(reason => {
             $scope.request(GetModUpdatesQuery, { modId: $scope.model.id });
-            setTimeout(() => {
-              this.applyIfNeeded(() => {
-                setCancelConfirmState(false, force);
-                setCancelState(false, force);
-              });
-            }, 1000 * 2);
+            setTimeout(() => this.applyIfNeeded(() => {
+              setCancelConfirmState(false, force);
+              setCancelState(false, force);
+            }), 1000 * 2);
             this.httpFailed(reason);
           });
       } else {
@@ -1132,8 +1066,9 @@ export class ModController extends ContentModelController<IBreezeMod> {
     if (this.$scope.model.fileTransferPolicies.length > 0) {
       var transferPolicy = this.$scope.model.fileTransferPolicies[0];
 
+      var isAdded = transferPolicy.entityAspect.entityState.isAdded();
       transferPolicy.entityAspect.setDeleted();
-      await this.$scope.editConfig.saveChanges(transferPolicy);
+      if (!isAdded) await this.$scope.editConfig.saveChanges(transferPolicy);
     }
   }
 
@@ -1176,8 +1111,11 @@ export class ModController extends ContentModelController<IBreezeMod> {
     if (this.$scope.model.dependentsCount > 0 || this.$scope.model.collectionsCount > 0)
       menuItems.push({ header: "Related", segment: "related" });
 
-    if (this.$scope.environment != Tools.Environment.Production) {
-      menuItems.push({ header: "Blog", segment: "blog" });
+    if (this.$scope.features.serverBrowser && this.$scope.game.id.toLowerCase() === GameHelper.gameIds.Arma3.toLowerCase()) {
+      menuItems.push({ header: "Servers", segment: "servers" })
+    }
+
+    if (this.$scope.environment !== Tools.Environment.Production) {
       menuItems.push({ header: "Credits", segment: "credits" });
     }
 
@@ -1282,7 +1220,7 @@ export class ModController extends ContentModelController<IBreezeMod> {
       this.logger.error("We were unable to retrieve an upload policy for your image. Please try again later", "Failed to upload image.");
       this.cancelImageUpload();
     } finally {
-      this.applyIfNeeded(_ => this.$scope.uploadingModImage = false)
+      await this.applyIfNeeded(() => this.$scope.uploadingModImage = false)
     }
   }
 
@@ -1290,7 +1228,7 @@ export class ModController extends ContentModelController<IBreezeMod> {
     try {
       return await this.entityManager.saveChanges(changedEntities);
     } finally {
-      this.applyIfNeeded();
+      await this.applyIfNeeded();
     }
   }
 
@@ -1329,7 +1267,7 @@ export class ModController extends ContentModelController<IBreezeMod> {
       this.logger.error("We were unable to retrieve an upload policy for your image. Please try again later", "Failed to upload image.");
       this.cancelImageUpload();
     } finally {
-      this.applyIfNeeded(_ => $scope.uploadingModImage = false);
+      await this.applyIfNeeded(() => $scope.uploadingModImage = false);
     }
   }
 
@@ -1349,7 +1287,7 @@ export class ModController extends ContentModelController<IBreezeMod> {
       if (data.includes("EntityTooSmall")) this.logger.error("Your image must be at least 10KB", "Image too small");
       throw r;
     } finally {
-      this.applyIfNeeded(_ => this.$scope.uploadingModImage = false);
+      await this.applyIfNeeded(() => this.$scope.uploadingModImage = false);
     }
   }
 
@@ -1361,22 +1299,21 @@ export class ModController extends ContentModelController<IBreezeMod> {
 
   unfollow() {
     this.requestAndProcessResponse(UnfollowModCommand, { model: this.$scope.model })
-      .then(r => {
-        this.applyIfNeeded(() => {
-          delete this.$scope.followedMods[this.$scope.model.id];
-          this.$scope.model.followersCount -= 1;
-        });
-      });
+      .then(r => this.applyIfNeeded(() => {
+        delete this.$scope.followedMods[this.$scope.model.id];
+        this.$scope.model.followersCount -= 1;
+      })
+      );
   }
 
   follow() {
     this.requestAndProcessResponse(FollowModCommand, { model: this.$scope.model })
-      .then(r => {
+      .then(r =>
         this.applyIfNeeded(() => {
           this.$scope.followedMods[this.$scope.model.id] = true;
           this.$scope.model.followersCount += 1;
-        });
-      });
+        })
+      );
   }
 
   setupHelp() {
@@ -1617,6 +1554,7 @@ export class ModEditBaseController extends BaseController {
   }
 }
 
+
 export interface IModInfoScope extends IEditableModScope, IHandleCommentsScope<IBreezeModComment> {
   openClaimDialog: () => any;
   exampleData: { key: string; values: number[][] }[];
@@ -1628,7 +1566,7 @@ export interface IModInfoScope extends IEditableModScope, IHandleCommentsScope<I
   addLink: (link) => void;
   newLink: { title: string; path: string };
   openSteamInfo: () => void;
-  externalInfo: { forumUrl?: string; steamInfo; gitHubRepo?: string; armaholicUrl?: string; chucklefishUrl?: string; description?: string; }
+  externalInfo: IExternalInfo;
   galleryInfo: { description?: string; avatar?: string }
 }
 
@@ -1666,16 +1604,33 @@ export class ModInfoController extends ModEditBaseController {
     this.setupDependencyAutoComplete();
 
     this.setupTitle("model.name", "Info - {0} (" + $scope.model.packageName + ") - " + $scope.model.game.name);
-    if (this.$scope.features.steam)
-      this.handleApis();
+    this.handleApis();
   }
 
   handleApis() {
-    let externalInfo = <any>{};
+    let externalInfo = <IExternalInfo>{};
+    if (this.$scope.model.homepageUrl) externalInfo.homepageUrl = this.$scope.model.homepageUrl;
+
+    const gameSlug = this.$scope.game.slug.toLowerCase();
+
+    // TODO: Game slugs for multi-game hosts (game.publishers)
     this.$scope.model.publishers.forEach(x => {
       switch (x.publisherType) {
         case Publisher[Publisher.Chucklefish]:
           externalInfo.chucklefishUrl = `http://community.playstarbound.com/resources/${this.$scope.model.name.sluggify()}.${x.publisherId}/`;
+          break;
+        case Publisher[Publisher.NoMansSkyMods]:
+          externalInfo.nmsmUrl = `http://nomansskymods.com/mods/${x.publisherId}/`;
+          break;
+        case Publisher[Publisher.ModDb]:
+          externalInfo.mdbUrl = `http://www.moddb.com/${gameSlug}/${x.publisherId}/`;
+          break;
+        case Publisher[Publisher.Curse]:
+          externalInfo.curseUrl = `http://www.curse.com/${gameSlug}/${x.publisherId}/`;
+          break;
+        case Publisher[Publisher.NexusMods]:
+          // TODO: Include game slug..
+          externalInfo.nexusUrl = `http://www.nexusmods.com/${gameSlug}/mods/${x.publisherId}/?`;
           break;
         case Publisher[Publisher.Armaholic]:
           externalInfo.armaholicUrl = `http://www.armaholic.com/page.php?id=${x.publisherId}`;
@@ -1696,11 +1651,16 @@ export class ModInfoController extends ModEditBaseController {
       }
     })
 
-    if (!externalInfo.forumUrl) {
-      let hp = this.$scope.model.homepageUrl;
-      if (hp && (hp.startsWith("http://forums.bistudio.com/") || hp.startsWith("https://forums.bistudio.com/"))) {
-        externalInfo.forumUrl = hp;
-      }
+    let hp = this.$scope.model.homepageUrl;
+    if (hp != null) {
+      if (!externalInfo.forumUrl && (hp.startsWith("http://forums.bistudio.com/") || hp.startsWith("https://forums.bistudio.com/"))) externalInfo.forumUrl = hp;
+      if (!externalInfo.nmsmUrl && hp.startsWith("http://nomansskymods.com/")) externalInfo.nmsmUrl = hp;
+      if (!externalInfo.curseUrl && hp.startsWith("http://www.curse.com/")) externalInfo.curseUrl = hp;
+      if (!externalInfo.nexusUrl && hp.startsWith("http://www.nexusmods.com/")) externalInfo.nexusUrl = hp;
+      if (!externalInfo.mdbUrl && hp.startsWith("http://www.moddb.com/")) externalInfo.mdbUrl = hp;
+      if (!externalInfo.chucklefishUrl && hp.startsWith("http://community.playstarbound.com")) externalInfo.chucklefishUrl = hp;
+      if (!externalInfo.armaholicUrl && hp.startsWith("http://www.armaholic.com")) externalInfo.armaholicUrl = hp;
+      //if (!externalInfo.steamInfo && hp.startsWith("http://steamcommunity.com/")) externalInfo.steamInfo = hp;
     }
     externalInfo.description = this.$scope.model.descriptionFull;
     this.$scope.externalInfo = externalInfo;
@@ -1728,18 +1688,18 @@ export class ModInfoController extends ModEditBaseController {
           .catch(this.breezeQueryFailed));
       }
 
-      this.$scope.likeComment = comment => this.$scope.request(LikeModCommentCommand, { modId: this.$scope.model.id, id: comment.id }).then(() => {
+      this.$scope.likeComment = comment => this.$scope.request(LikeModCommentCommand, { modId: this.$scope.model.id, id: comment.id }).then(() =>
         this.applyIfNeeded(() => {
           comment.likesCount += 1;
           this.$scope.commentLikeStates[comment.id] = true;
-        });
-      });
-      this.$scope.unlikeComment = comment => this.$scope.request(UnlikeModCommentCommand, { modId: this.$scope.model.id, id: comment.id }).then(() => {
+        })
+      );
+      this.$scope.unlikeComment = comment => this.$scope.request(UnlikeModCommentCommand, { modId: this.$scope.model.id, id: comment.id }).then(() =>
         this.applyIfNeeded(() => {
           comment.likesCount -= 1;
           this.$scope.commentLikeStates[comment.id] = false;
-        });
-      });
+        })
+      );
     }
 
     this.$timeout(() => this.$scope.request(GetModCommentsQuery, { modId: this.$scope.model.id }));
@@ -1981,6 +1941,7 @@ export interface IUploadVersionDialogScope extends IContentScope {
       version?: string;
       download?: string;
       isIncremental?: boolean;
+      packageName?: string;
     };
     downloadLinkAvailable?: boolean;
     info: {
@@ -2021,7 +1982,7 @@ export class UploadVersionDialogController extends ModelDialogControllerBase<IBr
       mod: {
         modId: model.id,
         download: dlUrl,
-        isIncremental: null
+        isIncremental: null,
       },
       info: {
         type: info,
@@ -2030,6 +1991,11 @@ export class UploadVersionDialogController extends ModelDialogControllerBase<IBr
         password: Tools.Password.generate(128)
       }
     };
+
+    if ($scope.w6.userInfo.isManager) {
+      $scope.model.mod.packageName =
+        model.packageName.startsWith("@") ? model.packageName : `@${model.name.replace(/[\s\t]/g, "_").sluggifyEntityName()}`;
+    }
 
     $scope.branches = AddModDialogController.branches;
     $scope.hints = AddModDialogController.hints;
@@ -2059,25 +2025,25 @@ export class UploadVersionDialogController extends ModelDialogControllerBase<IBr
 
   getLatestInfo() {
     let model = this.$scope.model;
-    this.$scope.request<IModVersionInfo>(GetLatestInfo, { data: { downloadUri: model.mod.download } }).then(r => {
+    this.$scope.request<IModVersionInfo>(GetLatestInfo, { data: { downloadUri: model.mod.download } }).then(r =>
       this.applyIfNeeded(() => {
         model.mod.version = r.version;
         model.mod.branch = r.branch;
-      });
-    });
+      })
+    );
   }
 
   checkDownloadLink(uri: string) {
     this.$scope.checkingDownloadLink = true;
     this.$scope.model.downloadLinkAvailable = false;
     this.$scope.request<boolean>(GetCheckLinkQuery, { linkToCheck: uri })
-      .then((result) => {
+      .then((result) =>
         this.applyIfNeeded(() => {
           this.$scope.checkingDownloadLink = false;
           Tools.Debug.log(result);
           this.$scope.model.downloadLinkAvailable = result;
-        });
-      })
+        })
+      )
       .catch(this.httpFailed);
   }
 
@@ -2107,7 +2073,7 @@ export class UploadVersionDialogController extends ModelDialogControllerBase<IBr
 
   private cancel = () => this.$modalInstance.close();
   private ok = () => {
-    if (this.$scope.model.cmod.modVersion != null && this.validateVersion(this.$scope.model.mod.version, this.$scope.model.cmod.modVersion) <= 0) {
+    if (this.$scope.model.cmod.modVersion != null && this.$scope.model.cmod.scope !== 'Unlisted' && this.validateVersion(this.$scope.model.mod.version, this.$scope.model.cmod.modVersion) <= 0) {
       this.logger.error("The new mod version must be greater than the current version", "Bad Version");
       return;
     }

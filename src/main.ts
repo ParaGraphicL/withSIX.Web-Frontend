@@ -1,5 +1,7 @@
 import 'whatwg-fetch'; // fetch polyfill
 import 'font-awesome/css/font-awesome.css';
+import 'flag-icon-css/css/flag-icon.css';
+import 'nouislider/distribute/nouislider.css';
 import '../scss/fonts.scss';
 import '../scss/lib.scss';
 import '../scss/main.scss';
@@ -24,6 +26,7 @@ Bluebird.config({
 // // Some modules use {DOM} from 'aurelia-pal' and expect it to already be initialized.
 // initialize();
 
+require('jquery-mousewheel');
 
 export * from './bootstrap';
 

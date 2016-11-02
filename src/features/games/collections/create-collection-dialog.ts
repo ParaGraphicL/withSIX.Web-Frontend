@@ -77,7 +77,7 @@ export class CreateCollectionDialog extends Dialog<ICollectionModel> {
       cls: "ok"
     });
 
-  cancel = uiCommand2('Cancel', async () => this.controller.cancel(null), {
+  cancel = uiCommand2('Cancel', () => this.controller.cancel(null), {
     cls: "ok",
     canExecuteObservable: this.save.isExecutingObservable.map(x => !x)
   });

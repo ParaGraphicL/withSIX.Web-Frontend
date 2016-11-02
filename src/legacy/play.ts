@@ -2,41 +2,43 @@ import { register } from './binder';
 
 import breeze from 'breeze-client';
 
-import {IBreezeMod, IBreezeUser, IBreezeCollection, IBreezeMission, IBreezeCollectionVersionDependency, IBreezePost, IBreezeModUpdate, IBreezeCollectionVersion, IBreezeGame, IBreezeAWSUploadPolicy,
+import {
+  IBreezeMod, IBreezeUser, IBreezeCollection, IBreezeMission, IBreezeCollectionVersionDependency, IBreezePost, IBreezeModUpdate, IBreezeCollectionVersion, IBreezeGame, IBreezeAWSUploadPolicy,
   IBreezeMissionComment, IBreezeMissionVersion, IBreezeCollectionImageFileTransferPolicy, IBreezeModInfo,
   IBreezeCollectionComment, IBreezePostComment, AbstractDefs, BreezeInitialzation, IBreezeModUserGroup, IBreezeModComment, IBreezeModImageFileTransferPolicy,
   IBreezeModMediaItem, IUserInfo, Resource, Permission, Role,
-  EntityExtends, BreezeEntityGraph, _IntDefs} from '../services/dtos';
+  EntityExtends, BreezeEntityGraph, _IntDefs
+} from '../services/dtos';
 
-import {LegacyMediator} from '../services/mediator';
-import {ModHelper, CollectionHelper, MissionHelper} from '../services/helpers';
+import { LegacyMediator } from '../services/mediator';
+import { ModHelper, CollectionHelper, MissionHelper } from '../services/helpers';
 
-import {RestoreBasket, OpenCreateCollectionDialog, OpenAddModDialog, OpenAddModsToCollectionsDialog} from '../services/api';
-import {ForkCollection} from '../features/profile/content/collection';
-import {W6, W6Urls, globalRedactorOptions} from '../services/withSIX';
-import {Tools} from '../services/tools';
-import {W6Context, IQueryResult, BooleanResult, Result} from '../services/w6context';
-import {Tk} from '../services/legacy/tk'
-import {IRootScope, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHaveModel, DialogQueryBase, DbCommandBase, DbQueryBase, BaseController, BaseQueryController, DialogControllerBase, ModelDialogControllerBase } from './app-base'
-import {ITagKey, ICreateComment, ICQWM, IModel, IMenuItem, IHandleCommentsScope} from '../services/legacy/base'
+import { RestoreBasket, OpenCreateCollectionDialog, OpenAddModDialog, OpenAddModsToCollectionsDialog } from '../services/api';
+import { ForkCollection } from '../features/profile/content/collection';
+import { W6, W6Urls, globalRedactorOptions } from '../services/withSIX';
+import { Tools } from '../services/tools';
+import { W6Context, IQueryResult, BooleanResult, Result } from '../services/w6context';
+import { Tk } from '../services/legacy/tk'
+import { IRootScope, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHaveModel, DialogQueryBase, DbCommandBase, DbQueryBase, BaseController, BaseQueryController, DialogControllerBase, ModelDialogControllerBase } from './app-base'
+import { ITagKey, ICreateComment, ICQWM, IModel, IMenuItem, IHandleCommentsScope } from '../services/legacy/base'
 import { Publisher } from '../services/apis/lib';
-import {EventAggregator} from 'aurelia-event-aggregator';
+import { EventAggregator } from 'aurelia-event-aggregator';
 
-import {Mediator} from 'aurelia-mediator';
-import {Client, IClientInfo, ItemState} from 'withsix-sync-api';
+import { Client, IClientInfo, ItemState } from 'withsix-sync-api';
 
-import {IBasketItem, BasketItemType} from '../services/legacy/baskets';
-import {BasketService} from '../services/basket-service';
-import {ModsHelper, Helper} from '../services/legacy/misc';
-import {ToastLogger} from '../services/legacy/logger';
+import { IBasketItem, BasketItemType } from '../services/legacy/baskets';
+import { BasketService } from '../services/basket-service';
+import { ModsHelper, Helper } from '../services/legacy/misc';
+import { ToastLogger } from '../services/legacy/logger';
 
-import {registerCommands, getFactory, skyscraperSlotSizes, rectangleSlotSizes, leaderboardSlotSizes} from './app-base';
-import {joinUri} from '../helpers/utils/url'
+import { registerCommands, getFactory, skyscraperSlotSizes, rectangleSlotSizes, leaderboardSlotSizes } from './app-base';
+import { joinUri } from '../helpers/utils/url'
 
 import { OpenReportDialogQuery } from './components';
 
 export class ContentDownloads {
   public static downloadInclClientCheck(url: string, forwardService, localStorageService, w6) {
+    if (window.___prerender___) return;
     if (w6.client && w6.client.clientFound) {
       w6.client.openPwsUri(url);
       return;
@@ -140,6 +142,7 @@ export interface IContentScopeT<TModel> extends IContentScope, IHaveModel<TModel
   trustedDescriptionFullHtml: string;
   callToAction: () => void;
   auModel;
+  scopes: { text: string }[];
 }
 
 
@@ -204,6 +207,12 @@ export class ContentModelController<TModel extends breeze.Entity> extends Conten
 
     $scope.model = model;
     $scope.header = this.setupContentHeader(model);
+    this.$scope.scopes = [
+      { text: "Public" },
+      { text: "Unlisted" },
+      { text: "Private" }
+    ];
+
     var anyModel = (<any>model);
     var keyWords = (anyModel.game ? anyModel.game.name + ", " : null)
       + $scope.header.contentType + ", " + $scope.header.title + ", "
@@ -301,31 +310,17 @@ export class ContentModelController<TModel extends breeze.Entity> extends Conten
       graphExpands = changeGraph.join(",");
     }
 
-    var saveChanges = async (entity?: breeze.Entity, ...entities: breeze.Entity[]): Promise<boolean> => {
-      if (entity != null) {
-        var changedEntites: breeze.Entity[] = [];
-        entities.push(entity);
-        entities.forEach((v, i, arr) => { if (!v.entityAspect.entityState.isUnchanged()) changedEntites.push(v) });
-        try {
-          await this.saveChanges(changedEntites);
-          return true;
-        } catch (reason) {
-          var reasons = (<string>(<any>breeze).saveErrorMessageService.getErrorMessage(reason)).replace(/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/gi, "").replace(/[ ]\(\)[ ][-][ ]/g, ": ");
-          this.breezeQueryFailed({ message: 'Save failed, See Validation Errors Below:<br/><br/>' + reasons });
-          return false;
-        }
-      } else {
-        var changedEntites: breeze.Entity[] = [];
-        var entities: breeze.Entity[] = (<any>this.entityManager).getEntityGraph(this.$scope.model, graphExpands);
-        entities.forEach((v, i, arr) => { if (!v.entityAspect.entityState.isUnchanged()) changedEntites.push(v) });
-        try {
-          await this.saveChanges(changedEntites);
-          return true;
-        } catch (reason) {
-          var reasons = (<string>(<any>breeze).saveErrorMessageService.getErrorMessage(reason)).replace(/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/gi, "").replace(/[ ]\(\)[ ][-][ ]/g, ": ");
-          this.breezeQueryFailed({ message: 'Save failed, See Validation Errors Below:<br/><br/>' + reasons });
-          return false;
-        }
+    var saveChanges = async (...entities: breeze.Entity[]): Promise<boolean> => {
+      var changedEntites: breeze.Entity[] = [];
+      if (!entities || entities.length === 0) entities = (<any>this.entityManager).getEntityGraph(this.$scope.model, graphExpands);
+      entities.forEach((v, i, arr) => { if (!v.entityAspect.entityState.isUnchanged()) changedEntites.push(v) });
+      try {
+        await this.saveChanges(changedEntites);
+        return true;
+      } catch (reason) {
+        var reasons = (<string>(<any>breeze).saveErrorMessageService.getErrorMessage(reason)).replace(/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/gi, "").replace(/[ ]\(\)[ ][-][ ]/g, ": ");
+        this.breezeQueryFailed({ message: 'Save failed, See Validation Errors Below:<br/><br/>' + reasons });
+        return false;
       }
     }
 
@@ -374,7 +369,7 @@ export class ContentModelController<TModel extends breeze.Entity> extends Conten
     try {
       return await this.entityManager.saveChanges(changedEntities);
     } finally {
-      this.applyIfNeeded();
+      await this.applyIfNeeded();
     }
   }
 

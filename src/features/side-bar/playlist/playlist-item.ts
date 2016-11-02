@@ -71,7 +71,7 @@ export class PlaylistItem extends ViewModel {
     super(ui);
   }
 
-  getNoteInfo() { return { text: this.model.name || this.model.packageName, href: this.url } };
+  getNoteInfo() { return { text: this.model.name || this.model.packageName, href: this.url ? (this.url.startsWith("http") ? this.url : `https://withsix.com${this.url}` ) : this.url } };
 
   async activate(model: IPlayModel) {
     if (model == null) throw Error("model cannot be null!");
@@ -239,6 +239,8 @@ export class PlaylistItem extends ViewModel {
 
   unbind() { this.revert(); }
 
+  get name() { return this.model.name || this.model.packageName || this.model.id }
+
   get canEdit() { return !this.basket.active.model.isTemporary; }
 
   installInternal = () => new InstallContent(this.model.gameId, { id: this.model.id, constraint: this.model.constraint }, this.getNoteInfo()).handle(this.mediator);
@@ -349,13 +351,15 @@ class GetCollectionDependenciesHandler extends DbQuery<GetCollectionDependencies
     let latest = versions.results[0];
     // TODO: How to handle 'non network mods'
     let modDependencies = latest.dependencies.map(x => x.modDependencyId).filter(x => x != null);
-    let nonNetworkDependencies = latest.dependencies.filter(x => !x.modDependencyId).map(x => {
+    let nonNetworkDependencies = latest.dependencies.filter(x => !x.modDependencyId && !x.collectionDependencyId).map(x => {
       return <IBasketItem>{
         packageName: x.dependency,
         name: x.dependency,
         gameId: request.gameId
       }
     });
+
+    let collectionDependencies = latest.dependencies.map(x => x.collectionDependencyId).filter(x => x != null);
 
     nonNetworkDependencies.forEach(x => request.localChain.push(x.packageName));
     // if (request.gameId != request.currentGameId) {
@@ -366,10 +370,26 @@ class GetCollectionDependenciesHandler extends DbQuery<GetCollectionDependencies
     //   }
     // }
 
+    var cols = [];
+
+    let cachedCIds = collectionDependencies.filter(x => request.chain.has(x));
+    let CidsToFetch = collectionDependencies.asEnumerable().except(cachedCIds).toArray();
+
+
+    if (collectionDependencies.length > 0) {
+        let op = { id: { in: CidsToFetch } };
+        query = breeze.EntityQuery.from("Collections")
+          .where(<any>op);
+        let r = await this.context.executeQueryWithManager<IBreezeCollection>(manager, query);
+        let results = r.results.map(x => Helper.collectionToBasket(x));
+        results.forEach(x => request.chain.set(x.id, x));
+        cols = results;
+    }
+
     let dependencies = modDependencies.filter(d => !request.localChain.some(x => x === d));
     if (dependencies.length === 0)
       return {
-        dependencies: nonNetworkDependencies,
+        dependencies: nonNetworkDependencies.concat(cols),
         sizePacked: sizePacked,
         avatar: c.avatar,
         avatarUpdatedAt: c.avatarUpdatedAt,
@@ -405,7 +425,7 @@ class GetCollectionDependenciesHandler extends DbQuery<GetCollectionDependencies
     let results = fetchedResults.concat(cachedIds.map(x => request.chain.get(x)));
     results.forEach(x => { request.localChain.push(x.id); });
     return {
-      dependencies: results.concat(nonNetworkDependencies),
+      dependencies: results.concat(nonNetworkDependencies).concat(cols),
       sizePacked: sizePacked,
       avatar: c.avatar,
       avatarUpdatedAt: c.avatarUpdatedAt,

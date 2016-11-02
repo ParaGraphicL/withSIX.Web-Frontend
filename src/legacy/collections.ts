@@ -1,36 +1,37 @@
 import breeze from 'breeze-client';
 
-import {IBreezeMod, IBreezeUser, IBreezeCollection, IBreezeMission, IBreezeCollectionVersionDependency, IBreezePost, IBreezeModUpdate, IBreezeCollectionVersion, IBreezeGame, IBreezeAWSUploadPolicy,
+import {
+  IBreezeMod, IBreezeUser, IBreezeCollection, IBreezeMission, IBreezeCollectionVersionDependency, IBreezePost, IBreezeModUpdate, IBreezeCollectionVersion, IBreezeGame, IBreezeAWSUploadPolicy,
   IBreezeMissionComment, IBreezeMissionVersion, IBreezeCollectionImageFileTransferPolicy, IBreezeModInfo,
   IBreezeCollectionComment, IBreezePostComment, AbstractDefs, BreezeInitialzation, IBreezeModUserGroup, IBreezeModComment, IBreezeModImageFileTransferPolicy,
   IBreezeModMediaItem, IUserInfo, Resource, Permission, Role,
-  EntityExtends, BreezeEntityGraph, _IntDefs} from '../services/dtos';
+  EntityExtends, BreezeEntityGraph, _IntDefs
+} from '../services/dtos';
 
-import {LegacyMediator} from '../services/mediator';
-import {ModHelper, CollectionHelper, MissionHelper} from '../services/helpers';
+import { LegacyMediator } from '../services/mediator';
+import { ModHelper, CollectionHelper, MissionHelper } from '../services/helpers';
 
-import {RestoreBasket, OpenCreateCollectionDialog, OpenAddModDialog, OpenAddModsToCollectionsDialog} from '../services/api';
-import {ForkCollection} from '../features/profile/content/collection';
-import {W6, W6Urls, globalRedactorOptions} from '../services/withSIX';
-import {Tools} from '../services/tools';
-import {W6Context, IQueryResult, BooleanResult, Result} from '../services/w6context';
-import {Tk} from '../services/legacy/tk'
-import {IRootScope, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHaveModel, DialogQueryBase, DbCommandBase, DbQueryBase, BaseController, BaseQueryController, DialogControllerBase, ModelDialogControllerBase } from './app-base'
-import {ITagKey, ICreateComment, ICQWM, IModel, IMenuItem, IHandleCommentsScope} from '../services/legacy/base'
+import { RestoreBasket, OpenCreateCollectionDialog, OpenAddModDialog, OpenAddModsToCollectionsDialog } from '../services/api';
+import { ForkCollection } from '../features/profile/content/collection';
+import { W6, W6Urls, globalRedactorOptions } from '../services/withSIX';
+import { Tools } from '../services/tools';
+import { W6Context, IQueryResult, BooleanResult, Result } from '../services/w6context';
+import { Tk } from '../services/legacy/tk'
+import { IRootScope, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHaveModel, DialogQueryBase, DbCommandBase, DbQueryBase, BaseController, BaseQueryController, DialogControllerBase, ModelDialogControllerBase } from './app-base'
+import { ITagKey, ICreateComment, ICQWM, IModel, IMenuItem, IHandleCommentsScope } from '../services/legacy/base'
 import { Publisher } from '../services/apis/lib';
-import {EventAggregator} from 'aurelia-event-aggregator';
+import { EventAggregator } from 'aurelia-event-aggregator';
 
-import {Mediator} from 'aurelia-mediator';
-import {Client, IClientInfo, ItemState} from 'withsix-sync-api';
+import { Client, IClientInfo, ItemState, TypeScope } from 'withsix-sync-api';
 
 import { ForwardService } from './components';
-import {IBasketItem, BasketItemType} from '../services/legacy/baskets';
-import {BasketService} from '../services/basket-service';
-import {ModsHelper, Helper} from '../services/legacy/misc';
-import {ToastLogger} from '../services/legacy/logger';
+import { IBasketItem, BasketItemType } from '../services/legacy/baskets';
+import { BasketService } from '../services/basket-service';
+import { ModsHelper, Helper } from '../services/legacy/misc';
+import { ToastLogger } from '../services/legacy/logger';
 
-import {registerCommands, getFactory, skyscraperSlotSizes, rectangleSlotSizes, leaderboardSlotSizes} from './app-base';
-import {joinUri} from '../helpers/utils/url'
+import { registerCommands, getFactory, skyscraperSlotSizes, rectangleSlotSizes, leaderboardSlotSizes } from './app-base';
+import { joinUri } from '../helpers/utils/url'
 
 import { registerCQ, registerService, registerController, IContentScopeT, ContentModelController, IContentHeader, ContentDownloads, HelpItem, ContentController, IContentIndexScope, IEditConfiguration } from './play'
 import { GetModTagsQuery } from './mods';
@@ -44,7 +45,6 @@ export interface ICollectionScope extends IContentScopeT<IBreezeCollection>, IHa
   addTag: (data: any) => boolean;
   getCurrentTags: () => any[];
   removeTag: (data: any) => void;
-  scopes: any[];
   uploadingCollectionImage: boolean;
   onFileSelectLogo: (files: any, $event: any) => void;
   onFileSelectGallery: (files: any, $event: any) => void;
@@ -66,12 +66,14 @@ export class CollectionController extends ContentModelController<IBreezeCollecti
     { header: "Content", segment: "content" }
     //{ header: "Comments", segment: "comments" }
   ];
-  static $inject = ['$scope', 'logger', '$routeParams', '$q', '$sce', 'localStorageService', 'w6', 'ForwardService', '$timeout', 'dbContext', '$popover', '$rootScope', 'basketService', 'aur.eventBus', 'aur.mediator', 'model'];
+  static $inject = ['$scope', 'logger', '$routeParams', '$q', '$sce', 'localStorageService', 'ForwardService', '$timeout', 'dbContext', '$popover', '$rootScope', 'basketService', 'aur.eventBus', 'aur.mediator', 'model'];
 
-  constructor(public $scope: ICollectionScope, public logger, public $routeParams, $q, $sce: ng.ISCEService, private localStorageService, private w6: W6, private forwardService: ForwardService, private $timeout: ng.ITimeoutService, private dbContext: W6Context, private $popover, $rootScope: IRootScope, basketService: BasketService, eventBus: EventAggregator, private mediator, model: IBreezeCollection) {
+  constructor(public $scope: ICollectionScope, public logger, public $routeParams, $q, $sce: ng.ISCEService, private localStorageService, private forwardService: ForwardService, private $timeout: ng.ITimeoutService, private dbContext: W6Context, private $popover, $rootScope: IRootScope, basketService: BasketService, eventBus: EventAggregator, private mediator, model: IBreezeCollection) {
     super($scope, logger, $routeParams, $q, $sce, model);
 
-    w6.collection = this;
+    if (model.groupId != null) this.$scope.features.groups = true;
+
+    this.w6.collection = this;
 
     $scope.tryDirectDownloadCollection = async () => {
       if (model.latestVersion.repositories != null) {
@@ -161,10 +163,10 @@ export class CollectionController extends ContentModelController<IBreezeCollecti
       menuEntry.url = newV ? $scope.gameUrl + "/collections/" + model.id.toShortId() + "/" + model.name.sluggifyEntityName() + "/content/edit" : null;
       if (newV) {
         if (window.location.pathname.endsWith("/content"))
-          w6.navigate(window.location.pathname + "/edit");
+          this.w6.navigate(window.location.pathname + "/edit");
       } else {
         if (window.location.pathname.endsWith("/edit"))
-          w6.navigate(window.location.pathname.replace("/edit", ""));
+          this.w6.navigate(window.location.pathname.replace("/edit", ""));
       }
     }
 
@@ -176,7 +178,7 @@ export class CollectionController extends ContentModelController<IBreezeCollecti
     handleEditMode($scope.editConfig.editMode);
 
     $scope.$on('$destroy', () => {
-      w6.collection = null;
+      this.w6.collection = null;
       eventBus.publish(new RestoreBasket());
       w();
     });
@@ -201,27 +203,17 @@ export class CollectionController extends ContentModelController<IBreezeCollecti
 
   protected updateAuModel() {
     // todo; call when going out of edit mode etc ?
-    this.$scope.auModel = CollectionHelper.convertOnlineCollection(this.$scope.model, 1, this.$scope.w6);
+    this.$scope.auModel = CollectionHelper.convertOnlineCollection(this.$scope.model, this.$scope.model.authorId === this.w6.userInfo.id ? TypeScope.Published : TypeScope.Subscribed, this.$scope.w6);
   }
 
 
   // workaround for angular vs aurelia
 
-  public enableEditModeFromAurelia() {
-    this.applyIfNeeded(() => {
-      this.$scope.editConfig.enableEditing();
-    })
-  }
+  public enableEditModeFromAurelia = () => this.applyIfNeeded(() => this.$scope.editConfig.enableEditing())
 
-  public disableEditModeFromAurelia() {
-    this.applyIfNeeded(() => {
-      this.$scope.editConfig.closeEditing();
-    })
-  }
+  public disableEditModeFromAurelia = () => this.applyIfNeeded(() => this.$scope.editConfig.closeEditing())
 
-  public saveFromAurelia() {
-    return this.$scope.editConfig.hasChanges() ? this.$scope.editConfig.saveChanges() : null;
-  }
+  public saveFromAurelia() { return this.$scope.editConfig.hasChanges() ? this.$scope.editConfig.saveChanges() : null; }
 
   public cancelFromAurelia() {
     if (this.$scope.editConfig.hasChanges())
@@ -232,52 +224,15 @@ export class CollectionController extends ContentModelController<IBreezeCollecti
 
   static hasChanges(editConfig) { return editConfig.hasChanges() }
 
-  private setupCategoriesAutoComplete() {
-    var $scope = this.$scope;
-
-    var saveOriginalTags = () => {
-      if (!$scope.model.entityAspect.originalValues.hasOwnProperty("tags")) {
-        (<any>$scope.model.entityAspect.originalValues).tags = $scope.model.tags.slice(0);
-        $scope.model.entityAspect.setModified();
-      }
-    };
-
-    $scope.addTag = (data) => {
-      var index = $scope.model.tags.indexOf(data.key);
-      if (index == -1) {
-        saveOriginalTags();
-        $scope.model.tags.push(data.key);
-      }
-      $scope.header.tags = $scope.model.tags;
-      return true;
-    };
-    $scope.getCurrentTags = () => {
-      var list = [];
-      for (var tag in $scope.model.tags) {
-        list.push({ key: $scope.model.tags[tag], text: $scope.model.tags[tag] });
-      }
-      return list;
-    };
-    $scope.removeTag = (data) => {
-      var index = $scope.model.tags.indexOf(data);
-      if (index > -1) {
-        saveOriginalTags();
-        $scope.model.tags.splice(index, 1);
-      }
-      $scope.header.tags = $scope.model.tags;
-    };
-  }
-
   unsubscribe() {
     return this.requestAndProcessResponse(UnsubscribeCollectionCommand, { model: this.$scope.model })
-      .then(r => {
-        this.applyIfNeeded(() => {
-          delete this.$scope.subscribedCollections[this.$scope.model.id];
-          this.$scope.model.subscribersCount -= 1;
-          if (window.six_client.unsubscribedFromCollection)
-            window.six_client.unsubscribedFromCollection(this.$scope.model.id);
-        });
-      });
+      .then(r => this.applyIfNeeded(() => {
+        delete this.$scope.subscribedCollections[this.$scope.model.id];
+        this.$scope.model.subscribersCount -= 1;
+        if (window.six_client && window.six_client.unsubscribedFromCollection) {
+          window.six_client.unsubscribedFromCollection(this.$scope.model.id);
+        }
+      }));
   }
 
   subscribe() {
@@ -286,11 +241,9 @@ export class CollectionController extends ContentModelController<IBreezeCollecti
         this.applyIfNeeded(() => {
           this.$scope.subscribedCollections[this.$scope.model.id] = true;
           this.$scope.model.subscribersCount += 1;
-          if (window.six_client.subscribedToCollection)
-            window.six_client.subscribedToCollection(this.$scope.model.id)
-
+          if (window.six_client && window.six_client.subscribedToCollection) { window.six_client.subscribedToCollection(this.$scope.model.id) }
           if (this.w6.client && this.w6.client.clientFound) {
-            this.w6.client.openPwsUri("pws://?c=" + this.$scope.toShortId(this.$scope.model.id));
+            setTimeout(() => this.w6.client.openPwsUri("pws://?c=" + this.$scope.toShortId(this.$scope.model.id)), 5 * 1000);
             return;
           }
           if (this.localStorageService.get('clientInstalled') == null
@@ -302,7 +255,7 @@ export class CollectionController extends ContentModelController<IBreezeCollecti
             this.localStorageService.set('clientInstalled', true);
             //Downloads.startDownload(url);
           }
-        });
+        })
       });
   }
 
@@ -340,15 +293,45 @@ export class CollectionController extends ContentModelController<IBreezeCollecti
       shortContentUrl: this.$scope.url.play + "/" + shortPath,
       tags: content.tags || []
     };
-
-    this.$scope.scopes = [
-      { text: "Public" },
-      { text: "Unlisted" },
-      { text: "Private" }
-    ];
-
     return header;
   }
+
+  private setupCategoriesAutoComplete() {
+    var $scope = this.$scope;
+
+    var saveOriginalTags = () => {
+      if (!$scope.model.entityAspect.originalValues.hasOwnProperty("tags")) {
+        (<any>$scope.model.entityAspect.originalValues).tags = $scope.model.tags.slice(0);
+        $scope.model.entityAspect.setModified();
+      }
+    };
+
+    $scope.addTag = (data) => {
+      var index = $scope.model.tags.indexOf(data.key);
+      if (index == -1) {
+        saveOriginalTags();
+        $scope.model.tags.push(data.key);
+      }
+      $scope.header.tags = $scope.model.tags;
+      return true;
+    };
+    $scope.getCurrentTags = () => {
+      var list = [];
+      for (var tag in $scope.model.tags) {
+        list.push({ key: $scope.model.tags[tag], text: $scope.model.tags[tag] });
+      }
+      return list;
+    };
+    $scope.removeTag = (data) => {
+      var index = $scope.model.tags.indexOf(data);
+      if (index > -1) {
+        saveOriginalTags();
+        $scope.model.tags.splice(index, 1);
+      }
+      $scope.header.tags = $scope.model.tags;
+    };
+  }
+
   private setupDependencyAutoComplete() {
     this.$scope.getDependencies = (query) => this.$scope.request(GetModTagsQuery, { gameId: this.$scope.game.id, query: query })
       .then((d) => this.processModNames(d))
@@ -411,9 +394,9 @@ export class CollectionController extends ContentModelController<IBreezeCollecti
     this.tempCollectionImagePath = null;
     if (this.$scope.model.fileTransferPolicies.length > 0) {
       var transferPolicy = this.$scope.model.fileTransferPolicies[0];
-
+      var isAdded = transferPolicy.entityAspect.entityState.isAdded();
       transferPolicy.entityAspect.setDeleted();
-      await this.$scope.editConfig.saveChanges(transferPolicy);
+      if (!isAdded) await this.$scope.editConfig.saveChanges(transferPolicy);
     }
   }
 
@@ -460,7 +443,7 @@ export class CollectionController extends ContentModelController<IBreezeCollecti
       this.logger.error("We were unable to retrieve an upload policy for your image. Please try again later", "Failed to upload image.");
       this.cancelImageUpload();
     } finally {
-      this.applyIfNeeded(_ => $scope.uploadingCollectionImage = false);
+      await this.applyIfNeeded(() => $scope.uploadingCollectionImage = false);
     }
   }
 
@@ -498,7 +481,7 @@ export class CollectionController extends ContentModelController<IBreezeCollecti
       this.logger.error("We were unable to retrieve an upload policy for your image. Please try again later", "Failed to upload image.");
       this.cancelImageUpload();
     } finally {
-      this.applyIfNeeded(_ => this.$scope.uploadingCollectionImage = false);
+      await this.applyIfNeeded(() => this.$scope.uploadingCollectionImage = false);
     }
   }
 
@@ -506,7 +489,7 @@ export class CollectionController extends ContentModelController<IBreezeCollecti
     try {
       return await this.entityManager.saveChanges(changedEntities);
     } finally {
-      this.applyIfNeeded();
+      await this.applyIfNeeded();
     }
   }
 
@@ -524,7 +507,7 @@ export class CollectionController extends ContentModelController<IBreezeCollecti
       if (data.includes("EntityTooSmall")) this.logger.error("Your image must be at least 10KB", "Image too small");
       throw r;
     } finally {
-      this.applyIfNeeded(_ => this.$scope.uploadingCollectionImage = false);
+      await this.applyIfNeeded(() => this.$scope.uploadingCollectionImage = false);
     }
   }
 
@@ -742,20 +725,20 @@ export class CollectionInfoController extends ContentController {
       }
 
       this.$scope.likeComment = comment => {
-        return this.$scope.request(LikeCollectionCommentCommand, { collectionId: this.$scope.model.id, id: comment.id }).then(() => {
+        return this.$scope.request(LikeCollectionCommentCommand, { collectionId: this.$scope.model.id, id: comment.id }).then(() =>
           this.applyIfNeeded(() => {
             comment.likesCount += 1;
             this.$scope.commentLikeStates[comment.id] = true;
-          });
-        });
+          })
+        );
       };
       this.$scope.unlikeComment = comment => {
-        return this.$scope.request(UnlikeCollectionCommentCommand, { collectionId: this.$scope.model.id, id: comment.id }).then(() => {
+        return this.$scope.request(UnlikeCollectionCommentCommand, { collectionId: this.$scope.model.id, id: comment.id }).then(() =>
           this.applyIfNeeded(() => {
             comment.likesCount -= 1;
             this.$scope.commentLikeStates[comment.id] = false;
-          });
-        });
+          })
+        );
       };
     }
 
@@ -956,6 +939,8 @@ export class SubscribeCollectionCommand extends DbCommandBase {
   public execute = [
     'model', (model: IBreezeCollection) =>
       this.context.postCustom("collections/" + model.id + "/subscribe")
+        .then(x => this.respondSuccess(x))
+        .catch(x => this.respondError(x))
   ];
 }
 
@@ -966,6 +951,8 @@ export class UnsubscribeCollectionCommand extends DbCommandBase {
   public execute = [
     'model', (model: IBreezeCollection) =>
       this.context.postCustom("collections/" + model.id + "/unsubscribe")
+        .then(x => this.respondSuccess(x))
+        .catch(x => this.respondError(x))
   ];
 }
 
