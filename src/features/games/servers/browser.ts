@@ -565,8 +565,6 @@ export class Index extends ViewModel {
       }
     }
 
-    if (this.params.modId) { (<any>filter).mod = { id: this.params.modId, type: "withSIX" }; }
-
     const orders = [];
     if (this.activeOrder) { orders.push({ column: this.activeOrder.name, direction: this.activeOrder.direction }); }
     const sort = { orders, }
