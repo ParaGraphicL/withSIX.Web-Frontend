@@ -456,23 +456,7 @@ export class Index extends ViewModel {
 
   async activate(params) {
     this.params = params;
-    if (params) {
-      if (params.steamId) {
-        this.defaultEnabled.push({
-          name: "mod",
-          value: { id: params.steamId, type: "Steam" },
-          filter: () => true
-        })
-      } else if (params.modId) {
-        let modId;
-        try { modId = params.modId.fromShortId() } catch (err) { modId = params.modId };
-        this.defaultEnabled.push({
-          name: "mod",
-          value: { id: modId, type: "withSIX" },
-          filter: () => true
-        })
-      }
-    }
+
     if (this.params.modId) { this.filterTest[1].items.removeEl(this.filterTest[1].items[1]); }
     if (!this.w6.userInfo.id) { this.filterTest[5].items.removeEl(this.filterTest[5].items[2]); this.filterTest[5].items.removeEl(this.filterTest[5].items[1]) }
 
@@ -571,7 +555,17 @@ export class Index extends ViewModel {
       filter["Mods"].modIds = this.baskets.active.model.items.map(x => x.id);
     }
 
-    if (this.params.modId) { (<any>filter).mod = { id: this.params.modId, type: "withSIX" } }
+    if (this.params) {
+      if (this.params.steamId) {
+        (<any>filter).mod = { id: this.params.steamId, type: "Steam" };
+      } else if (this.params.modId) {
+        let id;
+        try { id = this.params.modId.fromShortId() } catch (err) { id = this.params.modId; };
+        (<any>filter).mod = { id, type: "withSIX" };
+      }
+    }
+
+    if (this.params.modId) { (<any>filter).mod = { id: this.params.modId, type: "withSIX" }; }
 
     const orders = [];
     if (this.activeOrder) { orders.push({ column: this.activeOrder.name, direction: this.activeOrder.direction }); }
