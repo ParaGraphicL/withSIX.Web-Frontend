@@ -1,12 +1,12 @@
 import VersionCompare from 'version_compare';
-import {IDisposable} from './base';
-import {Environment, DebugInner, DebugBase, LogLevel, Environment as Env, EnvironmentHost} from './env';
-import {createError} from '../helpers/utils/errors';
-import {toShortId as toS, fromShortId as fromS} from '../helpers/utils/string';
-import {removeEl as rEl, enumToMap as eToMap} from '../helpers/utils/iterable';
-import {isTokenExpired as isTExpired} from '../helpers/utils/jwt';
-import {uriHasProtocol as uHasProtocol, cleanupHash as cHash, cleanupSearch as cSearch} from '../helpers/utils/url';
-import {createHttpError, ValidationErrorConstructor} from '../helpers/utils/http-errors'
+import { IDisposable } from './base';
+import { Environment, DebugInner, DebugBase, LogLevel, Environment as Env, EnvironmentHost } from './env';
+import { createError } from '../helpers/utils/errors';
+import { toShortId as toS, fromShortId as fromS } from '../helpers/utils/string';
+import { removeEl as rEl, enumToMap as eToMap } from '../helpers/utils/iterable';
+import { isTokenExpired as isTExpired } from '../helpers/utils/jwt';
+import { uriHasProtocol as uHasProtocol, cleanupHash as cHash, cleanupSearch as cSearch } from '../helpers/utils/url';
+import { createHttpError, ValidationErrorConstructor } from '../helpers/utils/http-errors'
 
 // TODO: Decompose
 export module Tools {
@@ -24,6 +24,7 @@ export module Tools {
   export var env = EnvironmentHost.env;
 
   // TODO: ES6/TS valid exceptions
+  export var AbortedException = createError('AbortedException');
   export var RequireSslException = createError('RequireSslException');
   export var RequireNonSslException = createError('RequireNonSslException');
   export var HttpException = createHttpError('HttpException');
@@ -67,7 +68,7 @@ export module Tools {
 
     _pattern: /[a-zA-Z0-9_\-\+\.]/,
 
-    _getRandomByte: function() {
+    _getRandomByte: function () {
       // http://caniuse.com/#feat=getrandomvalues
       if (window.crypto && window.crypto.getRandomValues) {
         var result = new Uint8Array(1);
@@ -84,9 +85,9 @@ export module Tools {
       }
     },
 
-    generate: function(length) {
+    generate: function (length) {
       return Array.apply(null, { 'length': length })
-        .map(function() {
+        .map(function () {
           var result;
           while (true) {
             result = String.fromCharCode(this._getRandomByte());

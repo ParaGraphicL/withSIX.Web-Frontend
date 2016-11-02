@@ -1,6 +1,6 @@
 import {
   BasketService, DbClientQuery, GameHelper, IIPEndpoint, IServerInfo, LaunchAction, LaunchGame,
-  Query, ViewModel, handlerFor, uiCommand2, FixedDialogController, UiContext
+  Query, ViewModel, handlerFor, uiCommand2, FixedDialogController, UiContext, VoidCommand,
 } from "../../../framework";
 import { inject } from 'aurelia-framework';
 import { DialogController } from 'aurelia-dialog';
@@ -19,4 +19,3 @@ export class ServerRender extends ServerRenderBase {
     return this.controller.cancel();
   }
 }
-

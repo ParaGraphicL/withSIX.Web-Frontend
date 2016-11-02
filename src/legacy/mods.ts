@@ -11,7 +11,7 @@ import {
 import { ProcessingState } from '../services/basket-service';
 
 import { LegacyMediator } from '../services/mediator';
-import { ModHelper, CollectionHelper, MissionHelper } from '../services/helpers';
+import { GameHelper, ModHelper } from '../services/helpers';
 
 import { RestoreBasket, OpenCreateCollectionDialog, OpenAddModDialog, OpenAddModsToCollectionsDialog } from '../services/api';
 import { ForkCollection } from '../features/profile/content/collection';
@@ -868,7 +868,7 @@ export class ModController extends ContentModelController<IBreezeMod> {
       }
     };
 
-    var timeout = 0;
+    var timeout;
     var _updating = false;
 
     var getCurrentChange = () => {
@@ -1110,6 +1110,10 @@ export class ModController extends ContentModelController<IBreezeMod> {
 
     if (this.$scope.model.dependentsCount > 0 || this.$scope.model.collectionsCount > 0)
       menuItems.push({ header: "Related", segment: "related" });
+
+    if (this.$scope.features.serverBrowser && this.$scope.game.id.toLowerCase() === GameHelper.gameIds.Arma3.toLowerCase()) {
+      menuItems.push({ header: "Servers", segment: "servers" })
+    }
 
     if (this.$scope.environment !== Tools.Environment.Production) {
       menuItems.push({ header: "Credits", segment: "credits" });
@@ -1937,6 +1941,7 @@ export interface IUploadVersionDialogScope extends IContentScope {
       version?: string;
       download?: string;
       isIncremental?: boolean;
+      packageName?: string;
     };
     downloadLinkAvailable?: boolean;
     info: {
@@ -1977,7 +1982,7 @@ export class UploadVersionDialogController extends ModelDialogControllerBase<IBr
       mod: {
         modId: model.id,
         download: dlUrl,
-        isIncremental: null
+        isIncremental: null,
       },
       info: {
         type: info,
@@ -1986,6 +1991,11 @@ export class UploadVersionDialogController extends ModelDialogControllerBase<IBr
         password: Tools.Password.generate(128)
       }
     };
+
+    if ($scope.w6.userInfo.isManager) {
+      $scope.model.mod.packageName =
+        model.packageName.startsWith("@") ? model.packageName : `@${model.name.replace(/[\s\t]/g, "_").sluggifyEntityName()}`;
+    }
 
     $scope.branches = AddModDialogController.branches;
     $scope.hints = AddModDialogController.hints;
@@ -2063,7 +2073,7 @@ export class UploadVersionDialogController extends ModelDialogControllerBase<IBr
 
   private cancel = () => this.$modalInstance.close();
   private ok = () => {
-    if (this.$scope.model.cmod.modVersion != null && this.validateVersion(this.$scope.model.mod.version, this.$scope.model.cmod.modVersion) <= 0) {
+    if (this.$scope.model.cmod.modVersion != null && this.$scope.model.cmod.scope !== 'Unlisted' && this.validateVersion(this.$scope.model.mod.version, this.$scope.model.cmod.modVersion) <= 0) {
       this.logger.error("The new mod version must be greater than the current version", "Bad Version");
       return;
     }

@@ -1,6 +1,6 @@
 import {
   BasketService, DbClientQuery, GameClientInfo, GameHelper, IServerInfo, InstallContents, LaunchAction, LaunchContents, LaunchGame,
-  Query, UiContext, ViewModel, handlerFor, uiCommand2,
+  Query, UiContext, ViewModel, handlerFor, uiCommand2, VoidCommand
 } from "../../../framework";
 
 import { inject } from "aurelia-framework";
@@ -25,6 +25,7 @@ export interface ExtendedServerInfo extends IServerInfo {
   downloadableContent: Dlcs;
   created: Date;
   updatedAt: Date;
+  hasPlayed: boolean;
 }
 
 enum HelicopterFlightModel {
@@ -65,13 +66,12 @@ export class ServerRenderBase extends ViewModel {
   AiLevel = AiLevel;
   Difficulty = Difficulty;
   HelicopterFlightModel = HelicopterFlightModel;
-  interval: number;
   gameId;
   model: ExtendedServerInfo;
   mods;
   links;
   clientLoaded;
-  refresh = uiCommand2("Refresh", () => this.loadModel(), { icon: "withSIX-icon-Reload" });
+  refresh = uiCommand2("", () => this.loadModel(), { icon: "withSIX-icon-Reload" });
   join = uiCommand2("Join", () => this.launch(), { icon: "withSIX-icon-Download" });
   detailsShown = false;
   dlcs = [];
@@ -110,6 +110,8 @@ export class ServerRenderBase extends ViewModel {
       act.serverAddress = this.model.connectionAddress || this.model.queryAddress;
       await act.handle(this.mediator);
     }
+    if (this.w6.userInfo.id) await new SavePlayedServer(this.w6.activeGame.id, this.model.connectionAddress).handle(this.mediator);
+    this.model.hasPlayed = true;
   }
 
   extractInfo(text: string) {
@@ -170,10 +172,13 @@ export class ServerRenderBase extends ViewModel {
     this.url = `/p/${this.w6.activeGame.slug}/servers/${this.address.replace(/\./g, "-")}/${this.model.name.sluggifyEntityName()}`;
 
     if (this.w6.miniClient.isConnected) { this.refresh(); }
-    this.interval = setInterval(() => {
-      if (!this.w6.miniClient.isConnected) { return; }
-      if (this.refresh.canExecute) { this.refresh(); }
-    }, 15 * 1000);
+    this.subscriptions.subd(d => {
+      const interval = setInterval(() => {
+        if (!this.w6.miniClient.isConnected) { return; }
+        if (this.refresh.canExecute) { this.refresh(); }
+      }, 15 * 1000);
+      clearTimeout(interval);
+    });
   }
 
   async handleMods(details) {
@@ -194,15 +199,17 @@ export class ServerRenderBase extends ViewModel {
 
   getPublisherName(p) { return `${p.publisher === 2 ? "Starbound-Servers.net" : "GameTracker.com"}`; }
 
-  deactivate() { clearInterval(this.interval); }
-
   async loadModel() {
-    const m = await new GetServer(this.gameId, this.address).handle(this.mediator);
-    // for now keep modlist from server as it has modID linked in..
-    const modList = this.model.modList;
-    Object.assign(this.model, m, { modList, country: this.model.country, location: this.model.location, created: this.model.created, updatedAt: new Date() });
-    this.clientLoaded = true;
-    this.updateLinks();
+    try {
+      const m = await new GetServer(this.gameId, this.address).handle(this.mediator);
+      // for now keep modlist from server as it has modID linked in..
+      const modList = this.model.modList;
+      Object.assign(this.model, m, { modList, country: this.model.country, location: this.model.location, created: this.model.created, updatedAt: new Date() });
+      this.clientLoaded = true;
+      this.updateLinks();
+    } catch (err) {
+      this.tools.Debug.warn("error while trying to refresh server", err);
+    }
   }
   updateLinks() {
     this.links = this.extractInfo(this.model.name + " " + this.model.game);
@@ -222,7 +229,7 @@ class GetServerQuery extends DbClientQuery<GetServer, IServerInfo>  {
       });
     const gameServers = await GameHelper.getGameServers(request.gameId, this.context);
     let s = results.servers[0];
-    if (s == null) { throw new Error("server could not be refreshed"); }
+    if (s == null) { throw new Error("server could not be refreshed"); } // TODO: Not found error?
     return Object.assign({}, s, { additional: gameServers.get(request.address) });
   }
 }
@@ -236,4 +243,13 @@ class GetModInfoQuery extends DbClientQuery<GetModInfo, any>  {
   handle(request: GetModInfo) {
     return this.context.postCustom("mods/get-mod-mappings", { gameId: request.gameId, inputMappings: request.inputMappings });
   }
+}
+
+export class SavePlayedServer extends VoidCommand {
+  constructor(public gameId: string, public endpoint: string) { super(); }
+}
+
+@handlerFor(SavePlayedServer)
+class SavePlayedServerHandler extends DbClientQuery<SavePlayedServer, void> {
+  handle(message: SavePlayedServer) { return this.context.postCustom(`games/${message.gameId}/favorite-servers/played`, message); }
 }

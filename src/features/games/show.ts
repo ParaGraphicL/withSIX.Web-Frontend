@@ -1,13 +1,14 @@
-import {ServersModule} from './servers/index';
-import {Router, RouterConfiguration} from 'aurelia-router';
-import {ViewModel, Query, DbClientQuery, handlerFor, IBreezeGame, GameChanged} from '../../framework';
+import { ServersModule } from './servers/index';
+import { Router, RouterConfiguration } from 'aurelia-router';
+import { ViewModel, Query, DbClientQuery, handlerFor, IBreezeGame, GameChanged } from '../../framework';
 
 export class Show extends ViewModel {
   configureRouter(config: RouterConfiguration, router: Router) {
     var mount = 'features/games/';
     new ServersModule().configureRouter(config, router, mount, 'servers');
     config.map([
-      { route: `collections/:id/:slug/content`, name: 'show-collection', moduleId: `${mount}collections/show`, nav: false, title: 'collection' },
+      { route: `collections/:id/:slug/content`, name: 'show-collection', moduleId: `${mount}collections/show`, nav: false, title: 'Collection' },
+      { route: `mods/:id/:slug/servers`, name: 'show-servers', moduleId: `${mount}mods/show`, nav: false, title: 'Mod' },
       {
         route: [
           `mods/:id`,

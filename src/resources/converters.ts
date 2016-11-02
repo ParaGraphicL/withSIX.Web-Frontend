@@ -4,7 +4,7 @@ import {
 } from 'aurelia-framework';
 import numeral from 'numbro';
 import {
-  sanitizeHtml
+  sanitizeHtml, camelCase
 } from '../helpers/utils/string';
 
 enum FileSize {
@@ -71,12 +71,9 @@ export class TextValueConverter {
       m2, m3) => `<a target="_blank" href="${whole}">${m3}</a>`);
 }
 
-const toUpperCaseFirst = (str: string) => str ? str[0].toUpperCase() + str.substring(1) : str;
-const toLowerCaseFirst = (str: string) => str ? str[0].toLowerCase() + str.substring(1) : str;
-
 @valueConverter('camelCase')
 export class CamelCaseConverter {
-  toView = (text: string) => text ? toUpperCaseFirst(text.split(/(?=[A-Z])/).map(x => toLowerCaseFirst(x)).join(" ")) : text;
+  toView = camelCase;
 }
 
 @valueConverter('take')
@@ -118,11 +115,15 @@ export class IpEndpointValueConverter {
   toView = addr => addr ? `${addr.address}:${addr.port}` : '';
 }
 
-@valueConverter('numeral')
-export class NumeralValueConverter {
+abstract class NumeralValueConverter {
   static defaultFormat = '0[.][0]';
-  defaultToView = (n: number, format: string) => this.convert(n, format)
+  defaultToView = (n: number, format: string = NumeralValueConverter.defaultFormat) => this.convert(n, format)
   convert = (n: number, format: string) => numeral(n || 0).format(format);
+}
+
+@valueConverter('numeral')
+export class NumeralValueConverter2 extends NumeralValueConverter {
+  toView = (n, format) => this.defaultToView(n, format);
 }
 
 @valueConverter('progress')

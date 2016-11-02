@@ -38,7 +38,8 @@
               <ul if.bind="result.value.length > 0">
                 <li repeat.for="v of result.value">
                   <span if.bind="v.isPrivate" class="icon withSIX-icon-Lock"></span>
-                  <a if.bind="v.gameSlug" href="/p/${gameSlug || v.gameSlug}/${result.key.type.toLowerCase()}/${v.slug}" title="${v.name} by ${v.authorDisplayName}">
+                  <a if.bind="v.gameSlug" href="/p/${gameSlug || v.gameSlug}/${result.key.type.toLowerCase()}/${v.id.toShortId()}/${v.slug}"
+                    title="${v.name} by ${v.authorDisplayName}">
                     <b>${v.name}</b>
                   </a>
                   <a if.bind="v.gameSlug" href="/p/${v.gameSlug}">for ${v.gameName}</a>
@@ -48,7 +49,7 @@
                   <a if.bind="result.key.type.endsWith('Authors')" href="/u/${v.authorUserName.sluggifyEntityName()}">
                     <b>${v.name}</b>
                   </a>
-                  <a if.bind="result.key.type == 'Groups'" href="/me/groups/${v.slug}">
+                  <a if.bind="result.key.type == 'Groups'" href="/me/groups/${v.id.toShortId()}/${v.slug}">
                     <b>${v.name}</b>
                   </a>
                 </li>
@@ -68,3 +69,4 @@
     </div>
   </div>
 </template>
+

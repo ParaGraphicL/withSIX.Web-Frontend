@@ -2,63 +2,64 @@
 <html six-ng-app="MyAppMain" ng-strict-di="true">
 
 <head>
-	<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ubuntu:500,400,300,300italic">
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ubuntu:500,400,300,300italic">
 
-	<style>
-		html,
-		body {
-			height: 100%;
-		}
-		
-		body {
-			background-color: #f0f0f0;
-		}
-		
-		#applicationHost {
-			height: 100%;
-		}
-		
-		#applicationLoader {
-			background-image: url('https://withsix-cdn.azureedge.net/assets/img/logo.png');
-			background-repeat: no-repeat;
-			background-attachment: fixed;
-			background-position: center;
-			height: 100%;
-		}
-	</style>
+  <style>
+    html,
+    body {
+      height: 100%;
+    }
+    
+    body {
+      background-color: #f0f0f0;
+    }
+    
+    #applicationHost {
+      height: 100%;
+    }
+    
+    #applicationLoader {
+      background-image: url('https://withsix-cdn.azureedge.net/assets/img/logo.png');
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-position: center;
+      height: 100%;
+    }
 
-	<title ng-bind="pageInfo.title">withSIX</title>
-	<link rel="shortcut icon" ng-href="{{w6.versionedAsset('img/meta/favicon.ico')}}" type="image/x-icon">
+  </style>
 
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<base href="/">
+  <title ng-bind="pageInfo.title">withSIX</title>
+  <link rel="shortcut icon" ng-href="{{w6.versionedAsset('img/meta/favicon.ico')}}" type="image/x-icon">
 
-	<meta name="fragment" content="!">
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <base href="/">
 
-	<meta name="author" lang="en" content="SIX Networks GmbH">
-	<meta name="description" lang="en" sx-content="{{microdata ? microdata.description : 'withSIX' | htmlToPlaintext2}}">
-	<meta name="keywords" lang="en" sx-content="{{microdata ? microdata.keywords : 'withSIX, games, modifications, mods, missions, collections, gaming, custom content, Play withSIX, connect withSIX, SIX Networks'}}">
+  <meta name="fragment" content="!">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-	<meta name="twitter:site" content="@SixNetworks">
-	<meta name="twitter:site:id" content="SixNetworks">
-	<meta name="twitter:url" sx-content="{{microdata.currentPage || url.currentPage}}">
-	<meta name="twitter:card" sx-content="{{microdata && microdata.image ? 'summary_large_image' : 'summary'}}">
-	<meta name="twitter:title" sx-content="{{microdata.title}}" ng-if="microdata">
-	<meta name="twitter:description" sx-content="{{microdata.description | htmlToPlaintext2}}" ng-if="microdata">
-	<meta name="twitter:image:src" sx-content="{{microdata.image || defaultImage}}" ng-if="microdata">
+  <meta name="author" lang="en" content="SIX Networks GmbH">
+  <meta name="description" lang="en" sx-content="{{microdata ? microdata.description : 'withSIX' | htmlToPlaintext2}}">
+  <meta name="keywords" lang="en" sx-content="{{microdata ? microdata.keywords : 'withSIX, games, modifications, mods, missions, collections, gaming, custom content, Play withSIX, connect withSIX, SIX Networks'}}">
 
-	<meta property="og:site_name" content="withSIX">
-	<meta property="og:image" sx-content="{{microdata && microdata.image ? microdata.image : defaultImage}}">
-	<meta property="og:url" sx-content="{{microdata.currentPage || url.currentPage}}">
-	<meta property="og:type" content="article" ng-if="microdata">
-	<meta property="og:title" sx-content="{{microdata.title}}" ng-if="microdata">
-	<meta property="og:description" sx-content="{{microdata.description | htmlToPlaintext2}}" ng-if="microdata">
+  <meta name="twitter:site" content="@SixNetworks">
+  <meta name="twitter:site:id" content="SixNetworks">
+  <meta name="twitter:url" sx-content="{{microdata.currentPage || url.currentPage}}">
+  <meta name="twitter:card" sx-content="{{microdata && microdata.image ? 'summary_large_image' : 'summary'}}">
+  <meta name="twitter:title" sx-content="{{microdata.title}}" ng-if="microdata">
+  <meta name="twitter:description" sx-content="{{microdata.description | htmlToPlaintext2}}" ng-if="microdata">
+  <meta name="twitter:image:src" sx-content="{{microdata.image || defaultImage}}" ng-if="microdata">
 
-	<!-- TODO: Import old heads -->
-	<!--
+  <meta property="og:site_name" content="withSIX">
+  <meta property="og:image" sx-content="{{microdata && microdata.image ? microdata.image : defaultImage}}">
+  <meta property="og:url" sx-content="{{microdata.currentPage || url.currentPage}}">
+  <meta property="og:type" content="article" ng-if="microdata">
+  <meta property="og:title" sx-content="{{microdata.title}}" ng-if="microdata">
+  <meta property="og:description" sx-content="{{microdata.description | htmlToPlaintext2}}" ng-if="microdata">
+
+  <!-- TODO: Import old heads -->
+  <!--
     <link rel="apple-touch-icon" href="@Url.VersionedAsset("img/meta/apple-touch-icon.png")"/>
     <link rel="apple-touch-icon" sizes="72x72"
           href="@Url.VersionedAsset("img/meta/apple-touch-icon-57x57-precomposed.png")"/>
@@ -75,100 +76,136 @@
     }
     -->
 
-	<% if (webpackConfig.metadata.ENV !== 'development') { %>
-		<script type="text/javascript">
-        var appInsights=window.appInsights||function(config){
-            function i(config){t[config]=function(){var i=arguments;t.queue.push(function(){t[config].apply(t,i)})}}var t={config:config},u=document,e=window,o="script",s="AuthenticatedUserContext",h="start",c="stop",l="Track",a=l+"Event",v=l+"Page",y=u.createElement(o),r,f;y.src=config.url||"https://az416426.vo.msecnd.net/scripts/a/ai.0.js";u.getElementsByTagName(o)[0].parentNode.appendChild(y);try{t.cookie=u.cookie}catch(p){}for(t.queue=[],t.version="1.0",r=["Event","Exception","Metric","PageView","Trace","Dependency"];r.length;)i("track"+r.pop());return i("set"+s),i("clear"+s),i(h+a),i(c+a),i(h+v),i(c+v),i("flush"),config.disableExceptionTracking||(r="onerror",i("_"+r),f=e[r],e[r]=function(config,i,u,e,o){var s=f&&f(config,i,u,e,o);return s!==!0&&t["_"+r](config,i,u,e,o),s}),t
-        }({
-            instrumentationKey:"f3fc758d-a034-4eda-ba1a-f1fbc7c16082"
-        });
-        
-        window.appInsights=appInsights;
-        appInsights.trackPageView();
+  <% if (webpackConfig.metadata.ENV !== 'development') { %>
+    <script type="text/javascript">
+      var appInsights = window.appInsights || function(config) {
+        function i(config) {
+          t[config] = function() {
+            var i = arguments;
+            t.queue.push(function() {
+              t[config].apply(t, i)
+            })
+          }
+        }
+        var t = {
+            config: config
+          },
+          u = document,
+          e = window,
+          o = "script",
+          s = "AuthenticatedUserContext",
+          h = "start",
+          c = "stop",
+          l = "Track",
+          a = l + "Event",
+          v = l + "Page",
+          y = u.createElement(o),
+          r, f;
+        y.src = config.url || "https://az416426.vo.msecnd.net/scripts/a/ai.0.js";
+        u.getElementsByTagName(o)[0].parentNode.appendChild(y);
+        try {
+          t.cookie = u.cookie
+        } catch (p) {}
+        for (t.queue = [], t.version = "1.0", r = ["Event", "Exception", "Metric", "PageView",
+            "Trace", "Dependency"
+          ]; r.length;) i("track" + r.pop());
+        return i("set" + s), i("clear" + s), i(h + a), i(c + a), i(h + v), i(c + v), i("flush"),
+          config.disableExceptionTracking || (r = "onerror", i("_" + r), f = e[r], e[r] =
+            function(config, i, u, e, o) {
+              var s = f && f(config, i, u, e, o);
+              return s !== !0 && t["_" + r](config, i, u, e, o), s
+            }), t
+      }({
+        instrumentationKey: "904a7cad-08c8-42fe-8330-77cbb23fa128"
+      });
+
+      window.appInsights = appInsights;
+      appInsights.trackPageView();
+
     </script>
-		<% } %>
+    <% } %>
 
-			<script>
-    window.prerenderReady = false;
+      <script>
+        window.prerenderReady = false;
 
-  </script>
+      </script>
 
-			<!-- Google Analytics -->
-			<script>
-    //if (Environments.Environment == Environments.Production) {
-    window.google_analytics_uacct = 'UA-33540689-1';
-    (function(i, s, o, g, r, a, m) {
-      i['GoogleAnalyticsObject'] = r;
-      i[r] = i[r] || function() {
-        (i[r].q = i[r].q || []).push(arguments);
-      }, i[r].l = 1 * new Date();
-      a = s.createElement(o),
-        m = s.getElementsByTagName(o)[0];
-      a.async = 1;
-      a.src = g;
-      m.parentNode.insertBefore(a, m);
-    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+      <!-- Google Analytics -->
+      <script>
+        //if (Environments.Environment == Environments.Production) {
+        window.google_analytics_uacct = 'UA-33540689-1';
+        (function(i, s, o, g, r, a, m) {
+          i['GoogleAnalyticsObject'] = r;
+          i[r] = i[r] || function() {
+            (i[r].q = i[r].q || []).push(arguments);
+          }, i[r].l = 1 * new Date();
+          a = s.createElement(o),
+            m = s.getElementsByTagName(o)[0];
+          a.async = 1;
+          a.src = g;
+          m.parentNode.insertBefore(a, m);
+        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
 
-    ga('create', 'UA-33540689-1', 'withsix.com');
-    // TODO: Generate by JS?
-    /*
-    ga('set', 'dimension1', "@(LayoutModel.LoggedIn ? "yes" : "no")");
-    ga('set', 'dimension2', "@LayoutModel.Urls.CurrentPage.DnsSafeHost");
-    ga('set', 'dimension3', "@(LayoutModel.IsClient ? "yes" : "no")");
-    */
-    ga('require', 'linkid', 'linkid.js');
-    /* ga('send', 'pageview'); // handled by angular now */
+        ga('create', 'UA-33540689-1', 'withsix.com');
+        // TODO: Generate by JS?
+        /*
+        ga('set', 'dimension1', "@(LayoutModel.LoggedIn ? "yes" : "no")");
+        ga('set', 'dimension2', "@LayoutModel.Urls.CurrentPage.DnsSafeHost");
+        ga('set', 'dimension3', "@(LayoutModel.IsClient ? "yes" : "no")");
+        */
+        ga('require', 'linkid', 'linkid.js');
+        /* ga('send', 'pageview'); // handled by angular now */
 
-  </script>
+      </script>
 
-			<!-- Adsense -->
-			<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-			<script>
-    (adsbygoogle = window.adsbygoogle || []).push({
-      google_ad_client: "ca-pub-8060864068276104",
-      enable_page_level_ads: true
-    });
+      <!-- Adsense -->
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-8060864068276104",
+          enable_page_level_ads: true
+        });
 
-  </script>
+      </script>
 
-			<!-- Doubleclick -->
-			<script type="text/javascript">
-    var googletag = googletag || {};
-    googletag.cmd = googletag.cmd || [];
+      <!-- Doubleclick -->
+      <script type="text/javascript">
+        var googletag = googletag || {};
+        googletag.cmd = googletag.cmd || [];
 
-    window.googleDfpPreloaded = true;
+        window.googleDfpPreloaded = true;
 
-    (function() {
-      var gads = document.createElement("script");
-      gads.async = true;
-      gads.type = "text/javascript";
-      var useSSL = "https:" == document.location.protocol;
-      gads.src = (useSSL ? "https:" : "http:") + "//www.googletagservices.com/tag/js/gpt.js";
-      var node = document.getElementsByTagName("script")[0];
-      node.parentNode.insertBefore(gads, node);
-    })();
+        (function() {
+          var gads = document.createElement("script");
+          gads.async = true;
+          gads.type = "text/javascript";
+          var useSSL = "https:" == document.location.protocol;
+          gads.src = (useSSL ? "https:" : "http:") + "//www.googletagservices.com/tag/js/gpt.js";
+          var node = document.getElementsByTagName("script")[0];
+          node.parentNode.insertBefore(gads, node);
+        })();
 
-  </script>
+      </script>
 
-			<script>
-    googletag.cmd.push(function() {
-      googletag.sbNgTags = googletag.sbNgTags || [];
-    });
+      <script>
+        googletag.cmd.push(function() {
+          googletag.sbNgTags = googletag.sbNgTags || [];
+        });
 
-  </script>
+      </script>
 
-			<base href="<%- webpackConfig.metadata.baseUrl %>">
-			<!-- imported CSS are concatenated and added automatically -->
+      <base href="<%- webpackConfig.metadata.baseUrl %>">
+      <!-- imported CSS are concatenated and added automatically -->
 </head>
 
 <body ng-controller="MainAppController as vm" data-status="{{ status }}">
-	<div aurelia-app="main">
-		<div id="applicationLoader">
-			<div class="container-fluid">
-				<center>
-					<div class="splash" id="splash" style="margin-top: 100px;">
-						<div class="message" id="splash-message">
-							<noscript>
+  <div aurelia-app="main">
+    <div id="applicationLoader">
+      <div class="container-fluid">
+        <center>
+          <div class="splash" id="splash" style="margin-top: 100px;">
+            <div class="message" id="splash-message">
+              <noscript>
 								<div class="container-fluid">
 									We apologize for the inconvenience, but you need to have JavaScript enabled to view this page
 									<br/>
@@ -178,23 +215,23 @@
 									<a href="https://community.withsix.com" target="_blank">Get Satisfaction withSIX</a>
 								</div>
 							</noscript>
-						</div>
-					</div>
-				</center>
-			</div>
-		</div>
-	</div>
+            </div>
+          </div>
+        </center>
+      </div>
+    </div>
+  </div>
 
-	<div app-view-segment="0" id="content"></div>
+  <div app-view-segment="0" id="content"></div>
 
-	<script type="text/javascript" src="legacy/bower.min.js"></script>
-	<script type="text/javascript" src="legacy/vendor.min.js"></script>
-	<script type="text/javascript" src="legacy/dart-uuid.js"></script>
+  <script type="text/javascript" src="legacy/bower.min.js"></script>
+  <script type="text/javascript" src="legacy/vendor.min.js"></script>
+  <script type="text/javascript" src="legacy/dart-uuid.js"></script>
 
-	<% if (webpackConfig.metadata.ENV === 'development') { %>
-		<!-- Webpack Dev Server reload -->
-		<script type="text/javascript" src="/webpack-dev-server.js"></script>
-		<% } %>
+  <% if (webpackConfig.metadata.ENV === 'development') { %>
+    <!-- Webpack Dev Server reload -->
+    <script type="text/javascript" src="/webpack-dev-server.js"></script>
+    <% } %>
 </body>
 
 </html>

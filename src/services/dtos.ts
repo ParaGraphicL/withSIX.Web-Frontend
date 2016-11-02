@@ -1,8 +1,8 @@
 
-import {W6} from './withSIX'
+import { W6 } from './withSIX'
 import breeze from 'breeze-client';
 
-import {EntityExtends} from './entity-extends';
+import { EntityExtends } from './entity-extends';
 export * from './entity-extends';
 
 // DTOS
@@ -28,18 +28,18 @@ export interface IBreezeRespawn
 
 export interface IBreezeWeather
   extends _IntDefs._Weather,
-		_IntDefExts.IWeather { }
+  _IntDefExts.IWeather { }
 
 export interface IBreezeAppComment
   extends _IntDefs._AppComment,
-		_IntDefExts.IAppComment { }
+  _IntDefExts.IAppComment { }
 
 export interface IBreezeApp
   extends _IntDefs._App { }
 
 export interface IBreezeUser
   extends _IntDefs._User,
-		_IntDefExts.IUser { }
+  _IntDefExts.IUser { }
 
 export interface IBreezeGameInApp
   extends _IntDefs._GameInApp { }
@@ -52,11 +52,11 @@ export interface IBreezeContentPublisherInContent
 
 export interface IBreezeCollectionComment
   extends _IntDefs._CollectionComment,
-		_IntDefExts.ICollectionComment { }
+  _IntDefExts.ICollectionComment { }
 
 export interface IBreezeCollection
   extends _IntDefs._Collection,
-		_IntDefExts.ICollection { }
+  _IntDefExts.ICollection { }
 
 export interface IBreezeCollectionFileTransferPolicy
   extends _IntDefs._CollectionFileTransferPolicy { }
@@ -78,14 +78,14 @@ export interface IBreezeGroupInContent
 
 export interface IBreezeCollectionVersion
   extends _IntDefs._CollectionVersion,
-		_IntDefExts.ICollectionVersion { }
+  _IntDefExts.ICollectionVersion { }
 
 export interface IBreezeCollectionVersionDependency
   extends _IntDefs._CollectionVersionDependency { }
 
 export interface IBreezeMod
   extends _IntDefs._Mod,
-		_IntDefExts.IMod { }
+  _IntDefExts.IMod { }
 
 export interface IBreezeModCategoryInMod
   extends _IntDefs._ModCategoryInMod { }
@@ -95,7 +95,7 @@ export interface IBreezeCollectionInMod
 
 export interface IBreezeModComment
   extends _IntDefs._ModComment,
-		_IntDefExts.IModComment { }
+  _IntDefExts.IModComment { }
 
 export interface IBreezeModDependency
   extends _IntDefs._ModDependency { }
@@ -138,7 +138,7 @@ export interface IBreezeCollectionStat
 
 export interface IBreezeGame
   extends _IntDefs._Game,
-		_IntDefExts.IGame { }
+  _IntDefExts.IGame { }
 
 export interface IBreezeGameStat
   extends _IntDefs._GameStat, IBreezeGame { }
@@ -154,18 +154,18 @@ export interface IBreezeServer
 
 export interface IBreezeServerComment
   extends _IntDefs._ServerComment,
-		_IntDefExts.IServerComment { }
+  _IntDefExts.IServerComment { }
 
 export interface IBreezePlayer
   extends _IntDefs._Player { }
 
 export interface IBreezeMissionComment
   extends _IntDefs._MissionComment,
-		_IntDefExts.IMissionComment { }
+  _IntDefExts.IMissionComment { }
 
 export interface IBreezeMission
   extends _IntDefs._Mission,
-		_IntDefExts.IMission { }
+  _IntDefExts.IMission { }
 
 export interface IBreezeMissionFeature
   extends _IntDefs._MissionFeature { }
@@ -199,7 +199,7 @@ export interface IBreezeModInCategory
 
 export interface IBreezePostComment
   extends _IntDefs._PostComment,
-		_IntDefExts.IPostComment { }
+  _IntDefExts.IPostComment { }
 
 export interface IBreezePost
   extends _IntDefs._Post { }
@@ -376,9 +376,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_Range): IBreezeRange;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_Range): IBreezeRange {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeRange>entityManagerOrConfig.createEntity("Range", config);
+        return <IBreezeRange>entityManagerOrConfig.createEntity("Range", config);
       } else {
-				    return <IBreezeRange>defaultEntityManager.createEntity("Range", entityManagerOrConfig);
+        return <IBreezeRange>defaultEntityManager.createEntity("Range", entityManagerOrConfig);
       }
     }
 
@@ -386,9 +386,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_Range): IBreezeRange;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_Range): IBreezeRange {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeRange>entityManagerOrConfig.createEntity("Range", config);
+        return <IBreezeRange>entityManagerOrConfig.createEntity("Range", config);
       } else {
-				    return <IBreezeRange>defaultEntityManager.createEntity("Range", entityManagerOrConfig);
+        return <IBreezeRange>defaultEntityManager.createEntity("Range", entityManagerOrConfig);
       }
     }
   }
@@ -405,9 +405,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_Respawn): IBreezeRespawn;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_Respawn): IBreezeRespawn {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeRespawn>entityManagerOrConfig.createEntity("Respawn", config);
+        return <IBreezeRespawn>entityManagerOrConfig.createEntity("Respawn", config);
       } else {
-				    return <IBreezeRespawn>defaultEntityManager.createEntity("Respawn", entityManagerOrConfig);
+        return <IBreezeRespawn>defaultEntityManager.createEntity("Respawn", entityManagerOrConfig);
       }
     }
 
@@ -415,9 +415,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_Respawn): IBreezeRespawn;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_Respawn): IBreezeRespawn {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeRespawn>entityManagerOrConfig.createEntity("Respawn", config);
+        return <IBreezeRespawn>entityManagerOrConfig.createEntity("Respawn", config);
       } else {
-				    return <IBreezeRespawn>defaultEntityManager.createEntity("Respawn", entityManagerOrConfig);
+        return <IBreezeRespawn>defaultEntityManager.createEntity("Respawn", entityManagerOrConfig);
       }
     }
   }
@@ -434,9 +434,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_Weather): IBreezeWeather;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_Weather): IBreezeWeather {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeWeather>entityManagerOrConfig.createEntity("Weather", config);
+        return <IBreezeWeather>entityManagerOrConfig.createEntity("Weather", config);
       } else {
-				    return <IBreezeWeather>defaultEntityManager.createEntity("Weather", entityManagerOrConfig);
+        return <IBreezeWeather>defaultEntityManager.createEntity("Weather", entityManagerOrConfig);
       }
     }
 
@@ -444,9 +444,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_Weather): IBreezeWeather;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_Weather): IBreezeWeather {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeWeather>entityManagerOrConfig.createEntity("Weather", config);
+        return <IBreezeWeather>entityManagerOrConfig.createEntity("Weather", config);
       } else {
-				    return <IBreezeWeather>defaultEntityManager.createEntity("Weather", entityManagerOrConfig);
+        return <IBreezeWeather>defaultEntityManager.createEntity("Weather", entityManagerOrConfig);
       }
     }
   }
@@ -473,9 +473,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_AppComment): IBreezeAppComment;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_AppComment): IBreezeAppComment {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeAppComment>entityManagerOrConfig.createEntity("AppComment", config);
+        return <IBreezeAppComment>entityManagerOrConfig.createEntity("AppComment", config);
       } else {
-				    return <IBreezeAppComment>defaultEntityManager.createEntity("AppComment", entityManagerOrConfig);
+        return <IBreezeAppComment>defaultEntityManager.createEntity("AppComment", entityManagerOrConfig);
       }
     }
 
@@ -483,9 +483,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_AppComment): IBreezeAppComment;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_AppComment): IBreezeAppComment {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeAppComment>entityManagerOrConfig.createEntity("AppComment", config);
+        return <IBreezeAppComment>entityManagerOrConfig.createEntity("AppComment", config);
       } else {
-				    return <IBreezeAppComment>defaultEntityManager.createEntity("AppComment", entityManagerOrConfig);
+        return <IBreezeAppComment>defaultEntityManager.createEntity("AppComment", entityManagerOrConfig);
       }
     }
   }
@@ -514,9 +514,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_App): IBreezeApp;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_App): IBreezeApp {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeApp>entityManagerOrConfig.createEntity("App", config);
+        return <IBreezeApp>entityManagerOrConfig.createEntity("App", config);
       } else {
-				    return <IBreezeApp>defaultEntityManager.createEntity("App", entityManagerOrConfig);
+        return <IBreezeApp>defaultEntityManager.createEntity("App", entityManagerOrConfig);
       }
     }
 
@@ -524,9 +524,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_App): IBreezeApp;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_App): IBreezeApp {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeApp>entityManagerOrConfig.createEntity("App", config);
+        return <IBreezeApp>entityManagerOrConfig.createEntity("App", config);
       } else {
-				    return <IBreezeApp>defaultEntityManager.createEntity("App", entityManagerOrConfig);
+        return <IBreezeApp>defaultEntityManager.createEntity("App", entityManagerOrConfig);
       }
     }
   }
@@ -544,9 +544,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_User): IBreezeUser;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_User): IBreezeUser {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeUser>entityManagerOrConfig.createEntity("User", config);
+        return <IBreezeUser>entityManagerOrConfig.createEntity("User", config);
       } else {
-				    return <IBreezeUser>defaultEntityManager.createEntity("User", entityManagerOrConfig);
+        return <IBreezeUser>defaultEntityManager.createEntity("User", entityManagerOrConfig);
       }
     }
 
@@ -554,9 +554,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_User): IBreezeUser;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_User): IBreezeUser {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeUser>entityManagerOrConfig.createEntity("User", config);
+        return <IBreezeUser>entityManagerOrConfig.createEntity("User", config);
       } else {
-				    return <IBreezeUser>defaultEntityManager.createEntity("User", entityManagerOrConfig);
+        return <IBreezeUser>defaultEntityManager.createEntity("User", entityManagerOrConfig);
       }
     }
   }
@@ -577,9 +577,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_GameInApp): IBreezeGameInApp;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_GameInApp): IBreezeGameInApp {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeGameInApp>entityManagerOrConfig.createEntity("GameInApp", config);
+        return <IBreezeGameInApp>entityManagerOrConfig.createEntity("GameInApp", config);
       } else {
-				    return <IBreezeGameInApp>defaultEntityManager.createEntity("GameInApp", entityManagerOrConfig);
+        return <IBreezeGameInApp>defaultEntityManager.createEntity("GameInApp", entityManagerOrConfig);
       }
     }
 
@@ -587,9 +587,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_GameInApp): IBreezeGameInApp;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_GameInApp): IBreezeGameInApp {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeGameInApp>entityManagerOrConfig.createEntity("GameInApp", config);
+        return <IBreezeGameInApp>entityManagerOrConfig.createEntity("GameInApp", config);
       } else {
-				    return <IBreezeGameInApp>defaultEntityManager.createEntity("GameInApp", entityManagerOrConfig);
+        return <IBreezeGameInApp>defaultEntityManager.createEntity("GameInApp", entityManagerOrConfig);
       }
     }
   }
@@ -612,9 +612,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_AppMediaItem): IBreezeAppMediaItem;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_AppMediaItem): IBreezeAppMediaItem {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeAppMediaItem>entityManagerOrConfig.createEntity("AppMediaItem", config);
+        return <IBreezeAppMediaItem>entityManagerOrConfig.createEntity("AppMediaItem", config);
       } else {
-				    return <IBreezeAppMediaItem>defaultEntityManager.createEntity("AppMediaItem", entityManagerOrConfig);
+        return <IBreezeAppMediaItem>defaultEntityManager.createEntity("AppMediaItem", entityManagerOrConfig);
       }
     }
 
@@ -622,9 +622,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_AppMediaItem): IBreezeAppMediaItem;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_AppMediaItem): IBreezeAppMediaItem {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeAppMediaItem>entityManagerOrConfig.createEntity("AppMediaItem", config);
+        return <IBreezeAppMediaItem>entityManagerOrConfig.createEntity("AppMediaItem", config);
       } else {
-				    return <IBreezeAppMediaItem>defaultEntityManager.createEntity("AppMediaItem", entityManagerOrConfig);
+        return <IBreezeAppMediaItem>defaultEntityManager.createEntity("AppMediaItem", entityManagerOrConfig);
       }
     }
   }
@@ -641,9 +641,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_ContentPublisherInContent): IBreezeContentPublisherInContent;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_ContentPublisherInContent): IBreezeContentPublisherInContent {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeContentPublisherInContent>entityManagerOrConfig.createEntity("ContentPublisherInContent", config);
+        return <IBreezeContentPublisherInContent>entityManagerOrConfig.createEntity("ContentPublisherInContent", config);
       } else {
-				    return <IBreezeContentPublisherInContent>defaultEntityManager.createEntity("ContentPublisherInContent", entityManagerOrConfig);
+        return <IBreezeContentPublisherInContent>defaultEntityManager.createEntity("ContentPublisherInContent", entityManagerOrConfig);
       }
     }
 
@@ -651,9 +651,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_ContentPublisherInContent): IBreezeContentPublisherInContent;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_ContentPublisherInContent): IBreezeContentPublisherInContent {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeContentPublisherInContent>entityManagerOrConfig.createEntity("ContentPublisherInContent", config);
+        return <IBreezeContentPublisherInContent>entityManagerOrConfig.createEntity("ContentPublisherInContent", config);
       } else {
-				    return <IBreezeContentPublisherInContent>defaultEntityManager.createEntity("ContentPublisherInContent", entityManagerOrConfig);
+        return <IBreezeContentPublisherInContent>defaultEntityManager.createEntity("ContentPublisherInContent", entityManagerOrConfig);
       }
     }
   }
@@ -680,9 +680,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_CollectionComment): IBreezeCollectionComment;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_CollectionComment): IBreezeCollectionComment {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeCollectionComment>entityManagerOrConfig.createEntity("CollectionComment", config);
+        return <IBreezeCollectionComment>entityManagerOrConfig.createEntity("CollectionComment", config);
       } else {
-				    return <IBreezeCollectionComment>defaultEntityManager.createEntity("CollectionComment", entityManagerOrConfig);
+        return <IBreezeCollectionComment>defaultEntityManager.createEntity("CollectionComment", entityManagerOrConfig);
       }
     }
 
@@ -690,9 +690,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_CollectionComment): IBreezeCollectionComment;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_CollectionComment): IBreezeCollectionComment {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeCollectionComment>entityManagerOrConfig.createEntity("CollectionComment", config);
+        return <IBreezeCollectionComment>entityManagerOrConfig.createEntity("CollectionComment", config);
       } else {
-				    return <IBreezeCollectionComment>defaultEntityManager.createEntity("CollectionComment", entityManagerOrConfig);
+        return <IBreezeCollectionComment>defaultEntityManager.createEntity("CollectionComment", entityManagerOrConfig);
       }
     }
   }
@@ -735,9 +735,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_Collection): IBreezeCollection;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_Collection): IBreezeCollection {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeCollection>entityManagerOrConfig.createEntity("Collection", config);
+        return <IBreezeCollection>entityManagerOrConfig.createEntity("Collection", config);
       } else {
-				    return <IBreezeCollection>defaultEntityManager.createEntity("Collection", entityManagerOrConfig);
+        return <IBreezeCollection>defaultEntityManager.createEntity("Collection", entityManagerOrConfig);
       }
     }
 
@@ -745,9 +745,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_Collection): IBreezeCollection;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_Collection): IBreezeCollection {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeCollection>entityManagerOrConfig.createEntity("Collection", config);
+        return <IBreezeCollection>entityManagerOrConfig.createEntity("Collection", config);
       } else {
-				    return <IBreezeCollection>defaultEntityManager.createEntity("Collection", entityManagerOrConfig);
+        return <IBreezeCollection>defaultEntityManager.createEntity("Collection", entityManagerOrConfig);
       }
     }
   }
@@ -770,9 +770,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_CollectionFileTransferPolicy): IBreezeCollectionFileTransferPolicy;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_CollectionFileTransferPolicy): IBreezeCollectionFileTransferPolicy {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeCollectionFileTransferPolicy>entityManagerOrConfig.createEntity("CollectionFileTransferPolicy", config);
+        return <IBreezeCollectionFileTransferPolicy>entityManagerOrConfig.createEntity("CollectionFileTransferPolicy", config);
       } else {
-				    return <IBreezeCollectionFileTransferPolicy>defaultEntityManager.createEntity("CollectionFileTransferPolicy", entityManagerOrConfig);
+        return <IBreezeCollectionFileTransferPolicy>defaultEntityManager.createEntity("CollectionFileTransferPolicy", entityManagerOrConfig);
       }
     }
 
@@ -780,9 +780,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_CollectionFileTransferPolicy): IBreezeCollectionFileTransferPolicy;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_CollectionFileTransferPolicy): IBreezeCollectionFileTransferPolicy {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeCollectionFileTransferPolicy>entityManagerOrConfig.createEntity("CollectionFileTransferPolicy", config);
+        return <IBreezeCollectionFileTransferPolicy>entityManagerOrConfig.createEntity("CollectionFileTransferPolicy", config);
       } else {
-				    return <IBreezeCollectionFileTransferPolicy>defaultEntityManager.createEntity("CollectionFileTransferPolicy", entityManagerOrConfig);
+        return <IBreezeCollectionFileTransferPolicy>defaultEntityManager.createEntity("CollectionFileTransferPolicy", entityManagerOrConfig);
       }
     }
   }
@@ -799,9 +799,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_AWSUploadPolicy): IBreezeAWSUploadPolicy;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_AWSUploadPolicy): IBreezeAWSUploadPolicy {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeAWSUploadPolicy>entityManagerOrConfig.createEntity("AWSUploadPolicy", config);
+        return <IBreezeAWSUploadPolicy>entityManagerOrConfig.createEntity("AWSUploadPolicy", config);
       } else {
-				    return <IBreezeAWSUploadPolicy>defaultEntityManager.createEntity("AWSUploadPolicy", entityManagerOrConfig);
+        return <IBreezeAWSUploadPolicy>defaultEntityManager.createEntity("AWSUploadPolicy", entityManagerOrConfig);
       }
     }
 
@@ -809,9 +809,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_AWSUploadPolicy): IBreezeAWSUploadPolicy;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_AWSUploadPolicy): IBreezeAWSUploadPolicy {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeAWSUploadPolicy>entityManagerOrConfig.createEntity("AWSUploadPolicy", config);
+        return <IBreezeAWSUploadPolicy>entityManagerOrConfig.createEntity("AWSUploadPolicy", config);
       } else {
-				    return <IBreezeAWSUploadPolicy>defaultEntityManager.createEntity("AWSUploadPolicy", entityManagerOrConfig);
+        return <IBreezeAWSUploadPolicy>defaultEntityManager.createEntity("AWSUploadPolicy", entityManagerOrConfig);
       }
     }
   }
@@ -834,9 +834,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_CollectionImageFileTransferPolicy): IBreezeCollectionImageFileTransferPolicy;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_CollectionImageFileTransferPolicy): IBreezeCollectionImageFileTransferPolicy {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeCollectionImageFileTransferPolicy>entityManagerOrConfig.createEntity("CollectionImageFileTransferPolicy", config);
+        return <IBreezeCollectionImageFileTransferPolicy>entityManagerOrConfig.createEntity("CollectionImageFileTransferPolicy", config);
       } else {
-				    return <IBreezeCollectionImageFileTransferPolicy>defaultEntityManager.createEntity("CollectionImageFileTransferPolicy", entityManagerOrConfig);
+        return <IBreezeCollectionImageFileTransferPolicy>defaultEntityManager.createEntity("CollectionImageFileTransferPolicy", entityManagerOrConfig);
       }
     }
 
@@ -844,9 +844,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_CollectionImageFileTransferPolicy): IBreezeCollectionImageFileTransferPolicy;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_CollectionImageFileTransferPolicy): IBreezeCollectionImageFileTransferPolicy {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeCollectionImageFileTransferPolicy>entityManagerOrConfig.createEntity("CollectionImageFileTransferPolicy", config);
+        return <IBreezeCollectionImageFileTransferPolicy>entityManagerOrConfig.createEntity("CollectionImageFileTransferPolicy", config);
       } else {
-				    return <IBreezeCollectionImageFileTransferPolicy>defaultEntityManager.createEntity("CollectionImageFileTransferPolicy", entityManagerOrConfig);
+        return <IBreezeCollectionImageFileTransferPolicy>defaultEntityManager.createEntity("CollectionImageFileTransferPolicy", entityManagerOrConfig);
       }
     }
   }
@@ -863,9 +863,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_GameInContent): IBreezeGameInContent;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_GameInContent): IBreezeGameInContent {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeGameInContent>entityManagerOrConfig.createEntity("GameInContent", config);
+        return <IBreezeGameInContent>entityManagerOrConfig.createEntity("GameInContent", config);
       } else {
-				    return <IBreezeGameInContent>defaultEntityManager.createEntity("GameInContent", entityManagerOrConfig);
+        return <IBreezeGameInContent>defaultEntityManager.createEntity("GameInContent", entityManagerOrConfig);
       }
     }
 
@@ -873,9 +873,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_GameInContent): IBreezeGameInContent;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_GameInContent): IBreezeGameInContent {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeGameInContent>entityManagerOrConfig.createEntity("GameInContent", config);
+        return <IBreezeGameInContent>entityManagerOrConfig.createEntity("GameInContent", config);
       } else {
-				    return <IBreezeGameInContent>defaultEntityManager.createEntity("GameInContent", entityManagerOrConfig);
+        return <IBreezeGameInContent>defaultEntityManager.createEntity("GameInContent", entityManagerOrConfig);
       }
     }
   }
@@ -892,9 +892,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_GameModStat): IBreezeGameModStat;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_GameModStat): IBreezeGameModStat {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeGameModStat>entityManagerOrConfig.createEntity("GameModStat", config);
+        return <IBreezeGameModStat>entityManagerOrConfig.createEntity("GameModStat", config);
       } else {
-				    return <IBreezeGameModStat>defaultEntityManager.createEntity("GameModStat", entityManagerOrConfig);
+        return <IBreezeGameModStat>defaultEntityManager.createEntity("GameModStat", entityManagerOrConfig);
       }
     }
 
@@ -902,9 +902,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_GameModStat): IBreezeGameModStat;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_GameModStat): IBreezeGameModStat {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeGameModStat>entityManagerOrConfig.createEntity("GameModStat", config);
+        return <IBreezeGameModStat>entityManagerOrConfig.createEntity("GameModStat", config);
       } else {
-				    return <IBreezeGameModStat>defaultEntityManager.createEntity("GameModStat", entityManagerOrConfig);
+        return <IBreezeGameModStat>defaultEntityManager.createEntity("GameModStat", entityManagerOrConfig);
       }
     }
   }
@@ -921,9 +921,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_GroupInContent): IBreezeGroupInContent;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_GroupInContent): IBreezeGroupInContent {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeGroupInContent>entityManagerOrConfig.createEntity("GroupInContent", config);
+        return <IBreezeGroupInContent>entityManagerOrConfig.createEntity("GroupInContent", config);
       } else {
-				    return <IBreezeGroupInContent>defaultEntityManager.createEntity("GroupInContent", entityManagerOrConfig);
+        return <IBreezeGroupInContent>defaultEntityManager.createEntity("GroupInContent", entityManagerOrConfig);
       }
     }
 
@@ -931,9 +931,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_GroupInContent): IBreezeGroupInContent;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_GroupInContent): IBreezeGroupInContent {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeGroupInContent>entityManagerOrConfig.createEntity("GroupInContent", config);
+        return <IBreezeGroupInContent>entityManagerOrConfig.createEntity("GroupInContent", config);
       } else {
-				    return <IBreezeGroupInContent>defaultEntityManager.createEntity("GroupInContent", entityManagerOrConfig);
+        return <IBreezeGroupInContent>defaultEntityManager.createEntity("GroupInContent", entityManagerOrConfig);
       }
     }
   }
@@ -958,9 +958,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_CollectionVersion): IBreezeCollectionVersion;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_CollectionVersion): IBreezeCollectionVersion {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeCollectionVersion>entityManagerOrConfig.createEntity("CollectionVersion", config);
+        return <IBreezeCollectionVersion>entityManagerOrConfig.createEntity("CollectionVersion", config);
       } else {
-				    return <IBreezeCollectionVersion>defaultEntityManager.createEntity("CollectionVersion", entityManagerOrConfig);
+        return <IBreezeCollectionVersion>defaultEntityManager.createEntity("CollectionVersion", entityManagerOrConfig);
       }
     }
 
@@ -968,9 +968,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_CollectionVersion): IBreezeCollectionVersion;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_CollectionVersion): IBreezeCollectionVersion {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeCollectionVersion>entityManagerOrConfig.createEntity("CollectionVersion", config);
+        return <IBreezeCollectionVersion>entityManagerOrConfig.createEntity("CollectionVersion", config);
       } else {
-				    return <IBreezeCollectionVersion>defaultEntityManager.createEntity("CollectionVersion", entityManagerOrConfig);
+        return <IBreezeCollectionVersion>defaultEntityManager.createEntity("CollectionVersion", entityManagerOrConfig);
       }
     }
   }
@@ -995,9 +995,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_CollectionVersionDependency): IBreezeCollectionVersionDependency;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_CollectionVersionDependency): IBreezeCollectionVersionDependency {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeCollectionVersionDependency>entityManagerOrConfig.createEntity("CollectionVersionDependency", config);
+        return <IBreezeCollectionVersionDependency>entityManagerOrConfig.createEntity("CollectionVersionDependency", config);
       } else {
-				    return <IBreezeCollectionVersionDependency>defaultEntityManager.createEntity("CollectionVersionDependency", entityManagerOrConfig);
+        return <IBreezeCollectionVersionDependency>defaultEntityManager.createEntity("CollectionVersionDependency", entityManagerOrConfig);
       }
     }
 
@@ -1005,9 +1005,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_CollectionVersionDependency): IBreezeCollectionVersionDependency;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_CollectionVersionDependency): IBreezeCollectionVersionDependency {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeCollectionVersionDependency>entityManagerOrConfig.createEntity("CollectionVersionDependency", config);
+        return <IBreezeCollectionVersionDependency>entityManagerOrConfig.createEntity("CollectionVersionDependency", config);
       } else {
-				    return <IBreezeCollectionVersionDependency>defaultEntityManager.createEntity("CollectionVersionDependency", entityManagerOrConfig);
+        return <IBreezeCollectionVersionDependency>defaultEntityManager.createEntity("CollectionVersionDependency", entityManagerOrConfig);
       }
     }
   }
@@ -1056,9 +1056,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_Mod): IBreezeMod;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_Mod): IBreezeMod {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeMod>entityManagerOrConfig.createEntity("Mod", config);
+        return <IBreezeMod>entityManagerOrConfig.createEntity("Mod", config);
       } else {
-				    return <IBreezeMod>defaultEntityManager.createEntity("Mod", entityManagerOrConfig);
+        return <IBreezeMod>defaultEntityManager.createEntity("Mod", entityManagerOrConfig);
       }
     }
 
@@ -1066,9 +1066,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_Mod): IBreezeMod;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_Mod): IBreezeMod {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeMod>entityManagerOrConfig.createEntity("Mod", config);
+        return <IBreezeMod>entityManagerOrConfig.createEntity("Mod", config);
       } else {
-				    return <IBreezeMod>defaultEntityManager.createEntity("Mod", entityManagerOrConfig);
+        return <IBreezeMod>defaultEntityManager.createEntity("Mod", entityManagerOrConfig);
       }
     }
   }
@@ -1089,9 +1089,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_ModCategoryInMod): IBreezeModCategoryInMod;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_ModCategoryInMod): IBreezeModCategoryInMod {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeModCategoryInMod>entityManagerOrConfig.createEntity("ModCategoryInMod", config);
+        return <IBreezeModCategoryInMod>entityManagerOrConfig.createEntity("ModCategoryInMod", config);
       } else {
-				    return <IBreezeModCategoryInMod>defaultEntityManager.createEntity("ModCategoryInMod", entityManagerOrConfig);
+        return <IBreezeModCategoryInMod>defaultEntityManager.createEntity("ModCategoryInMod", entityManagerOrConfig);
       }
     }
 
@@ -1099,9 +1099,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_ModCategoryInMod): IBreezeModCategoryInMod;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_ModCategoryInMod): IBreezeModCategoryInMod {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeModCategoryInMod>entityManagerOrConfig.createEntity("ModCategoryInMod", config);
+        return <IBreezeModCategoryInMod>entityManagerOrConfig.createEntity("ModCategoryInMod", config);
       } else {
-				    return <IBreezeModCategoryInMod>defaultEntityManager.createEntity("ModCategoryInMod", entityManagerOrConfig);
+        return <IBreezeModCategoryInMod>defaultEntityManager.createEntity("ModCategoryInMod", entityManagerOrConfig);
       }
     }
   }
@@ -1122,9 +1122,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_CollectionInMod): IBreezeCollectionInMod;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_CollectionInMod): IBreezeCollectionInMod {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeCollectionInMod>entityManagerOrConfig.createEntity("CollectionInMod", config);
+        return <IBreezeCollectionInMod>entityManagerOrConfig.createEntity("CollectionInMod", config);
       } else {
-				    return <IBreezeCollectionInMod>defaultEntityManager.createEntity("CollectionInMod", entityManagerOrConfig);
+        return <IBreezeCollectionInMod>defaultEntityManager.createEntity("CollectionInMod", entityManagerOrConfig);
       }
     }
 
@@ -1132,9 +1132,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_CollectionInMod): IBreezeCollectionInMod;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_CollectionInMod): IBreezeCollectionInMod {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeCollectionInMod>entityManagerOrConfig.createEntity("CollectionInMod", config);
+        return <IBreezeCollectionInMod>entityManagerOrConfig.createEntity("CollectionInMod", config);
       } else {
-				    return <IBreezeCollectionInMod>defaultEntityManager.createEntity("CollectionInMod", entityManagerOrConfig);
+        return <IBreezeCollectionInMod>defaultEntityManager.createEntity("CollectionInMod", entityManagerOrConfig);
       }
     }
   }
@@ -1161,9 +1161,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_ModComment): IBreezeModComment;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_ModComment): IBreezeModComment {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeModComment>entityManagerOrConfig.createEntity("ModComment", config);
+        return <IBreezeModComment>entityManagerOrConfig.createEntity("ModComment", config);
       } else {
-				    return <IBreezeModComment>defaultEntityManager.createEntity("ModComment", entityManagerOrConfig);
+        return <IBreezeModComment>defaultEntityManager.createEntity("ModComment", entityManagerOrConfig);
       }
     }
 
@@ -1171,9 +1171,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_ModComment): IBreezeModComment;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_ModComment): IBreezeModComment {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeModComment>entityManagerOrConfig.createEntity("ModComment", config);
+        return <IBreezeModComment>entityManagerOrConfig.createEntity("ModComment", config);
       } else {
-				    return <IBreezeModComment>defaultEntityManager.createEntity("ModComment", entityManagerOrConfig);
+        return <IBreezeModComment>defaultEntityManager.createEntity("ModComment", entityManagerOrConfig);
       }
     }
   }
@@ -1194,9 +1194,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_ModDependency): IBreezeModDependency;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_ModDependency): IBreezeModDependency {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeModDependency>entityManagerOrConfig.createEntity("ModDependency", config);
+        return <IBreezeModDependency>entityManagerOrConfig.createEntity("ModDependency", config);
       } else {
-				    return <IBreezeModDependency>defaultEntityManager.createEntity("ModDependency", entityManagerOrConfig);
+        return <IBreezeModDependency>defaultEntityManager.createEntity("ModDependency", entityManagerOrConfig);
       }
     }
 
@@ -1204,9 +1204,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_ModDependency): IBreezeModDependency;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_ModDependency): IBreezeModDependency {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeModDependency>entityManagerOrConfig.createEntity("ModDependency", config);
+        return <IBreezeModDependency>entityManagerOrConfig.createEntity("ModDependency", config);
       } else {
-				    return <IBreezeModDependency>defaultEntityManager.createEntity("ModDependency", entityManagerOrConfig);
+        return <IBreezeModDependency>defaultEntityManager.createEntity("ModDependency", entityManagerOrConfig);
       }
     }
   }
@@ -1227,9 +1227,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_ModDependent): IBreezeModDependent;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_ModDependent): IBreezeModDependent {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeModDependent>entityManagerOrConfig.createEntity("ModDependent", config);
+        return <IBreezeModDependent>entityManagerOrConfig.createEntity("ModDependent", config);
       } else {
-				    return <IBreezeModDependent>defaultEntityManager.createEntity("ModDependent", entityManagerOrConfig);
+        return <IBreezeModDependent>defaultEntityManager.createEntity("ModDependent", entityManagerOrConfig);
       }
     }
 
@@ -1237,9 +1237,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_ModDependent): IBreezeModDependent;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_ModDependent): IBreezeModDependent {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeModDependent>entityManagerOrConfig.createEntity("ModDependent", config);
+        return <IBreezeModDependent>entityManagerOrConfig.createEntity("ModDependent", config);
       } else {
-				    return <IBreezeModDependent>defaultEntityManager.createEntity("ModDependent", entityManagerOrConfig);
+        return <IBreezeModDependent>defaultEntityManager.createEntity("ModDependent", entityManagerOrConfig);
       }
     }
   }
@@ -1262,9 +1262,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_ModFileTransferPolicy): IBreezeModFileTransferPolicy;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_ModFileTransferPolicy): IBreezeModFileTransferPolicy {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeModFileTransferPolicy>entityManagerOrConfig.createEntity("ModFileTransferPolicy", config);
+        return <IBreezeModFileTransferPolicy>entityManagerOrConfig.createEntity("ModFileTransferPolicy", config);
       } else {
-				    return <IBreezeModFileTransferPolicy>defaultEntityManager.createEntity("ModFileTransferPolicy", entityManagerOrConfig);
+        return <IBreezeModFileTransferPolicy>defaultEntityManager.createEntity("ModFileTransferPolicy", entityManagerOrConfig);
       }
     }
 
@@ -1272,9 +1272,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_ModFileTransferPolicy): IBreezeModFileTransferPolicy;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_ModFileTransferPolicy): IBreezeModFileTransferPolicy {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeModFileTransferPolicy>entityManagerOrConfig.createEntity("ModFileTransferPolicy", config);
+        return <IBreezeModFileTransferPolicy>entityManagerOrConfig.createEntity("ModFileTransferPolicy", config);
       } else {
-				    return <IBreezeModFileTransferPolicy>defaultEntityManager.createEntity("ModFileTransferPolicy", entityManagerOrConfig);
+        return <IBreezeModFileTransferPolicy>defaultEntityManager.createEntity("ModFileTransferPolicy", entityManagerOrConfig);
       }
     }
   }
@@ -1297,9 +1297,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_ModImageFileTransferPolicy): IBreezeModImageFileTransferPolicy;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_ModImageFileTransferPolicy): IBreezeModImageFileTransferPolicy {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeModImageFileTransferPolicy>entityManagerOrConfig.createEntity("ModImageFileTransferPolicy", config);
+        return <IBreezeModImageFileTransferPolicy>entityManagerOrConfig.createEntity("ModImageFileTransferPolicy", config);
       } else {
-				    return <IBreezeModImageFileTransferPolicy>defaultEntityManager.createEntity("ModImageFileTransferPolicy", entityManagerOrConfig);
+        return <IBreezeModImageFileTransferPolicy>defaultEntityManager.createEntity("ModImageFileTransferPolicy", entityManagerOrConfig);
       }
     }
 
@@ -1307,9 +1307,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_ModImageFileTransferPolicy): IBreezeModImageFileTransferPolicy;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_ModImageFileTransferPolicy): IBreezeModImageFileTransferPolicy {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeModImageFileTransferPolicy>entityManagerOrConfig.createEntity("ModImageFileTransferPolicy", config);
+        return <IBreezeModImageFileTransferPolicy>entityManagerOrConfig.createEntity("ModImageFileTransferPolicy", config);
       } else {
-				    return <IBreezeModImageFileTransferPolicy>defaultEntityManager.createEntity("ModImageFileTransferPolicy", entityManagerOrConfig);
+        return <IBreezeModImageFileTransferPolicy>defaultEntityManager.createEntity("ModImageFileTransferPolicy", entityManagerOrConfig);
       }
     }
   }
@@ -1330,9 +1330,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_ModInfo): IBreezeModInfo;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_ModInfo): IBreezeModInfo {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeModInfo>entityManagerOrConfig.createEntity("ModInfo", config);
+        return <IBreezeModInfo>entityManagerOrConfig.createEntity("ModInfo", config);
       } else {
-				    return <IBreezeModInfo>defaultEntityManager.createEntity("ModInfo", entityManagerOrConfig);
+        return <IBreezeModInfo>defaultEntityManager.createEntity("ModInfo", entityManagerOrConfig);
       }
     }
 
@@ -1340,9 +1340,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_ModInfo): IBreezeModInfo;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_ModInfo): IBreezeModInfo {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeModInfo>entityManagerOrConfig.createEntity("ModInfo", config);
+        return <IBreezeModInfo>entityManagerOrConfig.createEntity("ModInfo", config);
       } else {
-				    return <IBreezeModInfo>defaultEntityManager.createEntity("ModInfo", entityManagerOrConfig);
+        return <IBreezeModInfo>defaultEntityManager.createEntity("ModInfo", entityManagerOrConfig);
       }
     }
   }
@@ -1365,9 +1365,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_ModMediaItem): IBreezeModMediaItem;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_ModMediaItem): IBreezeModMediaItem {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeModMediaItem>entityManagerOrConfig.createEntity("ModMediaItem", config);
+        return <IBreezeModMediaItem>entityManagerOrConfig.createEntity("ModMediaItem", config);
       } else {
-				    return <IBreezeModMediaItem>defaultEntityManager.createEntity("ModMediaItem", entityManagerOrConfig);
+        return <IBreezeModMediaItem>defaultEntityManager.createEntity("ModMediaItem", entityManagerOrConfig);
       }
     }
 
@@ -1375,9 +1375,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_ModMediaItem): IBreezeModMediaItem;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_ModMediaItem): IBreezeModMediaItem {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeModMediaItem>entityManagerOrConfig.createEntity("ModMediaItem", config);
+        return <IBreezeModMediaItem>entityManagerOrConfig.createEntity("ModMediaItem", config);
       } else {
-				    return <IBreezeModMediaItem>defaultEntityManager.createEntity("ModMediaItem", entityManagerOrConfig);
+        return <IBreezeModMediaItem>defaultEntityManager.createEntity("ModMediaItem", entityManagerOrConfig);
       }
     }
   }
@@ -1398,9 +1398,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_ModStat): IBreezeModStat;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_ModStat): IBreezeModStat {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeModStat>entityManagerOrConfig.createEntity("ModStat", config);
+        return <IBreezeModStat>entityManagerOrConfig.createEntity("ModStat", config);
       } else {
-				    return <IBreezeModStat>defaultEntityManager.createEntity("ModStat", entityManagerOrConfig);
+        return <IBreezeModStat>defaultEntityManager.createEntity("ModStat", entityManagerOrConfig);
       }
     }
 
@@ -1408,9 +1408,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_ModStat): IBreezeModStat;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_ModStat): IBreezeModStat {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeModStat>entityManagerOrConfig.createEntity("ModStat", config);
+        return <IBreezeModStat>entityManagerOrConfig.createEntity("ModStat", config);
       } else {
-				    return <IBreezeModStat>defaultEntityManager.createEntity("ModStat", entityManagerOrConfig);
+        return <IBreezeModStat>defaultEntityManager.createEntity("ModStat", entityManagerOrConfig);
       }
     }
   }
@@ -1433,9 +1433,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_ModUpdate): IBreezeModUpdate;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_ModUpdate): IBreezeModUpdate {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeModUpdate>entityManagerOrConfig.createEntity("ModUpdate", config);
+        return <IBreezeModUpdate>entityManagerOrConfig.createEntity("ModUpdate", config);
       } else {
-				    return <IBreezeModUpdate>defaultEntityManager.createEntity("ModUpdate", entityManagerOrConfig);
+        return <IBreezeModUpdate>defaultEntityManager.createEntity("ModUpdate", entityManagerOrConfig);
       }
     }
 
@@ -1443,9 +1443,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_ModUpdate): IBreezeModUpdate;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_ModUpdate): IBreezeModUpdate {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeModUpdate>entityManagerOrConfig.createEntity("ModUpdate", config);
+        return <IBreezeModUpdate>entityManagerOrConfig.createEntity("ModUpdate", config);
       } else {
-				    return <IBreezeModUpdate>defaultEntityManager.createEntity("ModUpdate", entityManagerOrConfig);
+        return <IBreezeModUpdate>defaultEntityManager.createEntity("ModUpdate", entityManagerOrConfig);
       }
     }
   }
@@ -1468,9 +1468,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_ModUserGroup): IBreezeModUserGroup;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_ModUserGroup): IBreezeModUserGroup {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeModUserGroup>entityManagerOrConfig.createEntity("ModUserGroup", config);
+        return <IBreezeModUserGroup>entityManagerOrConfig.createEntity("ModUserGroup", config);
       } else {
-				    return <IBreezeModUserGroup>defaultEntityManager.createEntity("ModUserGroup", entityManagerOrConfig);
+        return <IBreezeModUserGroup>defaultEntityManager.createEntity("ModUserGroup", entityManagerOrConfig);
       }
     }
 
@@ -1478,9 +1478,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_ModUserGroup): IBreezeModUserGroup;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_ModUserGroup): IBreezeModUserGroup {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeModUserGroup>entityManagerOrConfig.createEntity("ModUserGroup", config);
+        return <IBreezeModUserGroup>entityManagerOrConfig.createEntity("ModUserGroup", config);
       } else {
-				    return <IBreezeModUserGroup>defaultEntityManager.createEntity("ModUserGroup", entityManagerOrConfig);
+        return <IBreezeModUserGroup>defaultEntityManager.createEntity("ModUserGroup", entityManagerOrConfig);
       }
     }
   }
@@ -1503,9 +1503,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_ModGroupUser): IBreezeModGroupUser;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_ModGroupUser): IBreezeModGroupUser {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeModGroupUser>entityManagerOrConfig.createEntity("ModGroupUser", config);
+        return <IBreezeModGroupUser>entityManagerOrConfig.createEntity("ModGroupUser", config);
       } else {
-				    return <IBreezeModGroupUser>defaultEntityManager.createEntity("ModGroupUser", entityManagerOrConfig);
+        return <IBreezeModGroupUser>defaultEntityManager.createEntity("ModGroupUser", entityManagerOrConfig);
       }
     }
 
@@ -1513,9 +1513,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_ModGroupUser): IBreezeModGroupUser;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_ModGroupUser): IBreezeModGroupUser {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeModGroupUser>entityManagerOrConfig.createEntity("ModGroupUser", config);
+        return <IBreezeModGroupUser>entityManagerOrConfig.createEntity("ModGroupUser", config);
       } else {
-				    return <IBreezeModGroupUser>defaultEntityManager.createEntity("ModGroupUser", entityManagerOrConfig);
+        return <IBreezeModGroupUser>defaultEntityManager.createEntity("ModGroupUser", entityManagerOrConfig);
       }
     }
   }
@@ -1536,9 +1536,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_CollectionVersionServer): IBreezeCollectionVersionServer;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_CollectionVersionServer): IBreezeCollectionVersionServer {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeCollectionVersionServer>entityManagerOrConfig.createEntity("CollectionVersionServer", config);
+        return <IBreezeCollectionVersionServer>entityManagerOrConfig.createEntity("CollectionVersionServer", config);
       } else {
-				    return <IBreezeCollectionVersionServer>defaultEntityManager.createEntity("CollectionVersionServer", entityManagerOrConfig);
+        return <IBreezeCollectionVersionServer>defaultEntityManager.createEntity("CollectionVersionServer", entityManagerOrConfig);
       }
     }
 
@@ -1546,9 +1546,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_CollectionVersionServer): IBreezeCollectionVersionServer;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_CollectionVersionServer): IBreezeCollectionVersionServer {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeCollectionVersionServer>entityManagerOrConfig.createEntity("CollectionVersionServer", config);
+        return <IBreezeCollectionVersionServer>entityManagerOrConfig.createEntity("CollectionVersionServer", config);
       } else {
-				    return <IBreezeCollectionVersionServer>defaultEntityManager.createEntity("CollectionVersionServer", entityManagerOrConfig);
+        return <IBreezeCollectionVersionServer>defaultEntityManager.createEntity("CollectionVersionServer", entityManagerOrConfig);
       }
     }
   }
@@ -1571,9 +1571,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_CollectionMediaItem): IBreezeCollectionMediaItem;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_CollectionMediaItem): IBreezeCollectionMediaItem {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeCollectionMediaItem>entityManagerOrConfig.createEntity("CollectionMediaItem", config);
+        return <IBreezeCollectionMediaItem>entityManagerOrConfig.createEntity("CollectionMediaItem", config);
       } else {
-				    return <IBreezeCollectionMediaItem>defaultEntityManager.createEntity("CollectionMediaItem", entityManagerOrConfig);
+        return <IBreezeCollectionMediaItem>defaultEntityManager.createEntity("CollectionMediaItem", entityManagerOrConfig);
       }
     }
 
@@ -1581,9 +1581,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_CollectionMediaItem): IBreezeCollectionMediaItem;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_CollectionMediaItem): IBreezeCollectionMediaItem {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeCollectionMediaItem>entityManagerOrConfig.createEntity("CollectionMediaItem", config);
+        return <IBreezeCollectionMediaItem>entityManagerOrConfig.createEntity("CollectionMediaItem", config);
       } else {
-				    return <IBreezeCollectionMediaItem>defaultEntityManager.createEntity("CollectionMediaItem", entityManagerOrConfig);
+        return <IBreezeCollectionMediaItem>defaultEntityManager.createEntity("CollectionMediaItem", entityManagerOrConfig);
       }
     }
   }
@@ -1604,9 +1604,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_CollectionStat): IBreezeCollectionStat;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_CollectionStat): IBreezeCollectionStat {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeCollectionStat>entityManagerOrConfig.createEntity("CollectionStat", config);
+        return <IBreezeCollectionStat>entityManagerOrConfig.createEntity("CollectionStat", config);
       } else {
-				    return <IBreezeCollectionStat>defaultEntityManager.createEntity("CollectionStat", entityManagerOrConfig);
+        return <IBreezeCollectionStat>defaultEntityManager.createEntity("CollectionStat", entityManagerOrConfig);
       }
     }
 
@@ -1614,9 +1614,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_CollectionStat): IBreezeCollectionStat;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_CollectionStat): IBreezeCollectionStat {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeCollectionStat>entityManagerOrConfig.createEntity("CollectionStat", config);
+        return <IBreezeCollectionStat>entityManagerOrConfig.createEntity("CollectionStat", config);
       } else {
-				    return <IBreezeCollectionStat>defaultEntityManager.createEntity("CollectionStat", entityManagerOrConfig);
+        return <IBreezeCollectionStat>defaultEntityManager.createEntity("CollectionStat", entityManagerOrConfig);
       }
     }
   }
@@ -1637,9 +1637,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_Game): IBreezeGame;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_Game): IBreezeGame {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeGame>entityManagerOrConfig.createEntity("Game", config);
+        return <IBreezeGame>entityManagerOrConfig.createEntity("Game", config);
       } else {
-				    return <IBreezeGame>defaultEntityManager.createEntity("Game", entityManagerOrConfig);
+        return <IBreezeGame>defaultEntityManager.createEntity("Game", entityManagerOrConfig);
       }
     }
 
@@ -1647,9 +1647,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_Game): IBreezeGame;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_Game): IBreezeGame {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeGame>entityManagerOrConfig.createEntity("Game", config);
+        return <IBreezeGame>entityManagerOrConfig.createEntity("Game", config);
       } else {
-				    return <IBreezeGame>defaultEntityManager.createEntity("Game", entityManagerOrConfig);
+        return <IBreezeGame>defaultEntityManager.createEntity("Game", entityManagerOrConfig);
       }
     }
   }
@@ -1670,9 +1670,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_GameStat): IBreezeGameStat;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_GameStat): IBreezeGameStat {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeGameStat>entityManagerOrConfig.createEntity("GameStat", config);
+        return <IBreezeGameStat>entityManagerOrConfig.createEntity("GameStat", config);
       } else {
-				    return <IBreezeGameStat>defaultEntityManager.createEntity("GameStat", entityManagerOrConfig);
+        return <IBreezeGameStat>defaultEntityManager.createEntity("GameStat", entityManagerOrConfig);
       }
     }
 
@@ -1680,9 +1680,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_GameStat): IBreezeGameStat;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_GameStat): IBreezeGameStat {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeGameStat>entityManagerOrConfig.createEntity("GameStat", config);
+        return <IBreezeGameStat>entityManagerOrConfig.createEntity("GameStat", config);
       } else {
-				    return <IBreezeGameStat>defaultEntityManager.createEntity("GameStat", entityManagerOrConfig);
+        return <IBreezeGameStat>defaultEntityManager.createEntity("GameStat", entityManagerOrConfig);
       }
     }
   }
@@ -1705,9 +1705,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_GroupMembership): IBreezeGroupMembership;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_GroupMembership): IBreezeGroupMembership {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeGroupMembership>entityManagerOrConfig.createEntity("GroupMembership", config);
+        return <IBreezeGroupMembership>entityManagerOrConfig.createEntity("GroupMembership", config);
       } else {
-				    return <IBreezeGroupMembership>defaultEntityManager.createEntity("GroupMembership", entityManagerOrConfig);
+        return <IBreezeGroupMembership>defaultEntityManager.createEntity("GroupMembership", entityManagerOrConfig);
       }
     }
 
@@ -1715,9 +1715,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_GroupMembership): IBreezeGroupMembership;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_GroupMembership): IBreezeGroupMembership {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeGroupMembership>entityManagerOrConfig.createEntity("GroupMembership", config);
+        return <IBreezeGroupMembership>entityManagerOrConfig.createEntity("GroupMembership", config);
       } else {
-				    return <IBreezeGroupMembership>defaultEntityManager.createEntity("GroupMembership", entityManagerOrConfig);
+        return <IBreezeGroupMembership>defaultEntityManager.createEntity("GroupMembership", entityManagerOrConfig);
       }
     }
   }
@@ -1746,9 +1746,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_Group): IBreezeGroup;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_Group): IBreezeGroup {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeGroup>entityManagerOrConfig.createEntity("Group", config);
+        return <IBreezeGroup>entityManagerOrConfig.createEntity("Group", config);
       } else {
-				    return <IBreezeGroup>defaultEntityManager.createEntity("Group", entityManagerOrConfig);
+        return <IBreezeGroup>defaultEntityManager.createEntity("Group", entityManagerOrConfig);
       }
     }
 
@@ -1756,9 +1756,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_Group): IBreezeGroup;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_Group): IBreezeGroup {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeGroup>entityManagerOrConfig.createEntity("Group", config);
+        return <IBreezeGroup>entityManagerOrConfig.createEntity("Group", config);
       } else {
-				    return <IBreezeGroup>defaultEntityManager.createEntity("Group", entityManagerOrConfig);
+        return <IBreezeGroup>defaultEntityManager.createEntity("Group", entityManagerOrConfig);
       }
     }
   }
@@ -1779,9 +1779,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_Comment): AbstractDefs.IBreezeComment;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_Comment): AbstractDefs.IBreezeComment {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <AbstractDefs.IBreezeComment>entityManagerOrConfig.createEntity("Comment", config);
+        return <AbstractDefs.IBreezeComment>entityManagerOrConfig.createEntity("Comment", config);
       } else {
-				    return <AbstractDefs.IBreezeComment>defaultEntityManager.createEntity("Comment", entityManagerOrConfig);
+        return <AbstractDefs.IBreezeComment>defaultEntityManager.createEntity("Comment", entityManagerOrConfig);
       }
     }
 
@@ -1789,9 +1789,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_Comment): AbstractDefs.IBreezeComment;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_Comment): AbstractDefs.IBreezeComment {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <AbstractDefs.IBreezeComment>entityManagerOrConfig.createEntity("Comment", config);
+        return <AbstractDefs.IBreezeComment>entityManagerOrConfig.createEntity("Comment", config);
       } else {
-				    return <AbstractDefs.IBreezeComment>defaultEntityManager.createEntity("Comment", entityManagerOrConfig);
+        return <AbstractDefs.IBreezeComment>defaultEntityManager.createEntity("Comment", entityManagerOrConfig);
       }
     }
   }
@@ -1816,9 +1816,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_Server): IBreezeServer;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_Server): IBreezeServer {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeServer>entityManagerOrConfig.createEntity("Server", config);
+        return <IBreezeServer>entityManagerOrConfig.createEntity("Server", config);
       } else {
-				    return <IBreezeServer>defaultEntityManager.createEntity("Server", entityManagerOrConfig);
+        return <IBreezeServer>defaultEntityManager.createEntity("Server", entityManagerOrConfig);
       }
     }
 
@@ -1826,9 +1826,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_Server): IBreezeServer;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_Server): IBreezeServer {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeServer>entityManagerOrConfig.createEntity("Server", config);
+        return <IBreezeServer>entityManagerOrConfig.createEntity("Server", config);
       } else {
-				    return <IBreezeServer>defaultEntityManager.createEntity("Server", entityManagerOrConfig);
+        return <IBreezeServer>defaultEntityManager.createEntity("Server", entityManagerOrConfig);
       }
     }
   }
@@ -1855,9 +1855,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_ServerComment): IBreezeServerComment;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_ServerComment): IBreezeServerComment {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeServerComment>entityManagerOrConfig.createEntity("ServerComment", config);
+        return <IBreezeServerComment>entityManagerOrConfig.createEntity("ServerComment", config);
       } else {
-				    return <IBreezeServerComment>defaultEntityManager.createEntity("ServerComment", entityManagerOrConfig);
+        return <IBreezeServerComment>defaultEntityManager.createEntity("ServerComment", entityManagerOrConfig);
       }
     }
 
@@ -1865,9 +1865,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_ServerComment): IBreezeServerComment;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_ServerComment): IBreezeServerComment {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeServerComment>entityManagerOrConfig.createEntity("ServerComment", config);
+        return <IBreezeServerComment>entityManagerOrConfig.createEntity("ServerComment", config);
       } else {
-				    return <IBreezeServerComment>defaultEntityManager.createEntity("ServerComment", entityManagerOrConfig);
+        return <IBreezeServerComment>defaultEntityManager.createEntity("ServerComment", entityManagerOrConfig);
       }
     }
   }
@@ -1884,9 +1884,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_Player): IBreezePlayer;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_Player): IBreezePlayer {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezePlayer>entityManagerOrConfig.createEntity("Player", config);
+        return <IBreezePlayer>entityManagerOrConfig.createEntity("Player", config);
       } else {
-				    return <IBreezePlayer>defaultEntityManager.createEntity("Player", entityManagerOrConfig);
+        return <IBreezePlayer>defaultEntityManager.createEntity("Player", entityManagerOrConfig);
       }
     }
 
@@ -1894,9 +1894,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_Player): IBreezePlayer;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_Player): IBreezePlayer {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezePlayer>entityManagerOrConfig.createEntity("Player", config);
+        return <IBreezePlayer>entityManagerOrConfig.createEntity("Player", config);
       } else {
-				    return <IBreezePlayer>defaultEntityManager.createEntity("Player", entityManagerOrConfig);
+        return <IBreezePlayer>defaultEntityManager.createEntity("Player", entityManagerOrConfig);
       }
     }
   }
@@ -1923,9 +1923,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_MissionComment): IBreezeMissionComment;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_MissionComment): IBreezeMissionComment {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeMissionComment>entityManagerOrConfig.createEntity("MissionComment", config);
+        return <IBreezeMissionComment>entityManagerOrConfig.createEntity("MissionComment", config);
       } else {
-				    return <IBreezeMissionComment>defaultEntityManager.createEntity("MissionComment", entityManagerOrConfig);
+        return <IBreezeMissionComment>defaultEntityManager.createEntity("MissionComment", entityManagerOrConfig);
       }
     }
 
@@ -1933,9 +1933,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_MissionComment): IBreezeMissionComment;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_MissionComment): IBreezeMissionComment {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeMissionComment>entityManagerOrConfig.createEntity("MissionComment", config);
+        return <IBreezeMissionComment>entityManagerOrConfig.createEntity("MissionComment", config);
       } else {
-				    return <IBreezeMissionComment>defaultEntityManager.createEntity("MissionComment", entityManagerOrConfig);
+        return <IBreezeMissionComment>defaultEntityManager.createEntity("MissionComment", entityManagerOrConfig);
       }
     }
   }
@@ -1972,9 +1972,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_Mission): IBreezeMission;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_Mission): IBreezeMission {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeMission>entityManagerOrConfig.createEntity("Mission", config);
+        return <IBreezeMission>entityManagerOrConfig.createEntity("Mission", config);
       } else {
-				    return <IBreezeMission>defaultEntityManager.createEntity("Mission", entityManagerOrConfig);
+        return <IBreezeMission>defaultEntityManager.createEntity("Mission", entityManagerOrConfig);
       }
     }
 
@@ -1982,9 +1982,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_Mission): IBreezeMission;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_Mission): IBreezeMission {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeMission>entityManagerOrConfig.createEntity("Mission", config);
+        return <IBreezeMission>entityManagerOrConfig.createEntity("Mission", config);
       } else {
-				    return <IBreezeMission>defaultEntityManager.createEntity("Mission", entityManagerOrConfig);
+        return <IBreezeMission>defaultEntityManager.createEntity("Mission", entityManagerOrConfig);
       }
     }
   }
@@ -2005,9 +2005,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_MissionFeature): IBreezeMissionFeature;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_MissionFeature): IBreezeMissionFeature {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeMissionFeature>entityManagerOrConfig.createEntity("MissionFeature", config);
+        return <IBreezeMissionFeature>entityManagerOrConfig.createEntity("MissionFeature", config);
       } else {
-				    return <IBreezeMissionFeature>defaultEntityManager.createEntity("MissionFeature", entityManagerOrConfig);
+        return <IBreezeMissionFeature>defaultEntityManager.createEntity("MissionFeature", entityManagerOrConfig);
       }
     }
 
@@ -2015,9 +2015,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_MissionFeature): IBreezeMissionFeature;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_MissionFeature): IBreezeMissionFeature {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeMissionFeature>entityManagerOrConfig.createEntity("MissionFeature", config);
+        return <IBreezeMissionFeature>entityManagerOrConfig.createEntity("MissionFeature", config);
       } else {
-				    return <IBreezeMissionFeature>defaultEntityManager.createEntity("MissionFeature", entityManagerOrConfig);
+        return <IBreezeMissionFeature>defaultEntityManager.createEntity("MissionFeature", entityManagerOrConfig);
       }
     }
   }
@@ -2042,9 +2042,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_MissionVersion): IBreezeMissionVersion;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_MissionVersion): IBreezeMissionVersion {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeMissionVersion>entityManagerOrConfig.createEntity("MissionVersion", config);
+        return <IBreezeMissionVersion>entityManagerOrConfig.createEntity("MissionVersion", config);
       } else {
-				    return <IBreezeMissionVersion>defaultEntityManager.createEntity("MissionVersion", entityManagerOrConfig);
+        return <IBreezeMissionVersion>defaultEntityManager.createEntity("MissionVersion", entityManagerOrConfig);
       }
     }
 
@@ -2052,9 +2052,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_MissionVersion): IBreezeMissionVersion;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_MissionVersion): IBreezeMissionVersion {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeMissionVersion>entityManagerOrConfig.createEntity("MissionVersion", config);
+        return <IBreezeMissionVersion>entityManagerOrConfig.createEntity("MissionVersion", config);
       } else {
-				    return <IBreezeMissionVersion>defaultEntityManager.createEntity("MissionVersion", entityManagerOrConfig);
+        return <IBreezeMissionVersion>defaultEntityManager.createEntity("MissionVersion", entityManagerOrConfig);
       }
     }
   }
@@ -2077,9 +2077,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_MissionVersionDependency): IBreezeMissionVersionDependency;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_MissionVersionDependency): IBreezeMissionVersionDependency {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeMissionVersionDependency>entityManagerOrConfig.createEntity("MissionVersionDependency", config);
+        return <IBreezeMissionVersionDependency>entityManagerOrConfig.createEntity("MissionVersionDependency", config);
       } else {
-				    return <IBreezeMissionVersionDependency>defaultEntityManager.createEntity("MissionVersionDependency", entityManagerOrConfig);
+        return <IBreezeMissionVersionDependency>defaultEntityManager.createEntity("MissionVersionDependency", entityManagerOrConfig);
       }
     }
 
@@ -2087,9 +2087,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_MissionVersionDependency): IBreezeMissionVersionDependency;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_MissionVersionDependency): IBreezeMissionVersionDependency {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeMissionVersionDependency>entityManagerOrConfig.createEntity("MissionVersionDependency", config);
+        return <IBreezeMissionVersionDependency>entityManagerOrConfig.createEntity("MissionVersionDependency", config);
       } else {
-				    return <IBreezeMissionVersionDependency>defaultEntityManager.createEntity("MissionVersionDependency", entityManagerOrConfig);
+        return <IBreezeMissionVersionDependency>defaultEntityManager.createEntity("MissionVersionDependency", entityManagerOrConfig);
       }
     }
   }
@@ -2110,9 +2110,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_MissionVersionSide): IBreezeMissionVersionSide;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_MissionVersionSide): IBreezeMissionVersionSide {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeMissionVersionSide>entityManagerOrConfig.createEntity("MissionVersionSide", config);
+        return <IBreezeMissionVersionSide>entityManagerOrConfig.createEntity("MissionVersionSide", config);
       } else {
-				    return <IBreezeMissionVersionSide>defaultEntityManager.createEntity("MissionVersionSide", entityManagerOrConfig);
+        return <IBreezeMissionVersionSide>defaultEntityManager.createEntity("MissionVersionSide", entityManagerOrConfig);
       }
     }
 
@@ -2120,9 +2120,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_MissionVersionSide): IBreezeMissionVersionSide;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_MissionVersionSide): IBreezeMissionVersionSide {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeMissionVersionSide>entityManagerOrConfig.createEntity("MissionVersionSide", config);
+        return <IBreezeMissionVersionSide>entityManagerOrConfig.createEntity("MissionVersionSide", config);
       } else {
-				    return <IBreezeMissionVersionSide>defaultEntityManager.createEntity("MissionVersionSide", entityManagerOrConfig);
+        return <IBreezeMissionVersionSide>defaultEntityManager.createEntity("MissionVersionSide", entityManagerOrConfig);
       }
     }
   }
@@ -2145,9 +2145,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_MissionMediaItem): IBreezeMissionMediaItem;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_MissionMediaItem): IBreezeMissionMediaItem {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeMissionMediaItem>entityManagerOrConfig.createEntity("MissionMediaItem", config);
+        return <IBreezeMissionMediaItem>entityManagerOrConfig.createEntity("MissionMediaItem", config);
       } else {
-				    return <IBreezeMissionMediaItem>defaultEntityManager.createEntity("MissionMediaItem", entityManagerOrConfig);
+        return <IBreezeMissionMediaItem>defaultEntityManager.createEntity("MissionMediaItem", entityManagerOrConfig);
       }
     }
 
@@ -2155,9 +2155,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_MissionMediaItem): IBreezeMissionMediaItem;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_MissionMediaItem): IBreezeMissionMediaItem {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeMissionMediaItem>entityManagerOrConfig.createEntity("MissionMediaItem", config);
+        return <IBreezeMissionMediaItem>entityManagerOrConfig.createEntity("MissionMediaItem", config);
       } else {
-				    return <IBreezeMissionMediaItem>defaultEntityManager.createEntity("MissionMediaItem", entityManagerOrConfig);
+        return <IBreezeMissionMediaItem>defaultEntityManager.createEntity("MissionMediaItem", entityManagerOrConfig);
       }
     }
   }
@@ -2180,9 +2180,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_MissionImage): IBreezeMissionImage;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_MissionImage): IBreezeMissionImage {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeMissionImage>entityManagerOrConfig.createEntity("MissionImage", config);
+        return <IBreezeMissionImage>entityManagerOrConfig.createEntity("MissionImage", config);
       } else {
-				    return <IBreezeMissionImage>defaultEntityManager.createEntity("MissionImage", entityManagerOrConfig);
+        return <IBreezeMissionImage>defaultEntityManager.createEntity("MissionImage", entityManagerOrConfig);
       }
     }
 
@@ -2190,9 +2190,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_MissionImage): IBreezeMissionImage;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_MissionImage): IBreezeMissionImage {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeMissionImage>entityManagerOrConfig.createEntity("MissionImage", config);
+        return <IBreezeMissionImage>entityManagerOrConfig.createEntity("MissionImage", config);
       } else {
-				    return <IBreezeMissionImage>defaultEntityManager.createEntity("MissionImage", entityManagerOrConfig);
+        return <IBreezeMissionImage>defaultEntityManager.createEntity("MissionImage", entityManagerOrConfig);
       }
     }
   }
@@ -2215,9 +2215,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_MissionVideo): IBreezeMissionVideo;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_MissionVideo): IBreezeMissionVideo {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeMissionVideo>entityManagerOrConfig.createEntity("MissionVideo", config);
+        return <IBreezeMissionVideo>entityManagerOrConfig.createEntity("MissionVideo", config);
       } else {
-				    return <IBreezeMissionVideo>defaultEntityManager.createEntity("MissionVideo", entityManagerOrConfig);
+        return <IBreezeMissionVideo>defaultEntityManager.createEntity("MissionVideo", entityManagerOrConfig);
       }
     }
 
@@ -2225,9 +2225,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_MissionVideo): IBreezeMissionVideo;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_MissionVideo): IBreezeMissionVideo {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeMissionVideo>entityManagerOrConfig.createEntity("MissionVideo", config);
+        return <IBreezeMissionVideo>entityManagerOrConfig.createEntity("MissionVideo", config);
       } else {
-				    return <IBreezeMissionVideo>defaultEntityManager.createEntity("MissionVideo", entityManagerOrConfig);
+        return <IBreezeMissionVideo>defaultEntityManager.createEntity("MissionVideo", entityManagerOrConfig);
       }
     }
   }
@@ -2248,9 +2248,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_MissionStat): IBreezeMissionStat;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_MissionStat): IBreezeMissionStat {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeMissionStat>entityManagerOrConfig.createEntity("MissionStat", config);
+        return <IBreezeMissionStat>entityManagerOrConfig.createEntity("MissionStat", config);
       } else {
-				    return <IBreezeMissionStat>defaultEntityManager.createEntity("MissionStat", entityManagerOrConfig);
+        return <IBreezeMissionStat>defaultEntityManager.createEntity("MissionStat", entityManagerOrConfig);
       }
     }
 
@@ -2258,9 +2258,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_MissionStat): IBreezeMissionStat;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_MissionStat): IBreezeMissionStat {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeMissionStat>entityManagerOrConfig.createEntity("MissionStat", config);
+        return <IBreezeMissionStat>entityManagerOrConfig.createEntity("MissionStat", config);
       } else {
-				    return <IBreezeMissionStat>defaultEntityManager.createEntity("MissionStat", entityManagerOrConfig);
+        return <IBreezeMissionStat>defaultEntityManager.createEntity("MissionStat", entityManagerOrConfig);
       }
     }
   }
@@ -2281,9 +2281,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_ModCategory): IBreezeModCategory;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_ModCategory): IBreezeModCategory {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeModCategory>entityManagerOrConfig.createEntity("ModCategory", config);
+        return <IBreezeModCategory>entityManagerOrConfig.createEntity("ModCategory", config);
       } else {
-				    return <IBreezeModCategory>defaultEntityManager.createEntity("ModCategory", entityManagerOrConfig);
+        return <IBreezeModCategory>defaultEntityManager.createEntity("ModCategory", entityManagerOrConfig);
       }
     }
 
@@ -2291,9 +2291,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_ModCategory): IBreezeModCategory;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_ModCategory): IBreezeModCategory {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeModCategory>entityManagerOrConfig.createEntity("ModCategory", config);
+        return <IBreezeModCategory>entityManagerOrConfig.createEntity("ModCategory", config);
       } else {
-				    return <IBreezeModCategory>defaultEntityManager.createEntity("ModCategory", entityManagerOrConfig);
+        return <IBreezeModCategory>defaultEntityManager.createEntity("ModCategory", entityManagerOrConfig);
       }
     }
   }
@@ -2314,9 +2314,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_ModInCategory): IBreezeModInCategory;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_ModInCategory): IBreezeModInCategory {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeModInCategory>entityManagerOrConfig.createEntity("ModInCategory", config);
+        return <IBreezeModInCategory>entityManagerOrConfig.createEntity("ModInCategory", config);
       } else {
-				    return <IBreezeModInCategory>defaultEntityManager.createEntity("ModInCategory", entityManagerOrConfig);
+        return <IBreezeModInCategory>defaultEntityManager.createEntity("ModInCategory", entityManagerOrConfig);
       }
     }
 
@@ -2324,9 +2324,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_ModInCategory): IBreezeModInCategory;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_ModInCategory): IBreezeModInCategory {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeModInCategory>entityManagerOrConfig.createEntity("ModInCategory", config);
+        return <IBreezeModInCategory>entityManagerOrConfig.createEntity("ModInCategory", config);
       } else {
-				    return <IBreezeModInCategory>defaultEntityManager.createEntity("ModInCategory", entityManagerOrConfig);
+        return <IBreezeModInCategory>defaultEntityManager.createEntity("ModInCategory", entityManagerOrConfig);
       }
     }
   }
@@ -2353,9 +2353,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_PostComment): IBreezePostComment;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_PostComment): IBreezePostComment {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezePostComment>entityManagerOrConfig.createEntity("PostComment", config);
+        return <IBreezePostComment>entityManagerOrConfig.createEntity("PostComment", config);
       } else {
-				    return <IBreezePostComment>defaultEntityManager.createEntity("PostComment", entityManagerOrConfig);
+        return <IBreezePostComment>defaultEntityManager.createEntity("PostComment", entityManagerOrConfig);
       }
     }
 
@@ -2363,9 +2363,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_PostComment): IBreezePostComment;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_PostComment): IBreezePostComment {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezePostComment>entityManagerOrConfig.createEntity("PostComment", config);
+        return <IBreezePostComment>entityManagerOrConfig.createEntity("PostComment", config);
       } else {
-				    return <IBreezePostComment>defaultEntityManager.createEntity("PostComment", entityManagerOrConfig);
+        return <IBreezePostComment>defaultEntityManager.createEntity("PostComment", entityManagerOrConfig);
       }
     }
   }
@@ -2388,9 +2388,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_Post): IBreezePost;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_Post): IBreezePost {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezePost>entityManagerOrConfig.createEntity("Post", config);
+        return <IBreezePost>entityManagerOrConfig.createEntity("Post", config);
       } else {
-				    return <IBreezePost>defaultEntityManager.createEntity("Post", entityManagerOrConfig);
+        return <IBreezePost>defaultEntityManager.createEntity("Post", entityManagerOrConfig);
       }
     }
 
@@ -2398,9 +2398,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_Post): IBreezePost;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_Post): IBreezePost {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezePost>entityManagerOrConfig.createEntity("Post", config);
+        return <IBreezePost>entityManagerOrConfig.createEntity("Post", config);
       } else {
-				    return <IBreezePost>defaultEntityManager.createEntity("Post", entityManagerOrConfig);
+        return <IBreezePost>defaultEntityManager.createEntity("Post", entityManagerOrConfig);
       }
     }
   }
@@ -2423,9 +2423,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_CreateBlog): IBreezeCreateBlog;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_CreateBlog): IBreezeCreateBlog {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeCreateBlog>entityManagerOrConfig.createEntity("CreateBlog", config);
+        return <IBreezeCreateBlog>entityManagerOrConfig.createEntity("CreateBlog", config);
       } else {
-				    return <IBreezeCreateBlog>defaultEntityManager.createEntity("CreateBlog", entityManagerOrConfig);
+        return <IBreezeCreateBlog>defaultEntityManager.createEntity("CreateBlog", entityManagerOrConfig);
       }
     }
 
@@ -2433,9 +2433,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_CreateBlog): IBreezeCreateBlog;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_CreateBlog): IBreezeCreateBlog {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeCreateBlog>entityManagerOrConfig.createEntity("CreateBlog", config);
+        return <IBreezeCreateBlog>entityManagerOrConfig.createEntity("CreateBlog", config);
       } else {
-				    return <IBreezeCreateBlog>defaultEntityManager.createEntity("CreateBlog", entityManagerOrConfig);
+        return <IBreezeCreateBlog>defaultEntityManager.createEntity("CreateBlog", entityManagerOrConfig);
       }
     }
   }
@@ -2458,9 +2458,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_CreateBlogCommand): IBreezeCreateBlogCommand;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_CreateBlogCommand): IBreezeCreateBlogCommand {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeCreateBlogCommand>entityManagerOrConfig.createEntity("CreateBlogCommand", config);
+        return <IBreezeCreateBlogCommand>entityManagerOrConfig.createEntity("CreateBlogCommand", config);
       } else {
-				    return <IBreezeCreateBlogCommand>defaultEntityManager.createEntity("CreateBlogCommand", entityManagerOrConfig);
+        return <IBreezeCreateBlogCommand>defaultEntityManager.createEntity("CreateBlogCommand", entityManagerOrConfig);
       }
     }
 
@@ -2468,9 +2468,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_CreateBlogCommand): IBreezeCreateBlogCommand;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_CreateBlogCommand): IBreezeCreateBlogCommand {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeCreateBlogCommand>entityManagerOrConfig.createEntity("CreateBlogCommand", config);
+        return <IBreezeCreateBlogCommand>entityManagerOrConfig.createEntity("CreateBlogCommand", config);
       } else {
-				    return <IBreezeCreateBlogCommand>defaultEntityManager.createEntity("CreateBlogCommand", entityManagerOrConfig);
+        return <IBreezeCreateBlogCommand>defaultEntityManager.createEntity("CreateBlogCommand", entityManagerOrConfig);
       }
     }
   }
@@ -2493,9 +2493,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_EditBlogCommand): AbstractDefs.IBreezeEditBlogCommand;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_EditBlogCommand): AbstractDefs.IBreezeEditBlogCommand {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <AbstractDefs.IBreezeEditBlogCommand>entityManagerOrConfig.createEntity("EditBlogCommand", config);
+        return <AbstractDefs.IBreezeEditBlogCommand>entityManagerOrConfig.createEntity("EditBlogCommand", config);
       } else {
-				    return <AbstractDefs.IBreezeEditBlogCommand>defaultEntityManager.createEntity("EditBlogCommand", entityManagerOrConfig);
+        return <AbstractDefs.IBreezeEditBlogCommand>defaultEntityManager.createEntity("EditBlogCommand", entityManagerOrConfig);
       }
     }
 
@@ -2503,9 +2503,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_EditBlogCommand): AbstractDefs.IBreezeEditBlogCommand;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_EditBlogCommand): AbstractDefs.IBreezeEditBlogCommand {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <AbstractDefs.IBreezeEditBlogCommand>entityManagerOrConfig.createEntity("EditBlogCommand", config);
+        return <AbstractDefs.IBreezeEditBlogCommand>entityManagerOrConfig.createEntity("EditBlogCommand", config);
       } else {
-				    return <AbstractDefs.IBreezeEditBlogCommand>defaultEntityManager.createEntity("EditBlogCommand", entityManagerOrConfig);
+        return <AbstractDefs.IBreezeEditBlogCommand>defaultEntityManager.createEntity("EditBlogCommand", entityManagerOrConfig);
       }
     }
   }
@@ -2528,9 +2528,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_DeleteBlogCommand): IBreezeDeleteBlogCommand;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_DeleteBlogCommand): IBreezeDeleteBlogCommand {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeDeleteBlogCommand>entityManagerOrConfig.createEntity("DeleteBlogCommand", config);
+        return <IBreezeDeleteBlogCommand>entityManagerOrConfig.createEntity("DeleteBlogCommand", config);
       } else {
-				    return <IBreezeDeleteBlogCommand>defaultEntityManager.createEntity("DeleteBlogCommand", entityManagerOrConfig);
+        return <IBreezeDeleteBlogCommand>defaultEntityManager.createEntity("DeleteBlogCommand", entityManagerOrConfig);
       }
     }
 
@@ -2538,9 +2538,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_DeleteBlogCommand): IBreezeDeleteBlogCommand;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_DeleteBlogCommand): IBreezeDeleteBlogCommand {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeDeleteBlogCommand>entityManagerOrConfig.createEntity("DeleteBlogCommand", config);
+        return <IBreezeDeleteBlogCommand>entityManagerOrConfig.createEntity("DeleteBlogCommand", config);
       } else {
-				    return <IBreezeDeleteBlogCommand>defaultEntityManager.createEntity("DeleteBlogCommand", entityManagerOrConfig);
+        return <IBreezeDeleteBlogCommand>defaultEntityManager.createEntity("DeleteBlogCommand", entityManagerOrConfig);
       }
     }
   }
@@ -2563,9 +2563,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_UpdateBlogCommand): IBreezeUpdateBlogCommand;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_UpdateBlogCommand): IBreezeUpdateBlogCommand {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeUpdateBlogCommand>entityManagerOrConfig.createEntity("UpdateBlogCommand", config);
+        return <IBreezeUpdateBlogCommand>entityManagerOrConfig.createEntity("UpdateBlogCommand", config);
       } else {
-				    return <IBreezeUpdateBlogCommand>defaultEntityManager.createEntity("UpdateBlogCommand", entityManagerOrConfig);
+        return <IBreezeUpdateBlogCommand>defaultEntityManager.createEntity("UpdateBlogCommand", entityManagerOrConfig);
       }
     }
 
@@ -2573,9 +2573,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_UpdateBlogCommand): IBreezeUpdateBlogCommand;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_UpdateBlogCommand): IBreezeUpdateBlogCommand {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeUpdateBlogCommand>entityManagerOrConfig.createEntity("UpdateBlogCommand", config);
+        return <IBreezeUpdateBlogCommand>entityManagerOrConfig.createEntity("UpdateBlogCommand", config);
       } else {
-				    return <IBreezeUpdateBlogCommand>defaultEntityManager.createEntity("UpdateBlogCommand", entityManagerOrConfig);
+        return <IBreezeUpdateBlogCommand>defaultEntityManager.createEntity("UpdateBlogCommand", entityManagerOrConfig);
       }
     }
   }
@@ -2592,9 +2592,9 @@ export module BreezeEntityGraph {
     static createEntity(config?: _IntDefs.__opt_Product): IBreezeProduct;
     static createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_Product): IBreezeProduct {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeProduct>entityManagerOrConfig.createEntity("Product", config);
+        return <IBreezeProduct>entityManagerOrConfig.createEntity("Product", config);
       } else {
-				    return <IBreezeProduct>defaultEntityManager.createEntity("Product", entityManagerOrConfig);
+        return <IBreezeProduct>defaultEntityManager.createEntity("Product", entityManagerOrConfig);
       }
     }
 
@@ -2602,9 +2602,9 @@ export module BreezeEntityGraph {
     public createEntity(config?: _IntDefs.__opt_Product): IBreezeProduct;
     public createEntity(entityManagerOrConfig: any, config?: _IntDefs.__opt_Product): IBreezeProduct {
       if (typeof entityManagerOrConfig == typeof breeze.EntityManager || config != null) {
-				    return <IBreezeProduct>entityManagerOrConfig.createEntity("Product", config);
+        return <IBreezeProduct>entityManagerOrConfig.createEntity("Product", config);
       } else {
-				    return <IBreezeProduct>defaultEntityManager.createEntity("Product", entityManagerOrConfig);
+        return <IBreezeProduct>defaultEntityManager.createEntity("Product", entityManagerOrConfig);
       }
     }
   }
@@ -5473,6 +5473,13 @@ export module _IntDefs {
      - date: "'Value' must be a date"
     */
     archivedAt?: Date; //DateTime
+    /**(String)
+
+    Validation:
+     - required: "'Value' is required"
+     - string: "'Value' must be a string"
+    */
+    scope: string; //String
     /**(String)
 
     Validation:

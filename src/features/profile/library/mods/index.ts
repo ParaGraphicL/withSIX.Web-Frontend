@@ -53,7 +53,7 @@ class GetModsHandler extends DbClientQuery<GetMods, IModsData> {
     // we also need to refresh then when the client is connected later?
     const r = await this.getAllClientMods(request.id);
     r.items = r.items.concat(await authorMods);
-    return r;
+    return <any>r;
   }
 
   async getAuthoredMods(request: GetMods) {
@@ -64,11 +64,13 @@ class GetModsHandler extends DbClientQuery<GetMods, IModsData> {
 
   async getAllClientMods(id: string) {
     const request = { id, page: 0 };
-    let pageInfo = { items: [], pageNumber: 0, pageSize: 24, totalPages: 1 };
+    let pageInfo = { items: [], pageNumber: 0, pageSize: 24, total: 0 };
+    let totalPages = 1;
     let items = [];
-    while (pageInfo.pageNumber < pageInfo.totalPages) {
+    while (pageInfo.pageNumber < totalPages) {
       request.page++;
       pageInfo = await this.getClientMods(request);
+      totalPages = pageInfo.total / pageInfo.pageSize;
       items = items.concat(pageInfo.items);
     }
 
@@ -79,10 +81,10 @@ class GetModsHandler extends DbClientQuery<GetMods, IModsData> {
     try {
       let x = await this.client.getGameMods(request);
       await this.handleModAugments(x.items);
-      return x;
+      return <any>x;
     } catch (err) {
       this.tools.Debug.warn("Error while trying to get mods from client", err);
-      return { items: [], pageNumber: 1, pageSize: 24, totalPages: 1 };
+      return { items: [], pageNumber: 1, pageSize: 24, total: 0 };
     }
   }
 

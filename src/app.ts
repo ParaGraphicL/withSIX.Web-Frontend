@@ -34,7 +34,7 @@ import { BindingSignaler } from "aurelia-templating-resources";
 
 @inject(UiContext, HttpClient, Login, RouteHandler, TaskQueue, Client, BasketService, LS, ClientMissingHandler, BindingSignaler)
 export class App extends ViewModel {
-  newVersionInterval: number;
+  newVersionInterval;
   modules: any[];
   router: Router;
   original: boolean;
@@ -42,7 +42,7 @@ export class App extends ViewModel {
   firefoxTimeoutPassed = false;
   breadcrumbs: { title: string, path: string }[];
   gameInfo: GameClientInfo = new GameClientInfo(undefined, undefined, undefined);
-  game: { id: string; slug: string } | { id: null; slug: null} = { id: null, slug: null };
+  game: { id: string; slug: string } | { id: null; slug: null } = { id: null, slug: null };
   template = "v2";
   userMenuItems = [];
   dialogMap = [];
@@ -95,8 +95,8 @@ export class App extends ViewModel {
   get showSlogan() { return this.w6.url.site === "main" && this.w6.url.isRoot; }
 
   constructor(ui: UiContext, public http: HttpClient, private login: Login, private routeHandler: RouteHandler,
-              private taskQueue: TaskQueue, private client: Client, private basketService: BasketService, private ls: LS,
-              private clientMissingHandler: ClientMissingHandler, private signaler: BindingSignaler) {
+    private taskQueue: TaskQueue, private client: Client, private basketService: BasketService, private ls: LS,
+    private clientMissingHandler: ClientMissingHandler, private signaler: BindingSignaler) {
     super(ui);
     this.modules = [new FeaturesModule()];
     this.original = this.w6.enableBasket;
@@ -122,7 +122,7 @@ export class App extends ViewModel {
   }
 
   activate() {
-    if (this.hasApi) { 
+    if (this.hasApi) {
       window.onbeforeunload = () => {
         this.tools.Debug.warn("Tried to unload, prevented", window.location.href);
         return false;
@@ -131,7 +131,7 @@ export class App extends ViewModel {
 
     this.activateNg();
 
-    let w = <any> window;
+    let w = <any>window;
     if (Tools.env >= Tools.Environment.Staging && w.api) {
       let test = Container.instance.get(Test);
       w.test = test;
@@ -150,7 +150,7 @@ export class App extends ViewModel {
     Origin.set(MessageDialog, { moduleId: "features/message-dialog", moduleMember: "MessageDialog" });
     Origin.set(Finalize, { moduleId: "features/login/finalize", moduleMember: "Finalize" });
     Origin.set(HostServer, { moduleId: "features/games/servers/host-server", moduleMember: "HostServer" });
-    Origin.set(ServerRender, { moduleId: "features/games/servers/server-render", moduleMember: "ServerRender"});
+    Origin.set(ServerRender, { moduleId: "features/games/servers/server-render", moduleMember: "ServerRender" });
 
     let isSync = window.location.search.includes("sync=1") ? true : false;
     if (isSync) { this.w6.updateSettings(x => x.hasSync = true); }
@@ -217,7 +217,7 @@ export class App extends ViewModel {
       d(changed.startWith(this.w6.activeGame)
         .subscribe(this.gameChanged));
       d(this.clientWrapper.stateChanged
-        .startWith(<StateChanged> { newState: this.client.isConnected ? ConnectionState.connected : null })
+        .startWith(<StateChanged>{ newState: this.client.isConnected ? ConnectionState.connected : null })
         .subscribe(state => {
           if (state.newState === ConnectionState.connected) { this.infoReceived(this.client.clientInfo); }
         }));
@@ -341,7 +341,7 @@ export class App extends ViewModel {
       case "login": { if (!this.w6.userInfo) { this.login.handleUserUpgrade(); break; } }
       case "logout": { if (this.w6.userInfo) { this.w6.reload(); break; } }
       case "refresh-playlist": { this.basketService.refresh(); this.sideBar.refreshPlaylist(); }
-      default: {}
+      default: { }
     }
   }
 

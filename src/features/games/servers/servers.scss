@@ -82,6 +82,13 @@ $padding: 16px;
     background-color: $colorSixLightGray;
     min-height: 600px;
     //border: 1px solid $colorSixGray;
+    select {
+      width: 100px;
+    }
+    .toggle-group {
+      color: inherit;
+      text-decoration: none;
+    }
     .show-more {
       color: $colorSixBlue;
       text-decoration: none;
@@ -117,8 +124,19 @@ $padding: 16px;
     color: $colorSixGray;
     .server-list-info {
       height: 40px;
+      button {
+        display: inline-block;
+      }
     }
     .server-list-content {
+      .favorite-button {
+        .naked-button {
+          background-color: transparent;
+        }
+      }
+      button {
+        height: 48px;
+      }
       background-color: white;
       a {
         color: inherit;
@@ -150,6 +168,7 @@ $padding: 16px;
         .tr {
           //border: 1px solid $colorSixBlue;
           order {
+            cursor: pointer;
             .icon.direction {
               color: $colorSixLightGray;
               &.active {
@@ -166,11 +185,11 @@ $padding: 16px;
       @function bla($w) {
         @return $padding+$padding+$w;
       }
-      button {
-        width: 64px;
-        height: 48px;
-      }
       .join-button {
+        // button {
+        //   width: 64px;
+        //   height: 48px;
+        // }
         position: absolute;
         left: - bla(16px);
         top: $padding;
