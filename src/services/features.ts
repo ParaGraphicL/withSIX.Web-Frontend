@@ -33,6 +33,6 @@ export class FeatureToggles {
   get isClientConnected() { return this.w6.miniClient.isConnected }
   get serverFeatures() {
     return !this.isClientConnected ||
-      (this.clientInfo.version && (Tools.versionCompare(this.clientInfo.version, "1.7.0") <= 0));
+      (this.clientInfo.version && (Tools.versionCompare(this.clientInfo.version, "1.7.0") >= 0));
   }
 }
