@@ -462,6 +462,7 @@ export class Index extends ViewModel {
     if (!this.w6.userInfo.id) { this.filterTest[5].items.removeEl(this.filterTest[5].items[2]); this.filterTest[5].items.removeEl(this.filterTest[5].items[1]) }
     if (this.w6.activeGame.id !== GameHelper.gameIds.Arma3.toLowerCase()) {
       this.filterTest[1].items.removeEl(this.filterTest[1].items[3]);
+      this.filterTest[6].items.removeEl(this.filterTest[6].items[3]);
     }
 
     this.baskets = this.basketService.getGameBaskets(this.w6.activeGame.id);

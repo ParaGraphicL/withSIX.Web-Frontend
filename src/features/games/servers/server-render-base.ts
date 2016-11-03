@@ -15,6 +15,14 @@ enum Dlcs {
   Zeus = 1
 }
 
+enum Arma2Dlcs {
+  None = 0,
+  BAF = 1,
+  PMC = 2,
+  ACR = 4,
+  Arrowhead = 8
+}
+
 export interface ExtendedServerInfo extends IServerInfo {
   modList: any[];
   game: string;
@@ -143,7 +151,7 @@ export class ServerRenderBase extends ViewModel {
   }
 
   isDlcInstalled(dlc: string) { return this.gameInfo.isDlcInstalled(dlc); }
-  addDlc(dlc: Dlcs) { this.dlcs.push({ isInstalled: this.isDlcInstalled(Dlcs[dlc]), name: Dlcs[dlc] }); }
+  addDlc(dlc: number, t) { this.dlcs.push({ isInstalled: this.isDlcInstalled(t[dlc]), name: t[dlc] }); }
 
   async activateInternal(model) {
     this.model = model;
@@ -153,17 +161,29 @@ export class ServerRenderBase extends ViewModel {
     // const details = (<any> this.model).details;
     // if (details && details.modList) { this.handleMods(details); }
 
+    const lc = this.gameId.toLowerCase();
+    if (lc === GameHelper.gameIds.Arma3.toLowerCase()) {
+      let e = this.model.downloadableContent;
+      if (e === Dlcs.None) {
 
-    var e = this.model.downloadableContent;
-    if (e === Dlcs.None) {
+      } else {
+        if (e & Dlcs.Apex) { this.addDlc(Dlcs.Apex, Dlcs); }
+        if (e & Dlcs.Helicopters) { this.addDlc(Dlcs.Helicopters, Dlcs); }
+        if (e & Dlcs.Karts) { this.addDlc(Dlcs.Karts, Dlcs); }
+        if (e & Dlcs.Marksmen) { this.addDlc(Dlcs.Marksmen, Dlcs); }
+        if (e & Dlcs.Tanoa) { this.addDlc(Dlcs.Tanoa, Dlcs); }
+        if (e & Dlcs.Zeus) { this.addDlc(Dlcs.Zeus, Dlcs); }
+      }
+    } else if (lc === GameHelper.gameIds.Arma2Co.toLowerCase()) {
+      let e = <Arma2Dlcs><any>this.model.downloadableContent;
+      if (e === Arma2Dlcs.None) {
 
-    } else {
-      if (e & Dlcs.Apex) { this.addDlc(Dlcs.Apex); }
-      if (e & Dlcs.Helicopters) { this.addDlc(Dlcs.Helicopters); }
-      if (e & Dlcs.Karts) { this.addDlc(Dlcs.Karts); }
-      if (e & Dlcs.Marksmen) { this.addDlc(Dlcs.Marksmen); }
-      if (e & Dlcs.Tanoa) { this.addDlc(Dlcs.Tanoa); }
-      if (e & Dlcs.Zeus) { this.addDlc(Dlcs.Zeus); }
+      } else {
+        if (e & Arma2Dlcs.Arrowhead) { this.addDlc(Arma2Dlcs.Arrowhead, Arma2Dlcs); }
+        if (e & Arma2Dlcs.PMC) { this.addDlc(Arma2Dlcs.PMC, Arma2Dlcs); }
+        if (e & Arma2Dlcs.BAF) { this.addDlc(Arma2Dlcs.BAF, Arma2Dlcs); }
+        if (e & Arma2Dlcs.ACR) { this.addDlc(Arma2Dlcs.ACR, Arma2Dlcs); }
+      }
     }
 
 
