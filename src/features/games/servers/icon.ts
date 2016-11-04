@@ -14,13 +14,13 @@ export class DistanceValueConverter {
   }
 }
 
-export class PingValueConverter {
+export class ueConverter {
   toView = (ping?: number) => {
-    if (!ping || ping > 500) return 0;
+    if (!ping || ping > 1000) return 0;
     if (ping > 300) return 1;
-    if (ping > 120) return 2;
-    if (ping > 70) return 3;
-    if (ping > 35) return 4;
+    if (ping > 150) return 2;
+    if (ping > 80) return 3;
+    if (ping > 40) return 4;
     return 5;
   }
 }
