@@ -479,7 +479,7 @@ export class Index extends ViewModel {
     }
     //this.trigger++; // todo; Command, awaitable, observable
     this.model = {
-      items: [], pageNumber: 1, total: 0, pageSize: 24
+      items: [], pageNumber: 1, total: 0, pageSize: 40
     }
     this.filteredItems = this.order(this.model.items);
 
@@ -665,8 +665,14 @@ export class Index extends ViewModel {
     const anHourAgo = moment().subtract("hours", 1);
     items = items.filter(x => x.isFavorite || moment(x.updatedAt).isAfter(anHourAgo));
     let sortOrders: any[] = [];
-    if (this.activeOrder && this.activeOrder.name === 'players')
-      sortOrders.push({ name: 'currentPlayers', direction: this.activeOrder.direction });
+    if (this.activeOrder) {
+      if (this.activeOrder.name === 'players') {
+        sortOrders.push({ name: 'currentPlayers', direction: this.activeOrder.direction });
+      }
+      if (this.activeOrder.name === 'connection' && this.w6.miniClient.isConnected) {
+        sortOrders.push({ name: 'ping', direction: this.activeOrder.direction });
+      }
+    }
 
     if (sortOrders.length === 0) return items;
 
