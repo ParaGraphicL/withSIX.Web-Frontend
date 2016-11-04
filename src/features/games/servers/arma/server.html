@@ -1,6 +1,7 @@
 <template>
   <require from="../icon"></require>
   <require from="../flag"></require>
+  <require from="../ping"></require>
   <div class="td" hover.bind="hovering">
     <!--<icon cls="withSIX-icon-Cloud" optional-title="Dedicated" model.bind="model.isDedicated"></icon>-->
     <!--<icon cls="${model.battlEye && model.verifySignatures ? 'withSIX-icon-Protection-Full' : 'withSIX-icon-Protection-Med'}" optional-title="${model.battlEye ? 'BattlEye' : ''} ${model.verifySignatures ? 'Signatures' : ''} protected"
@@ -17,7 +18,9 @@
 
     <div>
       <span show.bind="!model.ping" class="flag-icon flag-icon-${model.country.toLowerCase()}" title="${model.country} inside ${model.continent}. ${(model.distance / 1000) | numeral} km from you"></span>
-      <span show.bind="model.ping" class="icon ${model.ping | ping} connection-quality" title="${model.ping}ms ${model.country} inside ${model.continent}. ${(model.distance / 1000) | numeral} km from you"></span>
+      <span show.bind="model.ping" title="${model.ping}ms ${model.country} inside ${model.continent}. ${(model.distance / 1000) | numeral} km from you">
+      <ping value.bind="model.ping | ping"></ping>
+      </span>
     </div>
     <div>${serverType}</div>
     <command-button class="join-button" model.bind="join" show.bind="hovering" hover.bind="hovering">
