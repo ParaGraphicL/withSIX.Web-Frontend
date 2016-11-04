@@ -556,8 +556,12 @@ export class Index extends ViewModel {
     const groups: IGroup<IServer>[] = this.filterTest; // filterValid ?  : JSON.parse(JSON.stringify(this.filterTest));
     //if (!filterValid) groups[0].items[0].value = null;
 
+    // TODO!
+    // value check because rangebox makes strings
+    const checkF = (f) => !f.range || (f.value[0] != f.defaultValue[0] || f.value[1] != f.defaultValue[1])
+
     groups.forEach(g => {
-      const filters = g.items.filter(f => f.value != null && f.value !== '' && f.type && (!f.range || (f.value[0] != 0 && f.value[1] != 300)));
+      const filters = g.items.filter(f => f.value != null && f.value !== "" && f.type && checkF(f));
       const flags = g.items
         .filter(f => f.value && !f.type);
       if (filters.length === 0 && flags.length === 0) {
@@ -572,8 +576,7 @@ export class Index extends ViewModel {
       let hasActiveFilters = false;
       filters
         .forEach(f => {
-          // TODO!
-          if (!f.range || (f.value[0] != 0 && f.value[1] != 300)) {
+          if (checkF(f)) {
             filt[f.name] = f.value;
             hasActiveFilters = true;
           }
