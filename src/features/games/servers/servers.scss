@@ -103,8 +103,11 @@ $padding: 16px;
       .group-title {
         margin-top: 12px;
         margin-bottom: 12px;
-        .withSIX-icon-Square-X {
-          font-size: 13px;
+        button {
+          padding: 4px;
+          .withSIX-icon-Square-X {
+            font-size: 13px;
+          }
         }
       }
       &.active {
@@ -123,8 +126,8 @@ $padding: 16px;
       &.active {
         font-weight: $font-weight-bold;
       }
-      .div.sub-title {
-        font-weight: $font-weight-normal;
+      .sub-title {
+        font-weight: $font-weight-medium;
       }
     }
     .clear-filter {
