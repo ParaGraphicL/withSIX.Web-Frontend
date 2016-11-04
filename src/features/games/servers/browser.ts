@@ -159,7 +159,7 @@ const defaultBoolItems = () => [{
 }];
 
 // Groups are AND, GroupItems are OR
-const filterTest: IGroup<IServer>[] = [
+const filterTest: () => IGroup<IServer>[] = () => [
   {
     title: "Keyword",
     items: [
@@ -341,7 +341,7 @@ export class Index extends ViewModel {
   constructor(ui, private basketService: BasketService) { super(ui) }
   model: IPageModel<IServer>;
 
-  filterTest = filterTest;
+  filterTest = filterTest();
   columns = columns;
   activeOrder: IOrder = columns[3];
   toggleOrder(c) {
