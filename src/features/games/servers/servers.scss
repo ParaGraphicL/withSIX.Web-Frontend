@@ -93,7 +93,6 @@ $padding: 16px;
     }
     .filter-title {
       font-size: $font-size-large;
-      margin-bottom: 8px;
     }
     .filter-group {
       border-bottom: $colorSixSoftGray 1px solid;
@@ -102,7 +101,11 @@ $padding: 16px;
       padding-left: 16px;
       padding-right: 16px;
       .group-title {
-        margin-bottom: 8px;
+        margin-top: 12px;
+        margin-bottom: 12px;
+        .withSIX-icon-Square-X {
+          font-size: 13px;
+        }
       }
       &.active {
         b.title {
@@ -113,13 +116,23 @@ $padding: 16px;
         font-style: italic;
       }
     }
+    .filter-group:last-child {
+      border-bottom: 0;
+    }
     label {
       &.active {
         font-weight: $font-weight-bold;
       }
+      .div.sub-title {
+        font-weight: $font-weight-normal;
+      }
     }
     .clear-filter {
       font-size: $font-size-small;
+    }
+    input[type=text] {
+      height: 32px;
+      padding-left: 4px;
     }
     select {
       width: 100px;
@@ -146,7 +159,7 @@ $padding: 16px;
           // TODO: Make it look like the mockup ;-)
           display: block;
           margin-top: 24px;
-          margin-bottom: 32px;
+          margin-bottom: 16px;
         }
         .noUi-connect {
           background: $colorSixGreen;

@@ -89,6 +89,7 @@ enum ServerFilter {
 
 interface IGroup<T> {
   title: string;
+  active?: boolean;
   items: {
     title: string;
     titleOverride?: string;
@@ -132,8 +133,8 @@ const columns = [
   }
 ]
 
-const buildFilter = (e, f, titleOverride?: string, icon?: string) => {
-  return { title: <string>camelCase(e[f]), useValue: f, titleOverride, icon }
+const buildFilter = (e, f, titleOverride?: string, icon?: string, subTitle?: string) => {
+  return { title: <string>camelCase(e[f]), useValue: f, titleOverride, icon, subTitle }
 }
 
 const defaultBoolTechItems = () => [{
@@ -172,7 +173,7 @@ const filterTest: () => IGroup<IServer>[] = () => [
     items: [
       buildFilter(ModFlags, ModFlags.ModsInPlaylist),
       buildFilter(ModFlags, ModFlags.NoMods),
-      buildFilter(ModFlags, ModFlags.HostedOnWithSIX, "Hosted on withSIX (recommended)"),
+      buildFilter(ModFlags, ModFlags.HostedOnWithSIX, "Hosted on withSIX", undefined, "(recommended)"),
       buildFilter(ModFlags, ModFlags.HostedOnSteamworks),
       //buildFilter(ModFlags, ModFlags.PrivateRepositories),
     ]
@@ -182,6 +183,7 @@ const filterTest: () => IGroup<IServer>[] = () => [
     items: [{
       title: "",
       name: "playerRange",
+      type: "range",
       range: [0, 300],
       defaultValue: () => [0, 300],
       value: [0, 300] // todo def value
@@ -542,24 +544,40 @@ export class Index extends ViewModel {
 
   async getMore(page = 1) {
     const filter = {}
-    const searchFilter = this.filterTest[0].items[0].value;
-    const filterValid = !searchFilter || searchFilter.length > 2;
-    const filters = filterValid ? this.filterTest : JSON.parse(JSON.stringify(this.filterTest));
-    if (!filterValid) filters[0].items[0].value = null;
+    //const searchFilter = this.filterTest[0].items[0].value;
+    //const filterValid = !searchFilter || searchFilter.length > 2;
+    const groups: IGroup<IServer>[] = this.filterTest; // filterValid ?  : JSON.parse(JSON.stringify(this.filterTest));
+    //if (!filterValid) groups[0].items[0].value = null;
 
-    filters.filter(x => x.items.some(f => f.value != null)).forEach(x => {
+    groups.forEach(g => {
+      const filters = g.items.filter(f => f.value != null && f.type && (!f.range || (f.value[0] !== 0 && f.value[1] !== 300)));
+      const flags = g.items
+        .filter(f => f.value && !f.type);
+      if (filters.length === 0 && flags.length === 0) {
+        g.active = false;
+        return;
+      }
       let flag = 0;
-      x.items.filter(f => f.value && !(f.value instanceof Array) && !f.type).map(f => f.useValue).forEach(f => {
+      flags.map(f => f.useValue).forEach(f => {
         flag += f;
       });
-      const filt = { flag };
-      const filters = x.items.filter(f => f.value != null && (f.value instanceof Array) || f.type !== "text" || f.type !== "value");
-      filters.forEach(f => {
-        // TODO!
-        if (!f.range || (f.value[0] !== 0 && f.value[1] !== 300)) { filt[f.name] = f.value; }
-      });
-      if (filt.flag > 0 || filters.length > 0) { filter[x.title] = filt; }
-    })
+      const filt: { flag?: number } = flag === 0 ? {} : { flag };
+      let hasActiveFilters = false;
+      filters
+        .forEach(f => {
+          // TODO!
+          if (!f.range || (f.value[0] !== 0 && f.value[1] !== 300)) {
+            filt[f.name] = f.value;
+            hasActiveFilters = true;
+          }
+        });
+      if (filt.flag > 0 || hasActiveFilters) {
+        filter[g.title] = filt;
+        g.active = true;
+      } else {
+        g.active = false;
+      }
+    });
 
     if (this.filterTest[1].items[0].value) {
       filter["Mods"].modIds = this.baskets.active.model.items.map(x => x.id);
@@ -604,11 +622,10 @@ export class Index extends ViewModel {
 
   clearGroup = (grp) => {
     grp.items.forEach(f => f.value = f.defaultValue ? f.defaultValue() : null);
+    grp.active = false;
   }
 
-  clearFilters() {
-    this.filterTest.forEach(x => x.items.forEach(f => f.value = f.defaultValue ? f.defaultValue() : null));
-  }
+  clearFilters() { this.filterTest.forEach(x => this.clearGroup(x)); }
 
   //get filteredItems() { return this.filteredComponent.filteredItems; }
   //get filteredTotalCount() { return this.filteredComponent.totalCount; }

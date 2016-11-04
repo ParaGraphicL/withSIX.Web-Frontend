@@ -12,10 +12,12 @@
         <div repeat.for="g of filterTest" class="filter-group ${g.active ? 'active' : ''}">
           <div class="group-title">
             <div show.bind="g.active" class="pull-right">
-              <button click.delegate="clearGroup(g)">X</button>
+              <button class="text-button" click.delegate="clearGroup(g)">
+                <span class="icon withSIX-icon-Square-X"></span>
+              </button>
             </div>
             <a class="toggle-group" href="#" click.delegate="g.hide = !g.hide">
-              <span class="icon withSIX-icon-Arrow-${!g.hide ? 'Down' : 'Right'}-Dir"></span>
+              <span class="icon withSIX-icon-Arrow-${!g.hide ? 'Down' : 'Right'}-Open"></span>
               <b class="title">${g.titleOverride || g.title}</b>
               <span class="active-text" show.bind="g.active">(active)</span>
             </a>
@@ -27,6 +29,7 @@
               <template if.bind="i.items" hide.bind="i.test && !features.isTestEnvironment">
                 <selectbox options.bind="i.items" value.bind="i.value" cls="pull-right" style="display: block; height: 28px">
                   ${i.titleOverride || i.title}
+                  <div if.bind="i.subTitle" class="sub-title">${i.subTitle}</div>
                   <template replace-part="item-template">
                     <option model.bind="o.value">${o.title || o}</option>
                   </template>
@@ -35,12 +38,16 @@
               <template if.bind="!i.items" hide.bind="i.test && !features.isTestEnvironment">
                 <checkbox cls="" if.one-time="!i.range && !i.type" value.bind="i.value">
                   <span class="icon ${i.icon}" if.bind="i.icon"></span> ${i.titleOverride || i.title}
+                  <div if.bind="i.subTitle" class="sub-title">${i.subTitle}</div>
                 </checkbox>
                 <textbox placeholder.bind="i.placeholder || i.titleOverride || i.title" cls="" if.one-time="i.type === 'text'"
                   value.bind="i.value & debounce">
-                  <span class="icon ${i.icon}" if.bind="i.icon"></span> ${i.titleOverride || i.title}</textbox>
+                  <span class="icon ${i.icon}" if.bind="i.icon"></span> ${i.titleOverride || i.title}
+                  <div if.bind="i.subTitle" class="sub-title">${i.subTitle}</div>
+                </textbox>
                 <rangeboxadv cls="" if.one-time="i.range" min.bind="i.range[0]" max.bind="i.range[1]" value.two-way="i.value">
                   <span class="icon ${i.icon}" if.bind="i.icon"></span> ${i.titleOverride || i.title}
+                  <div if.bind="i.subTitle" class="sub-title">${i.subTitle}</div>
                   </rangebox>
               </template>
             </li>
