@@ -1458,12 +1458,14 @@ button {
     box-shadow: none;
     border: 0;
     color: white;
+    outline-style: none;
   }
   &.text-button {
     color: inherit;
     background-color: transparent;
     border: 0;
     box-shadow: none;
+    outline-style: none;
     // &:hover {
     //   color: $colorSixDarkGray;
     // }
