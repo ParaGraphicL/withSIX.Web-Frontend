@@ -24,7 +24,9 @@
     </div>
 
     <command-button class="join-button" model.bind="join">
-      <div class="pull-left icon ${join.icon}"></div>
+      <div class="pull-left">
+        <span class="icon ${join.icon}"></span>
+      </div>
       <div class="text">
         <span if.bind="model.modList.length > 0 && model.modState !== 'uptodate'">${model.modState} &amp;</span>        <span class="join-text">join</span>
       </div>
@@ -122,4 +124,3 @@
   </div>
 
 </template>
-

@@ -29,13 +29,13 @@ $padding: 16px;
   .join-button {
     button {
       width: 96px;
+      height: 48px;
       color: white;
       background-color: $colorSixGreen;
-      .icon.withSIX-icon-Download {
-        margin-top: 8px;
+      .pull-left {
         margin-left: 4px;
-        vertical-align: middle;
       }
+      vertical-align: middle;
       .text {
         text-transform: uppercase;
         text-align: right;
@@ -56,6 +56,9 @@ $padding: 16px;
       .join-button {
         button {
           background-color: $colorSixOrange;
+          .pull-left {
+            margin-top: 4px;
+          }
         }
       }
     }
@@ -66,6 +69,9 @@ $padding: 16px;
       .join-button {
         button {
           background-color: $colorSixBlue;
+          .pull-left {
+            margin-top: 4px;
+          }
         }
       }
     }
@@ -82,6 +88,57 @@ $padding: 16px;
     background-color: $colorSixLightGray;
     min-height: 600px;
     //border: 1px solid $colorSixGray;
+    .icon {
+      color: $colorSixGray;
+    }
+    .filter-title {
+      font-size: $font-size-large;
+    }
+    .filter-group {
+      border-bottom: $colorSixSoftGray 1px solid;
+      margin-left: -16px;
+      margin-right: -16px;
+      padding-left: 16px;
+      padding-right: 16px;
+      .group-title {
+        margin-top: 12px;
+        margin-bottom: 12px;
+        height: 24px;
+        button {
+          padding: 0;
+          margin-top: -4px;
+          .withSIX-icon-Square-X {
+            font-size: 13px;
+          }
+        }
+      }
+      &.active {
+        b.title {
+          color: $colorSixBlue;
+        }
+      }
+      .active-text {
+        font-style: italic;
+      }
+    }
+    .filter-group:last-child {
+      border-bottom: 0;
+    }
+    label {
+      &.active {
+        font-weight: $font-weight-bold;
+      }
+      .sub-title {
+        font-weight: $font-weight-medium;
+      }
+    }
+    .clear-filter {
+      font-size: $font-size-small;
+    }
+    input[type=text] {
+      height: 32px;
+      padding-left: 4px;
+    }
     select {
       width: 100px;
     }
@@ -107,7 +164,7 @@ $padding: 16px;
           // TODO: Make it look like the mockup ;-)
           display: block;
           margin-top: 24px;
-          margin-bottom: 32px;
+          margin-bottom: 16px;
         }
         .noUi-connect {
           background: $colorSixGreen;
@@ -123,7 +180,7 @@ $padding: 16px;
     $border-color: $colorSixSoftGray;
     color: $colorSixGray;
     .server-list-info {
-      height: 40px;
+      height: 48px;
       button {
         display: inline-block;
       }
@@ -251,9 +308,6 @@ $padding: 16px;
           }
           .td:nth-child(1) {
             color: $colorSixLightGray;
-            &.has-mods {
-              color: $colorSixGray;
-            }
           }
           .td:nth-child(3) {
             padding: $padding;
@@ -264,9 +318,13 @@ $padding: 16px;
               font-size: 16px;
             }
           }
+          &.has-mods {
+            .td:nth-child(1) {
+              color: $colorSixGray;
+            }
+          }
         }
       }
     }
   }
 }
-
