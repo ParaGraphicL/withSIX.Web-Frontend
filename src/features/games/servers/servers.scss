@@ -138,6 +138,7 @@ $padding: 16px;
     }
     input[type=text] {
       height: 32px;
+      width: 256px;
       padding-left: 4px;
     }
     select {
@@ -160,15 +161,6 @@ $padding: 16px;
         .title {
           margin-top: 16px;
           margin-bottom: 8px;
-        }
-        rangeboxadv {
-          // TODO: Make it look like the mockup ;-)
-          display: block;
-          margin-top: 24px;
-          margin-bottom: 16px;
-        }
-        .noUi-connect {
-          background: $colorSixGreen;
         }
         .form-group {
           margin: 0;
