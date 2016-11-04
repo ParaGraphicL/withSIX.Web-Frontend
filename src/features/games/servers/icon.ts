@@ -14,7 +14,7 @@ export class DistanceValueConverter {
   }
 }
 
-export class ueConverter {
+export class PingValueConverter {
   toView = (ping?: number) => {
     if (!ping || ping > 1000) return 0;
     if (ping > 300) return 1;
