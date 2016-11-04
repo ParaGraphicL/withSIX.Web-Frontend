@@ -550,7 +550,7 @@ export class Index extends ViewModel {
     //if (!filterValid) groups[0].items[0].value = null;
 
     groups.forEach(g => {
-      const filters = g.items.filter(f => f.value != null && f.type && (!f.range || (f.value[0] !== 0 && f.value[1] !== 300)));
+      const filters = g.items.filter(f => f.value != null && f.type && (!f.range || (f.value[0] != 0 && f.value[1] != 300)));
       const flags = g.items
         .filter(f => f.value && !f.type);
       if (filters.length === 0 && flags.length === 0) {
@@ -566,7 +566,7 @@ export class Index extends ViewModel {
       filters
         .forEach(f => {
           // TODO!
-          if (!f.range || (f.value[0] !== 0 && f.value[1] !== 300)) {
+          if (!f.range || (f.value[0] != 0 && f.value[1] != 300)) {
             filt[f.name] = f.value;
             hasActiveFilters = true;
           }
