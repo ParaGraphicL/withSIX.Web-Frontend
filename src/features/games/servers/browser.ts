@@ -558,7 +558,7 @@ export class Index extends ViewModel {
 
     // TODO!
     // value check because rangebox makes strings
-    const checkF = (f) => !f.range || (f.value[0] != f.defaultValue[0] || f.value[1] != f.defaultValue[1])
+    const checkF = (f) => !f.range || (f.value[0] != f.range[0] || f.value[1] != f.range[1])
 
     groups.forEach(g => {
       const filters = g.items.filter(f => f.value != null && f.value !== "" && f.type && checkF(f));
