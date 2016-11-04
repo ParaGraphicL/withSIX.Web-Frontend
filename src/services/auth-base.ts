@@ -64,6 +64,7 @@ export class LoginBase {
             clientId: LoginBase.localClientId, idToken: window.localStorage[LoginBase.idToken]
           })
         });
+      if (!r.ok) { throw new Error("Error refreshing token: " + r.status); }
       /* authConfig.providers.localIdentityServer.clientId */
       let c = await r.json();
       this.updateAuthInfo(c.refresh_token, c.token, c.id_token);
@@ -91,11 +92,15 @@ export class LoginBase {
   }
 
   updateAuthInfo(refreshToken: string, accessToken: string, idToken: string) {
-    window.localStorage[LoginBase.refreshToken] = refreshToken;
-    window.localStorage[LoginBase.token] = accessToken;
-    window.localStorage[LoginBase.idToken] = idToken;
+    this.updateLs(LoginBase.refreshToken, refreshToken);
+    this.updateLs(LoginBase.token, accessToken);
+    this.updateLs(LoginBase.idToken, idToken);
 
     this.eventBus.publish(new LoginUpdated(accessToken));
+  }
+
+  updateLs(key: string, value: string) {
+    if (value) { window.localStorage[key] = value; } else { window.localStorage.removeItem(key); }
   }
 
   get isRequesting() { return this.httpFetch.isRequesting || this.http.isRequesting }
