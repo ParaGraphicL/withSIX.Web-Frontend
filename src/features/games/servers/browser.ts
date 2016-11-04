@@ -492,7 +492,14 @@ export class Index extends ViewModel {
       const pageStream = this.observeEx(x => x.triggerPage)
         .map(x => page++)
         .do<number>((pageNumber) => hasPending.next(true))
-        .concatMap((pageNumber) => this.getMore(pageNumber))
+        .concatMap(async (pageNumber) => {
+          try {
+            return await this.getMore(pageNumber);
+          } catch (err) {
+            this.toastr.warning("Failed to retrieve servers");
+            return { page: 1, total: 0, items: [], perPage: 40 };
+          }
+        })
         .do<IPageModel<IServer>>((response) => hasPending.next(false));
       d(list.itemChanged
         .map(x => 0)

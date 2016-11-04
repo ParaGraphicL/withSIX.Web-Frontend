@@ -1,0 +1,64 @@
+@import "_base";
+rangeboxadv {
+  .noUi-tooltip {
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+  }
+  .noUi-horizontal {
+    height: 8px;
+    .noUi-handle {
+      //background-color: $colorSixBlue;
+      background-color: transparent;
+      height: 16px;
+      width: 8px;
+      top: -4px;
+    }
+    .noUi-handle:before,
+    .noUi-handle:after {
+      background: transparent; // TODO
+      width: 0;
+    }
+    .noUi-origin:first-child {
+      .noUi-handle {
+        width: 0;
+        height: 0;
+        border-top: 8px solid transparent;
+        border-bottom: 8px solid transparent;
+        border-left: 0;
+        border-right: 8px solid $colorSixBlue;
+        left: -8px;
+        .noUi-tooltip {
+          left: 4px;
+        }
+      }
+    }
+    .noUi-origin:last-child {
+      .noUi-handle {
+        width: 0;
+        height: 0;
+        border-top: 8px solid transparent;
+        border-bottom: 8px solid transparent;
+        border-left: 8px solid $colorSixBlue;
+        border-right: 0;
+        left: 0;
+        .noUi-tooltip {
+          left: -8px;
+        }
+      }
+    }
+    .noUi-tooltip {
+      bottom: -28px;
+      font-size: 14px;
+    }
+  }
+  // TODO: Make it look like the mockup ;-)
+  display: block;
+  margin-bottom: 24px;
+  margin-top: -16px;
+  margin-left: 8px;
+  margin-right: 8px;
+  .noUi-connect {
+    background: $colorSixGreen;
+  }
+}
