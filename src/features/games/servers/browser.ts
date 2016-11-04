@@ -114,7 +114,7 @@ const columns = [
   },
   {
     name: "connection",
-    icon: "withSIX-icon-Connection-Med",
+    icon: "ping",
   },
   {
     name: "name",

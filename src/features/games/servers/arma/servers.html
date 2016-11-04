@@ -1,13 +1,15 @@
 <template>
 
   <require from="../order"></require>
+  <require from="../ping"></require>
 
   <div class="table">
     <div class="thead">
       <div class="tr">
         <div class="td" repeat.for="c of columns">
           <order direction.bind="c.direction" active.one-way="activeOrder === c" click.delegate="toggleOrder(c)">
-            <span if.bind="c.icon" class="icon ${c.icon}"></span>
+            <span if.bind="c.icon && !c.icon === 'ping'" class="icon ${c.icon}"></span>
+            <ping if.bind="c.icon === 'ping'" value.one-time="3"></ping>
             <span if.bind="c.text">${c.text}</span>
           </order>
         </div>
@@ -20,4 +22,3 @@
     </div>
   </div>
 </template>
-

@@ -1,0 +1,42 @@
+@import "_base";
+ping {
+  .icon {
+    color: $colorSixSoftGray;
+    margin-left: -2px;
+  }
+  .quality-1,
+  .quality-2,
+  .quality-3,
+  .quality-4,
+  .quality-5 {
+    .withSIX-icon-Connection-Bar_1 {
+      color: inherit;
+    }
+  }
+  .quality-2,
+  .quality-3,
+  .quality-4,
+  .quality-5 {
+    .withSIX-icon-Connection-Bar_2 {
+      color: inherit;
+    }
+  }
+  .quality-3,
+  .quality-4,
+  .quality-5 {
+    .withSIX-icon-Connection-Bar_3 {
+      color: inherit;
+    }
+  }
+  .quality-4,
+  .quality-5 {
+    .withSIX-icon-Connection-Bar_4 {
+      color: inherit;
+    }
+  }
+  .quality-5 {
+    .withSIX-icon-Connection-Bar_5 {
+      color: inherit;
+    }
+  }
+}

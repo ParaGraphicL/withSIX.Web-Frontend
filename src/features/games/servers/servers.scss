@@ -223,6 +223,7 @@ $padding: 16px;
       }
       .thead {
         .tr {
+          height: 32px;
           //border: 1px solid $colorSixBlue;
           order {
             cursor: pointer;
@@ -261,7 +262,7 @@ $padding: 16px;
         text-align: center;
       }
       .td:nth-child(2) {
-        $width: bla(16px);
+        $width: bla(24px);
         width: $width;
         text-align: center;
       }

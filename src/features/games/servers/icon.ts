@@ -16,8 +16,11 @@ export class DistanceValueConverter {
 
 export class PingValueConverter {
   toView = (ping?: number) => {
-    if (!ping || ping > 250) { return "withSIX-icon-Connection-Low"; }
-    if (ping < 50) { return "withSIX-icon-Connection-High"; }
-    return "withSIX-icon-Connection-Med";
+    if (!ping || ping > 500) return 0;
+    if (ping > 300) return 1;
+    if (ping > 120) return 2;
+    if (ping > 70) return 3;
+    if (ping > 35) return 4;
+    return 5;
   }
 }
