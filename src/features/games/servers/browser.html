@@ -3,17 +3,24 @@
   <div class="container-fluid" id="server-browser">
     <div class="server-filters">
       <div class="pull-right">
-        <command-button model.bind="clear"></command-button>
+        <command-button class="clear-filter" model.bind="clear"></command-button>
       </div>
-      <div>SERVER FILTERS</div>
+      <div class="filter-title">SERVER FILTERS</div>
       <div class="clearfix"></div>
 
       <div>
-        <div repeat.for="g of filterTest">
-          <a class="toggle-group" href="#" click.delegate="g.hide = !g.hide">
-            <span class="icon withSIX-icon-Arrow-${!g.hide ? 'Down' : 'Right'}-Dir"></span>
-            <b class="title">${g.titleOverride || g.title}</b>
-          </a>
+        <div repeat.for="g of filterTest" class="filter-group ${g.active ? 'active' : ''}">
+          <div class="group-title">
+            <div show.bind="g.active" class="pull-right">
+              <button click.delegate="clearGroup(g)">X</button>
+            </div>
+            <a class="toggle-group" href="#" click.delegate="g.hide = !g.hide">
+              <span class="icon withSIX-icon-Arrow-${!g.hide ? 'Down' : 'Right'}-Dir"></span>
+              <b class="title">${g.titleOverride || g.title}</b>
+              <span class="active-text" show.bind="g.active">(active)</span>
+            </a>
+            <div class="clearfix"></div>
+          </div>
 
           <ul show.bind="!g.hide">
             <li repeat.for="i of g.items | take: (showMore || g.cutOffPoint == null ? 99 : g.cutOffPoint)">
@@ -56,8 +63,8 @@
       <div class="server-list-info">
         <div class="pull-right">
           <a href="https://community.withsix.com/topic/290/web-based-serverbrowser-for-sync" target="_blank">Give feedback</a>
-          <command-button model.bind="refresh"></command-button>
           <command-button model.bind="reload"></command-button>
+          <command-button model.bind="createServer" if.bind="features.createServers"></command-button>
         </div>
         <div>
           ${model.playerCount} players on <b>
@@ -71,4 +78,3 @@
     </div>
   </div>
 </template>
-

@@ -172,7 +172,7 @@ const filterTest: () => IGroup<IServer>[] = () => [
     items: [
       buildFilter(ModFlags, ModFlags.ModsInPlaylist),
       buildFilter(ModFlags, ModFlags.NoMods),
-      buildFilter(ModFlags, ModFlags.HostedOnWithSIX, "Hosted on withSIX"),
+      buildFilter(ModFlags, ModFlags.HostedOnWithSIX, "Hosted on withSIX (recommended)"),
       buildFilter(ModFlags, ModFlags.HostedOnSteamworks),
       //buildFilter(ModFlags, ModFlags.PrivateRepositories),
     ]
@@ -515,10 +515,14 @@ export class Index extends ViewModel {
         canExecuteObservable: this.morePagesAvailable.merge(hasPending.map(x => !x)),
         isVisibleObservable: this.morePagesAvailable,
       }));
-      d(this.reload = uiCommand2("Reload", async () => this.trigger++, {
+      d(this.reload = uiCommand2("", async () => this.trigger++, {
         canExecuteObservable: hasPending.map(x => !x),
+        cls: "unprominent",
+        icon: "withSIX-icon-Reload",
       }));
-      const ival = setInterval(() => { if (this.w6.miniClient.isConnected && this.features.serverFeatures) { this.refresh(); } }, 60 * 1000);
+      const ival = setInterval(() => {
+        if (this.w6.miniClient.isConnected && this.features.serverFeatures) { this.refresh(); }
+      }, 60 * 1000);
       d(() => clearInterval(ival));
     });
     this.handleBetaDialog();
@@ -588,12 +592,22 @@ export class Index extends ViewModel {
   });
   reload;
 
-  clear = uiCommand2("Clear", async () => this.clearFilters());
+  createServer = uiCommand2("ADD SERVER", async () => { confirm("TODO"); }, {
+    cls: "warn",
+    icon: "withSIX-icon-Add",
+  });
+
+  clear = uiCommand2("CLEAR", async () => this.clearFilters(), {
+    cls: "text-button",
+    icon: "withSIX-icon-X",
+  });
+
+  clearGroup = (grp) => {
+    grp.items.forEach(f => f.value = f.defaultValue ? f.defaultValue() : null);
+  }
 
   clearFilters() {
-    this.filterTest.forEach(x => {
-      x.items.forEach(f => f.value = f.defaultValue ? f.defaultValue() : null)
-    });
+    this.filterTest.forEach(x => x.items.forEach(f => f.value = f.defaultValue ? f.defaultValue() : null));
   }
 
   //get filteredItems() { return this.filteredComponent.filteredItems; }
