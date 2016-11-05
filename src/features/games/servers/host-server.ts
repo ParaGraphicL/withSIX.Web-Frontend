@@ -1,5 +1,5 @@
 import {
-  CollectionScope, DbClientQuery, Dialog, IReactiveCommand, ServerHelper, VoidCommand, handlerFor, uiCommand2,
+  CollectionScope, DbClientQuery, DbQuery, Dialog, IReactiveCommand, ServerHelper, VoidCommand, handlerFor, uiCommand2,
 } from "../../../framework";
 
 
@@ -13,6 +13,7 @@ interface IModel {
   files: FileList;
   launchAsDedicated: boolean;
   launch: Function;
+  //host: (details) => Promise<void>;
   launchDedicated: Function;
 }
 
@@ -24,13 +25,16 @@ export class HostServer extends Dialog<IModel> {
   get scopeHint() { return ServerHelper.scopeHints[this.model.scope]; }
   cancel: IReactiveCommand<void>;
   launch: IReactiveCommand<void>;
+  host: IReactiveCommand<void>;
 
   activate(model: IModel) {
     super.activate(Object.assign({
+      adminPassword: null,
       commsUrl: null,
       description: null,
       files: null,
       homepageUrl: null,
+      launchAsDedicated: true,
       name: `${this.w6.userInfo.displayName}'s server`,
       password: null,
       scope: CollectionScope.Public,
@@ -42,7 +46,12 @@ export class HostServer extends Dialog<IModel> {
       d(this.cancel = uiCommand2("Cancel", this.performCancel, { cls: "cancel" }));
       d(this.launch = uiCommand2("Launch Server",
         this.handleLaunch,
-        { cls: "ok", isVisibleObservable: this.whenAny(x => x.model.launch).map(x => x != null) }));
+        { cls: "ok", isVisibleObservable: this.whenAnyValue(x => x.model.launch).map(x => x != null) }));
+      d(this.host = uiCommand2("Host Server",
+        this.handleHost, {
+          cls: "ok", isVisibleObservable: this.whenAnyValue(x => x.model.host).map(x => x != null)
+            .combineLatest(this.whenAnyValue(x => x.model.launchAsDedicated), (x, y) => x && y),
+        }));
     });
   }
   async close() {
@@ -67,7 +76,18 @@ export class HostServer extends Dialog<IModel> {
     await new LaunchServer(this.w6.activeGame.id, this.model.scope).handle(this.mediator);
     await t;
   }
+  handleHost = () => new HostW6Server(this.model).handle(this.mediator); //this.model.host(this.model);
+}
 
+class HostW6Server extends VoidCommand {
+  constructor(public details) { super(); }
+}
+
+@handlerFor(HostW6Server)
+class HostW6ServerHandler extends DbQuery<HostW6Server, string> {
+  handle(request: HostW6Server) {
+    return this.context.postCustom<string>('server-manager', request.details);
+  }
 }
 
 class LaunchServer extends VoidCommand {
