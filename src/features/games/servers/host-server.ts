@@ -49,8 +49,8 @@ export class HostServer extends Dialog<IModel> {
         { cls: "ok", isVisibleObservable: this.whenAnyValue(x => x.model.launch).map(x => x != null) }));
       d(this.host = uiCommand2("Host Server",
         this.handleHost, {
-          cls: "ok", isVisibleObservable: this.whenAnyValue(x => x.model.host).map(x => x != null)
-            .combineLatest(this.whenAnyValue(x => x.model.launchAsDedicated), (x, y) => x && y),
+          cls: "ok", isVisibleObservable: //this.whenAnyValue(x => x.model.host).map(x => x != null).combineLatest(
+          this.whenAnyValue(x => x.model.launchAsDedicated), //, (x, y) => x && y),
         }));
     });
   }
