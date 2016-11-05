@@ -92,7 +92,7 @@ class HostW6Server extends Command<IHostServerInfo> {
 @handlerFor(HostW6Server)
 class HostW6ServerHandler extends DbQuery<HostW6Server, IHostServerInfo> {
   handle(request: HostW6Server) {
-    return this.context.postCustom<IHostServerInfo>('server-manager', request.details);
+    return this.context.postCustom<IHostServerInfo>('/server-manager', request.details);
   }
 }
 
