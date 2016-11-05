@@ -20,6 +20,7 @@ export class FeatureToggles {
   constructor(private w6: W6) { }
 
   get createServers() { return this.isTestEnvironment; }
+  get serverHosting() { return this.isTestEnvironment && this.adminFeatures; }
   get listAvailable() { return this.isTestEnvironment; }
   get managerFeatures() { return this.w6.userInfo.isManager || this.adminFeatures; }
   get adminFeatures() { return this.w6.userInfo.isAdmin; }

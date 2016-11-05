@@ -1,22 +1,24 @@
 
 import breeze from 'breeze-client';
 
-import {IBreezeMod, IBreezeUser, IBreezeCollection, IBreezeMission, IBreezeCollectionVersionDependency, IBreezePost, IBreezeModUpdate, IBreezeCollectionVersion, IBreezeGame, IBreezeAWSUploadPolicy,
+import {
+  IBreezeMod, IBreezeUser, IBreezeCollection, IBreezeMission, IBreezeCollectionVersionDependency, IBreezePost, IBreezeModUpdate, IBreezeCollectionVersion, IBreezeGame, IBreezeAWSUploadPolicy,
   IBreezeMissionComment, IBreezeMissionVersion, IBreezeCollectionImageFileTransferPolicy, IBreezeModInfo,
   IBreezeCollectionComment, IBreezePostComment, AbstractDefs, BreezeInitialzation, IBreezeModUserGroup, IBreezeModComment, IBreezeModImageFileTransferPolicy,
   IBreezeModMediaItem, IUserInfo, Resource, Permission, Role,
-  EntityExtends, BreezeEntityGraph, _IntDefs} from '../services/dtos';
-import {W6, W6Urls, globalRedactorOptions} from '../services/withSIX';
-import {Tools} from '../services/tools';
-import {W6Context, IQueryResult} from '../services/w6context';
-import {Tk} from '../services/legacy/tk'
-import {IRootScope, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHaveModel, DialogQueryBase, DbCommandBase, DbQueryBase, BaseController, BaseQueryController } from './app-base'
-import {ITagKey, ICreateComment, ICQWM, IModel, IMenuItem, IHandleCommentsScope} from '../services/legacy/base'
-import {EventAggregator} from 'aurelia-event-aggregator';
+  EntityExtends, BreezeEntityGraph, _IntDefs
+} from '../services/dtos';
+import { W6, W6Urls, globalRedactorOptions } from '../services/withSIX';
+import { Tools } from '../services/tools';
+import { W6Context, IQueryResult } from '../services/w6context';
+import { Tk } from '../services/legacy/tk'
+import { IRootScope, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHaveModel, DialogQueryBase, DbCommandBase, DbQueryBase, BaseController, BaseQueryController } from './app-base'
+import { ITagKey, ICreateComment, ICQWM, IModel, IMenuItem, IHandleCommentsScope } from '../services/legacy/base'
+import { EventAggregator } from 'aurelia-event-aggregator';
 
-import {Client} from 'withsix-sync-api';
+import { Client } from 'withsix-sync-api';
 
-import {registerCommands, getFactory, skyscraperSlotSizes, rectangleSlotSizes, leaderboardSlotSizes} from './app-base';
+import { registerCommands, getFactory, skyscraperSlotSizes, rectangleSlotSizes, leaderboardSlotSizes } from './app-base';
 import { DefaultDialogWithDataController, OpenTermsDialogQuery, OpenRegisterDialogWithExistingDataQuery, ForwardService } from './components';
 
 angular.module('MyAppMainTemplates', []);
@@ -73,8 +75,8 @@ class MainModule extends Tk.Module {
             .segment('static_getting-started-publishing', { controller: 'AureliaPageController' })
             .segment('static_legal', { controller: 'AureliaPageController' })
             .segment('static_download', { controller: 'AureliaPageController' })
-            .segment('static_thanks',  { controller: 'AureliaPageController' })
-            .segment('static_update',  { controller: 'AureliaPageController' });
+            .segment('static_thanks', { controller: 'AureliaPageController' })
+            .segment('static_update', { controller: 'AureliaPageController' });
 
           var global = $routeProvider
             .when('/changelog/:nolayout?', 'changelog')
@@ -648,7 +650,7 @@ export class CreatePremiumOrderCommand extends DbCommandBase {
 
   public execute = [
     'data', (data) => {
-      return this.context.postCustom('premium', data, { requestName: 'createPremiumOrder' });
+      return this.context.postCustom<number>('premium', data, { requestName: 'createPremiumOrder' });
     }
   ];
 }
@@ -767,8 +769,8 @@ export class PremiumController extends BaseController {
     }
     var selectedProduct = this.$scope.model.selectedProduct;
     var recurring = this.$scope.model.autoRenew && selectedProduct.unitAmount != null;
-    return this.$scope.request<{ data }>(CreatePremiumOrderCommand, { data: { articleId: selectedProduct.articleId, isRecurring: recurring, termsAccepted: this.$scope.model.termsAccepted, ref: this.$scope.model.ref, overwrite: this.$scope.model.overwrite } })
-      .then((result) => this.forwardService.forwardNaked(this.$scope.url.urlSsl + "/orders/" + result.data + "/checkout"))
+    return this.$scope.request<number>(CreatePremiumOrderCommand, { data: { articleId: selectedProduct.articleId, isRecurring: recurring, termsAccepted: this.$scope.model.termsAccepted, ref: this.$scope.model.ref, overwrite: this.$scope.model.overwrite } })
+      .then((result) => this.forwardService.forwardNaked(this.$scope.url.urlSsl + "/orders/" + result + "/checkout"))
       .catch(reason => this.httpFailed(reason));
   };
   payMethod: PayMethodT;

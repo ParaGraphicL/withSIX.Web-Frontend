@@ -37,7 +37,10 @@
 
             <textbox multi-line.bind="true" value.bind="model.description" placeholder="Optional description">Description</textbox>
             <checkbox value.bind="model.launchAsDedicated">Launch as dedicated server</checkbox>
-
+            <passwordbox if.bind="model.launchAsDedicated" value.bind="model.adminPassword">Admin Password</passwordbox>
+            <!-- TODO:
+            Difficulty etc 
+            -->
           </div>
           <div class="col-md-5">
             <imageupload>Banner (optional)</imageupload>
@@ -51,6 +54,7 @@
     </ai-dialog-body>
 
     <ai-dialog-footer>
+      <command-button model.bind="host" if.bind="features.serverHosting"></command-button>
       <command-button model.bind="launch"></command-button>
       <command-button model.bind="cancel"></command-button>
     </ai-dialog-footer>

@@ -134,7 +134,9 @@ export class Playlist extends ViewModel {
       d(this.launchAsServer = uiCommand2("Host Server", () => this.dialog.open({
         viewModel: HostServer, model: {
           launchDedicated: () => this.launch(this.activeBasket, LaunchAction.LaunchAsDedicatedServer),
-          launch: () => this.launch(this.activeBasket, LaunchAction.LaunchAsServer)
+          launch: () => this.launch(this.activeBasket, LaunchAction.LaunchAsServer),
+          //host: details => this.host(this.activeBasket, details),
+          basket: this.activeBasket
         }
       }), {
           canExecuteObservable: this.whenAnyValue(x => x.hasItems)
