@@ -1,5 +1,5 @@
 import {
-  CollectionScope, DbClientQuery, DbQuery, Dialog, IReactiveCommand, ServerHelper, VoidCommand, handlerFor, uiCommand2,
+  CollectionScope, Command, DbClientQuery, DbQuery, Dialog, IReactiveCommand, ServerHelper, VoidCommand, handlerFor, uiCommand2,
 } from "../../../framework";
 
 
@@ -76,17 +76,23 @@ export class HostServer extends Dialog<IModel> {
     await new LaunchServer(this.w6.activeGame.id, this.model.scope).handle(this.mediator);
     await t;
   }
-  handleHost = () => new HostW6Server(this.model).handle(this.mediator); //this.model.host(this.model);
+  handleHost = async () => {
+    const info = await new HostW6Server(this.model).handle(this.mediator); //this.model.host(this.model);
+    confirm("Your server's ip+port=" + info.address);
+    this.controller.ok();
+  }
 }
 
-class HostW6Server extends VoidCommand {
+interface IHostServerInfo { address: string }
+
+class HostW6Server extends Command<IHostServerInfo> {
   constructor(public details) { super(); }
 }
 
 @handlerFor(HostW6Server)
-class HostW6ServerHandler extends DbQuery<HostW6Server, string> {
+class HostW6ServerHandler extends DbQuery<HostW6Server, IHostServerInfo> {
   handle(request: HostW6Server) {
-    return this.context.postCustom<string>('server-manager', request.details);
+    return this.context.postCustom<IHostServerInfo>('server-manager', request.details);
   }
 }
 
