@@ -1,13 +1,45 @@
-$content-states: (".content-state-uptodate", $colorSixGreen, $color0, "", "LAUNCH", ""), (".content-state-uptodate.has-servers", $colorSixGreen, $color0, "", "JOIN", ""), (".content-state-updateavailable", $colorSixOrange, $color0, "", "UPDATE", ""), (".content-state-incomplete", $colorSixOrange, $color0, "\e901", "CONTINUE", "\e901"), (".content-state-install", $colorSixBlue, $color0, "", "INSTALL", ""), (".content-state-installing", $colorSixMediumGray, $color0, "", "INSTALLING", ""), (".content-state-diagnosing", $colorSixBlue, $color0, "", "DIAGNOSING", ""), (".content-state-uninstalling", $colorSixMediumGray, $color0, "", "UNINSTALLING", ""), (".content-state-launching", $colorSixMediumGray, $color0, "", "LAUNCHING", ""), (".content-state-updating", $colorSixOrange, $color0, "", "UPDATING", ""), (".content-state-syncing", $colorSixMediumGray, $color0, "", "SYNCING", ""), (".content-state-no-client", $colorSixMediumGray, $color0, "\e631", "NO CLIENT", ""), (".content-state-uptodate-busy", $colorSixGreen, $color0, "", "BUSY", ""), (".content-state-updateavailable-busy", $colorSixOrange, $color0, "", "BUSY", ""), (".content-state-notinstalled-busy", $colorSixMediumGray, $color0, "", "BUSY", ""), (".content-state-install-busy", $colorSixBlue, $color0, "", "BUSY", ""), (".content-state-installing-busy", $colorSixBlue, $color0, "", "INSTALLING", ""), (".content-state-diagnosing-busy", $colorSixBlue, $color0, "", "DIAGNOSING", ""), (".content-state-updating-busy", $colorSixOrange, $color0, "", "UPDATING", ""), (".content-state-syncing-busy", $colorSixMediumGray, $color0, "", "SYNCING", ""), (".content-state-uninstalling-busy", $colorSixMediumGray, $color0, "", "UNINSTALLING", ""), (".content-state-launching-busy", $colorSixGreen, $color0, "", "LAUNCHING", ""), (".content-state-busy", $colorSixMediumGray, $color0, "", "BUSY", ""), (".content-state-incomplete-busy", $colorSixMediumGray, $color0, "", "CONTINUE", "");
+$content-states: (".content-state-uptodate", $colorSixGreen, $color0, "", "LAUNCH", ""),
+(".content-state-uptodate.has-servers", $colorSixGreen, $color0, "", "JOIN", ""),
+(".content-state-updateavailable", $colorSixOrange, $color0, "", "UPDATE", ""),
+(".content-state-incomplete", $colorSixOrange, $color0, "\e906", "CONTINUE", "\e906"),
+(".content-state-install", $colorSixBlue, $color0, "", "INSTALL", ""),
+(".content-state-installing", $colorSixMediumGray, $color0, "", "INSTALLING", ""),
+(".content-state-diagnosing", $colorSixBlue, $color0, "", "DIAGNOSING", ""),
+(".content-state-uninstalling", $colorSixMediumGray, $color0, "", "UNINSTALLING", ""),
+(".content-state-launching", $colorSixMediumGray, $color0, "", "LAUNCHING", ""),
+(".content-state-updating", $colorSixOrange, $color0, "", "UPDATING", ""),
+(".content-state-syncing", $colorSixMediumGray, $color0, "", "SYNCING", ""),
+(".content-state-no-client", $colorSixMediumGray, $color0, "\e631", "NO CLIENT", ""),
+(".content-state-uptodate-busy", $colorSixGreen, $color0, "", "BUSY", ""),
+(".content-state-updateavailable-busy", $colorSixOrange, $color0, "", "BUSY", ""),
+(".content-state-notinstalled-busy", $colorSixMediumGray, $color0, "", "BUSY", ""),
+(".content-state-install-busy", $colorSixBlue, $color0, "", "BUSY", ""),
+(".content-state-installing-busy", $colorSixBlue, $color0, "", "INSTALLING", ""),
+(".content-state-diagnosing-busy", $colorSixBlue, $color0, "", "DIAGNOSING", ""),
+(".content-state-updating-busy", $colorSixOrange, $color0, "", "UPDATING", ""),
+(".content-state-syncing-busy", $colorSixMediumGray, $color0, "", "SYNCING", ""),
+(".content-state-uninstalling-busy", $colorSixMediumGray, $color0, "", "UNINSTALLING", ""),
+(".content-state-launching-busy", $colorSixGreen, $color0, "", "LAUNCHING", ""),
+(".content-state-busy", $colorSixMediumGray, $color0, "", "BUSY", ""),
+(".content-state-incomplete-busy", $colorSixMediumGray, $color0, "", "CONTINUE", "");
 @mixin extend-content-states {
-   @each $selector, $primary-color, $secondary-color, $icon, $text in $content-states{
+  @each $selector,
+  $primary-color,
+  $secondary-color,
+  $icon,
+  $text in $content-states {
     &#{$selector} {
       @content;
     }
   }
 }
+
 @mixin extend-content-state-colors($colorKey, $primary: true, $attributes...) {
-   @each $selector, $primary-color, $secondary-color, $icon, $text in $content-states{
+  @each $selector,
+  $primary-color,
+  $secondary-color,
+  $icon,
+  $text in $content-states {
     &#{$selector} {
       $color: $secondary-color;
       @if $primary {
@@ -27,6 +59,7 @@ $content-states: (".content-state-uptodate", $colorSixGreen, $color0, "", "LA
     }
   }
 }
+
 @mixin color-creator($selector, $primary-color, $secondary-color) {
   &[class*=" #{$selector}-c-"],
   &[class^="#{$selector}-c-"],
@@ -70,6 +103,7 @@ $content-states: (".content-state-uptodate", $colorSixGreen, $color0, "", "LA
     color: $secondary-color !important;
   }
 }
+
 @mixin progress-class-creator($progress-container, $progress-bar, $progress-text) {
   &[class*=" #{progress-container}"],
   &[class^="#{progress-container}"],
@@ -90,8 +124,9 @@ $content-states: (".content-state-uptodate", $colorSixGreen, $color0, "", "LA
     }
   }
 }
+
 @mixin content-state-inner($state-primary-color, $state-secondary-color, $state-icon, $state-text, $state-icon-alt, $state-progress-primary-color: $colorSixBlue, $state-progress-secondary-color: $color0, $state-progress-icon: "") {
-   @include color-creator(".content-state", $state-primary-color, $state-secondary-color);
+  @include color-creator(".content-state", $state-primary-color, $state-secondary-color);
   .content-state-text:before {
     content: $state-text;
   }
@@ -109,6 +144,7 @@ $content-states: (".content-state-uptodate", $colorSixGreen, $color0, "", "LA
     }
   }
 }
+
 @mixin has-progress-container {
   &[class*=" content-progress-"],
   &[class^="content-progress-"],
@@ -117,6 +153,7 @@ $content-states: (".content-state-uptodate", $colorSixGreen, $color0, "", "LA
     @content;
   }
 }
+
 .dummy-for-utf {
   width: 0;
 }
