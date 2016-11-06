@@ -78,21 +78,21 @@ export class HostServer extends Dialog<IModel> {
   }
   handleHost = async () => {
     const info = await new HostW6Server(this.model).handle(this.mediator); //this.model.host(this.model);
-    confirm("Your server's ip+port=" + info.address);
+    confirm("Your server's ip+port=" + info);
     this.controller.ok();
   }
 }
 
-interface IHostServerInfo { address: string }
+//interface IHostServerInfo { address: string }
 
-class HostW6Server extends Command<IHostServerInfo> {
+class HostW6Server extends Command<string> {
   constructor(public details) { super(); }
 }
 
 @handlerFor(HostW6Server)
-class HostW6ServerHandler extends DbQuery<HostW6Server, IHostServerInfo> {
+class HostW6ServerHandler extends DbQuery<HostW6Server, string> {
   handle(request: HostW6Server) {
-    return this.context.postCustom<IHostServerInfo>('/server-manager', request.details);
+    return this.context.postCustom<string>('/server-manager', request.details);
   }
 }
 
