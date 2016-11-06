@@ -74,7 +74,10 @@ enum MissionMode {
   All,
   COOP = 1,
   CTF = 2, // (capture the flag)
-  KOTH = 4 // (king of the hill)
+  KOTH = 4, // (king of the hill)
+  RPG = 8,
+  Team = 16,
+  SC = 32, CTI = 64, Survive = 128, Sandbox = 256, Lastman = 512
 }
 
 enum ServerFilter {
@@ -211,8 +214,14 @@ const filterTest: () => IGroup<IServer>[] = () => [
       buildFilter(MissionMode, MissionMode.COOP, "COOP"),
       buildFilter(MissionMode, MissionMode.CTF, "CTF (capture the flag)"),
       buildFilter(MissionMode, MissionMode.KOTH, "KOTH (king of the hill)"),
-      //{ title: "Some other mode 1" },
-      //{ title: "Some other mode 2" },
+      buildFilter(MissionMode, MissionMode.RPG, "RPG (role playing game)"),
+      buildFilter(MissionMode, MissionMode.CTI, "CTI (capture the island)"),
+      buildFilter(MissionMode, MissionMode.Sandbox, "Sandbox"),
+      buildFilter(MissionMode, MissionMode.SC, "SC (sector control)"),
+      buildFilter(MissionMode, MissionMode.Survive, "Survive"),
+      buildFilter(MissionMode, MissionMode.Team, "Team DeathMatch"),
+      buildFilter(MissionMode, MissionMode.Lastman, "LMS (last man standing)"),
+
     ],
     cutOffPoint: 3
   }, {
