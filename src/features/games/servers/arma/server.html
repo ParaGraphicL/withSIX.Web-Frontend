@@ -2,20 +2,19 @@
   <require from="../icon"></require>
   <require from="../flag"></require>
   <require from="../ping"></require>
-  <div class="td" hover.bind="hovering">
+  <div class="td">
     <!--<icon cls="withSIX-icon-Cloud" optional-title="Dedicated" model.bind="model.isDedicated"></icon>-->
     <!--<icon cls="${model.battlEye && model.verifySignatures ? 'withSIX-icon-Protection-Full' : 'withSIX-icon-Protection-Med'}" optional-title="${model.battlEye ? 'BattlEye' : ''} ${model.verifySignatures ? 'Signatures' : ''} protected"
           model.bind="model.battlEye || model.verifySignatures"></icon>-->
     <!--<icon hide.bind="hovering" cls="withSIX-icon-Download ${model.hasAllMods ? 'ready' : ''}" optional-title="Requires ${model.modList.length} mods"
     model.bind="model.modList.length > 0"></icon>-->
-    <div hide.bind="hovering">
+    <div>
       <div class="state"></div>
       <span class="icon withSIX-icon-Nav-Mod ${model.hasAllMods ? 'ready' : ''}"></span>
       <div>${model.modList.length ? model.modList.length : 'none'}</div>
     </div>
   </div>
   <div class="td">
-
     <div>
       <span show.bind="!model.ping" class="flag-icon flag-icon-${model.country.toLowerCase()}" title="${model.country} inside ${model.continent}. ${(model.distance / 1000) | numeral} km from you"></span>
       <span show.bind="model.ping" title="${model.ping}ms ${model.country} inside ${model.continent}. ${(model.distance / 1000) | numeral} km from you">
@@ -23,7 +22,7 @@
       </span>
     </div>
     <div>${serverType}</div>
-    <command-button class="join-button" model.bind="join" show.bind="hovering" hover.bind="hovering">
+    <command-button class="join-button" model.bind="join" show.bind="hovering">
       <div class="pull-left">
         <span class="icon ${join.icon}"></span>
       </div>
