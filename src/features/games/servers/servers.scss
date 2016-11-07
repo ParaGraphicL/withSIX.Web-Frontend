@@ -179,6 +179,16 @@ $padding: 16px;
       }
     }
     .server-list-content {
+      position: relative;
+      .overlay {
+        display: none;
+        position: absolute;
+        top: 32px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(255, 255, 255, 0.5);
+      }
       .favorite-button {
         .naked-button {
           background-color: transparent;
@@ -246,7 +256,8 @@ $padding: 16px;
         top: $padding;
         bottom: $padding;
         button {
-          width: bla(16px) + bla(16px);
+          width: bla(16px) + bla(32px);
+          height: 100%;
         }
       }
       .td:nth-child(1) {
@@ -317,6 +328,15 @@ $padding: 16px;
               color: $colorSixGray;
             }
           }
+        }
+      }
+    }
+  }
+  &.active {
+    .server-list {
+      .server-list-content {
+        .overlay {
+          display: block;
         }
       }
     }

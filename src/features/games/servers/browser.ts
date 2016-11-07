@@ -465,6 +465,7 @@ export class Index extends ViewModel {
   triggerPage = 1;
 
   params;
+  hasPending: boolean;
 
   async activate(params) {
     this.params = params;
@@ -496,6 +497,7 @@ export class Index extends ViewModel {
       const list = this.listFactory.getList(this.filterTest.map(x => x.items).flatten(), ["value"]);
       d(list);
       const hasPending: Rx.Subject<boolean> = new Rx.BehaviorSubject(false);
+      this.toProperty(hasPending, x => x.hasPending);
 
       let page = 0;
       const pageStream = this.observeEx(x => x.triggerPage)

@@ -11,6 +11,8 @@ import { LS } from './base';
 import { buildUrl } from '../helpers/utils/url';
 import { createError } from '../helpers/utils/errors';
 
+import polly from "polly-js";
+
 export var AbortError = createError('AbortError');
 
 @inject(HttpClient, FetchClient, W6Urls, EventAggregator, LS)
@@ -57,16 +59,21 @@ export class LoginBase {
     if (!refreshToken) return false;
     if (this.shouldLog) Tools.Debug.log(`[HTTP] Trying to refresh token`);
     try {
-      const r = await this.refreshClient.fetch(this.w6Url.authSsl + "/login/refresh",
-        {
-          method: 'post', body: json({
-            refreshToken: refreshToken,
-            clientId: LoginBase.localClientId, idToken: window.localStorage[LoginBase.idToken]
-          })
+      const c = await polly()
+        .handle(err => true) // TODO: Handle specific errors only 
+        .waitAndRetry(3)
+        .executeForPromise(async () => {
+          const r = await this.refreshClient.fetch(this.w6Url.authSsl + "/login/refresh",
+            {
+              body: json({
+                clientId: LoginBase.localClientId, idToken: window.localStorage[LoginBase.idToken],
+                refreshToken,
+              }), method: "post",
+            });
+          if (!r.ok) { throw new Error("Error refreshing token: " + r.status); }
+          return <{ refresh_token, token, id_token }>await r.json();
         });
-      if (!r.ok) { throw new Error("Error refreshing token: " + r.status); }
       /* authConfig.providers.localIdentityServer.clientId */
-      let c = await r.json();
       this.updateAuthInfo(c.refresh_token, c.token, c.id_token);
       return true;
     } catch (err) {
