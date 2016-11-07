@@ -19,6 +19,7 @@ export class FeatureToggles {
 
   constructor(private w6: W6) { }
 
+  get contentTags() { return this.isTestEnvironment; }
   get createServers() { return this.isTestEnvironment; }
   get serverHosting() { return this.isTestEnvironment && this.adminFeatures; }
   get listAvailable() { return this.isTestEnvironment; }
