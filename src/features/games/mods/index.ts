@@ -1,5 +1,5 @@
-import {breeze, FindModel, IPaginated, ModHelper, PaginatedViewModel, IFilterInfo, SortDirection, Query, DbQuery, handlerFor, uiCommandWithLogin2, IMenuItem, MenuItem, IBreezeMod, ModsHelper, IMod, uiCommand2, VoidCommand} from '../../../framework';
-import {FilteredBase} from '../../filtered-base';
+import { breeze, FindModel, IPaginated, ModHelper, PaginatedViewModel, IFilterInfo, SortDirection, Query, DbQuery, handlerFor, uiCommandWithLogin2, IMenuItem, MenuItem, IBreezeMod, ModsHelper, IMod, uiCommand2, VoidCommand } from '../../../framework';
+import { FilteredBase } from '../../filtered-base';
 
 export class Index extends FilteredBase<IMod> {
   sort = [{ name: "stat.totalInstall", title: "Installs", direction: SortDirection.Desc }, { name: "updatedAt", title: "Updated", direction: SortDirection.Desc }, { name: "createdAt", title: "Created", direction: SortDirection.Desc }, { name: "name" }, { name: "packageName" }]
@@ -8,9 +8,11 @@ export class Index extends FilteredBase<IMod> {
   tagsModel: FindModel<IGameTag>;
 
   async activate(params) {
-    this.tags = await new GetGameTags(params.gameSlug || this.w6.activeGame.slug).handle(this.mediator);
-    this.tagsModel = new FindModel<IGameTag>(async (q) => q ? this.tags.filter(x => x.tagId.toLowerCase().includes(q.toLowerCase())) : this.tags, this.selectTag, x => `${x.tagId} (${x.contentCount})`)
-    this.tagsModel.searchItem = '';
+    if (this.features.contentTags) {
+      this.tags = await new GetGameTags(params.gameSlug || this.w6.activeGame.slug).handle(this.mediator);
+      this.tagsModel = new FindModel<IGameTag>(async (q) => q ? this.tags.filter(x => x.tagId.toLowerCase().includes(q.toLowerCase())) : this.tags, this.selectTag, x => `${x.tagId} (${x.contentCount})`)
+      this.tagsModel.searchItem = '';
+    }
     if (params.tag) {
       this.selectedTag = this.tags.filter(x => x.tagId.toLowerCase() === params.tag.toLowerCase())[0];
     }
