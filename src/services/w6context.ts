@@ -9,6 +9,8 @@ import { PromiseCache } from 'withsix-sync-api';
 import { IRequestInfo } from '../helpers/utils/http-errors';
 import { HttpClient, json } from 'aurelia-fetch-client';
 
+import polly from "polly-js";
+
 const metadata = require('../../data/metadata.json');
 
 export interface IAWSUploadPolicy {
@@ -163,7 +165,7 @@ export class W6Context {
     let url = this.getUrl(path);
     if (configOverride && configOverride.params) {
       const encode = (key: string, val, objKey?) => {
-        if (objKey) key = `${objKey}[${key}]`
+        if (objKey) { key = `${objKey}[${key}]`; }
         if (val instanceof Array) {
           return val.map((x, i) => encode(`${key}[${i}]`, x)).join("&")
         } else if (val instanceof Object) {
@@ -178,14 +180,16 @@ export class W6Context {
           return encode(encodeURIComponent(key), obj[key], objKey);
         })
         .join("&")
-      var params = encodeObject(configOverride.params)
+      const params = encodeObject(configOverride.params)
         .replace(/%20/g, "+");
       url = url + "?" + params;
     }
 
-    let r: Response;
     try {
-      return await this.http.fetch(url, configOverride);
+      return await polly()
+        .handle(err => true) // TODO: Handle specific errors only 
+        .waitAndRetry(3)
+        .executeForPromise(() => this.http.fetch(url, configOverride));
     } catch (err) {
       if (err instanceof Response) {
         let r: Response = err;
