@@ -26,15 +26,17 @@ $padding: 16px;
     top: $padding;
     bottom: $padding;
   }
+  $padding: 16px;
   .join-button {
+    top: $padding;
+    bottom: $padding;
     button {
-      width: 96px;
-      height: 48px;
+      height: 100%;
+      width: 112px;
       color: white;
       background-color: $colorSixGreen;
-      .pull-left {
-        margin-left: 4px;
-      }
+      padding-left: $padding;
+      padding-right: $padding;
       vertical-align: middle;
       .text {
         text-transform: uppercase;
@@ -247,14 +249,8 @@ $padding: 16px;
         @return $padding+$padding+$w;
       }
       .join-button {
-        // button {
-        //   width: 64px;
-        //   height: 48px;
-        // }
         position: absolute;
         left: - bla(16px);
-        top: $padding;
-        bottom: $padding;
         button {
           width: bla(16px) + bla(32px);
           height: 100%;
