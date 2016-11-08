@@ -15,7 +15,7 @@
   }
 }
 
-$padding: 16px;
+$padding: 12px;
 #server-browser,
 #server-render {
   .state {
@@ -26,7 +26,6 @@ $padding: 16px;
     top: $padding;
     bottom: $padding;
   }
-  $padding: 16px;
   .join-button {
     top: $padding;
     bottom: $padding;
@@ -174,18 +173,41 @@ $padding: 16px;
     margin-left: $filter-width + $gutter-width;
     $border-color: $colorSixSoftGray;
     color: $colorSixGray;
+    .c0 {
+      background-color: white;
+      position: absolute;
+    }
+    .c1 {
+      top: 0;
+      width: 1px;
+      left: -1px;
+      height: 12px;
+    }
+    .c2 {
+      bottom: 0;
+      width: 1px;
+      left: -1px;
+      height: 12px;
+    }
+    .td:first-child {
+      .c1,
+      .c2 {
+        display: none;
+      }
+    }
     .server-list-info {
       height: 48px;
       button {
         display: inline-block;
       }
     }
+    $thead-tr: 48px;
     .server-list-content {
       position: relative;
       .overlay {
         display: none;
         position: absolute;
-        top: 40px;
+        top: $thead-tr;
         left: 0;
         right: 0;
         bottom: 0;
@@ -228,7 +250,7 @@ $padding: 16px;
       }
       .thead {
         .tr {
-          height: 40px;
+          height: $thead-tr;
           //border: 1px solid $colorSixBlue;
           order {
             cursor: pointer;
@@ -238,6 +260,9 @@ $padding: 16px;
                 color: $colorSixGray;
               }
             }
+          }
+          ping {
+            margin-left: 10px;
           }
           .td:nth-child(3) {
             padding: 0 $padding;
@@ -286,6 +311,11 @@ $padding: 16px;
           font-size: 16px;
         }
         .tr {
+          &:hover {
+            .c0 {
+              background-color: $border-color;
+            }
+          }
           .td {
             padding: $padding 0px;
             .icon.withSIX-icon-Star-Outline {
