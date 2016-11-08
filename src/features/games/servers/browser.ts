@@ -499,10 +499,10 @@ export class Index extends ViewModel {
       const hasPending: Rx.Subject<boolean> = new Rx.BehaviorSubject(false);
       this.toProperty(hasPending, x => x.hasPending);
 
-      let page = 0;
+      let page = 1;
       const pageStream = this.observeEx(x => x.triggerPage)
         .map(x => page++)
-        .do<number>((pageNumber) => hasPending.next(true))
+        .do<number>((pageNumber) => hasPending.next(pageNumber <= 1))
         .concatMap(async (pageNumber) => {
           try {
             return await this.getMore(pageNumber);
@@ -516,7 +516,7 @@ export class Index extends ViewModel {
         .map(x => 0)
         .merge(this.observeEx(x => x.trigger))
         .switchMap((e) => {
-          page = 0;
+          page = 1;
           return pageStream;
         })
         .subscribe(x => {
