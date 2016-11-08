@@ -1,6 +1,6 @@
 <template>
   <require from="./servers.scss"></require>
-  <div class="container-fluid ${hasPending ? 'active' : ''}" id="server-browser">
+  <div class="container-fluid ${isActive ? 'active' : ''}" id="server-browser">
     <div class="server-filters">
       <div class="pull-right">
         <command-button class="clear-filter" model.bind="clear"></command-button>

@@ -465,7 +465,7 @@ export class Index extends ViewModel {
   triggerPage = 1;
 
   params;
-  hasPending: boolean;
+  isActive: boolean;
 
   async activate(params) {
     this.params = params;
@@ -489,34 +489,34 @@ export class Index extends ViewModel {
     }
     //this.trigger++; // todo; Command, awaitable, observable
     this.model = {
-      items: [], pageNumber: 1, total: 0, pageSize: 40
+      items: [], pageNumber: 1, total: 0, pageSize: 16
     }
     this.filteredItems = this.order(this.model.items);
 
     this.subscriptions.subd(d => {
       const list = this.listFactory.getList(this.filterTest.map(x => x.items).flatten(), ["value"]);
       d(list);
-      const hasPending: Rx.Subject<boolean> = new Rx.BehaviorSubject(false);
-      this.toProperty(hasPending, x => x.hasPending);
+      const hasPending: Rx.Subject<number> = new Rx.BehaviorSubject(0);
+      this.toProperty(hasPending.map(x => x === 1), x => x.isActive);
 
-      let page = 1;
+      let page = 0;
       const pageStream = this.observeEx(x => x.triggerPage)
-        .map(x => page++)
-        .do<number>((pageNumber) => hasPending.next(pageNumber <= 1))
+        .map(x => ++page)
+        .do<number>((pageNumber) => hasPending.next(pageNumber))
         .concatMap(async (pageNumber) => {
           try {
             return await this.getMore(pageNumber);
           } catch (err) {
             this.toastr.warning("Failed to retrieve servers");
-            return { page: 1, total: 0, items: [], perPage: 40 };
+            return { page: 1, total: 0, items: [], perPage: 16 };
           }
         })
-        .do<IPageModel<IServer>>((response) => hasPending.next(false));
+        .do<IPageModel<IServer>>((response) => hasPending.next(0));
       d(list.itemChanged
         .map(x => 0)
         .merge(this.observeEx(x => x.trigger))
         .switchMap((e) => {
-          page = 1;
+          page = 0;
           return pageStream;
         })
         .subscribe(x => {
@@ -619,7 +619,7 @@ export class Index extends ViewModel {
     const sort = { orders, }
 
     const servers = await new GetServers(this.w6.activeGame.id, filter, sort, {
-      page
+      page, pageSize: this.model.pageSize
     }).handle(this.mediator);
 
     if (this.w6.miniClient.isConnected && this.features.serverFeatures) this.refreshServerInfo(servers.items);
@@ -758,7 +758,7 @@ class GetServers extends Query<IPageModel<IServer>> {
       column: string; direction: number
     }[]
   }, public pageInfo?: {
-    page: number
+    page: number, pageSize: number
   }) {
     super();
   }
