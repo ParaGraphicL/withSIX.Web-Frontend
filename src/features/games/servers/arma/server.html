@@ -25,7 +25,7 @@
     <div>${serverType}</div>
     <command-button class="join-button" model.bind="join" show.bind="hovering">
       <div class="pull-left">
-        <span class="icon ${join.icon}"></span>
+        <span class="icon ${hasMods && modState !== 'uptodate' ? join.icon : 'withSIX-icon-Joystick'}"></span>
       </div>
       <div class="text">
         <span if.bind="hasMods && modState !== 'uptodate'">${modState} &amp;</span> <span class="join-text">join</span>
