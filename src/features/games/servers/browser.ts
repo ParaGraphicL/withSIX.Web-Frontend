@@ -489,7 +489,7 @@ export class Index extends ViewModel {
     }
     //this.trigger++; // todo; Command, awaitable, observable
     this.model = {
-      items: [], pageNumber: 1, total: 0, pageSize: 40
+      items: [], pageNumber: 1, total: 0, pageSize: 24
     }
     this.filteredItems = this.order(this.model.items);
 
@@ -499,16 +499,16 @@ export class Index extends ViewModel {
       const hasPending: Rx.Subject<boolean> = new Rx.BehaviorSubject(false);
       this.toProperty(hasPending, x => x.hasPending);
 
-      let page = 1;
+      let page = 0;
       const pageStream = this.observeEx(x => x.triggerPage)
-        .map(x => page++)
-        .do<number>((pageNumber) => hasPending.next(pageNumber <= 1))
+        .map(x => ++page)
+        .do<number>((pageNumber) => hasPending.next(pageNumber === 1))
         .concatMap(async (pageNumber) => {
           try {
             return await this.getMore(pageNumber);
           } catch (err) {
             this.toastr.warning("Failed to retrieve servers");
-            return { page: 1, total: 0, items: [], perPage: 40 };
+            return { page: 1, total: 0, items: [], perPage: 24 };
           }
         })
         .do<IPageModel<IServer>>((response) => hasPending.next(false));
@@ -516,7 +516,7 @@ export class Index extends ViewModel {
         .map(x => 0)
         .merge(this.observeEx(x => x.trigger))
         .switchMap((e) => {
-          page = 1;
+          page = 0;
           return pageStream;
         })
         .subscribe(x => {
@@ -619,7 +619,7 @@ export class Index extends ViewModel {
     const sort = { orders, }
 
     const servers = await new GetServers(this.w6.activeGame.id, filter, sort, {
-      page
+      page, pageSize: this.model.pageSize
     }).handle(this.mediator);
 
     if (this.w6.miniClient.isConnected && this.features.serverFeatures) this.refreshServerInfo(servers.items);
@@ -758,7 +758,7 @@ class GetServers extends Query<IPageModel<IServer>> {
       column: string; direction: number
     }[]
   }, public pageInfo?: {
-    page: number
+    page: number, pageSize: number
   }) {
     super();
   }
