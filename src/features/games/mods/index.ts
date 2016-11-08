@@ -8,13 +8,16 @@ export class Index extends FilteredBase<IMod> {
   tagsModel: FindModel<IGameTag>;
 
   async activate(params) {
+    // TODO: Tags must be optimized before we enable this again - we should scan and put them in memory on server, instead of part of request cycle.
     if (this.features.contentTags) {
       this.tags = await new GetGameTags(params.gameSlug || this.w6.activeGame.slug).handle(this.mediator);
       this.tagsModel = new FindModel<IGameTag>(async (q) => q ? this.tags.filter(x => x.tagId.toLowerCase().includes(q.toLowerCase())) : this.tags, this.selectTag, x => `${x.tagId} (${x.contentCount})`)
-      this.tagsModel.searchItem = '';
-    }
-    if (params.tag) {
-      this.selectedTag = this.tags.filter(x => x.tagId.toLowerCase() === params.tag.toLowerCase())[0];
+      this.tagsModel.searchItem = "";
+      if (params.tag) {
+        this.selectedTag = this.tags.filter(x => x.tagId.toLowerCase() === params.tag.toLowerCase())[0];
+      }
+    } else if (params.tag) {
+      this.selectedTag = { contentCount: 0, tagId: params.tag };
     }
     await super.activate(params);
   }
