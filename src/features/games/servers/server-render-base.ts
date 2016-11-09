@@ -218,6 +218,7 @@ export class ServerRenderBase extends ViewModel {
   }
 
   getPublisherName(p) { return `${p.publisher === 2 ? "Starbound-Servers.net" : "GameTracker.com"}`; }
+  get hasMods() { return this.model.modList.length > 0; }
 
   async loadModel() {
     try {
