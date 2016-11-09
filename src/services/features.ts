@@ -21,6 +21,7 @@ export class FeatureToggles {
 
   get contentTags() { return this.isTestEnvironment; }
   get createServers() { return this.isTestEnvironment; }
+  get serverClaiming() { return this.isTestEnvironment; }
   get serverHosting() { return this.isTestEnvironment && this.adminFeatures; }
   get listAvailable() { return this.isTestEnvironment; }
   get managerFeatures() { return this.w6.userInfo.isManager || this.adminFeatures; }

@@ -31,13 +31,14 @@ $padding: 12px;
     bottom: $padding;
     button {
       height: 100%;
-      width: 112px;
+      width: 96px;
       color: white;
       background-color: $colorSixGreen;
       padding-left: $padding;
       padding-right: $padding;
       vertical-align: middle;
       .text {
+        font-size: 12px;
         text-transform: uppercase;
         text-align: right;
         line-height: 1;
@@ -364,6 +365,18 @@ $padding: 12px;
         .overlay {
           display: block;
         }
+      }
+    }
+  }
+}
+
+#server-render {
+  .join-button {
+    button {
+      height: 48px;
+      width: 96px;
+      .text {
+        margin-top: 4px;
       }
     }
   }
