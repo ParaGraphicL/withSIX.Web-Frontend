@@ -1,0 +1,39 @@
+<template>
+  <require from="./get-client-dialog.scss"></require>
+  <ai-dialog class="ai-dialog get-client-dialog">
+    <ai-dialog-header>
+      <span class="imagecontent imageholder" back-img.bind="defaultBackUrl">
+      <span class="imagecontent imageholder" back-img.bind="model.logo">
+        <div class="title">
+          Get <b>Sync withSIX</b>
+        </div>
+      </div>
+      </span>
+      </span>
+    </ai-dialog-header>
+
+    <ai-dialog-body>
+      <div>
+        <div class="title">
+          The easiest way to download, install and update <b>${model.title}</b>
+        </div>
+        <p>
+          Use in combination with our webclient to manage <b>${model.game} mods</b> and to get the latest
+          content updates automatically!
+        </p>
+        <a href="/download">Learn more</a>
+      </div>
+
+      <div class="download-button">
+        <a href="${w6.url.main}/download/start?type=0&basket=1" rel="nofollow" class="calltoaction maindownload">
+          Download
+          <strong>Sync withSIX</strong>
+          <em>Windows only, 70MB</em>
+          <span class="iconbg">
+              <em class="icon withSIX-icon-Logo-Sync"></em>
+          </span>
+      </a>
+      </div>
+    </ai-dialog-body>
+  </ai-dialog>
+</template>

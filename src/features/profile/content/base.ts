@@ -1,12 +1,15 @@
-import {inject} from 'aurelia-framework';
-import {IContentGuidSpec, BasketItemType, IBasketItem, BasketService, Base, GameClientInfo, uiCommand, uiCommand2, UiContext, MenuItem, ViewModel, Mediator, Query, DbQuery, DbClientQuery, handlerFor, VoidCommand, IContent, ItemState, IContentState,
+import { inject } from 'aurelia-framework';
+import {
+  IContentGuidSpec, BasketItemType, IBasketItem, BasketService, Base, GameClientInfo, uiCommand, uiCommand2, UiContext, MenuItem, ViewModel, Mediator, Query, DbQuery, DbClientQuery, handlerFor, VoidCommand, IContent, ItemState, IContentState,
   RemoveRecent, Abort, UninstallContent, LaunchContent, OpenFolder, InstallContent, UnFavoriteContent, FavoriteContent, GameChanged, IMenuItem, FolderType, LaunchAction, IReactiveCommand, Publisher,
-ModsHelper} from '../../../framework';
-import {Router} from 'aurelia-router';
-import {GameBaskets, Basket} from '../../game-baskets';
-import {AddModsToCollections} from '../../games/add-mods-to-collections';
+  ModsHelper
+} from '../../../framework';
+import { Router } from 'aurelia-router';
+import { GameBaskets, Basket } from '../../game-baskets';
+import { AddModsToCollections } from '../../games/add-mods-to-collections';
+import { GetClientDialog } from '../../games/get-client-dialog';
 
-interface ISource {img: string; text: string}
+interface ISource { img: string; text: string }
 
 @inject(UiContext, BasketService)
 export class ContentViewModel<TContent extends IContent> extends ViewModel {
@@ -111,7 +114,7 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
 
     this.url = '/p/' + this.getPath();
 
-    let publishers = <{publisherId: string; publisherType: string}[]> (<any>model).publishers || [];
+    let publishers = <{ publisherId: string; publisherType: string }[]>(<any>model).publishers || [];
     // TODO: Add Group Owned and Custom Repository icons
     if (publishers.length > 0) {
       // Don't show the indicators on mods that are (also) hosted on our network
@@ -226,25 +229,37 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
 
   getInstallSpec() { return { id: this.model.id } }
 
-  protected installInternal = async () => { this.emitGameChanged(); await new InstallContent(this.model.gameId, this.getInstallSpec(), this.getNoteInfo()).handle(this.mediator) }
+  protected installInternal = async () => {
+    this.emitGameChanged();
+    if (this.features.isTestEnvironment && !this.w6.miniClient.isConnected) {
+      await this.dialog.open({
+        model: {
+          game: this.gameName,
+          logo: this.image,
+          title: this.name,
+        }, viewModel: GetClientDialog,
+      })
+    }
+    await new InstallContent(this.model.gameId, this.getInstallSpec(), this.getNoteInfo()).handle(this.mediator)
+  }
   protected launchInternal = async (action?: LaunchAction) => { this.emitGameChanged(); await new LaunchContent(this.model.gameId, this.model.id, this.getNoteInfo()).handle(this.mediator) }
   protected uninstallInternal = async () => { this.emitGameChanged(); if (await this.confirm("Are you sure you want to uninstall this content?")) await new UninstallContent(this.model.gameId, this.model.id, this.getNoteInfo()).handle(this.mediator) }
   protected diagnoseInternal = async () => { this.emitGameChanged(); await new InstallContent(this.model.gameId, { id: this.model.id }, this.getNoteInfo(), true, true).handle(this.mediator) }
   protected emitGameChanged = () => this.eventBus.publish(new GameChanged(this.model.gameId, this.model.gameSlug)); // incase we are on Home..
 
-  getNoteInfo() { return { text: this.model.name || this.model.packageName, href: this.url ? (this.url.startsWith("http") ? this.url : `https://withsix.com${this.url}` ) : this.url } };
+  getNoteInfo() { return { text: this.model.name || this.model.packageName, href: this.url ? (this.url.startsWith("http") ? this.url : `https://withsix.com${this.url}`) : this.url } };
   updateState() { this.state = (this.gameInfo.clientInfo.content[this.model.id] || this.getDefaultState()); }
 
-  
+
   getPinfo(p: Publisher) {
-      switch (p) {
-        case Publisher.Steam: return { img: this.w6.url.img.steam, text: 'Steam Workshop' }
-        case Publisher.Chucklefish: return { img: this.w6.url.img.chucklefish, text: 'Starbound Community Forums' }
-        case Publisher.NoMansSkyMods: return { img: this.w6.url.img.unknown, text: 'NoMansSkyMods' }
-        case Publisher.NexusMods: return { img: this.w6.url.img.unknown, text: 'Nexus Mods' }
-        case Publisher.ModDb: return { img: this.w6.url.img.unknown, text: 'ModDB' }
-        case Publisher.Curse: return { img: this.w6.url.img.unknown, text: 'Curse' }
-      }
+    switch (p) {
+      case Publisher.Steam: return { img: this.w6.url.img.steam, text: 'Steam Workshop' }
+      case Publisher.Chucklefish: return { img: this.w6.url.img.chucklefish, text: 'Starbound Community Forums' }
+      case Publisher.NoMansSkyMods: return { img: this.w6.url.img.unknown, text: 'NoMansSkyMods' }
+      case Publisher.NexusMods: return { img: this.w6.url.img.unknown, text: 'Nexus Mods' }
+      case Publisher.ModDb: return { img: this.w6.url.img.unknown, text: 'ModDB' }
+      case Publisher.Curse: return { img: this.w6.url.img.unknown, text: 'Curse' }
+    }
     return null;
   }
 
