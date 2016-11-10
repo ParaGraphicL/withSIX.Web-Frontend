@@ -661,7 +661,8 @@ export class Index extends ViewModel {
         evt.items.forEach(x => {
           let s = servers.filter(f => f.queryAddress === x.queryAddress)[0];
           if (s == null) return;
-          Object.assign(s, x, { country: s.country, distance: s.distance, modList: s.modList, updatedAt: new Date(), created: s.created });
+          const { modList, country, distance, created } = s;
+          Object.assign(s, x, { modList, country, distance, created, updatedAt: new Date() });
         });
       });
     try {

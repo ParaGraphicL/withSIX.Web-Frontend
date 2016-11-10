@@ -29,6 +29,7 @@ export interface ExtendedServerInfo extends IServerInfo {
   map: string;
   country: string;
   location: string;
+  distance: number;
   connectionAddress: string;
   downloadableContent: Dlcs;
   created: Date;
@@ -224,8 +225,8 @@ export class ServerRenderBase extends ViewModel {
     try {
       const m = await new GetServer(this.gameId, this.address).handle(this.mediator);
       // for now keep modlist from server as it has modID linked in..
-      const modList = this.model.modList;
-      Object.assign(this.model, m, { modList, country: this.model.country, location: this.model.location, created: this.model.created, updatedAt: new Date() });
+      const { modList, country, distance, location, created } = this.model;
+      Object.assign(this.model, m, { modList, country, distance, location, created, updatedAt: new Date() });
       this.clientLoaded = true;
       this.updateLinks();
     } catch (err) {
