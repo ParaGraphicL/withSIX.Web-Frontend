@@ -18,6 +18,7 @@
 $padding: 12px;
 #server-browser,
 #server-render {
+  word-break: break-word;
   .state {
     border-left: 4px solid $colorSixGreen;
     //margin: 0 $padding;
@@ -371,7 +372,6 @@ $padding: 12px;
 }
 
 #server-render {
-  word-break: break-word;
   .join-button {
     button {
       height: 48px;
