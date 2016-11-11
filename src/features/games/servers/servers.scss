@@ -371,6 +371,7 @@ $padding: 12px;
 }
 
 #server-render {
+  word-break: break-word;
   .join-button {
     button {
       height: 48px;
