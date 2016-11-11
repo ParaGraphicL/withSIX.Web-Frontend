@@ -217,14 +217,20 @@ export class App extends ViewModel {
         }));
 
       const changed = this.appEvents.gameChanged;
-      d(changed.flatMap(x => this.setActiveGame(x)).concat().subscribe());
+      d(changed.subscribe(info => this.w6.setActiveGame({ id: info.id, slug: info.slug })));
+      d(changed
+        .filter(game => game && game.id && game.isPageChange && this.w6.miniClient.isConnected)
+        .concatMap(game => this.client.selectGame(game.id))
+        .subscribe());
       d(changed.startWith(this.w6.activeGame)
-        .subscribe(this.gameChanged));
+        .do(this.gameChanged)
+        .filter(x => !!x.id)
+        .switchMap(game => this.basketService.getGameInfo(game.id))
+        .subscribe(x => this.gameInfo = x));
       d(this.clientWrapper.stateChanged
         .startWith(<StateChanged>{ newState: this.client.isConnected ? ConnectionState.connected : null })
-        .subscribe(state => {
-          if (state.newState === ConnectionState.connected) { this.infoReceived(this.client.clientInfo); }
-        }));
+        .filter(state => state.newState === ConnectionState.connected)
+        .subscribe(state => this.infoReceived(this.client.clientInfo)));
       const userErrors = this.whenAnyValue(x => x.userErrors).filter(x => x != null);
       d(userErrors.subscribe(_ => {
         // close all open dialogs when userErrors get replaced
@@ -263,9 +269,6 @@ export class App extends ViewModel {
     if (this.game.id === info.id) { return; }
     this.game.id = info.id;
     this.game.slug = info.slug;
-    if (this.game.id) {
-      this.gameInfo = await this.basketService.getGameInfo(this.game.id);
-    }
   }
   openClientSettings = (evt: OpenSettings) => this.dialog.open({ viewModel: SettingsIndex, model: evt.model })
   openCreateCollectionDialog = (event: OpenCreateCollectionDialog) =>
@@ -326,11 +329,6 @@ export class App extends ViewModel {
     await this.dialog.open({ model: userError, viewModel: UserErrorDialog, lock: true });
     // TODO: What about reshowing when closed prematurely??
     this.tools.removeEl(this.dialogMap, userError.id);
-  }
-
-  async setActiveGame(info: GameChanged) {
-    this.w6.setActiveGame({ id: info.id, slug: info.slug });
-    if (info && info.id && info.isPageChange) { await this.client.selectGame(info.id); }
   }
 
   myKeypressCallback = ($event: KeyboardEvent) => {
