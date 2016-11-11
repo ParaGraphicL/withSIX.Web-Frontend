@@ -10,7 +10,7 @@ import { EventAggregator } from 'aurelia-event-aggregator';
 import { ClientConnectionFailed, OperationCanceledError, ConnectionState } from 'withsix-sync-api';
 import { ClientWrapper } from './client-wrapper';
 
-@inject(W6, Toastr, Router, EventAggregator)
+@inject(W6, Toastr, Router, EventAggregator, ClientWrapper)
 export class ClientMissingHandler {
   constructor(private w6: W6, private toastr: Toastr, private router: Router, private eventBus: EventAggregator, private clientWrapper: ClientWrapper) { }
 
