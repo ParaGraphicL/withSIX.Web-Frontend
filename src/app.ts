@@ -167,15 +167,15 @@ export class App extends ViewModel {
     this.userMenuItems.push(new MenuItem(this.openMessages));
     this.userMenuItems.push(new MenuItem(this.openLogout));
 
-    setTimeout(() => {
+    setTimeout(async () => {
+      this.firefoxTimeoutPassed = true;
       if (!this.w6.settings.hasSync && (this.w6.miniClient.isConnected || this.basketService.hasConnected)) {
         this.w6.updateSettings(x => x.hasSync = true);
       }
       // TODO: put it on a connected handler?
       if (!this.w6.miniClient.isConnected && this.w6.settings.hasSync && this.features.clientAutostart) {
-        this.clientMissingHandler.addClientIframe();
+        await this.clientMissingHandler.addClientIframe(true);
       }
-      this.firefoxTimeoutPassed = true;
     }, 15 * 1000);
 
     this.w6.navigate = (url: string) => this.navigateInternal(url);

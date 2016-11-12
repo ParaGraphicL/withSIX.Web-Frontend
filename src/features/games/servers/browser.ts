@@ -540,10 +540,10 @@ export class Index extends ViewModel {
         cls: "unprominent",
         icon: "withSIX-icon-Reload",
       }));
-      const ival = setInterval(() => {
-        if (this.w6.miniClient.isConnected && this.features.serverFeatures) { this.refresh(); }
-      }, 60 * 1000);
-      d(() => clearInterval(ival));
+      if (this.features.serverFeatures) {
+        const ival = setInterval(() => { if (this.w6.miniClient.isConnected) { this.refresh(); } }, 60 * 1000);
+        d(() => clearInterval(ival));
+      }
     });
     this.handleBetaDialog();
   }

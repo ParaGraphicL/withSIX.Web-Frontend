@@ -39,16 +39,11 @@ export class ClientMissingHandler {
 
   openPlayTab = () => this.eventBus.publish(new SwitchSideBarTab('play'));
 
-  private async handleMessage(message: string) {
-    if (await this.toastr.warning(message, "Requires Sync client"))
-      this.router.navigate("/download");
-  }
-
-  addClientIframe() {
+  addClientIframe(silent = false) {
     if (window.___prerender___) return;
     if (this.p) return this.p;
     return this.p = new Promise((res, rej) => {
-      this.addClientIframeInternal();
+      this.addClientIframeInternal(silent);
       const t = setTimeout(() => {
         $('.client-frame').remove()
         sub.unsubscribe();
@@ -67,14 +62,18 @@ export class ClientMissingHandler {
     })
   }
 
-  async addClientIframeInternal() {
-    var i = document.createElement('iframe');
+  async addClientIframeInternal(silence: boolean) {
+    const i = document.createElement('iframe');
     i.style.display = 'none';
     i.classList.add('client-frame');
     i.onload = function () { i.parentNode.removeChild(i); };
     i.src = 'syncws://?launch=1';
     document.body.appendChild(i);
-    await this.handleMessage("Trying to start the client, or click here to download the Sync client");
+    if (!silence) { await this.handleMessage("Trying to start the client, or click here to download the Sync client"); }
+  }
+
+  private async handleMessage(message: string) {
+    if (await this.toastr.warning(message, "Requires Sync client")) { this.router.navigate("/download"); }
   }
 }
 
