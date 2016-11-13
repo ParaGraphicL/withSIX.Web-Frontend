@@ -177,10 +177,7 @@ export class GetModRelatedQuery extends DbQueryBase {
   // So we use a workaround - we actually re-get the mod but this time with collections+dependents, breeze will take care of merging with the existing object
   // and we only have slight overhead of grabbing the basic mod info again..
   public execute = [
-    'modId', modId => this.executeKeyQuery<IBreezeMod>(
-      () => this.getEntityQueryFromShortId("Mod", modId)
-        .withParameters({ id: Tools.fromShortId(modId) })
-        .expand(["collections", "dependents"]))
+    'modId', modId => Promise.resolve({ results: [] }) // this.executeKeyQuery<IBreezeMod>(      () => this.getEntityQueryFromShortId("Mod", modId)        .withParameters({ id: Tools.fromShortId(modId) })        .expand(["collections", "dependents"]))
   ];
 }
 
@@ -1108,8 +1105,8 @@ export class ModController extends ContentModelController<IBreezeMod> {
   private getModMenuItems(mod: IBreezeMod, editing) {
     var menuItems = angular.copy(ModController.menuItems);
 
-    if (this.$scope.model.dependentsCount > 0 || this.$scope.model.collectionsCount > 0)
-      menuItems.push({ header: "Related", segment: "related" });
+    //if (this.$scope.model.dependentsCount > 0 || this.$scope.model.collectionsCount > 0)
+    //menuItems.push({ header: "Related", segment: "related" });
 
     if (this.$scope.game.id.toLowerCase() === GameHelper.gameIds.Arma3.toLowerCase()) {
       menuItems.push({ header: "Servers", segment: "servers" })
