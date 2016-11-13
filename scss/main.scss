@@ -699,8 +699,8 @@ button.calltoaction {
   }
   .overlay {
     background-color: rgba(black, 0.3);
-    height: 100%;
-    min-height: $desiredHeight;
+    //height: 100%;
+    height: $desiredHeight;
   }
   .row {
     overflow: visible;
@@ -756,9 +756,9 @@ button.calltoaction {
 .chromeless {
   #header-row {
     $desiredHeight: 160px;
-    min-height: $desiredHeight;
+    height: $desiredHeight;
     .overlay {
-      min-height: $desiredHeight;
+      height: $desiredHeight;
     }
     .add-container {
       padding-top: 32px;
@@ -769,9 +769,9 @@ button.calltoaction {
 .no-adds {
   #header-row {
     $desiredHeight: 128px;
-    min-height: $desiredHeight;
+    height: $desiredHeight;
     .overlay {
-      min-height: $desiredHeight;
+      height: $desiredHeight;
     }
   }
 }
@@ -780,9 +780,9 @@ button.calltoaction {
 .play.no-adds {
   #header-row {
     $desiredHeight: 64px;
-    min-height: $desiredHeight;
+    height: $desiredHeight;
     .overlay {
-      min-height: $desiredHeight;
+      height: $desiredHeight;
     }
   }
 }

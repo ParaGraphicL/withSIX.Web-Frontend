@@ -18,9 +18,11 @@ $downloadButtonHeight: 74px;
     background-color: $colorSixLightGray;
   }
 }
+
 #contentheader-row {
   background-color: $colorSixLightGray;
 }
+
 #new-contentheader-row {
   margin-top: -65px;
   background-color: $colorSixSoftGray;
@@ -139,11 +141,11 @@ $downloadButtonHeight: 74px;
       }
       @include box-shadow(rgba(gray, 0.4) 0 0 25px, rgba(gray, 0.2) 0 0 3px 1px inset);
       height: $logoHeight;
-      > .my-container {
+      >.my-container {
         float: left;
         margin-right: -$logoWidth;
         width: 100%;
-        > .left {
+        >.left {
           margin-right: $logoWidth;
           div.title {
             height: 134px;
@@ -153,7 +155,7 @@ $downloadButtonHeight: 74px;
               }
             }
           }
-          > .bottom {
+          >.bottom {
             $height: $downloadButtonHeight;
             height: $height;
             color: white;
@@ -179,7 +181,7 @@ $downloadButtonHeight: 74px;
           }
         }
       }
-      > .logo {
+      >.logo {
         @include size($logoWidth, $logoHeight);
         .imageholder,
         img {
@@ -205,7 +207,7 @@ $downloadButtonHeight: 74px;
       @media (max-width: $flipWidth2) {
         display: none;
       }
-      > .bottom {
+      >.bottom {
         .left {
           color: white;
           width: 180px;
@@ -230,7 +232,7 @@ $downloadButtonHeight: 74px;
             }
           }
         }
-        > .logo {
+        >.logo {
           @include size($logoWidth, $logoHeight);
           .imageholder,
           img {
@@ -252,7 +254,7 @@ $downloadButtonHeight: 74px;
         display: block;
       }
       @include box-shadow(rgba(gray, 0.4) 0 0 25px, rgba(gray, 0.2) 0 0 3px 1px inset);
-      > .bottom {
+      >.bottom {
         color: white;
         .action {
           $height: 80px;
@@ -273,7 +275,7 @@ $downloadButtonHeight: 74px;
           }
         }
       }
-      > .logo {
+      >.logo {
         @include size($logoWidth, $logoHeight);
         .imageholder,
         img {
@@ -292,6 +294,7 @@ $downloadButtonHeight: 74px;
     padding: 16px;
   }
 }
+
 .play-game {
   #subheader-row {
     //min-height: 680px;
@@ -344,9 +347,9 @@ $downloadButtonHeight: 74px;
     #header-row,
     #new-contentheader-row {
       $desiredHeight: 128px;
-      min-height: $desiredHeight;
+      height: $desiredHeight;
       .overlay {
-        min-height: $desiredHeight;
+        height: $desiredHeight;
       }
     }
   }

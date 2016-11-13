@@ -7,6 +7,7 @@
     #{$what}: $value100;
   }
 }
+
 @mixin anim-inner($what, $value0, $value100: 0px, $timeout: 0.5s) {
   .tab-content-inner {
     overflow: hidden;
@@ -19,6 +20,7 @@
     }
   }
 }
+
 .v2 {
   .shell-bar {
     .btn,
@@ -42,7 +44,7 @@
     ul {
       margin: 0;
       padding: 0;
-      & > li {
+      &>li {
         list-style-type: none;
       }
     }
@@ -77,9 +79,9 @@
     header {
       color: $colorSixLightGray;
     }
-    action-bar.main > ul.menu,
+    action-bar.main>ul.menu,
     ul.menu.main {
-      > li {
+      >li {
         @include text-overflow;
         margin-top: 8px;
         // &:first-child {
@@ -182,18 +184,18 @@
   // legacy
   #header-row {
     $desiredHeight: 164px;
-    min-height: $desiredHeight;
+    height: $desiredHeight;
     .overlay {
-      min-height: $desiredHeight;
+      height: $desiredHeight;
     }
   }
   .main {
     &.home {
       #header-row {
         $desiredHeight: 240px;
-        min-height: $desiredHeight;
+        height: $desiredHeight;
         .overlay {
-          min-height: $desiredHeight;
+          height: $desiredHeight;
         }
       }
     }
@@ -201,18 +203,18 @@
   .play-game {
     #header-row {
       $desiredHeight: 190px;
-      min-height: $desiredHeight;
+      height: $desiredHeight;
       .overlay {
-        min-height: $desiredHeight;
+        height: $desiredHeight;
       }
     }
   }
   .no-adds.play-game {
     #header-row {
       $desiredHeight: 128px;
-      min-height: $desiredHeight;
+      height: $desiredHeight;
       .overlay {
-        min-height: $desiredHeight;
+        height: $desiredHeight;
       }
     }
   }
@@ -319,9 +321,7 @@
   }
 }
 
-$awesome: rgba(255,255,255, 0.83);
-
-
+$awesome: rgba(255, 255, 255, 0.83);
 div.source {
   left: 10px;
   position: absolute;
@@ -337,7 +337,7 @@ div.source {
 .card.horizontal {
   .basketable-dropdown button.dropdown-toggle {
     right: 0;
-  } 
+  }
   action-bar.basketable-action {
     button {
       left: 0;
