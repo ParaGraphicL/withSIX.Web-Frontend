@@ -50,6 +50,28 @@
             </div>
           </div>
         </div>
+        <div if.bind="features.isTestEnvironment">
+          Settings
+          <ul class="menu">
+            <li repeat.for="s of settings">
+              ${s.name}
+              <ul class="menu row">
+                <li repeat.for="d of s.values" class="col-md-3">
+                  ${d.name}
+                  <ul class="menu">
+                    <li repeat.for="ds of d.values">
+                      <rangeboxadv min.bind="ds.range[0]" max.bind="ds.range[1]" value.bind="ds.defaultValue">${ds.name}</checkbox>
+                    </li>
+                  </ul>
+                  <ul class="menu">
+                    <li repeat.for="ds of d.flags">
+                      <checkbox value.bind="ds.defaultValue">${ds.name}</checkbox>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+        </div>
       </form>
     </ai-dialog-body>
 

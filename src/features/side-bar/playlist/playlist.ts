@@ -131,17 +131,20 @@ export class Playlist extends ViewModel {
         cls: 'cancel ignore-close',
         isVisibleObservable: this.whenAnyValue(x => x.collectionChanged)
       }));
-      d(this.launchAsServer = uiCommand2("Host Server", () => this.dialog.open({
-        viewModel: HostServer, model: {
-          launchDedicated: () => this.launch(this.activeBasket, LaunchAction.LaunchAsDedicatedServer),
-          launch: () => this.launch(this.activeBasket, LaunchAction.LaunchAsServer),
-          //host: details => this.host(this.activeBasket, details),
-          basket: this.activeBasket
-        }
-      }), {
+      d(this.launchAsServer = uiCommand2("Host Server", () => {
+        const cmd = this.activeBasket.basketToCommandData();
+        return this.dialog.open({
+          viewModel: HostServer, model: {
+            launchDedicated: () => this.launch(this.activeBasket, LaunchAction.LaunchAsDedicatedServer),
+            launch: () => this.launch(this.activeBasket, LaunchAction.LaunchAsServer),
+            //host: details => this.host(this.activeBasket, details),
+            content: cmd.contents,
+          }
+        })
+      }, {
           canExecuteObservable: this.whenAnyValue(x => x.hasItems)
           //isVisibleObservable: // if the game supports launching as server
-        }))
+        }));
       d(this.appEvents.gameChanged.subscribe(this.gameChanged));
       d(this.findModel = new FindModel(this.findCollections, (col: IPlaylistCollection) => this.selectCollection(col), e => e.name));
       d(Playlist.bindObservableTo(this.whenAnyValue(x => x.isCollection).map(x => x ? "Save as new collection" : "Save as collection"), this.saveBasket, x => x.name));

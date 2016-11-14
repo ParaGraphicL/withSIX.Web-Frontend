@@ -1,7 +1,7 @@
-import { sanitizeHtml, parseBBCode } from '../../helpers/utils/string';
-import { createUrlSafe, Url } from '../../helpers/utils/url';
-import { HttpClient as FetchClient } from 'aurelia-fetch-client';
-import { inject } from 'aurelia-framework';
+import { sanitizeHtml, parseBBCode } from "../../helpers/utils/string";
+import { createUrlSafe, Url } from "../../helpers/utils/url";
+import { HttpClient as FetchClient } from "aurelia-fetch-client";
+import { inject } from "aurelia-framework";
 
 export { parseBBCode }
 
@@ -9,24 +9,24 @@ interface Media { href: string; title: string; thumbnail?: string, youtube?: str
 
 export class HtmlParser {
   toJquery(text: string, baseUrl?: string, transformer?) {
-    return new Parser($(this.createDocument(text, "imported html")), baseUrl, this)
+    return new Parser($(this.createDocument(text, "imported html")), baseUrl, this);
   }
 
   createDocument(html, title) {
-    var doc = document.implementation.createHTMLDocument(title)
-    doc.documentElement.innerHTML = html
-    return doc
+    let doc = document.implementation.createHTMLDocument(title)
+    doc.documentElement.innerHTML = html;
+    return doc;
   }
 
   parseElement(htmlElement: JQuery, domain: string) {
-    $.each(htmlElement.find('a'), (i, v) => {
+    $.each(htmlElement.find("a"), (i, v) => {
       let el = $(v);
-      this.handleAttr(el, 'href', domain);
-      el.attr('target', '_blank');
+      this.handleAttr(el, "href", domain);
+      el.attr("target", "_blank");
     });
-    $.each(htmlElement.find('img'), (i, v) => {
+    $.each(htmlElement.find("img"), (i, v) => {
       let el = $(v);
-      this.handleAttr(el, 'src', domain);
+      this.handleAttr(el, "src", domain);
     });
     return htmlElement;
   }
@@ -34,7 +34,7 @@ export class HtmlParser {
   handleAttr = (el: JQuery, attr: string, baseUrl: string) => {
     let src = el.attr(attr);
     let updatedUrl = src && (this.cleanupUrl(this.handleRelativeUrl(src, baseUrl)));
-    if (updatedUrl) el.attr(attr, updatedUrl);
+    if (updatedUrl) { el.attr(attr, updatedUrl); }
   }
 
   cleanupUrl(url: string) { return url.replace(/\/+$/, "") }
@@ -45,42 +45,42 @@ export class HtmlParser {
       : url;
 
   combineUrls = (baseUrl: string, url: string) => {
-    if (url.startsWith(".")) url = url.substring(1);
-    if (url.startsWith("/")) url = url.substring(1);
+    if (url.startsWith(".")) { url = url.substring(1); }
+    if (url.startsWith("/")) { url = url.substring(1); }
     return baseUrl + url;
   }
 
-  quote = (html: string) => this.surround('blockquote', html);
+  quote = (html: string) => this.surround("blockquote", html);
   surround = (tag: string, html: string) => `<${tag}>${html}</${tag}>`;
 
   static shouldIncludeImage = (i: Media) => !i.href || (!HtmlParser.filterHref(i.href) && (!i.originalLink || !HtmlParser.filterHref(i.originalLink)));
 
   static shouldFilterHref = [
-    '/logos/banner-420x120.png',
+    "/logos/banner-420x120.png",
 
-    'emoticon',
+    "emoticon",
 
-    '//forums.bistudio.com/',
-    '//www.bistudio.com/assets/img/licenses',
-    '//www.bistudio.com/license',
+    "//forums.bistudio.com/",
+    "//www.bistudio.com/assets/img/licenses",
+    "//www.bistudio.com/license",
 
     // both www. and main
-    'armaholic.com/images/pfs/',
-    'armaholic.com/datas/users/news_download',
-    'armaholic.com/skins/',
+    "armaholic.com/images/pfs/",
+    "armaholic.com/datas/users/news_download",
+    "armaholic.com/skins/",
 
-    '//button.moddb.com/',
-    '//staticdelivery.nexusmods.com/contents/images',
+    "//button.moddb.com/",
+    "//staticdelivery.nexusmods.com/contents/images",
 
-    '/noimage.',
-    '//steamcommunity-a.akamaihd.net/public/shared/images/',
-    '//store.akamai.steamstatic.com/public/shared/images/',
-    '//cfl.dropboxstatic.com/static/images/',
-    '//wmtransfer.com/',
-    '//paypalobjects.com/',
-    '//www.paypal.com/',
-    '//creativecommons.org/',
-    '//patreon.com/'
+    "/noimage.",
+    "//steamcommunity-a.akamaihd.net/public/shared/images/",
+    "//store.akamai.steamstatic.com/public/shared/images/",
+    "//cfl.dropboxstatic.com/static/images/",
+    "//wmtransfer.com/",
+    "//paypalobjects.com/",
+    "//www.paypal.com/",
+    "//creativecommons.org/",
+    "//patreon.com/"
   ]
 
   static filterHref(href: string) { return this.shouldFilterHref.some(x => href.toLowerCase().includes(x)); }
@@ -112,8 +112,8 @@ export abstract class InterestingLink {
     this.url = url.replace(/\/+$/, "");
     if (images && images.length > 0) this.displayImage = images[0];
     if (!this.displayImage) this.displayImage = this.getDisplayImage();
- }
- protected getDisplayImage() { return null; }
+  }
+  protected getDisplayImage() { return null; }
 }
 export class ImgurGallery extends InterestingLink {
   title = "Imgur Gallery"
@@ -128,10 +128,10 @@ export class SocialMedia extends InterestingLink {
     else if (this.url.includes("plus.google.com")) this.title = "Google Plus";
   }
 
- }
- export class GithubUrl extends InterestingLink {
-   title = "GitHub Repo"
- }
+}
+export class GithubUrl extends InterestingLink {
+  title = "GitHub Repo"
+}
 export class WorkshopUrl extends InterestingLink {
   title = "Steam Workshop"
 }
@@ -163,16 +163,18 @@ export class VideoUrl extends InterestingLink {
   title = "Video Channel";
 }
 export class DonationUrl extends InterestingLink {
-  title = "Support the Author"
+  title = "Support the Author";
   protected getDisplayImage() {
-    if (this.url.includes('patreon.com/')) return 'https://s3.amazonaws.com/patreon_public_assets/toolbox/patreon_logo.png';
-    else if (this.url.includes('paypal.com/')) return 'https://www.paypalobjects.com/webstatic/mktg/logo-center/PP_Acceptance_Marks_for_LogoCenter_266x142.png';
+    if (this.url.includes("patreon.com/")) { return "https://s3.amazonaws.com/patreon_public_assets/toolbox/patreon_logo.png"; }
+    if (this.url.includes("paypal.com/")) {
+      return "https://www.paypalobjects.com/webstatic/mktg/logo-center/PP_Acceptance_Marks_for_LogoCenter_266x142.png";
+    }
     return super.getDisplayImage();
   }
 }
 export class LicenseUrl extends InterestingLink {
-  title = "License"
- }
+  title = "License";
+}
 
 export class Parser {
   constructor(private doc: JQuery, private baseUrl: string, private p: HtmlParser) { }
@@ -190,11 +192,11 @@ export class Parser {
     let interestingLinks: InterestingLink[] = [];
     el.find("a").each((i, x) => {
       let el = $(x);
-      let link = el.attr('href');
+      let link = el.attr("href");
       let images = [];
       el.find("img").each((i, x) => {
         let iel = $(x);
-        let src = iel.attr('src');
+        let src = iel.attr("src");
         if (src) images.push(src);
       })
       if (link) {
@@ -207,54 +209,54 @@ export class Parser {
   }
 
   determineInterestingLink(url: string, images: string[]): InterestingLink {
-    if (url.startsWith('http://imgur.com/a/')
-      || url.startsWith('https://imgur.com/a/')
-      || url.startsWith('http://imgur.com/gallery/')
-      || url.startsWith('https://imgur.com/gallery/'))
+    if (url.startsWith("http://imgur.com/a/")
+      || url.startsWith("https://imgur.com/a/")
+      || url.startsWith("http://imgur.com/gallery/")
+      || url.startsWith("https://imgur.com/gallery/"))
       return new ImgurGallery(url, images);
 
-    if (url.startsWith('https://facebook.com/')
-      || url.startsWith('https://www.facebook.com/')
-      || url.startsWith('https://plus.google.com/')
-      || url.startsWith('https://twitter.com/'))
+    if (url.startsWith("https://facebook.com/")
+      || url.startsWith("https://www.facebook.com/")
+      || url.startsWith("https://plus.google.com/")
+      || url.startsWith("https://twitter.com/"))
       return new SocialMedia(url, images);
 
-    if (url.startsWith('https://www.reddit.com/r/')
-        || url.startsWith('http://www.reddit.com/r/'))
+    if (url.startsWith("https://www.reddit.com/r/")
+      || url.startsWith("http://www.reddit.com/r/"))
       return new ForumUrl(url, images);
 
-    if (url.startsWith('https://www.reddit.com/u/')
-        || url.startsWith('http://www.reddit.com/u/'))
+    if (url.startsWith("https://www.reddit.com/u/")
+      || url.startsWith("http://www.reddit.com/u/"))
       return new ProfileUrl(url, images);
 
-    if (url.startsWith('ts3server://')
-        || url.startsWith('http://discord.gg/')
-        || url.startsWith('https://discord.gg/')
-        || url.startsWith('https://gitter.im/')
-        || url.startsWith('http://gitter.im/')
-        || url.includes('.slack.com/'))
+    if (url.startsWith("ts3server://")
+      || url.startsWith("http://discord.gg/")
+      || url.startsWith("https://discord.gg/")
+      || url.startsWith("https://gitter.im/")
+      || url.startsWith("http://gitter.im/")
+      || url.includes(".slack.com/"))
       return new CommsUrl(url, images);
 
-// TODO: better distinguishing...
-/*
-    if (url.startsWith('https://forums.bistudio.com/')
-      || url.startsWith('http://community.playstarbound.com/')
-      || url.startsWith('http://www.armaholic.com/forums.php'))
-      return new ForumUrl(url, images);
-
-    if (url.startsWith('http://www.armaholic.com/page.php?id='))
-      return new ArmaholicUrl(url, images);
-*/
-    if (url.startsWith('http://www.youtube.com/playlist')
-      || url.startsWith('https://www.youtube.com/playlist')
-      || url.startsWith('http://www.youtube.com/user')
-      || url.startsWith('https://www.youtube.com/user'))
+    // TODO: better distinguishing...
+    /*
+        if (url.startsWith('https://forums.bistudio.com/')
+          || url.startsWith('http://community.playstarbound.com/')
+          || url.startsWith('http://www.armaholic.com/forums.php'))
+          return new ForumUrl(url, images);
+    
+        if (url.startsWith('http://www.armaholic.com/page.php?id='))
+          return new ArmaholicUrl(url, images);
+    */
+    if (url.startsWith("http://www.youtube.com/playlist")
+      || url.startsWith("https://www.youtube.com/playlist")
+      || url.startsWith("http://www.youtube.com/user")
+      || url.startsWith("https://www.youtube.com/user"))
       return new VideoUrl(url, images); // TODO
 
-    if (url.includes('patreon.com/') || url.includes('paypal.com/') || url.includes('wmtransfer.com/') || url.includes('webmoney.ru'))
+    if (url.includes("patreon.com/") || url.includes("paypal.com/") || url.includes("wmtransfer.com/") || url.includes("webmoney.ru"))
       return new DonationUrl(url, images);
 
-    if (url.includes('creativecommons.org/') || url.includes('www.bistudio.com/license'))
+    if (url.includes("creativecommons.org/") || url.includes("www.bistudio.com/license"))
       return new LicenseUrl(url, images);
 
     return null;
@@ -264,7 +266,7 @@ export class Parser {
     let images: Media[] = [];
     let handledImages = [];
     root.find("iframe").each((i, x) => {
-      let src = $(x).attr('src');
+      let src = $(x).attr("src");
 
       let video = this.tryVideo(src);
       if (video) images.push(video);
@@ -273,28 +275,28 @@ export class Parser {
 
     root.find("a").each((i, x) => {
       let el = $(x);
-      let link = el.attr('href');
-      let linkTitle = el.attr('title');
-      el.find('img').each((ii, ix) => {
+      let link = el.attr("href");
+      let linkTitle = el.attr("title");
+      el.find("img").each((ii, ix) => {
         if (handledImages.includes(ix)) return;
         let iel = $(ix);
         let linkImage = this.isImage(link) ? link : null;
-        let imgSrc = iel.attr('src') || linkImage;
+        let imgSrc = iel.attr("src") || linkImage;
         if (imgSrc) {
           let vid = this.tryImageVideo(imgSrc);
           if (vid) images.push(vid)
-          else images.push({ href: this.growImage(linkImage ? linkImage : imgSrc), title: linkTitle || iel.attr('alt') || iel.attr('title'), thumbnail: imgSrc, originalLink: link })
+          else images.push({ href: this.growImage(linkImage ? linkImage : imgSrc), title: linkTitle || iel.attr("alt") || iel.attr("title"), thumbnail: imgSrc, originalLink: link })
         }
         handledImages.push(ix);
       })
 
       if (link) {
-        let isMp4 = link.endsWith('.mp4');
-        if (isMp4 || link.endsWith('.ogg')) {
+        let isMp4 = link.endsWith(".mp4");
+        if (isMp4 || link.endsWith(".ogg")) {
           images.push({
             href: link,
             title: linkTitle,
-            type: `video/${isMp4 ? 'mp4' : 'ogg'}`
+            type: `video/${isMp4 ? "mp4" : "ogg"}`
           })
         } else {
           let video = this.tryVideo(link);
@@ -306,16 +308,20 @@ export class Parser {
     root.find("img").each((i, x) => {
       if (handledImages.includes(x)) return;
       let el = $(x);
-      let imgSrc = el.attr('src');
+      let imgSrc = el.attr("src");
       if (imgSrc) {
         let vid = this.tryImageVideo(imgSrc);
         if (vid) images.push(vid)
-        else images.push({ href: this.growImage(imgSrc), title: el.attr('title') || el.attr('alt'), thumbnail: imgSrc })
+        else images.push({ href: this.growImage(imgSrc), title: el.attr("title") || el.attr("alt"), thumbnail: imgSrc })
       }
       handledImages.push(x);
     })
     let newImages = [];
-    images.forEach(x => { if (HtmlParser.shouldIncludeImage(x) && !newImages.some(i => HtmlParser.compareImage(x, i))) newImages.push(x) });
+    images.forEach(x => {
+      if (HtmlParser.shouldIncludeImage(x) && !newImages.some(i => HtmlParser.compareImage(x, i))) {
+        newImages.push(x);
+      }
+    });
     return newImages;
   }
 
@@ -333,8 +339,8 @@ export class Parser {
       let id = m[1];
       return {
         href: `https://youtube.com/embed/${id}`,
-        title: 'Video',
-        type: 'text/html',
+        title: "Video",
+        type: "text/html",
         youtube: id,
         poster: `https://img.youtube.com/vi/${id}/0.jpg`
       }
@@ -348,8 +354,8 @@ export class Parser {
     if (id = this.parseYoutubeId(src)) {
       return {
         href: src,
-        title: 'Video',
-        type: 'text/html',
+        title: "Video",
+        type: "text/html",
         youtube: id,
         poster: `https://img.youtube.com/vi/${id}/0.jpg` // maxresdefault just doesnt always exist! http://stackoverflow.com/questions/34763547/youtube-maxresdefault-thumbnails
       };
@@ -358,12 +364,12 @@ export class Parser {
   }
 
   parseYoutubeId(src: string) {
-      let m;
-      // https://www.youtube.com/watch?v=icXoLobjUEg
-      if ((src.includes('youtube.com/embed/') || src.includes('youtu.be/embed/') || src.includes('youtube-nocookie.com/embed/'))
-        && (m = src.match(/embed\/([^\/\?#\s]+)/))) return m[1];
-      if (src.includes('youtube.com/watch?v=') && (m = src.match(/v=([^&#]+)/))) return m[1];
-      return null;
+    let m;
+    // https://www.youtube.com/watch?v=icXoLobjUEg
+    if ((src.includes("youtube.com/embed/") || src.includes("youtu.be/embed/") || src.includes("youtube-nocookie.com/embed/"))
+      && (m = src.match(/embed\/([^\/\?#\s]+)/))) return m[1];
+    if (src.includes("youtube.com/watch?v=") && (m = src.match(/v=([^&#]+)/))) return m[1];
+    return null;
   }
 
   isImage = (url: string) => {

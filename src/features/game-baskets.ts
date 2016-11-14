@@ -3,8 +3,8 @@
 // instead they are manually managed. We should standardize this asap.
 // However there is some complication because of legacy (Angular) code/references.
 
-import {EventAggregator} from 'aurelia-event-aggregator';
-import {inject, Container} from 'aurelia-framework';
+import { EventAggregator } from 'aurelia-event-aggregator';
+import { inject, Container } from 'aurelia-framework';
 import {
   Base, LS, Notifier, Toastr, uiCommand2, ViewModel, ViewModelWithModel, SelectTab,
   BasketType, IBasketModel, IBasketItem, BasketState, IBasketCollection, W6Context, LaunchAction,
@@ -12,10 +12,10 @@ import {
   BasketItemType, DependencyType, StateChanged
 } from '../framework';
 
-import {Client, ConnectionState, IContentState, ItemState, IContentStateChange, IContentStatusChange, IClientInfo, IContentGuidSpec, IContentsBase, IContentBase} from 'withsix-sync-api';
+import { Client, ConnectionState, IContentState, ItemState, IContentStateChange, IContentStatusChange, IClientInfo, IContentGuidSpec, IContentsBase, IContentBase } from 'withsix-sync-api';
 
-import {CreateCollectionDialog} from './games/collections/create-collection-dialog';
-import {LoadCollectionIntoBasket} from './profile/content/collection';
+import { CreateCollectionDialog } from './games/collections/create-collection-dialog';
+import { LoadCollectionIntoBasket } from './profile/content/collection';
 
 export class GameBaskets extends ViewModel {
   baskets: Basket[] = [];
@@ -348,9 +348,11 @@ export class Basket extends ViewModelWithModel<IBasketCollection> {
   //   return mainItem == null ? null : (mainItem.name || mainItem.packageName);
   // }
 
-  install = (hide = false) => this.model.basketType === BasketType.SingleCollection || this.model.basketType === BasketType.SingleItem // TODO: Use polymorphism instead?
-    ? this.installAsSingle(hide)
-    : this.installAsMulti(hide)
+  install = (hide = false) =>
+    this.model.basketType === BasketType.SingleCollection
+      || this.model.basketType === BasketType.SingleItem // TODO: Use polymorphism instead?
+      ? this.installAsSingle(hide)
+      : this.installAsMulti(hide)
   installAsMulti = (hide = false) => {
     this.tools.Debug.log("$$$ install as multi!!");
     var cmdData = this.basketToCommandData(hide);
@@ -368,10 +370,10 @@ export class Basket extends ViewModelWithModel<IBasketCollection> {
   update = () => this.install();
   play = this.launch;
 
-  private basketToCommandData(hideLaunchAction = false) {
-    var content: IContentGuidSpec[] = [];
-    for (var i = 0; i < this.model.items.length; i++) {
-      var item = this.model.items[i];
+  basketToCommandData(hideLaunchAction = false) {
+    const content: IContentGuidSpec[] = [];
+    for (let i = 0; i < this.model.items.length; i++) {
+      const item = this.model.items[i];
       content.push({ id: item.id, isOnlineCollection: item.isOnlineCollection, constraint: item.constraint });
     }
     return {
