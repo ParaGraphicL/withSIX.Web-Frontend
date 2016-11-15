@@ -50,7 +50,14 @@
             </div>
           </div>
         </div>
-        <div if.bind="features.isTestEnvironment">
+        <div if.bind="jobState">
+          <h2>Progress</h2>
+          State: ${State[jobState.state]}
+          <span if.bind="jobState.address">
+            Address: ${jobState.address}
+          </span>
+        </div>
+        <!--<div if.bind="features.isTestEnvironment">
           Settings
           <ul class="menu">
             <li repeat.for="s of settings">
@@ -71,7 +78,7 @@
                 </li>
               </ul>
             </li>
-        </div>
+        </div>-->
       </form>
     </ai-dialog-body>
 

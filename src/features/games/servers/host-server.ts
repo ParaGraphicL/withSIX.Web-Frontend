@@ -1,5 +1,5 @@
 import {
-  CollectionScope, Command, DbClientQuery, DbQuery, Dialog, IReactiveCommand, ServerHelper, VoidCommand, handlerFor, uiCommand2,
+  CollectionScope, Command, DbClientQuery, DbQuery, Dialog, IReactiveCommand, Query, ServerHelper, VoidCommand, handlerFor, uiCommand2,
 } from "../../../framework";
 
 
@@ -17,6 +17,19 @@ interface IModel {
   launchDedicated: Function;
 }
 
+
+enum State {
+  Default,
+  PreparingContent,
+  PreparingConfiguration,
+  Starting,
+  Failed,
+  Running,
+}
+
+interface IJobInfo { address: string; state: State; message: string; }
+
+
 export class HostServer extends Dialog<IModel> {
   ServerScope = CollectionScope;
   scopes = ServerHelper.scopes;
@@ -27,6 +40,8 @@ export class HostServer extends Dialog<IModel> {
   launch: IReactiveCommand<void>;
   host: IReactiveCommand<void>;
   settings;
+  jobState: IJobInfo;
+  State = State;
 
   activate(model: IModel) {
     this.settings = getArma3Settings();
@@ -79,8 +94,14 @@ export class HostServer extends Dialog<IModel> {
     await t;
   }
   handleHost = async () => {
-    const info = await new HostW6Server(this.w6.activeGame.id, this.model).handle(this.mediator); //this.model.host(this.model);
-    confirm("Your server's ip+port=" + info);
+    const jobId = await new HostW6Server(this.w6.activeGame.id, this.model).handle(this.mediator); //this.model.host(this.model);
+    this.jobState = <any>{ state: 0 };
+    while (this.jobState.state < State.Failed) {
+      this.jobState = await new GetJobState(jobId).handle(this.mediator);
+      await new Promise(res => setTimeout(() => res(), 2000));
+    }
+    if (this.jobState.state === State.Failed) { throw new Error(`Job failed: ${this.jobState.message}`); }
+    confirm("Your server's ip+port=" + this.jobState.address);
     this.controller.ok();
   }
 }
@@ -273,7 +294,7 @@ class HostW6Server extends Command<string> {
 @handlerFor(HostW6Server)
 class HostW6ServerHandler extends DbQuery<HostW6Server, string> {
   handle(request: HostW6Server) {
-    return this.context.postCustom<string>('/server-manager', request);
+    return this.context.postCustom<string>("/server-manager", request);
   }
 }
 
@@ -282,8 +303,17 @@ class LaunchServer extends VoidCommand {
 }
 
 @handlerFor(LaunchServer)
-class LaunchServerHandler extends DbClientQuery<LaunchServer, void> {
+class LaunchServerHandler extends DbQuery<LaunchServer, void> {
   handle(request: LaunchServer) {
     return this.context.postCustom("servers", request);
+  }
+}
+
+class GetJobState extends Query<IJobInfo> { constructor(public id: string) { super(); } }
+
+@handlerFor(GetJobState)
+class GetJobStateHandler extends DbQuery<GetJobState, IJobInfo> {
+  handle(request: GetJobState) {
+    return this.context.getCustom(`/server-manager/${request.id}`);
   }
 }
