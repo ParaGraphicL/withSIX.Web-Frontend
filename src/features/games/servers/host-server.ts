@@ -19,12 +19,17 @@ interface IModel {
 
 
 enum State {
-  Default,
+  Initializing,
+
   PreparingContent,
   PreparingConfiguration,
-  Starting,
-  Failed,
-  Running,
+
+  Provisioning = 5000,
+
+  Launching = 6000,
+
+  Running = 9998,
+  Failed = 9999
 }
 
 interface IJobInfo { address: string; state: State; message: string; }
@@ -95,14 +100,13 @@ export class HostServer extends Dialog<IModel> {
   }
   handleHost = async () => {
     const jobId = await new HostW6Server(this.w6.activeGame.id, this.model).handle(this.mediator); //this.model.host(this.model);
-    this.jobState = <any>{ state: 0 };
-    while (this.jobState.state < State.Failed) {
+    this.jobState = <any>{ state: State.Initializing };
+    while (this.jobState.state < State.Running) {
       this.jobState = await new GetJobState(jobId).handle(this.mediator);
       await new Promise(res => setTimeout(() => res(), 2000));
     }
     if (this.jobState.state === State.Failed) { throw new Error(`Job failed: ${this.jobState.message}`); }
-    confirm("Your server's ip+port=" + this.jobState.address);
-    this.controller.ok();
+    //this.controller.ok();
   }
 }
 
