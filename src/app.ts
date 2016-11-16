@@ -25,6 +25,7 @@ import { NewGroupDialog } from "./features/profile/groups/new-group-dialog";
 import { Index as SettingsIndex } from "./features/settings/index";
 import { EditPlaylistItem } from "./features/side-bar/playlist/edit-playlist-item";
 import { SideBar } from "./features/side-bar/side-bar";
+import { RsideBar } from "./features/rside-bar/rside-bar";
 import { TopBar } from "./features/top-bar/top-bar";
 import { UserErrorDialog } from "./features/user-error-dialog";
 
@@ -55,6 +56,7 @@ export class App extends ViewModel {
   openMessages = uiCommand2("Messages", async () => this.navigateInternal("/me/messages"));
   openLogout = uiCommand2("Logout", async () => this.login.logout());
   sideBar: SideBar;
+  rsideBar: RsideBar;
   topBar: TopBar;
   newAppVersionAvailable: boolean;
 
@@ -81,6 +83,7 @@ export class App extends ViewModel {
   get isNavigating() { return this.router.isNavigating; }
   get isRequesting() { return this.login.isRequesting; }
   get showSidebar() { return this.w6.enableBasket; }
+  get showRsidebar() { return this.features.serverHosting && this.w6.enableBasket; }
   get tabActive() { return (this.sideBar && this.sideBar.selectedTab) || (this.topBar && this.topBar.selectedTab); }
   get tabAsTabActive() {
     let side = this.sideBar && this.sideBar.selectedTab;
@@ -377,6 +380,7 @@ export class App extends ViewModel {
     // TODO: Better with event?
     this.sideBar.selectedTab = null;
     this.topBar.selectedTab = null;
+    this.rsideBar.selectedTab = null;
     return true;
   }
 
