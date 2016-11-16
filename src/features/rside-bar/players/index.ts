@@ -1,7 +1,10 @@
-import { ITab } from "../../../framework";
+import { ITabModel } from "../rside-bar";
+
+interface IPlayersTabModel extends ITabModel<any> { }
+
 export class Index {
-  model: ITab;
-  activate(model: ITab) {
+  model: IPlayersTabModel;
+  activate(model: IPlayersTabModel) {
     this.model = model;
   }
 }

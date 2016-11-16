@@ -10,6 +10,8 @@ import { Login } from "./services/auth";
 import { LoginBase, LoginUpdated } from "./services/auth-base";
 import { RenderService } from "./services/renderer/render-service";
 
+import { ToggleServer } from "./features/rside-bar/rside-bar";
+
 import { GameBaskets } from "./features/game-baskets";
 import { AddModsToCollections } from "./features/games/add-mods-to-collections";
 import { CreateCollectionDialog } from "./features/games/collections/create-collection-dialog";
@@ -83,7 +85,8 @@ export class App extends ViewModel {
   get isNavigating() { return this.router.isNavigating; }
   get isRequesting() { return this.login.isRequesting; }
   get showSidebar() { return this.w6.enableBasket; }
-  get showRsidebar() { return this.features.serverHosting && this.w6.enableBasket; }
+  showRsidebar;
+
   get tabActive() { return (this.sideBar && this.sideBar.selectedTab) || (this.topBar && this.topBar.selectedTab); }
   get tabAsTabActive() {
     let side = this.sideBar && this.sideBar.selectedTab;
@@ -245,6 +248,7 @@ export class App extends ViewModel {
       d(userErrors.flatMap(x => x)
         .merge<IUserError>(this.clientWrapper.userErrorAdded.map(x => x.userError))
         .subscribe(x => { if (!this.dialogMap.some(id => id === x.id)) { this.showUserErrorDialog(x); } }));
+      d(this.observableFromEvent(ToggleServer).subscribe(x => this.showRsidebar = !this.showRsidebar));
     });
 
     this.loginLegacyClient({ accessToken: this.w6.userInfo.id ? window.localStorage.getItem(LoginBase.token) : null });

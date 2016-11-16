@@ -1,8 +1,9 @@
-import {Base, ViewModel, UiContext, MenuItem, uiCommand2, Debouncer, IMenuItem, ITab, ClientMissingHandler, CloseTabs, Rx} from '../../framework';
-import {SideBar} from '../side-bar/side-bar';
-import {Login} from '../../services/auth';
-import {inject, bindable} from 'aurelia-framework'
-import {Search} from './search/search';
+import { Base, ViewModel, UiContext, MenuItem, uiCommand2, Debouncer, IMenuItem, ITab, ClientMissingHandler, CloseTabs, Rx } from '../../framework';
+import { SideBar } from '../side-bar/side-bar';
+import { Login } from '../../services/auth';
+import { inject, bindable } from 'aurelia-framework'
+import { Search } from './search/search';
+import { ToggleServer } from "../rside-bar/rside-bar";
 
 @inject(UiContext, Login, ClientMissingHandler)
 export class TopBar extends ViewModel {
@@ -70,6 +71,10 @@ export class TopBar extends ViewModel {
 
   get hasActiveGame() { return this.w6.activeGame.id != null }
   get isLoggedin() { return this.w6.userInfo.id != null }
+
+  toggleServer() {
+    this.eventBus.publish(new ToggleServer());
+  }
 
   disabledAction = () => {
     return this.clientMissingHandler.handleClientOrGameMissing();

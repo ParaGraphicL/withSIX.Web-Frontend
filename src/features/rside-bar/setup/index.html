@@ -12,8 +12,19 @@
   <hr />
 
   <div class="the-content" scroll.trigger="closeDropdowns()">
-    Lalala
+    <form>
+      <selectbox value.bind="m.size" options.bind="sizes">
+        Size
+        <template replace-part="item-template">
+          <option model.bind="o.value">${o.title || o}</option>
+        </template>
+      </selectbox>
+      <textbox value.bind="m.name" placeholder="name of the server">Name</textbox>
+      <textbox value.bind="m.password" placeholder="optional password">Password</textbox>
+      <textbox value.bind="m.adminPassword" placeholder="admin password">Admin Password</textbox>
+    </form>
+    <button class="naked-button default ignore-close" click.delegate="next()">Next</button>
+    <button class="naked-button default" click.delegate="done()">Done</button>
   </div>
 
-  <!--<button class="naked-button default bottom" click.delegate="openLibrary()">Open Full Library</button>-->
 </template>

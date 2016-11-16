@@ -1,4 +1,4 @@
-import {ViewModel} from '../../../framework';
+import { ViewModel } from '../../../framework';
 
 export class UserHeader extends ViewModel {
   get avatarUrl() {
