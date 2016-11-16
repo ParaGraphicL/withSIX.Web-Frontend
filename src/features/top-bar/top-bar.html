@@ -14,7 +14,8 @@
 
     <div class="the-bar">
       <nav id="top-left-tabs" class="tab-strip top">
-        <tab-view-items location="custom" tabs.bind="sideBar.tabs" toggle-tab.call="sideBar.tabView.toggleTab(tab, event)" selected-tab.bind="sideBar.selectedTab"></tab-view-items>
+        <tab-view-items location="custom" tabs.bind="sideBar.tabs" toggle-tab.call="sideBar.tabView.toggleTab(tab, event)"
+          selected-tab.bind="sideBar.selectedTab"></tab-view-items>
       </nav>
 
       <div id="search" class="container-fluid">
@@ -24,8 +25,12 @@
       </div>
 
       <div id="profile">
-        <tab-view view-model.ref="tabView" id="top-right-tabs" orientation="top" tabs.bind="tabs" selected-tab.bind="selectedTab" render-view="">
+        <tab-view view-model.ref="tabView" id="top-right-tabs" orientation="top" tabs.bind="tabs" selected-tab.bind="selectedTab"
+          render-view="">
           <button class="login" click.delegate="login.login()" title="or register" if.bind="!isLoggedIn" slot="start">Login</button>
+          <button class="server-toggle" slot="middle" click.delegate="toggleServer()" if.bind="features.createServers">
+            Servers
+          </button>
         </tab-view>
       </div>
     </div>

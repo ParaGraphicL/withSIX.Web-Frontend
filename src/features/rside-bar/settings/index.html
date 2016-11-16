@@ -12,8 +12,12 @@
   <hr />
 
   <div class="the-content" scroll.trigger="closeDropdowns()">
-    Lalala
+    <form>
+      <checkbox value.bind="m.battlEye">BattlEye</checkbox>
+      <checkbox value.bind="m.verifySignatures">VerifySignatures</checkbox>
+    </form>
+    <button class="naked-button default ignore-close" click.delegate="next()">Next</button>
+    <button class="naked-button default" click.delegate="done()">Done</button>
   </div>
 
-  <!--<button class="naked-button default bottom" click.delegate="openLibrary()">Open Full Library</button>-->
 </template>
