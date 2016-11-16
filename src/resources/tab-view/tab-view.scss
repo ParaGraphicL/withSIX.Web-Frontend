@@ -1,6 +1,7 @@
 @import "_base";
 @import '_content';
 tab-view {}
+
 $iconSize: 16px;
 $iconCntr: $iconSize / 2;
 $height: 48px;
@@ -9,8 +10,9 @@ $indicatorY: 34px;
 $lineSize: 1px;
 $lineMargin: 8px;
 @function offSetIndicator($input, $offset) {
-   @return $input - $iconCntr + $offset;
+  @return $input - $iconCntr+$offset;
 }
+
 nav.tab-strip {
   text-align: center;
   vertical-align: middle;
@@ -109,7 +111,7 @@ nav.tab-strip {
     }
     .row1,
     .row2 {
-      @include limit-lines(1,$font-size-small);
+      @include limit-lines(1, $font-size-small);
     }
     .title {
       text-transform: uppercase;
@@ -219,14 +221,16 @@ nav.tab-strip {
   }
   &.right {
     float: right;
-    margin-top: (-$iconCntr * 2) + $height + 2px;
-    margin-left: (-$iconCntr * 2) - (($height / 2) + 4px);
     .tab-component.end {
       right: auto;
       bottom: 0;
     }
     .indicator {
+      position: absolute;
+      margin-top: (-$iconCntr * 2) + $height + 2px;
+      margin-left: (-$iconCntr * 2) - (($height / 2) + 4px);
       &.arrow {
+        margin-top: 14px;
         &:before {
           content: "\e656";
         }
@@ -248,10 +252,11 @@ nav.tab-strip {
     }
   }
 }
+
 .tab-content-container {
   &.active {
     -webkit-filter: drop-shadow(0px 0px 8px rgba(0, 0, 0, 0.75));
-    filter:drop-shadow(0px 0px 8px rgba(0, 0, 0, 0.75));
+    filter: drop-shadow(0px 0px 8px rgba(0, 0, 0, 0.75));
   }
   center.loading,
   span.loading {
