@@ -656,7 +656,7 @@ export class W6 {
   }
 
   public scrollTo(position, duration): void {
-    $('html, body').animate({
+    $('html, body, #content-view').animate({
       scrollTop: position
     }, duration);
   }
