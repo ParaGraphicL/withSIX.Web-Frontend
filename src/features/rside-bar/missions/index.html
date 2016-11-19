@@ -12,8 +12,11 @@
   <hr />
 
   <div class="the-content" scroll.trigger="closeDropdowns()">
-    Lalala
-    <button class="naked-button default" click.delegate="done()">Done</button>
+    <ul>
+      <li repeat.for="m of missions">${m.name} <button>X</button></li>
+    </ul>
+
+    <button class="naked-button default ignore-close" click.delegate="done()">Done</button>
   </div>
 
 </template>

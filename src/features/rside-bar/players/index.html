@@ -12,8 +12,12 @@
   <hr />
 
   <div class="the-content" scroll.trigger="closeDropdowns()">
-    Lalala
-
+    <command-button model.bind="lock"></command-button>
+    <command-button model.bind="unlock"></command-button>
+    <h3>Players</h3>
+    <ul>
+      <li repeat.for="p of players">${p.name} <button>Kick</button> <button>Ban</button></li>
+    </ul>
   </div>
 
 </template>

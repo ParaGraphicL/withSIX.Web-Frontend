@@ -1,11 +1,9 @@
-import { ITabModel } from "../rside-bar";
+import { ITabModel, ServerTab } from "../rside-bar";
 
 interface IModsTabModel extends ITabModel<any> { }
-export class Index {
-  model: IModsTabModel;
-  activate(model: IModsTabModel) {
-    this.model = model;
-  }
-
-  next() { this.model.next(this.model); }
+export class Index extends ServerTab<IModsTabModel> {
+  mods = [
+    { name: "Mod X" },
+    { name: "Mod Y" },
+  ]
 }
