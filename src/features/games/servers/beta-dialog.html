@@ -1,0 +1,32 @@
+<template>
+  <ai-dialog class="ai-dialog">
+    <ai-dialog-header>
+      <h2>Server-browser withSIX (BETA)</h2>
+    </ai-dialog-header>
+    <ai-dialog-body>
+      <b>Key Features</b>
+      <ul>
+        <li>Hyper fast Server list, filtering and ordering</li>
+        <li>Select servers by mod and playlist</li>
+        <li>Advanced filter</li>
+        <li>Click and join</li>
+        <li>Automatically download and install required mods</li>
+        <li>Steam Workshop Support</li>
+      </ul>
+
+      <p>This is a preview release, so expect many more improvements to come.</p>
+      <p>If you encounter a BUG, or if we missed any feature that matters to you, <a href="https://community.withsix.com/topic/290/web-based-serverbrowser-for-sync">share your feedback with
+        us</a>.</p>
+    </ai-dialog-body>
+    <ai-dialog-footer>
+      <div class="pull-left">
+        &nbsp;
+        <label for="cb" style="margin-top: 4px">
+          <input name="cb" id="cb" type="checkbox" checked.bind="model.dontShowAgain" />
+          Don't show again
+        </label>
+      </div>
+      <command-button model.bind="ok"></command-button>
+    </ai-dialog-footer>
+  </ai-dialog>
+</template>

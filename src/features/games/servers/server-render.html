@@ -1,10 +1,7 @@
 <template>
-	<ai-dialog class="ai-dialog" id="server-render">
-		<ai-dialog-header>
-			<h2 innerHTML.bind="model.name | links"></h2>
-		</ai-dialog-header>
-		<ai-dialog-body>
-			<compose view="./server-render-info.html"></compose>
-		</ai-dialog-body>
-	</ai-dialog>
+  <ai-dialog class="ai-dialog" id="server-render">
+    <ai-dialog-body>
+      <compose view="./server-render-info.html"></compose>
+    </ai-dialog-body>
+  </ai-dialog>
 </template>

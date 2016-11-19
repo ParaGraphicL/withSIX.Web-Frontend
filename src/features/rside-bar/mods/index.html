@@ -1,0 +1,20 @@
+<template>
+  <!--<require from="./index.scss"></require>-->
+
+  <header class="tab-header">
+    <span class="main-text">${model.header}</span>
+  </header>
+
+  <hr />
+
+  <!--<action-bar class="main header-items" orientation="vertical" items.bind="topBarItems"></action-bar>-->
+
+  <hr />
+
+  <div class="the-content" scroll.trigger="closeDropdowns()">
+    Lalala
+    <button class="naked-button default ignore-close" click.delegate="next()">Next</button>
+    <button class="naked-button default" click.delegate="done()">Done</button>
+  </div>
+
+</template>

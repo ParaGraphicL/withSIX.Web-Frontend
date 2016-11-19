@@ -11,7 +11,7 @@ $bg: $colorSixBlue;
   left: 0;
   right: 0;
   height: $headerSize;
-  z-index: $headerZindex + 4;
+  z-index: $headerZindex+4;
   background-color: $bg;
   //overflow: hidden;
   color: $barColor;
@@ -22,7 +22,7 @@ $bg: $colorSixBlue;
   //   filter:none;
   // }
   ul {
-    & > li {
+    &>li {
       float: left;
     }
   }
@@ -113,8 +113,13 @@ $bg: $colorSixBlue;
         }
       }
     }
+    .server-toggle {
+      width: 64px;
+      background-color: $colorSixGray;
+    }
   }
 }
+
 .api-busy {
   #top-menu {
     #logo {
@@ -126,6 +131,7 @@ $bg: $colorSixBlue;
     }
   }
 }
+
 #tab-view-render-settings {
   .go-premium {
     color: gold;

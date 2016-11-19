@@ -10,7 +10,7 @@ export class Mod extends ContentViewModel<IMod> {
   setupMenuItems() {
     super.setupMenuItems();
     this.setupAddToBasket();
-    if (this.features.serverBrowser) this.topMenuActions.push(new MenuItem(this.findServers));
+    this.topMenuActions.push(new MenuItem(this.findServers));
   }
 
   findServers = uiCommand2("Find servers with this",

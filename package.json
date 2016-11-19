@@ -101,7 +101,7 @@
   "scripts": {
     "global-packages": "npm i -g grunt-cli bower gulp jspm jspm-bower-endpoint protractor karma typings",
     "build-legacy": "gulp build-global-scss && gulp build-other build-misc && grunt uglify:app uglify:misc",
-    "dist": "npm run build:prod && gulp prepare-release && grunt buildallPublish",
+    "dist": "npm run build:prod && npm run version && grunt buildallPublish",
     "start": "npm run server:dev:hmr",
     "mocha": "mocha --compilers ts:./test/register test/unit/spec/support",
     "prepublish": "",
@@ -182,6 +182,7 @@
     "ms-signalr-client": "^2.2.5",
     "nouislider": "^9.0.0",
     "numbro": "^1.9.3",
+    "polly-js": "^1.3.6",
     "rxjs": "^5.0.0-rc.1",
     "rxui": "git+https://github.com/sickboy/RxUI.git",
     "sanitize-html": "^1.13.0",

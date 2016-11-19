@@ -38,7 +38,9 @@ export class Server extends ViewModel {
     });
   }
 
-  join = uiCommand2("Join", () => this.launch(), { icon: "withSIX-icon-Download" });
+  join = uiCommand2("Join", () => this.launch(), {
+    icon: "withSIX-icon-Download", canExecuteObservable: this.observeEx(x => x.features.serverFeatures)
+  });
   toggleFavorite = uiCommand2("", () => this.toggleFavoriteInternal());
 
   async toggleFavoriteInternal() {

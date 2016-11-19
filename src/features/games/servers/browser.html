@@ -1,25 +1,35 @@
 <template>
   <require from="./servers.scss"></require>
-  <div class="container-fluid" id="server-browser">
+  <div class="container-fluid ${isActive ? 'active' : ''}" id="server-browser">
     <div class="server-filters">
       <div class="pull-right">
-        <command-button model.bind="clear"></command-button>
+        <command-button class="clear-filter" model.bind="clear"></command-button>
       </div>
-      <div>SERVER FILTERS</div>
+      <div class="filter-title">SERVER FILTERS</div>
       <div class="clearfix"></div>
 
       <div>
-        <div repeat.for="g of filterTest">
-          <a class="toggle-group" href="#" click.delegate="g.hide = !g.hide">
-            <span class="icon withSIX-icon-Arrow-${!g.hide ? 'Down' : 'Right'}-Dir"></span>
-            <b class="title">${g.titleOverride || g.title}</b>
-          </a>
+        <div repeat.for="g of filterTest" class="filter-group ${g.active ? 'active' : ''}">
+          <div class="group-title">
+            <div show.bind="g.active" class="pull-right">
+              <button class="text-button" click.delegate="clearGroup(g)">
+                <span class="icon withSIX-icon-Square-X"></span>
+              </button>
+            </div>
+            <a class="toggle-group" href="#" click.delegate="g.hide = !g.hide">
+              <span class="icon withSIX-icon-Arrow-${!g.hide ? 'Down' : 'Right'}-Open"></span>
+              <b class="title">${g.titleOverride || g.title}</b>
+              <span class="active-text" show.bind="g.active">(active)</span>
+            </a>
+            <div class="clearfix"></div>
+          </div>
 
           <ul show.bind="!g.hide">
             <li repeat.for="i of g.items | take: (showMore || g.cutOffPoint == null ? 99 : g.cutOffPoint)">
               <template if.bind="i.items" hide.bind="i.test && !features.isTestEnvironment">
                 <selectbox options.bind="i.items" value.bind="i.value" cls="pull-right" style="display: block; height: 28px">
                   ${i.titleOverride || i.title}
+                  <div if.bind="i.subTitle" class="sub-title">${i.subTitle}</div>
                   <template replace-part="item-template">
                     <option model.bind="o.value">${o.title || o}</option>
                   </template>
@@ -28,12 +38,16 @@
               <template if.bind="!i.items" hide.bind="i.test && !features.isTestEnvironment">
                 <checkbox cls="" if.one-time="!i.range && !i.type" value.bind="i.value">
                   <span class="icon ${i.icon}" if.bind="i.icon"></span> ${i.titleOverride || i.title}
+                  <div if.bind="i.subTitle" class="sub-title">${i.subTitle}</div>
                 </checkbox>
                 <textbox placeholder.bind="i.placeholder || i.titleOverride || i.title" cls="" if.one-time="i.type === 'text'"
                   value.bind="i.value & debounce">
-                  <span class="icon ${i.icon}" if.bind="i.icon"></span> ${i.titleOverride || i.title}</textbox>
+                  <span class="icon ${i.icon}" if.bind="i.icon"></span> ${i.titleOverride || i.title}
+                  <div if.bind="i.subTitle" class="sub-title">${i.subTitle}</div>
+                </textbox>
                 <rangeboxadv cls="" if.one-time="i.range" min.bind="i.range[0]" max.bind="i.range[1]" value.two-way="i.value">
                   <span class="icon ${i.icon}" if.bind="i.icon"></span> ${i.titleOverride || i.title}
+                  <div if.bind="i.subTitle" class="sub-title">${i.subTitle}</div>
                   </rangebox>
               </template>
             </li>
@@ -55,9 +69,9 @@
     <div class="server-list">
       <div class="server-list-info">
         <div class="pull-right">
-          <labs lab-link="https://community.withsix.com/topic/290/web-based-serverbrowser-for-sync"></labs>
-          <command-button model.bind="refresh"></command-button>
+          <a href="https://community.withsix.com/topic/290/web-based-serverbrowser-for-sync" target="_blank">Give feedback</a>
           <command-button model.bind="reload"></command-button>
+          <command-button model.bind="createServer" if.bind="features.createServers"></command-button>
         </div>
         <div>
           ${model.playerCount} players on <b>
@@ -67,8 +81,9 @@
       </div>
       <div infinite-scroll.bind="loadMore" class="server-list-content">
         <compose view="./arma/servers.html"></compose>
+        <div class="overlay"></div>
       </div>
+      <command-button model.bind="loadMore"></command-button>
     </div>
   </div>
 </template>
-

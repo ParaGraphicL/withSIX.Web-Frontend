@@ -1,24 +1,26 @@
 import breeze from 'breeze-client';
 
-import {IBreezeMod, IBreezeUser, IBreezeCollection, IBreezeMission, IBreezeCollectionVersionDependency, IBreezePost, IBreezeModUpdate, IBreezeCollectionVersion, IBreezeGame, IBreezeAWSUploadPolicy,
+import {
+  IBreezeMod, IBreezeUser, IBreezeCollection, IBreezeMission, IBreezeCollectionVersionDependency, IBreezePost, IBreezeModUpdate, IBreezeCollectionVersion, IBreezeGame, IBreezeAWSUploadPolicy,
   IBreezeMissionComment, IBreezeMissionVersion, IBreezeCollectionImageFileTransferPolicy, IBreezeModInfo,
   IBreezeCollectionComment, IBreezePostComment, AbstractDefs, BreezeInitialzation, IBreezeModUserGroup, IBreezeModComment, IBreezeModImageFileTransferPolicy,
   IBreezeModMediaItem, IUserInfo, Resource, Permission, Role,
-  EntityExtends, BreezeEntityGraph, _IntDefs} from '../services/dtos';
-import {W6, W6Urls, globalRedactorOptions} from '../services/withSIX';
-import {Tools} from '../services/tools';
-import {W6Context, IQueryResult} from '../services/w6context';
-import {Tk} from '../services/legacy/tk'
-import {IRootScope, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHaveModel, DialogQueryBase, DbCommandBase, DbQueryBase, BaseController, BaseQueryController } from './app-base'
-import {ITagKey, ICreateComment, ICQWM, IModel, IMenuItem} from '../services/legacy/base'
-import {EventAggregator} from 'aurelia-event-aggregator';
+  EntityExtends, BreezeEntityGraph, _IntDefs
+} from '../services/dtos';
+import { W6, W6Urls, globalRedactorOptions } from '../services/withSIX';
+import { Tools } from '../services/tools';
+import { W6Context, IQueryResult } from '../services/w6context';
+import { Tk } from '../services/legacy/tk'
+import { IRootScope, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHaveModel, DialogQueryBase, DbCommandBase, DbQueryBase, BaseController, BaseQueryController } from './app-base'
+import { ITagKey, ICreateComment, ICQWM, IModel, IMenuItem } from '../services/legacy/base'
+import { EventAggregator } from 'aurelia-event-aggregator';
 
-import {Client} from 'withsix-sync-api';
+import { Client } from 'withsix-sync-api';
 
 import { ReportDialogController, ForwardService, OpenForgotPasswordDialogQuery, ResendActivationCommand, ForgotPasswordCommand, ForgotUsernameCommand, RegisterCommand } from './components';
-import {ToastLogger} from '../services/legacy/logger';
+import { ToastLogger } from '../services/legacy/logger';
 
-import {registerCommands, getFactory, skyscraperSlotSizes, rectangleSlotSizes, leaderboardSlotSizes} from './app-base';
+import { registerCommands, getFactory, skyscraperSlotSizes, rectangleSlotSizes, leaderboardSlotSizes } from './app-base';
 
 declare var Fingerprint;
 
@@ -350,6 +352,7 @@ export class SaveMeSettingsAvatarCommand extends MeCommandbase {
   static $name = "SaveMeSettingsAvatar";
   public execute = [
     'file', file => {
+      if (file == null) { throw new Error("No file supplied"); }
       var fd = new FormData();
       fd.append('file', file);
       return this.context.postCustomFormData("Me/SettingsAvatar", fd, { requestName: 'saveMeSettingsAvatar' })
@@ -596,30 +599,31 @@ class MeSettingsCredentialsController extends BaseQueryController<any> {
   }
 }
 
-interface IMeSettingsAvatarScope extends IBaseScopeT<any> {
+interface IAvatarModel { avatarUrl: string, hasAvatar: boolean; avatarUpdatedAt: string; emailMd5: string; }
+
+interface IMeSettingsAvatarScope extends IBaseScopeT<IAvatarModel> {
   clearAvatar: () => any;
   uploadAvatar: (form) => any;
   updateFileInfo: (files) => any;
-  files: Object[];
+  file: File;
   refresh: number;
 }
 
-class MeSettingsAvatarController extends BaseQueryController<any> {
+class MeSettingsAvatarController extends BaseQueryController<IAvatarModel> {
   static $name = "MeSettingsAvatarController";
 
   constructor(public $scope: IMeSettingsAvatarScope, public logger, $q, model) {
     super($scope, logger, $q, model);
 
-    this.$scope.files = [];
-    this.$scope.model.avatarUrl = $scope.url.calculateAvatarUrl(this.getUserModel(), 400);
+    this.$scope.model.avatarUrl = $scope.url.calculateAvatarUrl(this.$scope.model, 400);
 
     $scope.clearAvatar = () => $scope.request(ClearAvatarCommand)
       .then(this.avatarCleared)
       .catch(this.httpFailed);
 
-    $scope.updateFileInfo = (files) => $scope.files = files;
+    $scope.updateFileInfo = (files: FileList) => $scope.file = files[0];
 
-    $scope.uploadAvatar = (form) => this.requestAndProcessResponse(SaveMeSettingsAvatarCommand, { file: $scope.files[0] })
+    $scope.uploadAvatar = (form) => this.requestAndProcessResponse(SaveMeSettingsAvatarCommand, { file: $scope.file })
       .then((data) => this.avatarUploaded(data, form));
   }
 
@@ -628,22 +632,16 @@ class MeSettingsAvatarController extends BaseQueryController<any> {
     this.avatarChanged();
   });
   private avatarUploaded = (data, form) => this.applyIfNeeded(() => {
-    (<HTMLFormElement>document.forms[form.$name]).reset();
-    this.$scope.files = [];
+    this.$scope.file = null;
     this.$scope.model.hasAvatar = true;
-    this.$scope.model.avatarURL = this.$scope.url.contentCdn + "/account/" + this.$scope.w6.userInfo.id + "/profile/avatar/";
+    this.$scope.model.avatarUrl = this.$scope.url.contentCdn + "/account/" + this.$scope.w6.userInfo.id + "/profile/avatar/";
     this.$scope.model.avatarUpdatedAt = new Date().toISOString();
     this.avatarChanged();
+    (<HTMLFormElement>document.forms[form.$name]).reset();
   });
 
-  private getUserModel() {
-    var info = angular.copy(this.$scope.model);
-    info.id = this.$scope.w6.userInfo.id;
-    return info;
-  }
-
   private avatarChanged() {
-    this.$scope.model.avatarUrl = this.$scope.url.calculateAvatarUrl(this.getUserModel(), 400);
+    this.$scope.model.avatarUrl = this.$scope.url.calculateAvatarUrl(this.$scope.model, 400);
     // TODO: We could actually move this into the commandhandlers instead, and $broadcast on the $rootScope instead?
     // $emit sends events up the tree, to parent scopes
     // $broadcast sends events down the tree, to child scopes

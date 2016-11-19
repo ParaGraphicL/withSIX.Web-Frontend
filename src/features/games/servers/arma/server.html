@@ -1,31 +1,37 @@
 <template>
   <require from="../icon"></require>
   <require from="../flag"></require>
-  <div class="td" hover.bind="hovering">
+  <require from="../ping"></require>
+  <div class="td">
     <!--<icon cls="withSIX-icon-Cloud" optional-title="Dedicated" model.bind="model.isDedicated"></icon>-->
     <!--<icon cls="${model.battlEye && model.verifySignatures ? 'withSIX-icon-Protection-Full' : 'withSIX-icon-Protection-Med'}" optional-title="${model.battlEye ? 'BattlEye' : ''} ${model.verifySignatures ? 'Signatures' : ''} protected"
           model.bind="model.battlEye || model.verifySignatures"></icon>-->
     <!--<icon hide.bind="hovering" cls="withSIX-icon-Download ${model.hasAllMods ? 'ready' : ''}" optional-title="Requires ${model.modList.length} mods"
     model.bind="model.modList.length > 0"></icon>-->
-    <div hide.bind="hovering">
+    <div>
       <div class="state"></div>
       <span class="icon withSIX-icon-Nav-Mod ${model.hasAllMods ? 'ready' : ''}"></span>
       <div>${model.modList.length ? model.modList.length : 'none'}</div>
     </div>
+    <compose view="./cell.html"></compose>
   </div>
   <div class="td">
-
     <div>
       <span show.bind="!model.ping" class="flag-icon flag-icon-${model.country.toLowerCase()}" title="${model.country} inside ${model.continent}. ${(model.distance / 1000) | numeral} km from you"></span>
-      <span show.bind="model.ping" class="icon ${model.ping | ping} connection-quality" title="${model.ping}ms ${model.country} inside ${model.continent}. ${(model.distance / 1000) | numeral} km from you"></span>
+      <span show.bind="model.ping" title="${model.ping}ms ${model.country} inside ${model.continent}. ${(model.distance / 1000) | numeral} km from you">
+      <ping value.bind="model.ping | ping"></ping>
+      </span>
     </div>
     <div>${serverType}</div>
-    <command-button class="join-button" model.bind="join" show.bind="hovering" hover.bind="hovering">
-      <div class="pull-left icon ${join.icon}"></div>
+    <command-button class="join-button" model.bind="join" show.bind="hovering">
+      <div class="pull-left">
+        <span class="icon ${hasMods && modState !== 'uptodate' ? join.icon : 'withSIX-icon-Joystick'}"></span>
+      </div>
       <div class="text">
         <span if.bind="hasMods && modState !== 'uptodate'">${modState} &amp;</span> <span class="join-text">join</span>
       </div>
     </command-button>
+    <compose view="./cell.html"></compose>
   </div>
   <div class="td">
     <div class="name">
@@ -36,15 +42,17 @@
       [${model.gameType}]
       <span>${model.game}</span> <span class="map">on ${model.map}</span>
     </div>
+    <compose view="./cell.html"></compose>
   </div>
   <div class="td">
     <div class="player-count"><b>${model.currentPlayers}</b>/${model.maxPlayers}</div>
     <div class="serverState">${SessionState[model.serverState]}</div>
+    <compose view="./cell.html"></compose>
   </div>
   <div class="td">
-    <command-button class="favorite-button" model.bind="toggleFavorite" icon="${model.isFavorite ? 'withSIX-icon-Star' : 'withSIX-icon-Star-Outline'}">
+    <command-button class="favorite-button" model.bind="toggleFavorite" no-processing.one-time="true" icon="${model.isFavorite ? 'withSIX-icon-Star' : 'withSIX-icon-Star-Outline'}">
     </command-button>
     <!--<icon cls="withSIX-icon-Star-Outline" 			cls-on="withSIX-icon-Star" optional-title="Favorite" model.bind="model.isFavorite"></icon>-->
+    <compose view="./cell.html"></compose>
   </div>
 </template>
-

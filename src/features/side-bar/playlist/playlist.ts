@@ -1,13 +1,15 @@
-import {ViewModel, Query, DbQuery, handlerFor, IGame, ITab, IMenuItem, MenuItem, uiCommand2, VoidCommand, IReactiveCommand, IDisposable, Rx, LaunchAction,
+import {
+  ViewModel, Query, DbQuery, handlerFor, IGame, ITab, IMenuItem, MenuItem, uiCommand2, VoidCommand, IReactiveCommand, IDisposable, Rx, LaunchAction,
   CollectionScope, IBreezeCollectionVersion, IBreezeCollectionVersionDependency, BasketItemType, TypeScope, UiContext, CollectionHelper, Confirmation, MessageDialog,
   ReactiveList, IBasketItem, FindModel, ActionType, BasketState, BasketType, ConnectionState, Debouncer, GameChanged, uiCommandWithLogin2, GameClientInfo, UninstallContent,
   IBreezeCollection, IRequireUser, IUserInfo, W6Context, Client, BasketService, CollectionDataService, DbClientQuery, requireUser, ICollection, Base, DependencyType,
-  breeze} from '../../../framework';
-import {CreateCollectionDialog} from '../../games/collections/create-collection-dialog';
+  breeze
+} from '../../../framework';
+import { CreateCollectionDialog } from '../../games/collections/create-collection-dialog';
 import { HostServer } from '../../games/servers/host-server';
-import {Basket, GameBaskets} from '../../game-baskets';
-import {inject} from 'aurelia-framework';
-import {DeleteCollection, ForkCollection, LoadCollectionIntoBasket, GetDependencies} from '../../profile/content/collection';
+import { Basket, GameBaskets } from '../../game-baskets';
+import { inject } from 'aurelia-framework';
+import { DeleteCollection, ForkCollection, LoadCollectionIntoBasket, GetDependencies } from '../../profile/content/collection';
 
 interface ICollectionsData {
   collections: IPlaylistCollection[];
@@ -129,13 +131,20 @@ export class Playlist extends ViewModel {
         cls: 'cancel ignore-close',
         isVisibleObservable: this.whenAnyValue(x => x.collectionChanged)
       }));
-      d(this.launchAsServer = uiCommand2("Host Server", () => this.dialog.open({viewModel: HostServer, model: {
-        launchDedicated: () => this.launch(this.activeBasket, LaunchAction.LaunchAsDedicatedServer),
-        launch: () => this.launch(this.activeBasket, LaunchAction.LaunchAsServer)
-      }}), {
-        canExecuteObservable: this.whenAnyValue(x => x.hasItems)
-        //isVisibleObservable: // if the game supports launching as server
-      }))
+      d(this.launchAsServer = uiCommand2("Host Server", () => {
+        const cmd = this.activeBasket.basketToCommandData();
+        return this.dialog.open({
+          viewModel: HostServer, model: {
+            launchDedicated: () => this.launch(this.activeBasket, LaunchAction.LaunchAsDedicatedServer),
+            launch: () => this.launch(this.activeBasket, LaunchAction.LaunchAsServer),
+            //host: details => this.host(this.activeBasket, details),
+            content: cmd.contents,
+          }
+        })
+      }, {
+          canExecuteObservable: this.whenAnyValue(x => x.hasItems)
+          //isVisibleObservable: // if the game supports launching as server
+        }));
       d(this.appEvents.gameChanged.subscribe(this.gameChanged));
       d(this.findModel = new FindModel(this.findCollections, (col: IPlaylistCollection) => this.selectCollection(col), e => e.name));
       d(Playlist.bindObservableTo(this.whenAnyValue(x => x.isCollection).map(x => x ? "Save as new collection" : "Save as collection"), this.saveBasket, x => x.name));
@@ -145,7 +154,7 @@ export class Playlist extends ViewModel {
     this.menuItems.push(new MenuItem(this.saveBasket));
     this.menuItems.push(new MenuItem(this.clearBasket));
 
-    if (this.features.serverBrowser) this.menuItems.push(new MenuItem(this.launchAsServer));
+    if (this.features.createServers) this.menuItems.push(new MenuItem(this.launchAsServer));
 
     if (this.basket.collectionId) {
       let c = await new GetMyCollection(this.basket.collectionId).handle(this.mediator);

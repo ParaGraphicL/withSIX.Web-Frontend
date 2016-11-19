@@ -1,6 +1,7 @@
 import { Environment, EnvironmentHost } from "./env";
 import { W6 } from "./withSIX";
 import { inject } from "aurelia-framework";
+import { Tools } from "./tools";
 
 @inject(W6)
 export class FeatureToggles {
@@ -18,16 +19,23 @@ export class FeatureToggles {
 
   constructor(private w6: W6) { }
 
+  get contentTags() { return this.isTestEnvironment; }
+  get createServers() { return this.isTestEnvironment; }
+  get serverClaiming() { return this.isTestEnvironment; }
+  get serverHosting() { return this.isTestEnvironment && this.adminFeatures; }
   get listAvailable() { return this.isTestEnvironment; }
   get managerFeatures() { return this.w6.userInfo.isManager || this.adminFeatures; }
   get adminFeatures() { return this.w6.userInfo.isAdmin; }
   get clientAutostart() { return !this.isTestEnvironment; }
-  get servers() { return this.serverBrowser; }
   get groups() { return this.groupsInternal; }
   set groups(value) { this.groupsInternal = value; }
   get notifications() { return this.isManager; }
   get library() { return this.syncFeatures; }
   get quickActions() { return this.isTestEnvironment; }
   get uiVirtualization() { return this.testingFlag; }
-  get serverBrowser() { return this.isTestEnvironment || this.isPrereleaseClient; }
+  get isClientConnected() { return this.w6.miniClient.isConnected }
+  get serverFeatures() {
+    return !this.isClientConnected ||
+      (this.clientInfo.version && (Tools.versionCompare(this.clientInfo.version, "1.7.0") >= 0));
+  }
 }

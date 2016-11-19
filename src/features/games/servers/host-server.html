@@ -37,7 +37,10 @@
 
             <textbox multi-line.bind="true" value.bind="model.description" placeholder="Optional description">Description</textbox>
             <checkbox value.bind="model.launchAsDedicated">Launch as dedicated server</checkbox>
-
+            <passwordbox if.bind="model.launchAsDedicated" value.bind="model.adminPassword">Admin Password</passwordbox>
+            <!-- TODO:
+            Difficulty etc 
+            -->
           </div>
           <div class="col-md-5">
             <imageupload>Banner (optional)</imageupload>
@@ -47,10 +50,41 @@
             </div>
           </div>
         </div>
+        <div if.bind="jobState">
+          This will take about 2-10 minutes, depending on the amount of Content you've selected.
+          <h2>Progress</h2>
+          <ul>
+            <li>State: ${State[jobState.state]}</li>
+            <li if.bind="jobState.address">Address: ${jobState.address}</li>
+          </ul>
+        </div>
+        <!--<div if.bind="features.isTestEnvironment">
+          Settings
+          <ul class="menu">
+            <li repeat.for="s of settings">
+              ${s.name}
+              <ul class="menu row">
+                <li repeat.for="d of s.values" class="col-md-3">
+                  ${d.name}
+                  <ul class="menu">
+                    <li repeat.for="ds of d.values">
+                      <rangeboxadv min.bind="ds.range[0]" max.bind="ds.range[1]" value.bind="ds.defaultValue">${ds.name}</checkbox>
+                    </li>
+                  </ul>
+                  <ul class="menu">
+                    <li repeat.for="ds of d.flags">
+                      <checkbox value.bind="ds.defaultValue">${ds.name}</checkbox>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+        </div>-->
       </form>
     </ai-dialog-body>
 
     <ai-dialog-footer>
+      <command-button model.bind="host" if.bind="features.serverHosting"></command-button>
       <command-button model.bind="launch"></command-button>
       <command-button model.bind="cancel"></command-button>
     </ai-dialog-footer>

@@ -2,19 +2,16 @@
   &.home {
     #header-row {
       $desiredHeight: 440px;
-
-      min-height: $desiredHeight;
+      height: $desiredHeight;
       .overlay {
-        min-height: $desiredHeight;
+        height: $desiredHeight;
       }
     }
   }
-
   .tabbar {
     background-color: #fff !important;
     position: relative;
   }
-
   #root-content-row {
     background: none;
     position: relative;

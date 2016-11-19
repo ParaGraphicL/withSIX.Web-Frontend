@@ -15,12 +15,21 @@ enum Dlcs {
   Zeus = 1
 }
 
+enum Arma2Dlcs {
+  None = 0,
+  BAF = 1,
+  PMC = 2,
+  ACR = 4,
+  Arrowhead = 8
+}
+
 export interface ExtendedServerInfo extends IServerInfo {
   modList: any[];
   game: string;
   map: string;
   country: string;
   location: string;
+  distance: number;
   connectionAddress: string;
   downloadableContent: Dlcs;
   created: Date;
@@ -71,8 +80,8 @@ export class ServerRenderBase extends ViewModel {
   mods;
   links;
   clientLoaded;
-  refresh = uiCommand2("", () => this.loadModel(), { icon: "withSIX-icon-Reload" });
-  join = uiCommand2("Join", () => this.launch(), { icon: "withSIX-icon-Download" });
+  refresh = uiCommand2("", () => this.loadModel(), { icon: "withSIX-icon-Reload", canExecuteObservable: this.observeEx(x => x.features.serverFeatures) });
+  join = uiCommand2("Join", () => this.launch(), { icon: "withSIX-icon-Download", canExecuteObservable: this.observeEx(x => x.features.serverFeatures) });
   detailsShown = false;
   dlcs = [];
   gameInfo: GameClientInfo;
@@ -143,7 +152,7 @@ export class ServerRenderBase extends ViewModel {
   }
 
   isDlcInstalled(dlc: string) { return this.gameInfo.isDlcInstalled(dlc); }
-  addDlc(dlc: Dlcs) { this.dlcs.push({ isInstalled: this.isDlcInstalled(Dlcs[dlc]), name: Dlcs[dlc] }); }
+  addDlc(dlc: number, t) { this.dlcs.push({ isInstalled: this.isDlcInstalled(t[dlc]), name: t[dlc] }); }
 
   async activateInternal(model) {
     this.model = model;
@@ -153,17 +162,29 @@ export class ServerRenderBase extends ViewModel {
     // const details = (<any> this.model).details;
     // if (details && details.modList) { this.handleMods(details); }
 
+    const lc = this.gameId.toLowerCase();
+    if (lc === GameHelper.gameIds.Arma3.toLowerCase()) {
+      let e = this.model.downloadableContent;
+      if (e === Dlcs.None) {
 
-    var e = this.model.downloadableContent;
-    if (e === Dlcs.None) {
+      } else {
+        if (e & Dlcs.Apex) { this.addDlc(Dlcs.Apex, Dlcs); }
+        if (e & Dlcs.Helicopters) { this.addDlc(Dlcs.Helicopters, Dlcs); }
+        if (e & Dlcs.Karts) { this.addDlc(Dlcs.Karts, Dlcs); }
+        if (e & Dlcs.Marksmen) { this.addDlc(Dlcs.Marksmen, Dlcs); }
+        if (e & Dlcs.Tanoa) { this.addDlc(Dlcs.Tanoa, Dlcs); }
+        if (e & Dlcs.Zeus) { this.addDlc(Dlcs.Zeus, Dlcs); }
+      }
+    } else if (lc === GameHelper.gameIds.Arma2Co.toLowerCase()) {
+      let e = <Arma2Dlcs><any>this.model.downloadableContent;
+      if (e === Arma2Dlcs.None) {
 
-    } else {
-      if (e & Dlcs.Apex) { this.addDlc(Dlcs.Apex); }
-      if (e & Dlcs.Helicopters) { this.addDlc(Dlcs.Helicopters); }
-      if (e & Dlcs.Karts) { this.addDlc(Dlcs.Karts); }
-      if (e & Dlcs.Marksmen) { this.addDlc(Dlcs.Marksmen); }
-      if (e & Dlcs.Tanoa) { this.addDlc(Dlcs.Tanoa); }
-      if (e & Dlcs.Zeus) { this.addDlc(Dlcs.Zeus); }
+      } else {
+        if (e & Arma2Dlcs.Arrowhead) { this.addDlc(Arma2Dlcs.Arrowhead, Arma2Dlcs); }
+        if (e & Arma2Dlcs.PMC) { this.addDlc(Arma2Dlcs.PMC, Arma2Dlcs); }
+        if (e & Arma2Dlcs.BAF) { this.addDlc(Arma2Dlcs.BAF, Arma2Dlcs); }
+        if (e & Arma2Dlcs.ACR) { this.addDlc(Arma2Dlcs.ACR, Arma2Dlcs); }
+      }
     }
 
 
@@ -171,10 +192,10 @@ export class ServerRenderBase extends ViewModel {
 
     this.url = `/p/${this.w6.activeGame.slug}/servers/${this.address.replace(/\./g, "-")}/${this.model.name.sluggifyEntityName()}`;
 
-    if (this.w6.miniClient.isConnected) { this.refresh(); }
+    if (this.w6.miniClient.isConnected && this.features.serverFeatures) { this.refresh(); }
     this.subscriptions.subd(d => {
       const interval = setInterval(() => {
-        if (!this.w6.miniClient.isConnected) { return; }
+        if (!this.w6.miniClient.isConnected || !this.features.serverFeatures) { return; }
         if (this.refresh.canExecute) { this.refresh(); }
       }, 15 * 1000);
       clearTimeout(interval);
@@ -198,13 +219,14 @@ export class ServerRenderBase extends ViewModel {
   }
 
   getPublisherName(p) { return `${p.publisher === 2 ? "Starbound-Servers.net" : "GameTracker.com"}`; }
+  get hasMods() { return this.model.modList.length > 0; }
 
   async loadModel() {
     try {
       const m = await new GetServer(this.gameId, this.address).handle(this.mediator);
       // for now keep modlist from server as it has modID linked in..
-      const modList = this.model.modList;
-      Object.assign(this.model, m, { modList, country: this.model.country, location: this.model.location, created: this.model.created, updatedAt: new Date() });
+      const { modList, country, distance, location, created } = this.model;
+      Object.assign(this.model, m, { modList, country, distance, location, created, updatedAt: new Date() });
       this.clientLoaded = true;
       this.updateLinks();
     } catch (err) {

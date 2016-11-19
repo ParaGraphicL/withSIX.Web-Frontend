@@ -1,4 +1,5 @@
 import {
+  Rx,
   ViewModel,
   Query,
   DbQuery,
@@ -8,9 +9,11 @@ import {
   IFilter,
   DbClientQuery,
   uiCommand2,
+  GameHelper,
   UiContext, BasketService, IBasketItem,
   InstallContents, LaunchAction, LaunchContents, LaunchGame,
 } from "../../../framework";
+import { BetaDialog } from './beta-dialog';
 import { inject } from 'aurelia-framework';
 import { camelCase } from '../../../helpers/utils/string';
 import { FilteredBase } from "../../filtered-base";
@@ -32,7 +35,10 @@ export interface IServer {
   version: string;
   updatedAt: Date;
   created: Date;
+  isFavorite?: boolean;
+  hasPlayed?: boolean;
   modList;
+  favorites;
 }
 
 enum ModLevel {
@@ -68,7 +74,10 @@ enum MissionMode {
   All,
   COOP = 1,
   CTF = 2, // (capture the flag)
-  KOTH = 4 // (king of the hill)
+  KOTH = 4, // (king of the hill)
+  RPG = 8,
+  Team = 16,
+  SC = 32, CTI = 64, Survive = 128, Sandbox = 256, Lastman = 512
 }
 
 enum ServerFilter {
@@ -83,6 +92,7 @@ enum ServerFilter {
 
 interface IGroup<T> {
   title: string;
+  active?: boolean;
   items: {
     title: string;
     titleOverride?: string;
@@ -107,7 +117,7 @@ const columns = [
   },
   {
     name: "connection",
-    icon: "withSIX-icon-Connection-Med",
+    icon: "ping",
   },
   {
     name: "name",
@@ -126,8 +136,8 @@ const columns = [
   }
 ]
 
-const buildFilter = (e, f, titleOverride?: string, icon?: string) => {
-  return { title: <string>camelCase(e[f]), useValue: f, titleOverride, icon }
+const buildFilter = (e, f, titleOverride?: string, icon?: string, subTitle?: string) => {
+  return { title: <string>camelCase(e[f]), useValue: f, titleOverride, icon, subTitle }
 }
 
 const defaultBoolTechItems = () => [{
@@ -153,7 +163,7 @@ const defaultBoolItems = () => [{
 }];
 
 // Groups are AND, GroupItems are OR
-const filterTest: IGroup<IServer>[] = [
+const filterTest: () => IGroup<IServer>[] = () => [
   {
     title: "Keyword",
     items: [
@@ -166,7 +176,7 @@ const filterTest: IGroup<IServer>[] = [
     items: [
       buildFilter(ModFlags, ModFlags.ModsInPlaylist),
       buildFilter(ModFlags, ModFlags.NoMods),
-      buildFilter(ModFlags, ModFlags.HostedOnWithSIX, "Hosted on withSIX"),
+      buildFilter(ModFlags, ModFlags.HostedOnWithSIX, "Hosted on withSIX", undefined, "(recommended)"),
       buildFilter(ModFlags, ModFlags.HostedOnSteamworks),
       //buildFilter(ModFlags, ModFlags.PrivateRepositories),
     ]
@@ -176,6 +186,7 @@ const filterTest: IGroup<IServer>[] = [
     items: [{
       title: "",
       name: "playerRange",
+      type: "range",
       range: [0, 300],
       defaultValue: () => [0, 300],
       value: [0, 300] // todo def value
@@ -203,8 +214,14 @@ const filterTest: IGroup<IServer>[] = [
       buildFilter(MissionMode, MissionMode.COOP, "COOP"),
       buildFilter(MissionMode, MissionMode.CTF, "CTF (capture the flag)"),
       buildFilter(MissionMode, MissionMode.KOTH, "KOTH (king of the hill)"),
-      //{ title: "Some other mode 1" },
-      //{ title: "Some other mode 2" },
+      buildFilter(MissionMode, MissionMode.RPG, "RPG (role playing game)"),
+      buildFilter(MissionMode, MissionMode.CTI, "CTI (capture the island)"),
+      buildFilter(MissionMode, MissionMode.Sandbox, "Sandbox"),
+      buildFilter(MissionMode, MissionMode.SC, "SC (sector control)"),
+      buildFilter(MissionMode, MissionMode.Survive, "Survive"),
+      buildFilter(MissionMode, MissionMode.Team, "Team DeathMatch"),
+      buildFilter(MissionMode, MissionMode.Lastman, "LMS (last man standing)"),
+
     ],
     cutOffPoint: 3
   }, {
@@ -228,24 +245,28 @@ const filterTest: IGroup<IServer>[] = [
         name: "crosshair",
         type: "value",
         title: "Weapon Crosshair",
+        value: null,
         items: defaultBoolTechItems()
       },
       {
         name: "battleye",
         type: "value",
         title: "BattlEye",
+        value: null,
         items: defaultBoolItems()
       },
       {
         name: "thirdPerson",
         type: "value",
         title: "3rd Person Camera",
+        value: null,
         items: defaultBoolTechItems()
       },
       {
         name: "flightModel",
         type: "value",
         title: "Flight Model",
+        value: null,
         items: [{
           title: "Any",
           value: null,
@@ -261,6 +282,7 @@ const filterTest: IGroup<IServer>[] = [
         name: "aiLevel",
         title: "AI Level",
         type: "value",
+        value: null,
         items: [{
           title: "Any",
           value: null,
@@ -282,6 +304,7 @@ const filterTest: IGroup<IServer>[] = [
         name: "difficulty",
         title: "Difficulty",
         type: "value",
+        value: null,
         items: [
           {
             title: "Any",
@@ -316,12 +339,20 @@ export interface IOrder {
   direction?: number;
 }
 
+interface IPageModel<T> {
+  pageNumber: number;
+  total: number;
+  items: T[];
+  pageSize: number;
+}
+
 
 @inject(UiContext, BasketService)
-export class Index extends FilteredBase<IServer> {
+export class Index extends ViewModel {
   constructor(ui, private basketService: BasketService) { super(ui) }
+  model: IPageModel<IServer>;
 
-  filterTest = filterTest;
+  filterTest = filterTest();
   columns = columns;
   activeOrder: IOrder = columns[3];
   toggleOrder(c) {
@@ -431,39 +462,22 @@ export class Index extends FilteredBase<IServer> {
     }
   ];
 
+  triggerPage = 1;
+
+  params;
+  isActive: boolean;
+
   async activate(params) {
     this.params = params;
-    if (params) {
-      if (params.steamId) {
-        this.defaultEnabled.push({
-          name: "mod",
-          value: { id: params.steamId, type: "Steam" },
-          filter: () => true
-        })
-      } else if (params.modId) {
-        let modId;
-        try { modId = params.modId.fromShortId() } catch (err) { modId = params.modId };
-        this.defaultEnabled.push({
-          name: "mod",
-          value: { id: modId, type: "withSIX" },
-          filter: () => true
-        })
-      }
+
+    if (!this.w6.userInfo.id) { this.filterTest[5].items.removeEl(this.filterTest[5].items[2]); this.filterTest[5].items.removeEl(this.filterTest[5].items[1]) }
+    if (this.w6.activeGame.id !== GameHelper.gameIds.Arma3.toLowerCase()) {
+      this.filterTest[1].items.removeEl(this.filterTest[1].items[3]);
+      this.filterTest[6].items.removeEl(this.filterTest[6].items[3]);
     }
     if (this.params.modId) { this.filterTest[1].items.removeEl(this.filterTest[1].items[1]); }
-    this.subscriptions.subd(d => {
-      const list = this.listFactory.getList(this.filterTest.map(x => x.items).flatten(), ["value"]);
-      d(list);
-      d(list.itemChanged.map(x => 1)
-        .merge(this.observeEx(x => x.trigger).map(x => 1))
-        .subscribe(async x => {
-          await this.handleFilter(this.filterInfo)
-          this.filteredItems = this.order(this.model.items);
-        }));
-      const ival = setInterval(() => { if (this.w6.miniClient.isConnected) { this.refresh(); } }, 60 * 1000);
-      d(() => clearInterval(ival));
-    })
-    this.enabledFilters = this.defaultEnabled;
+
+
     this.baskets = this.basketService.getGameBaskets(this.w6.activeGame.id);
     if (this.w6.userInfo.id) {
       const info = await new GetFavorites(this.w6.activeGame.id).handle(this.mediator);
@@ -473,8 +487,72 @@ export class Index extends FilteredBase<IServer> {
       this.favorites = [];
       this.history = [];
     }
-    await super.activate(params);
-    this.filteredItems = this.order(this.model.items)
+    //this.trigger++; // todo; Command, awaitable, observable
+    this.model = {
+      items: [], pageNumber: 1, total: 0, pageSize: 16
+    }
+    this.filteredItems = this.order(this.model.items);
+
+    this.subscriptions.subd(d => {
+      const list = this.listFactory.getList(this.filterTest.map(x => x.items).flatten(), ["value"]);
+      d(list);
+      const hasPending: Rx.Subject<number> = new Rx.BehaviorSubject(0);
+      this.toProperty(hasPending.map(x => x === 1), x => x.isActive);
+
+      let page = 0;
+      const pageStream = this.observeEx(x => x.triggerPage)
+        .map(x => ++page)
+        .do<number>((pageNumber) => hasPending.next(pageNumber))
+        .concatMap(async (pageNumber) => {
+          try {
+            return await this.getMore(pageNumber);
+          } catch (err) {
+            this.toastr.warning("Failed to retrieve servers");
+            return { page: 1, total: 0, items: [], perPage: 16 };
+          }
+        })
+        .do<IPageModel<IServer>>((response) => hasPending.next(0));
+      d(list.itemChanged
+        .map(x => 0)
+        .merge(this.observeEx(x => x.trigger))
+        .switchMap((e) => {
+          page = 0;
+          return pageStream;
+        })
+        .subscribe(x => {
+          if (page > 1) {
+            const m = this.model;
+            m.total = x.total;
+            m.pageNumber = x.pageNumber;
+            m.items.push(...x.items);
+          } else {
+            this.model = x;
+          }
+          this.filteredItems = this.order(this.model.items);
+        }));
+
+      d(this.loadMore = uiCommand2("Load more", this.addPage, {
+        canExecuteObservable: this.morePagesAvailable.merge(hasPending.map(x => !x)),
+        isVisibleObservable: this.morePagesAvailable,
+      }));
+      d(this.reload = uiCommand2("", async () => this.trigger++, {
+        canExecuteObservable: hasPending.map(x => !x),
+        cls: "unprominent",
+        icon: "withSIX-icon-Reload",
+      }));
+      if (this.features.serverFeatures) {
+        const ival = setInterval(() => { if (this.w6.miniClient.isConnected) { this.refresh(); } }, 60 * 1000);
+        d(() => clearInterval(ival));
+      }
+    });
+    this.handleBetaDialog();
+  }
+
+  async handleBetaDialog() {
+    if (this.w6.settings.serversBetaDialog) { return; }
+    const model = { dontShowAgain: false };
+    const r = await this.dialog.open({ viewModel: BetaDialog, model });
+    if (r.output) { this.w6.updateSettings(s => s.serversBetaDialog = true); }
   }
 
   favorites: string[];
@@ -482,83 +560,93 @@ export class Index extends FilteredBase<IServer> {
 
   baskets: { active: { model: { items: IBasketItem[] } } }
 
-  getId = 0;
-
-
   async getMore(page = 1) {
-    /*
-    const search = this.filterInfo.search;
-    let filters = undefined;
-    if (search.input || this.filterInfo.enabledFilters.length > 0) {
-      const f: { search?: string; minPlayers?: number; isDedicated?: boolean } = {};
-      if (search.input) f.search = search.input;
-      this.filterInfo.enabledFilters.forEach(x => {
-        if (x.name === "hasPlayers") f.minPlayers = 1;
-        else f[x.name] = x.value != null ? (x.value.value != null ? x.value.value : x.value) :
-          true;
-      })
-      filters = f
-    }
-    const so = this.filterInfo.sortOrder;
-    const sort = so ? {
-      orders: [{
-        column: so.name,
-        direction: so.direction
-      }]
-    } : undefined;
-    */
-
     const filter = {}
-    const searchFilter = this.filterTest[0].items[0].value;
-    const filterValid = !searchFilter || searchFilter.length > 2;
-    const filters = filterValid ? this.filterTest : JSON.parse(JSON.stringify(this.filterTest));
-    if (!filterValid) filters[0].items[0].value = null;
+    //const searchFilter = this.filterTest[0].items[0].value;
+    //const filterValid = !searchFilter || searchFilter.length > 2;
+    const groups: IGroup<IServer>[] = this.filterTest; // filterValid ?  : JSON.parse(JSON.stringify(this.filterTest));
+    //if (!filterValid) groups[0].items[0].value = null;
 
-    filters.filter(x => x.items.some(f => f.value != null)).forEach(x => {
+    // TODO!
+    // value check because rangebox makes strings
+    const checkF = (f) => !f.range || (f.value[0] != f.range[0] || f.value[1] != f.range[1])
+
+    groups.forEach(g => {
+      const filters = g.items.filter(f => f.value != null && f.value !== "" && f.type && checkF(f));
+      const flags = g.items
+        .filter(f => f.value && !f.type);
+      if (filters.length === 0 && flags.length === 0) {
+        g.active = false;
+        return;
+      }
       let flag = 0;
-      x.items.filter(f => f.value && !(f.value instanceof Array) && !f.type).map(f => f.useValue).forEach(f => {
+      flags.map(f => f.useValue).forEach(f => {
         flag += f;
       });
-      const filt = { flag };
-      const filters = x.items.filter(f => f.value != null && (f.value instanceof Array) || f.type !== "text" || f.type !== "value");
-      filters.forEach(f => {
-        // TODO!
-        if (!f.range || (f.value[0] !== 0 && f.value[1] !== 300)) { filt[f.name] = f.value; }
-      });
-      if (filt.flag > 0 || filters.length > 0) { filter[x.title] = filt; }
-    })
+      const filt: { flag?: number } = flag === 0 ? {} : { flag };
+      let hasActiveFilters = false;
+      filters
+        .forEach(f => {
+          if (checkF(f)) {
+            filt[f.name] = f.value;
+            hasActiveFilters = true;
+          }
+        });
+      if (filt.flag > 0 || hasActiveFilters) {
+        filter[g.title] = filt;
+        g.active = true;
+      } else {
+        g.active = false;
+      }
+    });
 
     if (this.filterTest[1].items[0].value) {
       filter["Mods"].modIds = this.baskets.active.model.items.map(x => x.id);
     }
 
-    if (this.params.modId) { (<any>filter).mod = { id: this.params.modId, type: "withSIX" } }
+    if (this.params) {
+      if (this.params.steamId) {
+        (<any>filter).mod = { id: this.params.steamId, type: "Steam" };
+      } else if (this.params.modId) {
+        let id;
+        try { id = this.params.modId.fromShortId() } catch (err) { id = this.params.modId; };
+        (<any>filter).mod = { id, type: "withSIX" };
+      }
+    }
 
     const orders = [];
     if (this.activeOrder) { orders.push({ column: this.activeOrder.name, direction: this.activeOrder.direction }); }
     const sort = { orders, }
 
-    const id = ++this.getId;
     const servers = await new GetServers(this.w6.activeGame.id, filter, sort, {
-      page
+      page, pageSize: this.model.pageSize
     }).handle(this.mediator);
 
-    if (id !== this.getId) throw new this.tools.AbortedException("old data");
-
-    if (this.w6.miniClient.isConnected) this.refreshServerInfo(servers.items);
+    if (this.w6.miniClient.isConnected && this.features.serverFeatures) this.refreshServerInfo(servers.items);
     return servers;
   }
 
-  refresh = uiCommand2("Refresh", () => this.refreshServerInfo(this.model.items));
-  reload = uiCommand2("Reload", async () => this.model = await this.getMore());
+  refresh = uiCommand2("Refresh", () => this.refreshServerInfo(this.model.items), {
+    canExecuteObservable: this.observeEx(x => x.features.serverFeatures)
+  });
+  reload;
 
-  clear = uiCommand2("Clear", async () => this.clearFilters());
+  createServer = uiCommand2("ADD SERVER", async () => { confirm("TODO"); }, {
+    cls: "warn",
+    icon: "withSIX-icon-Add",
+  });
 
-  clearFilters() {
-    this.filterTest.forEach(x => {
-      x.items.forEach(f => f.value = f.defaultValue ? f.defaultValue() : null)
-    });
+  clear = uiCommand2("CLEAR", async () => this.clearFilters(), {
+    cls: "text-button",
+    icon: "withSIX-icon-X",
+  });
+
+  clearGroup = (grp) => {
+    grp.items.forEach(f => f.value = f.defaultValue ? f.defaultValue() : null);
+    grp.active = false;
   }
+
+  clearFilters() { this.filterTest.forEach(x => this.clearGroup(x)); }
 
   //get filteredItems() { return this.filteredComponent.filteredItems; }
   //get filteredTotalCount() { return this.filteredComponent.totalCount; }
@@ -573,7 +661,8 @@ export class Index extends FilteredBase<IServer> {
         evt.items.forEach(x => {
           let s = servers.filter(f => f.queryAddress === x.queryAddress)[0];
           if (s == null) return;
-          Object.assign(s, x, { country: s.country, distance: s.distance, modList: s.modList, updatedAt: new Date(), created: s.created });
+          const { modList, country, distance, created } = s;
+          Object.assign(s, x, { modList, country, distance, created, updatedAt: new Date() });
         });
       });
     try {
@@ -587,21 +676,25 @@ export class Index extends FilteredBase<IServer> {
     }
   }
 
-  order(items) {
-
+  order(items: IServer[]): IServer[] {
     items.forEach(x => {
-      const s = (<any>x);
-      if (!s.favorites) {
-        s.favorites = this.favorites;
-        s.hasPlayed = this.history.some(h => h === s.connectionAddress);
-        s.isFavorite = this.favorites.some(f => f === s.connectionAddress);
+      if (!x.favorites) {
+        x.favorites = this.favorites;
+        x.hasPlayed = this.history.some(h => h === x.connectionAddress);
+        x.isFavorite = this.favorites.some(f => f === x.connectionAddress);
       }
     });
     const anHourAgo = moment().subtract("hours", 1);
     items = items.filter(x => x.isFavorite || moment(x.updatedAt).isAfter(anHourAgo));
     let sortOrders: any[] = [];
-    if (this.activeOrder && this.activeOrder.name === 'players')
-      sortOrders.push({ name: 'currentPlayers', direction: this.activeOrder.direction });
+    if (this.activeOrder) {
+      if (this.activeOrder.name === 'players') {
+        sortOrders.push({ name: 'currentPlayers', direction: this.activeOrder.direction });
+      }
+      if (this.activeOrder.name === 'connection' && this.w6.miniClient.isConnected) {
+        sortOrders.push({ name: 'ping', direction: this.activeOrder.direction });
+      }
+    }
 
     if (sortOrders.length === 0) return items;
 
@@ -623,25 +716,31 @@ export class Index extends FilteredBase<IServer> {
     });
   }
 
+  morePagesAvailable = this.whenAnyValue(x => x.inlineCount).combineLatest(this.whenAnyValue(x => x.page), (c, p) => p < this.totalPages);
+  loadMore;
+
   addPage = async () => {
-    if (!this.morePagesAvailable) return;
+    if (!this.morePagesAvailable) return; // TODO: makes no sense, its an obvservable!
+    this.triggerPage++;
+    /*
     const m = <any>this.model;
     let r = <any>await this.getMore(m.pageNumber + 1);
     m.total = r.total;
     m.pageNumber = r.pageNumber;
     m.items.push(...r.items);
     this.filteredItems = this.order(this.model.items)
+    */
   }
 
   // adapt to pageModel instead of Breeze
   get totalPages() {
-    return this.inlineCount / (<any>this.model).pageSize
+    return this.inlineCount / this.model.pageSize
   }
   get inlineCount() {
-    return (<any>this.model).total
+    return this.model.total
   }
   get page() {
-    return (<any>this.model).pageNumber
+    return this.model.pageNumber
   }
 
   showServer(server: IServer) {
@@ -652,7 +751,7 @@ export class Index extends FilteredBase<IServer> {
   }
 }
 
-class GetServers extends Query<IPaginated<IServer>> {
+class GetServers extends Query<IPageModel<IServer>> {
   constructor(public gameId: string, public filter?: {
     name?: string; currentPlayers?: number; isDedicated?: boolean
   }, public order?: {
@@ -660,14 +759,14 @@ class GetServers extends Query<IPaginated<IServer>> {
       column: string; direction: number
     }[]
   }, public pageInfo?: {
-    page: number
+    page: number, pageSize: number
   }) {
     super();
   }
 }
 
 @handlerFor(GetServers)
-class GetServersHandler extends DbQuery<GetServers, IPaginated<IServer>> {
+class GetServersHandler extends DbQuery<GetServers, IPageModel<IServer>> {
   handle(request: GetServers) {
     //return this.context.getCustom("servers", { params: request })
     // TODO: we prefer Get, but need some plumbing on the server ;-)

@@ -10,9 +10,13 @@ import { Login } from "./services/auth";
 import { LoginBase, LoginUpdated } from "./services/auth-base";
 import { RenderService } from "./services/renderer/render-service";
 
+import { ToggleServer } from "./features/rside-bar/rside-bar";
+
 import { GameBaskets } from "./features/game-baskets";
 import { AddModsToCollections } from "./features/games/add-mods-to-collections";
 import { CreateCollectionDialog } from "./features/games/collections/create-collection-dialog";
+import { BetaDialog } from "./features/games/servers/beta-dialog";
+import { GetClientDialog } from "./features/games/get-client-dialog";
 import { HostServer } from "./features/games/servers/host-server";
 import { ServerRender } from "./features/games/servers/server-render";
 import { FeaturesModule } from "./features/index";
@@ -23,6 +27,7 @@ import { NewGroupDialog } from "./features/profile/groups/new-group-dialog";
 import { Index as SettingsIndex } from "./features/settings/index";
 import { EditPlaylistItem } from "./features/side-bar/playlist/edit-playlist-item";
 import { SideBar } from "./features/side-bar/side-bar";
+import { RsideBar } from "./features/rside-bar/rside-bar";
 import { TopBar } from "./features/top-bar/top-bar";
 import { UserErrorDialog } from "./features/user-error-dialog";
 
@@ -53,6 +58,7 @@ export class App extends ViewModel {
   openMessages = uiCommand2("Messages", async () => this.navigateInternal("/me/messages"));
   openLogout = uiCommand2("Logout", async () => this.login.logout());
   sideBar: SideBar;
+  rsideBar: RsideBar;
   topBar: TopBar;
   newAppVersionAvailable: boolean;
 
@@ -79,6 +85,8 @@ export class App extends ViewModel {
   get isNavigating() { return this.router.isNavigating; }
   get isRequesting() { return this.login.isRequesting; }
   get showSidebar() { return this.w6.enableBasket; }
+  showRsidebar;
+
   get tabActive() { return (this.sideBar && this.sideBar.selectedTab) || (this.topBar && this.topBar.selectedTab); }
   get tabAsTabActive() {
     let side = this.sideBar && this.sideBar.selectedTab;
@@ -149,6 +157,8 @@ export class App extends ViewModel {
     Origin.set(UserErrorDialog, { moduleId: "features/user-error-dialog", moduleMember: "UserErrorDialog" });
     Origin.set(MessageDialog, { moduleId: "features/message-dialog", moduleMember: "MessageDialog" });
     Origin.set(Finalize, { moduleId: "features/login/finalize", moduleMember: "Finalize" });
+    Origin.set(BetaDialog, { moduleId: "features/games/servers/beta-dialog", moduleMember: "BetaDialog" });
+    Origin.set(GetClientDialog, { moduleId: "features/games/get-client-dialog", moduleMember: "GetClientDialog" });
     Origin.set(HostServer, { moduleId: "features/games/servers/host-server", moduleMember: "HostServer" });
     Origin.set(ServerRender, { moduleId: "features/games/servers/server-render", moduleMember: "ServerRender" });
 
@@ -163,15 +173,15 @@ export class App extends ViewModel {
     this.userMenuItems.push(new MenuItem(this.openMessages));
     this.userMenuItems.push(new MenuItem(this.openLogout));
 
-    setTimeout(() => {
+    setTimeout(async () => {
+      this.firefoxTimeoutPassed = true;
       if (!this.w6.settings.hasSync && (this.w6.miniClient.isConnected || this.basketService.hasConnected)) {
         this.w6.updateSettings(x => x.hasSync = true);
       }
       // TODO: put it on a connected handler?
       if (!this.w6.miniClient.isConnected && this.w6.settings.hasSync && this.features.clientAutostart) {
-        this.clientMissingHandler.addClientIframe();
+        await this.clientMissingHandler.addClientIframe(true);
       }
-      this.firefoxTimeoutPassed = true;
     }, 15 * 1000);
 
     this.w6.navigate = (url: string) => this.navigateInternal(url);
@@ -213,14 +223,20 @@ export class App extends ViewModel {
         }));
 
       const changed = this.appEvents.gameChanged;
-      d(changed.flatMap(x => this.setActiveGame(x)).concat().subscribe());
+      d(changed.subscribe(info => this.w6.setActiveGame({ id: info.id, slug: info.slug })));
+      d(changed
+        .filter(game => game && game.id && game.isPageChange && this.w6.miniClient.isConnected)
+        .concatMap(game => this.client.selectGame(game.id))
+        .subscribe());
       d(changed.startWith(this.w6.activeGame)
-        .subscribe(this.gameChanged));
+        .do(this.gameChanged)
+        .filter(x => !!x.id)
+        .switchMap(game => this.basketService.getGameInfo(game.id))
+        .subscribe(x => this.gameInfo = x));
       d(this.clientWrapper.stateChanged
         .startWith(<StateChanged>{ newState: this.client.isConnected ? ConnectionState.connected : null })
-        .subscribe(state => {
-          if (state.newState === ConnectionState.connected) { this.infoReceived(this.client.clientInfo); }
-        }));
+        .filter(state => state.newState === ConnectionState.connected)
+        .subscribe(state => this.infoReceived(this.client.clientInfo)));
       const userErrors = this.whenAnyValue(x => x.userErrors).filter(x => x != null);
       d(userErrors.subscribe(_ => {
         // close all open dialogs when userErrors get replaced
@@ -232,6 +248,7 @@ export class App extends ViewModel {
       d(userErrors.flatMap(x => x)
         .merge<IUserError>(this.clientWrapper.userErrorAdded.map(x => x.userError))
         .subscribe(x => { if (!this.dialogMap.some(id => id === x.id)) { this.showUserErrorDialog(x); } }));
+      d(this.observableFromEvent(ToggleServer).subscribe(x => this.showRsidebar = !this.showRsidebar));
     });
 
     this.loginLegacyClient({ accessToken: this.w6.userInfo.id ? window.localStorage.getItem(LoginBase.token) : null });
@@ -259,9 +276,6 @@ export class App extends ViewModel {
     if (this.game.id === info.id) { return; }
     this.game.id = info.id;
     this.game.slug = info.slug;
-    if (this.game.id) {
-      this.gameInfo = await this.basketService.getGameInfo(this.game.id);
-    }
   }
   openClientSettings = (evt: OpenSettings) => this.dialog.open({ viewModel: SettingsIndex, model: evt.model })
   openCreateCollectionDialog = (event: OpenCreateCollectionDialog) =>
@@ -324,11 +338,6 @@ export class App extends ViewModel {
     this.tools.removeEl(this.dialogMap, userError.id);
   }
 
-  async setActiveGame(info: GameChanged) {
-    this.w6.setActiveGame({ id: info.id, slug: info.slug });
-    if (info && info.id && info.isPageChange) { await this.client.selectGame(info.id); }
-  }
-
   myKeypressCallback = ($event: KeyboardEvent) => {
     if ($event.keyCode === 27) { // escape
       this.eventBus.publish(new CloseTabs());
@@ -375,6 +384,7 @@ export class App extends ViewModel {
     // TODO: Better with event?
     this.sideBar.selectedTab = null;
     this.topBar.selectedTab = null;
+    this.rsideBar.selectedTab = null;
     return true;
   }
 

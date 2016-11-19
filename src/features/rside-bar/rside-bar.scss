@@ -1,0 +1,37 @@
+@import "_v2";
+$bg: $barBackgroundColor;
+#rsidebar {
+  position: fixed;
+  top: $headerSize;
+  right: 0;
+  bottom: 0;
+  width: $sideHeaderSize;
+  z-index: $headerZindex + 3;
+  background-color: $bg;
+  color: $barColor;
+  word-wrap: break-word;
+  bar {
+    display: block;
+    width: $headerSize;
+    height: 100%;
+  }
+  // -webkit-filter: drop-shadow(0px 0px 8px rgba(28, 28, 28, 0.75));
+  // filter:drop-shadow(0px 0px 8px rgba(28, 28, 28, 0.75));
+  // &.active {
+  //   -webkit-filter: none;
+  //   filter:none;
+  // }
+  .indicator.sphere {
+    border: 2px solid $bg;
+  }
+  .indicator.arrow {
+    color: $colorSixDarkGray;
+  }
+  ul {
+    margin: 0;
+    padding: 0;
+    &>li {
+      list-style-type: none;
+    }
+  }
+}

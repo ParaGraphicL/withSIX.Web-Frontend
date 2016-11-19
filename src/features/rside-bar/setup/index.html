@@ -1,0 +1,30 @@
+<template>
+  <!--<require from="./index.scss"></require>-->
+
+  <header class="tab-header">
+    <span class="main-text">${model.header}</span>
+  </header>
+
+  <hr />
+
+  <!--<action-bar class="main header-items" orientation="vertical" items.bind="topBarItems"></action-bar>-->
+
+  <hr />
+
+  <div class="the-content" scroll.trigger="closeDropdowns()">
+    <form>
+      <selectbox value.bind="m.size" options.bind="sizes">
+        Size
+        <template replace-part="item-template">
+          <option model.bind="o.value">${o.title || o}</option>
+        </template>
+      </selectbox>
+      <textbox value.bind="m.name" placeholder="name of the server">Name</textbox>
+      <textbox value.bind="m.password" placeholder="optional password">Password</textbox>
+      <textbox value.bind="m.adminPassword" placeholder="admin password">Admin Password</textbox>
+    </form>
+    <button class="naked-button default ignore-close" click.delegate="next()">Next</button>
+    <button class="naked-button default" click.delegate="done()">Done</button>
+  </div>
+
+</template>

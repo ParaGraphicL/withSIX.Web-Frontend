@@ -119,18 +119,18 @@ export class AddCollectionDialogController extends DialogControllerBase {
   private ok = async () => {
     var data = this.$scope.model;
     if ((<string>data.uri).endsWithIgnoreCase("config.yml")) {
-      await this.$scope.request<{ data: any[] }>(NewImportedCollectionCommand, { data: data })
+      await this.$scope.request<any[]>(NewImportedCollectionCommand, { data: data })
         .then(result =>
           this.applyIfNeeded(() => {
-            if (result.data.length == 1) {
-              var modId = result.data[0].toShortId();
+            if (result.length == 1) {
+              var modId = result[0].toShortId();
               this.$modalInstance.close();
               //var slug = <string>data.name.sluggifyEntityName();
               this.$location.path(joinUri([this.$scope.url.play, this.model.slug, "collections", modId, "slug"])).search('landingrepo', 1);
             } else {
               this.$scope.importResult = [];
-              for (var i = 0; i < result.data.length; i++) {
-                this.$scope.importResult[i] = joinUri([this.$scope.url.play, this.model.slug, "collections", result.data[i].toShortId(), "slug"]);
+              for (var i = 0; i < result.length; i++) {
+                this.$scope.importResult[i] = joinUri([this.$scope.url.play, this.model.slug, "collections", result[i].toShortId(), "slug"]);
               }
               this.$scope.page = this.$newViewBaseFolder + 'add-collection-3.html';
             }
@@ -138,9 +138,9 @@ export class AddCollectionDialogController extends DialogControllerBase {
         )
         .catch(this.httpFailed);
     } else {
-      await this.$scope.request<{ data: string }>(NewMultiImportedCollectionCommand, { data: data })
+      await this.$scope.request<string>(NewMultiImportedCollectionCommand, { data: data })
         .then(result => {
-          var modId = result.data.toShortId();
+          var modId = result.toShortId();
           this.$modalInstance.close();
           //var slug = <string>data.name.sluggifyEntityName();
           this.$location.path(joinUri([this.$scope.url.play, this.model.slug, "collections", modId, "slug"])).search('landingrepo', 1);
@@ -636,14 +636,14 @@ export class NewModCommand extends DbCommandBase {
 registerCQ(NewModCommand);
 export class NewImportedCollectionCommand extends DbCommandBase {
   static $name = 'NewImportedCollection';
-  public execute = ['data', data => this.context.postCustom<Result<string>>("collections/import-repo", data, { requestName: 'postNewCollection' }).then(x => x.result)];
+  public execute = ['data', data => this.context.postCustom<string[]>("collections/import-repo", data, { requestName: 'postNewCollection' })];
 }
 
 registerCQ(NewImportedCollectionCommand);
 
 export class NewMultiImportedCollectionCommand extends DbCommandBase {
   static $name = 'NewMultiImportedCollection';
-  public execute = ['data', data => this.context.postCustom<Result<string>>("collections/import-server", data, { requestName: 'postNewCollection' }).then(x => x.result)];
+  public execute = ['data', data => this.context.postCustom<string>("collections/import-server", data, { requestName: 'postNewCollection' })];
 }
 
 registerCQ(NewMultiImportedCollectionCommand);
@@ -775,7 +775,7 @@ class GameController extends BaseQueryController<IBreezeGame> {
     if (model.supportsCollections)
       items.push({ header: "Collections", segment: "collections", icon: "icon withSIX-icon-Nav-Collection" });
 
-    if (model.supportsServers && $scope.features.serverBrowser)
+    if (model.supportsServers)
       items.push({ header: "Servers", segment: "servers", icon: "icon withSIX-icon-Nav-Server" });
 
     if ($scope.w6.enableBasket)

@@ -1,125 +1,157 @@
 <template>
   <require from="./flag"></require>
-  <div class="tile ${model.modList.length > 0 ? 'has-mods' : ''} mod-state-${model.modState}">
-    <span show.bind="clientLoaded">${model.ping}ms</span>
-    <flag s.bind="model"></flag>
-    <command-button model.bind="refresh"></command-button>
-    <span><a href.bind="url"><span class="icon withSIX-icon-Follow"></span></a>
-    </span>
-    <span>${model.currentPlayers} / ${model.maxPlayers} plyrs |</span>
-    <span>
-      <i class="icon withSIX-icon-Lock" if.bind="model.isPasswordProtected"></i>
-      [${model.serverState}
-      | ${model.gameType}] | v${model.version} |
-    </span>
-    <span>${model.modList.length} mods |</span>
-    <span>${SessionState[model.serverState]}</span>
-    <span>[<span innerHTML.bind="model.game | links"></span> on ${model.map}]</span>
+  <div class="${hasMods ? 'has-mods' : ''} mod-state-${model.modState}">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="pull-right">
+          <span><a href.bind="url"><span class="icon withSIX-icon-Follow"></span></a>
+          </span>
+          <command-button model.bind="refresh"></command-button>
+        </div>
 
-    <div>
-      Last Updated
-      <time-ago time.bind="model.updatedAt"></time-ago>
-      First appearance
-      <time-ago time.bind="model.created"></time-ago>
-    </div>
+        <h2><i class="icon withSIX-icon-Lock" if.bind="model.isPasswordProtected"></i><span innerHTML.bind="model.name"></span></h2>
 
-    <command-button class="join-button" model.bind="join">
-      <div class="pull-left icon ${join.icon}"></div>
-      <div class="text">
-        <span if.bind="model.modList.length > 0 && model.modState !== 'uptodate'">${model.modState} &amp;</span>        <span class="join-text">join</span>
-      </div>
-    </command-button>
+        <hr>
 
-    <compose view-model="./external/index"></compose>
 
-    <!-- ask for password otherwise, and add: /${password}.
+        <ul class="menu">
+          <li show.bind="clientLoaded"><span>Ping: ${model.ping}ms</span></li>
+          <li>Location: ${model.country}
+            <flag s.bind="model"></flag>
+            (${(model.distance / 1000) | numeral} KM)
+          </li>
+          <li if.bind="model.isDedicated">DEDICATED SERVER</li>
+          <li>Version: ARMA 3 <b>v${model.serverVersion}</b></li>
+          <li> Last Updated
+            <time-ago time.bind="model.updatedAt"></time-ago>
+            <br /> First appearance
+            <time-ago time.bind="model.created"></time-ago>
+          </li>
+        </ul>
+
+        <br />
+
+        <ul class="menu">
+          <li>${model.currentPlayers} / ${model.maxPlayers} players</li>
+          <li show.bind="model.players && model.players.length > 0">
+            <a href="#" click.delegate="showPlayers = !showPlayers">${showPlayers ? 'Hide' : 'Show'} players</a>
+            <ul class="menu" show.bind="showPlayers">
+              <li repeat.for="p of model.players">
+                ${p.name} | ${p.score} | ${p.deaths}
+              </li>
+            </ul>
+          </li>
+        </ul>
+
+        <h3>Mission info</h3>
+        <ul class="menu">
+          <li><b><span innerHTML.bind="model.game"></span></b></li>
+          <li>Status: ${SessionState[model.serverState]}</li>
+          <li>Type: [${model.gameType}]</li>
+          <li>Location: ${model.map}</li>
+        </ul>
+
+        <br />
+        <!-- ask for password otherwise, and add: /${password}.
         only show if user has steam etc.
        -->
-    <a if.bind="!model.isPasswordProtected" href="steam://connect/${address}">Join through Steam</a>
+        <!--<a if.bind="!model.isPasswordProtected" href="steam://connect/${address}">Join through Steam</a>-->
 
-    <div if.bind="!model.isClaimed">
-      This server is not yet claimed, is this your server? <button>claim it here</button>
-    </div>
+        <div if.bind="features.serverClaiming && !model.isClaimed">
+          This server is not yet claimed, is this your server? <button>claim it here</button>
+        </div>
 
-    <div if.bind="links.length > 0">
-      Links
-      <ul>
-        <li repeat.for="l of links">
-          <a href.bind="l.url">${l.title} (${l.type})</a>
-        </li>
-      </ul>
-    </div>
+        <div if.bind="links.length > 0">
+          Links
+          <ul>
+            <li repeat.for="l of links">
+              <a href.bind="l.url">${l.title} (${l.type})</a>
+            </li>
+          </ul>
+        </div>
 
-    <div>
-      <h2>Extended info</h2>
-      <ul>
-        <li>AILevel: ${AiLevel[model.aiLevel]}</li>
-        <li>Difficulty: ${Difficulty[model.difficulty]}</li>
-        <li>HelicopterFlightModel: ${HelicopterFlightModel[model.helicopterFlightModel]}</li>
-        <li if.bind="model.isThirdPersonViewEnabled">Third PersonView enabled</li>
-        <li if.bind="model.isWeaponCrosshairEnabled">Crosshair enabled</li>
-        <li if.bind="model.isVacEnabled">VacEnabled</li>
-        <li if.bind="model.signatureList.length > 0">Signatures: ${model.signatureList.join(", ")}</li>
-      </ul>
-    </div>
-
-    <div>
-      <h2>Official DLC/expansions</h2>
-      <div if.bind="model.requiresExpansionTerrain">Requires ExpansionTerrain</div>
-      <ul if.bind="dlcs.length > 0">
-        <li repeat.for="dlc of dlcs">${dlc.name} <span if.bind="!dlc.isInstalled">(missing)</span></li>
-      </ul>
-    </div>
-
-    <div if.bind="model.modList && model.modList.length > 0">
-      <h2>Mods</h2>
-      <ul>
-        <li repeat.for="m of model.modList">
-          <div if.bind="m.modId">
-            <a href="/p/${w6.activeGame.slug}/mods/${m.modId.toShortId()}/${m.name.sluggifyEntityName()}" click.delegate="cancel()">${m.name}</a>            (
-            <a href="/p/${w6.activeGame.slug}/servers/?modId=${m.modId.toShortId()}" click.delegate="cancel()">Find more servers with this</a>)
+        <div>
+          <a href="#" click.delegate="showInfo = !showInfo">${showInfo ? 'Hide' : 'Show'} difficulty settings</a>
+          <div show.bind="showInfo">
+            <h3>Difficulty settings</h3>
+            <ul class="menu">
+              <li>AILevel: ${AiLevel[model.aiLevel]}</li>
+              <li>Difficulty: ${Difficulty[model.difficulty]}</li>
+              <li>HelicopterFlightModel: ${HelicopterFlightModel[model.helicopterFlightModel]}</li>
+              <li if.bind="model.isThirdPersonViewEnabled">Third PersonView enabled</li>
+              <li if.bind="model.isWeaponCrosshairEnabled">Crosshair enabled</li>
+              <li if.bind="model.isVacEnabled">VacEnabled</li>
+            </ul>
           </div>
-          <span if.bind="!m.modId">${m.name}</span>
-        </li>
-      </ul>
-    </div>
+        </div>
 
-    <div if.bind="model.players && model.players.length > 0">
-      <h2>Players</h2>
-      <ul>
-        <li repeat.for="p of model.players">
-          ${p.name} | ${p.score} | ${p.deaths}
-        </li>
-      </ul>
+
+        <!--<compose view-model="./external/index"></compose>-->
+
+        <div if.bind="model.additional">
+          <img if.bind="model.additional.info.avatarUrl" src.bind="model.additional.info.avatarUrl" />
+          <h2>External links</h2>
+          <ul>
+            <li if.bind="model.additional.info.homepage">
+              <a target="_blank" href.bind="model.additional.info.homepage">Homepage</a>
+            </li>
+            <li repeat.for="p of model.additional.publishers">
+              <a target="_blank" href.bind="getPublisherUrl(p)">${getPublisherName(p)}</a>
+            </li>
+          </ul>
+
+          <h2>Tags</h2>
+          <ul>
+            <li repeat.for="t of model.additional.info.tags">
+              ${t.name}
+            </li>
+          </ul>
+
+          <div if.bind="model.additional.info.description">
+            <h2>Description</h2>
+            <div innerHTML.bind="model.additional.info.description"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <command-button class="join-button" model.bind="join">
+          <div class="pull-left">
+            <span class="icon ${hasMods && model.modState !== 'uptodate' ? join.icon : 'withSIX-icon-Joystick'}"></span>
+          </div>
+          <div class="text">
+            <span if.bind="hasMods && model.modState !== 'uptodate'">${model.modState} &amp;</span>
+            <span class="join-text">join</span>
+          </div>
+        </command-button>
+
+        <br /><br />
+        <div>
+          <h3>Official DLC/expansions</h3>
+          <div if.bind="model.requiresExpansionTerrain">Requires ExpansionTerrain</div>
+          <ul class="menu" if.bind="dlcs.length > 0">
+            <li repeat.for="dlc of dlcs">${dlc.name} <span if.bind="!dlc.isInstalled">(missing)</span></li>
+          </ul>
+        </div>
+
+        <div if.bind="hasMods">
+          <h3>${model.modList.length} Mods</h3>
+          <ul class="menu">
+            <li repeat.for="m of model.modList">
+              <div if.bind="m.modId">
+                <a href="/p/${w6.activeGame.slug}/mods/${m.modId.toShortId()}/${m.name.sluggifyEntityName()}" click.delegate="cancel()">${m.name}</a>                (
+                <a href="/p/${w6.activeGame.slug}/servers/?modId=${m.modId.toShortId()}" click.delegate="cancel()">Find more servers with this</a>)
+              </div>
+              <span if.bind="!m.modId">${m.name}</span>
+            </li>
+          </ul>
+        </div>
+
+        <div if.bind="model.signatureList.length > 0">
+          <a href="#" click.delegate="showSignatures = !showSignatures">${showSignatures ? 'Hide' : 'Show'} signatures</a>
+          <span show.bind="showSignatures">Signatures: ${model.signatureList.join(", ")}</span>
+        </div>
+      </div>
     </div>
   </div>
-  </div>
-
-
-  <div if.bind="model.additional">
-    <img if.bind="model.additional.info.avatarUrl" src.bind="model.additional.info.avatarUrl" />
-    <h2>External links</h2>
-    <ul>
-      <li if.bind="model.additional.info.homepage">
-        <a target="_blank" href.bind="model.additional.info.homepage">Homepage</a>
-      </li>
-      <li repeat.for="p of model.additional.publishers">
-        <a target="_blank" href.bind="getPublisherUrl(p)">${getPublisherName(p)}</a>
-      </li>
-    </ul>
-
-    <h2>Tags</h2>
-    <ul>
-      <li repeat.for="t of model.additional.info.tags">
-        ${t.name}
-      </li>
-    </ul>
-
-    <div if.bind="model.additional.info.description">
-      <h2>Description</h2>
-      <div innerHTML.bind="model.additional.info.description"></div>
-    </div>
-  </div>
-
 </template>
-
