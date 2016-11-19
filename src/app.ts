@@ -249,6 +249,7 @@ export class App extends ViewModel {
         .merge<IUserError>(this.clientWrapper.userErrorAdded.map(x => x.userError))
         .subscribe(x => { if (!this.dialogMap.some(id => id === x.id)) { this.showUserErrorDialog(x); } }));
       d(this.observableFromEvent(ToggleServer).subscribe(x => this.showRsidebar = !this.showRsidebar));
+      d(this.eventBus.subscribe('router:navigation:complete', _ => this.w6.scrollTo(0, 600)));
     });
 
     this.loginLegacyClient({ accessToken: this.w6.userInfo.id ? window.localStorage.getItem(LoginBase.token) : null });
