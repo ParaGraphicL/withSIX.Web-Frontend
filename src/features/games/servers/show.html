@@ -1,7 +1,8 @@
 <template>
   <div class="container-fluid" id="server-render">
     <labs lab-link="https://community.withsix.com/topic/85/add-a-server-browser-to-sync-web-vote-here/2"></labs>
-    <h2><i class="icon withSIX-icon-Lock" if.bind="model.isPasswordProtected"></i><span innerHTML.bind="model.name"></span></h2>
-    <compose class="tile" view="./server-render-info.html"></compose>
+    <div class="tile">
+      <compose view="./server-render-info.html"></compose>
+    </div>
   </div>
 </template>
