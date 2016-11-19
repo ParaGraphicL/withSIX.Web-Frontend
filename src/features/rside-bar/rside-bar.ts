@@ -11,19 +11,23 @@ export class RsideBar extends ViewModel {
     { header: "Status", name: "status", location: "end", icon: "icon withSIX-icon-System-Remote", viewModel: `${RsideBar.root}status/index`, next: (tab: IAwesomeTab) => this.next(tab) },
   ];
 
-  next(tab: IAwesomeTab) {
+  next(tab: IAwesomeTab | string) {
     if (tab == null) {
       this.selectedTab = this.tabs[this.tabs.length - 1];
       return;
     }
-    const idx = this.tabs.indexOf(tab);
-    this.selectedTab = this.tabs[idx + 1];
+    if (typeof(tab) === "string") {
+      this.selectedTab = this.tabs.filter(x => x.name === tab)[0];
+    } else {
+      const idx = this.tabs.indexOf(tab);
+      this.selectedTab = this.tabs[idx + 1];
+    }
   }
   selectedTab: ITab;
 }
 
 interface IAwesomeTab extends ITab {
-  next(tab?: IAwesomeTab): void;
+  next(tab?: IAwesomeTab | string): void;
 }
 
 export interface ITabModel<T> extends IAwesomeTab {
@@ -40,4 +44,5 @@ export class ServerTab<TModel extends ITabModel<any>> extends ViewModel {
 
   next() { this.model.next(this.model); }
   done() { this.model.next(); }
+  switch(tabName: string) { this.model.next(tabName); }
 }
