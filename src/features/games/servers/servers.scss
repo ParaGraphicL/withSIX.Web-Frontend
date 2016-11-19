@@ -18,7 +18,10 @@
 $padding: 12px;
 #server-browser,
 #server-render {
-  word-break: break-word;
+  word-wrap: break-word;
+  label {
+    width: 100%;
+  }
   .state {
     border-left: 4px solid $colorSixGreen;
     //margin: 0 $padding;
