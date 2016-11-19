@@ -1,4 +1,4 @@
-import { ITabModel } from "../rside-bar";
+import { ITabModel, ServerTab } from "../rside-bar";
 
 interface ISetupTab extends ITabModel<{}> { }
 
@@ -9,8 +9,7 @@ enum Size {
   VeryLarge
 }
 
-export class Index {
-  model: ISetupTab;
+export class Index extends ServerTab<ISetupTab> {
   sizes = [
     { value: Size.Small, title: Size[Size.Small] + " (Single core, 3.5GB)" },
     { value: Size.Normal, title: Size[Size.Normal] + " (Dual core, 7GB)" },
@@ -19,13 +18,11 @@ export class Index {
   ];
 
   activate(model: ISetupTab) {
-    this.model = model;
+    super.activate(model);
     this.model.data || (this.model.data = {
       size: Size.Normal
     });
   }
-
-  next() { this.model.next(this.model); }
 
   get m() { return this.model.data; };
 }

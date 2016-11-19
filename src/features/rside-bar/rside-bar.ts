@@ -12,6 +12,10 @@ export class RsideBar extends ViewModel {
   ];
 
   next(tab: IAwesomeTab) {
+    if (tab == null) {
+      this.selectedTab = this.tabs[this.tabs.length - 1];
+      return;
+    }
     const idx = this.tabs.indexOf(tab);
     this.selectedTab = this.tabs[idx + 1];
   }
@@ -19,7 +23,7 @@ export class RsideBar extends ViewModel {
 }
 
 interface IAwesomeTab extends ITab {
-  next(tab: IAwesomeTab): void;
+  next(tab?: IAwesomeTab): void;
 }
 
 export interface ITabModel<T> extends IAwesomeTab {
@@ -27,3 +31,13 @@ export interface ITabModel<T> extends IAwesomeTab {
 }
 
 export class ToggleServer { }
+
+export class ServerTab<TModel extends ITabModel<any>> extends ViewModel {
+  model: TModel;
+  activate(model: TModel) {
+    this.model = model;
+  }
+
+  next() { this.model.next(this.model); }
+  done() { this.model.next(); }
+}

@@ -1,10 +1,13 @@
-import { ITabModel } from "../rside-bar";
+import { ITabModel, ServerTab } from "../rside-bar";
+import { uiCommand2 } from "../../../framework";
 
 interface IPlayersTabModel extends ITabModel<any> { }
 
-export class Index {
-  model: IPlayersTabModel;
-  activate(model: IPlayersTabModel) {
-    this.model = model;
-  }
+export class Index extends ServerTab<IPlayersTabModel> {
+  lock = uiCommand2("Lock", async () => {});
+  unlock = uiCommand2("Unlock", async () => {});
+  players = [
+    {name: "Player X"},
+    {name: "Player Y"},
+  ]
 }

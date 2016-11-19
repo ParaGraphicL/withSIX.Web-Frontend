@@ -1,12 +1,9 @@
-import { ITabModel } from "../rside-bar";
+import { ITabModel, ServerTab } from "../rside-bar";
 
 interface ISettingsTabModel extends ITabModel<any> { }
-export class Index {
-  model: ISettingsTabModel;
+export class Index extends ServerTab<ISettingsTabModel> {
   activate(model: ISettingsTabModel) {
-    this.model = model;
+    super.activate(model);
     this.model.data || (this.model.data = { battlEye: true, verifySignatures: true })
   }
-
-  next() { this.model.next(this.model); }
 }

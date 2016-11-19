@@ -1,12 +1,10 @@
-import { ITabModel } from "../rside-bar";
+import { ITabModel, ServerTab } from "../rside-bar";
 
 interface IMissionsTabModel extends ITabModel<any> { }
 
-export class Index {
-  model: IMissionsTabModel;
-  activate(model: IMissionsTabModel) {
-    this.model = model;
-  }
-
-  next() { this.model.next(this.model); }
+export class Index extends ServerTab<IMissionsTabModel> {
+  missions = [
+    { name: "Mission X" },
+    { name: "Mission Y" },
+  ]
 }
