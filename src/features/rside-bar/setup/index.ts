@@ -6,6 +6,7 @@ interface ISetup {
   credit: number;
   password?: string;
   adminPassword?: string;
+  location: Location;
 }
 
 interface ISetupTab extends ITabModel<ISetup> { }
@@ -17,12 +18,21 @@ enum Size {
   VeryLarge
 }
 
+enum Location {
+  WestEU,
+  WestUS
+}
+
 export class Index extends ServerTab<ISetupTab> {
   sizes = [
     { value: Size.Small, title: Size[Size.Small] + " (Single core, 3.5GB) 0.5SU/hr", cost: 0.5 },
     { value: Size.Normal, title: Size[Size.Normal] + " (Dual core, 7GB) 1SU/hr", cost: 1 },
     { value: Size.Large, title: Size[Size.Large] + " (Quad core, 14GB) 2SU/hr", cost: 2 },
     { value: Size.VeryLarge, title: Size[Size.VeryLarge] + " (Octo core, 28GB) 4SU/hr", cost: 4 },
+  ];
+  locations = [
+    { value: Location.WestEU, title: "West Europe" },
+    { value: Location.WestUS, title: "West US" },
   ];
   sizeMap = this.sizes.toMap(x => x.value);
 

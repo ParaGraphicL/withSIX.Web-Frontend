@@ -9,10 +9,17 @@
 
   <!--<action-bar class="main header-items" orientation="vertical" items.bind="topBarItems"></action-bar>-->
 
-  <hr />
+  <!--<hr />-->
 
   <div class="the-content" scroll.trigger="closeDropdowns()">
     <form>
+      <selectbox value.bind="m.location" options.bind="locations" disabled.bind="true">
+        Location
+        <template replace-part="item-template">
+          <option model.bind="o.value">${o.title || o}</option>
+        </template>
+      </selectbox>
+
       <selectbox value.bind="m.size" options.bind="sizes">
         Size
         <template replace-part="item-template">

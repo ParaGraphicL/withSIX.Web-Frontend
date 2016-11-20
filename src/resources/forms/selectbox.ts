@@ -7,5 +7,5 @@ export class Selectbox<T> extends Field {
     @bindable label: string;
     @bindable useId = Field.generateId('select');
     @bindable cls = "form-control";
+    @bindable disabled: boolean;
 }
-
