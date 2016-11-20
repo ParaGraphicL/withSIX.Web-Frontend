@@ -24,7 +24,7 @@ enum Location {
 
 export class Index extends ServerTab<ISetupTab> {
   hours: number;
-  credit: number;
+  credit = 4; // TODO
 
   sizes = [
     { value: Size.Small, title: Size[Size.Small] + " (Single core, 3.5GB) 0.5SU/hr", cost: 0.5 },
