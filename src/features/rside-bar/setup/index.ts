@@ -4,6 +4,8 @@ interface ISetup {
   size: Size;
   secondaries: { size: Size }[];
   credit: number;
+  password: string;
+  adminPassword: string;
 }
 
 interface ISetupTab extends ITabModel<ISetup> { }
@@ -53,6 +55,9 @@ export class Index extends ServerTab<ISetupTab> {
 
   addSecondary() { this.m.secondaries.push({ size: Size.Normal }); }
   removeSecondary(s) { this.m.secondaries.removeEl(s); }
+  generatePassword() { return Math.random().toString(36).slice(-8); }
+  generateServerPassword() { this.m.password = this.generatePassword(); }
+  generateAdminPassword() { this.m.adminPassword = this.generatePassword(); }
 
   get m() { return this.model.data; };
 }
