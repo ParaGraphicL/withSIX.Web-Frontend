@@ -9,15 +9,15 @@
 
   <!--<action-bar class="main header-items" orientation="vertical" items.bind="topBarItems"></action-bar>-->
 
-  <hr />
+  <!--<hr />-->
 
   <div class="the-content" scroll.trigger="closeDropdowns()">
     ${status}
     <div>
-    <command-button model.bind="start"></command-button>
-    <command-button model.bind="stop"></command-button>
-    <command-button model.bind="restart"></command-button>
-    <command-button model.bind="prepare"></command-button>
+      <command-button model.bind="start"></command-button>
+      <command-button model.bind="stop"></command-button>
+      <command-button model.bind="restart"></command-button>
+      <command-button model.bind="prepare"></command-button>
     </div>
 
     <button click.delegate="switch('players')" class="ignore-close">Remote control</button>

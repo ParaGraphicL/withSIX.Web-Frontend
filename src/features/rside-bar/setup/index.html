@@ -9,10 +9,17 @@
 
   <!--<action-bar class="main header-items" orientation="vertical" items.bind="topBarItems"></action-bar>-->
 
-  <hr />
+  <!--<hr />-->
 
   <div class="the-content" scroll.trigger="closeDropdowns()">
     <form>
+      <selectbox value.bind="m.location" options.bind="locations" disabled.bind="true">
+        Location
+        <template replace-part="item-template">
+          <option model.bind="o.value">${o.title || o}</option>
+        </template>
+      </selectbox>
+
       <selectbox value.bind="m.size" options.bind="sizes">
         Size
         <template replace-part="item-template">
@@ -41,7 +48,7 @@
       <textbox value.bind="m.adminPassword" placeholder="admin password">Admin Password <button click.delegate="generateAdminPassword()" class="ignore-close pull-right">Generate</button></textbox>
     </form>
 
-    <div>Available credit: ${m.credit} SU</div>
+    <div>Available credit: ${credit} SU</div>
     <div>Runtime with this setup: ${hours | time}</div>
     <button class="naked-button default ignore-close" click.delegate="next()">Next</button>
     <button class="naked-button default ignore-close" click.delegate="done()">Done</button>
