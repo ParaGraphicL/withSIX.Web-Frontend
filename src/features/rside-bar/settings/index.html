@@ -15,6 +15,9 @@
     <form>
       <checkbox value.bind="m.battlEye">BattlEye</checkbox>
       <checkbox value.bind="m.verifySignatures">VerifySignatures</checkbox>
+      <checkbox value.bind="m.persistent">Persistent</checkbox>
+      <checkbox value.bind="m.disableVon">DisableVON</checkbox>
+      <rangebox value.bind="m.vonQuality" min.bind="0" max.bind="35" show.bind="!m.disableVon">vonCodecQuality</rangebox>
     </form>
     <button class="naked-button default ignore-close" click.delegate="next()">Next</button>
     <button class="naked-button default ignore-close" click.delegate="done()">Done</button>
