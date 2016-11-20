@@ -128,7 +128,9 @@ export class ReactiveList<T> extends ReactiveBase implements IDisposable {
     this._itemChanged.unsubscribe();
   }
 
-  get modified() { return Rx.Observable.merge(this.itemsAdded.map(x => 1), this.itemsRemoved.map(x => 1), this.itemChanged.map(x => 1)); }
+  get modified() {
+    return Rx.Observable.merge<void>(this.itemsAdded.map(x => 1), this.itemsRemoved.map(x => 1), this.itemChanged.map(x => 1));
+  }
 
   private _itemsAdded = new Subject<T[]>();
   private _itemsRemoved = new Subject<T[]>();

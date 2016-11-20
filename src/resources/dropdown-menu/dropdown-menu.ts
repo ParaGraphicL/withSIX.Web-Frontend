@@ -1,9 +1,9 @@
-import {customAttribute, bindable, inject} from 'aurelia-framework';
-import {ViewModel} from '../../services/viewmodel';
-import {UiContext} from '../../services/uicontext';
-import {CloseDropdowns} from '../../services/api';
-import {ReactiveList, ListFactory, uiCommand} from '../../services/reactive';
-import {IPromiseFunction} from '../../services/base';
+import { customAttribute, bindable, inject } from 'aurelia-framework';
+import { ViewModel } from '../../services/viewmodel';
+import { UiContext } from '../../services/uicontext';
+import { CloseDropdowns } from '../../services/api';
+import { ReactiveList, ListFactory, uiCommand } from '../../services/reactive';
+import { IPromiseFunction } from '../../services/base';
 import 'contextMenu';
 
 // requires  adjustment to contextMenu.js for child element activation..
@@ -36,7 +36,7 @@ export class DropdownMenu extends ViewModel {
     this.subscriptions.subd(d => {
       d(this.eventBus.subscribe(CloseDropdowns, x => this.close()));
       d(this.reactive = this.listFactory.getList(this.items, ["isVisible"]));
-      d(this.reactive.modified.startWith(1).subscribe(x => this.updateIsVisible()))
+      d(this.reactive.modified.startWith(null).subscribe(x => this.updateIsVisible()));
     });
   }
 
