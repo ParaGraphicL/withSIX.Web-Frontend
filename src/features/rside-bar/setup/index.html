@@ -48,7 +48,7 @@
       <textbox value.bind="m.adminPassword" placeholder="admin password">Admin Password <button click.delegate="generateAdminPassword()" class="ignore-close pull-right">Generate</button></textbox>
     </form>
 
-    <div>Available credit: ${credit} SU</div>
+    <div title="Server Units. 1 SU = 1hr of Normal sized server">Available credit: ${credit} SU</div>
     <div>Runtime with this setup: ${hours | time}</div>
     <button class="naked-button default ignore-close" click.delegate="next()">Next</button>
     <button class="naked-button default ignore-close" click.delegate="done()">Done</button>
