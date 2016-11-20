@@ -4,8 +4,8 @@ interface ISetup {
   size: Size;
   secondaries: { size: Size }[];
   credit: number;
-  password: string;
-  adminPassword: string;
+  password?: string;
+  adminPassword?: string;
 }
 
 interface ISetupTab extends ITabModel<ISetup> { }
