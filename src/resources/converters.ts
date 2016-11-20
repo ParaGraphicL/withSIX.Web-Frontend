@@ -209,6 +209,16 @@ export class AmountValueConverter extends NumeralValueConverter {
   toView = (n: number) => this.convert(n, AmountValueConverter.amountFormat);
 }
 
+@valueConverter('time')
+export class TimeValueConverter extends NumeralValueConverter {
+  static amountFormat = '00:00:00';
+  toView = (n: number) => {
+    const formatted = this.convert(n, TimeValueConverter.amountFormat);
+    const split = formatted.split(":");
+    return split[0] + ":" + split[1];
+  };
+}
+
 @valueConverter('date')
 export class DateValueConverter {
   toView = (date, format) => moment(date).format(format);

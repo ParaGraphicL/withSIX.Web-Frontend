@@ -19,12 +19,31 @@
           <option model.bind="o.value">${o.title || o}</option>
         </template>
       </selectbox>
+
+      <div>
+        <div show.bind="m.secondaries.length > 0">
+          <h3>Headless clients</h3>
+          <div repeat.for="s of m.secondaries">
+            <selectbox value.bind="s.size" options.bind="sizes">
+              Size
+              <template replace-part="item-template">
+                <option model.bind="o.value">${o.title || o}</option>
+              </template>
+            </selectbox>
+            <button class="ignore-close" click.delegate="removeSecondary(s)">X</button>
+          </div>
+        </div>
+        <button class="ignore-close" click.delegate="addSecondary()" show.bind="m.secondaries.length < 1">Add headless client</button>
+      </div>
+
       <textbox value.bind="m.name" placeholder="name of the server">Name</textbox>
       <textbox value.bind="m.password" placeholder="optional password">Password</textbox>
       <textbox value.bind="m.adminPassword" placeholder="admin password">Admin Password</textbox>
     </form>
+
+    <div>Available credit: ${m.credit} SU</div>
+    <div>Runtime with this setup: ${hours | time}</div>
     <button class="naked-button default ignore-close" click.delegate="next()">Next</button>
     <button class="naked-button default ignore-close" click.delegate="done()">Done</button>
   </div>
-
 </template>
