@@ -12,7 +12,23 @@
   <!--<hr />-->
 
   <div class="the-content" scroll.trigger="closeDropdowns()">
-    <form>
+    <form role="form" validate.bind="validation">
+      <div class="form-group">
+        <label>Name
+          <input class="form-control" placeholder="name of the server" name="name" id="name" type="text" value.bind="m.name">
+        </label>
+      </div>
+      <textbox value.bind="m.password" placeholder="optional password">Password <button click.delegate="generateServerPassword()" class="text-button ignore-close pull-right">Generate</button></textbox>
+      <div class="form-group">
+        <label>Admin Password
+          <button click.delegate="generateAdminPassword()" class="ignore-close text-button pull-right">Generate</button>
+          <input class="form-control" placeholder="admin password" name="admin-password" id="admin-password" type="text" value.bind="m.adminPassword">
+        </label>
+      </div>
+      <!--<textbox value.bind="m.adminPassword" placeholder="admin password">Admin Password <button click.delegate="generateAdminPassword()" class="ignore-close pull-right">Generate</button></textbox>-->
+
+      <h3>Provisioning</h3>
+      <hr />
       <selectbox value.bind="m.location" options.bind="locations" disabled.bind="true">
         Location
         <template replace-part="item-template">
@@ -27,6 +43,7 @@
         </template>
       </selectbox>
 
+      <hr />
       <div>
         <div show.bind="m.secondaries.length > 0">
           <h3>Headless clients</h3>
@@ -42,15 +59,11 @@
         </div>
         <button class="ignore-close" click.delegate="addSecondary()" show.bind="m.secondaries.length < 1">Add headless client</button>
       </div>
-
-      <textbox value.bind="m.name" placeholder="name of the server">Name</textbox>
-      <textbox value.bind="m.password" placeholder="optional password">Password <button click.delegate="generateServerPassword()" class="ignore-close pull-right">Generate</button></textbox>
-      <textbox value.bind="m.adminPassword" placeholder="admin password">Admin Password <button click.delegate="generateAdminPassword()" class="ignore-close pull-right">Generate</button></textbox>
+      <div title="Server Units. 1 SU = 1hr of Normal sized server">Available credit: ${credit} SU</div>
+      <div>Runtime with this setup: ${hours | time}</div>
     </form>
 
-    <div title="Server Units. 1 SU = 1hr of Normal sized server">Available credit: ${credit} SU</div>
-    <div>Runtime with this setup: ${hours | time}</div>
-    <button class="naked-button default ignore-close" click.delegate="next()">Next</button>
-    <button class="naked-button default ignore-close" click.delegate="done()">Done</button>
+    <command-button clss="default" model.bind="next"></command-button>
+    <command-button clss="default" model.bind="done"></command-button>
   </div>
 </template>
