@@ -13,6 +13,23 @@ export class RsideBar extends ViewModel {
     { header: "Status", name: "status", location: "end", icon: "icon withSIX-icon-System-Remote", viewModel: `${RsideBar.root}status/index`, next: (tab: IAwesomeTab) => this.next(tab) },
   ];
 
+  get validSetup() { return this.tabs[0].isValid; }
+  visible: boolean;
+
+  bind() {
+    const setupTabs = [this.tabs[1], this.tabs[2], this.tabs[3]];
+    const controlTabs = [this.tabs[4], this.tabs[5], this.tabs[6]];
+    this.subd(d => {
+      d(this.observeEx(x => x.validSetup)
+        .subscribe(x => setupTabs.concat(controlTabs).forEach(t => t.disabled = !x)));
+      d(this.observableFromEvent<ToggleServer>(ToggleServer).subscribe(x => {
+        const hasTab = x.tab > -1;
+        this.visible = hasTab || !this.visible;
+        if (this.visible && hasTab) { this.selectedTab = this.tabs[x.tab]; }
+      }));
+    });
+  }
+
   next(tab: IAwesomeTab | string) {
     if (tab == null) {
       this.selectedTab = this.tabs[this.tabs.length - 1];
@@ -30,13 +47,16 @@ export class RsideBar extends ViewModel {
 
 interface IAwesomeTab extends ITab {
   next(tab?: IAwesomeTab | string): void;
+  isValid?: boolean;
 }
 
 export interface ITabModel<T> extends IAwesomeTab {
   data?: T;
 }
 
-export class ToggleServer { }
+export class ToggleServer {
+  constructor(public tab = -1) { }
+}
 
 export class ServerTab<TModel extends ITabModel<any>> extends ViewModel {
   model: TModel;
@@ -67,8 +87,10 @@ export class ServerTab<TModel extends ITabModel<any>> extends ViewModel {
   async tryValidate() {
     try {
       const r = await this.validation.validate();
+      this.model.isValid = true;
       return true;
     } catch (err) {
+      this.model.isValid = false;
       this.toastr.warning("Please correct the inputs", "Invalid input");
       return false;
     }

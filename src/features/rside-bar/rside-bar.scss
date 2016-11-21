@@ -35,3 +35,14 @@ $bg: $barBackgroundColor;
     }
   }
 }
+
+#right-tabs2 {
+  form {
+    label {
+      display: block;
+    }
+    .form-group button {
+      height: inherit;
+    }
+  }
+}
