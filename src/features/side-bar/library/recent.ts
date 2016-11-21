@@ -29,13 +29,21 @@ export class Recent extends ViewModelWithModel<IHomeD> {
     this.model.installedMissionsCount = home.installedMissionsCount;
     this.model.installedModsCount = home.installedModsCount;
     this.model.homeLoaded = true;
+    this.subd(d => {
+      d(this.clearRecent = uiCommand2("Clear recent", async () => {
+        await new ClearRecent(this.w6.activeGame.id).handle(this.mediator);
+        //this.model.recent = [];
+      }, {
+          isVisibleObservable: this.observeEx(x => x.hasItems)
+        }));
+    });
+
     this.menuItems.push(new MenuItem(this.clearRecent));
   }
 
-  clearRecent = uiCommand2("Clear recent", async () => {
-    await new ClearRecent(this.w6.activeGame.id).handle(this.mediator);
-    //this.model.recent = [];
-  });
+  clearRecent;
+
+  get hasItems() { return this.model.recent.length > 0; }
 }
 
 class ClearRecent extends VoidCommand {
