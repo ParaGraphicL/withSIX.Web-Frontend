@@ -85,7 +85,6 @@ export class App extends ViewModel {
   get isNavigating() { return this.router.isNavigating; }
   get isRequesting() { return this.login.isRequesting; }
   get showSidebar() { return this.w6.enableBasket; }
-  showRsidebar;
 
   get tabActive() { return (this.sideBar && this.sideBar.selectedTab) || (this.topBar && this.topBar.selectedTab); }
   get tabAsTabActive() {
@@ -248,7 +247,6 @@ export class App extends ViewModel {
       d(userErrors.flatMap(x => x)
         .merge<IUserError>(this.clientWrapper.userErrorAdded.map(x => x.userError))
         .subscribe(x => { if (!this.dialogMap.some(id => id === x.id)) { this.showUserErrorDialog(x); } }));
-      d(this.observableFromEvent(ToggleServer).subscribe(x => this.showRsidebar = !this.showRsidebar));
       d(this.eventBus.subscribe('router:navigation:complete', _ => this.w6.scrollTo(0, 600)));
     });
 

@@ -18,10 +18,10 @@
           <input class="form-control" placeholder="name of the server" name="name" id="name" type="text" value.bind="m.name">
         </label>
       </div>
-      <textbox value.bind="m.password" placeholder="optional password">Password <button click.delegate="generateServerPassword()" class="text-button ignore-close pull-right">Generate</button></textbox>
+      <textbox value.bind="m.password" placeholder="optional password">Password <button click.delegate="generateServerPassword()" class="text-button ignore-close pull-right">generate</button></textbox>
       <div class="form-group">
         <label>Admin Password
-          <button click.delegate="generateAdminPassword()" class="ignore-close text-button pull-right">Generate</button>
+          <button click.delegate="generateAdminPassword()" class="ignore-close text-button pull-right">generate</button>
           <input class="form-control" placeholder="admin password" name="admin-password" id="admin-password" type="text" value.bind="m.adminPassword">
         </label>
       </div>
@@ -37,19 +37,18 @@
       </selectbox>
 
       <selectbox value.bind="m.size" options.bind="sizes">
-        Size
+        Server Size
         <template replace-part="item-template">
           <option model.bind="o.value">${o.title || o}</option>
         </template>
       </selectbox>
 
-      <hr />
       <div>
         <div show.bind="m.secondaries.length > 0">
-          <h3>Headless clients</h3>
+          <h4 title="Headless clients allow you to add additional server power to offload AI">Headless clients (advanced)</h4>
           <div repeat.for="s of m.secondaries">
             <selectbox value.bind="s.size" options.bind="sizes">
-              Size
+              HC Size
               <template replace-part="item-template">
                 <option model.bind="o.value">${o.title || o}</option>
               </template>
@@ -57,12 +56,17 @@
             <button class="ignore-close" click.delegate="removeSecondary(s)">X</button>
           </div>
         </div>
-        <button class="ignore-close" click.delegate="addSecondary()" show.bind="m.secondaries.length < 1">Add headless client</button>
+        <command-button title="Headless clients allow you to add additional server power to offload AI" model.bind="addHc"
+          show.bind="m.secondaries.length < 1"></command-button>
       </div>
+
+      <hr />
+
       <div title="Server Units. 1 SU = 1hr of Normal sized server">Available credit: ${credit} SU</div>
       <div>Runtime with this setup: ${hours | time}</div>
     </form>
 
+    <hr />
     <command-button clss="default" model.bind="next"></command-button>
     <command-button clss="default" model.bind="done"></command-button>
   </div>

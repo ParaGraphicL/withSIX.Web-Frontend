@@ -1,4 +1,4 @@
-import { ReactiveBase } from './base';
+import { ReactiveBase, LooseDisposable } from './base';
 import { Mediator, LegacyMediator, DbQuery } from './mediator';
 import { Toastr } from './toastr';
 import { ListFactory, ObservableEventAggregator, EventWrapper, uiCommand2 } from './reactive';
@@ -34,6 +34,8 @@ export class ViewModel extends ReactiveBase {
   constructor(private ui: UiContext) {
     super();
   }
+
+  subd = (func: (d: LooseDisposable) => void) => this.subscriptions.subd(func);
 
   get isNavigating() { return this.router.isNavigating; }
 

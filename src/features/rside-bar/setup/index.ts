@@ -1,4 +1,5 @@
 import { ITabModel, ServerTab } from "../rside-bar";
+import { uiCommand2 } from "../../../framework";
 
 interface ISetup {
   size: Size;
@@ -76,6 +77,7 @@ export class Index extends ServerTab<ISetupTab> {
     });
   }
 
+  addHc = uiCommand2("Add headless client", async () => this.addSecondary());
   addSecondary() { this.m.secondaries.push({ size: Size.Normal }); }
   removeSecondary(s) { this.m.secondaries.removeEl(s); }
   generatePassword(length) { return this.tools.Password.generate(length); } // return Math.random().toString(36).slice(-8); }

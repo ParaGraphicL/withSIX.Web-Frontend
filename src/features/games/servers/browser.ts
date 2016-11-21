@@ -13,6 +13,7 @@ import {
   UiContext, BasketService, IBasketItem,
   InstallContents, LaunchAction, LaunchContents, LaunchGame,
 } from "../../../framework";
+import { ToggleServer } from "../../rside-bar/rside-bar";
 import { BetaDialog } from './beta-dialog';
 import { inject } from 'aurelia-framework';
 import { camelCase } from '../../../helpers/utils/string';
@@ -631,7 +632,7 @@ export class Index extends ViewModel {
   });
   reload;
 
-  createServer = uiCommand2("ADD SERVER", async () => { confirm("TODO"); }, {
+  createServer = uiCommand2("ADD SERVER", async () => this.eventBus.publish(new ToggleServer(0)), {
     cls: "warn",
     icon: "withSIX-icon-Add",
   });

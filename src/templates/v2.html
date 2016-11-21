@@ -5,7 +5,7 @@
   <require from="features/rside-bar/rside-bar"></require>
   <require from="features/top-bar/top-bar"></require>
 
-  <div id="wrapper" class.bind="classes" class="${w6.url.site} ${showSidebar ? 'show-sidebar' : 'hide-sidebar'} ${showRsidebar ? 'show-rsidebar' : 'hide-rsidebar'} ${w6.url.site == 'main' && w6.url.isRoot ? 'home' : null} ${w6.chromeless ? 'chromeless' : null} ${w6.classes}">
+  <div id="wrapper" class.bind="classes" class="${w6.url.site} ${showSidebar ? 'show-sidebar' : 'hide-sidebar'} ${rsideBar.visible ? 'show-rsidebar' : 'hide-rsidebar'} ${w6.url.site == 'main' && w6.url.isRoot ? 'home' : null} ${w6.chromeless ? 'chromeless' : null} ${w6.classes}">
     <a name="top" id="top"></a>
 
     <top-bar view-model.ref="topBar" id="top-menu" class="shell-bar ${topBar.selectedTab ? 'active' : 'inactive'}"
@@ -13,7 +13,7 @@
     <side-bar view-model.ref="sideBar" id="sidebar" class="shell-bar ${sideBar.selectedTab ? 'active' : 'inactive'}"
       show.bind="showSidebar"></side-bar>
     <rside-bar view-model.ref="rsideBar" id="rsidebar" class="shell-bar ${rsideBar.selectedTab ? 'active' : 'inactive'}"
-      show.bind="showRsidebar" show-rsidebar.bind="showRsidebar"></rside-bar>
+      show.bind="rsideBar.visible" show-rsidebar.bind="rsideBar.visible"></rside-bar>
 
     <section id="content-view" scroll.trigger="closeDropdowns()">
       <div click.delegate="closeTabs()">
