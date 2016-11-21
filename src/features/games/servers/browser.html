@@ -71,7 +71,8 @@
         <div class="pull-right">
           <a href="https://community.withsix.com/topic/290/web-based-serverbrowser-for-sync" target="_blank">Give feedback</a>
           <command-button model.bind="reload"></command-button>
-          <command-button model.bind="createServer" if.bind="features.createServers"></command-button>
+          <dropdown-menu if.bind="features.createServers" btn-cls="warn" header="ADD SERVER" icon="withSIX-icon-Add"
+            items.bind="addServerItems"></dropdown-menu>
         </div>
         <div>
           ${model.playerCount} players on <b>
