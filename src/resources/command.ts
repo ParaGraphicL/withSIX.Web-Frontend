@@ -1,4 +1,4 @@
-import { inject, autoinject, customAttribute } from 'aurelia-framework';
+import { inject, autoinject, customAttribute, bindable } from 'aurelia-framework';
 import { Router } from 'aurelia-router';
 import { Subscriptions } from '../services/lib';
 import { Base } from '../services/base'
@@ -7,6 +7,7 @@ import { Base } from '../services/base'
 export class CommandCustomAttribute {
   value;
   subscriptions = new Subscriptions();
+  stopPropagation = true;
   constructor(private el: Element) { }
   valueChanged(value: { canExecute: boolean, isExecuting: boolean, (): void }) {
     this.handleNewValue(value);
@@ -20,7 +21,7 @@ export class CommandCustomAttribute {
     var f = $evt => {
       // TODO: when disabled (cant execute) we shouldn't receive the event anyway..
       if (value.canExecute) value();
-      $evt.stopPropagation();
+      if (this.stopPropagation) $evt.stopPropagation();
     };
     this.subscriptions.subd(d => {
       this.el.addEventListener('click', f);
@@ -38,4 +39,14 @@ export class CommandCustomAttribute {
   }
   bind() { if (this.value) this.handleNewValue(this.value); }
   unbind() { this.subscriptions.dispose() }
+}
+
+
+@inject(Element)
+export class Command2CustomAttribute extends CommandCustomAttribute {
+  @bindable value;
+  @bindable stopPropagation: boolean = true;
+  valueChanged(value: { canExecute: boolean, isExecuting: boolean, (): void }) {
+    this.handleNewValue(value);
+  }
 }

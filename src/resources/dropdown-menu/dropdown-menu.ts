@@ -15,6 +15,7 @@ export class DropdownMenu extends ViewModel {
   @bindable header: string;
   @bindable icon: string = "withSIX-icon-Share-Dots-V";
   @bindable textCls: string;
+  @bindable btnCls: string;
   @bindable direction: string = "auto";
   @bindable hideWhenEmpty = true;
   @bindable menuCls: string;
