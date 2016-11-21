@@ -10,6 +10,7 @@ import {
   DbClientQuery,
   uiCommand2,
   GameHelper,
+  MenuItem,
   UiContext, BasketService, IBasketItem,
   InstallContents, LaunchAction, LaunchContents, LaunchGame,
 } from "../../../framework";
@@ -349,7 +350,7 @@ interface IPageModel<T> {
 
 
 @inject(UiContext, BasketService)
-export class Index extends ViewModel {
+export class Browser extends ViewModel {
   constructor(ui, private basketService: BasketService) { super(ui) }
   model: IPageModel<IServer>;
 
@@ -448,11 +449,13 @@ export class Index extends ViewModel {
     title: "Country",
     direction: SortDirection.Asc,
   },]
-  filters: IFilter<IServer>[] = Index.getStandardFilters();
-  sort = Index.getStandardSort();
+  filters: IFilter<IServer>[] = Browser.getStandardFilters();
+  sort = Browser.getStandardSort();
   searchFields = ["name"];
 
   SessionState = SessionState;
+
+  addServerItems = [];
 
 
   defaultEnabled: IFilter<IServer>[] = [
@@ -493,6 +496,13 @@ export class Index extends ViewModel {
       items: [], pageNumber: 1, total: 0, pageSize: 16
     }
     this.filteredItems = this.order(this.model.items);
+
+
+    this.addServerItems.push(
+      new MenuItem(this.createLocalServer),
+      new MenuItem(this.connectHostedServer),
+      new MenuItem(this.createServer),
+    );
 
     this.subscriptions.subd(d => {
       const list = this.listFactory.getList(this.filterTest.map(x => x.items).flatten(), ["value"]);
@@ -632,10 +642,10 @@ export class Index extends ViewModel {
   });
   reload;
 
-  createServer = uiCommand2("ADD SERVER", async () => this.eventBus.publish(new ToggleServer(0)), {
-    cls: "warn",
-    icon: "withSIX-icon-Add",
-  });
+
+  createServer = uiCommand2("Host server withSIX", async () => this.eventBus.publish(new ToggleServer(0)));
+  createLocalServer = uiCommand2("Host local server", async () => this.eventBus.publish(new ToggleServer(0)), { canExecuteObservable: Rx.Observable.of(false) });
+  connectHostedServer = uiCommand2("Connect hosted server", async () => this.eventBus.publish(new ToggleServer(0)), { canExecuteObservable: Rx.Observable.of(false) });
 
   clear = uiCommand2("CLEAR", async () => this.clearFilters(), {
     cls: "text-button",
