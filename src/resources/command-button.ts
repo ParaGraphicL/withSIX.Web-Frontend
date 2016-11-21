@@ -10,6 +10,7 @@ export class CommandButtonCustomElement {
   set cancel(value) { this._cancel = value; }
 
   @bindable icon: string;
+  @bindable clss: string;
 
   get name() { return this.model.name; }
   get command() { return this.model; }

@@ -1,4 +1,6 @@
 import { ViewModel, Base, uiCommand2, ITab, UiContext, ClientMissingHandler, SwitchSideBarTab, CloseTabs } from '../../framework';
+import { ValidationGroup } from "aurelia-validation";
+
 export class RsideBar extends ViewModel {
   static root = "features/rside-bar/";
   tabs: IAwesomeTab[] = [
@@ -16,7 +18,7 @@ export class RsideBar extends ViewModel {
       this.selectedTab = this.tabs[this.tabs.length - 1];
       return;
     }
-    if (typeof(tab) === "string") {
+    if (typeof (tab) === "string") {
       this.selectedTab = this.tabs.filter(x => x.name === tab)[0];
     } else {
       const idx = this.tabs.indexOf(tab);
@@ -38,11 +40,39 @@ export class ToggleServer { }
 
 export class ServerTab<TModel extends ITabModel<any>> extends ViewModel {
   model: TModel;
+  validation: ValidationGroup;
+  next;
+  done;
+  //isValid: boolean;
+
   activate(model: TModel) {
     this.model = model;
+
+    this.validation = this.validator.on(this);
+    //this.validation.onValidate(() => this.isValid = true, () => this.isValid = false);
+
+    this.next = uiCommand2("Next", async () => {
+      if (! await this.tryValidate()) { return; }
+      this.model.next(this.model);
+    }, {
+        //canExecuteObservable: this.observeEx(x => x.isValid)
+      });
+
+    this.done = uiCommand2("Done", async () => {
+      if (! await this.tryValidate()) { return; }
+      this.model.next();
+    });
   }
 
-  next() { this.model.next(this.model); }
-  done() { this.model.next(); }
+  async tryValidate() {
+    try {
+      const r = await this.validation.validate();
+      return true;
+    } catch (err) {
+      this.toastr.warning("Please correct the inputs", "Invalid input");
+      return false;
+    }
+  }
+
   switch(tabName: string) { this.model.next(tabName); }
 }
