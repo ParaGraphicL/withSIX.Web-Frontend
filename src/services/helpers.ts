@@ -1,8 +1,8 @@
-import {CollectionScope, ItemState, ICollection, TypeScope, IIPEndpoint} from 'withsix-sync-api';
-import {IBreezeCollection, IBreezeMod, IBreezeMission} from './dtos';
-import {W6} from './withSIX';
+import { CollectionScope, ItemState, ICollection, TypeScope, IIPEndpoint } from 'withsix-sync-api';
+import { IBreezeCollection, IBreezeMod, IBreezeMission } from './dtos';
+import { W6 } from './withSIX';
 import breeze from 'breeze-client';
-import {W6Context} from './w6context';
+import { W6Context } from './w6context';
 
 interface ICollectionExtend extends ICollection {
   subscribers: number;
@@ -52,6 +52,14 @@ export class GameHelper {
       return new Map<string, any>();
     }
   }
+
+  public static getSlug(game: { slug: string }) {
+    return `/p/${game.slug}`;
+  }
+
+  public static getContentSlug(game: { slug: string }, content: { id: string; name: string }, type: string) {
+    return `${this.getSlug(game)}/${type}s/${content.id.toShortId()}/${content.name.sluggifyEntityName()}`;
+  }
 }
 
 export class MissionHelper {
@@ -73,6 +81,10 @@ export class MissionHelper {
       type: "mission",
       // version: x.version, // todo
     }
+  }
+
+  public static getSlug(modInfo: { id: string; name: string }, game: { slug: string }) {
+    return GameHelper.getContentSlug(game, modInfo, "mission");
   }
 }
 
@@ -115,6 +127,10 @@ export class ModHelper {
       publishers: x.publishers
     }
   }
+
+  public static getSlug(modInfo: { id: string; name: string }, game: { slug: string }) {
+    return GameHelper.getContentSlug(game, modInfo, "mod");
+  }
 }
 
 export class ServerHelper {
@@ -131,6 +147,10 @@ export class ServerHelper {
   ]
 
   public static scopes = [CollectionScope.Public, CollectionScope.Unlisted, CollectionScope.Private]
+
+  public static getSlug(modInfo: { id: string; name: string }, game: { slug: string }) {
+    return GameHelper.getContentSlug(game, modInfo, "server");
+  }
 }
 
 export class CollectionHelper {
@@ -174,6 +194,10 @@ export class CollectionHelper {
   }
 
   public static scopes = [CollectionScope.Public, CollectionScope.Unlisted, CollectionScope.Private]
+
+  public static getSlug(modInfo: { id: string; name: string }, game: { slug: string }) {
+    return GameHelper.getContentSlug(game, modInfo, "collection");
+  }
 }
 
 export class ContentHelper {
