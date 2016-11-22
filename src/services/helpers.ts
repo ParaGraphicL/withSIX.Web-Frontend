@@ -52,6 +52,14 @@ export class GameHelper {
       return new Map<string, any>();
     }
   }
+
+  public static getSlug(game: { slug: string }) {
+    return `/p/${game.slug}`;
+  }
+
+  public static getContentSlug(game: { slug: string }, content: { id: string; name: string }, type: string) {
+    return `${this.getSlug(game)}/${type}s/${content.id.toShortId()}/${content.name.sluggifyEntityName()}`;
+  }
 }
 
 export class MissionHelper {
@@ -73,6 +81,10 @@ export class MissionHelper {
       type: "mission",
       // version: x.version, // todo
     }
+  }
+
+  public static getSlug(modInfo: { id: string; name: string }, game: { slug: string }) {
+    return GameHelper.getContentSlug(game, modInfo, "mission");
   }
 }
 
@@ -117,7 +129,7 @@ export class ModHelper {
   }
 
   public static getSlug(modInfo: { id: string; name: string }, game: { slug: string }) {
-    return `/p/${game.slug}/mods/${modInfo.id.toShortId()}/${modInfo.name.sluggifyEntityName()}`;
+    return GameHelper.getContentSlug(game, modInfo, "mod");
   }
 }
 
@@ -135,6 +147,10 @@ export class ServerHelper {
   ]
 
   public static scopes = [CollectionScope.Public, CollectionScope.Unlisted, CollectionScope.Private]
+
+  public static getSlug(modInfo: { id: string; name: string }, game: { slug: string }) {
+    return GameHelper.getContentSlug(game, modInfo, "server");
+  }
 }
 
 export class CollectionHelper {
@@ -178,6 +194,10 @@ export class CollectionHelper {
   }
 
   public static scopes = [CollectionScope.Public, CollectionScope.Unlisted, CollectionScope.Private]
+
+  public static getSlug(modInfo: { id: string; name: string }, game: { slug: string }) {
+    return GameHelper.getContentSlug(game, modInfo, "collection");
+  }
 }
 
 export class ContentHelper {
