@@ -1,8 +1,8 @@
-import {CollectionScope, ItemState, ICollection, TypeScope, IIPEndpoint} from 'withsix-sync-api';
-import {IBreezeCollection, IBreezeMod, IBreezeMission} from './dtos';
-import {W6} from './withSIX';
+import { CollectionScope, ItemState, ICollection, TypeScope, IIPEndpoint } from 'withsix-sync-api';
+import { IBreezeCollection, IBreezeMod, IBreezeMission } from './dtos';
+import { W6 } from './withSIX';
 import breeze from 'breeze-client';
-import {W6Context} from './w6context';
+import { W6Context } from './w6context';
 
 interface ICollectionExtend extends ICollection {
   subscribers: number;
@@ -114,6 +114,10 @@ export class ModHelper {
       statTotalInstall: x.stat.totalInstall,
       publishers: x.publishers
     }
+  }
+
+  public static getSlug(modInfo: { id: string; name: string }, game: { slug: string }) {
+    return `/p/${game.slug}/mods/${modInfo.id.toShortId()}/${modInfo.name.sluggifyEntityName()}`;
   }
 }
 

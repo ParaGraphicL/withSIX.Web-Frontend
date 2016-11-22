@@ -1,8 +1,13 @@
 import { ContentViewModel } from './base';
-import { IMod, uiCommand2, MenuItem } from '../../../framework';
+import { IMod, uiCommand2, MenuItem, ModHelper } from '../../../framework';
 
 export class Mod extends ContentViewModel<IMod> {
   icon = "withSIX-icon-Nav-Mod";
+
+  findServers = uiCommand2("Find servers with this",
+    async () => this.w6.navigate(`${ModHelper.getSlug(this.model, this.w6.activeGame)}/servers`),
+    { icon: "withSIX-icon-Nav-Server" });
+
   changelog() {
     alert("TODO");
   }
@@ -12,8 +17,4 @@ export class Mod extends ContentViewModel<IMod> {
     this.setupAddToBasket();
     this.topMenuActions.push(new MenuItem(this.findServers));
   }
-
-  findServers = uiCommand2("Find servers with this",
-    async () => this.w6.navigate(`/p/${this.w6.activeGame.slug}/servers/?modId=${this.model.id.toShortId()}`),
-    { icon: "withSIX-icon-Nav-Server" })
 }
