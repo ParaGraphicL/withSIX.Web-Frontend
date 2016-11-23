@@ -201,7 +201,7 @@ export class Parser {
       });
       if (link) {
         const r = this.determineInterestingLink(link, images);
-        if (!interestingLinks.some(x => x.url === r.url)) {
+        if (r && !interestingLinks.some(x => x.url === r.url)) {
           interestingLinks.push(r);
         }
       }
