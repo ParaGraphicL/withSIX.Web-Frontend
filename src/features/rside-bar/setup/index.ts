@@ -1,41 +1,29 @@
 import { ITabModel, ServerTab } from "../rside-bar";
-import { uiCommand2 } from "../../../framework";
+import { uiCommand2, ServerSize, ServerLocation } from "../../../framework";
 
 interface ISetup {
-  size: Size;
-  secondaries: { size: Size }[];
+  size: ServerSize;
+  secondaries: { size: ServerSize }[];
   password: string;
   adminPassword: string;
-  location: Location;
+  location: ServerLocation;
 }
 
 interface ISetupTab extends ITabModel<ISetup> { }
-
-enum Size {
-  Small,
-  Normal,
-  Large,
-  VeryLarge
-}
-
-enum Location {
-  WestEU,
-  WestUS
-}
 
 export class Index extends ServerTab<ISetupTab> {
   hours: number;
   credit = 4; // TODO
 
   sizes = [
-    { value: Size.Small, title: Size[Size.Small] + " (Single core, 3.5GB) 0.5SU/hr", cost: 0.5 },
-    { value: Size.Normal, title: Size[Size.Normal] + " (Dual core, 7GB) 1SU/hr", cost: 1 },
-    { value: Size.Large, title: Size[Size.Large] + " (Quad core, 14GB) 2SU/hr", cost: 2 },
-    { value: Size.VeryLarge, title: Size[Size.VeryLarge] + " (Octo core, 28GB) 4SU/hr", cost: 4 },
+    { value: ServerSize.Small, title: ServerSize[ServerSize.Small] + " (Single core, 3.5GB) 0.5SU/hr", cost: 0.5 },
+    { value: ServerSize.Normal, title: ServerSize[ServerSize.Normal] + " (Dual core, 7GB) 1SU/hr", cost: 1 },
+    { value: ServerSize.Large, title: ServerSize[ServerSize.Large] + " (Quad core, 14GB) 2SU/hr", cost: 2 },
+    { value: ServerSize.VeryLarge, title: ServerSize[ServerSize.VeryLarge] + " (Octo core, 28GB) 4SU/hr", cost: 4 },
   ];
   locations = [
-    { value: Location.WestEU, title: "West Europe" },
-    { value: Location.WestUS, title: "West US" },
+    { value: ServerLocation.WestEU, title: "West Europe" },
+    { value: ServerLocation.WestUS, title: "West US" },
   ];
   sizeMap = this.sizes.toMap(x => x.value);
 
@@ -53,10 +41,10 @@ export class Index extends ServerTab<ISetupTab> {
 
     this.model.data = Object.assign({
       adminPassword: "",
-      location: Location.WestEU,
+      location: ServerLocation.WestEU,
       password: "",
       secondaries: [],
-      size: Size.Normal,
+      size: ServerSize.Normal,
     }, this.model.data || {});
 
     this.validation = this.validation
@@ -78,7 +66,7 @@ export class Index extends ServerTab<ISetupTab> {
   }
 
   addHc = uiCommand2("Add headless client", async () => this.addSecondary());
-  addSecondary() { this.m.secondaries.push({ size: Size.Normal }); }
+  addSecondary() { this.m.secondaries.push({ size: ServerSize.Normal }); }
   removeSecondary(s) { this.m.secondaries.removeEl(s); }
   generatePassword(length) { return this.tools.Password.generate(length); } // return Math.random().toString(36).slice(-8); }
   generateServerPassword() { this.m.password = this.generatePassword(6); }

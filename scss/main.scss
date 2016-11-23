@@ -1194,6 +1194,11 @@ action-bar {
   ul.horizontal {
     display: inline-block;
   }
+  ul.vertical {
+    li {
+      margin: 0;
+    }
+  }
   ul {
     li {
       button.anchor {

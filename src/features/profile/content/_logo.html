@@ -1,7 +1,8 @@
 <template>
   <div class="img">
-    <action-bar class="pull-left basketable-action" items.bind="topActions"></action-bar>
-    <dropdown-menu class="basketable-dropdown new-style hide-until-open" direction="left" menu-cls="content-stateable content-state-${itemStateClass}" if.bind="topMenuActions && topMenuActions.length > 0" items.bind="topMenuActions"></dropdown-menu>
+    <action-bar class="pull-left basketable-action" items.bind="topActions" orientation="vertical"></action-bar>
+    <dropdown-menu class="basketable-dropdown new-style hide-until-open" direction="left" menu-cls="content-stateable content-state-${itemStateClass}"
+      if.bind="topMenuActions && topMenuActions.length > 0" items.bind="topMenuActions"></dropdown-menu>
     <a href="${w6.url.play}/${path}" if.bind="path">
       <span class="imagecontent imageholder" back-img.bind="defaultBackUrl">
       <span class="imageholder" back-img.bind="defaultAssetUrl">
@@ -17,7 +18,8 @@
     </span>
     </span>
     <div class="source" if.one-time="sources.length > 0">
-      <img src.one-time="source.img" class="source" title="Hosted on ${source.text}" repeat.for="source of sources" />
+      <img src.one-time="source.img" class="source" title="Hosted on ${source.text}" repeat.for="source of sources"
+      />
     </div>
   </div>
 </template>

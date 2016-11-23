@@ -1,4 +1,4 @@
-import { ViewModel, Base, uiCommand2, ITab, UiContext, ClientMissingHandler, SwitchSideBarTab, CloseTabs } from '../../framework';
+import { ViewModel, Base, uiCommand2, ITab, UiContext, ClientMissingHandler, SwitchSideBarTab, CloseTabs, Tools, W6, W6Context } from '../../framework';
 import { ValidationGroup } from "aurelia-validation";
 
 export class RsideBar extends ViewModel {
@@ -26,6 +26,9 @@ export class RsideBar extends ViewModel {
         if (this.visible && hasTab) { this.selectedTab = this.tabs[x.tab]; }
       }));
     });
+
+    //     this.serverData = await new GetServerData().handle(this.mediator);
+
   }
 
   next(tab: IAwesomeTab | string) {
@@ -56,11 +59,15 @@ export class ToggleServer {
   constructor(public tab = -1) { }
 }
 
+
 export class ServerTab<TModel extends ITabModel<any>> extends ViewModel {
   model: TModel;
   validation: ValidationGroup;
   next;
   done;
+  get isValid() {
+    return (<any>this.validation).result.isValid;
+  }
   //isValid: boolean;
 
   activate(model: TModel) {
@@ -69,26 +76,26 @@ export class ServerTab<TModel extends ITabModel<any>> extends ViewModel {
     this.validation = this.validator.on(this);
     //this.validation.onValidate(() => this.isValid = true, () => this.isValid = false);
 
+    this.subd(d => {
+      d(this.observeEx(x => x.isValid).subscribe(x => this.model.isValid = x));
+    });
+
     this.next = uiCommand2("Next", async () => {
       if (! await this.tryValidate()) { return; }
       this.model.next(this.model);
-    }, {
-        //canExecuteObservable: this.observeEx(x => x.isValid)
-      });
+    }, { canExecuteObservable: this.observeEx(x => x.isValid) });
 
     this.done = uiCommand2("Done", async () => {
       if (! await this.tryValidate()) { return; }
       this.model.next();
-    });
+    }, { canExecuteObservable: this.observeEx(x => x.isValid) });
   }
 
   async tryValidate() {
     try {
       const r = await this.validation.validate();
-      this.model.isValid = true;
       return true;
     } catch (err) {
-      this.model.isValid = false;
       this.toastr.warning("Please correct the inputs", "Invalid input");
       return false;
     }
@@ -96,3 +103,11 @@ export class ServerTab<TModel extends ITabModel<any>> extends ViewModel {
 
   switch(tabName: string) { this.model.next(tabName); }
 }
+
+
+
+// class GetServerData { }
+
+// class GetServerDataHandler extends DbQuery<GetServerData, Server> {
+
+// }

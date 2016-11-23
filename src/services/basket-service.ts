@@ -8,6 +8,9 @@ import { W6 } from './withSIX';
 import { BasketType, IBasketModel, IBasketItem, BasketState, IBasketCollection, IBaskets } from './legacy/baskets';
 import { W6Context } from './w6context';
 import { ContentHelper } from './helpers';
+
+import { Tools } from './tools';
+
 import {
   ActionType, IActionNotification, Client, ConnectionState, IContentState, ItemState, IContentStateChange, IContentStatusChange, IClientInfo, IActionTabStateUpdate, IContentGuidSpec, IContentsBase, IContentBase,
   IUserErrorAdded, IUserErrorResolved
@@ -385,4 +388,171 @@ export enum ProcessingState {
   SyncFailed = 411,
   NoChangesFound = 412,
   SignalFailed = 420
+}
+
+interface IManagedServer {
+  id: string;
+  location: ServerLocation;
+  size: ServerSize;
+  secondaries: { size: ServerSize }[];
+
+  name: string;
+  password: string;
+  adminPassword: string;
+
+  settings: any;
+
+  mods: any[];
+  missions: any[];
+}
+
+export class ManagedServer {
+  id: string;
+
+  location: ServerLocation;
+  size: ServerSize;
+  secondaries: { size: ServerSize }[] = [];
+
+  name: string;
+  password: string;
+  adminPassword: string;
+
+  settings: any = {};
+
+  mods: Map<string, any> = new Map<string, any>();
+  missions: Map<string, any> = new Map<string, any>();
+
+  constructor(private data) {
+    Object.assign(this, data);
+  }
+
+  toggleMod(mod: { id: string; name: string }) {
+    if (this.mods.has(mod.id)) { this.mods.delete(mod.id); } else { this.mods.set(mod.id, mod); }
+  }
+
+  toggleMission(mission: { id: string; name: string }) {
+    if (this.missions.has(mission.id)) { this.missions.delete(mission.id); } else { this.missions.set(mission.id, mission); }
+  }
+
+  hasMod(id: string) { return this.mods.has(id); }
+  hasMission(id: string) { return this.missions.has(id); }
+
+  // ideas
+  start(ctx: W6Context) { return ctx.postCustom(`/server-manager/${this.id}/start`); }
+  stop(ctx: W6Context) { return ctx.postCustom(`/server-manager/${this.id}/stop`); }
+}
+
+interface IGame { id: string; servers: IManagedServer[]; }
+
+export class Game {
+  activeServer: ManagedServer;
+  servers: Map<string, ManagedServer>;
+  id: string;
+
+  constructor(data: { id: string, servers: Map<string, ManagedServer> }) {
+    this.id = data.id;
+    this.servers = data.servers;
+    if (this.servers.size > 0) {
+      this.activeServer = this.servers[0];
+    } else {
+      this.activeServer = this.create();
+    }
+  }
+
+  get(id: string) { return this.servers.get(id); }
+
+  create() {
+    const s = new ManagedServer(<IManagedServer>{ id: Tools.generateGuid() });
+    this.servers.set(s.id, s);
+    return s;
+  }
+
+  //add(server: Server) { this.servers.push(server); }
+  remove(server: ManagedServer) { this.servers.delete(server.id); }
+}
+
+
+@inject(W6)
+export class ServerStore {
+  games: Map<string, Game>;
+
+  constructor(private w6: W6) {
+    this.load();
+  }
+
+  get activeGame() {
+    const id = this.w6.activeGame.id;
+    if (id == null) { return null; }
+
+    if (!this.games.has(id)) {
+      this.games.set(id, new Game({ id, servers: new Map<string, ManagedServer>() }));
+    }
+    return this.games.get(this.w6.activeGame.id);
+  }
+
+  load() {
+    const storage = window.localStorage.getItem("w6.servers");
+    const m: { games: IGame[] } = storage ? JSON.parse(storage) : { games: [] };
+    this.games = storage ? m.games.map(x => this.storageToGame(x)).toMap(x => x.id) : new Map<string, Game>();
+  }
+
+  get(id: string) { return this.games.get(id); }
+
+  save() {
+    const games = Array.from(this.games.values()).map(x => this.gameToStorage(x));
+    window.localStorage.setItem("w6.servers", JSON.stringify({ games }));
+  }
+
+  private storageToGame(game: IGame) {
+    return new Game({ id: game.id, servers: game.servers.map(x => this.storageToServer(x)).toMap(x => x.id) });
+  }
+
+  private gameToStorage(game: Game) {
+    return {
+      id: game.id,
+      servers: Array.from(game.servers.values()).map(x => this.serverToStorage(x))
+    }
+  }
+
+  private storageToServer(s: IManagedServer): ManagedServer {
+    return new ManagedServer({
+      adminPassword: s.adminPassword,
+      id: s.id,
+      location: s.location,
+      missions: s.missions.toMap(x => x.id),
+      mods: s.mods.toMap(x => x.id),
+      name: s.name,
+      password: s.password,
+      secondaries: s.secondaries,
+      settings: s.settings,
+      size: s.size,
+    });
+  }
+
+  private serverToStorage(s: ManagedServer): IManagedServer {
+    return {
+      adminPassword: s.adminPassword,
+      id: s.id,
+      location: s.location,
+      missions: Array.from(s.missions.values()),
+      mods: Array.from(s.mods.values()),
+      name: s.name,
+      password: s.password,
+      secondaries: s.secondaries,
+      settings: s.settings,
+      size: s.size,
+    }
+  }
+}
+
+export enum ServerSize {
+  Small,
+  Normal,
+  Large,
+  VeryLarge
+}
+
+export enum ServerLocation {
+  WestEU,
+  WestUS
 }

@@ -2,7 +2,7 @@ import { inject } from 'aurelia-framework';
 import {
   IContentGuidSpec, BasketItemType, IBasketItem, BasketService, Base, GameClientInfo, uiCommand, uiCommand2, UiContext, MenuItem, ViewModel, Mediator, Query, DbQuery, DbClientQuery, handlerFor, VoidCommand, IContent, ItemState, IContentState,
   RemoveRecent, Abort, UninstallContent, LaunchContent, OpenFolder, InstallContent, UnFavoriteContent, FavoriteContent, GameChanged, IMenuItem, FolderType, LaunchAction, IReactiveCommand, Publisher,
-  ModsHelper
+  ModsHelper, ServerStore, ManagedServer
 } from '../../../framework';
 import { Router } from 'aurelia-router';
 import { GameBaskets, Basket } from '../../game-baskets';
@@ -11,7 +11,7 @@ import { GetClientDialog } from '../../games/get-client-dialog';
 
 interface ISource { img: string; text: string }
 
-@inject(UiContext, BasketService)
+@inject(UiContext, BasketService, ServerStore)
 export class ContentViewModel<TContent extends IContent> extends ViewModel {
   baskets: GameBaskets;
   model: TContent;
@@ -35,52 +35,56 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
   abort: IReactiveCommand<void>;
   removeRecent: IReactiveCommand<void>;
   addToBasket: IReactiveCommand<void>;
+  addToServer: IReactiveCommand<void>;
   openConfigFolder: IReactiveCommand<any>;
   state: IContentState = this.getDefaultState();
   bottomMenuActions = [];
   url: string;
   sources: ISource[] = [];
-
   isForActiveGame: boolean;
   launchMenuItem: MenuItem<any>;
+  busyStates = [ItemState.Installing, ItemState.Updating, ItemState.Uninstalling, ItemState.Launching];
 
-  getDefaultState() { return { state: ItemState.NotInstalled, version: null, id: this.model ? this.model.id : null, gameId: this.model ? this.model.gameId : null } }
-
-  get statTitle() { return 'install' }
-  get defaultAssetUrl() { return this.assets.defaultAssetUrl }
-  get defaultBackUrl() { return this.assets.defaultBackUrl }
   // TODO: This could be modeled by events similar to the state handling?
   static isInBasketFunction = (basket, id) => basket.content.has(id);
+
+  static isInServerFunction = (server: ManagedServer, id) => server.hasMod(id);
+
+  getDefaultState() {
+    return {
+      state: ItemState.NotInstalled, version: null, id: this.model ? this.model.id : null, gameId: this.model ? this.model.gameId : null
+    };
+  }
+
+  get statTitle() { return "install" }
+  get defaultAssetUrl() { return this.assets.defaultAssetUrl; }
+  get defaultBackUrl() { return this.assets.defaultBackUrl; }
 
   toggleFavorite = () => this.model.isFavorite
     ? new UnFavoriteContent(this.model.id).handle(this.mediator)
     : new FavoriteContent(this.model.id).handle(this.mediator);
 
-  busyStates = [ItemState.Installing, ItemState.Updating, ItemState.Uninstalling, ItemState.Launching];
-
-  constructor(ui: UiContext, protected basketService: BasketService) {
+  constructor(ui: UiContext, protected basketService: BasketService, protected serverStore: ServerStore) {
     super(ui);
   }
 
   get hasLastUsed() { return this.state.lastUsed != null; }
-  get isActive() { return this.gameInfo.isLocked && this.basketService.lastActiveItem === this.model.id };
+  get isActive() { return this.gameInfo.isLocked && this.basketService.lastActiveItem === this.model.id; };
   get canAbort() { return this.gameInfo.clientInfo.canAbort; }
   get hasUpdateAvailable() { return this.itemState === ItemState.UpdateAvailable; }
   get isInstalled() { return !this.isIncomplete && this.itemState !== ItemState.NotInstalled; }
   get canBeUninstalled() { return this.isIncomplete || this.isInstalled; }
   get isIncomplete() { return this.itemState === ItemState.Incomplete; }
-  get activeGameId() { return this.w6.activeGame.id }
+  get activeGameId() { return this.w6.activeGame.id; }
   get canAddToBasket() { return this.activeGameId === this.model.gameId; }
   get isInBasket() { return ContentViewModel.isInBasketFunction(this.baskets.active, this.model.id); }
-  get isBusy() { return this.busyStates.some(x => x === this.itemState) }
+  get isInServer() { return ContentViewModel.isInServerFunction(this.serverStore.activeGame.activeServer, this.model.id); }
+  get isBusy() { return this.busyStates.some(x => x === this.itemState); }
   get progressClass() {
-    if (!(this.state.state == ItemState.Updating || this.state.state == ItemState.Installing)) return null;
-    var percent = Math.round(this.state.progress);
-    if (percent < 1)
-      return "content-in-progress content-progress-0";
-    if (percent > 100)
-      return "content-in-progress content-progress-100";
-
+    if (!(this.state.state === ItemState.Updating || this.state.state === ItemState.Installing)) { return null; }
+    const percent = Math.round(this.state.progress);
+    if (percent < 1) { return "content-in-progress content-progress-0"; }
+    if (percent > 100) { return "content-in-progress content-progress-100"; }
     return "content-in-progress content-progress-" + percent;
   };
   get versionInfo() {
@@ -96,12 +100,15 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
     return this.desiredVersion;
   }
   get itemStateClass() { return this.basketService.getItemStateClassInternal(this.itemState); }
-  get itemBusyClass() { return this.basketService.getItemBusyClassInternal(this.itemState) }
+  get itemBusyClass() { return this.basketService.getItemBusyClassInternal(this.itemState); }
   get itemState() { return this.state.state; }
-  get basketableText() { return this.isInBasket ? "Remove from Playlist" : "Add to Playlist" }
-  get basketableIcon() { return this.isInBasket ? "withSIX-icon-X" : "withSIX-icon-Add" }
-  get desiredVersion() { return this.model.version }
-  get type() { return this.model.type }
+  get basketableText() { return this.isInBasket ? "Remove from Playlist" : "Add to Playlist"; }
+  get serverableText() { return this.isInServer ? "Remove from Server" : "Add to Server"; }
+  get serverableIcon() { return this.getAddRemoveIcon(this.isInServer); }
+  get basketableIcon() { return this.getAddRemoveIcon(this.isInBasket); }
+  getAddRemoveIcon(b: boolean) { return b ? "withSIX-icon-X" : "withSIX-icon-Add"; }
+  get desiredVersion() { return this.model.version; }
+  get type() { return this.model.type; }
 
   async activate(model: TContent) {
     this.model = model;
@@ -142,6 +149,9 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
       d(this.eventBus.subscribe('contentInfoStateChange-' + this.model.id, x => this.updateState()))
 
       d(this.addToBasket = uiCommand2("toggle in playlist", async () => this.basketService.addToBasket(this.model.gameId, this.toBasketInfo()), {
+        isVisibleObservable: this.whenAnyValue(x => x.canAddToBasket)
+      }));
+      d(this.addToServer = uiCommand2("toggle in server", async () => this.serverStore.activeGame.activeServer.toggleMod(this.toBasketInfo()), {
         isVisibleObservable: this.whenAnyValue(x => x.canAddToBasket)
       }));
 
@@ -285,11 +295,29 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
 
   setupAddToBasket() {
     this.subscriptions.subd(d => {
-      this.topActions.push(new MenuItem(this.addToBasket, { name: "", icon: "content-basketable-icon", textCls: "content-basketable-text", cls: "content-basketable-button" }))
+      this.topActions.push(new MenuItem(this.addToBasket, {
+        name: "", icon: "content-basketable-icon", textCls: "content-basketable-text", cls: "content-basketable-button"
+      }));
       this.topMenuActions.push(new MenuItem(this.addToBasket));
-      d(this.whenAnyValue(x => x.isInBasket).subscribe(x => { this.addToBasket.name = this.basketableText; this.addToBasket.icon = this.basketableIcon }));
+      d(this.whenAnyValue(x => x.isInBasket).subscribe(x => {
+        this.addToBasket.name = this.basketableText;
+        this.addToBasket.icon = this.basketableIcon;
+      }));
+
+      if (this.features.createServers) {
+        this.topMenuActions.push(new MenuItem(this.addToServer));
+        this.topActions.push(new MenuItem(this.addToServer));
+        d(this.whenAnyValue(x => x.isInServer).subscribe(x => {
+          this.addToServer.name = this.serverableText;
+          this.addToServer.icon = this.serverableIcon;
+        }));
+      }
+
       if (this.isLoggedIn) {
-        d(this.addToCollections = uiCommand2("Add to ...", async () => this.dialog.open({ viewModel: AddModsToCollections, model: { gameId: this.model.gameId, mods: [this.model] } }), { icon: 'withSIX-icon-Nav-Collection' }));
+        d(this.addToCollections = uiCommand2("Add to ...", async () => this.dialog.open({
+          viewModel: AddModsToCollections,
+          model: { gameId: this.model.gameId, mods: [this.model] }
+        }), { icon: 'withSIX-icon-Nav-Collection' }));
         this.topMenuActions.push(new MenuItem(this.addToCollections));
       }
     });
