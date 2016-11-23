@@ -20,7 +20,13 @@
       <command-button model.bind="prepare"></command-button>
     </div>
 
-    <button click.delegate="switch('players')" class="ignore-close">Remote control</button>
+    <hr />
+    <command-button model.bind="lock"></command-button>
+    <command-button model.bind="unlock"></command-button>
+    <h3>Players</h3>
+    <ul>
+      <li repeat.for="p of players">${p.name} <button>Kick</button> <button>Ban</button></li>
+    </ul>
   </div>
 
   <!--<button class="naked-button default bottom" click.delegate="openLibrary()">Open Full Library</button>-->
