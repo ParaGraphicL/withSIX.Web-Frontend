@@ -441,19 +441,36 @@ card-view {
       }
     }
   }
-  action-bar.basketable-action button {
-    float: left;
-    left: 10px;
-    position: relative;
-    text-decoration: initial;
-    .content-basketable-text {
-      display: none;
+  action-bar.basketable-action {
+    li {
+      .icon {
+        font-size: $font-size-tiny;
+      }
+      .text {
+        display: none;
+        font-size: 13px;
+        text-transform: uppercase;
+      }
+      &:hover {
+        .text {
+          display: inherit;
+        }
+      }
     }
-    &:hover {
+    button {
+      float: left;
+      left: 10px;
+      position: relative;
+      text-decoration: initial;
       .content-basketable-text {
-        display: initial;
-        //padding-left: 5px;
-        //font-size: 13px;
+        display: none;
+      }
+      &:hover {
+        .content-basketable-text {
+          display: initial;
+          //padding-left: 5px;
+          //font-size: 13px;
+        }
       }
     }
   }
@@ -528,4 +545,3 @@ menu {
     }
   }
 }
-
