@@ -3,6 +3,7 @@ import { uiCommand2 } from "../../../framework";
 
 interface IStatusTab extends ITabModel<any> { }
 
+
 export class Index extends ServerTab<IStatusTab> {
   start = uiCommand2("Start", async () => { });
   stop = uiCommand2("Stop", async () => { });

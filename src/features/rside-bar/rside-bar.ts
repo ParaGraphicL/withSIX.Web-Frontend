@@ -1,8 +1,9 @@
 import {
   ViewModel, Base, uiCommand2, ITab, UiContext, ClientMissingHandler, SwitchSideBarTab, CloseTabs, Tools, W6, W6Context,
-  ModAddedToServer, RemovedModFromServer
+  ModAddedToServer, RemovedModFromServer, ServerStore,
 } from '../../framework';
 import { ValidationGroup } from "aurelia-validation";
+import { inject } from "aurelia-framework";
 
 export class RsideBar extends ViewModel {
   static root = "features/rside-bar/";
@@ -81,6 +82,7 @@ export class ToggleServer {
 }
 
 
+@inject(UiContext, ServerStore)
 export class ServerTab<TModel extends ITabModel<any>> extends ViewModel {
   model: TModel;
   validation: ValidationGroup;
@@ -90,6 +92,12 @@ export class ServerTab<TModel extends ITabModel<any>> extends ViewModel {
     return (<any>this.validation).result.isValid;
   }
   //isValid: boolean;
+
+  constructor(ui, private serverStore: ServerStore) {
+    super(ui);
+  }
+
+  get server() { return this.serverStore.activeGame.activeServer; }
 
   activate(model: TModel) {
     this.model = model;
