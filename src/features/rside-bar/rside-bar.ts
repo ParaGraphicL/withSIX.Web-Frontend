@@ -8,9 +8,7 @@ export class RsideBar extends ViewModel {
     { header: "Settings", name: "settings", icon: "icon withSIX-icon-Settings", viewModel: `${RsideBar.root}settings/index`, next: (tab: IAwesomeTab) => this.next(tab) },
     { header: "Mods", name: "mods", icon: "icon withSIX-icon-Nav-Mod", viewModel: `${RsideBar.root}mods/index`, next: (tab: IAwesomeTab) => this.next(tab) },
     { header: "Missions", name: "missions", icon: "icon withSIX-icon-Nav-Mission", viewModel: `${RsideBar.root}missions/index`, next: (tab: IAwesomeTab) => this.next(tab) },
-    { header: "Players", name: "players", location: "end", icon: "icon withSIX-icon-User-Community", viewModel: `${RsideBar.root}players/index`, next: (tab: IAwesomeTab) => this.next(tab) },
-    { header: "Stats", name: "stats", location: "end", icon: "icon withSIX-icon-Share-Lines", viewModel: `${RsideBar.root}stats/index`, next: (tab: IAwesomeTab) => this.next(tab) },
-    { header: "Status", name: "status", location: "end", icon: "icon withSIX-icon-System-Remote", viewModel: `${RsideBar.root}status/index`, next: (tab: IAwesomeTab) => this.next(tab) },
+    { header: "Control", name: "control", location: "end", icon: "icon withSIX-icon-System-Remote", viewModel: `${RsideBar.root}control/index`, next: (tab: IAwesomeTab) => this.next(tab) },
   ];
 
   get validSetup() { return this.tabs[0].isValid; }
@@ -18,7 +16,7 @@ export class RsideBar extends ViewModel {
 
   bind() {
     const setupTabs = [this.tabs[1], this.tabs[2], this.tabs[3]];
-    const controlTabs = [this.tabs[4], this.tabs[5], this.tabs[6]];
+    const controlTabs = [this.tabs[4]];
     this.subd(d => {
       d(this.observeEx(x => x.validSetup)
         .subscribe(x => setupTabs.concat(controlTabs).forEach(t => t.disabled = !x)));
