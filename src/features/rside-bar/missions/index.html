@@ -16,6 +16,11 @@
       <li repeat.for="[k, m] of missions">${m.name} <button class="ignore-close" click.delegate="remove(m)">X</button></li>
     </ul>
 
+    <div if.bind="mods.size === 0">
+      <i>No missions found, add some .. somehow</i>
+    </div>
+
+
     <button class="naked-button default ignore-close" click.delegate="done()">Done</button>
   </div>
 
