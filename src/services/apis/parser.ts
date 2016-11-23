@@ -117,7 +117,7 @@ export abstract class InterestingLink {
 }
 export class ImgurGallery extends InterestingLink {
   title = "Imgur Gallery"
-  constructor(url, images) { super(url, images); this.displayImage = null }
+  constructor(url, images) { super(url.includes("/embed") ? url.replace(/\/embed(.*)/, "") : url, images); this.displayImage = null; }
 }
 export class SocialMedia extends InterestingLink {
   title = "Social Media"
@@ -205,6 +205,15 @@ export class Parser {
           interestingLinks.push(r);
       }
     });
+    el.find("iframe").each((i, x) => {
+      let link = el.attr("src");
+      if (link) {
+        let r: InterestingLink;
+        if ((r = this.determineInterestingLink(link, [])) && !interestingLinks.some(x => x.url === r.url))
+          interestingLinks.push(r);
+      }
+    });
+
     return interestingLinks;
   }
 
