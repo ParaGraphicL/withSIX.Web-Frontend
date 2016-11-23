@@ -41,7 +41,7 @@ export class RsideBar extends ViewModel {
           title: 'removed from server', text: x.mod.name, icon: 'withSIX-icon-Nav-Mod',
           href: this.getItemHref(x.mod),
           cls: 'start',
-          command: uiCommand2("", async () => x.server.toggleMod(x.mod), { tooltip: "Add to playlist", icon: 'withSIX-icon-Add' })
+          command: uiCommand2("", async () => x.server.toggleMod(x.mod), { tooltip: "Add to server", icon: 'withSIX-icon-Add' })
         });
       }));
     });
