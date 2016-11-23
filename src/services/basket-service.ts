@@ -411,15 +411,16 @@ interface IManagedServer {
 export class ManagedServer extends EntityExtends.BaseEntity {
   id: string;
 
-  location: ServerLocation;
-  size: ServerSize;
+  location: ServerLocation = ServerLocation.WestEU;
+  size: ServerSize = ServerSize.Normal;
   secondaries: { size: ServerSize }[] = [];
 
   name: string;
   password: string;
   adminPassword: string;
 
-  settings: any = {};
+  // TODO: Game specific
+  settings: any = { battlEye: true, verifySignatures: true, vonCodecQuality: 12 };
 
   mods: Map<string, any> = new Map<string, any>();
   missions: Map<string, any> = new Map<string, any>();

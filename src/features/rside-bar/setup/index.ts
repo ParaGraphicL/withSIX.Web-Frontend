@@ -39,14 +39,6 @@ export class Index extends ServerTab<ISetupTab> {
   activate(model: ISetupTab) {
     super.activate(model);
 
-    this.model.data = Object.assign({
-      adminPassword: "",
-      location: ServerLocation.WestEU,
-      password: "",
-      secondaries: [],
-      size: ServerSize.Normal,
-    }, this.model.data || {});
-
     this.validation = this.validation
       .ensure('m.name')
       .isNotEmpty()
@@ -72,5 +64,5 @@ export class Index extends ServerTab<ISetupTab> {
   generateServerPassword() { this.m.password = this.generatePassword(6); }
   generateAdminPassword() { this.m.adminPassword = this.generatePassword(8); }
 
-  get m() { return this.model.data; };
+  get m() { return this.server; };
 }
