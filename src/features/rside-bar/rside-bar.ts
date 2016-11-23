@@ -16,7 +16,7 @@ export class RsideBar extends ViewModel {
 
   bind() {
     const setupTabs = [this.tabs[1], this.tabs[2], this.tabs[3]];
-    const controlTabs = [this.tabs[4], this.tabs[5], this.tabs[6]];
+    const controlTabs = [this.tabs[4]];
     this.subd(d => {
       d(this.observeEx(x => x.validSetup)
         .subscribe(x => setupTabs.concat(controlTabs).forEach(t => t.disabled = !x)));
