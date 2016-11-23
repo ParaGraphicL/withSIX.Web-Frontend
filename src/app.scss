@@ -443,6 +443,9 @@ card-view {
   }
   action-bar.basketable-action {
     li {
+      button {
+        padding: 6px 10px;
+      }
       .icon {
         font-size: $font-size-tiny;
       }
@@ -451,8 +454,12 @@ card-view {
         font-size: 13px;
         text-transform: uppercase;
       }
+      .spacer {
+        display: none;
+      }
       &:hover {
-        .text {
+        .text,
+        .spacer {
           display: inherit;
         }
       }
@@ -475,6 +482,10 @@ card-view {
     }
   }
   &.in-basket {
+    .ok {
+      @include transition(background-color 0.5s ease);
+      background-color: transparentize($colorSixGreen, 0.4);
+    }
     .content-basketable-button {
       @include transition(background-color 0.5s ease);
       background-color: transparentize($colorSixGreen, 0.4);
