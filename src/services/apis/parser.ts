@@ -188,29 +188,32 @@ export class Parser {
     return sanitizeHtml(el.html());
   }
 
-  extractInterestingLinks(el: JQuery) {
-    let interestingLinks: InterestingLink[] = [];
-    el.find("a").each((i, x) => {
-      let el = $(x);
-      let link = el.attr("href");
-      let images = [];
+  extractInterestingLinks(element: JQuery) {
+    const interestingLinks: InterestingLink[] = [];
+    element.find("a").each((i, x) => {
+      const el = $(x);
+      const link = el.attr("href");
+      const images = [];
       el.find("img").each((i, x) => {
-        let iel = $(x);
-        let src = iel.attr("src");
-        if (src) images.push(src);
-      })
+        const iel = $(x);
+        const src = iel.attr("src");
+        if (src) { images.push(src); }
+      });
       if (link) {
-        let r: InterestingLink;
-        if ((r = this.determineInterestingLink(link, images)) && !interestingLinks.some(x => x.url === r.url))
+        const r = this.determineInterestingLink(link, images);
+        if (!interestingLinks.some(x => x.url === r.url)) {
           interestingLinks.push(r);
+        }
       }
     });
-    el.find("iframe").each((i, x) => {
-      let link = el.attr("src");
+    element.find("iframe").each((i, x) => {
+      const el = $(x);
+      const link = el.attr("src");
       if (link) {
-        let r: InterestingLink;
-        if ((r = this.determineInterestingLink(link, [])) && !interestingLinks.some(x => x.url === r.url))
+        const r = this.determineInterestingLink(link, []);
+        if (r && !interestingLinks.some(x => x.url === r.url)) {
           interestingLinks.push(r);
+        }
       }
     });
 
