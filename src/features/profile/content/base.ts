@@ -36,6 +36,7 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
   removeRecent: IReactiveCommand<void>;
   addToBasket: IReactiveCommand<void>;
   addToServer: IReactiveCommand<void>;
+  addToServer2: IReactiveCommand<void>;
   openConfigFolder: IReactiveCommand<any>;
   state: IContentState = this.getDefaultState();
   bottomMenuActions = [];
@@ -152,6 +153,9 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
         isVisibleObservable: this.whenAnyValue(x => x.canAddToBasket)
       }));
       d(this.addToServer = uiCommand2("toggle in server", async () => this.serverStore.activeGame.activeServer.toggleMod(this.toBasketInfo()), {
+        isVisibleObservable: this.whenAnyValue(x => x.canAddToBasket)
+      }));
+      d(this.addToServer2 = uiCommand2("toggle in server", async () => this.serverStore.activeGame.activeServer.toggleMod(this.toBasketInfo()), {
         isVisibleObservable: this.whenAnyValue(x => x.canAddToBasket)
       }));
 
@@ -306,10 +310,14 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
 
       if (this.features.createServers) {
         this.topMenuActions.push(new MenuItem(this.addToServer));
-        this.topActions.push(new MenuItem(this.addToServer));
+        this.topActions.push(new MenuItem(this.addToServer2));
         d(this.whenAnyValue(x => x.isInServer).subscribe(x => {
           this.addToServer.name = this.serverableText;
           this.addToServer.icon = this.serverableIcon;
+
+          this.addToServer2.cls = this.isInServer ? "ok" : null;
+          this.addToServer2.name = this.isInServer ? "IN SERVER" : "ADD TO SERVER";
+          this.addToServer2.icon = this.isInServer ? "withSIX-icon-Checkmark" : "withSIX-icon-Add";
         }));
       }
 
