@@ -218,6 +218,7 @@ export class Parser {
   }
 
   determineInterestingLink(url: string, images: string[]): InterestingLink {
+    url = url.startsWith("//") ? `https:${url}` : url;
     if (url.startsWith("http://imgur.com/a/")
       || url.startsWith("https://imgur.com/a/")
       || url.startsWith("http://imgur.com/gallery/")
