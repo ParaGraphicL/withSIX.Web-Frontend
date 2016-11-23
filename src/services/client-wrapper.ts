@@ -10,7 +10,7 @@ export class StateChanged {
 
 @inject(Client)
 export class ClientWrapper implements IClientWrapper {
-  constructor(private client: Client) {}
+  constructor(private client: Client) { }
   get stateChanged() { return this.fromClient('connection.state-changed', (previous, next) => new StateChanged(previous, next)) }
   get actionUpdateNotification() { return this.fromClientNative<IActionTabStateUpdate>('status.actionUpdateNotification') }
   get actionNotification() { return this.fromClientNative<IActionNotification>('status.actionNotification') }
@@ -18,10 +18,12 @@ export class ClientWrapper implements IClientWrapper {
   get userErrorResolved() { return this.fromClientNative<IUserErrorResolved>('client.userErrorResolved') }
 
   private fromClientNative = <T>(eventName: string) => Rx.Observable.fromEvent<T>(this.client, eventName)
-  private fromClient = <T>(eventName: string, transform: (...args) => T) => Rx.Observable.fromEvent<T>(this.client, eventName, transform); 
+  private fromClient = <T>(eventName: string, transform: (...args) => T) => Rx.Observable.fromEvent<T>(this.client, eventName, transform);
 }
 
-export class GameChanged { constructor(public id?: string, public slug?: string, public isPageChange?: boolean) { } }
+export class GameChanged {
+  constructor(public id: string, public slug: string, public isPageChange?: boolean) { }
+}
 
 export class AppEventsWrapper extends EventWrapper {
   get gameChanged() { return this.observableFromEvent<GameChanged>(GameChanged); }
@@ -69,5 +71,5 @@ interface IClientWrapper {
   readonly actionUpdateNotification: Rx.Observable<IActionTabStateUpdate>;
   readonly actionNotification: Rx.Observable<IActionNotification>;
   readonly userErrorAdded: Rx.Observable<IUserErrorAdded>;
-  readonly userErrorResolved: Rx.Observable<IUserErrorResolved>; 
+  readonly userErrorResolved: Rx.Observable<IUserErrorResolved>;
 }

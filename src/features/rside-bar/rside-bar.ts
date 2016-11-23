@@ -1,4 +1,7 @@
-import { ViewModel, Base, uiCommand2, ITab, UiContext, ClientMissingHandler, SwitchSideBarTab, CloseTabs, Tools, W6, W6Context } from '../../framework';
+import {
+  ViewModel, Base, uiCommand2, ITab, UiContext, ClientMissingHandler, SwitchSideBarTab, CloseTabs, Tools, W6, W6Context,
+  ModAddedToServer, RemovedModFromServer
+} from '../../framework';
 import { ValidationGroup } from "aurelia-validation";
 
 export class RsideBar extends ViewModel {
@@ -12,7 +15,7 @@ export class RsideBar extends ViewModel {
   ];
 
   get validSetup() { return this.tabs[0].isValid; }
-  visible: boolean;
+  visible = true;
 
   bind() {
     const setupTabs = [this.tabs[1], this.tabs[2], this.tabs[3]];
@@ -25,11 +28,29 @@ export class RsideBar extends ViewModel {
         this.visible = hasTab || !this.visible;
         if (this.visible && hasTab) { this.selectedTab = this.tabs[x.tab]; }
       }));
+      d(this.observableFromEvent<ModAddedToServer>(ModAddedToServer).subscribe(x => {
+        this.notifier.raiseTabNotification("mods", {
+          title: 'added to server', text: x.mod.name, icon: 'withSIX-icon-Nav-Mod',
+          href: this.getItemHref(x.mod),
+          cls: 'end',
+          command: uiCommand2("", async () => x.server.toggleMod(x.mod), { tooltip: "Remove from server", icon: 'withSIX-icon-Checkmark' })
+        });
+      }));
+      d(this.observableFromEvent<RemovedModFromServer>(RemovedModFromServer).subscribe(x => {
+        this.notifier.raiseTabNotification("mods", {
+          title: 'removed from server', text: x.mod.name, icon: 'withSIX-icon-Nav-Mod',
+          href: this.getItemHref(x.mod),
+          cls: 'start',
+          command: uiCommand2("", async () => x.server.toggleMod(x.mod), { tooltip: "Add to playlist", icon: 'withSIX-icon-Add' })
+        });
+      }));
     });
 
     //     this.serverData = await new GetServerData().handle(this.mediator);
 
   }
+
+  getItemHref = (item: { id: string; name: string }) => item.id ? `/p/${this.w6.activeGame.slug}/mods/${item.id.toShortId()}/${item.name.sluggify()}` : null;
 
   next(tab: IAwesomeTab | string) {
     if (tab == null) {
