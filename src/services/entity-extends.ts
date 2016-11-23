@@ -1,6 +1,6 @@
 import breeze from 'breeze-client';
 
-import {IBreezeModMediaItem} from './dtos';
+import { IBreezeModMediaItem } from './dtos';
 
 export interface IUserInfo {
   // TODO: Instead use dynamic getters that use isInRole internally and cache the result?
@@ -103,6 +103,8 @@ export module EntityExtends {
   export abstract class BaseEntity {
     // BAH
     static w6;
+    static eventPublisher: (evt) => void;
+    publishEvent(evt) { return BaseEntity.eventPublisher(evt); }
   }
 
   export abstract class CollectionVersion implements ICollectionVersion {

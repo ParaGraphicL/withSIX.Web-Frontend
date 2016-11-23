@@ -18,12 +18,12 @@ $basket-header-font-size: $font-size-medium;
 $status-icon-width: 70px;
 $status-width: 330px;
 $font-size-small: 12px;
-$status-total-width: $status-icon-width + $status-width;
+$status-total-width: $status-icon-width+$status-width;
 @mixin basket-title-icon($icon-size, $line-height, $vert-align: true) {
   text-align: center;
   vertical-align: middle;
   @if $vert-align {
-     @include v-align-content($line-height);
+    @include v-align-content($line-height);
   }
   //& > :first-child {
   .icon {
@@ -36,22 +36,7 @@ $status-total-width: $status-icon-width + $status-width;
   }
   //}
 }
-.tab-header.playlist {
-  $colorStart: $colorSixGray;
-  $colorEnd: $colorSixGreen;
-  .notification.start {
-    background-color: $colorStart;
-    .notification-inner button:hover {
-      background-color: $colorEnd;
-    }
-  }
-  .notification.end {
-    background-color: $colorEnd;
-    .notification-inner button:hover {
-      background-color: $colorStart;
-    }
-  }
-}
+
 #tab-view-render-playlist {
   header.tab-header {
     hr {
@@ -363,7 +348,7 @@ $status-total-width: $status-icon-width + $status-width;
       @include no-margin-h;
       @include extend-content-state-colors("bgd-border", true, "border-left-color");
       @include progress-class-creator(".content-progress-", ".content-state-progress-width", ".content-state-progress-text");
-      height: $basket-content-height + 8px;
+      height: $basket-content-height+8px;
       overflow: hidden;
       padding-top: 4px;
       padding-bottom: 4px;
@@ -513,10 +498,10 @@ $status-total-width: $status-icon-width + $status-width;
       }
     }
     &.level-0 {
-      > .dependencies {
+      >.dependencies {
         margin-top: 4px;
         margin-bottom: 4px;
-        > section {
+        >section {
           $borderSize: 2px;
           border-left: $borderSize solid $borderColor;
           border-bottom: $borderSize solid $borderColor;
@@ -528,6 +513,7 @@ $status-total-width: $status-icon-width + $status-width;
     }
   }
 }
+
 @mixin basket-state-inner($color, $text, $icon: false) {
   .basket-state-colored {
     @include transition(background-color 0.5s ease);
@@ -554,40 +540,49 @@ $status-total-width: $status-icon-width + $status-width;
       @include color-creator(".basket-state-progress", $color, $basketHeaderBackgroundColor);
   }*/
 }
+
 [class*=" basket-state-"],
 [class^="basket-state-"] {
   @include progress-class-creator(".basket-progress-", ".basket-state-progress-width", ".basket-state-progress-text");
 }
+
 .basket-state-install {
   @include basket-state-inner($colorSixBlue, "INSTALL", "");
 }
+
 .basket-state-syncing {
   @include basket-state-inner($colorSixLightGray, "SYNCING", "");
 }
+
 .basket-state-update {
   @include basket-state-inner($colorSixOrange, "UPDATE", "");
 }
+
 .basket-state-launch {
   @include basket-state-inner($colorSixGreen, "LAUNCH", "");
   &.has-servers {
     @include basket-state-inner($colorSixGreen, "JOIN", "");
   }
 }
+
 .basket-state-launching {
   @include basket-state-inner($colorSixGreen, "Launching...");
 }
+
 .basket-state-no-client {
   @include basket-state-inner($colorSixDarkGray, "NO CLIENT");
   .basket-header-icon {
     color: white;
   }
 }
+
 .basket-state-busy {
   @include basket-state-inner($colorSixDarkGray, "Busy...");
   .basket-header-icon {
     color: white;
   }
 }
+
 .basket-state-busy-active {
   @include basket-state-inner($colorSixOrange, "Downloading...");
   .basket-header-icon {

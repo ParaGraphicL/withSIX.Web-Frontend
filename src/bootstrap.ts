@@ -13,7 +13,7 @@ import {
   Toastr, UiContext, Mediator, ErrorLoggingMediatorDecorator, InjectingMediatorDecorator, BasketService, Client,
   CollectionDataService, ModDataService, MissionDataService, PromiseCache,
   IUserInfo, W6Context, ClientMissingHandler, EntityExtends,
-  W6Urls, W6, Tools, Environment, StateChanged
+  W6Urls, W6, Tools, Environment, StateChanged,
 } from "./services/lib";
 import { ToastLogger, GlobalErrorHandler, LogAppender } from "./services/legacy/logger";
 import { AbortError, LoginBase, UserInfo } from "./services/auth-base";
@@ -183,6 +183,8 @@ export async function configure(aurelia: Aurelia) {
     // WARNING CANT PASS THE ROUTER INSTANCE HERE OR Aurelia STOPS ROUTING
     const w6 = W6.instance = new W6(w6Urls, userInfo, client, api);
     EntityExtends.BaseEntity.w6 = w6; // pff
+    const ea = getInstance<EventAggregator>(EventAggregator);
+    EntityExtends.BaseEntity.eventPublisher = evt => ea.publish(evt);
     window.w6Cheat = { api, navigate: (url: string) => w6.navigate(url) };
     Container.instance.registerSingleton(W6, () => w6);
     if (Tools.env > Tools.Environment.Staging) window.w6Debug = { w6, container: Container.instance };

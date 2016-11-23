@@ -221,6 +221,11 @@ nav.tab-strip {
   }
   &.right {
     float: right;
+    div.notification {
+      right: 0;
+      margin: 0;
+      margin-right: 64px;
+    }
     .tab-component.end {
       right: auto;
       bottom: 0;
@@ -249,6 +254,20 @@ nav.tab-strip {
       position: absolute;
       margin-top: 28px;
       height: 8px;
+    }
+  }
+  $colorStart: $colorSixGray;
+  $colorEnd: $colorSixGreen;
+  .notification.start {
+    background-color: $colorStart;
+    .notification-inner button:hover {
+      background-color: $colorEnd;
+    }
+  }
+  .notification.end {
+    background-color: $colorEnd;
+    .notification-inner button:hover {
+      background-color: $colorStart;
     }
   }
 }

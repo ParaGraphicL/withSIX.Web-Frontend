@@ -6,6 +6,7 @@ import { Toastr } from './toastr';
 import { ObservableEventAggregator } from './reactive';
 import { W6 } from './withSIX';
 import { BasketType, IBasketModel, IBasketItem, BasketState, IBasketCollection, IBaskets } from './legacy/baskets';
+import { EntityExtends } from "./entity-extends";
 import { W6Context } from './w6context';
 import { ContentHelper } from './helpers';
 
@@ -16,6 +17,7 @@ import {
   IUserErrorAdded, IUserErrorResolved
 } from 'withsix-sync-api';
 import { ClientWrapper, AppEventsWrapper, StateChanged } from './client-wrapper';
+
 
 @inject(EventAggregator, W6, Client, Toastr, ClientWrapper, AppEventsWrapper)
 export class BasketService extends ReactiveBase {
@@ -406,7 +408,7 @@ interface IManagedServer {
   missions: any[];
 }
 
-export class ManagedServer {
+export class ManagedServer extends EntityExtends.BaseEntity {
   id: string;
 
   location: ServerLocation;
@@ -423,11 +425,18 @@ export class ManagedServer {
   missions: Map<string, any> = new Map<string, any>();
 
   constructor(private data) {
+    super();
     Object.assign(this, data);
   }
 
   toggleMod(mod: { id: string; name: string }) {
-    if (this.mods.has(mod.id)) { this.mods.delete(mod.id); } else { this.mods.set(mod.id, mod); }
+    if (this.mods.has(mod.id)) {
+      this.mods.delete(mod.id);
+      ManagedServer.eventPublisher(new RemovedModFromServer(mod, this));
+    } else {
+      this.mods.set(mod.id, mod);
+      ManagedServer.eventPublisher(new ModAddedToServer(mod, this));
+    }
   }
 
   toggleMission(mission: { id: string; name: string }) {
@@ -440,6 +449,14 @@ export class ManagedServer {
   // ideas
   start(ctx: W6Context) { return ctx.postCustom(`/server-manager/${this.id}/start`); }
   stop(ctx: W6Context) { return ctx.postCustom(`/server-manager/${this.id}/stop`); }
+}
+
+export class ModAddedToServer {
+  constructor(public mod: { name: string; id: string }, public server: ManagedServer) { }
+}
+
+export class RemovedModFromServer {
+  constructor(public mod: { name: string; id: string }, public server: ManagedServer) { }
 }
 
 interface IGame { id: string; servers: IManagedServer[]; }
