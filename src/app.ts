@@ -224,17 +224,17 @@ export class App extends ViewModel {
       const changed = this.appEvents.gameChanged;
       d(changed.subscribe(info => this.w6.setActiveGame({ id: info.id, slug: info.slug })));
       d(changed
-        .filter<GameChanged, GameChanged>(game => game && game.id && game.isPageChange && this.w6.miniClient.isConnected)
+        .filter(game => game && game.id && game.isPageChange && this.w6.miniClient.isConnected)
         .concatMap(game => this.client.selectGame(game.id))
         .subscribe());
       d(changed.startWith(this.w6.activeGame)
         .do(this.gameChanged)
-        .filter<GameChanged, GameChanged>(x => !!x.id)
+        .filter(x => !!x.id)
         .switchMap(game => this.basketService.getGameInfo(game.id))
         .subscribe(x => this.gameInfo = x));
       d(this.clientWrapper.stateChanged
         .startWith(<StateChanged>{ newState: this.client.isConnected ? ConnectionState.connected : null })
-        .filter<StateChanged, StateChanged>(state => state.newState === ConnectionState.connected)
+        .filter(state => state.newState === ConnectionState.connected)
         .subscribe(state => this.infoReceived(this.client.clientInfo)));
       const userErrors = this.whenAnyValue(x => x.userErrors).filter(x => x != null);
       d(userErrors.subscribe(_ => {
