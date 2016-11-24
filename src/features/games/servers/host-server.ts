@@ -47,6 +47,7 @@ export class HostServer extends Dialog<IModel> {
   settings;
   jobState: IJobInfo;
   State = State;
+  timeLeft: number;
 
   activate(model: IModel) {
     this.settings = getArma3Settings();
@@ -101,11 +102,13 @@ export class HostServer extends Dialog<IModel> {
   handleHost = async () => {
     const jobId = await new HostW6Server(this.w6.activeGame.id, this.model).handle(this.mediator); //this.model.host(this.model);
     this.jobState = <any>{ state: State.Initializing };
+    this.timeLeft = 60 * 60;
     while (this.jobState.state < State.Running) {
       this.jobState = await new GetJobState(jobId).handle(this.mediator);
       await new Promise(res => setTimeout(() => res(), 2000));
     }
     if (this.jobState.state === State.Failed) { throw new Error(`Job failed: ${this.jobState.message}`); }
+    setInterval(() => this.timeLeft = - 1);
     //this.controller.ok();
   }
 }
@@ -302,6 +305,15 @@ class HostW6ServerHandler extends DbQuery<HostW6Server, string> {
   }
 }
 
+class GetJobState extends Query<IJobInfo> { constructor(public id: string) { super(); } }
+
+@handlerFor(GetJobState)
+class GetJobStateHandler extends DbQuery<GetJobState, IJobInfo> {
+  handle(request: GetJobState) {
+    return this.context.getCustom(`/server-manager/${request.id}`);
+  }
+}
+
 class LaunchServer extends VoidCommand {
   constructor(public gameId: string, public scope: CollectionScope) { super(); }
 }
@@ -310,14 +322,5 @@ class LaunchServer extends VoidCommand {
 class LaunchServerHandler extends DbQuery<LaunchServer, void> {
   handle(request: LaunchServer) {
     return this.context.postCustom("servers", request);
-  }
-}
-
-class GetJobState extends Query<IJobInfo> { constructor(public id: string) { super(); } }
-
-@handlerFor(GetJobState)
-class GetJobStateHandler extends DbQuery<GetJobState, IJobInfo> {
-  handle(request: GetJobState) {
-    return this.context.getCustom(`/server-manager/${request.id}`);
   }
 }
