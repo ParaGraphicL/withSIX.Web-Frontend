@@ -564,8 +564,9 @@ export class ServerStore {
 }
 
 export enum ServerSize {
-  Small,
-  Normal,
+  VerySmall = -2,
+  Small = -1,
+  Normal = 0,
   Large,
   VeryLarge
 }

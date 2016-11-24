@@ -18,6 +18,7 @@
       <checkbox value.bind="m.persistent">Persistent</checkbox>
       <checkbox value.bind="m.disableVon">DisableVON</checkbox>
       <rangebox value.bind="m.vonQuality" min.bind="0" max.bind="35" show.bind="!m.disableVon">vonCodecQuality</rangebox>
+      <textbox value.bind="m.motd">MOTD (message of the day)</textbox>
     </form>
     <button class="naked-button default ignore-close" click.delegate="next()">Next</button>
     <button class="naked-button default ignore-close" click.delegate="done()">Done</button>
