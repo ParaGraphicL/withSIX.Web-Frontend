@@ -47,7 +47,6 @@ export class HostServer extends Dialog<IModel> {
   settings;
   jobState: IJobInfo;
   State = State;
-  timeLeft: number;
 
   activate(model: IModel) {
     this.settings = getArma3Settings();
@@ -102,13 +101,11 @@ export class HostServer extends Dialog<IModel> {
   handleHost = async () => {
     const jobId = await new HostW6Server(this.w6.activeGame.id, this.model).handle(this.mediator); //this.model.host(this.model);
     this.jobState = <any>{ state: State.Initializing };
-    this.timeLeft = 60 * 60;
     while (this.jobState.state < State.Running) {
       this.jobState = await new GetJobState(jobId).handle(this.mediator);
       await new Promise(res => setTimeout(() => res(), 2000));
     }
     if (this.jobState.state === State.Failed) { throw new Error(`Job failed: ${this.jobState.message}`); }
-    setInterval(() => this.timeLeft = - 1);
     //this.controller.ok();
   }
 }
@@ -270,7 +267,7 @@ forcedDifficulty = "<difficultyClass>";
     */
     BattlEye: 1,
     forceRotorLibSimulation: 0,//  [0, 2] UpToPlayer, ForceAFM, ForceSFM
-    vonCodecQuality: 3, // [1, 30]
+    vonCodecQuality: 12, // [1, 30]
   }
 }
 

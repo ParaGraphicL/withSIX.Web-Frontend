@@ -24,6 +24,8 @@ interface IJobInfo { address: string; state: State; message: string; }
 export class Index extends ServerTab<IStatusTab> {
   jobState: IJobInfo;
   State = State;
+  timeLeft: number;
+
 
   start = uiCommand2("Start", () => this.handleHost());
   stop = uiCommand2("Stop", async () => { });
@@ -40,11 +42,18 @@ export class Index extends ServerTab<IStatusTab> {
   handleHost = async () => {
     const jobId = await new HostW6Server(this.w6.activeGame.id, ServerStore.serverToStorage(this.server)).handle(this.mediator); //this.model.host(this.model);
     this.jobState = <any>{ state: State.Initializing };
+    this.timeLeft = 60 * 60;
+
     while (this.jobState.state < State.Running) {
       this.jobState = await new GetJobState(jobId).handle(this.mediator);
       await new Promise(res => setTimeout(() => res(), 2000));
     }
     if (this.jobState.state === State.Failed) { throw new Error(`Job failed: ${this.jobState.message}`); }
+    const iv = setInterval(() => {
+      this.timeLeft -= 1; // todo; use a time calc instead
+      if (this.timeLeft === 0) { clearInterval(iv); }
+    }, 1000);
+
     //this.controller.ok();
   }
 }
