@@ -12,12 +12,23 @@
   <!--<hr />-->
 
   <div class="the-content" scroll.trigger="closeDropdowns()">
-    ${status}
+    <!--${status}-->
     <div>
       <command-button model.bind="start"></command-button>
       <command-button model.bind="stop"></command-button>
       <command-button model.bind="restart"></command-button>
       <command-button model.bind="prepare"></command-button>
+    </div>
+
+    <div if.bind="jobState">
+      This will take about 2-10 minutes, depending on the amount of Content you've selected.
+      <h2>Progress</h2>
+      <ul>
+        <li>State: ${State[jobState.state]}</li>
+        <li if.bind="jobState.address">
+          Address: ${jobState.address} ${timeLeft | time}
+        </li>
+      </ul>
     </div>
 
     <hr />

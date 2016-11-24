@@ -233,7 +233,7 @@ nav.tab-strip {
     .indicator {
       position: absolute;
       margin-top: (-$iconCntr * 2) + $height + 2px;
-      margin-left: (-$iconCntr * 2) - (($height / 2) + 4px);
+      margin-left: (-$iconCntr * 2) - (($height / 2) + 2px);
       &.arrow {
         margin-top: 14px;
         &:before {

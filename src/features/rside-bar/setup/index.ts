@@ -36,7 +36,7 @@ export class Index extends ServerTab<ISetupTab> {
   calcHours() { return (this.credit / this.calcCost()) * 60 * 60; }
 
 
-  activate(model: ISetupTab) {
+  async activate(model: ISetupTab) {
     super.activate(model);
 
     this.validation = this.validation
@@ -46,6 +46,8 @@ export class Index extends ServerTab<ISetupTab> {
       .hasMaxLength(150)
       .ensure('m.adminPassword')
       .isNotEmpty();
+
+    try { await this.validation.validate(); } catch (err) { };
 
     this.subscriptions.subd(d => {
       const rxl = this.listFactory.getList(this.m.secondaries, ["size"]);

@@ -420,7 +420,7 @@ export class ManagedServer extends EntityExtends.BaseEntity {
   adminPassword: string;
 
   // TODO: Game specific
-  settings: any = { battlEye: true, verifySignatures: true, vonCodecQuality: 12 };
+  settings: any = { battlEye: true, verifySignatures: true, vonQuality: 12 };
 
   mods: Map<string, any> = new Map<string, any>();
   missions: Map<string, any> = new Map<string, any>();
@@ -522,17 +522,17 @@ export class ServerStore {
   }
 
   private storageToGame(game: IGame) {
-    return new Game({ id: game.id, servers: game.servers.map(x => this.storageToServer(x)).toMap(x => x.id) });
+    return new Game({ id: game.id, servers: game.servers.map(x => ServerStore.storageToServer(x)).toMap(x => x.id) });
   }
 
   private gameToStorage(game: Game) {
     return {
       id: game.id,
-      servers: Array.from(game.servers.values()).map(x => this.serverToStorage(x))
+      servers: Array.from(game.servers.values()).map(x => ServerStore.serverToStorage(x)),
     }
   }
 
-  private storageToServer(s: IManagedServer): ManagedServer {
+  public static storageToServer(s: IManagedServer): ManagedServer {
     return new ManagedServer({
       adminPassword: s.adminPassword,
       id: s.id,
@@ -547,7 +547,7 @@ export class ServerStore {
     });
   }
 
-  private serverToStorage(s: ManagedServer): IManagedServer {
+  public static serverToStorage(s: ManagedServer): IManagedServer {
     return {
       adminPassword: s.adminPassword,
       id: s.id,
@@ -559,13 +559,14 @@ export class ServerStore {
       secondaries: s.secondaries,
       settings: s.settings,
       size: s.size,
-    }
+    };
   }
 }
 
 export enum ServerSize {
-  Small,
-  Normal,
+  VerySmall = -2,
+  Small = -1,
+  Normal = 0,
   Large,
   VeryLarge
 }
