@@ -448,8 +448,8 @@ export class ManagedServer extends EntityExtends.BaseEntity {
   hasMission(id: string) { return this.missions.has(id); }
 
   // ideas
-  start(ctx: W6Context) { return ctx.postCustom(`/server-manager/${this.id}/start`); }
-  stop(ctx: W6Context) { return ctx.postCustom(`/server-manager/${this.id}/stop`); }
+  start(ctx: W6Context) { return ctx.postCustom(`/server-manager/jobs/${this.id}/start`); }
+  stop(ctx: W6Context) { return ctx.postCustom(`/server-manager/jobs/${this.id}/stop`); }
 }
 
 export class ModAddedToServer {

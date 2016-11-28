@@ -13,13 +13,18 @@
 
   <div class="the-content" scroll.trigger="closeDropdowns()">
     <ul>
-      <li repeat.for="[k, m] of missions">${m.name} <button class="ignore-close" click.delegate="remove(m)">X</button></li>
+      <li repeat.for="[k, m] of missions">${m} <button class="ignore-close" click.delegate="remove(m)">X</button></li>
     </ul>
 
-    <div if.bind="mods.size === 0">
+    <div if.bind="missions.size === 0">
       <i>No missions found, add some .. somehow</i>
     </div>
 
+    <hr />
+    <fileupload accept=".pbo" value.bind="files">Upload new</fileupload>
+    <command-button model.bind="upload"></command-button>
+
+    <hr />
 
     <button class="naked-button default ignore-close" click.delegate="done()">Done</button>
   </div>
