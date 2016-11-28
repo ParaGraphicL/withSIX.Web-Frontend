@@ -298,7 +298,7 @@ class HostW6Server extends Command<string> {
 @handlerFor(HostW6Server)
 class HostW6ServerHandler extends DbQuery<HostW6Server, string> {
   handle(request: HostW6Server) {
-    return this.context.postCustom<string>("/server-manager", request);
+    return this.context.postCustom<string>("/server-manager/jobs", request);
   }
 }
 
@@ -307,7 +307,7 @@ class GetJobState extends Query<IJobInfo> { constructor(public id: string) { sup
 @handlerFor(GetJobState)
 class GetJobStateHandler extends DbQuery<GetJobState, IJobInfo> {
   handle(request: GetJobState) {
-    return this.context.getCustom(`/server-manager/${request.id}`);
+    return this.context.getCustom(`/server-manager/jobs/${request.id}`);
   }
 }
 
@@ -318,6 +318,6 @@ class LaunchServer extends VoidCommand {
 @handlerFor(LaunchServer)
 class LaunchServerHandler extends DbQuery<LaunchServer, void> {
   handle(request: LaunchServer) {
-    return this.context.postCustom("servers", request);
+    return this.context.postCustom("servers/jobs", request);
   }
 }
