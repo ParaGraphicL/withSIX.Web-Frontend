@@ -410,7 +410,7 @@ interface IManagedServer {
 
 interface IArmaSettings {
   battlEye: boolean; verifySignatures: boolean; vonQuality: number;
-  persistent: boolean; disableVon: boolean;
+  persistent: boolean; disableVon: boolean; drawingInMap: boolean; forceRotorLibSimulation: boolean;
 }
 
 export class ManagedServer extends EntityExtends.BaseEntity {
@@ -425,7 +425,7 @@ export class ManagedServer extends EntityExtends.BaseEntity {
   adminPassword: string;
 
   // TODO: Game specific
-  settings: IArmaSettings = <any>{ battlEye: true, verifySignatures: true, vonQuality: 12 };
+  settings: IArmaSettings = <any>{ battlEye: true, drawingInMap: true, verifySignatures: true, vonQuality: 12 };
 
   mods: Map<string, any> = new Map<string, any>();
   missions: Map<string, any> = new Map<string, any>();
