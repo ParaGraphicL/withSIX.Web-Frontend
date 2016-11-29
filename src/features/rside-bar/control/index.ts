@@ -27,13 +27,13 @@ export class Index extends ServerTab<IStatusTab> {
   timeLeft: number;
 
 
-  start = uiCommand2("Start", () => this.handleHost());
-  stop = uiCommand2("Stop", async () => { });
-  restart = uiCommand2("Restart", async () => { });
-  prepare = uiCommand2("Prepare content and configs", async () => { });
+  start = uiCommand2("Start", () => this.handleHost(), { cls: "ignore-close" });
+  stop = uiCommand2("Stop", async () => { }, { cls: "ignore-close" });
+  restart = uiCommand2("Restart", async () => { }, { cls: "ignore-close" });
+  prepare = uiCommand2("Prepare content and configs", async () => { }, { cls: "ignore-close" });
   status = "Stopped";
-  lock = uiCommand2("Lock", async () => { });
-  unlock = uiCommand2("Unlock", async () => { });
+  lock = uiCommand2("Lock", async () => { }, { cls: "ignore-close" });
+  unlock = uiCommand2("Unlock", async () => { }, { cls: "ignore-close" });
   players = [
     { name: "Player X" },
     { name: "Player Y" },
