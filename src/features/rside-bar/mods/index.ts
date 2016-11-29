@@ -23,8 +23,12 @@ export class Index extends ServerTab<IModsTabModel> {
 
   async activate(model) {
     super.activate(model);
-    await this.refresh();
+    if (this.signaturesEnabled) {
+      await this.refresh();
+    }
   }
+
+  get signaturesEnabled() { return this.server.settings.verifySignatures; }
 
   async refresh() {
     const keys = await new GetKeys().handle(this.mediator);
