@@ -21,7 +21,7 @@ export class Index extends ServerTab<IMissionsTabModel> {
     await new UploadMission(file.name, dataUrl.substring(fr.result.indexOf(",") + 1)).handle(this.mediator);
     // todo; reset files
     await this.refresh();
-  }, { canExecuteObservable: this.whenAnyValue(x => x.files.length).map(x => x > 0) });
+  }, { cls: "ignore-close", canExecuteObservable: this.whenAnyValue(x => x.files.length).map(x => x > 0) });
 
   async activate(model) {
     super.activate(model);
@@ -62,6 +62,7 @@ class UploadMissionHandler extends DbQuery<UploadMission, void> {
 class DeleteMission extends VoidCommand { constructor(public fileName: string) { super(); } }
 
 @handlerFor(DeleteMission)
+@inject(W6Context, ServerFileUploader)
 class DeleteMissionHandler extends DbQuery<DeleteMission, void> {
   constructor(ctx: W6Context, private uploader: ServerFileUploader) { super(ctx); }
 
