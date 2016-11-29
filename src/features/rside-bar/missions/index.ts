@@ -1,20 +1,11 @@
-import { ITabModel, ServerTab } from "../rside-bar";
-import { DbQuery, Query, Command, VoidCommand, handlerFor, uiCommand2 } from "../../../framework"
+import { DbQuery, Query, VoidCommand, W6Context, handlerFor, uiCommand2 } from "../../../framework";
+import { ITabModel, ServerFileUploader, ServerTab } from "../rside-bar";
+import { inject } from "aurelia-framework";
 
 interface IMissionsTabModel extends ITabModel<any> { }
 
 export class Index extends ServerTab<IMissionsTabModel> {
   get missions() { return this.server.missions; }
-
-  async activate(model) {
-    super.activate(model);
-    await this.refresh();
-  }
-
-  async refresh() {
-    const missions = await new GetMissions().handle(this.mediator);
-    this.server.missions = missions.toMap(x => x);
-  }
 
   files: FileList;
 
@@ -32,6 +23,16 @@ export class Index extends ServerTab<IMissionsTabModel> {
     await this.refresh();
   }, { canExecuteObservable: this.whenAnyValue(x => x.files.length).map(x => x > 0) });
 
+  async activate(model) {
+    super.activate(model);
+    await this.refresh();
+  }
+
+  async refresh() {
+    const missions = await new GetMissions().handle(this.mediator);
+    this.server.missions = missions.toMap(x => x);
+  }
+
   async remove(m) {
     await new DeleteMission(m).handle(this.mediator);
     this.missions.delete(m);
@@ -41,30 +42,28 @@ export class Index extends ServerTab<IMissionsTabModel> {
 class GetMissions extends Query<string[]> { }
 
 @handlerFor(GetMissions)
+@inject(W6Context, ServerFileUploader)
 class GetMissionsHandler extends DbQuery<GetMissions, string[]> {
-  handle(request: GetMissions) {
-    return this.context.getCustom<string[]>("/server-manager/files");
-  }
+  constructor(ctx: W6Context, private uploader: ServerFileUploader) { super(ctx); }
+
+  handle(request: GetMissions) { return this.uploader.getFiles("missions", ".pbo"); }
 }
 
-class UploadMission extends VoidCommand {
-  constructor(public fileName: string, public fileContent: string) { super(); }
-}
+class UploadMission extends VoidCommand { constructor(public fileName: string, public fileContent: string) { super(); } }
 
 @handlerFor(UploadMission)
+@inject(W6Context, ServerFileUploader)
 class UploadMissionHandler extends DbQuery<UploadMission, void> {
-  handle(request: UploadMission) {
-    return this.context.postCustom<void>(`/server-manager/files/${request.fileName}`, { fileContent: request.fileContent });
-  }
+  constructor(ctx: W6Context, private uploader: ServerFileUploader) { super(ctx); }
+
+  handle(request: UploadMission) { return this.uploader.uploadFile("missions", request.fileName, request.fileContent); }
 }
 
-class DeleteMission extends VoidCommand {
-  constructor(public fileName: string) { super(); }
-}
+class DeleteMission extends VoidCommand { constructor(public fileName: string) { super(); } }
 
 @handlerFor(DeleteMission)
 class DeleteMissionHandler extends DbQuery<DeleteMission, void> {
-  handle(request: DeleteMission) {
-    return this.context.deleteCustom<void>(`/server-manager/files/${request.fileName}`);
-  }
+  constructor(ctx: W6Context, private uploader: ServerFileUploader) { super(ctx); }
+
+  handle(request: DeleteMission) { return this.uploader.deleteFile("missions", request.fileName); }
 }
