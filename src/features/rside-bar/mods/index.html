@@ -12,12 +12,28 @@
   <!--<hr />-->
 
   <div class="the-content" scroll.trigger="closeDropdowns()">
-    <ul>
+    <ul class="menu">
       <li repeat.for="[k, m] of mods">${m.name} <button class="ignore-close" click.delegate="remove(m)">X</button></li>
     </ul>
     <div if.bind="mods.size === 0">
       <i>No mods found, add some with the "Add to Server" button on Mod cards</i>
     </div>
+
+    <hr />
+
+    <h3>BI Keys</h3>
+    <i>Please note: bikeys from all the mods loaded on the server will be automatically added!</i>
+    <ul class="menu">
+      <li repeat.for="[k, m] of keys">${m} <button class="ignore-close" click.delegate="removeKey(m)">X</button></li>
+    </ul>
+
+    <hr />
+
+    <fileupload accept=".bikey" value.bind="files">Upload BIKey</fileupload>
+    <command-button model.bind="upload"></command-button>
+
+    <hr />
+
     <button class="naked-button default ignore-close" click.delegate="next()">Next</button>
     <button class="naked-button default ignore-close" click.delegate="done()">Done</button>
   </div>

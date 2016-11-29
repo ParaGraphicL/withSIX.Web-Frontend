@@ -135,6 +135,21 @@ export class ServerTab<TModel extends ITabModel<any>> extends ViewModel {
 
 
 
+@inject(W6Context)
+export class ServerFileUploader {
+  constructor(private context: W6Context) { }
+  uploadFile(directory: string, fileName: string, fileContent: string) {
+    return this.context.postCustom<void>(`/server-manager/files/${directory}/${fileName}`, { fileContent });
+  }
+  deleteFile(directory: string, fileName: string) {
+    return this.context.deleteCustom<void>(`/server-manager/files/${directory}/${fileName}`);
+  }
+  getFiles(directory: string, fileType: string) {
+    return this.context.getCustom<string[]>(`/server-manager/files/${directory}/${fileType}`);
+  }
+}
+
+
 // class GetServerData { }
 
 // class GetServerDataHandler extends DbQuery<GetServerData, Server> {
