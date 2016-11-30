@@ -47,17 +47,20 @@ export class Index extends ServerTab<IStatusTab> {
   get isRunning() { return this.jobState && this.jobState.state === State.GameIsRunning; }
   get hasActiveJob() { return !!this.server.currentJobId; }
 
-  start = uiCommand2("Start", () => this.handleHost(), { cls: "ignore-close" });
+  start = uiCommand2("Start", () => this.handleHost(), {
+    isVisibleObservable: this.observeEx(x => x.isRunning).map(x => !x),
+    cls: "ignore-close",
+  });
   stop = uiCommand2("Stop", () => new ChangeServerState(this.server.id, ServerAction.Stop).handle(this.mediator), {
-    canExecuteObservable: this.observeEx(x => x.isRunning),
+    isVisibleObservable: this.observeEx(x => x.isRunning),
     cls: "ignore-close",
   });
   cancel = uiCommand2("Cancel", () => new CancelJob(this.server.currentJobId).handle(this.mediator), {
     cls: "ignore-close",
-    isVisibleObservable: this.observeEx(x => x.hasActiveJob),
+    //isVisibleObservable: this.observeEx(x => x.hasActiveJob),
   });
   restart = uiCommand2("Restart", () => this.handleRestart(), {
-    canExecuteObservable: this.observeEx(x => x.isRunning),
+    isVisibleObservable: this.observeEx(x => x.isRunning),
     cls: "ignore-close",
   });
   prepare = uiCommand2("Prepare content and configs",
@@ -84,14 +87,20 @@ export class Index extends ServerTab<IStatusTab> {
       await new HostW6Server(this.w6.activeGame.id, this.server.id, ServerStore.serverToStorage(this.server)).handle(this.mediator);
     this.jobState = <any>{ state: State.Initializing };
 
+
+    setTimeout(async () => {
+      while (this.jobState.state < State.Failed) {
+        this.jobState = await new GetJobState(jobId).handle(this.mediator);
+        await new Promise(res => setTimeout(() => res(), 2000));
+      }
+    }, 0);
+
     while (this.jobState.state < State.GameIsRunning) {
-      this.jobState = await new GetJobState(jobId).handle(this.mediator);
       await new Promise(res => setTimeout(() => res(), 2000));
     }
     if (this.jobState.state === State.Failed) { throw new Error(`Job failed: ${this.jobState.message}`); }
-
     this.server.currentJobId = null;
-    //this.controller.ok();
+    this.jobState = null;
   }
 
   handleRestart = async () => {
