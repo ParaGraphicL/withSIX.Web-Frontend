@@ -20,14 +20,18 @@
     </div>
 
     <div if.bind="jobState">
-      This will take about 2-10 minutes, depending on the amount of Content you've selected.
       <h2>Progress</h2>
       <ul>
         <li>State: ${State[jobState.state]}</li>
         <li if.bind="jobState.address">
-          Address: ${jobState.address} ${timeLeft | time}
+          Address: ${jobState.address}
+        </li>
+        <li if.bind="jobState.endtime">
+          Ends
+          <time-ago time.bind="jobState.endtime"></time-ago>
         </li>
       </ul>
+      <i show.bind="jobState.state < 7000">This will take about 2-10 minutes, depending on the amount of Content you've selected and Server size.</i>
     </div>
 
     <hr />

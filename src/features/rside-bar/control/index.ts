@@ -3,7 +3,6 @@ import { uiCommand2, handlerFor, DbQuery, Command, Query, ServerStore, VoidComma
 
 interface IStatusTab extends ITabModel<any> { }
 
-
 enum State {
   Initializing,
 
@@ -11,8 +10,8 @@ enum State {
   PreparingConfiguration,
 
   Provisioning = 5000,
-  Provisioned,
-  ConnectionEstablished,
+  AwaitingBoot,
+  PreparingLaunch,
 
   LaunchingGame = 6000,
 
@@ -23,6 +22,8 @@ enum State {
   Failed = 9999,
   Cancelled = 10000,
   Shutdown = 50000
+
+  //End
 }
 
 enum ServerAction {
@@ -37,12 +38,11 @@ enum ServerAction {
 //}
 
 
-interface IJobInfo { address: string; state: State; message: string; }
+interface IJobInfo { address: string; state: State; message: string; endtime: Date }
 
 export class Index extends ServerTab<IStatusTab> {
   jobState: IJobInfo;
   State = State;
-  timeLeft: number;
 
   get isRunning() { return this.jobState && this.jobState.state === State.GameIsRunning; }
   get hasActiveJob() { return !!this.server.currentJobId; }
@@ -83,17 +83,12 @@ export class Index extends ServerTab<IStatusTab> {
     const jobId = this.server.currentJobId =
       await new HostW6Server(this.w6.activeGame.id, this.server.id, ServerStore.serverToStorage(this.server)).handle(this.mediator);
     this.jobState = <any>{ state: State.Initializing };
-    this.timeLeft = 60 * 60;
 
     while (this.jobState.state < State.GameIsRunning) {
       this.jobState = await new GetJobState(jobId).handle(this.mediator);
       await new Promise(res => setTimeout(() => res(), 2000));
     }
     if (this.jobState.state === State.Failed) { throw new Error(`Job failed: ${this.jobState.message}`); }
-    const iv = setInterval(() => {
-      this.timeLeft -= 1; // todo; use a time calc instead
-      if (this.timeLeft === 0) { clearInterval(iv); }
-    }, 1000);
 
     this.server.currentJobId = null;
     //this.controller.ok();
