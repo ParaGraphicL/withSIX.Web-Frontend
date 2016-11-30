@@ -93,6 +93,7 @@ export class Index extends ServerTab<IStatusTab> {
         this.jobState = await new GetJobState(jobId).handle(this.mediator);
         await new Promise(res => setTimeout(() => res(), 2000));
       }
+      this.jobState = null;
     }, 0);
 
     while (this.jobState.state < State.GameIsRunning) {
@@ -100,7 +101,6 @@ export class Index extends ServerTab<IStatusTab> {
     }
     if (this.jobState.state === State.Failed) { throw new Error(`Job failed: ${this.jobState.message}`); }
     this.server.currentJobId = null;
-    this.jobState = null;
   }
 
   handleRestart = async () => {
