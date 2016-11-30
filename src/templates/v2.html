@@ -13,7 +13,7 @@
     <side-bar view-model.ref="sideBar" id="sidebar" class="shell-bar ${sideBar.selectedTab ? 'active' : 'inactive'}"
       show.bind="showSidebar"></side-bar>
     <rside-bar view-model.ref="rsideBar" id="rsidebar" class="shell-bar ${rsideBar.selectedTab ? 'active' : 'inactive'}"
-      show.bind="rsideBar.visible" show-rsidebar.bind="rsideBar.visible"></rside-bar>
+      if.bind="features.serverHosting" show.bind="rsideBar.visible" show-rsidebar.bind="rsideBar.visible"></rside-bar>
 
     <section id="content-view" scroll.trigger="closeDropdowns()">
       <div click.delegate="closeTabs()">

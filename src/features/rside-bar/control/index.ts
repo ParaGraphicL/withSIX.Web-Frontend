@@ -1,5 +1,5 @@
 import { ITabModel, ServerTab } from "../rside-bar";
-import { uiCommand2, handlerFor, DbQuery, Command, Query, ServerStore } from "../../../framework";
+import { uiCommand2, handlerFor, DbQuery, Command, Query, ServerStore, VoidCommand } from "../../../framework";
 
 interface IStatusTab extends ITabModel<any> { }
 
@@ -23,9 +23,18 @@ enum State {
   Failed = 9999,
   Cancelled = 10000,
   Shutdown = 50000
-
-  //End
 }
+
+enum ServerAction {
+  Start,
+  Stop,
+  Prepare,
+  Restart // Incl Config+Content preparation
+}
+
+//enum JobAction {
+//  Cancel
+//}
 
 
 interface IJobInfo { address: string; state: State; message: string; }
@@ -37,19 +46,36 @@ export class Index extends ServerTab<IStatusTab> {
 
 
   start = uiCommand2("Start", () => this.handleHost(), { cls: "ignore-close" });
-  stop = uiCommand2("Stop", async () => { }, { cls: "ignore-close" });
-  restart = uiCommand2("Restart", async () => { }, { cls: "ignore-close" });
-  prepare = uiCommand2("Prepare content and configs", async () => { }, { cls: "ignore-close" });
-  status = "Stopped";
-  lock = uiCommand2("Lock", async () => { }, { cls: "ignore-close" });
-  unlock = uiCommand2("Unlock", async () => { }, { cls: "ignore-close" });
+  stop = uiCommand2("Stop", () => new ChangeServerState(this.server.id, ServerAction.Stop).handle(this.mediator), {
+    canExecuteObservable: this.observeEx(x => x.jobState).map(x => x && x.state === State.GameIsRunning),
+    cls: "ignore-close",
+  });
+  cancel = uiCommand2("Cancel", () => new CancelJob(this.server.currentJobId).handle(this.mediator), {
+    cls: "ignore-close",
+    isVisibleObservable: this.observeEx(x => x.server.currentJobId).map(x => !!x),
+  });
+  restart = uiCommand2("Restart", () => this.handleRestart(), {
+    canExecuteObservable: this.observeEx(x => x.jobState).map(x => x && x.state === State.GameIsRunning),
+    cls: "ignore-close",
+  });
+  prepare = uiCommand2("Prepare content and configs",
+    () => new ChangeServerState(this.server.id, ServerAction.Stop).handle(this.mediator), {
+      canExecuteObservable: this.observeEx(x => x.jobState).map(x => !x && (x.state === State.GameIsRunning)),
+      cls: "ignore-close",
+    });
+
+  lock = uiCommand2("Lock", async () => alert("TODO"), { cls: "ignore-close" });
+  unlock = uiCommand2("Unlock", async () => alert("TODO"), { cls: "ignore-close" });
+
   players = [
     { name: "Player X" },
     { name: "Player Y" },
   ];
 
   handleHost = async () => {
-    const jobId = await new HostW6Server(this.w6.activeGame.id, this.server.id, ServerStore.serverToStorage(this.server)).handle(this.mediator); //this.model.host(this.model);
+    // TODO: this should be: SaveServerChanges + ServerAction.Start
+    const jobId = this.server.currentJobId =
+      await new HostW6Server(this.w6.activeGame.id, this.server.id, ServerStore.serverToStorage(this.server)).handle(this.mediator);
     this.jobState = <any>{ state: State.Initializing };
     this.timeLeft = 60 * 60;
 
@@ -63,7 +89,12 @@ export class Index extends ServerTab<IStatusTab> {
       if (this.timeLeft === 0) { clearInterval(iv); }
     }, 1000);
 
+    this.server.currentJobId = null;
     //this.controller.ok();
+  }
+
+  handleRestart = async () => {
+    const jobId = this.server.currentJobId = await new ChangeServerState(this.server.id, ServerAction.Restart).handle(this.mediator);
   }
 }
 
@@ -78,11 +109,41 @@ class HostW6ServerHandler extends DbQuery<HostW6Server, string> {
   }
 }
 
+
+class GetServerState extends Query<IJobInfo> { constructor(public id: string) { super(); } }
+
+@handlerFor(GetServerState)
+class GetServerStateHandler extends DbQuery<GetServerState, IJobInfo> {
+  handle(request: GetServerState) {
+    return this.context.getCustom(`/server-manager/servers/${request.id}`);
+  }
+}
+
+class ChangeServerState extends Query<string> { constructor(public id: string, public action: ServerAction) { super(); } }
+
+@handlerFor(ChangeServerState)
+class ChangeServerStateHandler extends DbQuery<ChangeServerState, IJobInfo> {
+  handle(request: ChangeServerState) {
+    return this.context.postCustom(`/server-manager/servers/${request.id}`, { action: request.action });
+  }
+}
+
+
+
 class GetJobState extends Query<IJobInfo> { constructor(public id: string) { super(); } }
 
 @handlerFor(GetJobState)
 class GetJobStateHandler extends DbQuery<GetJobState, IJobInfo> {
   handle(request: GetJobState) {
     return this.context.getCustom(`/server-manager/jobs/${request.id}`);
+  }
+}
+
+class CancelJob extends VoidCommand { constructor(public id: string) { super(); } }
+
+@handlerFor(CancelJob)
+class CancelJobHandler extends DbQuery<CancelJob, IJobInfo> {
+  handle(request: CancelJob) {
+    return this.context.deleteCustom(`/server-manager/jobs/${request.id}`);
   }
 }

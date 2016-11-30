@@ -416,6 +416,8 @@ interface IArmaSettings {
 export class ManagedServer extends EntityExtends.BaseEntity {
   id: string;
 
+  currentJobId: string;
+
   location: ServerLocation = ServerLocation.WestEU;
   size: ServerSize = ServerSize.Normal;
   secondaries: { size: ServerSize }[] = [];
