@@ -39,7 +39,7 @@ export class Index extends ServerTab<ISetupTab> {
   calcCost() {
     let cost = this.sizeMap.get(this.m.size).cost;
     this.m.secondaries.forEach(x => cost += this.sizeMap.get(x.size).cost);
-    cost += this.m.additionalSlots / 10 * 5;
+    cost += this.m.additionalSlots;
     return cost;
   }
 
