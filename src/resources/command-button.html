@@ -7,7 +7,8 @@
       </slot>
       <span class="fa fa-spinner fa-spin" title.bind="name" if.bind="!noProcessing" show.bind="command.isExecuting"></span>
     </button>
-    <button if.bind="cancel" show.bind="command.isExecuting" command.bind="cancel" class="naked-button" title="Cancel">
+    <button if.bind="cancel" show.bind="command.isExecuting" command.bind="cancel" class="naked-button" cls.bind="cancel.cls"
+      title="Cancel">
       <span class="icon withSIX-icon-X"></span>
     </button>
   </conditional-title>
