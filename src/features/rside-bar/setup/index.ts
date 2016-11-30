@@ -30,7 +30,7 @@ export class Index extends ServerTab<ISetupTab> {
 
   private _selectedSize;
   get selectedSize() { return this._selectedSize; }
-  set selectedSize(value) { this._selectedSize = value; this.m.size = value.value; }
+  set selectedSize(value) { this._selectedSize = value; this.m.size = value.value; this.m.additionalSlots = 0; }
 
   get totalSlots() { return this.selectedSize.baseSlots + this.m.additionalSlots; }
 
@@ -39,7 +39,7 @@ export class Index extends ServerTab<ISetupTab> {
   calcCost() {
     let cost = this.sizeMap.get(this.m.size).cost;
     this.m.secondaries.forEach(x => cost += this.sizeMap.get(x.size).cost);
-    cost += this.m.additionalSlots;
+    cost += this.m.additionalSlots / 8 * 2;
     return cost;
   }
 
@@ -76,5 +76,4 @@ export class Index extends ServerTab<ISetupTab> {
   generatePassword(length) { return this.tools.Password.generate(length); } // return Math.random().toString(36).slice(-8); }
   generateServerPassword() { this.m.password = this.generatePassword(6); }
   generateAdminPassword() { this.m.adminPassword = this.generatePassword(8); }
-
 }

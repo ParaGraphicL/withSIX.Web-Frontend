@@ -47,7 +47,7 @@
 
       <rangeboxadv value.bind="m.additionalSlots" step.one-time="12" min.one-time="0" max.bind="selectedSize.maxSlots - selectedSize.baseSlots"
         if.bind="selectedSize.baseSlots !== selectedSize.maxSlots">
-        Additional slots (1/slot)
+        Additional slots@2/pack of 8 slots
       </rangeboxadv>
 
       ${m.additionalSlots} additional slots
@@ -59,7 +59,7 @@
             <selectbox value.bind="s.size" options.bind="sizes">
               HC Size
               <template replace-part="item-template">
-                <option model.bind="o.value">${o.title || o} ${o.cost}/hr ${o.baseSlots} slots</option>
+                <option model.bind="o.value">${o.title || o}@${o.cost}/hr ${o.baseSlots} slots</option>
               </template>
             </selectbox>
             <button class="ignore-close" click.delegate="removeSecondary(s)">X</button>
@@ -71,12 +71,13 @@
 
       <hr />
 
-      <div>Available credit: ${credit} SU</div>
+      <div>Available credits: ${credit}</div>
       <div>Runtime with this setup: ${hours | time}</div>
       <div>${totalSlots} total slots</div>
     </form>
 
     <hr />
+
     <command-button clss="default" model.bind="next"></command-button>
     <command-button clss="default" model.bind="done"></command-button>
   </div>
