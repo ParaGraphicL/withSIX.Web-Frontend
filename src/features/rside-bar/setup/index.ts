@@ -26,6 +26,10 @@ export class Index extends ServerTab<ISetupTab> {
     { value: ServerLocation.WestUS, title: "West US" },
   ];
   sizeMap = this.sizes.toMap(x => x.value);
+  addHc = uiCommand2("Add headless client", async () => this.addSecondary(), { cls: "ignore-close" });
+
+
+  get m() { return this.server; };
 
   calcCost() {
     let cost = this.sizeMap.get(this.m.size).cost;
@@ -59,12 +63,10 @@ export class Index extends ServerTab<ISetupTab> {
     });
   }
 
-  addHc = uiCommand2("Add headless client", async () => this.addSecondary());
   addSecondary() { this.m.secondaries.push({ size: ServerSize.Normal }); }
   removeSecondary(s) { this.m.secondaries.removeEl(s); }
   generatePassword(length) { return this.tools.Password.generate(length); } // return Math.random().toString(36).slice(-8); }
   generateServerPassword() { this.m.password = this.generatePassword(6); }
   generateAdminPassword() { this.m.adminPassword = this.generatePassword(8); }
 
-  get m() { return this.server; };
 }
