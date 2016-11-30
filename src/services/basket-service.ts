@@ -398,6 +398,8 @@ interface IManagedServer {
   size: ServerSize;
   secondaries: { size: ServerSize }[];
 
+  additionalSlots: number;
+
   name: string;
   password: string;
   adminPassword: string;
@@ -421,6 +423,8 @@ export class ManagedServer extends EntityExtends.BaseEntity {
   location: ServerLocation = ServerLocation.WestEU;
   size: ServerSize = ServerSize.Normal;
   secondaries: { size: ServerSize }[] = [];
+
+  additionalSlots = 0;
 
   name: string;
   password: string;
@@ -542,6 +546,7 @@ export class ServerStore {
   public static storageToServer(s: IManagedServer): ManagedServer {
     return new ManagedServer({
       adminPassword: s.adminPassword,
+      additionaSlots: s.additionalSlots,
       id: s.id,
       location: s.location,
       missions: s.missions.toMap(x => x.id),
@@ -557,6 +562,7 @@ export class ServerStore {
   public static serverToStorage(s: ManagedServer): IManagedServer {
     return {
       adminPassword: s.adminPassword,
+      additionalSlots: s.additionalSlots,
       id: s.id,
       location: s.location,
       missions: Array.from(s.missions.values()),

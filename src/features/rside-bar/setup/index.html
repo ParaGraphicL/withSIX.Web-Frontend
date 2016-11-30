@@ -36,12 +36,21 @@
         </template>
       </selectbox>
 
-      <selectbox value.bind="m.size" options.bind="sizes">
+      <selectbox value.bind="selectedSize" options.bind="sizes">
         Server Size
         <template replace-part="item-template">
-          <option model.bind="o.value">${o.title || o}</option>
+          <option model.bind="o">${o.title || o} ${o.cost}/hr ${o.baseSlots} slots</option>
         </template>
       </selectbox>
+
+      <br />
+
+      <rangeboxadv value.bind="m.additionalSlots" step.one-time="12" min.one-time="0" max.bind="selectedSize.maxSlots - selectedSize.baseSlots"
+        if.bind="selectedSize.baseSlots !== selectedSize.maxSlots">
+        Additional slots (1/slot)
+      </rangeboxadv>
+
+      ${m.additionalSlots} additional slots
 
       <div>
         <div show.bind="m.secondaries.length > 0">
@@ -50,7 +59,7 @@
             <selectbox value.bind="s.size" options.bind="sizes">
               HC Size
               <template replace-part="item-template">
-                <option model.bind="o.value">${o.title || o}</option>
+                <option model.bind="o.value">${o.title || o} ${o.cost}/hr ${o.baseSlots} slots</option>
               </template>
             </selectbox>
             <button class="ignore-close" click.delegate="removeSecondary(s)">X</button>
@@ -62,8 +71,9 @@
 
       <hr />
 
-      <div title="Server Units. 1 SU = 1hr of Normal sized server">Available credit: ${credit} SU</div>
+      <div>Available credit: ${credit} SU</div>
       <div>Runtime with this setup: ${hours | time}</div>
+      <div>${totalSlots} total slots</div>
     </form>
 
     <hr />
