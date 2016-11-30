@@ -11,11 +11,20 @@ enum State {
   PreparingConfiguration,
 
   Provisioning = 5000,
+  Provisioned,
+  ConnectionEstablished,
 
-  Launching = 6000,
+  LaunchingGame = 6000,
 
-  Running = 9998,
-  Failed = 9999
+  GameIsRunning = 7000,
+  StoppingGame,
+  GameExited,
+
+  Failed = 9999,
+  Cancelled = 10000,
+  Shutdown = 50000
+
+  //End
 }
 
 
@@ -40,11 +49,11 @@ export class Index extends ServerTab<IStatusTab> {
   ];
 
   handleHost = async () => {
-    const jobId = await new HostW6Server(this.w6.activeGame.id, ServerStore.serverToStorage(this.server)).handle(this.mediator); //this.model.host(this.model);
+    const jobId = await new HostW6Server(this.w6.activeGame.id, this.server.id, ServerStore.serverToStorage(this.server)).handle(this.mediator); //this.model.host(this.model);
     this.jobState = <any>{ state: State.Initializing };
     this.timeLeft = 60 * 60;
 
-    while (this.jobState.state < State.Running) {
+    while (this.jobState.state < State.GameIsRunning) {
       this.jobState = await new GetJobState(jobId).handle(this.mediator);
       await new Promise(res => setTimeout(() => res(), 2000));
     }
@@ -59,7 +68,7 @@ export class Index extends ServerTab<IStatusTab> {
 }
 
 class HostW6Server extends Command<string> {
-  constructor(public gameId: string, public serverInfo) { super(); }
+  constructor(public gameId: string, public id: string, public serverInfo) { super(); }
 }
 
 @handlerFor(HostW6Server)
