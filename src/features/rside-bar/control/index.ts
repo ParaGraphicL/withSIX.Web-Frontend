@@ -60,7 +60,7 @@ export class Index extends ServerTab<IStatusTab> {
   });
   prepare = uiCommand2("Prepare content and configs",
     () => new ChangeServerState(this.server.id, ServerAction.Stop).handle(this.mediator), {
-      canExecuteObservable: this.observeEx(x => x.jobState).map(x => !x && (x.state === State.GameIsRunning)),
+      canExecuteObservable: this.observeEx(x => x.jobState).map(x => !x || (x.state === State.GameIsRunning)),
       cls: "ignore-close",
     });
 

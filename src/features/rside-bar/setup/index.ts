@@ -13,19 +13,23 @@ interface ISetupTab extends ITabModel<ISetup> { }
 
 export class Index extends ServerTab<ISetupTab> {
   hours: number;
-  credit = 4; // TODO
+  credit = 40; // TODO
 
   sizes = [
-    { value: ServerSize.Small, title: ServerSize[ServerSize.Small] + " (Single core, 3.5GB) 0.5SU/hr", cost: 0.5 },
-    { value: ServerSize.Normal, title: ServerSize[ServerSize.Normal] + " (Dual core, 7GB) 1SU/hr", cost: 1 },
-    { value: ServerSize.Large, title: ServerSize[ServerSize.Large] + " (Quad core, 14GB) 2SU/hr", cost: 2 },
-    { value: ServerSize.VeryLarge, title: ServerSize[ServerSize.VeryLarge] + " (Octo core, 28GB) 4SU/hr", cost: 4 },
+    { value: ServerSize.Small, title: ServerSize[ServerSize.Small] + " (Single core, 3.5GB) 0.5SU/hr", cost: 5 },
+    { value: ServerSize.Normal, title: ServerSize[ServerSize.Normal] + " (Dual core, 7GB) 1SU/hr", cost: 10 },
+    { value: ServerSize.Large, title: ServerSize[ServerSize.Large] + " (Quad core, 14GB) 2SU/hr", cost: 20 },
+    //{ value: ServerSize.VeryLarge, title: ServerSize[ServerSize.VeryLarge] + " (Octo core, 28GB) 4SU/hr", cost: 4 },
   ];
   locations = [
     { value: ServerLocation.WestEU, title: "West Europe" },
     { value: ServerLocation.WestUS, title: "West US" },
   ];
   sizeMap = this.sizes.toMap(x => x.value);
+  addHc = uiCommand2("Add headless client", async () => this.addSecondary(), { cls: "ignore-close" });
+
+
+  get m() { return this.server; };
 
   calcCost() {
     let cost = this.sizeMap.get(this.m.size).cost;
@@ -59,12 +63,10 @@ export class Index extends ServerTab<ISetupTab> {
     });
   }
 
-  addHc = uiCommand2("Add headless client", async () => this.addSecondary());
   addSecondary() { this.m.secondaries.push({ size: ServerSize.Normal }); }
   removeSecondary(s) { this.m.secondaries.removeEl(s); }
   generatePassword(length) { return this.tools.Password.generate(length); } // return Math.random().toString(36).slice(-8); }
   generateServerPassword() { this.m.password = this.generatePassword(6); }
   generateAdminPassword() { this.m.adminPassword = this.generatePassword(8); }
 
-  get m() { return this.server; };
 }

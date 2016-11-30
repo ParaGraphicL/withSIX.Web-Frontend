@@ -574,8 +574,7 @@ export enum ServerSize {
   VerySmall = -2,
   Small = -1,
   Normal = 0,
-  Large,
-  VeryLarge
+  Large
 }
 
 export enum ServerLocation {
