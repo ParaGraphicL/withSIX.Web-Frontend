@@ -13,13 +13,13 @@ interface ISetupTab extends ITabModel<ISetup> { }
 
 export class Index extends ServerTab<ISetupTab> {
   hours: number;
-  credit = 4; // TODO
+  credit = 40; // TODO
 
   sizes = [
-    { value: ServerSize.Small, title: ServerSize[ServerSize.Small] + " (Single core, 3.5GB) 0.5SU/hr", cost: 0.5 },
-    { value: ServerSize.Normal, title: ServerSize[ServerSize.Normal] + " (Dual core, 7GB) 1SU/hr", cost: 1 },
-    { value: ServerSize.Large, title: ServerSize[ServerSize.Large] + " (Quad core, 14GB) 2SU/hr", cost: 2 },
-    { value: ServerSize.VeryLarge, title: ServerSize[ServerSize.VeryLarge] + " (Octo core, 28GB) 4SU/hr", cost: 4 },
+    { value: ServerSize.Small, title: ServerSize[ServerSize.Small] + " (Single core, 3.5GB) 0.5SU/hr", cost: 5 },
+    { value: ServerSize.Normal, title: ServerSize[ServerSize.Normal] + " (Dual core, 7GB) 1SU/hr", cost: 10 },
+    { value: ServerSize.Large, title: ServerSize[ServerSize.Large] + " (Quad core, 14GB) 2SU/hr", cost: 20 },
+    //{ value: ServerSize.VeryLarge, title: ServerSize[ServerSize.VeryLarge] + " (Octo core, 28GB) 4SU/hr", cost: 4 },
   ];
   locations = [
     { value: ServerLocation.WestEU, title: "West Europe" },
