@@ -13,12 +13,12 @@ interface ISetupTab extends ITabModel<ISetup> { }
 
 export class Index extends ServerTab<ISetupTab> {
   hours: number;
-  credit = 40; // TODO
+  credit = 20; // TODO
 
   sizes = [
-    { value: ServerSize.Small, title: ServerSize[ServerSize.Small] + " (Single core, 3.5GB) 0.5SU/hr", cost: 5 },
-    { value: ServerSize.Normal, title: ServerSize[ServerSize.Normal] + " (Dual core, 7GB) 1SU/hr", cost: 10 },
-    { value: ServerSize.Large, title: ServerSize[ServerSize.Large] + " (Quad core, 14GB) 2SU/hr", cost: 20 },
+    { value: ServerSize.Small, title: ServerSize[ServerSize.Small] + " (Single core, 3.5GB)", cost: 5, baseSlots: 12, maxSlots: 12 },
+    { value: ServerSize.Normal, title: ServerSize[ServerSize.Normal] + " (Dual core, 7GB)", cost: 10, baseSlots: 32, maxSlots: 64 },
+    { value: ServerSize.Large, title: ServerSize[ServerSize.Large] + " (Quad core, 14GB)", cost: 20, baseSlots: 64, maxSlots: 256 },
     //{ value: ServerSize.VeryLarge, title: ServerSize[ServerSize.VeryLarge] + " (Octo core, 28GB) 4SU/hr", cost: 4 },
   ];
   locations = [
@@ -28,12 +28,18 @@ export class Index extends ServerTab<ISetupTab> {
   sizeMap = this.sizes.toMap(x => x.value);
   addHc = uiCommand2("Add headless client", async () => this.addSecondary(), { cls: "ignore-close" });
 
+  private _selectedSize;
+  get selectedSize() { return this._selectedSize; }
+  set selectedSize(value) { this._selectedSize = value; this.m.size = value.value; }
+
+  get totalSlots() { return this.selectedSize.baseSlots + this.m.additionalSlots; }
 
   get m() { return this.server; };
 
   calcCost() {
     let cost = this.sizeMap.get(this.m.size).cost;
     this.m.secondaries.forEach(x => cost += this.sizeMap.get(x.size).cost);
+    cost += this.m.additionalSlots / 10 * 5;
     return cost;
   }
 
@@ -42,6 +48,7 @@ export class Index extends ServerTab<ISetupTab> {
 
   async activate(model: ISetupTab) {
     super.activate(model);
+    this._selectedSize = this.sizes.filter(x => x.value === this.m.size)[0];
 
     this.validation = this.validation
       .ensure('m.name')
@@ -56,6 +63,7 @@ export class Index extends ServerTab<ISetupTab> {
     this.subscriptions.subd(d => {
       const rxl = this.listFactory.getList(this.m.secondaries, ["size"]);
       d(this.whenAny(x => x.m.size)
+        .merge(this.whenAny(x => x.m.additionalSlots))
         .merge(this.whenAny(x => x.credit))
         .merge(rxl.modified)
         .map(_ => this.calcHours())
