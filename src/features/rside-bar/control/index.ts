@@ -122,6 +122,12 @@ export class Index extends ServerTab<IStatusTab> {
 
   handleRestart = async () => {
     const jobId = this.server.currentJobId = await new ChangeServerState(this.server.id, ServerAction.Restart).handle(this.mediator);
+    while (this.jobState.state >= State.GameIsRunning) {
+      await new Promise(res => setTimeout(() => res(), 2000));
+    }
+    while (this.jobState.state < State.GameIsRunning) {
+      await new Promise(res => setTimeout(() => res(), 2000));
+    }
   }
 }
 
