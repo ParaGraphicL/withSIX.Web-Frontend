@@ -51,11 +51,11 @@ export class Index extends ServerTab<IStatusTab> {
     isVisibleObservable: this.observeEx(x => x.isRunning).map(x => !x),
     cls: "ignore-close",
   });
-  stop = uiCommand2("Stop", () => new ChangeServerState(this.server.id, ServerAction.Stop).handle(this.mediator), {
+  stop = uiCommand2("Stop", () => this.handleStop(), {
     isVisibleObservable: this.observeEx(x => x.isRunning),
     cls: "ignore-close",
   });
-  cancel = uiCommand2("Cancel", () => new CancelJob(this.server.currentJobId).handle(this.mediator), {
+  cancel = uiCommand2("Cancel", () => this.cancelJob(), {
     cls: "ignore-close",
     //isVisibleObservable: this.observeEx(x => x.hasActiveJob),
   });
@@ -80,6 +80,20 @@ export class Index extends ServerTab<IStatusTab> {
     { name: "Player X" },
     { name: "Player Y" },
   ];
+
+  cancelJob = async () => {
+    await new CancelJob(this.server.currentJobId).handle(this.mediator);
+    while (this.jobState.state < State.Failed) {
+      await new Promise(res => setTimeout(() => res(), 2000));
+    }
+  }
+
+  handleStop = async () => {
+    await new ChangeServerState(this.server.id, ServerAction.Stop).handle(this.mediator);
+    while (this.jobState.state < State.Failed) {
+      await new Promise(res => setTimeout(() => res(), 2000));
+    }
+  }
 
   handleHost = async () => {
     // TODO: this should be: SaveServerChanges + ServerAction.Start
