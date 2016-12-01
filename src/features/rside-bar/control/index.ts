@@ -10,18 +10,21 @@ enum State {
   PreparingConfiguration,
 
   Provisioning = 5000,
-  AwaitingBoot,
+  InstancesRunning,
   PreparingLaunch,
 
   LaunchingGame = 6000,
 
   GameIsRunning = 7000,
-  StoppingGame,
+
+  Cancelling = 8000,
+
+  StoppingInstances,
   GameExited,
 
   Failed = 9999,
   Cancelled = 10000,
-  Shutdown = 50000
+  InstancesShutdown = 50000
 
   //End
 }
