@@ -16,32 +16,33 @@ export class Index extends ServerTab<IStatusTab> {
     get isRunning() { return this.jobState && this.jobState.state === ServerState.GameIsRunning; }
     get hasActiveJob() { return !!this.server.currentJobId; }
 
-    get canStart() { return this.jobState && (this.jobState.state === ServerState.Initializing || this.jobState.state >= ServerState.Failed); }
+    get canStart() {
+        return this.jobState && (this.jobState.state === ServerState.Initializing || this.jobState.state >= ServerState.Failed);
+    }
+    get canPrepare() {
+        return this.jobState && (this.jobState.state === ServerState.Initializing
+            || this.jobState.state === ServerState.GameIsRunning || this.jobState.state >= ServerState.Failed);
+    }
 
     start = uiCommand2("Start", () => this.handleStart(), {
-        isVisibleObservable: this.observeEx(x => x.canStart),
+        canExecuteObservable: this.observeEx(x => x.canStart),
         cls: "ignore-close",
     });
     // TODO: Stop as a Cancel of Start
     stop = uiCommand2("Stop", () => this.handleStop(), {
-        isVisibleObservable: this.observeEx(x => x.isRunning),
+        canExecuteObservable: this.observeEx(x => x.isRunning),
         cls: "ignore-close",
     });
-    /*
-    cancel = uiCommand2("Cancel", () => this.cancelJob(), {
-        cls: "ignore-close",
-        //isVisibleObservable: this.observeEx(x => x.hasActiveJob),
-    });
-    */
     restart = uiCommand2("Restart", () => this.handleRestart(), {
-        isVisibleObservable: this.observeEx(x => x.isRunning),
+        canExecuteObservable: this.observeEx(x => x.isRunning),
         cls: "ignore-close",
     });
     prepare = uiCommand2("Prepare content and configs",
         () => this.handlePrepare(), {
-            canExecuteObservable: this.observeEx(x => x.jobState).map(x => !x || (x.state === ServerState.GameIsRunning)),
+            canExecuteObservable: this.observeEx(x => x.canPrepare),
             cls: "ignore-close",
         });
+
     lock = uiCommand2("Lock", async () => alert("TODO"), {
         cls: "ignore-close", isVisibleObservable: this.observeEx(x => x.isRunning),
     });
