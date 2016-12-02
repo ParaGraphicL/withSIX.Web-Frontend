@@ -73,7 +73,9 @@ export class Index extends ServerTab<IStatusTab> {
     handleStop = () => new StopServer(this.server.id).handle(this.mediator);
 
     async saveChanges() {
-        this.server.currentJobId = await new CreateOrUpdateServer(this.w6.activeGame.id, this.server.id, ServerStore.serverToStorage(this.server)).handle(this.mediator);
+        this.server.currentJobId =
+            await new CreateOrUpdateServer(this.w6.activeGame.id, this.server.id,
+                ServerStore.serverToStorage(this.server)).handle(this.mediator);
     }
 }
 

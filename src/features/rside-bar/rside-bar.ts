@@ -118,7 +118,7 @@ export class ServerTab<TModel extends ITabModel<any>> extends ViewModel {
     this.next = uiCommand2("Next", async () => {
       if (! await this.tryValidate()) { return; }
       this.model.next(this.model);
-    }, { canExecuteObservable: this.observeEx(x => x.isValid) });
+    }, { cls: "default ignore-close" });
   }
 
   async tryValidate() {
