@@ -27,8 +27,7 @@
       <checkbox value.bind="m.enableDefaultSecurity">Enable security best practices</checkbox>
       <checkbox value.bind="m.allowedFilePatching">Allow FilePatching</checkbox>
     </form>
-    <button class="naked-button default ignore-close" click.delegate="next()">Next</button>
-    <button class="naked-button default ignore-close" click.delegate="done()">Done</button>
+    <command-button model.bind="next"></command-button>
   </div>
 
 </template>
