@@ -264,12 +264,9 @@ button.anchor {
   &::-moz-focus-inner {
     border: 0;
   }
-  &:hover:enabled {
-    color: $colorSixGray;
-  }
 }
 
-button.anchor[disabled="disabled"] {
+button.anchor:disabled {
   color: $colorSixGray;
 }
 
