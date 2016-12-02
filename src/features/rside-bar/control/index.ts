@@ -16,8 +16,10 @@ export class Index extends ServerTab<IStatusTab> {
     get isRunning() { return this.jobState && this.jobState.state === ServerState.GameIsRunning; }
     get hasActiveJob() { return !!this.server.currentJobId; }
 
+    get canStart() { return this.jobState && (this.jobState.state === ServerState.Initializing || this.jobState.state >= ServerState.Failed); }
+
     start = uiCommand2("Start", () => this.handleStart(), {
-        isVisibleObservable: this.observeEx(x => x.isRunning).map(x => !x),
+        isVisibleObservable: this.observeEx(x => x.canStart),
         cls: "ignore-close",
     });
     // TODO: Stop as a Cancel of Start
