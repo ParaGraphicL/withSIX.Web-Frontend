@@ -187,7 +187,11 @@ export class W6Context {
 
     try {
       return await polly()
-        .handle(err => true) // TODO: Handle specific errors only 
+        .handle(err => {
+          const r = <any>err;
+          if (r.status && r.status < 500) return false;
+          return true;
+        }) // TODO: Handle specific errors only 
         .waitAndRetry(3)
         .executeForPromise(() => this.http.fetch(url, configOverride));
     } catch (err) {
