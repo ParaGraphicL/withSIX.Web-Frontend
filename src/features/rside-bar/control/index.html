@@ -16,7 +16,7 @@
       <command-button model.bind="start"></command-button>
       <command-button model.bind="stop"></command-button>
       <command-button model.bind="restart"></command-button>
-      <command-button model.bind="prepare"></command-button>
+      <command-button model.bind="prepare" if.one-time="features.isTestEnvironment"></command-button>
     </div>
 
     <div if.bind="jobState && jobState.state">
@@ -34,13 +34,15 @@
       <i show.bind="jobState.state < 7000">This will take about 2-10 minutes, depending on the amount of Content you've selected and Server size.</i>
     </div>
 
-    <hr />
-    <command-button model.bind="lock"></command-button>
-    <command-button model.bind="unlock"></command-button>
-    <h3>Players</h3>
-    <ul>
-      <li repeat.for="p of players">${p.name} <button>Kick</button> <button>Ban</button></li>
-    </ul>
+    <div if.bind="features.serverRemoteControl">
+      <hr />
+      <command-button model.bind="lock"></command-button>
+      <command-button model.bind="unlock"></command-button>
+      <h3>Players</h3>
+      <ul>
+        <li repeat.for="p of players">${p.name} <button>Kick</button> <button>Ban</button></li>
+      </ul>
+    </div>
   </div>
 
   <!--<button class="naked-button default bottom" click.delegate="openLibrary()">Open Full Library</button>-->

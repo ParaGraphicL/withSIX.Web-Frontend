@@ -264,7 +264,7 @@ button.anchor {
   &::-moz-focus-inner {
     border: 0;
   }
-  &:hover {
+  &:hover:enabled {
     color: $colorSixGray;
   }
 }
@@ -540,7 +540,7 @@ button.calltoaction {
           text-decoration: none;
           font-size: $font-size-small;
           @include basictransition;
-          &:hover {
+          &:hover:enabled {
             background-color: $attentioncolor;
             @include basictransition;
           }
@@ -584,7 +584,7 @@ button.calltoaction {
     button {
       text-decoration: none;
       color: $color0;
-      &:hover {
+      &:hover:enabled {
         color: $color5;
       }
     }
@@ -652,7 +652,7 @@ button.calltoaction {
               padding-left: 16px;
               padding-right: 16px;
               display: block;
-              &:hover {
+              &:hover:enabled {
                 background-color: $color1;
               }
             }
@@ -662,7 +662,7 @@ button.calltoaction {
               text-align: left;
               background-color: $color0;
               transition: none;
-              &:hover {
+              &:hover:enabled {
                 background-color: $color1;
                 color: $color3;
                 transition: none;
@@ -1464,6 +1464,10 @@ button {
     border: 0;
     color: white;
     outline-style: none;
+    &:disabled {
+      cursor: default;
+      opacity: 0.45;
+    }
   }
   &.text-button {
     color: inherit;
@@ -1471,9 +1475,6 @@ button {
     border: 0;
     box-shadow: none;
     outline-style: none;
-    // &:hover {
-    //   color: $colorSixDarkGray;
-    // }
     &:disabled {
       cursor: default;
       opacity: 0.45;

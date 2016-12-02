@@ -28,7 +28,7 @@
         <tab-view view-model.ref="tabView" id="top-right-tabs" orientation="top" tabs.bind="tabs" selected-tab.bind="selectedTab"
           render-view="">
           <button class="login" click.delegate="login.login()" title="or register" if.bind="!isLoggedIn" slot="start">Login</button>
-          <button class="server-toggle" slot="middle" click.delegate="toggleServer()" if.bind="features.createServers">
+          <button class="server-toggle" slot="middle" click.delegate="toggleServer()" if.bind="features.serverHosting">
             Servers
           </button>
         </tab-view>
