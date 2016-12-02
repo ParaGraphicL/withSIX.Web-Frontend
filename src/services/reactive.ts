@@ -367,3 +367,16 @@ export class AllSignalCombiner implements IDisposable {
 
   dispose() { this.signal.unsubscribe(); }
 }
+
+
+export class CancelTokenSource {
+  token: ICancellationToken;
+  constructor() {
+    this.token = { isCancellationRequested: false };
+  }
+  cancel() { this.token.isCancellationRequested = true; }
+}
+
+export interface ICancellationToken {
+  isCancellationRequested: boolean;
+}

@@ -6,6 +6,7 @@ import { Toastr } from './toastr';
 import { ObservableEventAggregator } from './reactive';
 import { W6 } from './withSIX';
 import { BasketType, IBasketModel, IBasketItem, BasketState, IBasketCollection, IBaskets } from './legacy/baskets';
+import { createError } from "../helpers/utils/errors";
 import { EntityExtends } from "./entity-extends";
 import { W6Context } from './w6context';
 import { ContentHelper } from './helpers';
@@ -415,6 +416,144 @@ interface IArmaSettings {
   persistent: boolean; disableVon: boolean; drawingInMap: boolean; forceRotorLibSimulation: boolean;
 }
 
+export interface IServerClient {
+  servers: ServersApi;
+}
+
+//const OperationCancelledException = createError("OperationCancelledException", Tools.AbortedException);
+const OperationFailedException = createError("OperationFailedException");
+
+abstract class ApiBase {
+  constructor(private ctx: W6Context, private basePath: string) { }
+
+  // TODO: Location based job redir
+  protected _get<T>(path: string) { return this.ctx.getCustom<T>(`${this.basePath}${path}`); }
+  protected _delete<T>(path: string) { return this.ctx.deleteCustom<T>(`${this.basePath}${path}`); }
+  protected _post<T>(path: string, data?) { return this.ctx.postCustom<T>(`${this.basePath}${path}`, data); }
+
+  protected delay(delay: number) { return new Promise((res) => setTimeout(res, delay)); }
+
+  protected async _pollOperationState<T>(id: string, operationId: string, ct?: Promise<void>) {
+    let status: IOperationStatusT<T> = { state: OperationState.Queued, result: null };
+
+    let cancelled = false;
+    if (ct) { ct.then(_ => cancelled = true); }
+
+    while (!cancelled && status.state < OperationState.Completed) {
+      //try {
+      status = await this.getOperation<T>(id, operationId);
+      //} catch (err) {
+      // todo
+      //}
+      await this.delay(2000);
+    }
+    if (cancelled && status.state < OperationState.Completed) {
+      await this.cancelOperation(id, operationId);
+      status.state = OperationState.Cancelled;
+    }
+    if (status.state !== OperationState.Completed) {
+      if (status.state === OperationState.Cancelled) { throw new Tools.AbortedException(status.message); }
+      throw new OperationFailedException(`Operation did not succeed: ${OperationState[status.state]} ${status.message}`);
+    }
+    return status.result;
+  }
+
+  private cancelOperation(id: string, operationId: string) { return this._delete(`/${id}/operations/${operationId}`); }
+  private getOperation<T>(id: string, operationId: string) { return this._get<IOperationStatusT<T>>(`/${id}/operations/${operationId}`); }
+}
+
+enum OperationState {
+  Queued,
+  Progressing,
+  Completed,
+  Cancelled,
+  Failed
+}
+
+interface IOperationStatus {
+  state: OperationState;
+  message?: string;
+  progress?: number;
+}
+
+interface IOperationStatusT<T> extends IOperationStatus {
+  result: T;
+}
+
+export interface IServerSession { address: string; state: ServerState; message: string; endtime: Date }
+
+export interface IHostedServer {
+  id: string;
+  name: string;
+  password: string;
+  adminPassword: string;
+  // etc
+}
+
+class ServersApi extends ApiBase {
+  constructor(ctx: W6Context) { super(ctx, "/server-manager/servers"); }
+
+  async createOrUpdate(server) {
+    // TODO: Creation/Updating could be a long running op, in such case we should adopt the same Operation model as the actions (start/stop etc)
+    const opId = await this._post<string>(`/`, server);
+    return await this.get(opId);
+  }
+
+  get(id: string) { return this._get<IHostedServer>(`/${id}`); }
+  session(id: string) { return this._get<IServerSession>(`/${id}/session`); }
+
+  start(id: string, ct?: Promise<void>) { return this.changeState(id, "start", ct); }
+  stop(id: string, ct?: Promise<void>) { return this.changeState(id, "stop", ct); }
+  restart(id: string, ct?: Promise<void>) { return this.changeState(id, "restart", ct); }
+  prepare(id: string, ct?: Promise<void>) { return this.changeState(id, "prepare", ct); }
+
+  private async changeState(id: string, action: string, ct?: Promise<void>) {
+    const operationId = await this._post<string>(`/${id}/${action}`);
+    await this._pollOperationState(id, operationId, ct);
+  }
+}
+
+@inject(W6Context)
+export class ServerClient implements IServerClient {
+  servers: ServersApi;
+  constructor(ctx: W6Context) {
+    this.servers = new ServersApi(ctx);
+  }
+}
+
+export enum ServerState {
+  Initializing,
+
+  PreparingContent,
+  PreparingConfiguration,
+
+  Provisioning = 5000,
+  InstancesRunning,
+  PreparingLaunch,
+
+  LaunchingGame = 6000,
+
+  GameIsRunning = 7000,
+
+  Cancelling = 8000,
+
+  StoppingInstances,
+  GameExited,
+
+  Failed = 9999,
+  Cancelled = 10000,
+  InstancesShutdown = 50000
+
+  //End
+}
+
+export enum ServerAction {
+  Start,
+  Stop,
+  Prepare,
+  Restart // Incl Config+Content preparation
+}
+
 export class ManagedServer extends EntityExtends.BaseEntity {
   id: string;
 
@@ -435,10 +574,34 @@ export class ManagedServer extends EntityExtends.BaseEntity {
 
   mods: Map<string, any> = new Map<string, any>();
   missions: Map<string, any> = new Map<string, any>();
+  state: IServerSession;
+  interval = 2 * 1000; // todo; adjust interval based on state, also should restart on each action?
 
   constructor(private data) {
     super();
+    this.state = this.getDefaultState();
     Object.assign(this, data);
+  }
+
+  getDefaultState() { return <any>{ state: ServerState.Initializing }; }
+
+  monitor(client: IServerClient, ct: { isCancellationRequested: boolean }) {
+    return new Promise<void>(async (res, rej) => {
+      try {
+        while (!ct.isCancellationRequested) {
+          try {
+            const session = await client.servers.session(this.id);
+            this.state = session;
+          } catch (err) {
+            if (err.status === 404) { this.state = this.getDefaultState(); }
+          }
+          await new Promise((res2) => setTimeout(res2, this.interval));
+        }
+      } catch (err) {
+        rej(err);
+      }
+      res();
+    });
   }
 
   toggleMod(mod: { id: string; name: string }) {
@@ -458,9 +621,11 @@ export class ManagedServer extends EntityExtends.BaseEntity {
   hasMod(id: string) { return this.mods.has(id); }
   hasMission(id: string) { return this.missions.has(id); }
 
-  // ideas
-  start(ctx: W6Context) { return ctx.postCustom(`/server-manager/jobs/${this.id}/start`); }
-  stop(ctx: W6Context) { return ctx.postCustom(`/server-manager/jobs/${this.id}/stop`); }
+  // TODO: Decreased interval while actions are running..
+  start(client: IServerClient) { return client.servers.start(this.id); }
+  stop(client: IServerClient) { return client.servers.stop(this.id); }
+  restart(client: IServerClient) { return client.servers.restart(this.id); }
+  prepare(client: IServerClient) { return client.servers.prepare(this.id); }
 }
 
 export class ModAddedToServer {

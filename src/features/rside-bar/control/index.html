@@ -13,13 +13,13 @@
 
   <div class="the-content" scroll.trigger="closeDropdowns()">
     <div>
-      <command-button model.bind="start" cancel.bind="cancel"></command-button>
+      <command-button model.bind="start"></command-button>
       <command-button model.bind="stop"></command-button>
-      <command-button model.bind="restart" cancel.bind="cancel"></command-button>
-      <command-button model.bind="prepare" cancel.bind="cancel"></command-button>
+      <command-button model.bind="restart"></command-button>
+      <command-button model.bind="prepare"></command-button>
     </div>
 
-    <div if.bind="jobState">
+    <div if.bind="jobState && jobState.state">
       <h2>Progress</h2>
       <ul>
         <li>State: ${State[jobState.state]}</li>

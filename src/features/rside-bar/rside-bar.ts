@@ -1,6 +1,6 @@
 import {
   ViewModel, Base, uiCommand2, ITab, UiContext, ClientMissingHandler, SwitchSideBarTab, CloseTabs, Tools, W6, W6Context,
-  ModAddedToServer, RemovedModFromServer, ServerStore,
+  ModAddedToServer, RemovedModFromServer, ServerStore, VoidCommand, handlerFor, RequestBase, ServerClient, CancelTokenSource, ICancellationToken
 } from '../../framework';
 import { ValidationGroup } from "aurelia-validation";
 import { inject } from "aurelia-framework";
@@ -18,10 +18,18 @@ export class RsideBar extends ViewModel {
   get validSetup() { return this.tabs[0].isValid; }
   visible = true;
 
-  bind() {
+  cts: CancelTokenSource;
+
+  async bind() {
     const setupTabs = [this.tabs[1], this.tabs[2], this.tabs[3]];
     const controlTabs = [this.tabs[4]];
     this.subd(d => {
+      this.cts = new CancelTokenSource();
+      new MonitorServerState(this.cts.token).handle(this.mediator);
+      d(() => {
+        this.cts.cancel();
+        //this.cts.dispose();
+      })
       d(this.observeEx(x => x.validSetup)
         .subscribe(x => setupTabs.concat(controlTabs).forEach(t => t.disabled = !x)));
       d(this.observableFromEvent<ToggleServer>(ToggleServer).subscribe(x => {
@@ -80,7 +88,6 @@ export interface ITabModel<T> extends IAwesomeTab {
 export class ToggleServer {
   constructor(public tab = -1) { }
 }
-
 
 @inject(UiContext, ServerStore)
 export class ServerTab<TModel extends ITabModel<any>> extends ViewModel {
@@ -150,8 +157,14 @@ export class ServerFileUploader {
 }
 
 
-// class GetServerData { }
+export class MonitorServerState extends VoidCommand {
+  constructor(public ct: ICancellationToken) { super(); }
+}
 
-// class GetServerDataHandler extends DbQuery<GetServerData, Server> {
+@handlerFor(MonitorServerState)
+@inject(ServerClient, ServerStore)
+export class MonitorServerStateHandler extends RequestBase<MonitorServerState, void> {
+  constructor(private client: ServerClient, private store: ServerStore) { super(); }
 
-// }
+  handle(request: MonitorServerState) { return this.store.activeGame.activeServer.monitor(this.client, request.ct); }
+}

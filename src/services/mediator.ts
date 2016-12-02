@@ -57,15 +57,18 @@ export function requireUser() {
 
 let ls = <{ on: (key: string, fn) => void; set: (key: string, value) => void }><any>require("local-storage");
 
+export abstract class RequestBase<TRequest, TResponse> implements IRequestHandler<TRequest, TResponse> {
+  handle(request: TRequest): Promise<TResponse> { throw "must implement handle method"; }
+}
+
 @inject(W6Context)
-export class DbQuery<TRequest, TResponse> implements IRequestHandler<TRequest, TResponse> {
+export class DbQuery<TRequest, TResponse> extends RequestBase<TRequest, TResponse> {
   static pageSize = 12;
 
   get tools() { return Tools; }
 
   // TODO: Move the w6context!!
-  constructor(protected context: W6Context) { }
-  handle(request: TRequest): Promise<TResponse> { throw "must implement handle method"; }
+  constructor(protected context: W6Context) { super(); }
 
   protected get w6(): W6 { return <any>this.context.w6; }
 
