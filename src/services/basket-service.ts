@@ -482,7 +482,7 @@ interface IOperationStatusT<T> extends IOperationStatus {
 
 export interface IServerSession { address: string; state: ServerState; message: string; endtime: Date }
 
-export interface IServer {
+export interface IHostedServer {
   id: string;
   name: string;
   password: string;
@@ -499,7 +499,7 @@ class ServersApi extends ApiBase {
     return await this.get(opId);
   }
 
-  get(id: string) { return this._get<IServer>(`/${id}`); }
+  get(id: string) { return this._get<IHostedServer>(`/${id}`); }
   session(id: string) { return this._get<IServerSession>(`/${id}/session`); }
 
   start(id: string, ct?: Promise<void>) { return this.changeState(id, "start", ct); }
