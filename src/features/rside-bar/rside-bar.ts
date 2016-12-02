@@ -94,7 +94,6 @@ export class ServerTab<TModel extends ITabModel<any>> extends ViewModel {
   model: TModel;
   validation: ValidationGroup;
   next;
-  done;
   get isValid() {
     return (<any>this.validation).result.isValid;
   }
@@ -119,11 +118,6 @@ export class ServerTab<TModel extends ITabModel<any>> extends ViewModel {
     this.next = uiCommand2("Next", async () => {
       if (! await this.tryValidate()) { return; }
       this.model.next(this.model);
-    }, { canExecuteObservable: this.observeEx(x => x.isValid) });
-
-    this.done = uiCommand2("Done", async () => {
-      if (! await this.tryValidate()) { return; }
-      this.model.next();
     }, { canExecuteObservable: this.observeEx(x => x.isValid) });
   }
 
