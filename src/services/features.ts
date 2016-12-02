@@ -8,8 +8,8 @@ export class FeatureToggles {
   loggedIn = this.w6.userInfo.id != null;
   private isManager = this.w6.userInfo.isManager || this.w6.userInfo.isAdmin;
   private syncFeatures = !this.w6.isClient;
-  isTestEnvironment = EnvironmentHost.env !== Environment.Production;
-  // private isPreviewEnvironment = window.location.hostname === "preview.withsix.com";
+  isTestEnvironment = EnvironmentHost.env !== Environment.Production; // Also excludes preview
+  private isPreviewEnvironment = window.location.hostname === "preview.withsix.com";
   private testingFlag = window.location.search.includes("testmode=1");
   private groupTestingFlag = window.location.search.includes("testgroupmode=1")
   || (!window.location.search.includes("testgroupmode=0") && this.isManager);
@@ -19,11 +19,19 @@ export class FeatureToggles {
 
   constructor(private w6: W6) { }
 
-  get contentTags() { return this.isTestEnvironment; }
+  get serverHosting() { return this.isTestEnvironment || this.isPreviewEnvironment; }
+  get serverRemoteControl() { return this.isTestEnvironment; }
+
   get createServers() { return this.isTestEnvironment; }
   get serverClaiming() { return this.isTestEnvironment; }
-  get serverHosting() { return this.isTestEnvironment && this.adminFeatures; }
   get listAvailable() { return this.isTestEnvironment; }
+  get contentTags() { return this.isTestEnvironment; }
+
+  get serverFeatures() {
+    return !this.isClientConnected ||
+      (this.clientInfo.version && (Tools.versionCompare(this.clientInfo.version, "1.7.0") >= 0));
+  }
+
   get managerFeatures() { return this.w6.userInfo.isManager || this.adminFeatures; }
   get adminFeatures() { return this.w6.userInfo.isAdmin; }
   get clientAutostart() { return !this.isTestEnvironment && this.w6.enableBasket; }
@@ -34,8 +42,5 @@ export class FeatureToggles {
   get quickActions() { return this.isTestEnvironment; }
   get uiVirtualization() { return this.testingFlag; }
   get isClientConnected() { return this.w6.miniClient.isConnected; }
-  get serverFeatures() {
-    return !this.isClientConnected ||
-      (this.clientInfo.version && (Tools.versionCompare(this.clientInfo.version, "1.7.0") >= 0));
-  }
+
 }

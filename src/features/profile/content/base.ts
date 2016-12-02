@@ -308,7 +308,7 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
         this.addToBasket.icon = this.basketableIcon;
       }));
 
-      if (this.features.createServers) {
+      if (this.features.serverHosting) {
         this.topMenuActions.push(new MenuItem(this.addToServer));
         this.topActions.push(new MenuItem(this.addToServer2));
         d(this.whenAnyValue(x => x.isInServer).subscribe(x => {
