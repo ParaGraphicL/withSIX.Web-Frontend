@@ -71,6 +71,16 @@ export class Index extends ServerTab<ISetupTab> {
     });
   }
 
+  async tryValidate() {
+    const r = await super.tryValidate();
+    if (!r) {
+      // TODO: How to make this behavioral?
+      if (!this.m.adminPassword) { this.m.adminPassword = "_"; setTimeout(() => this.m.adminPassword = "", 10); }
+      if (!this.m.name) { this.m.name = "_"; setTimeout(() => this.m.name = "", 10); }
+    }
+    return r;
+  }
+
   addSecondary() { this.m.secondaries.push({ size: ServerSize.Normal }); }
   removeSecondary(s) { this.m.secondaries.removeEl(s); }
   generatePassword(length) { return this.tools.Password.generate(length); } // return Math.random().toString(36).slice(-8); }
