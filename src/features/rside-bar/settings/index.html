@@ -21,6 +21,11 @@
       <checkbox value.bind="m.forceRotorLibSimulation">Force advanced flightmodel</checkbox>
       <rangebox value.bind="m.vonQuality" min.one-time="0" max.one-time="30" show.bind="!m.disableVon">vonCodecQuality</rangebox>
       <textbox multi-line.one-time="true" value.bind="m.motd" placeholder="Message of the day">MOTD</textbox>
+
+      <hr />
+      <h3>Advanced</h3>
+      <checkbox value.bind="m.enableDefaultSecurity">Enable security best practices</checkbox>
+      <checkbox value.bind="m.allowedFilePatching">Allow FilePatching</checkbox>
     </form>
     <button class="naked-button default ignore-close" click.delegate="next()">Next</button>
     <button class="naked-button default ignore-close" click.delegate="done()">Done</button>
