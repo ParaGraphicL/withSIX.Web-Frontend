@@ -11,6 +11,7 @@ interface IStatusTab extends ITabModel<any> { }
 
 export class Index extends ServerTab<IStatusTab> {
     get jobState() { return this.server.state; }
+    isLocked = false;
     State = ServerState;
 
     get isRunning() { return this.jobState && this.jobState.state === ServerState.GameIsRunning; }
@@ -26,28 +27,30 @@ export class Index extends ServerTab<IStatusTab> {
 
     start = uiCommand2("Start", () => this.handleStart(), {
         canExecuteObservable: this.observeEx(x => x.canStart),
-        cls: "ignore-close",
+        cls: "ignore-close default",
     });
     // TODO: Stop as a Cancel of Start
     stop = uiCommand2("Stop", () => this.handleStop(), {
         canExecuteObservable: this.observeEx(x => x.isRunning),
-        cls: "ignore-close",
+        cls: "ignore-close danger",
     });
     restart = uiCommand2("Restart", () => this.handleRestart(), {
         canExecuteObservable: this.observeEx(x => x.isRunning),
-        cls: "ignore-close",
+        cls: "ignore-close warn",
     });
     prepare = uiCommand2("Prepare content and configs",
         () => this.handlePrepare(), {
             canExecuteObservable: this.observeEx(x => x.canPrepare),
-            cls: "ignore-close",
+            cls: "ignore-close warn",
         });
 
     lock = uiCommand2("Lock", async () => alert("TODO"), {
-        cls: "ignore-close", isVisibleObservable: this.observeEx(x => x.isRunning),
+        cls: "ignore-close warn",
+        isVisibleObservable: this.observeEx(x => x.isRunning).combineLatest(this.observeEx(x => x.isLocked), (r, l) => r && !l),
     });
     unlock = uiCommand2("Unlock", async () => alert("TODO"), {
-        cls: "ignore-close", isVisibleObservable: this.observeEx(x => x.isRunning),
+        cls: "ignore-close warn",
+        isVisibleObservable: this.observeEx(x => x.isRunning).combineLatest(this.observeEx(x => x.isLocked), (r, l) => r && l),
     });
 
     players = [
