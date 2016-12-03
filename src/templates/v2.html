@@ -13,7 +13,8 @@
     <side-bar view-model.ref="sideBar" id="sidebar" class="shell-bar ${sideBar.selectedTab ? 'active' : 'inactive'}"
       show.bind="showSidebar"></side-bar>
     <rside-bar view-model.ref="rsideBar" id="rsidebar" class="shell-bar ${rsideBar.selectedTab ? 'active' : 'inactive'}"
-      if.bind="features.serverHosting && w6.activeGame.id" show.bind="rsideBar.visible" show-rsidebar.bind="rsideBar.visible"></rside-bar>
+      if.bind="features.serverHosting && w6.activeGame.id && w6.userInfo.id" show.bind="rsideBar.visible"
+      show-rsidebar.bind="rsideBar.visible"></rside-bar>
 
     <section id="content-view" scroll.trigger="closeDropdowns()">
       <div click.delegate="closeTabs()">
