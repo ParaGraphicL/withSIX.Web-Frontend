@@ -407,8 +407,12 @@ interface IManagedServer {
 
   settings: IArmaSettings;
 
-  mods: any[];
-  missions: any[];
+  mods: string[];
+  missions: string[];
+}
+
+interface IManagedServerListItem {
+  id: string; name: string; gameId: string; userId: string
 }
 
 interface IArmaSettings {
@@ -482,12 +486,11 @@ interface IOperationStatusT<T> extends IOperationStatus {
 
 export interface IServerSession { address: string; state: ServerState; message: string; endtime: Date }
 
-export interface IHostedServer {
-  id: string;
-  name: string;
-  password: string;
-  adminPassword: string;
-  // etc
+enum Action {
+  Start,
+  Stop,
+  Restart,
+  Prepare
 }
 
 class ServersApi extends ApiBase {
@@ -499,16 +502,17 @@ class ServersApi extends ApiBase {
     return await this.get(opId);
   }
 
-  get(id: string) { return this._get<IHostedServer>(`/${id}`); }
+  list(gameId: string) { return this._get<{ items: IManagedServerListItem[] }>(`/?gameId=${gameId}`); }
+  get(id: string) { return this._get<IManagedServer>(`/${id}`); }
   session(id: string) { return this._get<IServerSession>(`/${id}/session`); }
 
-  start(id: string, ct?: Promise<void>) { return this.changeState(id, "start", ct); }
-  stop(id: string, ct?: Promise<void>) { return this.changeState(id, "stop", ct); }
-  restart(id: string, ct?: Promise<void>) { return this.changeState(id, "restart", ct); }
-  prepare(id: string, ct?: Promise<void>) { return this.changeState(id, "prepare", ct); }
+  start(id: string, ct?: Promise<void>) { return this.changeState(id, Action.Start, ct); }
+  stop(id: string, ct?: Promise<void>) { return this.changeState(id, Action.Stop, ct); }
+  restart(id: string, ct?: Promise<void>) { return this.changeState(id, Action.Restart, ct); }
+  prepare(id: string, ct?: Promise<void>) { return this.changeState(id, Action.Prepare, ct); }
 
-  private async changeState(id: string, action: string, ct?: Promise<void>) {
-    const operationId = await this._post<string>(`/${id}/${action}`);
+  private async changeState(id: string, action: Action, ct?: Promise<void>) {
+    const operationId = await this._post<string>(`/${id}/${Action[action].toLowerCase()}`);
     await this._pollOperationState(id, operationId, ct);
   }
 }
@@ -572,8 +576,8 @@ export class ManagedServer extends EntityExtends.BaseEntity {
   // TODO: Game specific
   settings: IArmaSettings = <any>{ battlEye: true, drawingInMap: true, verifySignatures: true, vonQuality: 12, enableDefaultSecurity: true };
 
-  mods: Map<string, any> = new Map<string, any>();
-  missions: Map<string, any> = new Map<string, any>();
+  mods: Map<string, { id: string }> = new Map<string, { id: string }>();
+  missions: Map<string, { id: string }> = new Map<string, { id: string }>();
   state: IServerSession;
   interval = 2 * 1000; // todo; adjust interval based on state, also should restart on each action?
 
@@ -692,6 +696,15 @@ export class ServerStore {
 
   get(id: string) { return this.games.get(id); }
 
+  async getServers(client: IServerClient, augmentMods: (mods: any[]) => Promise<void>) {
+    const game = this.activeGame;
+    const servers = await client.servers.list(game.id);
+    if (servers.items.length > 0) {
+      game.activeServer = ServerStore.storageToServer(await client.servers.get(servers.items[0].id));
+      await augmentMods(Array.from(game.activeServer.mods.values()));
+    }
+  }
+
   save() {
     const games = Array.from(this.games.values()).map(x => this.gameToStorage(x));
     window.localStorage.setItem("w6.servers", JSON.stringify({ games }));
@@ -714,8 +727,8 @@ export class ServerStore {
       additionaSlots: s.additionalSlots,
       id: s.id,
       location: s.location,
-      missions: s.missions.toMap(x => x.id),
-      mods: s.mods.toMap(x => x.id),
+      missions: s.missions.toMapValue(x => x, x => { return { id: x } }),
+      mods: s.mods.toMapValue(x => x, x => { return { id: x } }),
       name: s.name,
       password: s.password,
       secondaries: s.secondaries,
@@ -730,8 +743,8 @@ export class ServerStore {
       additionalSlots: s.additionalSlots,
       id: s.id,
       location: s.location,
-      missions: Array.from(s.missions.values()),
-      mods: Array.from(s.mods.values()),
+      missions: Array.from(s.missions.keys()),
+      mods: Array.from(s.mods.keys()),
       name: s.name,
       password: s.password,
       secondaries: s.secondaries,

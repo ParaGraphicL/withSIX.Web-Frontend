@@ -1,5 +1,5 @@
 import {
-  ViewModel, Base, uiCommand2, ITab, UiContext, ClientMissingHandler, SwitchSideBarTab, CloseTabs, Tools, W6, W6Context,
+  ViewModel, Base, uiCommand2, ITab, UiContext, ClientMissingHandler, SwitchSideBarTab, CloseTabs, Tools, W6, W6Context, DbQuery,
   ModAddedToServer, RemovedModFromServer, ServerStore, VoidCommand, handlerFor, RequestBase, ServerClient, CancelTokenSource, ICancellationToken
 } from '../../framework';
 import { ValidationGroup } from "aurelia-validation";
@@ -25,6 +25,7 @@ export class RsideBar extends ViewModel {
     const controlTabs = [this.tabs[4]];
     this.subd(d => {
       this.cts = new CancelTokenSource();
+      // TODO: Game change etc
       new MonitorServerState(this.cts.token).handle(this.mediator);
       d(() => {
         this.cts.cancel();
@@ -156,9 +157,12 @@ export class MonitorServerState extends VoidCommand {
 }
 
 @handlerFor(MonitorServerState)
-@inject(ServerClient, ServerStore)
-export class MonitorServerStateHandler extends RequestBase<MonitorServerState, void> {
-  constructor(private client: ServerClient, private store: ServerStore) { super(); }
+@inject(W6Context, ServerClient, ServerStore)
+export class MonitorServerStateHandler extends DbQuery<MonitorServerState, void> {
+  constructor(ctx, private client: ServerClient, private store: ServerStore) { super(ctx); }
 
-  handle(request: MonitorServerState) { return this.store.activeGame.activeServer.monitor(this.client, request.ct); }
+  async handle(request: MonitorServerState) {
+    await this.store.getServers(this.client, this.handleModAugments);
+    await this.store.activeGame.activeServer.monitor(this.client, request.ct);
+  }
 }
