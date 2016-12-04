@@ -4,10 +4,10 @@ declare var googletag: any;
 declare var Markdown: any;
 
 // Workaround aurelia fetch
-interface URLSearchParams {}
+interface URLSearchParams { }
 
 // Rxui
-interface Proxy {}
+interface Proxy { }
 
 interface Function {
   $name?: string;
@@ -26,6 +26,7 @@ interface Array<T> {
   uniq: () => this;
   removeEl: (el: T) => void;
   toMap: <K>(keySelector: (x: T) => K) => Map<K, T>;
+  toMapValue: <K, V>(keySelector: (x: T) => K, valueSelector: (x: T) => V) => Map<K, V>;
   includes: (el: T) => boolean;
   move: (fromIdx: number, toIdx: number) => void;
   //removeRange: (...el: T[]) => void;
@@ -59,10 +60,10 @@ interface IApi {
   login(evt?): void;
   navigate(url: string): void;
   logout(): void;
-  render(settings: ISettings): Promise<{dispose: () => void}>
+  render(settings: ISettings): Promise<{ dispose: () => void }>
 }
 
-interface ISettings { model?; view?; viewModel?; targetElement}
+interface ISettings { model?; view?; viewModel?; targetElement }
 
 interface Window {
   ___prerender___?: boolean;
