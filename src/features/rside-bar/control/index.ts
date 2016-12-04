@@ -4,34 +4,26 @@ import { inject } from "aurelia-framework";
 
 interface IStatusTab extends ITabModel<any> { }
 
-//enum JobAction {
-//  Cancel
-//}
-
-
 export class Index extends ServerTab<IStatusTab> {
     get jobState() { return this.server.state; }
     isLocked = false;
     State = ServerState;
 
-    get isRunning() { return this.jobState && this.jobState.state === ServerState.GameIsRunning; }
-    get hasActiveJob() { return !!this.server.currentJobId; }
-
-    get canStart() {
-        return this.jobState && (this.jobState.state === ServerState.Initializing || this.jobState.state >= ServerState.Failed);
-    }
+    get isRunning() { return this.state === ServerState.GameIsRunning; }
+    get canStop() { return (this.state > ServerState.Initializing && this.state <= ServerState.GameIsRunning); }
+    get canStart() { return (this.state === ServerState.Initializing || this.state >= ServerState.Failed); }
     get canPrepare() {
-        return this.jobState && (this.jobState.state === ServerState.Initializing
-            || this.jobState.state === ServerState.GameIsRunning || this.jobState.state >= ServerState.Failed);
+        return (this.state === ServerState.Initializing
+            || this.state === ServerState.GameIsRunning || this.state >= ServerState.Failed);
     }
+    get state() { return this.jobState ? this.jobState.state : 0; }
 
     start = uiCommand2("Start", () => this.handleStart(), {
         canExecuteObservable: this.observeEx(x => x.canStart),
         cls: "ignore-close default",
     });
-    // TODO: Stop as a Cancel of Start
     stop = uiCommand2("Stop", () => this.handleStop(), {
-        canExecuteObservable: this.observeEx(x => x.isRunning),
+        canExecuteObservable: this.observeEx(x => x.canStop),
         cls: "ignore-close danger",
     });
     restart = uiCommand2("Restart", () => this.handleRestart(), {
@@ -73,9 +65,8 @@ export class Index extends ServerTab<IStatusTab> {
     handleStop = () => new StopServer(this.server.id).handle(this.mediator);
 
     async saveChanges() {
-        this.server.currentJobId =
-            await new CreateOrUpdateServer(this.w6.activeGame.id, this.server.id,
-                ServerStore.serverToStorage(this.server)).handle(this.mediator);
+        await new CreateOrUpdateServer(this.w6.activeGame.id, this.server.id,
+            ServerStore.serverToStorage(this.server)).handle(this.mediator);
     }
 }
 

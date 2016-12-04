@@ -529,23 +529,20 @@ export enum ServerState {
   Initializing,
 
   PreparingContent,
-  PreparingConfiguration,
+  ContentPrepared,
 
   Provisioning = 5000,
-  InstancesRunning,
+  Provisioned,
+
   PreparingLaunch,
 
   LaunchingGame = 6000,
 
   GameIsRunning = 7000,
 
-  Cancelling = 8000,
-
   StoppingInstances,
-  GameExited,
 
   Failed = 9999,
-  Cancelled = 10000,
   InstancesShutdown = 50000
 
   //End
@@ -560,8 +557,6 @@ export enum ServerAction {
 
 export class ManagedServer extends EntityExtends.BaseEntity {
   id: string;
-
-  currentJobId: string;
 
   location: ServerLocation = ServerLocation.WestEU;
   size: ServerSize = ServerSize.Normal;
