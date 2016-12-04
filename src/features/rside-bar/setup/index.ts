@@ -15,7 +15,8 @@ export class Index extends ServerTab<ISetupTab> {
   hours: number;
   credit = 20; // TODO
 
-
+  sizes = SharedValues.sizes;
+  locations = SharedValues.locations;
   addHc = uiCommand2("Add headless client", async () => this.addSecondary(), { cls: "ignore-close" });
 
   private _selectedSize;
@@ -37,11 +38,11 @@ export class Index extends ServerTab<ISetupTab> {
     this._selectedSize = SharedValues.sizeMap.get(this.server.size);
 
     this.validation = this.validation
-      .ensure("m.name")
+      .ensure("server.name")
       .isNotEmpty()
       .hasMinLength(3)
       .hasMaxLength(150)
-      .ensure("m.adminPassword")
+      .ensure("server.adminPassword")
       .isNotEmpty();
 
     try { await this.validation.validate(); } catch (err) { };
