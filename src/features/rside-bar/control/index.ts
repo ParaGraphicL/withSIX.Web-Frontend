@@ -1,135 +1,96 @@
-import { ITabModel, ServerTab } from "../rside-bar";
-import { uiCommand2, handlerFor, DbQuery, Command, Query, ServerStore, VoidCommand, ServerState, ServerAction, RequestBase, ServerClient, IServerSession } from "../../../framework";
-import { inject } from "aurelia-framework";
+import { ITabModel, ServerTab, SharedValues } from "../rside-bar";
+import { Command as ScaleServer } from "./actions/scale";
+import { StartServer, RestartServer, PrepareServer, StopServer, CreateOrUpdateServer } from "./actions/other"; // todo decompose
+import { ServerState, ServerStore, uiCommand2 } from "../../../framework"
 
 interface IStatusTab extends ITabModel<any> { }
 
 export class Index extends ServerTab<IStatusTab> {
-    get jobState() { return this.server.state; }
-    isLocked = false;
-    State = ServerState;
+  State = ServerState;
+  isLocked = false;
 
-    get isRunning() { return this.state === ServerState.GameIsRunning; }
-    get canStop() { return (this.state > ServerState.Initializing && this.state <= ServerState.GameIsRunning); }
-    get canStart() { return (this.state === ServerState.Initializing || this.state >= ServerState.Failed); }
-    get canPrepare() {
-        return (this.state === ServerState.Initializing
-            || this.state === ServerState.GameIsRunning || this.state >= ServerState.Failed);
-    }
-    get state() { return this.jobState ? this.jobState.state : 0; }
-
-    start = uiCommand2("Start", () => this.handleStart(), {
-        canExecuteObservable: this.observeEx(x => x.canStart),
-        cls: "ignore-close default",
+  start = uiCommand2("Start", () => this.handleStart(), {
+    canExecuteObservable: this.observeEx(x => x.canStart),
+    cls: "ignore-close default",
+  });
+  stop = uiCommand2("Stop", () => this.handleStop(), {
+    canExecuteObservable: this.observeEx(x => x.canStop),
+    cls: "ignore-close danger",
+  });
+  restart = uiCommand2("Restart", () => this.handleRestart(), {
+    canExecuteObservable: this.observeEx(x => x.isRunning),
+    cls: "ignore-close warn",
+  });
+  prepare = uiCommand2("Prepare content and configs",
+    () => this.handlePrepare(), {
+      canExecuteObservable: this.observeEx(x => x.canPrepare),
+      cls: "ignore-close warn",
     });
-    stop = uiCommand2("Stop", () => this.handleStop(), {
-        canExecuteObservable: this.observeEx(x => x.canStop),
-        cls: "ignore-close danger",
-    });
-    restart = uiCommand2("Restart", () => this.handleRestart(), {
-        canExecuteObservable: this.observeEx(x => x.isRunning),
-        cls: "ignore-close warn",
-    });
-    prepare = uiCommand2("Prepare content and configs",
-        () => this.handlePrepare(), {
-            canExecuteObservable: this.observeEx(x => x.canPrepare),
-            cls: "ignore-close warn",
-        });
+  scale = uiCommand2("Scale", () => this.handleScale(), {
+    canExecuteObservable: this.observeEx(x => x.isRunning)
+      .combineLatest(this.observeEx(x => x.selectedSize).map(x => x !== this.server.size), (x, y) => x && y),
+    cls: "ignore-close warn",
+  });
+  lock = uiCommand2("Lock", async () => alert("TODO"), {
+    cls: "ignore-close warn",
+    isVisibleObservable: this.observeEx(x => x.isRunning).combineLatest(this.observeEx(x => x.isLocked), (r, l) => r && !l),
+  });
+  unlock = uiCommand2("Unlock", async () => alert("TODO"), {
+    cls: "ignore-close warn",
+    isVisibleObservable: this.observeEx(x => x.isRunning).combineLatest(this.observeEx(x => x.isLocked), (r, l) => r && l),
+  });
 
-    lock = uiCommand2("Lock", async () => alert("TODO"), {
-        cls: "ignore-close warn",
-        isVisibleObservable: this.observeEx(x => x.isRunning).combineLatest(this.observeEx(x => x.isLocked), (r, l) => r && !l),
-    });
-    unlock = uiCommand2("Unlock", async () => alert("TODO"), {
-        cls: "ignore-close warn",
-        isVisibleObservable: this.observeEx(x => x.isRunning).combineLatest(this.observeEx(x => x.isLocked), (r, l) => r && l),
-    });
+  players = [
+    { name: "Player X" },
+    { name: "Player Y" },
+  ];
 
-    players = [
-        { name: "Player X" },
-        { name: "Player Y" },
-    ];
+  private _selectedSize;
+  private _additionalSlots;
 
-    handleStart = async () => {
-        await this.saveChanges();
-        await new StartServer(this.server.id).handle(this.mediator);
-    }
-    handleRestart = async () => {
-        await this.saveChanges();
-        await new RestartServer(this.server.id).handle(this.mediator);
-    }
-    handlePrepare = async () => {
-        await this.saveChanges();
-        await new PrepareServer(this.server.id).handle(this.mediator)
-    }
-    handleStop = () => new StopServer(this.server.id).handle(this.mediator);
+  get jobState() { return this.server.state; }
+  get selectedSize() { return this._selectedSize; }
+  set selectedSize(value) { this._selectedSize = value; this.server.size = value.value; this.server.additionalSlots = 0; }
 
-    async saveChanges() {
-        await new CreateOrUpdateServer(this.w6.activeGame.id, this.server.id,
-            ServerStore.serverToStorage(this.server)).handle(this.mediator);
-    }
+  get isRunning() { return this.state === ServerState.GameIsRunning; }
+  get canStop() { return (this.state > ServerState.Initializing && this.state <= ServerState.GameIsRunning); }
+  get canStart() { return (this.state === ServerState.Initializing || this.state >= ServerState.Failed); }
+  get canPrepare() {
+    return (this.state === ServerState.Initializing
+      || this.state === ServerState.GameIsRunning || this.state >= ServerState.Failed);
+  }
+  get state() { return this.jobState ? this.jobState.state : 0; }
+
+
+  activate(model) {
+    super.activate(model);
+    this._selectedSize = SharedValues.sizeMap.get(this.server.size);
+    this._additionalSlots = this.server.additionalSlots;
+  }
+
+
+  handleStart = async () => {
+    await this.saveChanges();
+    await new StartServer(this.server.id).handle(this.mediator);
+  }
+  handleRestart = async () => {
+    await this.saveChanges();
+    await new RestartServer(this.server.id).handle(this.mediator);
+  }
+  handlePrepare = async () => {
+    await this.saveChanges();
+    await new PrepareServer(this.server.id).handle(this.mediator)
+  }
+  handleStop = () => new StopServer(this.server.id).handle(this.mediator);
+
+  handleScale = async () => {
+    // TODO: Reverse this and don't do saveChanges?
+    this.server.size = this.selectedSize.value;
+    await this.saveChanges();
+    await new ScaleServer(this.server.id, this.selectedSize.value).handle(this.mediator);
+  }
+
+  saveChanges() {
+    return new CreateOrUpdateServer(this.w6.activeGame.id, this.server.id, ServerStore.serverToStorage(this.server)).handle(this.mediator);
+  }
 }
-
-@inject(ServerClient)
-abstract class ServerHandler<TRequest, TResponse> extends RequestBase<TRequest, TResponse> {
-    constructor(protected client: ServerClient) { super(); }
-}
-
-class CreateOrUpdateServer extends Command<string> {
-    constructor(public gameId: string, public id: string, public serverInfo) { super(); }
-}
-
-@handlerFor(CreateOrUpdateServer)
-class CreateOrUpdateServerHandler extends ServerHandler<CreateOrUpdateServer, string> {
-    handle(request: CreateOrUpdateServer) {
-        return this.client.servers.createOrUpdate(request);
-    }
-}
-
-
-class GetServerState extends Query<IServerSession> { constructor(public id: string) { super(); } }
-
-@handlerFor(GetServerState)
-class GetServerStateHandler extends ServerHandler<GetServerState, IServerSession> {
-    handle(request: GetServerState) { return this.client.servers.get(request.id); }
-}
-
-class StartServer extends VoidCommand { constructor(public id: string) { super(); } }
-@handlerFor(StartServer)
-class StartServerStateHandler extends ServerHandler<StartServer, string> {
-    handle(request: StartServer) { return this.client.servers.start(request.id); }
-}
-
-class StopServer extends VoidCommand { constructor(public id: string) { super(); } }
-@handlerFor(StopServer)
-class StopServerStateHandler extends ServerHandler<StopServer, string> {
-    handle(request: StopServer) { return this.client.servers.stop(request.id); }
-}
-
-class RestartServer extends VoidCommand { constructor(public id: string) { super(); } }
-@handlerFor(RestartServer)
-class RestartServerStateHandler extends ServerHandler<RestartServer, string> {
-    handle(request: RestartServer) { return this.client.servers.restart(request.id); }
-}
-
-class PrepareServer extends VoidCommand { constructor(public id: string) { super(); } }
-@handlerFor(PrepareServer)
-class PrepareServerStateHandler extends ServerHandler<PrepareServer, string> {
-    handle(request: PrepareServer) { return this.client.servers.prepare(request.id); }
-}
-
-class GetJobState extends Query<IServerSession> { constructor(public id: string) { super(); } }
-
-@handlerFor(GetJobState)
-class GetJobStateHandler extends ServerHandler<GetJobState, IServerSession> {
-    handle(request: GetJobState) { return this.client.servers.session(request.id); }
-}
-
-/*
-class CancelJob extends VoidCommand { constructor(public id: string) { super(); } }
-
-@handlerFor(CancelJob)
-class CancelJobHandler extends ServerHandler<CancelJob, IServerSession> {
-    handle(request: CancelJob) { return this.client.jobs.delete(request.id); }
-}
-*/

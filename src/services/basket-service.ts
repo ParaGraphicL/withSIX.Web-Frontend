@@ -3,7 +3,7 @@ import { inject } from 'aurelia-framework';
 import { ReactiveBase } from './base';
 import { _Indexer } from './legacy/base';
 import { Toastr } from './toastr';
-import { ObservableEventAggregator } from './reactive';
+import { ICancellationToken, ObservableEventAggregator } from './reactive';
 import { W6 } from './withSIX';
 import { BasketType, IBasketModel, IBasketItem, BasketState, IBasketCollection, IBaskets } from './legacy/baskets';
 import { createError } from "../helpers/utils/errors";
@@ -437,13 +437,10 @@ abstract class ApiBase {
 
   protected delay(delay: number) { return new Promise((res) => setTimeout(res, delay)); }
 
-  protected async _pollOperationState<T>(id: string, operationId: string, ct?: Promise<void>) {
+  protected async _pollOperationState<T>(id: string, operationId: string, ct?: ICancellationToken) {
     let status: IOperationStatusT<T> = { state: OperationState.Queued, result: null };
 
-    let cancelled = false;
-    if (ct) { ct.then(_ => cancelled = true); }
-
-    while (!cancelled && status.state < OperationState.Completed) {
+    while (!ct.isCancellationRequested && status.state < OperationState.Completed) {
       //try {
       status = await this.getOperation<T>(id, operationId);
       //} catch (err) {
@@ -451,7 +448,7 @@ abstract class ApiBase {
       //}
       await this.delay(2000);
     }
-    if (cancelled && status.state < OperationState.Completed) {
+    if (ct.isCancellationRequested && status.state < OperationState.Completed) {
       await this.cancelOperation(id, operationId);
       status.state = OperationState.Cancelled;
     }
@@ -490,7 +487,8 @@ enum Action {
   Start,
   Stop,
   Restart,
-  Prepare
+  Prepare,
+  Scale
 }
 
 class ServersApi extends ApiBase {
@@ -506,13 +504,14 @@ class ServersApi extends ApiBase {
   get(id: string) { return this._get<IManagedServer>(`/${id}`); }
   session(id: string) { return this._get<IServerSession>(`/${id}/session`); }
 
-  start(id: string, ct?: Promise<void>) { return this.changeState(id, Action.Start, ct); }
-  stop(id: string, ct?: Promise<void>) { return this.changeState(id, Action.Stop, ct); }
-  restart(id: string, ct?: Promise<void>) { return this.changeState(id, Action.Restart, ct); }
-  prepare(id: string, ct?: Promise<void>) { return this.changeState(id, Action.Prepare, ct); }
+  start(id: string, ct?: ICancellationToken) { return this.changeState(id, Action.Start, undefined, ct); }
+  stop(id: string, ct?: ICancellationToken) { return this.changeState(id, Action.Stop, undefined, ct); }
+  restart(id: string, ct?: ICancellationToken) { return this.changeState(id, Action.Restart, undefined, ct); }
+  prepare(id: string, ct?: ICancellationToken) { return this.changeState(id, Action.Prepare, undefined, ct); }
+  scale(id: string, size: ServerSize, ct?: ICancellationToken) { return this.changeState(id, Action.Scale, { size }, ct); }
 
-  private async changeState(id: string, action: Action, ct?: Promise<void>) {
-    const operationId = await this._post<string>(`/${id}/${Action[action].toLowerCase()}`);
+  private async changeState(id: string, action: Action, data?, ct?: ICancellationToken) {
+    const operationId = await this._post<string>(`/${id}/${Action[action].toLowerCase()}`, data);
     await this._pollOperationState(id, operationId, ct);
   }
 }

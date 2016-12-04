@@ -15,22 +15,22 @@
     <form role="form" validate.bind="validation">
       <div class="form-group required">
         <label>Name
-          <input class="form-control" required placeholder="name of the server" name="name" id="name" type="text" value.bind="m.name">
+          <input class="form-control" required placeholder="name of the server" name="name" id="name" type="text" value.bind="server.name">
         </label>
       </div>
       <div class="form-group required">
         <label>Admin Password
           <button click.delegate="generateAdminPassword()" class="ignore-close text-button pull-right">generate</button>
-          <input class="form-control" required placeholder="admin password" name="admin-password" id="admin-password" type="text" value.bind="m.adminPassword">
+          <input class="form-control" required placeholder="admin password" name="admin-password" id="admin-password" type="text" value.bind="server.adminPassword">
         </label>
       </div>
-      <!--<textbox value.bind="m.adminPassword" placeholder="admin password">Admin Password <button click.delegate="generateAdminPassword()" class="ignore-close pull-right">Generate</button></textbox>-->
+      <!--<textbox value.bind="server.adminPassword" placeholder="admin password">Admin Password <button click.delegate="generateAdminPassword()" class="ignore-close pull-right">Generate</button></textbox>-->
 
-      <textbox value.bind="m.password" placeholder="optional password">Password <button click.delegate="generateServerPassword()" class="text-button ignore-close pull-right">generate</button></textbox>
+      <textbox value.bind="server.password" placeholder="optional password">Password <button click.delegate="generateServerPassword()" class="text-button ignore-close pull-right">generate</button></textbox>
 
       <h3>Provisioning</h3>
       <hr />
-      <selectbox class="required" value.bind="m.location" options.bind="locations" disabled.bind="true">
+      <selectbox class="required" value.bind="server.location" options.bind="locations" disabled.bind="true">
         Location
         <template replace-part="item-template">
           <option model.bind="o.value">${o.title || o}</option>
@@ -46,17 +46,17 @@
 
       <br />
 
-      <rangeboxadv value.bind="m.additionalSlots" step.one-time="8" min.one-time="0" max.bind="selectedSize.maxSlots - selectedSize.baseSlots"
+      <rangeboxadv value.bind="server.additionalSlots" step.one-time="8" min.one-time="0" max.bind="selectedSize.maxSlots - selectedSize.baseSlots"
         if.bind="selectedSize.baseSlots !== selectedSize.maxSlots">
         Additional slots@2/pack of 8 slots
       </rangeboxadv>
 
-      ${m.additionalSlots} additional slots
+      ${server.additionalSlots} additional slots
 
       <div>
-        <div show.bind="m.secondaries.length > 0">
+        <div show.bind="server.secondaries.length > 0">
           <h4 title="Headless clients allow you to add additional server power to offload AI">Headless clients (advanced)</h4>
-          <div repeat.for="s of m.secondaries">
+          <div repeat.for="s of server.secondaries">
             <selectbox class="required" value.bind="s.size" options.bind="sizes">
               HC Size
               <template replace-part="item-template">
@@ -67,7 +67,7 @@
           </div>
         </div>
         <command-button title="Headless clients allow you to add additional server power to offload AI" model.bind="addHc"
-          show.bind="m.secondaries.length < 1"></command-button>
+          show.bind="server.secondaries.length < 1"></command-button>
       </div>
 
       <hr />

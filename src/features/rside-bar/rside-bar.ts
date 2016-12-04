@@ -1,6 +1,7 @@
 import {
   ViewModel, Base, uiCommand2, ITab, UiContext, ClientMissingHandler, SwitchSideBarTab, CloseTabs, Tools, W6, W6Context, DbQuery,
-  ModAddedToServer, RemovedModFromServer, ServerStore, VoidCommand, handlerFor, RequestBase, ServerClient, CancelTokenSource, ICancellationToken
+  ModAddedToServer, RemovedModFromServer, ServerStore, VoidCommand, handlerFor, RequestBase, ServerClient, CancelTokenSource, ICancellationToken,
+  ServerSize, ServerLocation
 } from '../../framework';
 import { ValidationGroup } from "aurelia-validation";
 import { inject } from "aurelia-framework";
@@ -88,6 +89,20 @@ export interface ITabModel<T> extends IAwesomeTab {
 
 export class ToggleServer {
   constructor(public tab = -1) { }
+}
+
+export class SharedValues {
+  static sizes = [
+    { value: ServerSize.Small, title: ServerSize[ServerSize.Small] + " (Single core, 3.5GB)", cost: 5, baseSlots: 12, maxSlots: 12 },
+    { value: ServerSize.Normal, title: ServerSize[ServerSize.Normal] + " (Dual core, 7GB)", cost: 10, baseSlots: 32, maxSlots: 64 },
+    { value: ServerSize.Large, title: ServerSize[ServerSize.Large] + " (Quad core, 14GB)", cost: 20, baseSlots: 64, maxSlots: 256 },
+    //{ value: ServerSize.VeryLarge, title: ServerSize[ServerSize.VeryLarge] + " (Octo core, 28GB) 4SU/hr", cost: 4 },
+  ];
+  static locations = [
+    { value: ServerLocation.WestEU, title: "West Europe" },
+    { value: ServerLocation.WestUS, title: "West US" },
+  ];
+  static sizeMap = SharedValues.sizes.toMap(x => x.value);
 }
 
 @inject(UiContext, ServerStore)

@@ -16,7 +16,27 @@
       <command-button model.bind="start"></command-button>
       <command-button model.bind="stop"></command-button>
       <command-button model.bind="restart"></command-button>
-      <command-button model.bind="prepare" if.one-time="features.isTestEnvironment"></command-button>
+      <command-button model.bind="prepare"></command-button>
+
+      <hr />
+      <div show.bind="isRunning">
+        <h3>Scaling</h3>
+
+        <selectbox class="required" value.bind="selectedSize" options.bind="sizes">
+          Scale size
+          <template replace-part="item-template">
+            <option model.bind="o">${o.title || o} ${o.cost}/hr ${o.baseSlots} slots</option>
+          </template>
+        </selectbox>
+        <rangeboxadv value.bind="additionalSlots" step.one-time="8" min.one-time="0" max.bind="selectedSize.maxSlots - selectedSize.baseSlots"
+          if.bind="selectedSize.baseSlots !== selectedSize.maxSlots">
+          Additional slots@2/pack of 8 slots
+        </rangeboxadv>
+
+        ${additionalSlots} additional slots
+        <command-button model.bind="scale"></command-button>
+        <hr />
+      </div>
     </div>
 
     <div if.bind="jobState && jobState.state">
