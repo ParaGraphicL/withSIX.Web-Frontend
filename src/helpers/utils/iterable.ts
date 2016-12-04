@@ -18,8 +18,8 @@ export const flatten = <T>([first, ...rest]): T[] => {
 // alternative
 const foldl = (fn, terminalValue, [first, ...rest]) =>
   first === void 0
-   ? terminalValue
-   : foldl(fn, fn(terminalValue, first), rest)
+    ? terminalValue
+    : foldl(fn, fn(terminalValue, first), rest)
 
 const flatten2 = (list: any[]) => foldl(
   (a: any[], b) => a.concat(Array.isArray(b) ? flatten2(b) : b)
@@ -33,9 +33,9 @@ export const flattenEnumerable = <T>(results: Enumerable<T>[]) => {
 }
 
 export function* entries<T>(obj: T) {
-   for (let key of Object.keys(obj)) {
-     yield [key, obj[key]];
-   }
+  for (let key of Object.keys(obj)) {
+    yield [key, obj[key]];
+  }
 }
 
 export const includes = <T>(ary: T[], el: T) => ary.some(x => x === el);
@@ -51,20 +51,26 @@ export const aryToMap = <K, V>(ary: V[], keyFunc: (x: V) => K) => {
   return map;
 }
 
-export const enumToMap = <K, V> (ary: Enumerable<V>, keyFunc: (x: V) => K) => aryToMap(ary.toArray(), keyFunc); // todo use iterable instead..
+export const aryValueToMap = <K, V, T>(ary: V[], keyFunc: (x: V) => K, valueFunc: (x: V) => T) => {
+  let map = new Map<K, T>();
+  ary.forEach(x => map.set(keyFunc(x), valueFunc(x)));
+  return map;
+}
+
+export const enumToMap = <K, V>(ary: Enumerable<V>, keyFunc: (x: V) => K) => aryToMap(ary.toArray(), keyFunc); // todo use iterable instead..
 
 export const move = (ar: any[], old_index: number, new_index: number) => {
-    while (old_index < 0) {
-        old_index += ar.length;
+  while (old_index < 0) {
+    old_index += ar.length;
+  }
+  while (new_index < 0) {
+    new_index += ar.length;
+  }
+  if (new_index >= ar.length) {
+    var k = new_index - ar.length;
+    while ((k--) + 1) {
+      ar.push(undefined);
     }
-    while (new_index < 0) {
-        new_index += ar.length;
-    }
-    if (new_index >= ar.length) {
-        var k = new_index - ar.length;
-        while ((k--) + 1) {
-            ar.push(undefined);
-        }
-    }
-    ar.splice(new_index, 0, ar.splice(old_index, 1)[0]);
+  }
+  ar.splice(new_index, 0, ar.splice(old_index, 1)[0]);
 }

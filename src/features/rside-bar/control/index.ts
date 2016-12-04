@@ -8,6 +8,7 @@ interface IStatusTab extends ITabModel<any> { }
 export class Index extends ServerTab<IStatusTab> {
   State = ServerState;
   isLocked = false;
+  sizes = SharedValues.sizes;
 
   start = uiCommand2("Start", () => this.handleStart(), {
     canExecuteObservable: this.observeEx(x => x.canStart),
@@ -50,7 +51,10 @@ export class Index extends ServerTab<IStatusTab> {
 
   get jobState() { return this.server.state; }
   get selectedSize() { return this._selectedSize; }
-  set selectedSize(value) { this._selectedSize = value; this.server.size = value.value; this.server.additionalSlots = 0; }
+  set selectedSize(value) { this._selectedSize = value; this.server.size = value.value; this.additionalSlots = 0; }
+
+  get additionalSlots() { return this._additionalSlots; }
+  set additionalSlots(value) { this._additionalSlots = value; this.server.additionalSlots = value; }
 
   get isRunning() { return this.state === ServerState.GameIsRunning; }
   get canStop() { return (this.state > ServerState.Initializing && this.state <= ServerState.GameIsRunning); }

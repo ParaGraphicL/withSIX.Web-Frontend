@@ -440,7 +440,7 @@ abstract class ApiBase {
   protected async _pollOperationState<T>(id: string, operationId: string, ct?: ICancellationToken) {
     let status: IOperationStatusT<T> = { state: OperationState.Queued, result: null };
 
-    while (!ct.isCancellationRequested && status.state < OperationState.Completed) {
+    while ((!ct || !ct.isCancellationRequested) && status.state < OperationState.Completed) {
       //try {
       status = await this.getOperation<T>(id, operationId);
       //} catch (err) {
@@ -448,7 +448,7 @@ abstract class ApiBase {
       //}
       await this.delay(2000);
     }
-    if (ct.isCancellationRequested && status.state < OperationState.Completed) {
+    if (ct && ct.isCancellationRequested && status.state < OperationState.Completed) {
       await this.cancelOperation(id, operationId);
       status.state = OperationState.Cancelled;
     }
