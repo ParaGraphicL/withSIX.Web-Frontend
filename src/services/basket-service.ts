@@ -407,8 +407,8 @@ interface IManagedServer {
 
   settings: IArmaSettings;
 
-  mods: string[];
-  missions: string[];
+  mods: { id: string, constraint?: string }[];
+  missions: { id: string }[];
 }
 
 interface IManagedServerListItem {
@@ -668,6 +668,39 @@ export class Game {
 export class ServerStore {
   games: Map<string, Game>;
 
+
+  public static storageToServer(s: IManagedServer): ManagedServer {
+    return new ManagedServer({
+      additionaSlots: s.additionalSlots,
+      adminPassword: s.adminPassword,
+      id: s.id,
+      location: s.location,
+      missions: s.missions.toMap(x => x.id),
+      mods: s.mods.toMap(x => x.id),
+      name: s.name,
+      password: s.password,
+      secondaries: s.secondaries,
+      settings: s.settings,
+      size: s.size,
+    });
+  }
+
+  public static serverToStorage(s: ManagedServer): IManagedServer {
+    return {
+      additionalSlots: s.additionalSlots,
+      adminPassword: s.adminPassword,
+      id: s.id,
+      location: s.location,
+      missions: Array.from(s.missions.keys()).map(id => { return { id } }),
+      mods: Array.from(s.mods.keys()).map(id => { return { id, constraint: (<any>s.mods.get(id)).constraint } }),
+      name: s.name,
+      password: s.password,
+      secondaries: s.secondaries,
+      settings: s.settings,
+      size: s.size,
+    };
+  }
+
   constructor(private w6: W6) {
     this.load();
   }
@@ -713,38 +746,6 @@ export class ServerStore {
       id: game.id,
       servers: Array.from(game.servers.values()).map(x => ServerStore.serverToStorage(x)),
     }
-  }
-
-  public static storageToServer(s: IManagedServer): ManagedServer {
-    return new ManagedServer({
-      adminPassword: s.adminPassword,
-      additionaSlots: s.additionalSlots,
-      id: s.id,
-      location: s.location,
-      missions: s.missions.toMapValue(x => x, x => { return { id: x } }),
-      mods: s.mods.toMapValue(x => x, x => { return { id: x } }),
-      name: s.name,
-      password: s.password,
-      secondaries: s.secondaries,
-      settings: s.settings,
-      size: s.size,
-    });
-  }
-
-  public static serverToStorage(s: ManagedServer): IManagedServer {
-    return {
-      adminPassword: s.adminPassword,
-      additionalSlots: s.additionalSlots,
-      id: s.id,
-      location: s.location,
-      missions: Array.from(s.missions.keys()),
-      mods: Array.from(s.mods.keys()),
-      name: s.name,
-      password: s.password,
-      secondaries: s.secondaries,
-      settings: s.settings,
-      size: s.size,
-    };
   }
 }
 
