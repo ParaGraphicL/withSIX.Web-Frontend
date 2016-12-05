@@ -1,4 +1,4 @@
-import 'isomorphic-fetch'; // fetch polyfill
+import 'whatwg-fetch'; // fetch polyfill
 import 'font-awesome/css/font-awesome.css';
 import 'flag-icon-css/css/flag-icon.css';
 import 'nouislider/distribute/nouislider.css';
