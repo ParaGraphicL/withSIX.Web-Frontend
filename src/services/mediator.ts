@@ -131,7 +131,7 @@ export class DbQuery<TRequest, TResponse> extends RequestBase<TRequest, TRespons
       .inlineCount(true);
   }
 
-  protected async handleModAugments(allMods: IContent[]) {
+  protected handleModAugments = async (allMods: IContent[]) => {
     if (allMods.length > 0) {
       let onlineModsInfo = await this.getOnlineModsInfo(allMods.map(x => x.id));
       allMods.forEach(x => {
