@@ -346,8 +346,9 @@ export class ServerStore {
     if (Tools.env >= Tools.Environment.Staging) { this.graphTest(); }
 
     if (servers.items.length > 0) {
-      game.activeServer = ServerStore.storageToServer(await client.servers.get(servers.items[0].id));
-      await augmentMods(Array.from(game.activeServer.mods.values()));
+      const s = ServerStore.storageToServer(await client.servers.get(servers.items[0].id));
+      await augmentMods(Array.from(s.mods.values()));
+      game.activeServer = s;
     }
   }
 
