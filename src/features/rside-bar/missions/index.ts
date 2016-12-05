@@ -30,12 +30,12 @@ export class Index extends ServerTab<IMissionsTabModel> {
 
   async refresh() {
     const missions = await new GetMissions().handle(this.mediator);
-    this.server.missions = missions.toMap(x => x);
+    this.server.missions = missions.toMapValue(x => x, x => { return { id: x }; });
   }
 
   async remove(m) {
-    await new DeleteMission(m).handle(this.mediator);
-    this.missions.delete(m);
+    await new DeleteMission(m.id).handle(this.mediator);
+    this.missions.delete(m.id);
   }
 }
 

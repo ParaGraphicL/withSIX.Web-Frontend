@@ -139,6 +139,7 @@
     "version": "version-uc"
   },
   "dependencies": {
+    "apollo-client": "^0.5.11",
     "aurelia-animator-css": "^1.0.1",
     "aurelia-auth": "git+https://github.com/sickboy/aurelia-auth.git",
     "aurelia-bootstrapper-webpack": "^1.0.0",

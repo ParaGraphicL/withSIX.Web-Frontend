@@ -1,6 +1,6 @@
-import {flatten, entries, removeEl, aryToMap, includes, move, uniq} from './utils/iterable'
-import {indexOfIgnoreCase, endsWithIgnoreCase, startsWithIgnoreCase, toUpperCaseFirst, toLowerCaseFirst, containsIgnoreCase, equalsIgnoreCase, truncate, sluggify, sluggifyEntityName, toShortId, fromShortId} from './utils/string'
-import {defineFunctions} from './utils/extenders'
+import { flatten, entries, removeEl, aryToMap, aryValueToMap, includes, move, uniq } from './utils/iterable'
+import { indexOfIgnoreCase, endsWithIgnoreCase, startsWithIgnoreCase, toUpperCaseFirst, toLowerCaseFirst, containsIgnoreCase, equalsIgnoreCase, truncate, sluggify, sluggifyEntityName, toShortId, fromShortId } from './utils/string'
+import { defineFunctions } from './utils/extenders'
 import Linq from 'linq4es2015'
 
 Linq.setExtensions();
@@ -21,13 +21,14 @@ defineFunctions(String.prototype, {
 })
 
 defineFunctions(Array.prototype, {
-   'flatten': flatten,
-   'removeEl': removeEl,
-   'toMap': aryToMap,
-   'includes': includes,
-   'move': move,
-   'uniq': uniq,
+  'flatten': flatten,
+  'removeEl': removeEl,
+  'toMap': aryToMap,
+  'toMapValue': aryValueToMap,
+  'includes': includes,
+  'move': move,
+  'uniq': uniq,
 });
 defineFunctions(Object.prototype, {
-   'entries': entries
+  'entries': entries
 });

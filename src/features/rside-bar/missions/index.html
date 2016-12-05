@@ -13,7 +13,7 @@
 
   <div class="the-content" scroll.trigger="closeDropdowns()">
     <ul class="menu">
-      <li repeat.for="[k, m] of missions">${m} <button class="ignore-close" click.delegate="remove(m)">X</button></li>
+      <li repeat.for="[k, m] of missions">${m.id} <button class="ignore-close" click.delegate="remove(m)">X</button></li>
     </ul>
 
     <div if.bind="missions.size === 0">
