@@ -17,6 +17,7 @@ export function configure(config: FrameworkConfiguration) {
   config.globalResources('./typeahead');
   config.globalResources('./command-button');
   config.globalResources('./optional-link');
+  config.globalResources('./add-attribute');
   config.globalResources('./remove-attribute');
 
   config.globalResources('./loading-composer');

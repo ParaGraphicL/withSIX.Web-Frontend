@@ -1,5 +1,5 @@
 <template>
-  <conditional-title desired-title.bind="tooltip" condition.bind="tooltip">
+  <div title.bind="tooltip & addAttribute">
     <button command.bind="command" type.bind="type" class.bind="clss || cls" class="naked-button" show.bind="isVisible">
       <slot>
         <span class="icon ${icon || model.icon} ${name ? 'with-text' : ''}" if.bind="icon || model.icon" show.bind="name || !command.isExecuting || noProcessing"></span>
@@ -11,5 +11,5 @@
       title="Cancel">
       <span class="icon withSIX-icon-X"></span>
     </button>
-  </conditional-title>
+  </div>
 </template>
