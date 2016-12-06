@@ -67,6 +67,16 @@ export class TopBar extends ViewModel {
       };
       this.tabs.push(userTab)
     }
+
+    if (this.features.createServers) {
+      this.tabs.push({
+        header: "Servers",
+        icon: "icon withSIX-icon-Nav-Server",
+        viewModel: `${TopBar.root}servers/servers`,
+        type: 'dropdown',
+        location: "middle", instant: true
+      });
+    }
   }
 
   get hasActiveGame() { return this.w6.activeGame.id != null }
