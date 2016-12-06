@@ -283,9 +283,12 @@ export class Game {
     } else {
       this.activeServer = this.create();
     }
+    this.overview = [{ id: this.activeServer.id, name: this.activeServer.name }];
   }
 
   get(id: string) { return this.servers.get(id); }
+
+  overview: { id: string, name: string }[] = []
 
   create() {
     const s = new ManagedServer(<IManagedServer>{ id: Tools.generateGuid() });
@@ -357,20 +360,86 @@ export class ServerStore {
 
   get(id: string) { return this.games.get(id); }
 
+  async select(id: string) {
+    const game = this.activeGame;
+    const { data }: IGQLResponse<{ server: IServerDataNode }> = await gcl.query<any>({
+      query: gql`
+        query GetServer($id: ID!) {
+          server(id: $id) {
+              ...BasicServerInfo
+              adminPassword
+              password
+              additionalSlots
+              settings {
+                ...InterestingSettings
+              }
+              status {
+                state
+                address
+              }
+              secondaries {
+                size
+              }
+              mods {
+                edges {
+                  constraint
+                  node {
+                    name
+                    id
+                  }
+                }
+              }
+              missions {
+                edges {
+                  node {
+                    id
+                    name
+                  }
+                }
+              }
+            }
+        }
+        fragment InterestingSettings on ServerSettings {
+          battlEye
+          verifySignatures
+          persistent
+          disableVon
+          drawingInMap
+          forceRotorLibSimulation
+          allowedFilePatching
+          enableDefaultSecurity
+          vonQuality
+          motd
+        }
+
+        fragment BasicServerInfo on Server {
+          id
+          name
+          gameId
+          userId
+          size
+          location
+        }
+    `, variables: {
+        id,
+      }
+    });
+    const { server } = data;
+    game.activeServer = ServerStore.storageToServer(this.toManagedServer(server));
+  }
+
   async getServers(client: IServerClient, augmentMods: (mods: any[]) => Promise<void>) {
     const game = this.activeGame;
 
-    const server = await this.getCurrentServer();
-    if (server) { game.activeServer = ServerStore.storageToServer(server); }
-
-    const servers = await this.getServerOverview();
+    const { firstServer, overview } = await this.queryServers();
+    if (overview.length > 0) { game.overview = overview; }
+    if (firstServer) { game.activeServer = ServerStore.storageToServer(firstServer); }
   }
 
-  async getServerOverview(): Promise<{ id: string, name: string }[]> {
-    const { data }: IGQLViewerResponse<{ servers: { edges: { node: { id, name } }[] } }> = await gcl.query<any>({
-      //forceFetch: true,
+  async queryServers(): Promise<{ firstServer: IManagedServer, overview: { id: string, name: string }[] }> {
+    const { data }: IGQLViewerResponse<{ firstServer: IServerData, servers: { edges: { node: { id, name } }[] } }> = await gcl.query<any>({
       query: gql`
-        query GetManagedServersOverview {
+        query GetServers {
           viewer {
             servers {
               edges {
@@ -381,21 +450,7 @@ export class ServerStore {
               }
               totalCount
             }
-          }
-        }
-    `
-    });
-
-    return data.viewer.servers.edges.map(x => x.node).map(({ id, name }) => { return { id, name } });
-  }
-
-
-  async getCurrentServer(): Promise<IManagedServer> {
-    const { data }: IGQLViewerResponse<IServerData> = await gcl.query<any>({
-      query: gql`
-        query GetFirstManagedServer {
-          viewer {
-            servers(first: 1) {
+            firstServer: servers(first: 1) {
               edges {
                 node {
                   ...BasicServerInfo
@@ -457,17 +512,25 @@ export class ServerStore {
           location
         }
     `});
-    const server = data.viewer.servers.edges[0];
+    const server = data.viewer.firstServer.edges[0];
     if (!server) { return null; }
     // TODO: or would we change the shape of our views instead?
     // TODO: We could drop the edges indirection for non paged requirements, hmz
+    const firstServer = this.toManagedServer(server.node)
+    return {
+      firstServer,
+      overview: data.viewer.servers.edges.map(x => x.node).map(({ id, name }) => { return { id, name }; }),
+    };
+  }
+
+  toManagedServer(server: IServerDataNode) {
     const { additionalSlots, adminPassword, gameId, id, location, name, password, secondaries,
-      settings, size, status, userId, mods, missions } = server.node;
+      settings, size, status, userId, mods, missions } = server;
     return {
       additionalSlots, adminPassword, gameId, id, location, name, password, secondaries, settings, size, status, userId,
       missions: missions.edges.map(x => x.node),
       mods: mods.edges.map(x => x.node),
-    };
+    }
   }
 
   save() {
@@ -494,54 +557,54 @@ interface IGQLResponse<T> {
 interface IGQLViewerResponse<T> extends IGQLResponse<{ viewer: T }> { }
 
 interface IServerData {
-  servers: {
+  edges: {
+    node: IServerDataNode
+  }[]
+}
+
+interface IServerDataNode {
+  id
+  name
+  gameId
+  userId
+  size: ServerSize
+  location: ServerLocation
+  adminPassword
+  password
+  additionalSlots
+  settings: {
+    battlEye
+    verifySignatures
+    persistent
+    disableVon
+    drawingInMap
+    forceRotorLibSimulation
+    allowedFilePatching
+    enableDefaultSecurity
+    vonQuality
+    motd
+  }
+  status: {
+    state
+    address
+  }
+  secondaries: {
+    size: ServerSize
+  }[]
+  mods: {
+    edges: {
+      constraint
+      node: {
+        name
+        id
+      }
+    }[]
+  }
+  missions: {
     edges: {
       node: {
         id
         name
-        gameId
-        userId
-        size: ServerSize
-        location: ServerLocation
-        adminPassword
-        password
-        additionalSlots
-        settings: {
-          battlEye
-          verifySignatures
-          persistent
-          disableVon
-          drawingInMap
-          forceRotorLibSimulation
-          allowedFilePatching
-          enableDefaultSecurity
-          vonQuality
-          motd
-        }
-        status: {
-          state
-          address
-        }
-        secondaries: {
-          size: ServerSize
-        }[]
-        mods: {
-          edges: {
-            constraint
-            node: {
-              name
-              id
-            }
-          }[]
-        }
-        missions: {
-          edges: {
-            node: {
-              id
-              name
-            }
-          }[]
-        }
       }
     }[]
   }

@@ -115,11 +115,12 @@ export class ServerTab<TModel extends ITabModel<any>> extends ViewModel {
   }
   //isValid: boolean;
 
-  constructor(ui, private serverStore: ServerStore) {
+  constructor(ui, protected serverStore: ServerStore) {
     super(ui);
   }
 
-  get server() { return this.serverStore.activeGame.activeServer; }
+  get server() { return this.game.activeServer; }
+  get game() { return this.serverStore.activeGame; }
 
   activate(model: TModel) {
     this.model = model;
