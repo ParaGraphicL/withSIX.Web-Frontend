@@ -1,7 +1,9 @@
-import {IBasketItem, BasketItemType, Base, ICollection, ViewModelWithModel, Query, DbClientQuery, handlerFor, IGame, ITab, IMenuItem, MenuItem, uiCommand2, IContentStatusChange, IContentStateChange, IContentState, ItemState,
-  InstallContents, ContentDeleted, IGameHome} from '../../../framework';
-import {GetGameHome} from '../../profile/library/home/index';
-import {BaseGame} from '../../profile/lib';
+import {
+  IBasketItem, BasketItemType, Base, ICollection, ViewModelWithModel, Query, DbClientQuery, handlerFor, IGame, ITab, IMenuItem, MenuItem, uiCommand2, IContentStatusChange, IContentStateChange, IContentState, ItemState,
+  InstallContents, ContentDeleted, IGameHome
+} from '../../../framework';
+import { GetGameHome } from '../../profile/library/home/index';
+import { BaseGame } from '../../profile/lib';
 
 export interface IHomeD extends IGameHome {
   collections: ICollection[];
@@ -76,7 +78,7 @@ export class Library extends ViewModelWithModel<ITab> {
   }
 
   attached() {
-    setTimeout(() => { this.shown = true; }, 0.6 * 1000); // animation delay. // TODO: have actual animation end trigger..
+    setTimeout(() => { this.shown = true; }, 0.2 * 1000); // animation delay. // TODO: have actual animation end trigger..
   }
 
   get activeGameName() { return !this.w6.activeGame.id ? "" : this.w6.activeGame.slug.replace("-", " "); }
