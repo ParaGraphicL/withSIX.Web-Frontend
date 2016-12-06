@@ -176,6 +176,7 @@ export enum ServerAction {
 
 export class ManagedServer extends EntityExtends.BaseEntity {
   id: string;
+  unsaved: boolean;
 
   location: ServerLocation = ServerLocation.WestEU;
   size: ServerSize = ServerSize.Normal;
@@ -285,7 +286,7 @@ export class Game {
   overview: { id: string, name: string }[] = []
 
   create() {
-    const s = new ManagedServer(<IManagedServer>{ id: Tools.generateGuid() });
+    const s = new ManagedServer({ id: Tools.generateGuid(), unsaved: true });
     this.servers.set(s.id, s);
     return s;
   }
@@ -345,7 +346,10 @@ export class ServerStore {
     return new Promise<void>(async (res, rej) => {
       while (!ct.isCancellationRequested) {
         try {
-          await this.activeGame.activeServer.refreshState();
+          const s = this.activeGame.activeServer;
+          if (!s.unsaved) {
+            await s.refreshState();
+          }
         } catch (err) {
           if (err.toString().indexOf('Failed request 404') > -1) { } else { rej(err); }
         }
