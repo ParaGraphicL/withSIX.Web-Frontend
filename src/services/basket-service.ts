@@ -1,28 +1,17 @@
-import { EventAggregator } from 'aurelia-event-aggregator';
-import { inject } from 'aurelia-framework';
-import { ReactiveBase } from './base';
-import { _Indexer } from './legacy/base';
-import { Toastr } from './toastr';
-import { ICancellationToken, ObservableEventAggregator } from './reactive';
-import { W6 } from './withSIX';
-import { BasketType, IBasketModel, IBasketItem, BasketState, IBasketCollection, IBaskets } from './legacy/baskets';
-import { createError } from "../helpers/utils/errors";
-import { EntityExtends } from "./entity-extends";
-import { W6Context } from './w6context';
-import { ContentHelper } from './helpers';
-
-import { Tools } from './tools';
-
-import ApolloClient, { createNetworkInterface } from "apollo-client";
-import gql from 'graphql-tag';
-
+import { ReactiveBase } from "./base";
+import { AppEventsWrapper, ClientWrapper } from "./client-wrapper";
+import { ContentHelper } from "./helpers";
+import { _Indexer } from "./legacy/base";
+import { IBasketItem, IBaskets } from "./legacy/baskets";
+import { Toastr } from "./toastr";
+import { W6 } from "./withSIX";
+import { EventAggregator } from "aurelia-event-aggregator";
+import { inject } from "aurelia-framework";
 
 import {
-  ActionType, IActionNotification, Client, ConnectionState, IContentState, ItemState, IContentStateChange, IContentStatusChange, IClientInfo, IActionTabStateUpdate, IContentGuidSpec, IContentsBase, IContentBase,
-  IUserErrorAdded, IUserErrorResolved
-} from 'withsix-sync-api';
-import { ClientWrapper, AppEventsWrapper, StateChanged } from './client-wrapper';
-
+  ActionType, Client, ConnectionState, IActionNotification, IActionTabStateUpdate, IClientInfo, IContentState, IContentStateChange,
+  IContentStatusChange, ItemState, IUserErrorAdded, IUserErrorResolved
+} from "withsix-sync-api";
 
 @inject(EventAggregator, W6, Client, Toastr, ClientWrapper, AppEventsWrapper)
 export class BasketService extends ReactiveBase {

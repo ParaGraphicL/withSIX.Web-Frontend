@@ -9,6 +9,7 @@ export { Rx };
 //export * from './entity-extends';
 export * from './dtos';
 export * from './w6context';
+export * from './graphqlclient';
 export * from './env';
 
 export * from './legacy';

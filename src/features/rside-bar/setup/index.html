@@ -13,6 +13,14 @@
 
   <div class="the-content" scroll.trigger="closeDropdowns()">
     <form role="form" validate.bind="validation">
+
+      <selectbox value.bind="activeServerId" options.bind="game.overview" if.bind="features.isTestEnvironment">
+        Servers
+        <template replace-part="item-template">
+          <option model.bind="o.id">${o.name}</option>
+        </template>
+      </selectbox>
+
       <div class="form-group required">
         <label>Name
           <input class="form-control" required placeholder="name of the server" name="name" id="name" type="text" value.bind="server.name">
