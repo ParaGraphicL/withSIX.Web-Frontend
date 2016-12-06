@@ -29,8 +29,8 @@ export class Index extends ServerTab<IStatusTab> {
     });
   scale = uiCommand2("Scale", () => this.handleScale(), {
     canExecuteObservable: this.observeEx(x => x.isRunning)
-      .combineLatest(this.observeEx(x => x.selectedSize).map(x => x.value !== this.server.size), (x, y) => x && y)
-      .combineLatest(this.observeEx(x => x.additionalSlots).map(x => x.value !== this.server.additionalSlots), (x, y) => x && y),
+      .combineLatest(this.observeEx(x => x.selectedSize).map(x => x && x.value !== this.server.size), (x, y) => x && y)
+      .combineLatest(this.observeEx(x => x.additionalSlots).map(x => x !== this.server.additionalSlots), (x, y) => x && y),
     cls: "ignore-close warn",
   });
   lock = uiCommand2("Lock", async () => alert("TODO"), {
