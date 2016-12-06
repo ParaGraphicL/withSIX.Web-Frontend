@@ -9,6 +9,7 @@ export class Index extends ServerTab<IStatusTab> {
   State = ServerState;
   isLocked = false;
   sizes = SharedValues.sizes;
+  saving;
 
   start = uiCommand2("Start", () => this.handleStart(), {
     canExecuteObservable: this.observeEx(x => x.canStart),
@@ -98,7 +99,12 @@ export class Index extends ServerTab<IStatusTab> {
     await new ScaleServer(this.server.id, this.selectedSize.value, this.additionalSlots).handle(this.mediator);
   }
 
-  saveChanges() {
-    return new CreateOrUpdateServer(this.w6.activeGame.id, this.server.id, ServerStore.serverToStorage(this.server)).handle(this.mediator);
+  async saveChanges() {
+    try {
+      this.saving = true;
+      await new CreateOrUpdateServer(this.w6.activeGame.id, this.server.id, ServerStore.serverToStorage(this.server)).handle(this.mediator);
+    } finally {
+      this.saving = false;
+    }
   }
 }
