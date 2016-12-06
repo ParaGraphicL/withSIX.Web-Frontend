@@ -203,7 +203,12 @@ export class ManagedServer extends EntityExtends.BaseEntity {
 
   getDefaultState() { return <any>{ state: ServerState.Initializing }; }
 
-  async refreshState() {
+  async refreshState(client: IServerClient) {
+    this.status = await client.servers.session(this.id); // await this.graphRefreshState();
+  }
+
+  // Optimize this server-side, so that GQL doesnt actually pull in the whole server? :-P
+  async graphRefreshState() {
     const { data }: IGQLResponse<{ server: { status: { address: string; state: ServerState; message: string; endtime: string } } }>
       = await gcl.query<any>({
         forceFetch: true,
@@ -224,10 +229,10 @@ export class ManagedServer extends EntityExtends.BaseEntity {
       });
 
     if (!data.server) {
-      this.status = this.getDefaultState();
+      return this.getDefaultState();
     } else {
       const { state, message, address, endtime } = data.server.status;
-      this.status = { state, message, address, endtime: endtime ? new Date(endtime) : null };
+      return { state, message, address, endtime: endtime ? new Date(endtime) : null };
     }
   }
 
@@ -412,7 +417,7 @@ export class ServerStore {
         try {
           const s = this.activeGame.activeServer;
           if (!s.unsaved) {
-            await s.refreshState();
+            await s.refreshState(client);
           }
         } catch (err) {
           if (err.toString().indexOf('Failed request 404') > -1) { } else { rej(err); }
