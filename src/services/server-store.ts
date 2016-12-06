@@ -1,6 +1,6 @@
 import { createError } from "../helpers/utils/errors";
 import { EntityExtends } from "./entity-extends";
-import { gcl, gql, createFragment } from "./graphqlclient";
+import { gcl, gql, createFragment, toGlobalId, fromGlobalId } from "./graphqlclient";
 import { ICancellationToken } from "./reactive";
 import { Tools } from "./tools";
 import { W6Context } from "./w6context";
@@ -209,12 +209,12 @@ export class ManagedServer extends EntityExtends.BaseEntity {
 
   // Optimize this server-side, so that GQL doesnt actually pull in the whole server? :-P
   async graphRefreshState() {
-    const { data }: IGQLResponse<{ server: { status: { address: string; state: ServerState; message: string; endtime: string } } }>
+    const { data }: IGQLResponse<{ managedServer: { status: { address: string; state: ServerState; message: string; endtime: string } } }>
       = await gcl.query<any>({
         forceFetch: true,
         query: gql`
                 query GetServerStatus($id: ID!) {
-                  server(id: $id) {
+                  managedServer(id: $id) {
                     status {
                       address
                       state
@@ -224,14 +224,14 @@ export class ManagedServer extends EntityExtends.BaseEntity {
                   }
                 }`,
         variables: {
-          id: this.id,
+          id: toGlobalId("ManagedServer", this.id),
         },
       });
 
-    if (!data.server) {
+    if (!data.managedServer) {
       return this.getDefaultState();
     } else {
-      const { state, message, address, endtime } = data.server.status;
+      const { state, message, address, endtime } = data.managedServer.status;
       return { state, message, address, endtime: endtime ? new Date(endtime) : null };
     }
   }
@@ -301,7 +301,7 @@ export class Game {
 }
 
 const interesting = createFragment(gql`
-  fragment InterestingSettings on ServerSettings {
+  fragment InterestingSettings on ManagedServerSettings {
     battlEye
     verifySignatures
     persistent
@@ -316,7 +316,7 @@ const interesting = createFragment(gql`
 `);
 
 const basic = createFragment(gql`
-  fragment BasicServerInfo on Server {
+  fragment BasicServerInfo on ManagedServer {
     id
     name
     gameId
@@ -326,7 +326,7 @@ const basic = createFragment(gql`
   }`);
 
 const fullServer = createFragment(gql`
-  fragment Server on Server {
+  fragment Server on ManagedServer {
     ...BasicServerInfo
     adminPassword
     password
@@ -448,21 +448,21 @@ export class ServerStore {
 
   async select(id: string) {
     const game = this.activeGame;
-    const { data }: IGQLResponse<{ server: IServerDataNode }> = await gcl.query<any>({
+    const { data }: IGQLResponse<{ managedServer: IServerDataNode }> = await gcl.query<any>({
       fragments: serverFragments,
       query: gql`
         query GetServer($id: ID!) {
-          server(id: $id) {
+          managedServer(id: $id) {
             ...Server
           }
         }
     `, variables: {
-        id,
+        id: toGlobalId("ManagedServer", id),
       }
     });
-    const { server } = data;
-    const s = ServerStore.storageToServer(this.toManagedServer(server));
-    game.servers.set(server.id, s);
+    const { managedServer } = data;
+    const s = ServerStore.storageToServer(this.toManagedServer(managedServer));
+    game.servers.set(managedServer.id, s);
     game.activeServer = s;
   }
 
@@ -479,12 +479,12 @@ export class ServerStore {
   }
 
   async queryServers(): Promise<{ firstServer: IManagedServer, overview: { id: string, name: string }[] }> {
-    const { data }: IGQLViewerResponse<{ firstServer: IServerData, servers: { edges: { node: { id, name } }[] } }> = await gcl.query<any>({
+    const { data }: IGQLViewerResponse<{ firstServer: IServerData, managedServers: { edges: { node: { id, name } }[] } }> = await gcl.query<any>({
       fragments: serverFragments,
       query: gql`
         query GetServers {
           viewer {
-            servers {
+            managedServers {
               edges {
                 node {
                   id
@@ -493,7 +493,7 @@ export class ServerStore {
               }
                 totalCount
             }
-            firstServer: servers(first: 1) {
+            firstServer: managedServers(first: 1) {
               edges {
                 node {
                   ...Server
@@ -510,18 +510,20 @@ export class ServerStore {
     const firstServer = server ? this.toManagedServer(server.node) : null;
     return {
       firstServer,
-      overview: data.viewer.servers.edges.map(x => x.node).map(({ id, name }) => { return { id, name }; }),
+      overview: data.viewer.managedServers.edges.map(x => x.node).map(({ id, name }) => { return { id: fromGlobalId(id).id, name }; }),
     };
   }
 
+  // todo; User and GameId from user and game nodes?
   toManagedServer(server: IServerDataNode) {
     const { additionalSlots, adminPassword, gameId, id, location, name, password, secondaries,
       settings, size, status, userId, mods, missions } = server;
     return {
-      additionalSlots, adminPassword, gameId, id, location, name, password, secondaries, settings, size, status, userId,
-      missions: missions.edges.map(x => x.node),
-      mods: mods.edges.map(x => x.node),
-    }
+      additionalSlots, adminPassword, gameId, id: fromGlobalId(id).id, location,
+      name, password, secondaries, settings, size, status, userId,
+      missions: missions.edges.map(x => Object.assign({}, x.node, { id: fromGlobalId(x.node.id) })),
+      mods: mods.edges.map(x => Object.assign({}, x.node, { id: fromGlobalId(x.node.id) })),
+    };
   }
 
   save() {
