@@ -9,8 +9,10 @@ export class CreateOrUpdateServer extends Command<string> {
 
 @handlerFor(CreateOrUpdateServer)
 class CreateOrUpdateServerHandler extends ServerHandler<CreateOrUpdateServer, string> {
-  handle(request: CreateOrUpdateServer) {
-    return this.client.servers.createOrUpdate(request);
+  async handle(request: CreateOrUpdateServer) {
+    const s = await this.client.servers.createOrUpdate(request);
+    // TODO: update store, set unsaved undefined
+    return s;
   }
 }
 
