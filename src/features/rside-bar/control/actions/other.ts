@@ -10,13 +10,13 @@ export class CreateOrUpdateServer extends Command<string> {
 @handlerFor(CreateOrUpdateServer)
 class CreateOrUpdateServerHandler extends ServerHandler<CreateOrUpdateServer, string> {
   async handle(request: CreateOrUpdateServer) {
+    const server = this.store.get(request.gameId).servers.get(request.id);
     const s = await this.client.servers.createOrUpdate(request);
-    // TODO: update store, set unsaved undefined
+    // TODO: Store the return in the store?
+    server.unsaved = undefined;
     return s;
   }
 }
-
-
 
 export class GetServerState extends Query<IServerSession> { constructor(public id: string) { super(); } }
 

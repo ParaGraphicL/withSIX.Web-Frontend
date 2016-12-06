@@ -96,10 +96,7 @@ export class Index extends ServerTab<IStatusTab> {
     await new ScaleServer(this.server.id, this.selectedSize.value).handle(this.mediator);
   }
 
-  async saveChanges() {
-    const server = this.server;
-    await new CreateOrUpdateServer(this.w6.activeGame.id, server.id, ServerStore.serverToStorage(this.server)).handle(this.mediator);
-    // TODO: Store the return in the store?
-    server.unsaved = undefined; // todo; this should be handled by the command
+  saveChanges() {
+    return new CreateOrUpdateServer(this.w6.activeGame.id, this.server.id, ServerStore.serverToStorage(this.server)).handle(this.mediator);
   }
 }
