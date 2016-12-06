@@ -1,12 +1,14 @@
 import { Tools } from "./tools";
 
-import ApolloClient, { createNetworkInterface } from "apollo-client";
+import ApolloClient, { createNetworkInterface, createFragment } from "apollo-client";
 import { DeprecatedWatchQueryOptions } from "apollo-client/core/watchQueryOptions";
 import gql from "graphql-tag";
-export { gql }
+export { gql, createFragment }
 
 // TODO: Include graph also on the frontend domain, so that we can use it during development?
 // TODO: What about a graph for the Client (and what about hybrid; e.g get me these Mods, and if client connected, also the installed status)
+// TODO: Investigate batching http://dev.apollodata.com/core/network.html#query-batching
+
 const networkInterface = createNetworkInterface({
   uri: Tools.env <= Tools.Environment.Staging ? "https://graph.withsix.com" : "http://localhost:5000/graphql",
   opts: {

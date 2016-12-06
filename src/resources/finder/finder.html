@@ -1,7 +1,8 @@
 <template>
   <require from="./finder.scss"></require>
   <span class="pull-right" if.bind="showTotalResults">${model.results.length} results</span>
-  <button class="pull-right naked-button execute ignore-close" show.bind="shouldShowButton" click.delegate="model.execute()" disabled.bind="!model.searchItem">
+  <button class="pull-right naked-button execute ignore-close" show.bind="shouldShowButton" click.delegate="model.execute()"
+    disabled.bind="!model.searchItem & removeAttribute">
     <span class="icon ${icon}" if.bind="icon"></span>
     <span class.bind="textCls" if.bind="text">${text}</span>
   </button>

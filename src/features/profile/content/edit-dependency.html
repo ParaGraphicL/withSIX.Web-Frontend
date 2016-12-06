@@ -8,7 +8,7 @@
       <div class="form-control">
         <label for="version-constraint">Version:</label>
         <span class="icon withSIX-icon-Lock" show.bind="versionSelected"></span>
-        <select value.bind="constraint" disabled.bind="versions.length < 1">
+        <select value.bind="constraint" disabled.bind="versions.length < 1 & removeAttribute">
           <option repeat.for="v of versions">${v}</option>
         </select>
       </div>

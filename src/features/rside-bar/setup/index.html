@@ -42,7 +42,7 @@
 
       <h3>Provisioning</h3>
       <hr />
-      <selectbox class="required" value.bind="server.location" options.bind="locations" disabled.bind="true">
+      <selectbox class="required" value.bind="server.location" options.bind="locations" disabled.one-time="true">
         Location
         <template replace-part="item-template">
           <option model.bind="o.value">${o.title || o}</option>
