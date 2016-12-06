@@ -528,10 +528,9 @@ export class ServerStore {
         }
     `});
     const server = data.viewer.firstServer.edges[0];
-    if (!server) { return null; }
     // TODO: or would we change the shape of our views instead?
     // TODO: We could drop the edges indirection for non paged requirements, hmz
-    const firstServer = this.toManagedServer(server.node)
+    const firstServer = server ? this.toManagedServer(server.node) : null;
     return {
       firstServer,
       overview: data.viewer.servers.edges.map(x => x.node).map(({ id, name }) => { return { id, name }; }),
