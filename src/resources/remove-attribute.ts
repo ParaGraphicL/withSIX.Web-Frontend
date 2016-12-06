@@ -1,9 +1,11 @@
 // <input ref="test" disabled.bind="myInput.checked & removeAttribute">
 export class RemoveAttributeBindingBehavior {
+  originalObserver;
   bind(binding, source) {
+    this.originalObserver = binding.targetObserver;
     binding.targetObserver = new RemoveAttributeObserver(binding.target, binding.targetProperty);
   }
-  unbind(binding) { }
+  unbind(binding) { binding.targetObserver = this.originalObserver; }
 }
 
 class RemoveAttributeObserver {
