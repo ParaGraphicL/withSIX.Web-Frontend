@@ -2,7 +2,7 @@
   <!--<require from="./index.scss"></require>-->
 
   <header class="tab-header">
-    <span class="main-text">${model.header}</span>
+    <span class="main-text">${model.header} <a href="https://community.bistudio.com/wiki/server.cfg" target="_blank">(i)</a></span>
   </header>
 
   <hr />
@@ -24,7 +24,8 @@
 
       <hr />
       <h3>Advanced</h3>
-      <checkbox value.bind="m.enableDefaultSecurity">Enable security best practices</checkbox>
+      <checkbox value.bind="m.enableDefaultSecurity">Enable security best practices <a href="https://community.bistudio.com/wiki/server.cfg#Server_Security"
+          target="_blank" title="Security best practices specified by Bohemia Interactive">(i)</a></checkbox>
       <checkbox value.bind="m.allowedFilePatching">Allow FilePatching</checkbox>
     </form>
     <command-button model.bind="next"></command-button>
