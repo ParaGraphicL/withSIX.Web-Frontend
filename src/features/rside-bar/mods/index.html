@@ -12,26 +12,11 @@
   <!--<hr />-->
 
   <div class="the-content" scroll.trigger="closeDropdowns()">
-    <ul class="menu">
-      <li repeat.for="[k, m] of mods">${m.name} <button class="ignore-close" click.delegate="remove(m)">X</button></li>
-    </ul>
-    <div if.bind="mods.size === 0">
-      <i>No mods found, add some with the "Add to Server" button on Mod cards</i>
-    </div>
-
+    <loading-composer shown.bind="shown" view-model="features/rside-bar/mods/mods" model.bind="server"></loading-composer>
     <div if.bind="signaturesEnabled">
       <hr />
       <h3>BI Keys</h3>
-
-      <ul class="menu">
-        <li repeat.for="[k, m] of keys">${m} <button class="ignore-close" click.delegate="removeKey(m)">X</button></li>
-      </ul>
-
-      <hr />
-
-      <fileupload accept=".bikey" value.bind="files">Upload BIKey</fileupload>
-      <command-button model.bind="upload"></command-button>
-      <i>Please note: bikeys from all the mods loaded on the server will be automatically added!</i>
+      <loading-composer shown.bind="shown" view-model="features/rside-bar/mods/bikeys" model.bind="server"></loading-composer>
     </div>
 
     <hr />

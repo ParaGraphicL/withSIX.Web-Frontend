@@ -1,0 +1,11 @@
+<template>
+  <ul class="menu">
+    <li repeat.for="[k, m] of keys">${m} <button class="ignore-close" click.delegate="removeKey(m)">X</button></li>
+  </ul>
+
+  <hr />
+
+  <fileupload accept=".bikey" value.bind="files">Upload BIKey</fileupload>
+  <command-button model.bind="upload"></command-button>
+  <i>Please note: bikeys from all the mods loaded on the server will be automatically added!</i>
+</template>

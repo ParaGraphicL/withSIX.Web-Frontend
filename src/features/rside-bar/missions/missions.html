@@ -1,0 +1,15 @@
+<template>
+  <ul class="menu">
+    <li repeat.for="[k, m] of missions">${m.id} <button class="ignore-close" click.delegate="remove(m)">X</button></li>
+  </ul>
+
+  <div if.bind="missions.size === 0">
+    <i>No missions found, add some .. somehow</i>
+  </div>
+
+  <hr />
+  <fileupload accept=".pbo" value.bind="files">Upload new</fileupload>
+  <command-button model.bind="upload"></command-button>
+
+  <hr />
+</template>
