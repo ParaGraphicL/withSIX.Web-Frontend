@@ -339,15 +339,17 @@ export class ServerStore {
   }
 
   interval = 2 * 1000; // todo; adjust interval based on state, also should restart on each action?
+
   monitor(client: IServerClient, ct: { isCancellationRequested: boolean }) {
+    // TODO: Only monitor servers that actually exist on network
     return new Promise<void>(async (res, rej) => {
-      try {
-        while (!ct.isCancellationRequested) {
+      while (!ct.isCancellationRequested) {
+        try {
           await this.activeGame.activeServer.refreshState();
-          await new Promise((res2) => setTimeout(res2, this.interval));
+        } catch (err) {
+          if (err.toString().indexOf('Failed request 404') > -1) { } else { rej(err); }
         }
-      } catch (err) {
-        rej(err);
+        await new Promise((res2) => setTimeout(res2, this.interval));
       }
       res();
     });
