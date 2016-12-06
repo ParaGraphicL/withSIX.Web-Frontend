@@ -49,7 +49,7 @@ export class Index extends ServerTab<IStatusTab> {
   private _selectedSize;
   private _additionalSlots;
 
-  get jobState() { return this.server.state; }
+  get jobState() { return this.server.status; }
   get selectedSize() { return this._selectedSize; }
   set selectedSize(value) { this._selectedSize = value; this.server.size = value.value; this.additionalSlots = 0; }
 
@@ -58,7 +58,9 @@ export class Index extends ServerTab<IStatusTab> {
 
   get isRunning() { return this.state === ServerState.GameIsRunning; }
   get canStop() { return (this.state > ServerState.Initializing && this.state <= ServerState.GameIsRunning); }
-  get canStart() { return (this.state === ServerState.Initializing || this.state >= ServerState.Failed); }
+  get canStart() {
+    return (this.state === ServerState.Initializing || this.state === ServerState.ContentPrepared || this.state >= ServerState.Failed);
+  }
   get canPrepare() {
     return (this.state === ServerState.Initializing
       || this.state === ServerState.GameIsRunning || this.state >= ServerState.Failed);
