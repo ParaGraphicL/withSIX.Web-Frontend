@@ -1,7 +1,7 @@
 <template>
   <command-button class="pull-right" model.bind="model.command" if.bind="model.command"></command-button>
   <div class="content">
-    <div title.bind="model.details & addAttribute">
+    <div title.bind="model.details & removeAttribute">
       <a href.bind="model.href" class="text-link" if.bind="model.href" click.trigger="visit()">
         <div class="row1">
           <span class="title" show.bind="model.title">${model.title}</span>

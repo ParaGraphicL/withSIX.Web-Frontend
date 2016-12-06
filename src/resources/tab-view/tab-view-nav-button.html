@@ -12,7 +12,7 @@
     </div>
 
     <div class="item-progress-bar ${progressClass}" title.bind="tab.header">
-      <button title.bind="tab.progressInfo.text & addAttribute" click.trigger="toggleTab({ tab, event: $event })"
+      <button title.bind="tab.progressInfo.text & removeAttribute" click.trigger="toggleTab({ tab, event: $event })"
         click.delegate="removeNotification()" disabled.bind="tab.disabled && !tab.disabledAction & removeAttribute"
         class="tab-button ${tabNotificationActive ? 'notification' : ''} ${lastNotificationClass} ${tab.disabled ? 'disabled' : ''}">
           <div class="item-progress-width item-progress-c-bgd"></div>

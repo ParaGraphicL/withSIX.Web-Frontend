@@ -1,5 +1,5 @@
 <template>
-  <span title.bind="tooltip & addAttribute">
+  <span title.bind="tooltip & removeAttribute">
     <button command.bind="command" type.bind="type" class.bind="clss || cls" class="naked-button" show.bind="isVisible">
       <slot>
         <span class="icon ${icon || model.icon} ${name ? 'with-text' : ''}" if.bind="icon || model.icon" show.bind="name || !command.isExecuting || noProcessing"></span>
