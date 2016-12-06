@@ -444,7 +444,9 @@ export class ServerStore {
       }
     });
     const { server } = data;
-    game.activeServer = ServerStore.storageToServer(this.toManagedServer(server));
+    const s = ServerStore.storageToServer(this.toManagedServer(server));
+    game.servers.set(server.id, s);
+    game.activeServer = s;
   }
 
   async getServers(client: IServerClient, augmentMods: (mods: any[]) => Promise<void>) {
@@ -452,7 +454,11 @@ export class ServerStore {
 
     const { firstServer, overview } = await this.queryServers();
     if (overview.length > 0) { game.overview = overview; }
-    if (firstServer) { game.activeServer = ServerStore.storageToServer(firstServer); }
+    if (firstServer) {
+      const s = ServerStore.storageToServer(firstServer);
+      game.servers.set(s.id, s);
+      game.activeServer = s;
+    }
   }
 
   async queryServers(): Promise<{ firstServer: IManagedServer, overview: { id: string, name: string }[] }> {
