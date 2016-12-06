@@ -1,6 +1,6 @@
 import { createError } from "../helpers/utils/errors";
 import { EntityExtends } from "./entity-extends";
-import { gcl, gql } from "./graphqlclient";
+import { gcl, gql, createFragment } from "./graphqlclient";
 import { ICancellationToken } from "./reactive";
 import { Tools } from "./tools";
 import { W6Context } from "./w6context";
@@ -295,6 +295,70 @@ export class Game {
   remove(server: ManagedServer) { this.servers.delete(server.id); }
 }
 
+const interesting = createFragment(gql`
+  fragment InterestingSettings on ServerSettings {
+    battlEye
+    verifySignatures
+    persistent
+    disableVon
+    drawingInMap
+    forceRotorLibSimulation
+    allowedFilePatching
+    enableDefaultSecurity
+    vonQuality
+    motd
+  }
+`);
+
+const basic = createFragment(gql`
+  fragment BasicServerInfo on Server {
+    id
+    name
+    gameId
+    userId
+    size
+    location
+  }`);
+
+const fullServer = createFragment(gql`
+  fragment Server on Server {
+    ...BasicServerInfo
+    adminPassword
+    password
+    additionalSlots
+    settings {
+      ...InterestingSettings
+    }
+    status {
+      state
+      address
+      message
+      endtime
+    }
+    secondaries {
+      size
+    }
+    mods {
+      edges {
+        constraint
+        node {
+          name
+          id
+        }
+      }
+    }
+    missions {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+  }
+  `);
+
+const serverFragments = basic.concat(interesting).concat(fullServer);
 
 @inject(W6)
 export class ServerStore {
@@ -380,64 +444,12 @@ export class ServerStore {
   async select(id: string) {
     const game = this.activeGame;
     const { data }: IGQLResponse<{ server: IServerDataNode }> = await gcl.query<any>({
+      fragments: serverFragments,
       query: gql`
         query GetServer($id: ID!) {
           server(id: $id) {
-              ...BasicServerInfo
-              adminPassword
-              password
-              additionalSlots
-              settings {
-                ...InterestingSettings
-              }
-              status {
-                state
-                address
-                message
-                endtime
-              }
-              secondaries {
-                size
-              }
-              mods {
-                edges {
-                  constraint
-                  node {
-                    name
-                    id
-                  }
-                }
-              }
-              missions {
-                edges {
-                  node {
-                    id
-                    name
-                  }
-                }
-              }
-            }
-        }
-        fragment InterestingSettings on ServerSettings {
-          battlEye
-          verifySignatures
-          persistent
-          disableVon
-          drawingInMap
-          forceRotorLibSimulation
-          allowedFilePatching
-          enableDefaultSecurity
-          vonQuality
-          motd
-        }
-
-        fragment BasicServerInfo on Server {
-          id
-          name
-          gameId
-          userId
-          size
-          location
+            ...Server
+          }
         }
     `, variables: {
         id,
@@ -463,6 +475,7 @@ export class ServerStore {
 
   async queryServers(): Promise<{ firstServer: IManagedServer, overview: { id: string, name: string }[] }> {
     const { data }: IGQLViewerResponse<{ firstServer: IServerData, servers: { edges: { node: { id, name } }[] } }> = await gcl.query<any>({
+      fragments: serverFragments,
       query: gql`
         query GetServers {
           viewer {
@@ -473,70 +486,17 @@ export class ServerStore {
                   name
                 }
               }
-              totalCount
+                totalCount
             }
             firstServer: servers(first: 1) {
               edges {
                 node {
-                  ...BasicServerInfo
-                  adminPassword
-                  password
-                  additionalSlots
-                  settings {
-                    ...InterestingSettings
-                  }
-                  status {
-                    address
-                    state
-                    message
-                    endtime
-                  }
-                  secondaries {
-                    size
-                  }
-                  mods {
-                    edges {
-                      constraint
-                      node {
-                        name
-                        id
-                      }
-                    }
-                  }
-                  missions {
-                    edges {
-                      node {
-                        id
-                        name
-                      }
-                    }
-                  }
+                  ...Server
                 }
-                }
-                totalCount
               }
+              totalCount
+            }
           }
-        }
-        fragment InterestingSettings on ServerSettings {
-          battlEye
-          verifySignatures
-          persistent
-          disableVon
-          drawingInMap
-          forceRotorLibSimulation
-          allowedFilePatching
-          enableDefaultSecurity
-          vonQuality
-          motd
-        }
-
-        fragment BasicServerInfo on Server {
-          id
-          name
-          gameId
-          userId
-          size
-          location
         }
     `});
     const server = data.viewer.firstServer.edges[0];
