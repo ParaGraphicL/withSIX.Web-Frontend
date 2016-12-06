@@ -7,7 +7,7 @@
 
     <ai-dialog-body>
       <form role="form" validate.bind="validation">
-        <field-set disabled.bind="ok.isExecuting">
+        <field-set disabled.bind="ok.isExecuting & removeAttribute">
           <div class="form-group">
             <label for="name">Name:</label>
             <input type="text" name="name" id="name" class="form-control" value.bind="model.name">

@@ -1,4 +1,4 @@
-import {FrameworkConfiguration} from 'aurelia-framework';
+import { FrameworkConfiguration } from 'aurelia-framework';
 
 export function configure(config: FrameworkConfiguration) {
   config.globalResources('./router-menu');
@@ -17,6 +17,7 @@ export function configure(config: FrameworkConfiguration) {
   config.globalResources('./typeahead');
   config.globalResources('./command-button');
   config.globalResources('./optional-link');
+  config.globalResources('./remove-attribute');
 
   config.globalResources('./loading-composer');
 
