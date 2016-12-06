@@ -128,7 +128,7 @@ class ServersApi extends ApiBase {
   stop(id: string, ct?: ICancellationToken) { return this.changeState(id, Action.Stop, undefined, ct); }
   restart(id: string, ct?: ICancellationToken) { return this.changeState(id, Action.Restart, undefined, ct); }
   prepare(id: string, ct?: ICancellationToken) { return this.changeState(id, Action.Prepare, undefined, ct); }
-  scale(id: string, size: ServerSize, ct?: ICancellationToken) { return this.changeState(id, Action.Scale, { size }, ct); }
+  scale(id: string, size: ServerSize, additionalSlots: number, ct?: ICancellationToken) { return this.changeState(id, Action.Scale, { size, additionalSlots }, ct); }
 
   private async changeState(id: string, action: Action, data?, ct?: ICancellationToken) {
     const operationId = await this._post<string>(`/${id}/${Action[action].toLowerCase()}`, data);

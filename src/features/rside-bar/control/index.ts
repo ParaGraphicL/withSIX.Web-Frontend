@@ -93,8 +93,9 @@ export class Index extends ServerTab<IStatusTab> {
   handleScale = async () => {
     // TODO: Reverse this and don't do saveChanges?
     this.server.size = this.selectedSize.value;
+    this.server.additionalSlots = this.additionalSlots;
     await this.saveChanges();
-    await new ScaleServer(this.server.id, this.selectedSize.value).handle(this.mediator);
+    await new ScaleServer(this.server.id, this.selectedSize.value, this.additionalSlots).handle(this.mediator);
   }
 
   saveChanges() {
