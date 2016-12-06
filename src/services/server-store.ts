@@ -23,6 +23,12 @@ interface IManagedServer {
 
   mods: { id: string, constraint?: string }[];
   missions: { id: string }[];
+  status: {
+    address
+    state
+    message
+    endtime
+  }
 }
 
 interface IManagedServerListItem {
@@ -186,25 +192,21 @@ export class ManagedServer extends EntityExtends.BaseEntity {
 
   mods: Map<string, { id: string }> = new Map<string, { id: string }>();
   missions: Map<string, { id: string }> = new Map<string, { id: string }>();
-  state: IServerSession;
-  interval = 2 * 1000; // todo; adjust interval based on state, also should restart on each action?
+  status: IServerSession;
 
   constructor(private data) {
     super();
-    this.state = this.getDefaultState();
+    this.status = this.getDefaultState();
     Object.assign(this, data);
   }
 
   getDefaultState() { return <any>{ state: ServerState.Initializing }; }
 
-  monitor(client: IServerClient, ct: { isCancellationRequested: boolean }) {
-    return new Promise<void>(async (res, rej) => {
-      try {
-        while (!ct.isCancellationRequested) {
-          const { data }: IGQLResponse<{ server: { status: { address: string; state: ServerState; message: string; endtime: string } } }>
-            = await gcl.query<any>({
-              forceFetch: true,
-              query: gql`
+  async refreshState() {
+    const { data }: IGQLResponse<{ server: { status: { address: string; state: ServerState; message: string; endtime: string } } }>
+      = await gcl.query<any>({
+        forceFetch: true,
+        query: gql`
                 query GetServerStatus($id: ID!) {
                   server(id: $id) {
                     status {
@@ -215,25 +217,17 @@ export class ManagedServer extends EntityExtends.BaseEntity {
                     }
                   }
                 }`,
-              variables: {
-                id: this.id,
-              },
-            });
+        variables: {
+          id: this.id,
+        },
+      });
 
-          // TODO: We should always return a status!
-          if (!data.server || !data.server.status) {
-            this.state = this.getDefaultState();
-          } else {
-            const { state, message, address, endtime } = data.server.status;
-            this.state = { state, message, address, endtime: endtime ? new Date(endtime) : null };
-          }
-          await new Promise((res2) => setTimeout(res2, this.interval));
-        }
-      } catch (err) {
-        rej(err);
-      }
-      res();
-    });
+    if (!data.server) {
+      this.status = this.getDefaultState();
+    } else {
+      const { state, message, address, endtime } = data.server.status;
+      this.status = { state, message, address, endtime: endtime ? new Date(endtime) : null };
+    }
   }
 
   toggleMod(mod: { id: string; name: string }) {
@@ -319,6 +313,7 @@ export class ServerStore {
       secondaries: s.secondaries,
       settings: s.settings,
       size: s.size,
+      status: s.status
     });
   }
 
@@ -335,11 +330,27 @@ export class ServerStore {
       secondaries: s.secondaries,
       settings: s.settings,
       size: s.size,
+      status: s.status,
     };
   }
 
   constructor(private w6: W6) {
     this.load();
+  }
+
+  interval = 2 * 1000; // todo; adjust interval based on state, also should restart on each action?
+  monitor(client: IServerClient, ct: { isCancellationRequested: boolean }) {
+    return new Promise<void>(async (res, rej) => {
+      try {
+        while (!ct.isCancellationRequested) {
+          await this.activeGame.activeServer.refreshState();
+          await new Promise((res2) => setTimeout(res2, this.interval));
+        }
+      } catch (err) {
+        rej(err);
+      }
+      res();
+    });
   }
 
   get activeGame() {
@@ -376,6 +387,8 @@ export class ServerStore {
               status {
                 state
                 address
+                message
+                endtime
               }
               secondaries {
                 size
@@ -461,8 +474,10 @@ export class ServerStore {
                     ...InterestingSettings
                   }
                   status {
-                    state
                     address
+                    state
+                    message
+                    endtime
                   }
                   secondaries {
                     size
@@ -585,8 +600,10 @@ interface IServerDataNode {
     motd
   }
   status: {
-    state
     address
+    state
+    message
+    endtime
   }
   secondaries: {
     size: ServerSize

@@ -183,6 +183,6 @@ export class MonitorServerStateHandler extends DbQuery<MonitorServerState, void>
 
   async handle(request: MonitorServerState) {
     await this.store.getServers(this.client, this.handleModAugments);
-    await this.store.activeGame.activeServer.monitor(this.client, request.ct);
+    await this.store.monitor(this.client, request.ct);
   }
 }
