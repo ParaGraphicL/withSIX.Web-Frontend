@@ -1,13 +1,11 @@
 import { createError } from "../helpers/utils/errors";
 import { EntityExtends } from "./entity-extends";
+import { gcl, gql } from "./graphqlclient";
 import { ICancellationToken } from "./reactive";
 import { Tools } from "./tools";
 import { W6Context } from "./w6context";
 import { W6 } from "./withSIX";
 import { inject } from "aurelia-framework";
-
-import ApolloClient, { createNetworkInterface } from "apollo-client";
-import gql from "graphql-tag";
 
 interface IManagedServer {
   id: string;
@@ -203,11 +201,31 @@ export class ManagedServer extends EntityExtends.BaseEntity {
     return new Promise<void>(async (res, rej) => {
       try {
         while (!ct.isCancellationRequested) {
-          try {
-            const session = await client.servers.session(this.id);
-            this.state = session;
-          } catch (err) {
-            if (err.status === 404) { this.state = this.getDefaultState(); }
+          const { data }: IGQLResponse<{ server: { status: { address: string; state: ServerState; message: string; endtime: string } } }>
+            = await gcl.query<any>({
+              forceFetch: true,
+              query: gql`
+                query GetServerStatus($id: ID!) {
+                  server(id: $id) {
+                    status {
+                      address
+                      state
+                      message
+                      endtime
+                    }
+                  }
+                }`,
+              variables: {
+                id: this.id,
+              },
+            });
+
+          // TODO: We should always return a status!
+          if (!data.server || !data.server.status) {
+            this.state = this.getDefaultState();
+          } else {
+            const { state, message, address, endtime } = data.server.status;
+            this.state = { state, message, address, endtime: endtime ? new Date(endtime) : null };
           }
           await new Promise((res2) => setTimeout(res2, this.interval));
         }
@@ -341,95 +359,115 @@ export class ServerStore {
 
   async getServers(client: IServerClient, augmentMods: (mods: any[]) => Promise<void>) {
     const game = this.activeGame;
-    const servers = await client.servers.list(game.id);
 
-    if (Tools.env >= Tools.Environment.Staging) { this.graphTest(); }
+    const server = await this.getCurrentServer();
+    if (server) { game.activeServer = ServerStore.storageToServer(server); }
 
-    if (servers.items.length > 0) {
-      const s = ServerStore.storageToServer(await client.servers.get(servers.items[0].id));
-      await augmentMods(Array.from(s.mods.values()));
-      game.activeServer = s;
-    }
+    const servers = await this.getServerOverview();
   }
 
-  async graphTest() {
-    // TODO: Include graph also on the frontend domain, so that we can use it during development?
-    const networkInterface = createNetworkInterface({
-      uri: Tools.env <= Tools.Environment.Staging ? "https://graph.withsix.com" : "http://localhost:5000/graphql",
-      opts: {
-        //credentials: 'same-origin',
-      },
+  async getServerOverview(): Promise<{ id: string, name: string }[]> {
+    const { data }: IGQLViewerResponse<{ servers: { edges: { node: { id, name } }[] } }> = await gcl.query<any>({
+      //forceFetch: true,
+      query: gql`
+        query GetManagedServersOverview {
+          viewer {
+            servers {
+              edges {
+                node {
+                  id
+                  name
+                }
+              }
+              totalCount
+            }
+          }
+        }
+    `
     });
-    networkInterface.use([{
-      applyMiddleware(req, next) {
-        if (!req.options.headers) {
-          req.options.headers = {};  // Create the header object if needed.
-        }
-        req.options.headers["authorization"] = localStorage.getItem("aurelia_token") ? `Bearer ${localStorage.getItem("aurelia_token")}` : null;
-        next();
-      }
-    }]);
-    const ac = new ApolloClient({ networkInterface });
 
-    try {
-      await ac.query({
-        query: gql`
-          query Awesome($id: String) {
-            viewer {
-    userName
-    id
-    servers {
-      id
-    }
+    return data.viewer.servers.edges.map(x => x.node).map(({ id, name }) => { return { id, name } });
   }
-  server(id: $id) {
-    id
-    name
-    mods {
-      edges {
-        constraint
-        cursor
-        node {
-          name
-          id
-          packageName
+
+
+  async getCurrentServer(): Promise<IManagedServer> {
+    const { data }: IGQLViewerResponse<IServerData> = await gcl.query<any>({
+      query: gql`
+        query GetFirstManagedServer {
+          viewer {
+            servers(first: 1) {
+              edges {
+                node {
+                  ...BasicServerInfo
+                  adminPassword
+                  password
+                  additionalSlots
+                  settings {
+                    ...InterestingSettings
+                  }
+                  status {
+                    state
+                    address
+                  }
+                  secondaries {
+                    size
+                  }
+                  mods {
+                    edges {
+                      constraint
+                      node {
+                        name
+                        id
+                      }
+                    }
+                  }
+                  missions {
+                    edges {
+                      node {
+                        id
+                        name
+                      }
+                    }
+                  }
+                }
+                }
+                totalCount
+              }
+          }
         }
-      }
-      totalCount
-      pageInfo {
-        hasNextPage
-        hasPreviousPage
-      }
-    }
-    missions {
-      edges {
-        cursor
-        node {
-          name
-          id
+        fragment InterestingSettings on ServerSettings {
+          battlEye
+          verifySignatures
+          persistent
+          disableVon
+          drawingInMap
+          forceRotorLibSimulation
+          allowedFilePatching
+          enableDefaultSecurity
+          vonQuality
+          motd
         }
-      }
-      totalCount
-      pageInfo {
-        hasNextPage
-        hasPreviousPage
-      }
-    }
-    adminPassword
-    password
-    size
-    location
-    additionalSlots
-  }
-      }
-      `, variables: { id: "98731246-e77c-deec-e217-cdc8800aa14c" }
-      })
-        .then(x => {
-          console.log("$$$$ GQL: RESULT", x);
-        });
-    } catch (err) {
-      console.log("$$$$ GQL: ERR", err);
-    }
+
+        fragment BasicServerInfo on Server {
+          id
+          name
+          gameId
+          userId
+          size
+          location
+        }
+    `});
+    const server = data.viewer.servers.edges[0];
+    if (!server) { return null; }
+    // TODO: or would we change the shape of our views instead?
+    // TODO: We could drop the edges indirection for non paged requirements, hmz
+    const { additionalSlots, adminPassword, gameId, id, location, name, password, secondaries,
+      settings, size, status, userId, mods, missions } = server.node;
+    return {
+      additionalSlots, adminPassword, gameId, id, location, name, password, secondaries, settings, size, status, userId,
+      missions: missions.edges.map(x => x.node),
+      mods: mods.edges.map(x => x.node),
+    };
   }
 
   save() {
@@ -448,6 +486,67 @@ export class ServerStore {
     }
   }
 }
+
+interface IGQLResponse<T> {
+  data: T;
+}
+
+interface IGQLViewerResponse<T> extends IGQLResponse<{ viewer: T }> { }
+
+interface IServerData {
+  servers: {
+    edges: {
+      node: {
+        id
+        name
+        gameId
+        userId
+        size: ServerSize
+        location: ServerLocation
+        adminPassword
+        password
+        additionalSlots
+        settings: {
+          battlEye
+          verifySignatures
+          persistent
+          disableVon
+          drawingInMap
+          forceRotorLibSimulation
+          allowedFilePatching
+          enableDefaultSecurity
+          vonQuality
+          motd
+        }
+        status: {
+          state
+          address
+        }
+        secondaries: {
+          size: ServerSize
+        }[]
+        mods: {
+          edges: {
+            constraint
+            node: {
+              name
+              id
+            }
+          }[]
+        }
+        missions: {
+          edges: {
+            node: {
+              id
+              name
+            }
+          }[]
+        }
+      }
+    }[]
+  }
+}
+
 
 export enum ServerSize {
   VerySmall = -2,

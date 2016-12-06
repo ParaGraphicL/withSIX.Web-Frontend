@@ -8,7 +8,7 @@ import { isTokenExpired as isTExpired } from '../helpers/utils/jwt';
 import { uriHasProtocol as uHasProtocol, cleanupHash as cHash, cleanupSearch as cSearch } from '../helpers/utils/url';
 import { createHttpError, ValidationErrorConstructor } from '../helpers/utils/http-errors'
 
-// TODO: Decompose
+// TODO: Decompose and export default
 export module Tools {
   // for legacy purposes
   export const toShortId = toS;
