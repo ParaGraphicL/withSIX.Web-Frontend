@@ -3,6 +3,7 @@ export class RemoveAttributeBindingBehavior {
   bind(binding, source) {
     binding.targetObserver = new RemoveAttributeObserver(binding.target, binding.targetProperty);
   }
+  unbind(binding) { }
 }
 
 class RemoveAttributeObserver {

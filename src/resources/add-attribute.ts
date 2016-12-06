@@ -2,6 +2,7 @@ export class AddAttributeBindingBehavior {
   bind(binding, source) {
     binding.targetObserver = new AddAttributeObserver(binding.target, binding.targetProperty);
   }
+  unbind(binding) { }
 }
 
 class AddAttributeObserver {
