@@ -31,14 +31,18 @@
         </label>
       </div>
       <div class="form-group required">
-        <label>Admin Password
-          <button click.delegate="generateAdminPassword()" class="ignore-close text-button pull-right">generate</button>
-          <input class="form-control" required placeholder="admin password" name="admin-password" id="admin-password" type="text" value.bind="server.adminPassword">
+        <button click.delegate="generateAdminPassword()" class="ignore-close text-button pull-right">generate</button>
+        <label>
+          Admin Password
         </label>
+        <input class="form-control" required placeholder="admin password" name="admin-password" id="admin-password"
+          type="text" value.bind="server.adminPassword">
       </div>
-      <!--<textbox value.bind="server.adminPassword" placeholder="admin password">Admin Password <button click.delegate="generateAdminPassword()" class="ignore-close pull-right">Generate</button></textbox>-->
 
-      <textbox value.bind="server.password" placeholder="optional password">Password <button click.delegate="generateServerPassword()" class="text-button ignore-close pull-right">generate</button></textbox>
+      <button click.delegate="generateServerPassword()" class="text-button ignore-close pull-right">generate</button>
+      <textbox value.bind="server.password" placeholder="optional password">
+        Password
+      </textbox>
 
       <h3>Provisioning</h3>
       <hr />
