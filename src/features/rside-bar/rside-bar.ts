@@ -149,9 +149,13 @@ export class ServerTab<TModel extends ITabModel<any>> extends ViewModel {
   }
 
   switch(tabName: string) { this.model.next(tabName); }
+
+  shown = false;
+
+  attached() {
+    setTimeout(() => { this.shown = true; }, 0.2 * 1000); // animation delay. // TODO: have actual animation end trigger..
+  }
 }
-
-
 
 @inject(W6Context)
 export class ServerFileUploader {

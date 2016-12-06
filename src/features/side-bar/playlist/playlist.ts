@@ -462,7 +462,7 @@ export class Playlist extends ViewModel {
     });
   }
 
-  attached() { setTimeout(() => this.shown = true, 0.6 * 1000); } // animation delay. // TODO: have actual animation end trigger..
+  attached() { setTimeout(() => this.shown = true, 0.2 * 1000); } // animation delay. // TODO: have actual animation end trigger..
 }
 
 interface IDependency {
