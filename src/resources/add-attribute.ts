@@ -1,10 +1,10 @@
 export class AddAttributeBindingBehavior {
-  originalObserver;
+  //originalObserver;
   bind(binding, source) {
-    this.originalObserver = binding.targetObserver;
+    //this.originalObserver = binding.targetObserver; // undoing breaks things
     binding.targetObserver = new AddAttributeObserver(binding.target, binding.targetProperty);
   }
-  unbind(binding) { binding.targetObserver = this.originalObserver; }
+  unbind(binding) { } // binding.targetObserver = this.originalObserver;
 }
 
 class AddAttributeObserver {
