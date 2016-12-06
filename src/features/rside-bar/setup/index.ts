@@ -11,6 +11,7 @@ interface ISetup {
 
 interface ISetupTab extends ITabModel<ISetup> { }
 
+
 export class Index extends ServerTab<ISetupTab> {
   hours: number;
   credit = 20; // TODO
@@ -20,6 +21,9 @@ export class Index extends ServerTab<ISetupTab> {
   addHc = uiCommand2("Add headless client", async () => this.addSecondary(), { cls: "ignore-close" });
 
   activeServerId: string;
+
+  games = [`Arma 3 v1.66.139494`]
+  selectedGame: string;
 
   private _selectedSize;
   get selectedSize() { return this._selectedSize; }

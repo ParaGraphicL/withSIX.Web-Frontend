@@ -21,6 +21,10 @@
         </template>
       </selectbox>
 
+      <selectbox value.bind="selectedGame" options.bind="games" disabled.one-time="true">
+        Game
+      </selectbox>
+
       <div class="form-group required">
         <label>Name
           <input class="form-control" required placeholder="name of the server" name="name" id="name" type="text" value.bind="server.name">
