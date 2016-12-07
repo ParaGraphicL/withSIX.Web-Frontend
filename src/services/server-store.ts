@@ -204,7 +204,13 @@ export class ManagedServer extends EntityExtends.BaseEntity {
   getDefaultState() { return <any>{ state: ServerState.Initializing }; }
 
   async refreshState(client: IServerClient) {
-    this.status = await client.servers.session(this.id); // await this.graphRefreshState();
+    try {
+      this.status = await client.servers.session(this.id); // await this.graphRefreshState();
+    } catch (err) {
+      if (err.status === 404 || err.toString().indexOf('Failed request 404') > -1) {
+        this.status = this.getDefaultState();
+      } else { throw err; }
+    }
   }
 
   // Optimize this server-side, so that GQL doesnt actually pull in the whole server? :-P
@@ -421,16 +427,18 @@ export class ServerStore {
   monitor(client: IServerClient, ct: { isCancellationRequested: boolean }) {
     // TODO: Only monitor servers that actually exist on network
     return new Promise<void>(async (res, rej) => {
-      while (!ct.isCancellationRequested) {
-        try {
-          const s = this.activeGame.activeServer;
-          if (!s.unsaved) {
-            await s.refreshState(client);
+      try {
+        while (!ct.isCancellationRequested) {
+          try {
+            const s = this.activeGame.activeServer;
+            if (!s.unsaved) { await s.refreshState(client); }
+          } catch (err) {
+            Tools.Debug.log("Err while trying to monitor server status", err);
           }
-        } catch (err) {
-          if (err.toString().indexOf('Failed request 404') > -1) { } else { rej(err); }
+          await new Promise((res2) => setTimeout(res2, this.interval));
         }
-        await new Promise((res2) => setTimeout(res2, this.interval));
+      } catch (err) {
+        return rej(err);
       }
       res();
     });
