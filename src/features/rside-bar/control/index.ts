@@ -9,7 +9,13 @@ export class Index extends ServerTab<IStatusTab> {
   State = ServerState;
   isLocked = false;
   sizes = SharedValues.sizes;
-  saving;
+  saving: boolean;
+  additionalSlots: number;
+
+  get selectionChanged() {
+    return (this.selectedSize && this.selectedSize.value !== this.server.size)
+      || this.additionalSlots !== this.server.additionalSlots;
+  }
 
   start = uiCommand2("Start", () => this.handleStart(), {
     canExecuteObservable: this.observeEx(x => x.canStart),
@@ -30,8 +36,7 @@ export class Index extends ServerTab<IStatusTab> {
     });
   scale = uiCommand2("Scale", () => this.handleScale(), {
     canExecuteObservable: this.observeEx(x => x.isRunning)
-      .combineLatest(this.observeEx(x => x.selectedSize).map(x => x && x.value !== this.server.size), (x, y) => x && y)
-      .combineLatest(this.observeEx(x => x.additionalSlots).map(x => x !== this.server.additionalSlots), (x, y) => x && y),
+      .combineLatest(this.observeEx(x => x.selectionChanged), (r, c) => r && c),
     cls: "ignore-close warn",
   });
   lock = uiCommand2("Lock", async () => alert("TODO"), {
@@ -49,14 +54,10 @@ export class Index extends ServerTab<IStatusTab> {
   ];
 
   private _selectedSize: { value: ServerSize };
-  private _additionalSlots;
 
   get jobState() { return this.server.status; }
   get selectedSize() { return this._selectedSize; }
-  set selectedSize(value) { this._selectedSize = value; this.server.size = value.value; this.additionalSlots = 0; }
-
-  get additionalSlots() { return this._additionalSlots; }
-  set additionalSlots(value) { this._additionalSlots = value; this.server.additionalSlots = value; }
+  set selectedSize(value) { this._selectedSize = value; this.additionalSlots = 0; }
 
   get isRunning() { return this.state === ServerState.GameIsRunning; }
   get canStop() { return (this.state > ServerState.Initializing && this.state <= ServerState.GameIsRunning); }
@@ -76,9 +77,8 @@ export class Index extends ServerTab<IStatusTab> {
   activate(model) {
     super.activate(model);
     this._selectedSize = SharedValues.sizeMap.get(this.server.size);
-    this._additionalSlots = this.server.additionalSlots;
+    this.additionalSlots = this.server.additionalSlots;
   }
-
 
   handleStart = async () => {
     await this.saveChanges();
