@@ -1,0 +1,6 @@
+<template>
+  <a if.bind="url" href.bind="url" target="_blank" title.bind="text & removeAttribute">
+    <slot>(i)</slot>
+  </a>
+  <span if.bind="!url" title.bind="text & removeAttribute"><slot>(i)</slot></span>
+</template>
