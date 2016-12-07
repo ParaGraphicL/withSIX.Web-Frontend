@@ -63,7 +63,7 @@
         <li if.bind="jobState.message" innerHTML.bind="jobState.message | text">
         </li>
       </ul>
-      <i show.bind="jobState.state < 7000">This will take about 2-10 minutes, depending on the amount of Content you've selected and Server size.</i>
+      <i show.bind="jobState.state < 7000">Average startup time is 10 minutes depending on selected content availability.</i>
     </div>
 
     <div if.bind="features.serverRemoteControl">
