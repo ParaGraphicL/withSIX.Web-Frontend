@@ -164,6 +164,7 @@
     "aurelia-ui-virtualization": "^1.0.0-beta.3.0.1",
     "aurelia-validation": "git+https://github.com/sickboy/validation.git",
     "aurelia-webpack-plugin": "^1.1.0",
+    "awesome-typescript-loader": "^2.2.4",
     "babel-register": "^6.11.6",
     "bbcode-parser": "^1.0.10",
     "bluebird": "^3.4.6",
