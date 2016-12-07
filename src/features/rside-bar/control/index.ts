@@ -1,7 +1,7 @@
 import { ITabModel, ServerTab, SharedValues } from "../rside-bar";
 import { Command as ScaleServer } from "./actions/scale";
 import { StartServer, RestartServer, PrepareServer, StopServer, CreateOrUpdateServer } from "./actions/other"; // todo decompose
-import { ServerSize, ServerState, ServerStore, uiCommand2 } from "../../../framework"
+import { IReactiveCommand, ServerSize, ServerState, ServerStore, uiCommand2 } from "../../../framework"
 
 interface IStatusTab extends ITabModel<any> { }
 
@@ -11,34 +11,21 @@ export class Index extends ServerTab<IStatusTab> {
   sizes = SharedValues.sizes;
   saving: boolean;
   additionalSlots: number;
+  start: IReactiveCommand<void>;
+  stop: IReactiveCommand<void>;
+  restart: IReactiveCommand<void>;
+  prepare: IReactiveCommand<void>;
+  scale: IReactiveCommand<void>;
 
   get selectionChanged() {
     return (this.selectedSize && this.selectedSize.value !== this.server.size)
       || this.additionalSlots !== this.server.additionalSlots;
   }
 
-  start = uiCommand2("Start", () => this.handleStart(), {
-    canExecuteObservable: this.observeEx(x => x.canStart),
-    cls: "ignore-close default",
-  });
-  stop = uiCommand2("Stop", () => this.handleStop(), {
-    canExecuteObservable: this.observeEx(x => x.canStop),
-    cls: "ignore-close danger",
-  });
-  restart = uiCommand2("Restart", () => this.handleRestart(), {
-    canExecuteObservable: this.observeEx(x => x.isRunning),
-    cls: "ignore-close warn",
-  });
-  prepare = uiCommand2("Prepare content and configs",
-    () => this.handlePrepare(), {
-      canExecuteObservable: this.observeEx(x => x.canPrepare),
-      cls: "ignore-close warn",
-    });
-  scale = uiCommand2("Scale", () => this.handleScale(), {
-    canExecuteObservable: this.observeEx(x => x.isRunning)
-      .combineLatest(this.observeEx(x => x.selectionChanged), (r, c) => r && c),
-    cls: "ignore-close warn",
-  });
+  commands = [];
+
+  get isExecuting() { return this.commands.some(x => x.isExecuting); }
+
   lock = uiCommand2("Lock", async () => alert("TODO"), {
     cls: "ignore-close warn",
     isVisibleObservable: this.observeEx(x => x.isRunning).combineLatest(this.observeEx(x => x.isLocked), (r, l) => r && !l),
@@ -62,12 +49,15 @@ export class Index extends ServerTab<IStatusTab> {
   get isRunning() { return this.state === ServerState.GameIsRunning; }
   get canStop() { return (this.state > ServerState.Initializing && this.state <= ServerState.GameIsRunning); }
   get canStart() {
-    return (this.state === ServerState.Initializing || this.state === ServerState.ContentPrepared || this.state >= ServerState.Failed);
+    return !this.isExecuting &&
+      (this.state === ServerState.Initializing || this.state === ServerState.ContentPrepared || this.state >= ServerState.Failed);
   }
+  get canRestart() { return !this.isExecuting && this.isRunning; }
   get canPrepare() {
-    return (this.state === ServerState.Initializing
+    return !this.isExecuting && (this.state === ServerState.Initializing
       || this.state === ServerState.GameIsRunning || this.state >= ServerState.Failed);
   }
+  get canScale() { return !this.isExecuting && this.selectionChanged; }
   get state() { return this.jobState ? this.jobState.state : 0; }
 
   get serverUrl() {
@@ -78,6 +68,29 @@ export class Index extends ServerTab<IStatusTab> {
     super.activate(model);
     this._selectedSize = SharedValues.sizeMap.get(this.server.size);
     this.additionalSlots = this.server.additionalSlots;
+
+    this.start = uiCommand2("Start", () => this.handleStart(), {
+      canExecuteObservable: this.observeEx(x => x.canStart),
+      cls: "ignore-close default",
+    });
+    this.stop = uiCommand2("Stop", () => this.handleStop(), {
+      canExecuteObservable: this.observeEx(x => x.canStop),
+      cls: "ignore-close danger",
+    });
+    this.restart = uiCommand2("Restart", () => this.handleRestart(), {
+      canExecuteObservable: this.observeEx(x => x.canRestart),
+      cls: "ignore-close warn",
+    });
+    this.prepare = uiCommand2("Prepare content and configs",
+      () => this.handlePrepare(), {
+        canExecuteObservable: this.observeEx(x => x.canPrepare),
+        cls: "ignore-close warn",
+      });
+    this.scale = uiCommand2("Scale", () => this.handleScale(), {
+      canExecuteObservable: this.observeEx(x => x.canScale),
+      cls: "ignore-close warn",
+    });
+    this.commands = [this.start, this.stop, this.restart, this.prepare, this.scale];
   }
 
   handleStart = async () => {
