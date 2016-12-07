@@ -304,19 +304,19 @@
     position: relative;
     //box-shadow: inset -10px -10px 100px #000, 10px 10px 20px black, inset 0px 0px 10px black;
     display: inline-block;
-    &.red {
-      background-color: red;
+    &.redbg {
+      background-color: $colorSixSoftRed;
     }
-    &.green {
-      background-color: green;
+    &.greenbg {
+      background-color: $colorSixGreen;
     }
-    &.blue {
-      background-color: blue;
+    &.bluebg {
+      background-color: $colorSixBlue;
     }
-    &.yellow {
+    &.yellowbg {
       background-color: yellow;
     }
-    &.orange {
+    &.orangebg {
       background-color: $colorSixOrange;
     }
   }

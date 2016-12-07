@@ -1,6 +1,12 @@
 <template>
   <div mouseenter.trigger="hovering = true" mouseleave.trigger="hovering = false">
-    <span if.bind="tab.notificationCount > 0" class="indicator sphere orange" title="${tab.notificationCount} notifications"></span>
+    <span class="indicator sphere orangebg" show.bind="tab.notificationCount > 0">
+      ${tab.notificationCount}
+    </span>
+
+    <span class="indicator sphere ${tab.notificationCls || 'orangebg'}" show.bind="tab.notificationText">
+      ${tab.notificationText}
+    </span>
 
     <div class="indicator icon withSIX-icon-arrow-omni arrow"></div>
 

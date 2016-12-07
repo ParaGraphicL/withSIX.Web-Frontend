@@ -19,6 +19,8 @@ export interface ITab {
   type?: string;
   cls?: string;
   notificationCount?: number;
+  notificationText?: string;
+  notificationCls?: string;
   progressInfo?: IProgressInfo;
   notification?: ITabNotification;
   notificationTimeOut?; // Timer;
