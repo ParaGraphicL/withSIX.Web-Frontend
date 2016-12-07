@@ -52,7 +52,7 @@ export class RsideBar extends ViewModel {
         this.cts.cancel();
         //this.cts.dispose();
       });
-      //d(this.observeEx(x => x.validSetup).subscribe(x => setupTabs.concat(controlTabs).forEach(t => t.disabled = !x)));
+      d(this.observeEx(x => x.validSetup).subscribe(x => controlTabs.forEach(t => t.disabled = !x)));
       d(this.observableFromEvent<ToggleServer>(ToggleServer).subscribe(x => {
         const hasTab = x.tab > -1;
         this.visible = hasTab || !this.visible;
