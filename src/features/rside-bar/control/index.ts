@@ -69,6 +69,9 @@ export class Index extends ServerTab<IStatusTab> {
   }
   get state() { return this.jobState ? this.jobState.state : 0; }
 
+  get serverUrl() {
+    return `/p/${this.w6.activeGame.slug}/servers/${this.jobState.address.replace(/\./g, "-")}/${this.server.name.sluggify()}`
+  }
 
   activate(model) {
     super.activate(model);
