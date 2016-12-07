@@ -209,6 +209,7 @@ export class ManagedServer extends EntityExtends.BaseEntity {
     } catch (err) {
       if (err.status === 404 || err.toString().indexOf('Failed request 404') > -1) {
         this.status = this.getDefaultState();
+        this.unsaved = true;
       } else { throw err; }
     }
   }
