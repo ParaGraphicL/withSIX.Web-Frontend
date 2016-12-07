@@ -38,6 +38,7 @@
 
         ${additionalSlots} additional slots
         <command-button model.bind="scale"></command-button>
+        <i if.bind="scale.canExecute">Please be aware, this will restart the server..</i>
         <hr />
       </div>
     </div>
