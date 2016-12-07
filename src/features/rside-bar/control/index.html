@@ -49,7 +49,7 @@
         <li>State: ${State[jobState.state]}</li>
         <li if.bind="jobState.address">
           Address: ${jobState.address}
-          <a href="/p/${w6.activeGame.slug}/servers/${jobState.address.replace(/\./g, '-')}/${server.name.sluggify()}">Server Page (WIP)</a>
+          <a href.bind="serverUrl">Server Page (WIP)</a>
         </li>
         <li if.bind="jobState.endtime">
           Ends

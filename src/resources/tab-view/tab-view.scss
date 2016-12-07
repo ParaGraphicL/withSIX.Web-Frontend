@@ -239,6 +239,7 @@ nav.tab-strip {
       margin-left: (-$iconCntr * 2) - (($height / 2) - 2px);
       &.arrow {
         margin-top: 14px;
+        margin-left: (-$iconCntr * 2) - (($height / 2) + 2px);
         &:before {
           content: "\e656";
         }

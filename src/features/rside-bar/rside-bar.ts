@@ -52,7 +52,7 @@ export class RsideBar extends ViewModel {
         this.cts.cancel();
         //this.cts.dispose();
       });
-      //d(this.observeEx(x => x.validSetup).subscribe(x => setupTabs.concat(controlTabs).forEach(t => t.disabled = !x)));
+      d(this.observeEx(x => x.validSetup).subscribe(x => controlTabs.forEach(t => t.disabled = !x)));
       d(this.observableFromEvent<ToggleServer>(ToggleServer).subscribe(x => {
         const hasTab = x.tab > -1;
         this.visible = hasTab || !this.visible;
@@ -153,9 +153,11 @@ export class ServerTab<TModel extends ITabModel<any>> extends ViewModel {
         .observeEx(x => x.isValid)
         .subscribe(x => {
           this.model.isValid = x;
-          if (x == null) { this.model.notificationText = this.model.id; this.model.notificationCls = "orangebg"; }
-          else if (x) { this.model.notificationText = "v"; this.model.notificationCls = "greenbg"; }
-          else { this.model.notificationText = "!"; this.model.notificationCls = "redbg"; }
+          if (this.model.id !== "0") {
+            if (x == null) { this.model.notificationText = this.model.id; this.model.notificationCls = "orangebg"; }
+            else if (x) { this.model.notificationText = "v"; this.model.notificationCls = "greenbg"; }
+            else { this.model.notificationText = "!"; this.model.notificationCls = "redbg"; }
+          }
         }));
     });
 
