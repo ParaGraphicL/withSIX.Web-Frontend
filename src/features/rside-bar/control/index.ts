@@ -22,10 +22,9 @@ export class Index extends ServerTab<IStatusTab> {
       || this.additionalSlots !== this.server.additionalSlots;
   }
 
-  get isExecuting() {
-    return this.start.isExecuting || this.stop.isExecuting ||
-      this.restart.isExecuting || this.prepare.isExecuting || this.scale.isExecuting;
-  }
+  commands = [];
+
+  get isExecuting() { return this.commands.some(x => x.isExecuting); }
 
   lock = uiCommand2("Lock", async () => alert("TODO"), {
     cls: "ignore-close warn",
@@ -91,6 +90,7 @@ export class Index extends ServerTab<IStatusTab> {
       canExecuteObservable: this.observeEx(x => x.canScale),
       cls: "ignore-close warn",
     });
+    this.commands = [this.start, this.stop, this.restart, this.prepare, this.scale];
   }
 
   handleStart = async () => {
