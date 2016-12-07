@@ -9,11 +9,31 @@ import { inject } from "aurelia-framework";
 export class RsideBar extends ViewModel {
   static root = "features/rside-bar/";
   tabs: IAwesomeTab[] = [
-    { header: "Setup", name: "setup", icon: "icon withSIX-icon-System", viewModel: `${RsideBar.root}setup/index`, next: (tab: IAwesomeTab) => this.next(tab) },
-    { header: "Settings", name: "settings", icon: "icon withSIX-icon-Settings", viewModel: `${RsideBar.root}settings/index`, next: (tab: IAwesomeTab) => this.next(tab) },
-    { header: "Mods", name: "mods", icon: "icon withSIX-icon-Nav-Mod", viewModel: `${RsideBar.root}mods/index`, next: (tab: IAwesomeTab) => this.next(tab) },
-    { header: "Missions", name: "missions", icon: "icon withSIX-icon-Nav-Mission", viewModel: `${RsideBar.root}missions/index`, next: (tab: IAwesomeTab) => this.next(tab) },
-    { header: "Control", name: "control", location: "end", icon: "icon withSIX-icon-System-Remote", viewModel: `${RsideBar.root}control/index`, next: (tab: IAwesomeTab) => this.next(tab) },
+    {
+      header: "Setup", name: "setup", icon: "icon withSIX-icon-System",
+      viewModel: `${RsideBar.root}setup/index`, next: (tab: IAwesomeTab) => this.next(tab),
+      id: "1", notificationText: "1",
+    },
+    {
+      header: "Settings", name: "settings", icon: "icon withSIX-icon-Settings",
+      viewModel: `${RsideBar.root}settings/index`, next: (tab: IAwesomeTab) => this.next(tab),
+      id: "2", notificationText: "2",
+    },
+    {
+      header: "Mods", name: "mods", icon: "icon withSIX-icon-Nav-Mod",
+      viewModel: `${RsideBar.root}mods/index`, next: (tab: IAwesomeTab) => this.next(tab),
+      id: "3", notificationText: "3",
+    },
+    {
+      header: "Missions", name: "missions", icon: "icon withSIX-icon-Nav-Mission",
+      viewModel: `${RsideBar.root}missions/index`, next: (tab: IAwesomeTab) => this.next(tab),
+      id: "4", notificationText: "4",
+    },
+    {
+      header: "Control", name: "control", location: "end", icon: "icon withSIX-icon-System-Remote",
+      viewModel: `${RsideBar.root}control/index`, next: (tab: IAwesomeTab) => this.next(tab),
+      id: "0",
+    },
   ];
 
   get validSetup() { return this.tabs[0].isValid; }
@@ -31,9 +51,8 @@ export class RsideBar extends ViewModel {
       d(() => {
         this.cts.cancel();
         //this.cts.dispose();
-      })
-      d(this.observeEx(x => x.validSetup)
-        .subscribe(x => setupTabs.concat(controlTabs).forEach(t => t.disabled = !x)));
+      });
+      //d(this.observeEx(x => x.validSetup).subscribe(x => setupTabs.concat(controlTabs).forEach(t => t.disabled = !x)));
       d(this.observableFromEvent<ToggleServer>(ToggleServer).subscribe(x => {
         const hasTab = x.tab > -1;
         this.visible = hasTab || !this.visible;
@@ -81,6 +100,7 @@ export class RsideBar extends ViewModel {
 interface IAwesomeTab extends ITab {
   next(tab?: IAwesomeTab | string): void;
   isValid?: boolean;
+  id: string;
 }
 
 export interface ITabModel<T> extends IAwesomeTab {
@@ -129,7 +149,14 @@ export class ServerTab<TModel extends ITabModel<any>> extends ViewModel {
     //this.validation.onValidate(() => this.isValid = true, () => this.isValid = false);
 
     this.subd(d => {
-      d(this.observeEx(x => x.isValid).subscribe(x => this.model.isValid = x));
+      d(this
+        .observeEx(x => x.isValid)
+        .subscribe(x => {
+          this.model.isValid = x;
+          if (x == null) { this.model.notificationText = this.model.id; this.model.notificationCls = "orangebg"; }
+          else if (x) { this.model.notificationText = "v"; this.model.notificationCls = "greenbg"; }
+          else { this.model.notificationText = "!"; this.model.notificationCls = "redbg"; }
+        }));
     });
 
     this.next = uiCommand2("Next", async () => {

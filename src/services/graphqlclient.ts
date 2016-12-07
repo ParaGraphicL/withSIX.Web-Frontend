@@ -9,6 +9,16 @@ export { gql, createFragment }
 // TODO: What about a graph for the Client (and what about hybrid; e.g get me these Mods, and if client connected, also the installed status)
 // TODO: Investigate batching http://dev.apollodata.com/core/network.html#query-batching
 
+export const toGlobalId = (type: string, id: string) => btoa([type, id].join(":"));
+export const fromGlobalId = (gid: string) => {
+  const dec = atob(gid);
+  const split = dec.split(":");
+  return {
+    id: split[1],
+    type: split[0],
+  }
+}
+
 const networkInterface = createNetworkInterface({
   uri: Tools.env <= Tools.Environment.Staging ? "https://graph.withsix.com" : "http://localhost:5000/graphql",
   opts: {
