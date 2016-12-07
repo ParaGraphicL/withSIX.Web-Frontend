@@ -1,10 +1,7 @@
 <template>
-  Show me some servers
-  <ul>
-    <li>
-      Some server [x]
-    </li>
-  </ul>
-
-  Add server
+  <div class="tab-header">${model.header}</div>
+  <div class="the-content" scroll.trigger="closeDropdowns()">
+    <loading-composer view-model="features/top-bar/servers/list"></loading-composer>
+  </div>
+  <button class="naked-button default bottom" click.delegate="add()">Add Server</button>
 </template>

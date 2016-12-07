@@ -290,6 +290,14 @@ export class Game {
 
   overview: { id: string, name: string }[] = []
 
+  add() {
+    const newS = this.create();
+    const { id, name } = newS;
+    this.overview.push({ id, name });
+    this.activeServer = newS;
+    return newS.id;
+  }
+
   create() {
     const s = new ManagedServer({ id: Tools.generateGuid(), unsaved: true });
     this.servers.set(s.id, s);

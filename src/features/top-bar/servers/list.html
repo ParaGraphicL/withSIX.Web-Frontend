@@ -1,0 +1,8 @@
+<template>
+  <ul class="menu">
+    <li repeat.for="s of servers" class="${active === s ? 'active' : ''}" click.delegate="select(s)">
+      ${s.name}
+      <button click.delegate="delete(s)">X</button>
+    </li>
+  </ul>
+</template>
