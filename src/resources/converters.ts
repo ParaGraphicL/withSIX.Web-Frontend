@@ -61,7 +61,7 @@ export class HighlightValueConverter {
 
 @valueConverter('text')
 export class TextValueConverter {
-  toView = text => text ? this.parseText(sanitizeHtml(text)) : text;
+  toView = text => text ? this.parseText(sanitizeHtml(text)) : "";
   parseText = text => this.replaceBreaks(this.replaceSpecial(this.replaceLinks(text)))
   replaceBreaks = text => text.replace(/(\r\n)|\n/g, "<br />")
   replaceSpecial = text => text.replace(/configure the game first in the Settings/, (whole) =>
