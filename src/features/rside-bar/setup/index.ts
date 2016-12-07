@@ -20,8 +20,6 @@ export class Index extends ServerTab<ISetupTab> {
   locations = SharedValues.locations;
   addHc = uiCommand2("Add headless client", async () => this.addSecondary(), { cls: "ignore-close" });
 
-  activeServerId: string;
-
   games = [`Arma 3 v1.66.139494`]
   selectedGame: string;
 
@@ -43,8 +41,6 @@ export class Index extends ServerTab<ISetupTab> {
     super.activate(model);
     this._selectedSize = SharedValues.sizeMap.get(this.server.size);
 
-    this.activeServerId = this.server.id;
-
     this.validation = this.validation
       .ensure("server.name")
       .isNotEmpty()
@@ -57,10 +53,6 @@ export class Index extends ServerTab<ISetupTab> {
 
     this.subscriptions.subd(d => {
       const rxl = this.listFactory.getList(this.server.secondaries, ["size"]);
-      d(this.whenAnyValue(x => x.activeServerId)
-        .skip(1)
-        .flatMap(x => this.serverStore.select(x))
-        .subscribe());
       d(this.whenAny(x => x.server.size)
         .merge(this.whenAny(x => x.server.additionalSlots))
         .merge(this.whenAny(x => x.credit))

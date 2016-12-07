@@ -13,14 +13,6 @@
 
   <div class="the-content" scroll.trigger="closeDropdowns()">
     <form role="form" validate.bind="validation">
-
-      <selectbox value.bind="activeServerId" options.bind="game.overview" if.bind="features.isTestEnvironment">
-        Servers
-        <template replace-part="item-template">
-          <option model.bind="o.id">${o.name}</option>
-        </template>
-      </selectbox>
-
       <selectbox value.bind="selectedGame" options.bind="games" disabled.one-time="true">
         Game
       </selectbox>
