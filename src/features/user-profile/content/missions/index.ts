@@ -31,7 +31,7 @@ class GetMissionsHandler extends DbQuery<GetMissions, IPaginated<IMission>> {
     let r = await this.context.executeQuery<IBreezeMission>(query);
     return {
       items: r.results.map(x => MissionHelper.convertOnlineMission(x, null, this.w6)),
-      page: request.page, inlineCount: r.inlineCount
+      page: request.page, inlineCount: r.inlineCount, total: r.inlineCount
     };
   }
   //private desiredFields = ["id", "name", "slug", "avatar", "avatarUpdatedAt", "tags", "description", "authorId", "author", "gameId", "game", "size", "sizePacked", "followersCount", "modsCount"]

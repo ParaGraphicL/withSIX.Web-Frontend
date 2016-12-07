@@ -1,6 +1,8 @@
-import {breeze, IPaginated, ModHelper, PaginatedViewModel, IFilterInfo, SortDirection, Query, DbQuery, handlerFor, uiCommandWithLogin2, IMenuItem, MenuItem, IBreezeMod, ModsHelper, IModInContent, uiCommand2,
-  IShowDependency} from '../../../../framework';
-import {FilteredBase} from '../../../filtered-base';
+import {
+  breeze, IPaginated, ModHelper, PaginatedViewModel, IFilterInfo, SortDirection, Query, DbQuery, handlerFor, uiCommandWithLogin2, IMenuItem, MenuItem, IBreezeMod, ModsHelper, IModInContent, uiCommand2,
+  IShowDependency
+} from '../../../../framework';
+import { FilteredBase } from '../../../filtered-base';
 
 export class Index extends FilteredBase<IModInContent> {
   sort = [{ name: "stat.totalInstall", title: "Installs", direction: SortDirection.Desc }, { name: "updatedAt", title: "Updated", direction: SortDirection.Desc }, { name: "createdAt", title: "Created", direction: SortDirection.Desc }, { name: "name" }, { name: "packageName" }]
@@ -8,7 +10,7 @@ export class Index extends FilteredBase<IModInContent> {
 
 
   async activate(params) {
-    if (!this.w6.collection2) throw new this.tools.NotFoundException("Collection not found", { statusText: "NotFound", status: 404, body: ""});
+    if (!this.w6.collection2) throw new this.tools.NotFoundException("Collection not found", { statusText: "NotFound", status: 404, body: "" });
     await super.activate(params);
   }
 
@@ -40,7 +42,7 @@ class GetModsHandler extends DbQuery<GetMods, IPaginated<IModInContent>> {
     })
     return {
       items: mods,
-      inlineCount: r.inlineCount, page: request.page
+      inlineCount: r.inlineCount, page: request.page, total: r.inlineCount
     };
   }
 

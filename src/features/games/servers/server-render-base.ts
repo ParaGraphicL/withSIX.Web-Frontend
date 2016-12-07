@@ -273,5 +273,5 @@ export class SavePlayedServer extends VoidCommand {
 
 @handlerFor(SavePlayedServer)
 class SavePlayedServerHandler extends DbClientQuery<SavePlayedServer, void> {
-  handle(message: SavePlayedServer) { return this.context.postCustom(`games/${message.gameId}/favorite-servers/played`, message); }
+  handle(message: SavePlayedServer) { return this.context.postCustom<void>(`games/${message.gameId}/favorite-servers/played`, message); }
 }

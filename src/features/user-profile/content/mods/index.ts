@@ -1,5 +1,5 @@
-import {breeze, IPaginated, ModHelper, PaginatedViewModel, IFilterInfo, SortDirection, Query, DbQuery, handlerFor, uiCommandWithLogin2, IMenuItem, MenuItem, IBreezeMod, ModsHelper, IMod, uiCommand2} from '../../../../framework';
-import {FilteredBase} from '../../../filtered-base';
+import { breeze, IPaginated, ModHelper, PaginatedViewModel, IFilterInfo, SortDirection, Query, DbQuery, handlerFor, uiCommandWithLogin2, IMenuItem, MenuItem, IBreezeMod, ModsHelper, IMod, uiCommand2 } from '../../../../framework';
+import { FilteredBase } from '../../../filtered-base';
 
 export class Index extends FilteredBase<IMod> {
   sort = [{ name: "stat.totalInstall", title: "Installs", direction: SortDirection.Desc }, { name: "updatedAt", title: "Updated", direction: SortDirection.Desc }, { name: "createdAt", title: "Created", direction: SortDirection.Desc }, { name: "name" }, { name: "packageName" }]
@@ -29,7 +29,7 @@ class GetModsHandler extends DbQuery<GetMods, IPaginated<IMod>> {
     let r = await this.context.executeQuery<IBreezeMod>(query);
     return {
       items: r.results.map(x => ModHelper.convertOnlineMod(x, null, this.w6)),
-      inlineCount: r.inlineCount, page: request.page
+      inlineCount: r.inlineCount, page: request.page, total: r.inlineCount
     };
   }
 

@@ -13,6 +13,7 @@ import {
   MenuItem,
   UiContext, BasketService, IBasketItem,
   InstallContents, LaunchAction, LaunchContents, LaunchGame,
+  IServerInfo
 } from "../../../framework";
 import { ToggleServer } from "../../rside-bar/rside-bar";
 import { BetaDialog } from './beta-dialog';
@@ -806,7 +807,7 @@ class GetFavoritesHandler extends DbClientQuery<GetFavorites, IServerFavorites> 
 }
 
 @handlerFor(GetServer)
-class GetServerQuery extends DbClientQuery<GetServer, IServer[]>  {
+class GetServerQuery extends DbClientQuery<GetServer, IServerInfo[]>  {
   async handle(request: GetServer) {
     let results = await this.client.hubs.server
       .getServersInfo(<any>{

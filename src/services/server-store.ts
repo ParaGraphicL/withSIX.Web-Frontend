@@ -7,7 +7,7 @@ import { W6Context } from "./w6context";
 import { W6 } from "./withSIX";
 import { inject } from "aurelia-framework";
 
-interface IManagedServer {
+export interface IManagedServer {
   id: string;
   location: ServerLocation;
   size: ServerSize;

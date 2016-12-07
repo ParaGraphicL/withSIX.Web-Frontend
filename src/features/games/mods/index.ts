@@ -41,7 +41,7 @@ class BrowseExternal extends VoidCommand {
 @handlerFor(BrowseExternal)
 class BrowseExternalHandler extends DbQuery<BrowseExternal, void> {
   handle(request: BrowseExternal) {
-    return this.context.postCustom("https://127.0.0.66:48666/api/external-downloads/start-session", request);
+    return this.context.postCustom<void>("https://127.0.0.66:48666/api/external-downloads/start-session", request);
   }
 }
 
@@ -78,7 +78,7 @@ class GetModsHandler extends DbQuery<GetMods, IPaginated<IMod>> {
     let r = await this.context.executeQuery<IBreezeMod>(query);
     return {
       items: r.results.map(x => ModHelper.convertOnlineMod(x, this.w6.activeGame, this.w6)),
-      inlineCount: r.inlineCount, page: request.page
+      inlineCount: r.inlineCount, page: request.page, total: r.inlineCount
     };
   }
 
