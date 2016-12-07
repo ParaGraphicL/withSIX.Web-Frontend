@@ -154,10 +154,11 @@ class InstallContentHandler extends ClientQuery<InstallContent, void> {
     //this.raiseDownloadNotification(request.force ? 'Diagnosing' : 'Installing', null, request.noteInfo);
     //try {
 
-    let req = Object.assign({}, request, {
+    let req = {
+      ...request,
+      href: request.noteInfo.href,
       name: request.noteInfo.text,
-      href: request.noteInfo.href
-    });
+    };
     if (request.content.isOnlineCollection) {
       if (this.w6.isLoggedIn) {
         // TODO: Don't subscribe when it's our own..

@@ -146,7 +146,7 @@ export class GlobalErrorHandler {
     return `${source} An unexpected error has occured: ${exception}${causeInfo}`;
   }
 
-  private getInfo = () => { return { userId: this.w6.userInfo.id, roles: this.w6.userInfo.roles, location: window.location.pathname + window.location.search + window.location.hash, ua: window.navigator.userAgent } }
+  private getInfo = () => ({ userId: this.w6.userInfo.id, roles: this.w6.userInfo.roles, location: window.location.pathname + window.location.search + window.location.hash, ua: window.navigator.userAgent });
 
   private leLog(message, ...params) { LE.error(message, this.getInfo(), ...params); }
 

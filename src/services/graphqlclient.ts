@@ -21,7 +21,7 @@ export const fromGlobalId = (gid: string) => {
 
 export const idFromGlobalId = (gid: string) => fromGlobalId(gid).id;
 
-export const fromGraphQL = (node) => Object.assign({}, node, { id: idFromGlobalId(node.id) });
+export const fromGraphQL = node => ({ ...node, id: idFromGlobalId(node.id) });
 
 const networkInterface = createNetworkInterface({
   uri: Tools.env <= Tools.Environment.Staging ? "https://graph.withsix.com" : "http://localhost:5000/graphql",

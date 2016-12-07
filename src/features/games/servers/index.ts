@@ -34,7 +34,7 @@ export class Index extends ViewModel {
         this.model
           .addresses
           .push(...x.items.filter(s => !this.model.addresses.some(s2 => s2.queryAddress === s))
-            .map(s => { return { gameId: x.gameId, queryAddress: s } }));
+            .map(s => ({ gameId: x.gameId, queryAddress: s })));
       })
     try {
       const req = new GetServers(this.w6.activeGame.id);
@@ -99,7 +99,7 @@ class GetServersQuery extends DbClientQuery<GetServers, IBatchResult>  {
     //   return { addresses: Array.from(gameServers.values()).map(x => x.address)};
     // }
     // if (this.tools.env > this.tools.Environment.Staging) { return this.arma3Bs(); }
-    //return this.getAddresses(request); //{ addresses: results.addresses.map(x => { return { address: x, gameId: request.gameId }; }) };
+    //return this.getAddresses(request); //{ addresses: results.addresses.map(x => ({ address: x, gameId: request.gameId })) };
     const cp = this.client.hubs.server
       .getServers({ gameId: request.gameId });;
     request.cancel = cp.cancel;

@@ -1171,7 +1171,7 @@ export class ModController extends ContentModelController<IBreezeMod> {
       });
     };
     $scope.getCategories = (query) => this.$scope.request<IGameTag[]>(GetCategoriesQuery, { query: query, gameSlug: this.$scope.game.slug })
-      .then((d) => this.processNames(d.map(x => { return { name: x.tagId } })))
+      .then((d) => this.processNames(d.map(x => ({ name: x.tagId } ) )))
       .catch(this.breezeQueryFailed);
   }
 

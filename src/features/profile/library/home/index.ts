@@ -1,12 +1,14 @@
-import {IBasketItem, BasketItemType, GameClientInfo, UiContext, uiCommand2, uiCommandWithLogin2, ViewModel, MenuItem, IMenuItem, Query, DbQuery, DbClientQuery, handlerFor, VoidCommand, IContent, TypeScope, ItemState, IContentStateChange, IContentStatusChange, IContentState, BasketService,
-  InstallContents, ContentDeleted, breeze, IBreezeMod, IGameHome} from "../../../../framework";
-import {inject} from "aurelia-framework";
-import {Router} from "aurelia-router";
-import {EventAggregator} from "aurelia-event-aggregator";
-import {BaseGame} from "../../lib";
-import {CreateCollectionDialog} from "../../../games/collections/create-collection-dialog";
+import {
+  IBasketItem, BasketItemType, GameClientInfo, UiContext, uiCommand2, uiCommandWithLogin2, ViewModel, MenuItem, IMenuItem, Query, DbQuery, DbClientQuery, handlerFor, VoidCommand, IContent, TypeScope, ItemState, IContentStateChange, IContentStatusChange, IContentState, BasketService,
+  InstallContents, ContentDeleted, breeze, IBreezeMod, IGameHome
+} from "../../../../framework";
+import { inject } from "aurelia-framework";
+import { Router } from "aurelia-router";
+import { EventAggregator } from "aurelia-event-aggregator";
+import { BaseGame } from "../../lib";
+import { CreateCollectionDialog } from "../../../games/collections/create-collection-dialog";
 
-import {Index as SettingsIndex} from "../../../../features/settings/index";
+import { Index as SettingsIndex } from "../../../../features/settings/index";
 
 @inject(UiContext, BasketService)
 export class Index extends BaseGame {
@@ -18,23 +20,23 @@ export class Index extends BaseGame {
   basket: any;
   gameInfo: GameClientInfo;
 
-  addMod = uiCommandWithLogin2("Mod", 
+  addMod = uiCommandWithLogin2("Mod",
     async () => this.legacyMediator.openAddModDialog(this.game.slug), { icon: "icon withSIX-icon-Nav-Mod" });
   addMission = uiCommandWithLogin2("Mission",
-    async () => this.navigateInternal(this.w6.url.play + "/" + this.game.slug + "/missions/new"),{
-        icon: "icon withSIX-icon-Nav-Mission",
-      });
+    async () => this.navigateInternal(this.w6.url.play + "/" + this.game.slug + "/missions/new"), {
+      icon: "icon withSIX-icon-Nav-Mission",
+    });
   addCollection = uiCommandWithLogin2("Collection",
     async () => this.dialog.open({ model: { game: this.game, viewModel: CreateCollectionDialog } }), {
       icon: "icon withSIX-icon-Nav-Collection",
     });
   updateAll = uiCommand2("Update all",
-    () => new InstallContents(this.game.id, this.updates.map(x => { return { id: x.id }; }), { text: "Available updates" })
-        .handle(this.mediator), {
-          canExecuteObservable: this.observeEx(x => x.hasUpdates),
-          cls: "warn", icon: "withSIX-icon-Hexagon-Upload2",
-          isVisibleObservable: this.observeEx(x => x.clientEnabled),
-        });
+    () => new InstallContents(this.game.id, this.updates.map(x => ({ id: x.id })), { text: "Available updates" })
+      .handle(this.mediator), {
+      canExecuteObservable: this.observeEx(x => x.hasUpdates),
+      cls: "warn", icon: "withSIX-icon-Hexagon-Upload2",
+      isVisibleObservable: this.observeEx(x => x.clientEnabled),
+    });
 
   addContentMenu: IMenuItem[] = [
     new MenuItem(this.addCollection),
@@ -180,7 +182,7 @@ export class GetGameHome extends Query<IGameHome> {
 class GetGameHomeHandler extends DbClientQuery<GetGameHome, IGameHome> {
   public async handle(request: GetGameHome): Promise<IGameHome> {
     let r = await this.client.getGameHome(request.id);
-    r.recent.forEach(x => (<any> x).showRecent = true);
+    r.recent.forEach(x => (<any>x).showRecent = true);
 
     // TODO: Collections
     let allMods = r.newContent.concat(r.recent).concat(r.updates);

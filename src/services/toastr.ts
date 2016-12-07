@@ -1,5 +1,5 @@
-import {inject} from 'aurelia-framework';
-import {ToastLogger} from './legacy/logger';
+import { inject } from 'aurelia-framework';
+import { ToastLogger } from './legacy/logger';
 
 interface ToastOpts {
   timeOut?: number;
@@ -21,10 +21,11 @@ export class Toastr {
   callLogger(type, message, title, opts?: ToastOpts) {
     return new Promise<boolean>((resolve, reject) => {
       let resolved = false;
-      let options = Object.assign({
-        onHidden: () => { if (!resolved) { resolved = true; resolve() } },
-        onclick: () => { resolved = true; resolve(true) }
-      }, opts);
+      let options = {
+        onHidden: () => { if (!resolved) { resolved = true; resolve(); } },
+        onclick: () => { resolved = true; resolve(true); }
+        , ...opts,
+      };
       this.logger[type].apply(this.logger, [message, title, options])
     })
   }

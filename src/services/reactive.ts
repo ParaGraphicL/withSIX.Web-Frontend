@@ -178,7 +178,7 @@ export class ObserveAll<T> {
   // }
 
   observeProperty = (x: T, p: string) => Base.observe<T>(x, p, this.includeInitial)
-    .map(evt => { return { item: x, propertyName: p, change: evt } })
+    .map(evt => ({ item: x, propertyName: p, change: evt }));
 }
 
 export interface ICommandInfo {
