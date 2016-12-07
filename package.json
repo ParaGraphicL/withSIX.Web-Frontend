@@ -90,7 +90,7 @@
     "ts-babel-node-extendable": "^1.0.1",
     "ts-node": "^1.7.0",
     "tslint": "^3.15.1",
-    "typescript": "^2.0.10",
+    "typescript": "^2.1.0",
     "typings": "^2.0.0",
     "version-uc": "^1.0.2",
     "vinyl-paths": "^2.1.0",
