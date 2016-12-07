@@ -1,6 +1,6 @@
 import { createError } from "../helpers/utils/errors";
 import { EntityExtends } from "./entity-extends";
-import { gcl, gql, createFragment, toGlobalId, fromGlobalId } from "./graphqlclient";
+import { gcl, gql, createFragment, toGlobalId, idFromGlobalId, fromGraphQL } from "./graphqlclient";
 import { ICancellationToken } from "./reactive";
 import { Tools } from "./tools";
 import { W6Context } from "./w6context";
@@ -510,7 +510,7 @@ export class ServerStore {
     const firstServer = server ? this.toManagedServer(server.node) : null;
     return {
       firstServer,
-      overview: data.viewer.managedServers.edges.map(x => x.node).map(({ id, name }) => { return { id: fromGlobalId(id).id, name }; }),
+      overview: data.viewer.managedServers.edges.map(x => fromGraphQL(x.node)),
     };
   }
 
@@ -518,12 +518,13 @@ export class ServerStore {
   toManagedServer(server: IServerDataNode) {
     const { additionalSlots, adminPassword, gameId, id, location, name, password, secondaries,
       settings, size, status, userId, mods, missions } = server;
-    return {
-      additionalSlots, adminPassword, gameId, id: fromGlobalId(id).id, location,
+    const man = {
+      additionalSlots, adminPassword, gameId, id: idFromGlobalId(id), location,
       name, password, secondaries, settings, size, status, userId,
-      missions: missions.edges.map(x => Object.assign({}, x.node, { id: fromGlobalId(x.node.id) })),
-      mods: mods.edges.map(x => Object.assign({}, x.node, { id: fromGlobalId(x.node.id) })),
+      missions: missions.edges.map(x => fromGraphQL(x.node)),
+      mods: mods.edges.map(x => fromGraphQL(x.node)),
     };
+    return man;
   }
 
   save() {
