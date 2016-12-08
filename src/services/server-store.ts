@@ -1,3 +1,4 @@
+import { Base } from "./base";
 import { createError } from "../helpers/utils/errors";
 import { EntityExtends } from "./entity-extends";
 import { gcl, gql, createFragment, toGlobalId, idFromGlobalId, fromGraphQL } from "./graphqlclient";
@@ -195,50 +196,78 @@ export class ManagedServer extends EntityExtends.BaseEntity {
   missions: Map<string, { id: string }> = new Map<string, { id: string }>();
   status: IServerSession;
 
+  globalId: string;
+
   constructor(private data) {
     super();
     this.status = this.getDefaultState();
     Object.assign(this, data);
+    this.globalId = toGlobalId("ManagedServer", this.id);
   }
 
   getDefaultState() { return <any>{ state: ServerState.Initializing }; }
 
+  static SUBSCRIPTION_QUERY = gql`
+subscription($serverId: ID!) {
+  serverStateChanged(serverId: $serverId) {
+    state
+    message
+    address
+    endtime
+  }
+}
+`;
+
+  async monitor(client: IServerClient) {
+    const s = gcl.subscribe({
+      query: ManagedServer.SUBSCRIPTION_QUERY,
+      variables: { serverId: this.globalId },
+    }).subscribe({
+      next: (data) => this.status = data.serverStateChanged,
+      error: (err) => Tools.Debug.error("Error while processing event", err),
+    });
+    await this.refreshState(client);
+    return s;
+  }
+
   async refreshState(client: IServerClient) {
+    const status = await this.graphRefreshState();
+    this.status = status ? status : this.getDefaultState();
+    /*
     try {
-      this.status = await client.servers.session(this.id); // await this.graphRefreshState();
+      this.status = await client.servers.session(this.id);
     } catch (err) {
       if (err.status === 404 || err.toString().indexOf('Failed request 404') > -1) {
         this.status = this.getDefaultState();
         this.unsaved = true;
       } else { throw err; }
     }
+    */
   }
 
   // Optimize this server-side, so that GQL doesnt actually pull in the whole server? :-P
   async graphRefreshState() {
-    const { data }: IGQLResponse<{ managedServer: { status: { address: string; state: ServerState; message: string; endtime: string } } }>
-      = await gcl.query<any>({
+    const { data }: IGQLResponse<{ managedServerStatus: { address: string; state: ServerState; message: string; endtime: string } }>
+      = await gcl.query({
         forceFetch: true,
         query: gql`
                 query GetServerStatus($id: ID!) {
-                  managedServer(id: $id) {
-                    status {
-                      address
-                      state
-                      message
-                      endtime
-                    }
+                  managedServerStatus(id: $id) {
+                    address
+                    state
+                    message
+                    endtime
                   }
                 }`,
         variables: {
-          id: toGlobalId("ManagedServer", this.id),
+          id: this.globalId,
         },
       });
 
-    if (!data.managedServer) {
+    if (!data.managedServerStatus) {
       return this.getDefaultState();
     } else {
-      const { state, message, address, endtime } = data.managedServer.status;
+      const { state, message, address, endtime } = data.managedServerStatus;
       return { state, message, address, endtime: endtime ? new Date(endtime) : null };
     }
   }
@@ -408,7 +437,7 @@ export class ServerStore {
       adminPassword: s.adminPassword,
       id: s.id,
       location: s.location,
-      missions: Array.from(s.missions.keys()).map(id => ({ id } )),
+      missions: Array.from(s.missions.keys()).map(id => ({ id })),
       mods: Array.from(s.mods.keys()).map(id => ({ id, constraint: (<any>s.mods.get(id)).constraint })),
       name: s.name,
       password: s.password,
@@ -425,24 +454,28 @@ export class ServerStore {
 
   interval = 2 * 1000; // todo; adjust interval based on state, also should restart on each action?
 
-  monitor(client: IServerClient, ct: { isCancellationRequested: boolean }) {
-    // TODO: Only monitor servers that actually exist on network
-    return new Promise<void>(async (res, rej) => {
-      try {
-        while (!ct.isCancellationRequested) {
-          try {
-            const s = this.activeGame.activeServer;
-            if (!s.unsaved) { await s.refreshState(client); }
-          } catch (err) {
-            Tools.Debug.log("Err while trying to monitor server status", err);
-          }
-          await new Promise((res2) => setTimeout(res2, this.interval));
-        }
-      } catch (err) {
-        return rej(err);
-      }
-      res();
-    });
+  get activeServer() { return this.activeGame.activeServer; }
+
+  // TODO: re-monitor on WebSockets reconnect, while the subscription is active
+  async monitor(client: IServerClient, ct: ICancellationToken) {
+    let sub;
+    const sub2 =
+      Base.observeEx(this.activeServer, x => x.unsaved)
+        .combineLatest(Base.observeEx(this.activeServer, x => x.unsaved), (x, y) => null)
+        .switchMap(x => Base.observeEx(this, x => x.activeServer)
+          .filter(x => !x.unsaved))
+        .flatMap(x => x.monitor(client))
+        .subscribe(s => {
+          if (sub) sub.unsubscribe();
+          sub = s;
+        })
+    const sub3 = Base.observeEx(ct, x => x.isCancellationRequested)
+      .skip(1)
+      .subscribe(x => {
+        if (sub) sub.unsubscribe();
+        sub2.unsubscribe();
+        sub3.unsubscribe();
+      })
   }
 
   get activeGame() {
@@ -465,7 +498,7 @@ export class ServerStore {
 
   async select(id: string) {
     const game = this.activeGame;
-    const { data }: IGQLResponse<{ managedServer: IServerDataNode }> = await gcl.query<any>({
+    const { data }: IGQLResponse<{ managedServer: IServerDataNode }> = await gcl.query({
       fragments: serverFragments,
       query: gql`
         query GetServer($id: ID!) {
@@ -483,7 +516,7 @@ export class ServerStore {
     game.activeServer = s;
   }
 
-  async getServers(client: IServerClient, augmentMods: (mods: any[]) => Promise<void>) {
+  async getServers(client: IServerClient) {
     const game = this.activeGame;
 
     const { firstServer, overview } = await this.queryServers();
@@ -496,7 +529,7 @@ export class ServerStore {
   }
 
   async queryServers(): Promise<{ firstServer: IManagedServer, overview: { id: string, name: string }[] }> {
-    const { data }: IGQLViewerResponse<{ firstServer: IServerData, managedServers: { edges: { node: { id, name } }[] } }> = await gcl.query<any>({
+    const { data }: IGQLViewerResponse<{ firstServer: IServerData, managedServers: { edges: { node: { id, name } }[] } }> = await gcl.query({
       fragments: serverFragments,
       query: gql`
         query GetServers {

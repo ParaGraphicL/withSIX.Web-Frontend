@@ -65,29 +65,4 @@ networkInterface.use([{
 
 const ac = new ApolloClient({ networkInterface: networkInterfaceWithSubscriptions });
 
-if (Tools.env >= Tools.Environment.Staging) {
-  const SUBSCRIPTION_QUERY = gql`
-  subscription onCommentAdded($repoFullName: String!){
-    commentAdded(repoFullName: $repoFullName)
-  }
-`;
-
-  ac.subscribe({
-    query: SUBSCRIPTION_QUERY,
-    variables: { repoFullName: 'test' },
-  }).subscribe({
-    next: (data) => {
-      console.log("$$$$$ DATA", data);
-      // ... call updateQuery to integrate the new comment
-      // into the existing list of comments
-    },
-    error: (err) => { console.error('$$$$$ err', err); },
-  });
-}
-
-class W6GraphClient {
-  constructor(private ac: ApolloClient) { }
-  query<T>(opts: DeprecatedWatchQueryOptions) { return <Promise<{ data: T; loading: boolean; networkStatus; }>>this.ac.query(opts); }
-}
-
-export const gcl = new W6GraphClient(ac);
+export const gcl = ac;
