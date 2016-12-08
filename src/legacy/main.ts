@@ -621,7 +621,7 @@ export class GetMiniChangelogQuery extends DbQueryBase {
 
 registerCQ(GetMiniChangelogQuery);
 
-const premiumTerms = <string><any>require("raw!../../docs/global/TermsOfServicesPremium.md");
+const premiumTerms = <string><any>require("raw-loader!../../docs/global/TermsOfServicesPremium.md");
 
 export class OpenPremiumTermsDialogQuery extends DialogQueryBase {
   static $inject = ['$modal', 'dialogs', 'dbContext', 'w6'];

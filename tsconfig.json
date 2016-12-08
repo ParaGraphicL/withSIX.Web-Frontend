@@ -5,8 +5,11 @@
   },
   "compileOnSave": false,
   "compilerOptions": {
-    "target": "es6",
-    "module": "es6",
+    "target": "es2015",
+    "module": "es2015",
+    "lib": [
+      "es2017", "dom"
+    ],
     "moduleResolution": "node",
     "noImplicitAny": false,
     "emitDecoratorMetadata": true,
@@ -16,10 +19,11 @@
       //, "strictNullChecks": true
   },
   "awesomeTypescriptLoaderOptions": {
-    "doTypeCheck": true,
+    //"doTypeCheck": true,
     "forkChecker": true,
-    "useBabel": true,
     "useCache": true,
+    // we want generators
+    "useBabel": true,
     "babelOptions": {
       "presets": [
         "es2015-loose-native-modules"

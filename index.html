@@ -76,7 +76,7 @@
     }
     -->
 
-  <% if (webpackConfig.metadata.ENV !== 'development') { %>
+  <% if (htmlWebpackPlugin.options.metadata.ENV !== 'development') { %>
     <script type="text/javascript">
       var appInsights = window.appInsights || function(config) {
         function i(config) {
@@ -194,7 +194,7 @@
 
       </script>
 
-      <base href="<%- webpackConfig.metadata.baseUrl %>">
+      <base href="<%- htmlWebpackPlugin.options.metadata.baseUrl %>">
       <!-- imported CSS are concatenated and added automatically -->
 </head>
 
@@ -228,7 +228,7 @@
   <script type="text/javascript" src="legacy/vendor.min.js"></script>
   <script type="text/javascript" src="legacy/dart-uuid.js"></script>
 
-  <% if (webpackConfig.metadata.ENV === 'development') { %>
+  <% if (htmlWebpackPlugin.options.metadata.ENV === 'development') { %>
     <!-- Webpack Dev Server reload -->
     <script type="text/javascript" src="/webpack-dev-server.js"></script>
     <% } %>
