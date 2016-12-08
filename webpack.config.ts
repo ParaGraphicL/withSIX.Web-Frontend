@@ -80,6 +80,7 @@ const coreBundles = {
     'aurelia-templating-resources',
 
     // custom
+    'aurelia-computed',
     'aurelia-dialog',
     'mediatr',
     'aurelia-fetch-client',
