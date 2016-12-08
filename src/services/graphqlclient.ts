@@ -43,7 +43,7 @@ export const fromGraphQL = node => ({ ...node, id: idFromGlobalId(node.id) });
 
 const networkInterface = createBatchingNetworkInterface({
   batchInterval: 15,
-  uri: ep,
+  uri: `${ep}/graphql`,
   opts: {
     //credentials: 'same-origin',
   },
