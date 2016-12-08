@@ -31,7 +31,7 @@ export class Missions extends ViewModel {
 
   async refresh() {
     const missions = await new GetMissions().handle(this.mediator);
-    this.server.missions = missions.toMapValue(x => x, x => { return { id: x }; });
+    this.server.missions = missions.toMapValue(x => x, id => ({ id }));
   }
 
   async remove(m) {

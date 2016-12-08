@@ -42,7 +42,7 @@ export class ClientMissingHandler {
   addClientIframe(silent = false) {
     if (window.___prerender___) return;
     if (this.p) return this.p;
-    return this.p = new Promise((res, rej) => {
+    return this.p = new Promise<void>((res, rej) => {
       this.addClientIframeInternal(silent);
       const t = setTimeout(() => {
         $('.client-frame').remove()

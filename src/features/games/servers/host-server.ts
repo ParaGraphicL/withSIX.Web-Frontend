@@ -318,6 +318,6 @@ class LaunchServer extends VoidCommand {
 @handlerFor(LaunchServer)
 class LaunchServerHandler extends DbQuery<LaunchServer, void> {
   handle(request: LaunchServer) {
-    return this.context.postCustom("servers/jobs", request);
+    return this.context.postCustom<void>("servers/jobs", request);
   }
 }

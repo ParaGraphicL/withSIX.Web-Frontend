@@ -124,7 +124,7 @@ class AddFavorite extends VoidCommand {
 
 @handlerFor(AddFavorite)
 class AddFavoriteHandler extends DbClientQuery<AddFavorite, void> {
-  handle(message: AddFavorite) { return this.context.postCustom(`games/${message.gameId}/favorite-servers`, message); }
+  handle(message: AddFavorite) { return this.context.postCustom<void>(`games/${message.gameId}/favorite-servers`, message); }
 }
 
 class RemoveFavorite extends VoidCommand {
@@ -134,7 +134,7 @@ class RemoveFavorite extends VoidCommand {
 @handlerFor(RemoveFavorite)
 class RemoveFavoriteHandler extends DbClientQuery<RemoveFavorite, void> {
   handle(message: RemoveFavorite) {
-    return this.context.deleteCustom(`games/${message.gameId}/favorite-servers/${message.endpoint}`);
+    return this.context.deleteCustom<void>(`games/${message.gameId}/favorite-servers/${message.endpoint}`);
   }
 }
 

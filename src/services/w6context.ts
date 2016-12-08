@@ -135,19 +135,20 @@ export class W6Context {
 
   public get = <T>(path, query?) => this.handleJson<T>(this.serviceName + '/' + path, { params: query });
   public getCustom = <T>(path, configOverrides?: IRequestShortcutConfig) => this.handleJson<T>(path, configOverrides)
-  public postCustom = <T>(path, data?, configOverrides?: IRequestShortcutConfig) => this.handleJsonWithBody<T>(path, data, Object.assign({ method: 'POST' }, configOverrides));
-  public putCustom = <T>(path, data, configOverrides?: IRequestShortcutConfig) => this.handleJsonWithBody<T>(path, data, Object.assign({ method: 'PUT' }, configOverrides));
-  public patchCustom = <T>(path, data, configOverrides?: IRequestShortcutConfig) => this.handleJsonWithBody<T>(path, data, Object.assign({ method: 'PATCH' }, configOverrides));
+  public postCustom = <T>(path, data?, configOverrides?: IRequestShortcutConfig) => this.handleJsonWithBody<T>(path, data, { method: 'POST', ...configOverrides });
+  public putCustom = <T>(path, data, configOverrides?: IRequestShortcutConfig) => this.handleJsonWithBody<T>(path, data, { method: 'PUT', ...configOverrides });
+  public patchCustom = <T>(path, data, configOverrides?: IRequestShortcutConfig) => this.handleJsonWithBody<T>(path, data, { method: 'PATCH', ...configOverrides });
 
   public postCustomFormData<T>(path, fd: FormData, configOverrides?: IRequestShortcutConfig) {
     Tools.Debug.log("postCustomFormData", path, fd, configOverrides);
-    return this.handleJson<T>(path, Object.assign({ body: fd, method: 'POST' }, configOverrides));
+    return this.handleJson<T>(path, { body: fd, method: 'POST', ...configOverrides });
   }
-  public deleteCustom = <T>(path, configOverrides?: IRequestShortcutConfig) => this.handleJson<T>(path, Object.assign({ method: 'DELETE' }, configOverrides))
+  public deleteCustom = <T>(path, configOverrides?: IRequestShortcutConfig) => this.handleJson<T>(path, { method: 'DELETE', ...configOverrides })
 
-  handleJsonWithBody = <T>(path, data, configOverride?) => this.handleJson<T>(path, Object.assign({
+  handleJsonWithBody = <T>(path, data, configOverride?) => this.handleJson<T>(path, {
     body: data ? json(data) : null
-  }, configOverride));
+    , ...configOverride
+  });
 
   handleJson = async <T>(path, configOverride?) => {
     let r = await this.getResponse(path, configOverride);

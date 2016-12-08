@@ -15,7 +15,7 @@ export class Index extends ViewModel {
   updateAll = uiCommand2("Update all", async () => {
     const commands = Array.from(this.model.updates.values()).asEnumerable()
       .groupBy(x => x.gameId, x => x.id,
-        (key, elements) => new InstallContents(key, elements.map(x => { return { id: x }; }), { text: "Available updates" }, true))
+      (key, elements) => new InstallContents(key, elements.map(x => ({ id: x })), { text: "Available updates" }, true))
       .toArray();
     for (let c of commands) { await c.handle(this.mediator); }
   }, { cls: "warn", icon: "withSIX-icon-Hexagon-Upload2" });
@@ -31,7 +31,7 @@ export class Index extends ViewModel {
       this.clientEnabled = false;
       try {
         let x = await new GetGames().handle(this.mediator);
-        this.model = <IHomeData> { games: x.games.toMap(x => x.id) };
+        this.model = <IHomeData>{ games: x.games.toMap(x => x.id) };
       } catch (err) {
         this.tools.Debug.warn("Error trying to fetch games", err);
       }

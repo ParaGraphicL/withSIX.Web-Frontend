@@ -1,5 +1,5 @@
-import {breeze, IPaginated, PaginatedViewModel, SortDirection, IFilterInfo, Query, DbQuery, handlerFor, uiCommandWithLogin2, IMenuItem, MenuItem, IBreezeCollection, ModsHelper, ICollection, CollectionHelper, TypeScope} from '../../../framework';
-import {FilteredBase} from '../../filtered-base';
+import { breeze, IPaginated, PaginatedViewModel, SortDirection, IFilterInfo, Query, DbQuery, handlerFor, uiCommandWithLogin2, IMenuItem, MenuItem, IBreezeCollection, ModsHelper, ICollection, CollectionHelper, TypeScope } from '../../../framework';
+import { FilteredBase } from '../../filtered-base';
 
 export class Index extends FilteredBase<ICollection> {
   sort = [{ title: "Subscribers", name: "subscribersCount", direction: SortDirection.Desc }, { name: "updatedAt", title: "Updated", direction: SortDirection.Desc }, { name: "createdAt", title: "Created", direction: SortDirection.Desc }, { name: "name" }, { name: "packageName" }]
@@ -28,7 +28,7 @@ class GetCollectionsHandler extends DbQuery<GetCollections, IPaginated<ICollecti
     query = this.handlePaginationQuery(query, request.page);
     //.select(this.desiredFields); // cant be used, virtual props
     let r = await this.context.executeQuery<IBreezeCollection>(query);
-    return { items: r.results.map(x => CollectionHelper.convertOnlineCollection(x, null, this.w6)), page: request.page, inlineCount: r.inlineCount };
+    return { items: r.results.map(x => CollectionHelper.convertOnlineCollection(x, null, this.w6)), page: request.page, inlineCount: r.inlineCount, total: r.inlineCount };
   }
   //private desiredFields = ["id", "name", "gameId", "game", "groupId", "group", "slug", "avatar", "avatarUpdatedAt", "tags", "description", "author", "size", "sizePacked", "subscribersCount", "modsCount"]
 }

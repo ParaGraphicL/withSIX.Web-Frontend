@@ -1,7 +1,9 @@
-import {ViewModel, MenuItem, uiCommand2, Debouncer, IMenuItem, UiContext,
-  ModsHelper, DbQuery, Query, VoidCommand, handlerFor, CloseTabs} from '../../../framework';
-import {inject} from 'aurelia-framework';
-import {ValidationGroup} from 'aurelia-validation';
+import {
+  ViewModel, MenuItem, uiCommand2, Debouncer, IMenuItem, UiContext,
+  ModsHelper, DbQuery, Query, VoidCommand, handlerFor, CloseTabs
+} from '../../../framework';
+import { inject } from 'aurelia-framework';
+import { ValidationGroup } from 'aurelia-validation';
 
 enum SearchContentType {
   User,
@@ -101,7 +103,7 @@ export class Search extends ViewModel {
     const types = this.types;
     fullView = this.fullView;
     this.openNow();
-    const results = this.results = types.map(t => { return { key: { loading: true, type: t.toUpperCaseFirst() + 's', totalCount: 0, processing: false }, value: [] } });
+    const results = this.results = types.map(t => ({ key: { loading: true, type: t.toUpperCaseFirst() + 's', totalCount: 0, processing: false }, value: [] }));
 
     for (const i in types) {
       const type = types[i];

@@ -335,8 +335,8 @@ export class BaseController extends Tk.Controller {
     return this.$scope.w6.navigate(fullUrl);
   }
 
-  public processNames = (results: { name: string }[]) => results.map(x => { return { text: x.name, key: x.name } });
-  public processNamesWithPrefix = (results: { name: string }[], prefix: string) => results.map(x => { return { text: prefix + x.name, key: prefix + x.name } });
+  public processNames = (results: { name: string }[]) => results.map(x => ({ text: x.name, key: x.name }));
+  public processNamesWithPrefix = (results: { name: string }[], prefix: string) => results.map(x => ({ text: prefix + x.name, key: prefix + x.name }));
 
   public getMenuItems(items: IMenuItem[], mainSegment: string, parentIsDefault?: boolean): IMenuItem[] {
     var menuItems = [];

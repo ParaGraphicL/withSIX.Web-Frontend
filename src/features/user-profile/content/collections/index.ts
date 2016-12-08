@@ -28,7 +28,7 @@ class GetCollectionsHandler extends DbQuery<GetCollections, IPaginated<ICollecti
     query = this.handlePaginationQuery(query, request.page);
     //.select(this.desiredFields); // cant be used, virtual props
     let r = await this.context.executeQuery<IBreezeCollection>(query);
-    return { items: r.results.map(x => CollectionHelper.convertOnlineCollection(x, null, this.w6)), page: request.page, inlineCount: r.inlineCount };
+    return { items: r.results.map(x => CollectionHelper.convertOnlineCollection(x, null, this.w6)), page: request.page, inlineCount: r.inlineCount, total: r.inlineCount };
   }
   //private desiredFields = ["id", "name", "gameId", "game", "groupId", "group", "slug", "avatar", "avatarUpdatedAt", "tags", "description", "author", "size", "sizePacked", "subscribersCount", "modsCount"]
 }

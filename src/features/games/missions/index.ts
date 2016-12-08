@@ -1,5 +1,5 @@
-import {breeze, IPaginated, MissionHelper, PaginatedViewModel, Query, SortDirection, IFilterInfo, DbQuery, handlerFor, uiCommandWithLogin2, IMenuItem, MenuItem, IBreezeMission, ModsHelper, IMission} from '../../../framework';
-import {FilteredBase} from '../../filtered-base';
+import { breeze, IPaginated, MissionHelper, PaginatedViewModel, Query, SortDirection, IFilterInfo, DbQuery, handlerFor, uiCommandWithLogin2, IMenuItem, MenuItem, IBreezeMission, ModsHelper, IMission } from '../../../framework';
+import { FilteredBase } from '../../filtered-base';
 
 export class Index extends FilteredBase<IMission> {
   // { name: "stat.totalInstall", title: "installs", direction: SortDirection.Desc },
@@ -31,7 +31,7 @@ class GetMissionsHandler extends DbQuery<GetMissions, IPaginated<IMission>> {
     let r = await this.context.executeQuery<IBreezeMission>(query);
     return {
       items: r.results.map(x => MissionHelper.convertOnlineMission(x, this.w6.activeGame, this.w6)),
-      page: request.page, inlineCount: r.inlineCount
+      page: request.page, inlineCount: r.inlineCount, total: r.inlineCount
     };
   }
   //private desiredFields = ["id", "name", "slug", "avatar", "avatarUpdatedAt", "tags", "description", "authorId", "author", "gameId", "game", "size", "sizePacked", "followersCount", "modsCount"]

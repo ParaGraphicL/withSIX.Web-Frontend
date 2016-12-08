@@ -7,7 +7,7 @@ import { W6Context } from "./w6context";
 import { W6 } from "./withSIX";
 import { inject } from "aurelia-framework";
 
-interface IManagedServer {
+export interface IManagedServer {
   id: string;
   location: ServerLocation;
   size: ServerSize;
@@ -408,8 +408,8 @@ export class ServerStore {
       adminPassword: s.adminPassword,
       id: s.id,
       location: s.location,
-      missions: Array.from(s.missions.keys()).map(id => { return { id } }),
-      mods: Array.from(s.mods.keys()).map(id => { return { id, constraint: (<any>s.mods.get(id)).constraint } }),
+      missions: Array.from(s.missions.keys()).map(id => ({ id } )),
+      mods: Array.from(s.mods.keys()).map(id => ({ id, constraint: (<any>s.mods.get(id)).constraint })),
       name: s.name,
       password: s.password,
       secondaries: s.secondaries,

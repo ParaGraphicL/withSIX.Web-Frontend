@@ -1,22 +1,24 @@
 
-import {Tk} from '../services/legacy/tk';
-import {W6Context} from '../services/w6context';
-import {W6, W6Urls} from '../services/withsix';
-import {Tools} from '../services/tools';
+import { Tk } from '../services/legacy/tk';
+import { W6Context } from '../services/w6context';
+import { W6, W6Urls } from '../services/withsix';
+import { Tools } from '../services/tools';
 import breeze from 'breeze-client';
 
-import {registerCommands, getFactory} from './app-base';
+import { registerCommands, getFactory } from './app-base';
 
-import {IBreezeMod, IBreezeUser, IBreezeCollection, IBreezeMission, IBreezeCollectionVersionDependency, IBreezePost, IBreezeModUpdate, IBreezeCollectionVersion, IBreezeGame, IBreezeAWSUploadPolicy,
+import {
+  IBreezeMod, IBreezeUser, IBreezeCollection, IBreezeMission, IBreezeCollectionVersionDependency, IBreezePost, IBreezeModUpdate, IBreezeCollectionVersion, IBreezeGame, IBreezeAWSUploadPolicy,
   IBreezeMissionComment, IBreezeMissionVersion, IBreezeCollectionImageFileTransferPolicy, IBreezeModInfo,
   IBreezeCollectionComment, IBreezePostComment, AbstractDefs, BreezeInitialzation, IBreezeModUserGroup, IBreezeModComment, IBreezeModImageFileTransferPolicy,
   IBreezeModMediaItem, IUserInfo, Resource, Permission, Role,
-  EntityExtends, BreezeEntityGraph, _IntDefs} from '../services/dtos';
+  EntityExtends, BreezeEntityGraph, _IntDefs
+} from '../services/dtos';
 
-import {IRootScope, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHaveModel, DialogQueryBase, DialogControllerBase, DbCommandBase, DbQueryBase, BaseController, BaseQueryController } from './app-base'
-import {ITagKey, ICreateComment, ICQWM, IModel, IMenuItem} from '../services/legacy/base'
+import { IRootScope, IMicrodata, IPageInfo, IBaseScope, IBaseScopeT, IHaveModel, DialogQueryBase, DialogControllerBase, DbCommandBase, DbQueryBase, BaseController, BaseQueryController } from './app-base'
+import { ITagKey, ICreateComment, ICQWM, IModel, IMenuItem } from '../services/legacy/base'
 
-import {IBaskets, IBasketItem} from '../services/legacy/baskets';
+import { IBaskets, IBasketItem } from '../services/legacy/baskets';
 
 declare var commangular;
 declare var accounting;
@@ -296,7 +298,7 @@ class ComponentsModule extends Tk.Module {
             } else {
               var deferred = $q.defer();
 
-              $http.get(keyOrUrl, { cache: true }).success(function(html) {
+              $http.get(keyOrUrl, { cache: true }).success(function (html) {
                 $templateCache.put(keyOrUrl, html);
 
                 deferred.resolve(html);
@@ -345,7 +347,7 @@ class ComponentsModule extends Tk.Module {
           scope: {
             passwordVerify: '=sxPasswordVerify'
           },
-          link: (scope: any, element, attrs, ctrl) => {
+          link: (scope: any, element, attrs, ctrl: any) => {
             scope.$watch(() => {
               var combined;
 
@@ -379,17 +381,17 @@ class ComponentsModule extends Tk.Module {
 
               // Directive options
               var options = { scope: scope, element: null };
-              angular.forEach(['placement', 'container', 'delay', 'trigger', 'keyboard', 'html', 'animation', 'template', 'element'], function(key) {
+              angular.forEach(['placement', 'container', 'delay', 'trigger', 'keyboard', 'html', 'animation', 'template', 'element'], function (key) {
                 if (angular.isDefined(attr[key])) options[key] = attr[key];
               });
 
               // Support scope as an object
-              attr.bsDropdown && scope.$watch(attr.bsDropdown, function(newValue, oldValue) {
+              attr.bsDropdown && scope.$watch(attr.bsDropdown, function (newValue, oldValue) {
                 scope.content = newValue;
               }, true);
 
               // Visibility binding support
-              attr.bsShow && scope.$watch(attr.bsShow, function(newValue, oldValue) {
+              attr.bsShow && scope.$watch(attr.bsShow, function (newValue, oldValue) {
                 if (!dropdown || !angular.isDefined(newValue)) return;
                 if (angular.isString(newValue)) newValue = !!newValue.match(/true|,?(dropdown),?/i);
                 newValue === true ? dropdown.show() : dropdown.hide();
@@ -399,7 +401,7 @@ class ComponentsModule extends Tk.Module {
               var dropdown = $dropdown(options.element ? options.element : element, options);
 
               // Garbage collection
-              scope.$on('$destroy', function() {
+              scope.$on('$destroy', function () {
                 if (dropdown) dropdown.destroy();
                 options = null;
                 dropdown = null;
@@ -408,8 +410,8 @@ class ComponentsModule extends Tk.Module {
             }
           };
         }
-      ]).filter('reverse', function() {
-        return function(items) {
+      ]).filter('reverse', function () {
+        return function (items) {
           if (items == null)
             return items;
           return items.slice().reverse();
@@ -417,11 +419,11 @@ class ComponentsModule extends Tk.Module {
       })
       // TODO: just use <a href/ng-href ?
       .directive('clickLink', [
-        '$location', function($location) {
+        '$location', function ($location) {
           return {
-            link: function(scope, element, attrs) {
-              element.on('click', function() {
-                scope.$apply(function() {
+            link: function (scope, element, attrs) {
+              element.on('click', function () {
+                scope.$apply(function () {
                   $location.url(attrs.clickLink);
                 });
               });
@@ -429,7 +431,7 @@ class ComponentsModule extends Tk.Module {
           };
         }
       ])
-      .directive('autoFocus', function() {
+      .directive('autoFocus', function () {
         return {
           link: {
             pre: function preLink(scope, element, attr) {
@@ -443,10 +445,10 @@ class ComponentsModule extends Tk.Module {
           }
         };
       }).directive('collapseWidth', [
-        '$transition', function($transition, $timeout) {
+        '$transition', function ($transition, $timeout) {
 
           return {
-            link: function(scope, element, attrs) {
+            link: function (scope, element, attrs) {
 
               var initialAnimSkip = true;
               var currentTransition;
@@ -506,7 +508,7 @@ class ComponentsModule extends Tk.Module {
                 element.addClass('collapse');
               }
 
-              scope.$watch(attrs.collapseWidth, function(shouldCollapse) {
+              scope.$watch(attrs.collapseWidth, function (shouldCollapse) {
                 if (shouldCollapse) {
                   collapse();
                 } else {
@@ -516,29 +518,29 @@ class ComponentsModule extends Tk.Module {
             }
           };
         }
-      ]).factory('focus', function($timeout) {
-        return function(id) {
+      ]).factory('focus', function ($timeout) {
+        return function (id) {
           // timeout makes sure that is invoked after any other event has been triggered.
           // e.g. click events that need to run before the focus or
           // inputs elements that are in a disabled state but are enabled when those events
           // are triggered.
-          $timeout(function() {
+          $timeout(function () {
             var element = document.getElementById(id);
             if (element)
               element.focus();
           });
         };
       })
-      .directive('eventFocus', function(focus) {
-        return function(scope, elem, attr) {
-          elem.on(attr.eventFocus, function() {
+      .directive('eventFocus', function (focus) {
+        return function (scope, elem, attr) {
+          elem.on(attr.eventFocus, function () {
             focus(attr.eventFocusId);
           });
 
           // Removes bound events in the element itself
           // when the scope is destroyed
 
-          scope.$on('$destroy', function() {
+          scope.$on('$destroy', function () {
             elem.off(attr.eventFocus);
           });
         };
@@ -729,7 +731,7 @@ class ComponentsModule extends Tk.Module {
             notEquals: '&?'
           },
           restrict: 'E',
-          link: ($scope, $element, $attrs: any, ctrl) => {
+          link: ($scope: any, $element, $attrs: any, ctrl: any) => {
             new FieldBase().link($scope, $element, $attrs, ctrl, 'password', 'Password');
             if ($attrs.confirmModel) $scope.confirmEnabled = true;
             if (!$attrs.validate) $scope.validate = true;
@@ -747,7 +749,7 @@ class ComponentsModule extends Tk.Module {
           },
           transclude: true,
           restrict: 'E',
-          link: ($scope, $element, $attrs: any, ctrl) => {
+          link: ($scope: any, $element, $attrs: any, ctrl: any) => {
             $scope.form = ctrl;
             $scope.Modernizr = Modernizr;
             $scope.showGeneralError = (field) => {
@@ -768,7 +770,7 @@ class ComponentsModule extends Tk.Module {
             method: '&sxValidateOnSubmit'
           },
           restrict: 'A',
-          link: ($scope: any, $element, $attrs, ctrl) => {
+          link: ($scope: any, $element, $attrs: any, ctrl: any) => {
             //if ($attrs.hideIndicator) ctrl.sxHideIndicator = true;
             ctrl.sxValidateOnlyOnSubmit = true;
             if ($attrs.validateOnBlur) ctrl.sxValidateOnBlur = true;
@@ -787,7 +789,7 @@ class ComponentsModule extends Tk.Module {
         return {
           require: 'form',
           restrict: 'A',
-          link: ($scope: any, $element, $attrs, ctrl) => {
+          link: ($scope: any, $element, $attrs, ctrl: any) => {
             ctrl.sxValidateOnBlur = true;
             $attrs.$set('novalidate', 'novalidate');
           }
@@ -841,8 +843,8 @@ class ComponentsModule extends Tk.Module {
           }
         };
       })
-      .controller('Ctrl', function($scope, focus) {
-        $scope.doSomething = function() {
+      .controller('Ctrl', function ($scope, focus) {
+        $scope.doSomething = function () {
           // do something awesome
           focus('email');
         };
@@ -899,7 +901,7 @@ class ComponentsModule extends Tk.Module {
         if (!input || input.length == 0 || mod == null) return [];
         return input.filter(x => x.modId == mod.id && x.entityAspect.entityState.isDeleted())
       })
-      .filter('unsafe', ['$sce', function($sce) { return $sce.trustAsHtml; }])
+      .filter('unsafe', ['$sce', function ($sce) { return $sce.trustAsHtml; }])
       .filter('monthName', [
         () => monthNumber => { //1 = January
           var monthNames = [
@@ -923,7 +925,7 @@ var app = new ComponentsModule();
 angular.module('xeditable').factory('editableController2',
   [
     '$q', 'editableUtils',
-    function($q, editableUtils) {
+    function ($q, editableUtils) {
 
       //EditableController function
       EditableController.$inject = ['$scope', '$attrs', '$element', '$parse', 'editableThemes', 'editableIcons', 'editableOptions', '$rootScope', '$compile', '$q'];
@@ -992,7 +994,7 @@ angular.module('xeditable').factory('editableController2',
         // no real `blur` property as it is transfered to editable form
 
         //init
-        self.init = function(single) {
+        self.init = function (single) {
           self.single = single;
 
           self.name = $attrs.eName || $attrs[self.directiveName];
@@ -1017,7 +1019,7 @@ angular.module('xeditable').factory('editableController2',
 
           //if name defined --> watch changes and update $data in form
           if ($attrs.eName) {
-            self.scope.$watch('$data', function(newVal) {
+            self.scope.$watch('$data', function (newVal) {
               self.scope.$form.$data[$attrs.eName] = newVal;
             });
           }
@@ -1030,7 +1032,7 @@ angular.module('xeditable').factory('editableController2',
            * @memberOf editable-element
            */
           if ($attrs.onshow) {
-            self.onshow = function() {
+            self.onshow = function () {
               return self.catchError($parse($attrs.onshow)($scope));
             };
           }
@@ -1042,7 +1044,7 @@ angular.module('xeditable').factory('editableController2',
            * @memberOf editable-element
            */
           if ($attrs.onhide) {
-            self.onhide = function() {
+            self.onhide = function () {
               return $parse($attrs.onhide)($scope);
             };
           }
@@ -1054,7 +1056,7 @@ angular.module('xeditable').factory('editableController2',
            * @memberOf editable-element
            */
           if ($attrs.oncancel) {
-            self.oncancel = function() {
+            self.oncancel = function () {
               return $parse($attrs.oncancel)($scope);
             };
           }
@@ -1067,7 +1069,7 @@ angular.module('xeditable').factory('editableController2',
            * @memberOf editable-element
            */
           if ($attrs.onbeforesave) {
-            self.onbeforesave = function() {
+            self.onbeforesave = function () {
               return self.catchError($parse($attrs.onbeforesave)($scope));
             };
           }
@@ -1080,7 +1082,7 @@ angular.module('xeditable').factory('editableController2',
            * @memberOf editable-element
            */
           if ($attrs.onaftersave) {
-            self.onaftersave = function() {
+            self.onaftersave = function () {
               return self.catchError($parse($attrs.onaftersave)($scope));
             };
           }
@@ -1089,13 +1091,13 @@ angular.module('xeditable').factory('editableController2',
           // now only add/remove `editable-empty` class.
           // Initially this method called with newVal = undefined, oldVal = undefined
           // so no need initially call handleEmpty() explicitly
-          $scope.$parent.$watch($attrs[self.directiveName], function(newVal, oldVal) {
+          $scope.$parent.$watch($attrs[self.directiveName], function (newVal, oldVal) {
             self.setLocalValue();
             self.handleEmpty();
           });
         };
 
-        self.render = function() {
+        self.render = function () {
           var theme = self.theme;
 
           //build input
@@ -1181,14 +1183,14 @@ angular.module('xeditable').factory('editableController2',
         // with majority of controls copy is not needed, but..
         // copy MUST NOT be used for `select-multiple` with objects as items
         // copy MUST be used for `checklist`
-        self.setLocalValue = function() {
+        self.setLocalValue = function () {
           self.scope.$data = self.useCopy ?
             angular.copy(valueGetter($scope.$parent)) :
             valueGetter($scope.$parent);
         };
 
         //show
-        self.show = function() {
+        self.show = function () {
           // set value of scope.$data
           self.setLocalValue();
 
@@ -1216,7 +1218,7 @@ angular.module('xeditable').factory('editableController2',
         };
 
         //hide
-        self.hide = function() {
+        self.hide = function () {
           self.editorEl.remove();
           $element.removeClass('editable-hide');
 
@@ -1225,7 +1227,7 @@ angular.module('xeditable').factory('editableController2',
         };
 
         // cancel
-        self.cancel = function() {
+        self.cancel = function () {
           // oncancel
           self.oncancel();
           // don't call hide() here as it called in form's code
@@ -1234,9 +1236,9 @@ angular.module('xeditable').factory('editableController2',
         /*
         Called after show to attach listeners
         */
-        self.addListeners = function() {
+        self.addListeners = function () {
           // bind keyup for `escape`
-          self.inputEl.bind('keyup', function(e) {
+          self.inputEl.bind('keyup', function (e) {
             if (!self.single) {
               return;
             }
@@ -1245,7 +1247,7 @@ angular.module('xeditable').factory('editableController2',
             switch (e.keyCode) {
               // hide on `escape` press
               case 27:
-                self.scope.$apply(function() {
+                self.scope.$apply(function () {
                   self.scope.$form.$cancel();
                 });
                 break;
@@ -1258,7 +1260,7 @@ angular.module('xeditable').factory('editableController2',
           }
 
           // click - mark element as clicked to exclude in document click handler
-          self.editorEl.bind('click', function(e) {
+          self.editorEl.bind('click', function (e) {
             // ignore right/middle button click
             if (e.which && e.which !== 1) {
               return;
@@ -1271,7 +1273,7 @@ angular.module('xeditable').factory('editableController2',
         };
 
         // setWaiting
-        self.setWaiting = function(value) {
+        self.setWaiting = function (value) {
           if (value) {
             // participate in waiting only if not disabled
             inWaiting = !self.inputEl.attr('disabled') &&
@@ -1293,15 +1295,15 @@ angular.module('xeditable').factory('editableController2',
           }
         };
 
-        self.activate = function(start, end) {
-          setTimeout(function() {
+        self.activate = function (start, end) {
+          setTimeout(function () {
             var el = self.inputEl[0];
             if (editableOptions.activate === 'focus' && el.focus) {
               if (start) {
                 end = end || start;
-                el.onfocus = function() {
+                el.onfocus = function () {
                   var that = this;
-                  setTimeout(function() {
+                  setTimeout(function () {
                     that.setSelectionRange(start, end);
                   });
                 };
@@ -1314,7 +1316,7 @@ angular.module('xeditable').factory('editableController2',
           }, 0);
         };
 
-        self.setError = function(msg) {
+        self.setError = function (msg) {
           if (!angular.isObject(msg)) {
             $scope.$error = msg;
             self.error = msg;
@@ -1325,14 +1327,14 @@ angular.module('xeditable').factory('editableController2',
         Checks that result is string or promise returned string and shows it as error message
         Applied to onshow, onbeforesave, onaftersave
         */
-        self.catchError = function(result, noPromise) {
+        self.catchError = function (result, noPromise) {
           if (angular.isObject(result) && noPromise !== true) {
             $q.when(result).then(
               //success and fail handlers are equal
-              angular.bind(this, function(r) {
+              angular.bind(this, function (r) {
                 this.catchError(r, true);
               }),
-              angular.bind(this, function(r) {
+              angular.bind(this, function (r) {
                 this.catchError(r, true);
               })
             );
@@ -1348,7 +1350,7 @@ angular.module('xeditable').factory('editableController2',
           return result;
         };
 
-        self.save = function() {
+        self.save = function () {
           valueGetter.assign($scope.$parent,
             self.useCopy ? angular.copy(self.scope.$data) : self.scope.$data);
 
@@ -1359,7 +1361,7 @@ angular.module('xeditable').factory('editableController2',
         /*
         attach/detach `editable-empty` class to element
         */
-        self.handleEmpty = function() {
+        self.handleEmpty = function () {
           var val = valueGetter($scope.$parent);
           var isEmpty = val === null || val === undefined || val === "" || (angular.isArray(val) && val.length === 0);
           $element.toggleClass('editable-empty', isEmpty);
@@ -1386,7 +1388,7 @@ angular.module('xeditable').directive('editableMarkdown', [
   editableDirectiveFactory => editableDirectiveFactory({
     directiveName: 'editableMarkdown',
     inputTpl: '<textarea sx-pagedown></textarea>',
-    addListeners: function() {
+    addListeners: function () {
       var self = this;
       self.parent.addListeners.call(self);
       // submit textarea by ctrl+enter even with buttons
@@ -1394,24 +1396,24 @@ angular.module('xeditable').directive('editableMarkdown', [
         self.autosubmit();
       }
     },
-    autosubmit: function() {
+    autosubmit: function () {
       var self = this;
-      self.inputEl.bind('keydown', function(e) {
+      self.inputEl.bind('keydown', function (e) {
         if ((e.ctrlKey || e.metaKey) && (e.keyCode === 13)) {
-          self.scope.$apply(function() {
+          self.scope.$apply(function () {
             self.scope.$form.$submit();
           });
         }
       });
     },
-    render: function() {
+    render: function () {
       var self = this;
 
       self.parent.render();
 
       self.editorEl.attr('blur', '');
     },
-    activate: function() {
+    activate: function () {
       //var self = this;
 
       //setTimeout(function() {
@@ -1427,7 +1429,7 @@ angular.module('xeditable').directive('editableHtml', [
   (editableDirectiveFactory, $timeout) => editableDirectiveFactory({
     directiveName: 'editableHtml',
     inputTpl: '<textarea redactor="{blurCallback: initBlur(), keydownCallback: initKeydown()}"></textarea>',
-    addListeners: function() {
+    addListeners: function () {
       var self = this;
       self.parent.addListeners.call(self);
       // submit textarea by ctrl+enter even with buttons
@@ -1435,7 +1437,7 @@ angular.module('xeditable').directive('editableHtml', [
         self.autosubmit();
       }
     },
-    autosubmit: function() {
+    autosubmit: function () {
       var self = this;
       self.keydownEvents = self.keyDownEvents || [];
       //self.inputEl.bind('keydown',
@@ -1457,7 +1459,7 @@ angular.module('xeditable').directive('editableHtml', [
         });
       }
     },
-    render: function() {
+    render: function () {
       var self = this;
       // TODO: Consider if it would make sense to proxy these events to the actual textarea element
       // (so disable these events on the textarea itself, then raise these events as if it were the textarea's own events)
@@ -1474,7 +1476,7 @@ angular.module('xeditable').directive('editableHtml', [
       if (self.attrs.noBlur != undefined || self.attrs.blurSaves != undefined)
         self.editorEl.attr('blur', '');
     },
-    activate: function() {
+    activate: function () {
       $timeout(() => {
         var elem = <HTMLFormElement>this.editorEl[0];
         $(elem).find('textarea[redactor]').redactor('core.getObject').focus.setStart();
@@ -1488,7 +1490,7 @@ angular.module('xeditable').directive('sxEditableTextarea', [
   editableDirectiveFactory => editableDirectiveFactory({
     directiveName: 'sxEditableTextarea',
     inputTpl: '<textarea></textarea>',
-    addListeners: function() {
+    addListeners: function () {
       var self = this;
       self.parent.addListeners.call(self);
       // submit textarea by ctrl+enter even with buttons
@@ -1496,7 +1498,7 @@ angular.module('xeditable').directive('sxEditableTextarea', [
         self.autosubmit();
       }
     },
-    autosubmit: function() {
+    autosubmit: function () {
       var self = this;
       self.inputEl.bind('keydown', e => {
         if ((e.ctrlKey || e.metaKey) && (e.keyCode === 13)) {
@@ -1512,7 +1514,7 @@ angular.module('xeditable').directive('sxEditableTextarea', [
           });
         });
     },
-    render: function() {
+    render: function () {
       var self = this;
 
       self.parent.render();
@@ -1538,7 +1540,7 @@ angular.module('xeditable').directive('editableMarkdownPreviewFirst', [
   editableDirectiveFactory => editableDirectiveFactory({
     directiveName: 'editableMarkdownPreviewFirst',
     inputTpl: '<textarea sx-pagedown preview-first></textarea>',
-    addListeners: function() {
+    addListeners: function () {
       var self = this;
       self.parent.addListeners.call(self);
       // submit textarea by ctrl+enter even with buttons
@@ -1546,11 +1548,11 @@ angular.module('xeditable').directive('editableMarkdownPreviewFirst', [
         self.autosubmit();
       }
     },
-    autosubmit: function() {
+    autosubmit: function () {
       var self = this;
-      self.editorEl.bind('keydown', function(e) {
+      self.editorEl.bind('keydown', function (e) {
         if ((e.ctrlKey || e.metaKey) && (e.keyCode === 13)) {
-          self.scope.$apply(function() {
+          self.scope.$apply(function () {
             self.scope.$form.$submit();
           });
         }
@@ -1562,7 +1564,7 @@ angular.module('xeditable').directive('editableMarkdownPreviewFirst', [
           });
         });
     },
-    render: function() {
+    render: function () {
       var self = this;
 
       self.parent.render();
@@ -1571,7 +1573,7 @@ angular.module('xeditable').directive('editableMarkdownPreviewFirst', [
       if (self.attrs.noBlur != undefined || self.attrs.blurSaves != undefined)
         self.editorEl.attr('blur', '');
     },
-    activate: function() {
+    activate: function () {
       //var self = this;
 
       //setTimeout(function () {
@@ -1587,25 +1589,25 @@ angular.module('xeditable').directive('editableTagAutoComplete', [
     return editableDirectiveFactory({
       directiveName: 'editableTagAutoComplete',
       inputTpl: '<tags-input replace-spaces-with-dashes="false" min-tags="0" allow-leftover-text="false" enable-editing-last-tag="false"><auto-complete min-length="0" debounce-delay="500" display-property="text"></auto-complete></tags-input>',
-      link: function(scope, elem, attrs, ctrl) {
+      link: function (scope, elem, attrs, ctrl) {
         var self = this;
 
-        scope.$watch('e-form', function(newValue, oldValue) {
+        scope.$watch('e-form', function (newValue, oldValue) {
           if (newValue)
             Tools.Debug.log("I see a data change!");
         }, true);
 
         self.parent.link(scope, elem, attrs, ctrl);
       },
-      addListeners: function() {
+      addListeners: function () {
         var self = this;
         self.parent.addListeners.call(self);
       },
-      autosubmit: function() {
+      autosubmit: function () {
         var self = this;
-        self.inputEl.bind('keydown', function(e) {
+        self.inputEl.bind('keydown', function (e) {
           if ((e.ctrlKey || e.metaKey) && (e.keyCode === 13)) {
-            self.scope.$apply(function() {
+            self.scope.$apply(function () {
               self.scope.$form.$submit();
             });
           }
@@ -1617,7 +1619,7 @@ angular.module('xeditable').directive('editableTagAutoComplete', [
             });
           });
       },
-      render: function() {
+      render: function () {
         var self = this;
         var elem = <HTMLElement>angular.element(self.inputTpl)[0];
         var acNode = <HTMLElement>elem.childNodes[0];
@@ -1666,10 +1668,10 @@ angular.module('xeditable').directive('editableTagAutoComplete', [
           self.editorEl.attr('blur', '');
 
       },
-      activate: function() {
+      activate: function () {
         var self = this;
 
-        setTimeout(function() {
+        setTimeout(function () {
           var elem = <HTMLFormElement>self.editorEl[0];
           $(elem).find(".tags").find("input.input").focus();
         }, 0);
@@ -1683,15 +1685,15 @@ var types = 'text|email|tel|number|url|search|color|date|datetime|time|month|wee
 //todo: datalist
 
 // generate directives
-angular.forEach(types, function(type) {
+angular.forEach(types, function (type) {
   var directiveName = 'sxEditable' + type.charAt(0).toUpperCase() + type.slice(1);
   angular.module('xeditable').directive(directiveName, [
     'editableLinkDirectiveFactory',
-    function(editableDirectiveFactory) {
+    function (editableDirectiveFactory) {
       return editableDirectiveFactory({
         directiveName: directiveName,
         inputTpl: '<input type="' + type + '">',
-        autosubmit: function() {
+        autosubmit: function () {
           var self = this;
           if (self.attrs.blurSaves != undefined)
             self.inputEl.bind('blur', (e) => {
@@ -1700,7 +1702,7 @@ angular.forEach(types, function(type) {
               });
             });
         },
-        render: function() {
+        render: function () {
           var self = this;
 
           self.parent.render();
@@ -1714,11 +1716,11 @@ angular.forEach(types, function(type) {
 
 angular.module('xeditable').directive('sxEditableSelect', [
   'editableDirectiveFactory2',
-  function(editableDirectiveFactory) {
+  function (editableDirectiveFactory) {
     return editableDirectiveFactory({
       directiveName: 'sxEditableSelect',
       inputTpl: '<select></select>',
-      autosubmit: function() {
+      autosubmit: function () {
         var self = this;
         self.inputEl.bind('change', (e) => {
           self.scope.$apply(() => {
@@ -1732,7 +1734,7 @@ angular.module('xeditable').directive('sxEditableSelect', [
             });
           });
       },
-      render: function() {
+      render: function () {
         var self = this;
 
         self.parent.render();
@@ -1746,11 +1748,11 @@ angular.module('xeditable').directive('sxEditableSelect', [
 //`range` is bit specific
 angular.module('xeditable').directive('sxEditableRange', [
   'editableLinkDirectiveFactory',
-  function(editableDirectiveFactory) {
+  function (editableDirectiveFactory) {
     return editableDirectiveFactory({
       directiveName: 'editableRange',
       inputTpl: '<input type="range" id="range" name="range">',
-      autosubmit: function() {
+      autosubmit: function () {
         var self = this;
         if (self.attrs.blurSaves != undefined)
           self.inputEl.bind('blur', (e) => {
@@ -1759,7 +1761,7 @@ angular.module('xeditable').directive('sxEditableRange', [
             });
           });
       },
-      render: function() {
+      render: function () {
         var self = this;
         this.parent.render.call(this);
         this.inputEl.after('<output>{{$data}}</output>');
@@ -1795,7 +1797,7 @@ angular.module('xeditable').factory('editableLinkDirectiveFactory',
         },
         require: [overwrites.directiveName, '?^form'],
         controller: editableController,
-        link: function(scope, elem, attrs, ctrl) {
+        link: function (scope, elem, attrs, ctrl) {
           // editable controller
           var eCtrl = ctrl[0];
 
@@ -1842,7 +1844,7 @@ angular.module('xeditable').factory('editableLinkDirectiveFactory',
                   */
 
           // store original props to `parent` before merge
-          angular.forEach(overwrites, function(v, k) {
+          angular.forEach(overwrites, function (v, k) {
             if (eCtrl[k] !== undefined) {
               eCtrl.parent[k] = eCtrl[k];
             }
@@ -1912,22 +1914,22 @@ angular.module('xeditable').factory('editableLinkDirectiveFactory',
               if (scope.canEdit)
                 elem.addClass('editable-click');
 
-              elem.bind('click', function(e) {
+              elem.bind('click', function (e) {
                 if (!scope.canEdit) {
                   return;
                 }
                 e.preventDefault();
                 e.editable = eCtrl;
-                scope.$apply(function() {
+                scope.$apply(function () {
                   scope.$form.$show();
                 });
               });
             } else {
               elem.addClass('editable-click');
-              elem.bind('click', function(e) {
+              elem.bind('click', function (e) {
                 e.preventDefault();
                 e.editable = eCtrl;
-                scope.$apply(function() {
+                scope.$apply(function () {
                   scope.$form.$show();
                 });
               });
@@ -1957,10 +1959,10 @@ Depends on: editableController, editableFormFactory
 angular.module('xeditable').factory('editableDirectiveFactory2',
   [
     '$parse', '$compile', 'editableThemes', '$rootScope', '$document', 'editableController2', 'editableFormController', 'editableOptions',
-    function($parse, $compile, editableThemes, $rootScope, $document, editableController, editableFormController, editableOptions) {
+    function ($parse, $compile, editableThemes, $rootScope, $document, editableController, editableFormController, editableOptions) {
 
       //directive object
-      return function(overwrites) {
+      return function (overwrites) {
         return {
           restrict: 'A',
           scope: {
@@ -1971,7 +1973,7 @@ angular.module('xeditable').factory('editableDirectiveFactory2',
           },
           require: [overwrites.directiveName, '?^form'],
           controller: editableController,
-          link: function(scope, elem, attrs, ctrl) {
+          link: function (scope, elem, attrs, ctrl) {
             // editable controller
             var eCtrl = ctrl[0];
 
@@ -2018,7 +2020,7 @@ angular.module('xeditable').factory('editableDirectiveFactory2',
                 */
 
             // store original props to `parent` before merge
-            angular.forEach(overwrites, function(v, k) {
+            angular.forEach(overwrites, function (v, k) {
               if (eCtrl[k] !== undefined) {
                 eCtrl.parent[k] = eCtrl[k];
               }
@@ -2097,22 +2099,22 @@ angular.module('xeditable').factory('editableDirectiveFactory2',
                 if (scope.canEdit)
                   elem.addClass('editable-click');
 
-                elem.bind('click', function(e) {
+                elem.bind('click', function (e) {
                   if (!scope.canEdit) {
                     return;
                   }
                   e.preventDefault();
                   e.editable = eCtrl;
-                  scope.$apply(function() {
+                  scope.$apply(function () {
                     scope.$form.$show();
                   });
                 });
               } else {
                 elem.addClass('editable-click');
-                elem.bind('click', function(e) {
+                elem.bind('click', function (e) {
                   e.preventDefault();
                   e.editable = eCtrl;
-                  scope.$apply(function() {
+                  scope.$apply(function () {
                     scope.$form.$show();
                   });
                 });
@@ -2225,7 +2227,7 @@ registerService(ForwardService);
 * @author  Danial  <danial.farid@gmail.com>
 * @version 4.2.4
 */
-(function() {
+(function () {
 
   var key, i;
 
@@ -2234,8 +2236,8 @@ registerService(ForwardService);
   }
 
   if ((<any>window).XMLHttpRequest && !(<any>window).XMLHttpRequest.__isFileAPIShim) {
-    patchXHR('setRequestHeader', function(orig) {
-      return function(header, value) {
+    patchXHR('setRequestHeader', function (orig) {
+      return function (header, value) {
         if (header === '__setXHR_') {
           var val = value(this);
           // fix for angular < 1.2.0
@@ -2253,11 +2255,11 @@ registerService(ForwardService);
 
   (<any>ngFileUpload).version = '4.2.4';
   ngFileUpload.service('Upload', [
-    '$http', '$q', '$timeout', function($http: ng.IHttpService, $q: ng.IQService, $timeout) {
+    '$http', '$q', '$timeout', function ($http: ng.IHttpService, $q: ng.IQService, $timeout) {
       function sendHttp(config) {
         config.method = config.method || 'POST';
         config.headers = config.headers || {};
-        config.transformRequest = config.transformRequest || function(data, headersGetter) {
+        config.transformRequest = config.transformRequest || function (data, headersGetter) {
           if ((<any>window).ArrayBuffer && data instanceof (<any>window).ArrayBuffer) {
             return data;
           }
@@ -2268,22 +2270,22 @@ registerService(ForwardService);
 
         var anyPromise = <any>promise;
 
-        config.headers['__setXHR_'] = function() {
-          return function(xhr) {
+        config.headers['__setXHR_'] = function () {
+          return function (xhr) {
             if (!xhr) return;
             config.__XHR = xhr;
             config.xhrFn && config.xhrFn(xhr);
-            xhr.upload.addEventListener('progress', function(e) {
+            xhr.upload.addEventListener('progress', function (e) {
               e.config = config;
-              deferred.notify ? deferred.notify(e) : anyPromise.progress_fn && $timeout(function() {
+              deferred.notify ? deferred.notify(e) : anyPromise.progress_fn && $timeout(function () {
                 anyPromise.progress_fn(e);
               });
             }, false);
             //fix for firefox not firing upload progress end, also IE8-9
-            xhr.upload.addEventListener('load', function(e) {
+            xhr.upload.addEventListener('load', function (e) {
               if (e.lengthComputable) {
                 e.config = config;
-                deferred.notify ? deferred.notify(e) : anyPromise.progress_fn && $timeout(function() {
+                deferred.notify ? deferred.notify(e) : anyPromise.progress_fn && $timeout(function () {
                   anyPromise.progress_fn(e);
                 });
               }
@@ -2291,46 +2293,46 @@ registerService(ForwardService);
           };
         };
 
-        $http(config).then(function(r) {
+        $http(config).then(function (r) {
           deferred.resolve(r);
-        }, function(e) {
+        }, function (e) {
           deferred.reject(e);
-        }, function(n) {
+        }, function (n) {
           deferred.notify(n);
         });
 
-        anyPromise.success = function(fn) {
-          promise.then(function(response) {
+        anyPromise.success = function (fn) {
+          promise.then(function (response) {
             fn(response.data, response.status, response.headers, config);
           });
           return promise;
         };
 
-        anyPromise.error = function(fn) {
-          promise.then(null, function(response) {
+        anyPromise.error = function (fn) {
+          promise.then(null, function (response) {
             fn(response.data, response.status, response.headers, config);
           });
           return promise;
         };
 
-        anyPromise.progress = function(fn) {
+        anyPromise.progress = function (fn) {
           anyPromise.progress_fn = fn;
-          promise.then(null, null, function(update) {
+          promise.then(null, null, function (update) {
             fn(update);
           });
           return promise;
         };
-        anyPromise.abort = function() {
+        anyPromise.abort = function () {
           if (config.__XHR) {
-            $timeout(function() {
+            $timeout(function () {
               config.__XHR.abort();
             });
           }
           return promise;
         };
-        anyPromise.xhr = function(fn) {
-          config.xhrFn = (function(origXhrFn) {
-            return function() {
+        anyPromise.xhr = function (fn) {
+          config.xhrFn = (function (origXhrFn) {
+            return function () {
               origXhrFn && origXhrFn.apply(promise, arguments);
               fn.apply(promise, arguments);
             };
@@ -2341,13 +2343,13 @@ registerService(ForwardService);
         return promise;
       }
 
-      this.upload = function(config) {
+      this.upload = function (config) {
         config.headers = config.headers || {};
         config.headers['Content-Type'] = undefined;
         config.transformRequest = config.transformRequest ?
           (angular.isArray(config.transformRequest) ?
             config.transformRequest : [config.transformRequest]) : [];
-        config.transformRequest.push(function(data) {
+        config.transformRequest.push(function (data) {
           var formData = new FormData();
           var allFields = {};
           for (key in config.fields) {
@@ -2405,7 +2407,7 @@ registerService(ForwardService);
         return sendHttp(config);
       };
 
-      this.http = function(config) {
+      this.http = function (config) {
         return sendHttp(config);
       };
     }
@@ -2413,11 +2415,11 @@ registerService(ForwardService);
 
   ngFileUpload.directive('ngfSelect2', [
     '$parse', '$timeout', '$compile',
-    function($parse, $timeout, $compile) {
+    function ($parse, $timeout, $compile) {
       return {
         restrict: 'AEC',
         require: '?ngModel',
-        link: function(scope, elem, attr, ngModel) {
+        link: function (scope, elem, attr, ngModel) {
           linkFileSelect(scope, elem, attr, ngModel, $parse, $timeout, $compile);
         }
       };
@@ -2530,7 +2532,7 @@ registerService(ForwardService);
 
         // fix for android native browser
         if (navigator.userAgent.toLowerCase().match(/android/)) {
-          setTimeout(function() {
+          setTimeout(function () {
             clickAndAssign(evt);
           }, 0);
         } else {
@@ -2551,29 +2553,29 @@ registerService(ForwardService);
   }
 
   ngFileUpload.directive('ngfDrop2', [
-    '$parse', '$timeout', '$location', function($parse, $timeout, $location) {
+    '$parse', '$timeout', '$location', function ($parse, $timeout, $location) {
       return {
         restrict: 'AEC',
         require: '?ngModel',
-        link: function(scope, elem, attr, ngModel) {
+        link: function (scope, elem, attr, ngModel) {
           linkDrop(scope, elem, attr, ngModel, $parse, $timeout, $location);
         }
       };
     }
   ]);
 
-  ngFileUpload.directive('ngfNoFileDrop2', function() {
-    return function(scope, elem) {
+  ngFileUpload.directive('ngfNoFileDrop2', function () {
+    return function (scope, elem) {
       if (dropAvailable()) elem.css('display', 'none');
     };
   });
 
   ngFileUpload.directive('ngfDropAvailable2', [
-    '$parse', '$timeout', function($parse, $timeout) {
-      return function(scope, elem, attr) {
+    '$parse', '$timeout', function ($parse, $timeout) {
+      return function (scope, elem, attr) {
         if (dropAvailable()) {
           var fn = $parse(attr.ngfDropAvailable);
-          $timeout(function() {
+          $timeout(function () {
             fn(scope);
             if (fn.assign) {
               fn.assign(scope, true);
@@ -2587,7 +2589,7 @@ registerService(ForwardService);
   function linkDrop(scope, elem, attr, ngModel, $parse, $timeout, $location) {
     var available = dropAvailable();
     if (attr.dropAvailable) {
-      $timeout(function() {
+      $timeout(function () {
         scope[attr.dropAvailable] ? scope[attr.dropAvailable].value = available : scope[attr.dropAvailable] = available;
       });
     }
@@ -2603,7 +2605,7 @@ registerService(ForwardService);
     var accept = $parse(attr.ngfAccept);
     var actualDragOverClass;
 
-    elem[0].addEventListener('dragover', function(evt) {
+    elem[0].addEventListener('dragover', function (evt) {
       if (elem.attr('disabled')) return;
       evt.preventDefault();
       if (stopPropagation(scope)) evt.stopPropagation();
@@ -2618,25 +2620,25 @@ registerService(ForwardService);
       }
       elem.addClass(actualDragOverClass);
     }, false);
-    elem[0].addEventListener('dragenter', function(evt) {
+    elem[0].addEventListener('dragenter', function (evt) {
       if (elem.attr('disabled')) return;
       evt.preventDefault();
       if (stopPropagation(scope)) evt.stopPropagation();
     }, false);
-    elem[0].addEventListener('dragleave', function() {
+    elem[0].addEventListener('dragleave', function () {
       if (elem.attr('disabled')) return;
-      leaveTimeout = $timeout(function() {
+      leaveTimeout = $timeout(function () {
         elem.removeClass(actualDragOverClass);
         actualDragOverClass = null;
       }, dragOverDelay || 1);
     }, false);
-    elem[0].addEventListener('drop', function(evt) {
+    elem[0].addEventListener('drop', function (evt) {
       if (elem.attr('disabled')) return;
       evt.preventDefault();
       if (stopPropagation(scope)) evt.stopPropagation();
       elem.removeClass(actualDragOverClass);
       actualDragOverClass = null;
-      extractFiles(evt, function(files, rejFiles) {
+      extractFiles(evt, function (files, rejFiles) {
         updateModel($parse, $timeout, scope, ngModel, attr,
           attr.ngfChange || attr.ngfDrop, files, rejFiles, evt, null);
       }, $parse(attr.ngfAllowDir)(scope) != false, attr.multiple || $parse(attr.ngfMultiple)(scope));
@@ -2704,7 +2706,7 @@ registerService(ForwardService);
       }
       var delays = 0;
       (function waitForProcess(delay) {
-        $timeout(function() {
+        $timeout(function () {
           if (!processing) {
             if (!multiple && files.length > 1) {
               i = 0;
@@ -2728,8 +2730,8 @@ registerService(ForwardService);
             var dirReader = entry.createReader();
             var entries = [];
             processing++;
-            var readEntries = function() {
-              dirReader.readEntries(function(results) {
+            var readEntries = function () {
+              dirReader.readEntries(function (results) {
                 try {
                   if (!results.length) {
                     for (var i = 0; i < entries.length; i++) {
@@ -2744,14 +2746,14 @@ registerService(ForwardService);
                   processing--;
                   Tools.Debug.error(e);
                 }
-              }, function() {
+              }, function () {
                 processing--;
               });
             };
             readEntries();
           } else {
             processing++;
-            entry.file(function(file) {
+            entry.file(function (file) {
               try {
                 processing--;
                 file.path = (path ? path : '') + file.name;
@@ -2760,7 +2762,7 @@ registerService(ForwardService);
                 processing--;
                 Tools.Debug.error(e);
               }
-            }, function() {
+            }, function () {
               processing--;
             });
           }
@@ -2770,17 +2772,17 @@ registerService(ForwardService);
   }
 
   ngFileUpload.directive('ngfSrc2', [
-    '$parse', '$timeout', function($parse, $timeout) {
+    '$parse', '$timeout', function ($parse, $timeout) {
       return {
         restrict: 'AE',
-        link: function(scope, elem, attr, file) {
+        link: function (scope, elem, attr, file) {
           if ((<any>window).FileReader) {
-            scope.$watch(attr.ngfSrc, function(file) {
+            scope.$watch(attr.ngfSrc, function (file) {
               if (file &&
                 validate(scope, $parse, attr, file, null) &&
                 (!(<any>window).FileAPI || navigator.userAgent.indexOf('MSIE 8') === -1 || file.size < 20000) &&
                 (!(<any>window).FileAPI || navigator.userAgent.indexOf('MSIE 9') === -1 || file.size < 4000000)) {
-                $timeout(function() {
+                $timeout(function () {
                   //prefer URL.createObjectURL for handling refrences to files of all sizes
                   //since it doesn´t build a large string in memory
                   var URL = (<any>window).URL || (<any>window).webkitURL;
@@ -2789,8 +2791,8 @@ registerService(ForwardService);
                   } else {
                     var fileReader = new FileReader();
                     fileReader.readAsDataURL(file);
-                    fileReader.onload = function(e) {
-                      $timeout(function() {
+                    fileReader.onload = function (e) {
+                      $timeout(function () {
                         elem.attr('src', (<any>e).target.result);
                       });
                     };
@@ -2815,7 +2817,7 @@ registerService(ForwardService);
     function update() {
       if (ngModel) {
         $parse(attr.ngModel).assign(scope, files);
-        $timeout(function() {
+        $timeout(function () {
           ngModel && ngModel.$setViewValue(files != null && files.length == 0 ? null : files);
         });
       }
@@ -2835,7 +2837,7 @@ registerService(ForwardService);
     if (noDelay) {
       update();
     } else {
-      $timeout(function() {
+      $timeout(function () {
         update();
       });
     }
