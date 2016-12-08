@@ -210,8 +210,10 @@ export class ManagedServer extends EntityExtends.BaseEntity {
   static SUBSCRIPTION_QUERY = gql`
 subscription($serverId: ID!) {
   serverStateChanged(serverId: $serverId) {
-    state,
+    state
     message
+    address
+    endtime
   }
 }
 `;
@@ -229,41 +231,43 @@ subscription($serverId: ID!) {
   }
 
   async refreshState(client: IServerClient) {
+    const status = await this.graphRefreshState();
+    this.status = status ? status : this.getDefaultState();
+    /*
     try {
-      this.status = await client.servers.session(this.id); // await this.graphRefreshState();
+      this.status = await client.servers.session(this.id);
     } catch (err) {
       if (err.status === 404 || err.toString().indexOf('Failed request 404') > -1) {
         this.status = this.getDefaultState();
         this.unsaved = true;
       } else { throw err; }
     }
+    */
   }
 
   // Optimize this server-side, so that GQL doesnt actually pull in the whole server? :-P
   async graphRefreshState() {
-    const { data }: IGQLResponse<{ managedServer: { status: { address: string; state: ServerState; message: string; endtime: string } } }>
+    const { data }: IGQLResponse<{ managedServerStatus: { address: string; state: ServerState; message: string; endtime: string } }>
       = await gcl.query({
         forceFetch: true,
         query: gql`
                 query GetServerStatus($id: ID!) {
-                  managedServer(id: $id) {
-                    status {
-                      address
-                      state
-                      message
-                      endtime
-                    }
+                  managedServerStatus(id: $id) {
+                    address
+                    state
+                    message
+                    endtime
                   }
                 }`,
         variables: {
-          id: toGlobalId("ManagedServer", this.id),
+          id: this.globalId,
         },
       });
 
-    if (!data.managedServer) {
+    if (!data.managedServerStatus) {
       return this.getDefaultState();
     } else {
-      const { state, message, address, endtime } = data.managedServer.status;
+      const { state, message, address, endtime } = data.managedServerStatus;
       return { state, message, address, endtime: endtime ? new Date(endtime) : null };
     }
   }
