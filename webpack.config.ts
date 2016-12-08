@@ -33,6 +33,7 @@ import * as generateCoverage from '@easy-webpack/config-test-coverage-istanbul';
 
 import * as sass from '@easy-webpack/config-sass';
 import * as json from '@easy-webpack/config-json';
+import * as globalRegenerator from '@easy-webpack/config-global-regenerator';
 
 const ENV: 'development' | 'production' | 'test' = process.env.NODE_ENV && process.env.NODE_ENV.toLowerCase() ||
   (process.env.NODE_ENV = 'development');
@@ -139,7 +140,10 @@ let config = generateConfig({
   sass({
     filename: '[name]-[contenthash].css',
   }),
-  json(),
+  json({
+    exclude: ['node_modules']
+  }),
+  globalRegenerator(),
   fontAndImages(),
   globalBluebird(),
   globalJquery(),
@@ -181,6 +185,7 @@ config.externals = {
   jquery: "jQuery",
   'aurelia-webpack-plugin': "awp",
   'awesome-typescript-loader': "atl",
+  'copy-webpack-plugin': "cwp",
 }
 //console.log("$$$$ CONFIG", config.metadata);
 config.module.rules.push(...[{
