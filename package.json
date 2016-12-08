@@ -188,6 +188,7 @@
     "rxjs": "^5.0.0-rc.5",
     "rxui": "git+https://github.com/sickboy/RxUI.git",
     "sanitize-html": "^1.13.0",
+    "subscriptions-transport-ws": "^0.3.1",
     "typeahead.js": "git+https://github.com/twitter/typeahead.js.git",
     "uuid-js": "^0.7.5",
     "version_compare": "0.0.3",
