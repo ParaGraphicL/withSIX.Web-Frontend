@@ -211,7 +211,7 @@ export class MonitorServerStateHandler extends DbQuery<MonitorServerState, void>
   constructor(ctx, private client: ServerClient, private store: ServerStore) { super(ctx); }
 
   async handle(request: MonitorServerState) {
-    await this.store.getServers(this.client, this.handleModAugments);
+    await this.store.getServers(this.client);
     await this.store.monitor(this.client, request.ct);
   }
 }
