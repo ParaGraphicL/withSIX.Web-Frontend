@@ -3160,7 +3160,7 @@ export class OpenForgotPasswordDialogQuery extends DialogQueryBase {
   public execute = ['email', email => this.createDialog(ForgotPasswordDialogController, { email: email })];
 }
 
-const terms = require("raw!../../docs/global/TermsOfService.md")
+const terms = require("raw-loader!../../docs/global/TermsOfService.md")
 export class OpenTermsDialogQuery extends DialogQueryBase {
   static $name = 'OpenTermsDialog';
   public execute = [
