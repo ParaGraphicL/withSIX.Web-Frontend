@@ -15,7 +15,7 @@ Bluebird.config({
   //// Enable monitoring
   // monitoring: true,
   // Enable warnings
-  warnings: false
+  warnings: false,
 });
 // import {
 //   initialize

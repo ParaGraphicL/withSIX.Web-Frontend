@@ -20,8 +20,10 @@ export class ConditionalTitleCustomElement extends ViewModel {
     this.subscriptions.subd(d => {
       d(this.whenAnyValue(x => x.desiredTitle).subscribe(x => this.setTitle(x)))
       d(this.whenAnyValue(x => x.condition).subscribe(x => this.setTitle(this.desiredTitle)))
-    })
+    });
   }
 
-  setTitle(title) { if (this.condition) this.jElement.attr('title', title); else this.jElement.removeAttr('title') }
+  setTitle(title) {
+    if (this.condition) { this.jElement.attr('title', title); } else { this.jElement.removeAttr('title'); }
+  }
 }
