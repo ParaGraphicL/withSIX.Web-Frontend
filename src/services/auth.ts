@@ -1,11 +1,11 @@
-import {LS} from './base';
-import {UiContext} from './uicontext';
-import {HttpClient} from 'aurelia-http-client';
-import {HttpClient as FetchClient} from 'aurelia-fetch-client';
-import {EventAggregator} from 'aurelia-event-aggregator';
-import {inject} from 'aurelia-framework';
-import {AuthService} from 'aurelia-auth';
-import {LoginBase, AbortError} from './auth-base';
+import { LS } from './base';
+import { UiContext } from './uicontext';
+import { HttpClient } from 'aurelia-http-client';
+import { HttpClient as FetchClient } from 'aurelia-fetch-client';
+import { EventAggregator } from 'aurelia-event-aggregator';
+import { inject } from 'aurelia-framework';
+import { AuthService } from 'aurelia-auth';
+import { LoginBase, AbortError } from './auth-base';
 
 @inject(AuthService, UiContext, HttpClient, FetchClient, LS)
 export class Login extends LoginBase {
@@ -62,12 +62,13 @@ export class Login extends LoginBase {
     throw err;
   }
 
-  logout() {
+  async logout() {
     this.clearRefreshToken();
     this.resetUnload();
     var logoutUrl = this.w6Url.urlSsl + '/logout';
     if (!window.location.pathname.startsWith('/logout'))
       logoutUrl = logoutUrl + '?redirect=' + encodeURI(this.getBaseUrl() + window.location.search); // must be without #loggedin and #sslredir etc
+    //await this.http.post(this.w6Url.authSsl + "/login/logout", {});
     this.authService.logout(logoutUrl);
     // TODO: This probably doesn't fire anymore?
     this.ls.set('w6.event', { name: 'logout', data: null });
