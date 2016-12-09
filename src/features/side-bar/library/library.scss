@@ -52,100 +52,8 @@
     hr {
       margin-right: 8px;
     }
-    li {
-      height: $item-height;
-      overflow: hidden;
-      .entry {
-        .update-available {
-          color: $colorSixOrange;
-          .version {
-            font-style: italic;
-          }
-        }
-        dropdown-menu {
-          margin-left: 4px;
-          display: none;
-        }
-        .imageholder {
-          overflow: hidden;
-          .actions {
-            display: none;
-            li {
-              width: 46.6px;
-              button.anchor {
-                height: 32px;
-                width: 100%;
-                text-align: center;
-                &:hover {
-                  color: inherit;
-                }
-              }
-              span.spacer,
-              span.text {
-                display: none;
-              }
-            }
-          }
-        }
-        &:hover {
-          dropdown-menu {
-            display: block;
-          }
-          background-color: $colorSixMediumGray;
-          .imageholder {
-            .actions {
-              background-color: $colorSixGreen;
-              color: white;
-              display: block;
-              button.active {
-                span.icon {
-                  display: none;
-                }
-              }
-            }
-          }
-        }
-        .content-state-c-bgd-border {
-          $borderWidth: 2px;
-          height: 32px;
-          border-left-width: $borderWidth;
-          border-left-style: solid;
-        }
-        .imageholder {
-          margin-left: 8px;
-          width: 46.6px;
-          height: 32px;
-          display: inline-block;
-        }
-        .right {
-          margin-top: 8px;
-        }
-        .info {
-          $space: 212px - $scrollBarSize;
-          $margin: 8px;
-          margin-left: 8px;
-          margin-right: 8px;
-          max-width: $space - ($margin * 2);
-          overflow: hidden;
-          .author {
-            font-style: italic;
-            @include text-overflow;
-          }
-          .size {
-            font-weight: $font-weight-medium;
-          }
-          .title {
-            font-weight: $font-weight-medium;
-          }
-          .other-info,
-          .title {
-            height: 16px;
-            @include text-overflow;
-          }
-        }
-      }
-    }
   }
+  /*
   li {
     font-size: $font-size-medium;
     .icon {
@@ -163,4 +71,5 @@
       }
     }
   }
+  */
 }

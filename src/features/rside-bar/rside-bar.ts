@@ -5,6 +5,7 @@ import {
 } from '../../framework';
 import { ValidationGroup } from "aurelia-validation";
 import { inject } from "aurelia-framework";
+import { ServerHandler, ToggleModInServer } from "./control/actions/base";
 
 export class RsideBar extends ViewModel {
   static root = "features/rside-bar/";
@@ -63,7 +64,8 @@ export class RsideBar extends ViewModel {
           title: 'added to server', text: x.mod.name, icon: 'withSIX-icon-Nav-Mod',
           href: this.getItemHref(x.mod),
           cls: 'end',
-          command: uiCommand2("", async () => x.server.toggleMod(x.mod), { tooltip: "Remove from server", icon: 'withSIX-icon-Checkmark' })
+          command: uiCommand2("", () =>
+            new ToggleModInServer(x.mod).handle(this.mediator), { tooltip: "Remove from server", icon: 'withSIX-icon-Checkmark' })
         });
       }));
       d(this.observableFromEvent<RemovedModFromServer>(RemovedModFromServer).subscribe(x => {
@@ -71,7 +73,8 @@ export class RsideBar extends ViewModel {
           title: 'removed from server', text: x.mod.name, icon: 'withSIX-icon-Nav-Mod',
           href: this.getItemHref(x.mod),
           cls: 'start',
-          command: uiCommand2("", async () => x.server.toggleMod(x.mod), { tooltip: "Add to server", icon: 'withSIX-icon-Add' })
+          command: uiCommand2("", async () =>
+            new ToggleModInServer(x.mod).handle(this.mediator), { tooltip: "Add to server", icon: 'withSIX-icon-Add' })
         });
       }));
     });
@@ -206,12 +209,10 @@ export class MonitorServerState extends VoidCommand {
 }
 
 @handlerFor(MonitorServerState)
-@inject(W6Context, ServerClient, ServerStore)
-export class MonitorServerStateHandler extends DbQuery<MonitorServerState, void> {
-  constructor(ctx, private client: ServerClient, private store: ServerStore) { super(ctx); }
+export class MonitorServerStateHandler extends ServerHandler<MonitorServerState, void> {
 
   async handle(request: MonitorServerState) {
-    await this.store.getServers(this.client);
-    await this.store.monitor(this.client, request.ct);
+    await this.store.getServers(this.client, this.gql);
+    await this.store.monitor(this.client, this.gql, request.ct);
   }
 }

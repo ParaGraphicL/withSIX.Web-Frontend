@@ -1,6 +1,18 @@
 <template>
   <ul class="menu">
-    <li repeat.for="[k, m] of missions">${m.id} <button class="ignore-close" click.delegate="remove(m)">X</button></li>
+    <li repeat.for="[k, m] of missions">
+      <div class="entry">
+        <div class="pull-right">
+          <button class="ignore-close naked-button" click.delegate="remove(m)"><span class="withSIX-icon-X"></span></button>
+        </div>
+        <div class="info">
+          <div class="title">
+            ${m.id}
+          </div>
+        </div>
+        <div class="clearfix"></div>
+      </div>
+    </li>
   </ul>
 
   <div if.bind="missions.size === 0">

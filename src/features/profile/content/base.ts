@@ -2,14 +2,16 @@ import { inject } from 'aurelia-framework';
 import {
   IContentGuidSpec, BasketItemType, IBasketItem, BasketService, Base, GameClientInfo, uiCommand, uiCommand2, UiContext, MenuItem, ViewModel, Mediator, Query, DbQuery, DbClientQuery, handlerFor, VoidCommand, IContent, ItemState, IContentState,
   RemoveRecent, Abort, UninstallContent, LaunchContent, OpenFolder, InstallContent, UnFavoriteContent, FavoriteContent, GameChanged, IMenuItem, FolderType, LaunchAction, IReactiveCommand, Publisher,
-  ModsHelper, ServerStore, ManagedServer
+  ModsHelper, ServerStore,
 } from '../../../framework';
 import { Router } from 'aurelia-router';
 import { GameBaskets, Basket } from '../../game-baskets';
 import { AddModsToCollections } from '../../games/add-mods-to-collections';
 import { GetClientDialog } from '../../games/get-client-dialog';
 
-interface ISource { img: string; text: string }
+import { ServerHandler, ToggleModInServer } from "../../rside-bar/control/actions/base";
+
+interface ISource { img: string; text: string; }
 
 @inject(UiContext, BasketService, ServerStore)
 export class ContentViewModel<TContent extends IContent> extends ViewModel {
@@ -49,7 +51,7 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
   // TODO: This could be modeled by events similar to the state handling?
   static isInBasketFunction = (basket, id) => basket.content.has(id);
 
-  static isInServerFunction = (server: ManagedServer, id) => server.hasMod(id);
+  static isInServerFunction = (server: { hasMod: (id) => boolean }, id) => server.hasMod(id);
 
   getDefaultState() {
     return {
@@ -149,14 +151,15 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
       d(this.eventBus.subscribe('refreshContentInfo-' + this.model.gameId, x => this.updateState()))
       d(this.eventBus.subscribe('contentInfoStateChange-' + this.model.id, x => this.updateState()))
 
-      d(this.addToBasket = uiCommand2("toggle in playlist", async () => this.basketService.addToBasket(this.model.gameId, this.toBasketInfo()), {
-        isVisibleObservable: this.whenAnyValue(x => x.canAddToBasket)
+      d(this.addToBasket = uiCommand2("toggle in playlist", async () =>
+        this.basketService.addToBasket(this.model.gameId, this.toBasketInfo()), {
+          isVisibleObservable: this.whenAnyValue(x => x.canAddToBasket),
+        }));
+      d(this.addToServer = uiCommand2("toggle in server", () => new ToggleModInServer(this.toBasketInfo()).handle(this.mediator), {
+        isVisibleObservable: this.whenAnyValue(x => x.canAddToBasket),
       }));
-      d(this.addToServer = uiCommand2("toggle in server", async () => this.serverStore.activeGame.activeServer.toggleMod(this.toBasketInfo()), {
-        isVisibleObservable: this.whenAnyValue(x => x.canAddToBasket)
-      }));
-      d(this.addToServer2 = uiCommand2("toggle in server", async () => this.serverStore.activeGame.activeServer.toggleMod(this.toBasketInfo()), {
-        isVisibleObservable: this.whenAnyValue(x => x.canAddToBasket)
+      d(this.addToServer2 = uiCommand2("toggle in server", () => new ToggleModInServer(this.toBasketInfo()).handle(this.mediator), {
+        isVisibleObservable: this.whenAnyValue(x => x.canAddToBasket),
       }));
 
       if ((<any>this.model).showRecent) {

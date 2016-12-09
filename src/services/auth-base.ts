@@ -27,7 +27,7 @@ export class LoginBase {
   static key = 'w6.refreshToken';
 
   refreshClient: FetchClient;
-  constructor(private http: HttpClient, private httpFetch: FetchClient, protected w6Url: W6Urls, private eventBus: EventAggregator, protected ls: LS) {
+  constructor(protected http: HttpClient, private httpFetch: FetchClient, protected w6Url: W6Urls, private eventBus: EventAggregator, protected ls: LS) {
     const headers = {
       'Accept': 'application/json',
       //'X-Requested-With': 'Fetch'

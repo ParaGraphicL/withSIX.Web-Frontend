@@ -1,9 +1,9 @@
-import {bindable, inject} from 'aurelia-framework';
-import {ViewModel} from '../services/viewmodel';
-import {UiContext} from '../services/uicontext';
+import { bindable, inject } from 'aurelia-framework';
+import { ViewModel } from '../services/viewmodel';
+import { UiContext } from '../services/uicontext';
 
 @inject(Element, UiContext)
-export class ConditionalTitle extends ViewModel {
+export class ConditionalTitleCustomElement extends ViewModel {
   @bindable desiredTitle: string;
   @bindable condition: boolean;
   element: HTMLElement;
