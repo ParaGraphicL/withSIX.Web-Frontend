@@ -105,7 +105,7 @@ export class ServerStore {
             secondaries: s.secondaries,
             settings: s.settings,
             size: s.size,
-            status: s.status
+            status: s.status,
         });
     }
 
