@@ -196,7 +196,9 @@ config.module.rules.push(...[{
 }, {
   test: /\.map$/,
   loader: 'ignore-loader'
-}])
+}]);
+
+const WebpackChunkHash = require('webpack-chunk-hash');
 
 config.plugins.push(
   new webpack.LoaderOptionsPlugin({
@@ -208,7 +210,8 @@ config.plugins.push(
         ]
       }
     }
-  })
+  }),
+  new WebpackChunkHash({ algorithm: 'md5' })
 );
 
 
