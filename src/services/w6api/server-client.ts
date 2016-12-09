@@ -6,7 +6,6 @@ export interface IServerClient {
   servers: ServersApi;
 }
 
-
 @inject(W6Context)
 export class ServerClient implements IServerClient {
   servers: ServersApi;

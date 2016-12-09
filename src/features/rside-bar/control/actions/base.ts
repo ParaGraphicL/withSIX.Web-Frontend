@@ -1,7 +1,14 @@
-import { RequestBase, ServerClient, ServerStore } from "../../../../framework";
 import { inject } from "aurelia-framework";
+import { handlerFor, IBasketItem, RequestBase, ServerClient, ServerStore, VoidCommand } from "../../../../framework";
 
 @inject(ServerClient, ServerStore)
 export abstract class ServerHandler<TRequest, TResponse> extends RequestBase<TRequest, TResponse> {
   constructor(protected client: ServerClient, protected store: ServerStore) { super(); }
+}
+
+export class ToggleModInServer extends VoidCommand { constructor(public mod: IBasketItem) { super(); } }
+
+@handlerFor(ToggleModInServer)
+export class ToggleModInServerHandler extends ServerHandler<ToggleModInServer, void> {
+  async handle(req: ToggleModInServer) { this.store.activeGame.activeServer.toggleMod(req.mod); }
 }
