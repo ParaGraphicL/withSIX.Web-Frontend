@@ -39,6 +39,7 @@
     "@easy-webpack/config-typescript": "^4.0.0",
     "@easy-webpack/config-uglify": "^2.2.3",
     "@easy-webpack/core": "^2.0.1",
+    "@playlyfe/gql": "^1.0.1",
     "@types/jasmine": "^2.5.38",
     "@types/whatwg-fetch": "0.0.32",
     "aurelia-tools": "^1.0.0",

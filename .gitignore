@@ -13,3 +13,4 @@ node_modules/
 jspm_packages/
 /typings/globals/
 /typings/modules/
+*.graphql
