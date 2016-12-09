@@ -3,27 +3,13 @@ import { createError } from "../helpers/utils/errors";
 import { EntityExtends } from "./entity-extends";
 import { gcl, gql, createFragment, toGlobalId, idFromGlobalId, fromGraphQL, IGQLResponse, IGQLViewerResponse } from "./graphqlclient";
 import { Tools } from "./tools";
-import { W6Context } from "./w6context";
 import { W6 } from "./withSIX";
 import { inject } from "aurelia-framework";
 
 import { ICancellationToken } from "./reactive";
 
-import { IManagedServer, IArmaSettings, IServerSession, ServersApi, ServerLocation, ServerSize, ServerState } from "./w6api/servers-api";
-
-
-export interface IServerClient {
-  servers: ServersApi;
-}
-
-
-@inject(W6Context)
-export class ServerClient implements IServerClient {
-  servers: ServersApi;
-  constructor(ctx: W6Context) {
-    this.servers = new ServersApi(ctx);
-  }
-}
+import { IManagedServer, IArmaSettings, IServerSession, ServerLocation, ServerSize, ServerState } from "./w6api/servers-api";
+import { IServerClient } from "./w6api/server-client";
 
 export class ManagedServer extends EntityExtends.BaseEntity {
   id: string;
