@@ -48,10 +48,10 @@
       </div>
     </div>
 
-    <div if.bind="jobState && jobState.state">
+    <div if.bind="showStatus">
       <h2>Progress</h2>
-      <ul>
-        <li>State: ${State[jobState.state]}</li>
+      <ul class="menu">
+        <li>${State[jobState.state]}</li>
         <li if.bind="jobState.address">
           Address: ${jobState.address}
           <a href.bind="serverUrl">Server Page (WIP)</a>
