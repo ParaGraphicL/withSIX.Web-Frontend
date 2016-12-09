@@ -1,0 +1,9 @@
+<template>
+  <!-- slots dont work with if.bind -->
+  <a if.bind="url" href.bind="url" target.bind="target & removeAttribute">
+    ${text}
+  </a>
+  <span if.bind="!url">
+    ${text}
+  </span>
+</template>

@@ -39,6 +39,7 @@ export function configure(config: FrameworkConfiguration) {
   config.globalResources("./router");
   config.globalResources("./menu");
   config.globalResources("./ad-links");
+  config.globalResources("./conditional-link");
   config.globalResources("./ad-unit");
   config.globalResources("./time-ago");
 }

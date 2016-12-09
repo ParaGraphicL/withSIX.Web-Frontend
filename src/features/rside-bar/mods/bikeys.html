@@ -1,6 +1,20 @@
 <template>
   <ul class="menu">
-    <li repeat.for="[k, m] of keys">${m} <button class="ignore-close" click.delegate="removeKey(m)">X</button></li>
+    <li repeat.for="[k, m] of keys">
+      <div class="entry">
+        <div class="pull-right">
+          <button class="ignore-close naked-button" click.delegate="removeKey(m)">
+            <span class="withSIX-icon-X"></span>
+          </button>
+        </div>
+        <div class="info">
+          <div class="title">
+            ${m}
+          </div>
+        </div>
+        <div class="clearfix"></div>
+      </div>
+    </li>
   </ul>
 
   <hr />
