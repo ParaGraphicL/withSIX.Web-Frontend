@@ -49,7 +49,9 @@ export class GQLClient {
   constructor() {
 
     const ep = Tools.env <= Tools.Environment.Staging ? "https://graph.withsix.com" : "http://localhost:5000";
-    const wsClient = new Client(ep.replace("https:", "wss:").replace("http:", "ws:") + "?token=" + localStorage.getItem('aurelia_token'));
+    const wsClient = new Client(ep.replace("https:", "wss:").replace("http:", "ws:"));
+    // fails with 404 on azure?
+    //  + "?token=" + localStorage.getItem('aurelia_token')
     // todo// update URL when authtoken updates... 
 
     const reconnected = new Subject<void>();
