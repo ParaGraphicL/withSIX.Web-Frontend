@@ -47,5 +47,5 @@ export class SelectServer extends VoidCommand {
 
 @handlerFor(SelectServer)
 export class SelectServerHandler extends ServerHandler<SelectServer, void> {
-  handle(req: SelectServer) { return this.store.select(req.id); }
+  handle(req: SelectServer) { return this.store.select(req.id, this.gql); }
 }

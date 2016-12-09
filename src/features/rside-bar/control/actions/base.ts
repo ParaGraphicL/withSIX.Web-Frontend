@@ -1,9 +1,9 @@
 import { inject } from "aurelia-framework";
-import { handlerFor, IBasketItem, RequestBase, ServerClient, ServerStore, VoidCommand } from "../../../../framework";
+import { GQLClient, handlerFor, IBasketItem, RequestBase, ServerClient, ServerStore, VoidCommand } from "../../../../framework";
 
-@inject(ServerClient, ServerStore)
+@inject(ServerClient, ServerStore, GQLClient)
 export abstract class ServerHandler<TRequest, TResponse> extends RequestBase<TRequest, TResponse> {
-  constructor(protected client: ServerClient, protected store: ServerStore) { super(); }
+  constructor(protected client: ServerClient, protected gql: GQLClient, protected store: ServerStore) { super(); }
 }
 
 export class ToggleModInServer extends VoidCommand { constructor(public mod: IBasketItem) { super(); } }

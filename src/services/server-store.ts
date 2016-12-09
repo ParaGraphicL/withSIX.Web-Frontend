@@ -1,6 +1,6 @@
 import { Base } from "./base";
 import { EntityExtends } from "./entity-extends";
-import { gcl, gql, createFragment, toGlobalId, idFromGlobalId, fromGraphQL, IGQLResponse, IGQLViewerResponse } from "./graphqlclient";
+import { GQLClient, gql, toGlobalId, idFromGlobalId, fromGraphQL, IGQLResponse, IGQLViewerResponse } from "./graphqlclient";
 import { Tools } from "./tools";
 import { W6 } from "./withSIX";
 import { inject } from "aurelia-framework";
@@ -19,7 +19,8 @@ import { ManagedServer } from "./models/managed-server";
 
 interface IGame { id: string; servers: IManagedServer[]; }
 
-const interesting = createFragment(gql`
+const fragments = {
+  interesting: gql`
   fragment InterestingSettings on ManagedServerSettings {
     battlEye
     verifySignatures
@@ -32,9 +33,8 @@ const interesting = createFragment(gql`
     vonQuality
     motd
   }
-`);
-
-const basic = createFragment(gql`
+`,
+  basic: gql`
   fragment BasicServerInfo on ManagedServer {
     id
     name
@@ -42,9 +42,8 @@ const basic = createFragment(gql`
     userId
     size
     location
-  }`);
-
-const fullServer = createFragment(gql`
+  }`,
+  fullServer: gql`
   fragment Server on ManagedServer {
     ...BasicServerInfo
     adminPassword
@@ -80,9 +79,8 @@ const fullServer = createFragment(gql`
       }
     }
   }
-  `);
-
-const serverFragments = basic.concat(interesting).concat(fullServer);
+  `,
+};
 
 @inject(W6)
 export class ServerStore {
@@ -132,14 +130,14 @@ export class ServerStore {
   get activeServer() { return this.activeGame.activeServer; }
 
   // TODO: re-monitor on WebSockets reconnect, while the subscription is active
-  async monitor(client: IServerClient, ct: ICancellationToken) {
+  async monitor(client: IServerClient, gcl: GQLClient, ct: ICancellationToken) {
     let sub;
     const sub2 =
       Base.observeEx(this.activeServer, x => x.unsaved)
         .combineLatest(Base.observeEx(this.activeServer, x => x.unsaved), (x, y) => null)
         .switchMap(x => Base.observeEx(this, x => x.activeServer)
           .filter(x => !x.unsaved))
-        .flatMap(x => x.monitor(client))
+        .flatMap(x => x.monitor(client, gcl))
         .subscribe(s => {
           if (sub) sub.unsubscribe();
           sub = s;
@@ -171,16 +169,18 @@ export class ServerStore {
 
   get(id: string) { return this.games.get(id); }
 
-  async select(id: string) {
+  async select(id: string, gcl: GQLClient) {
     const game = this.activeGame;
-    const { data }: IGQLResponse<{ managedServer: IServerDataNode }> = await gcl.query({
-      fragments: serverFragments,
+    const { data }: IGQLResponse<{ managedServer: IServerDataNode }> = await gcl.ac.query({
       query: gql`
         query GetServer($id: ID!) {
           managedServer(id: $id) {
             ...Server
           }
         }
+        ${fragments.basic}
+        ${fragments.fullServer}
+        ${fragments.interesting}
     `, variables: {
         id: toGlobalId("ManagedServer", id),
       }
@@ -191,10 +191,10 @@ export class ServerStore {
     game.activeServer = s;
   }
 
-  async getServers(client: IServerClient) {
+  async getServers(client: IServerClient, gcl: GQLClient) {
     const game = this.activeGame;
 
-    const { firstServer, overview } = await this.queryServers();
+    const { firstServer, overview } = await this.queryServers(gcl);
     if (overview.length > 0) { game.overview = overview; }
     if (firstServer) {
       const s = ServerStore.storageToServer(firstServer);
@@ -203,9 +203,8 @@ export class ServerStore {
     }
   }
 
-  async queryServers(): Promise<{ firstServer: IManagedServer, overview: { id: string, name: string }[] }> {
-    const { data }: IGQLViewerResponse<{ firstServer: IServerData, managedServers: { edges: { node: { id, name } }[] } }> = await gcl.query({
-      fragments: serverFragments,
+  async queryServers(gcl: GQLClient): Promise<{ firstServer: IManagedServer, overview: { id: string, name: string }[] }> {
+    const { data }: IGQLViewerResponse<{ firstServer: IServerData, managedServers: { edges: { node: { id, name } }[] } }> = await gcl.ac.query({
       query: gql`
         query GetServers {
           viewer {
@@ -228,6 +227,9 @@ export class ServerStore {
             }
           }
         }
+        ${fragments.basic}
+        ${fragments.fullServer}
+        ${fragments.interesting}
     `});
     const server = data.viewer.firstServer.edges[0];
     // TODO: or would we change the shape of our views instead?

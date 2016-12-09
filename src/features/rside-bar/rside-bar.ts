@@ -212,7 +212,7 @@ export class MonitorServerState extends VoidCommand {
 export class MonitorServerStateHandler extends ServerHandler<MonitorServerState, void> {
 
   async handle(request: MonitorServerState) {
-    await this.store.getServers(this.client);
-    await this.store.monitor(this.client, request.ct);
+    await this.store.getServers(this.client, this.gql);
+    await this.store.monitor(this.client, this.gql, request.ct);
   }
 }

@@ -1,6 +1,6 @@
 import { Base } from "../base";
 import { EntityExtends } from "../entity-extends";
-import { gcl, gql, createFragment, toGlobalId, idFromGlobalId, fromGraphQL, IGQLResponse, IGQLViewerResponse } from "../graphqlclient";
+import { GQLClient, gql, toGlobalId, idFromGlobalId, fromGraphQL, IGQLResponse, IGQLViewerResponse } from "../graphqlclient";
 import { Tools } from "../tools";
 import { W6 } from "../withSIX";
 import { inject } from "aurelia-framework";
@@ -59,21 +59,21 @@ subscription($serverId: ID!) {
 
   getDefaultState() { return <any>{ state: ServerState.Initializing }; }
 
-  async monitor(client: IServerClient) {
-    const s = gcl.subscribe({
+  async monitor(client: IServerClient, gcl: GQLClient) {
+    const s = gcl.ac.subscribe({
       query: ManagedServer.SUBSCRIPTION_QUERY,
       variables: { serverId: this.globalId },
     }).subscribe({
-      next: (data) => this.status = data.serverStateChanged,
       error: (err) => Tools.Debug.error("Error while processing event", err),
+      next: (data) => this.status = data.serverStateChanged,
     });
-    await this.refreshState(client);
-    return s;
+    const sub = gcl.wsReconnected.flatMap((x) => this.refreshState(client, gcl)).subscribe((x) => this.updateStatus(x));
+    this.updateStatus(await this.refreshState(client, gcl));
+    return { unsubscribe: () => { s.unsubscribe(); sub.unsubscribe(); } };
   }
 
-  async refreshState(client: IServerClient) {
-    const status = await this.graphRefreshState();
-    this.status = status ? status : this.getDefaultState();
+  private async refreshState(client: IServerClient, gcl: GQLClient) {
+    const status = await this.graphRefreshState(gcl);
     /*
     try {
       this.status = await client.servers.session(this.id);
@@ -86,10 +86,12 @@ subscription($serverId: ID!) {
     */
   }
 
+  private updateStatus(status) { this.status = status ? status : this.getDefaultState(); }
+
   // Optimize this server-side, so that GQL doesnt actually pull in the whole server? :-P
-  async graphRefreshState() {
+  async graphRefreshState(gcl: GQLClient) {
     const { data }: IGQLResponse<{ managedServerStatus: { address: string; state: ServerState; message: string; endtime: string } }>
-      = await gcl.query({
+      = await gcl.ac.query({
         forceFetch: true,
         query: gql`
                 query GetServerStatus($id: ID!) {
