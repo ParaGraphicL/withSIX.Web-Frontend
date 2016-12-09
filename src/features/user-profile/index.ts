@@ -1,7 +1,7 @@
-import {UiContext, ViewModel, Mediator, Query, DbQuery, handlerFor} from '../../framework'
-import {inject} from 'aurelia-framework';
-import {Router, RouterConfiguration, RouteConfig} from 'aurelia-router';
-import {EventAggregator} from 'aurelia-event-aggregator';
+import { UiContext, ViewModel, Mediator, Query, DbQuery, handlerFor } from '../../framework'
+import { inject } from 'aurelia-framework';
+import { Router, RouterConfiguration, RouteConfig } from 'aurelia-router';
+import { EventAggregator } from 'aurelia-event-aggregator';
 
 export class Index extends ViewModel {
   model;
@@ -12,8 +12,10 @@ export class Index extends ViewModel {
     let modulePath = 'features/user-profile/';
     config.map([
       { route: ['', 'content'], name: 'content', moduleId: `${modulePath}content/index`, nav: false, title: 'Content' },
+      { route: 'servers', name: 'servers', moduleId: `${modulePath}servers/index`, nav: false, title: "Servers" },
+      { route: 'servers/:serverSlug', name: 'server', moduleId: `${modulePath}servers/show`, nav: false, title: "Server" },
       { route: ['blogposts', 'friends', 'messages'], name: 'angular', moduleId: 'features/pages/angular', nav: false }
-    ])
+    ]);
   }
 
   params;

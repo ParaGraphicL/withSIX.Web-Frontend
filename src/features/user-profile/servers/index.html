@@ -1,0 +1,12 @@
+<template>
+  <div class="container-fluid">
+    <div class="tile">
+      Showing ${servers.edges.length}/${servers.totalCount} ${user.displayName}'s servers
+      <ul class="menu">
+        <li repeat.for="s of servers.edges">
+          <a href="/u/${user.slug}/servers/${s.slug}">${s.name}</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</template>
