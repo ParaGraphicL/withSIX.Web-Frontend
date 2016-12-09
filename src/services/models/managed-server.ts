@@ -72,22 +72,6 @@ subscription($serverId: ID!) {
     return { unsubscribe: () => { s.unsubscribe(); sub.unsubscribe(); } };
   }
 
-  private refreshState(client: IServerClient, gcl: GQLClient) {
-    return this.graphRefreshState(gcl);
-    /*
-    try {
-      this.status = await client.servers.session(this.id);
-    } catch (err) {
-      if (err.status === 404 || err.toString().indexOf('Failed request 404') > -1) {
-        this.status = this.getDefaultState();
-        this.unsaved = true;
-      } else { throw err; }
-    }
-    */
-  }
-
-  private updateStatus(status) { this.status = status ? status : this.getDefaultState(); }
-
   // Optimize this server-side, so that GQL doesnt actually pull in the whole server? :-P
   async graphRefreshState(gcl: GQLClient) {
     const { data }: IGQLResponse<{ managedServerStatus: { address: string; state: ServerState; message: string; endtime: string } }>
@@ -128,7 +112,11 @@ subscription($serverId: ID!) {
   }
 
   toggleMission(mission: { id: string; name: string }) {
-    if (this.missions.has(mission.id)) { this.missions.delete(mission.id); } else { this.missions.set(mission.id, mission); }
+    if (this.missions.has(mission.id)) {
+      this.missions.delete(mission.id);
+    } else {
+      this.missions.set(mission.id, mission);
+    }
   }
 
   hasMod(id: string) { return this.mods.has(id); }
@@ -139,4 +127,11 @@ subscription($serverId: ID!) {
   stop(client: IServerClient) { return client.servers.stop(this.id); }
   restart(client: IServerClient) { return client.servers.restart(this.id); }
   prepare(client: IServerClient) { return client.servers.prepare(this.id); }
+
+
+  private refreshState(client: IServerClient, gcl: GQLClient) {
+    return this.graphRefreshState(gcl);
+  }
+
+  private updateStatus(status) { this.status = status ? status : this.getDefaultState(); }
 }
