@@ -72,8 +72,8 @@ subscription($serverId: ID!) {
     return { unsubscribe: () => { s.unsubscribe(); sub.unsubscribe(); } };
   }
 
-  private async refreshState(client: IServerClient, gcl: GQLClient) {
-    const status = await this.graphRefreshState(gcl);
+  private refreshState(client: IServerClient, gcl: GQLClient) {
+    return this.graphRefreshState(gcl);
     /*
     try {
       this.status = await client.servers.session(this.id);

@@ -17,14 +17,7 @@ export class Index extends ServerTab<IStatusTab> {
   prepare: IReactiveCommand<void>;
   scale: IReactiveCommand<void>;
 
-  get selectionChanged() {
-    return (this.selectedSize && this.selectedSize.value !== this.server.size)
-      || this.additionalSlots !== this.server.additionalSlots;
-  }
-
   commands = [];
-
-  get isExecuting() { return this.commands.some(x => x.isExecuting); }
 
   lock = uiCommand2("Lock", async () => alert("TODO"), {
     cls: "ignore-close warn",
@@ -41,6 +34,13 @@ export class Index extends ServerTab<IStatusTab> {
   ];
 
   private _selectedSize: { value: ServerSize };
+
+  get selectionChanged() {
+    return (this.selectedSize && this.selectedSize.value !== this.server.size)
+      || this.additionalSlots !== this.server.additionalSlots;
+  }
+  get showStatus() { return this.state < ServerState.InstancesShutdown && this.state > ServerState.Initializing; }
+  get isExecuting() { return this.commands.some(x => x.isExecuting); }
 
   get jobState() { return this.server.status; }
   get selectedSize() { return this._selectedSize; }
