@@ -1,141 +1,21 @@
 import { Base } from "./base";
 import { createError } from "../helpers/utils/errors";
 import { EntityExtends } from "./entity-extends";
-import { gcl, gql, createFragment, toGlobalId, idFromGlobalId, fromGraphQL } from "./graphqlclient";
-import { ICancellationToken } from "./reactive";
+import { gcl, gql, createFragment, toGlobalId, idFromGlobalId, fromGraphQL, IGQLResponse, IGQLViewerResponse } from "./graphqlclient";
 import { Tools } from "./tools";
 import { W6Context } from "./w6context";
 import { W6 } from "./withSIX";
 import { inject } from "aurelia-framework";
 
-export interface IManagedServer {
-  id: string;
-  location: ServerLocation;
-  size: ServerSize;
-  secondaries: { size: ServerSize }[];
+import { ICancellationToken } from "./reactive";
 
-  additionalSlots: number;
+import { IManagedServer, IArmaSettings, IServerSession, ServersApi, ServerLocation, ServerSize, ServerState } from "./w6api/servers-api";
 
-  name: string;
-  password: string;
-  adminPassword: string;
-
-  settings: IArmaSettings;
-
-  mods: { id: string, constraint?: string }[];
-  missions: { id: string }[];
-  status: {
-    address
-    state
-    message
-    endtime
-  }
-}
-
-interface IManagedServerListItem {
-  id: string; name: string; gameId: string; userId: string
-}
-
-interface IArmaSettings {
-  battlEye: boolean; verifySignatures: boolean; vonQuality: number;
-  persistent: boolean; disableVon: boolean; drawingInMap: boolean; forceRotorLibSimulation: boolean; enableDefaultSecurity: boolean; allowedFilePatching: boolean;
-}
 
 export interface IServerClient {
   servers: ServersApi;
 }
 
-//const OperationCancelledException = createError("OperationCancelledException", Tools.AbortedException);
-const OperationFailedException = createError("OperationFailedException");
-
-abstract class ApiBase {
-  constructor(private ctx: W6Context, private basePath: string) { }
-
-  // TODO: Location based job redir
-  protected _get<T>(path: string) { return this.ctx.getCustom<T>(`${this.basePath}${path}`); }
-  protected _delete<T>(path: string) { return this.ctx.deleteCustom<T>(`${this.basePath}${path}`); }
-  protected _post<T>(path: string, data?) { return this.ctx.postCustom<T>(`${this.basePath}${path}`, data); }
-
-  protected delay(delay: number) { return new Promise((res) => setTimeout(res, delay)); }
-
-  protected async _pollOperationState<T>(id: string, operationId: string, ct?: ICancellationToken) {
-    let status: IOperationStatusT<T> = { state: OperationState.Queued, result: null };
-
-    while ((!ct || !ct.isCancellationRequested) && status.state < OperationState.Completed) {
-      //try {
-      status = await this.getOperation<T>(id, operationId);
-      //} catch (err) {
-      // todo
-      //}
-      await this.delay(2000);
-    }
-    if (ct && ct.isCancellationRequested && status.state < OperationState.Completed) {
-      await this.cancelOperation(id, operationId);
-      status.state = OperationState.Cancelled;
-    }
-    if (status.state !== OperationState.Completed) {
-      if (status.state === OperationState.Cancelled) { throw new Tools.AbortedException(status.message); }
-      throw new OperationFailedException(`Operation did not succeed: ${OperationState[status.state]} ${status.message}`);
-    }
-    return status.result;
-  }
-
-  private cancelOperation(id: string, operationId: string) { return this._delete(`/${id}/operations/${operationId}`); }
-  private getOperation<T>(id: string, operationId: string) { return this._get<IOperationStatusT<T>>(`/${id}/operations/${operationId}`); }
-}
-
-enum OperationState {
-  Queued,
-  Progressing,
-  Completed,
-  Cancelled,
-  Failed
-}
-
-interface IOperationStatus {
-  state: OperationState;
-  message?: string;
-  progress?: number;
-}
-
-interface IOperationStatusT<T> extends IOperationStatus {
-  result: T;
-}
-
-export interface IServerSession { address: string; state: ServerState; message: string; endtime: Date }
-
-enum Action {
-  Start,
-  Stop,
-  Restart,
-  Prepare,
-  Scale
-}
-
-class ServersApi extends ApiBase {
-  constructor(ctx: W6Context) { super(ctx, "/server-manager/servers"); }
-
-  async createOrUpdate(server) {
-    // TODO: Creation/Updating could be a long running op, in such case we should adopt the same Operation model as the actions (start/stop etc)
-    const opId = await this._post<string>(`/`, server);
-    return await this.get(opId);
-  }
-
-  list(gameId: string) { return this._get<{ items: IManagedServerListItem[] }>(`/?gameId=${gameId}`); }
-  get(id: string) { return this._get<IManagedServer>(`/${id}`); }
-  session(id: string) { return this._get<IServerSession>(`/${id}/session`); }
-
-  start(id: string, ct?: ICancellationToken) { return this.changeState(id, Action.Start, undefined, ct); }
-  stop(id: string, ct?: ICancellationToken) { return this.changeState(id, Action.Stop, undefined, ct); }
-  restart(id: string, ct?: ICancellationToken) { return this.changeState(id, Action.Restart, undefined, ct); }
-  prepare(id: string, ct?: ICancellationToken) { return this.changeState(id, Action.Prepare, undefined, ct); }
-  scale(id: string, size: ServerSize, additionalSlots: number, ct?: ICancellationToken) { return this.changeState(id, Action.Scale, { size, additionalSlots }, ct); }
-
-  private async changeState(id: string, action: Action, data?, ct?: ICancellationToken) {
-    const operationId = await this._post<string>(`/${id}/${Action[action].toLowerCase()}`, data);
-    await this._pollOperationState(id, operationId, ct);
-  }
-}
 
 @inject(W6Context)
 export class ServerClient implements IServerClient {
@@ -143,36 +23,6 @@ export class ServerClient implements IServerClient {
   constructor(ctx: W6Context) {
     this.servers = new ServersApi(ctx);
   }
-}
-
-export enum ServerState {
-  Initializing,
-
-  PreparingContent,
-  ContentPrepared,
-
-  Provisioning = 5000,
-  Provisioned,
-
-  PreparingLaunch,
-
-  LaunchingGame = 6000,
-
-  GameIsRunning = 7000,
-
-  StoppingInstances,
-
-  Failed = 9999,
-  InstancesShutdown = 50000
-
-  //End
-}
-
-export enum ServerAction {
-  Start,
-  Stop,
-  Prepare,
-  Restart // Incl Config+Content preparation
 }
 
 export class ManagedServer extends EntityExtends.BaseEntity {
@@ -594,11 +444,6 @@ export class ServerStore {
   }
 }
 
-interface IGQLResponse<T> {
-  data: T;
-}
-
-interface IGQLViewerResponse<T> extends IGQLResponse<{ viewer: T }> { }
 
 interface IServerData {
   edges: {
@@ -656,15 +501,3 @@ interface IServerDataNode {
   }
 }
 
-
-export enum ServerSize {
-  VerySmall = -2,
-  Small = -1,
-  Normal = 0,
-  Large
-}
-
-export enum ServerLocation {
-  WestEU,
-  WestUS
-}

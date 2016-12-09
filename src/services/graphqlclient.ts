@@ -7,6 +7,13 @@ export { gql, createFragment }
 import { Client } from 'subscriptions-transport-ws';
 import { print } from 'graphql-tag/printer';
 
+export interface IGQLResponse<T> {
+  data: T;
+}
+
+export interface IGQLViewerResponse<T> extends IGQLResponse<{ viewer: T }> { }
+
+
 const ep = Tools.env <= Tools.Environment.Staging ? "https://graph.withsix.com" : "http://localhost:5000";
 const wsClient = new Client(ep.replace("https:", "wss:").replace("http:", "ws:")); // todo
 

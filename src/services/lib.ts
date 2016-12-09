@@ -11,6 +11,7 @@ export * from './dtos';
 export * from './w6context';
 export * from './graphqlclient';
 export * from './env';
+export * from './w6api/servers-api';
 
 export * from './legacy';
 export * from './base';
