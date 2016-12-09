@@ -3,14 +3,17 @@ import { ServerHandler } from "../../rside-bar/control/actions/base";
 
 export class Index extends ViewModel {
   data;
-  get user() { return this.data; }
+  get user() { return this.data.user; }
   get servers() { return this.data.servers; }
 
   async activate({ slug }) {
     const { data } = await new GetUserServers(slug).handle(this.mediator);
     this.data = {
-      displayName: "Testaccount1",
-      slug: "Testaccount1",
+      // todo: UserBySlug
+      user: {
+        slug,
+        displayName: slug
+      },
       servers: {
         edges: data.managedServersByUser,
         totalCount: data.managedServersByUser.length,
@@ -33,6 +36,10 @@ export class GetUserServersHandler extends ServerHandler<GetUserServers, { data 
           id
           name
           slug
+          user {
+            displayName
+            slug
+          }
         }
       }
     `, variables: { user: req.userSlug },

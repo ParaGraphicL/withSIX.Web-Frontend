@@ -11,10 +11,7 @@ export class Show extends ViewModel {
     const { data } = await new GetUserServer(slug, serverSlug).handle(this.mediator);
     this.data = {
       server: data.managedServerByUser,
-      user: {
-        displayName: "Testaccount1",
-        slug: "Testaccount1",
-      },
+      user: data.managedServerByUser.user,
     }
   }
 }
@@ -34,6 +31,10 @@ export class GetUserServerHandler extends ServerHandler<GetUserServer, { data }>
           id
           name
           slug
+          user {
+            displayName
+            slug
+          }
         }
       }
     `, variables: { user: req.userSlug, name: req.serverSlug, },
