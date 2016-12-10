@@ -14,6 +14,8 @@
           ${server.status.address} JOIN HERE (todo)
         </div>
       </div>
+
+      <compose view-model="./server-info" model.bind="info" if.bind="isRunning && online"></compose>
     </div>
   </div>
 </template>
