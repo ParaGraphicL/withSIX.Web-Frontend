@@ -198,7 +198,7 @@ export class ServerRenderBase extends ViewModel {
         if (!this.w6.miniClient.isConnected || !this.features.serverFeatures) { return; }
         if (this.refresh.canExecute) { this.refresh(); }
       }, 15 * 1000);
-      clearTimeout(interval);
+      d(() => clearTimeout(interval));
     });
   }
 
