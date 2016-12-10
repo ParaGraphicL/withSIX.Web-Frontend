@@ -48,13 +48,14 @@
       </div>
     </div>
 
+    <a href.bind="serverUrl">Server Page (WIP)</a>
+
     <div if.bind="showStatus">
       <h2>Progress</h2>
       <ul class="menu">
         <li>${State[jobState.state]}</li>
         <li if.bind="jobState.address">
           Address: ${jobState.address}
-          <a href.bind="serverUrl">Server Page (WIP)</a>
         </li>
         <li if.bind="jobState.endtime">
           Ends
@@ -65,6 +66,8 @@
       </ul>
       <i show.bind="jobState.state < 7000">Average startup time is 10 minutes depending on selected content availability.</i>
     </div>
+
+    <compose if.bind="!server.unsaved" view-model="./logs" model.bind="server"></compose>
 
     <div if.bind="features.serverRemoteControl">
       <hr />

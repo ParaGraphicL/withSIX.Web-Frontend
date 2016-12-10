@@ -17,6 +17,8 @@ export { ModAddedToServer, RemovedModFromServer }
 import { Game } from "./models/game";
 import { ManagedServer } from "./models/managed-server";
 
+export { Game, ManagedServer }
+
 interface IGame { id: string; servers: IManagedServer[]; }
 
 const fragments = {
@@ -96,15 +98,18 @@ export class ServerStore {
         return new ManagedServer({
             additionaSlots: s.additionalSlots,
             adminPassword: s.adminPassword,
+            description: s.description,
             id: s.id,
             location: s.location,
             missions: s.missions.toMap(x => x.id),
             mods: s.mods.toMap(x => x.id),
             name: s.name,
             password: s.password,
+            scope: s.scope,
             secondaries: s.secondaries,
             settings: s.settings,
             size: s.size,
+            slug: s.slug,
             status: s.status,
         });
     }
@@ -113,15 +118,18 @@ export class ServerStore {
         return {
             additionalSlots: s.additionalSlots,
             adminPassword: s.adminPassword,
+            description: s.description,
             id: s.id,
             location: s.location,
             missions: Array.from(s.missions.keys()).map(id => ({ id })),
             mods: Array.from(s.mods.keys()).map(id => ({ id, constraint: (<any>s.mods.get(id)).constraint })),
             name: s.name,
             password: s.password,
+            scope: s.scope,
             secondaries: s.secondaries,
             settings: s.settings,
             size: s.size,
+            slug: s.slug,
             status: s.status,
         };
     }

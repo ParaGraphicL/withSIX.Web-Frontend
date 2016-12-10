@@ -1,15 +1,13 @@
 import { ServersApi } from "./servers-api";
 import { W6Context } from "../w6context";
 import { inject } from "aurelia-framework";
+import { ServerFileUploader } from "./server-file-uploader";
 
 export interface IServerClient {
   servers: ServersApi;
 }
 
-@inject(W6Context)
+@inject(ServersApi, ServerFileUploader)
 export class ServerClient implements IServerClient {
-  servers: ServersApi;
-  constructor(ctx: W6Context) {
-    this.servers = new ServersApi(ctx);
-  }
+  constructor(public servers: ServersApi, public uploader: ServerFileUploader) { }
 }
