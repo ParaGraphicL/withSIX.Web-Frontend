@@ -17,14 +17,18 @@ import {
 
 import { inject } from 'aurelia-framework';
 
+interface IExtendedServer extends IServer {
+  modState: string;
+}
+
 @inject(UiContext, BasketService)
 export class Server extends ViewModel {
   constructor(ui, private basketService: BasketService) { super(ui); }
-  model;
+  model: IExtendedServer;
   gameInfo: GameClientInfo;
   SessionState = SessionState;
   state;
-  async activate(model) {
+  async activate(model: IExtendedServer) {
     this.model = model;
 
     this.gameInfo = await this.basketService.getGameInfo(this.w6.activeGame.id);
