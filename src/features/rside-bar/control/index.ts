@@ -1,6 +1,6 @@
 import { ITabModel, ServerTab, SharedValues } from "../rside-bar";
 import { Command as ScaleServer } from "./actions/scale";
-import { StartServer, RestartServer, PrepareServer, StopServer, CreateOrUpdateServer } from "./actions/other"; // todo decompose
+import { StartServer, RestartServer, PrepareServer, StopServer, CreateOrUpdateServer, GetLog, GetLogs } from "./actions/other"; // todo decompose
 import { IReactiveCommand, ServerSize, ServerState, ServerStore, uiCommand2 } from "../../../framework"
 
 interface IStatusTab extends ITabModel<any> { }
@@ -60,9 +60,7 @@ export class Index extends ServerTab<IStatusTab> {
   get canScale() { return !this.isExecuting && this.selectionChanged; }
   get state() { return this.jobState ? this.jobState.state : 0; }
 
-  get serverUrl() {
-    return `/p/${this.w6.activeGame.slug}/servers/${this.jobState.address.replace(/\./g, "-")}/${this.server.name.sluggify()}`
-  }
+  get serverUrl() { return `/u/${this.w6.userInfo.slug}/servers/${this.server.slug}`; }
 
   activate(model) {
     super.activate(model);
@@ -118,7 +116,8 @@ export class Index extends ServerTab<IStatusTab> {
   async saveChanges() {
     try {
       this.saving = true;
-      await new CreateOrUpdateServer(this.w6.activeGame.id, this.server.id, ServerStore.serverToStorage(this.server)).handle(this.mediator);
+      const s = await new CreateOrUpdateServer(this.w6.activeGame.id, this.server.id, ServerStore.serverToStorage(this.server)).handle(this.mediator);
+      this.server.slug = s.slug;
     } finally {
       this.saving = false;
     }

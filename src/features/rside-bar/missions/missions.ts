@@ -1,5 +1,6 @@
 import { DbQuery, Query, ViewModel, VoidCommand, W6Context, handlerFor, uiCommand2 } from "../../../framework";
-import { ITabModel, ServerFileUploader } from "../rside-bar";
+import { ServerHandler } from "../control/actions/base";
+import { ITabModel } from "../rside-bar";
 import { inject } from "aurelia-framework";
 
 interface IMissionsTabModel extends ITabModel<any> { }
@@ -43,29 +44,20 @@ export class Missions extends ViewModel {
 class GetMissions extends Query<string[]> { }
 
 @handlerFor(GetMissions)
-@inject(W6Context, ServerFileUploader)
-class GetMissionsHandler extends DbQuery<GetMissions, string[]> {
-  constructor(ctx: W6Context, private uploader: ServerFileUploader) { super(ctx); }
-
-  handle(request: GetMissions) { return this.uploader.getFiles("missions", ".pbo"); }
+class GetMissionsHandler extends ServerHandler<GetMissions, string[]> {
+  handle(request: GetMissions) { return this.client.uploader.getFiles("missions", ".pbo"); }
 }
 
 class UploadMission extends VoidCommand { constructor(public fileName: string, public fileContent: string) { super(); } }
 
 @handlerFor(UploadMission)
-@inject(W6Context, ServerFileUploader)
-class UploadMissionHandler extends DbQuery<UploadMission, void> {
-  constructor(ctx: W6Context, private uploader: ServerFileUploader) { super(ctx); }
-
-  handle(request: UploadMission) { return this.uploader.uploadFile("missions", request.fileName, request.fileContent); }
+class UploadMissionHandler extends ServerHandler<UploadMission, void> {
+  handle(request: UploadMission) { return this.client.uploader.uploadFile("missions", request.fileName, request.fileContent); }
 }
 
 class DeleteMission extends VoidCommand { constructor(public fileName: string) { super(); } }
 
 @handlerFor(DeleteMission)
-@inject(W6Context, ServerFileUploader)
-class DeleteMissionHandler extends DbQuery<DeleteMission, void> {
-  constructor(ctx: W6Context, private uploader: ServerFileUploader) { super(ctx); }
-
-  handle(request: DeleteMission) { return this.uploader.deleteFile("missions", request.fileName); }
+class DeleteMissionHandler extends ServerHandler<DeleteMission, void> {
+  handle(request: DeleteMission) { return this.client.uploader.deleteFile("missions", request.fileName); }
 }

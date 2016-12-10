@@ -1,8 +1,9 @@
-import { gql, handlerFor, Query, ViewModel } from "../../../framework";
+import { gql, handlerFor, Query, ServerState, ViewModel } from "../../../framework";
 import { ServerHandler } from "../../rside-bar/control/actions/base";
 
 export class Show extends ViewModel {
   data;
+  State = ServerState;
 
   get server() { return this.data.server; }
   get user() { return this.data.user; }
@@ -14,6 +15,8 @@ export class Show extends ViewModel {
       user: data.managedServerByUser.user,
     }
   }
+
+  get isRunning() { return this.server.status.state === ServerState.GameIsRunning; }
 }
 
 
@@ -34,6 +37,10 @@ export class GetUserServerHandler extends ServerHandler<GetUserServer, { data }>
           user {
             displayName
             slug
+          }
+          status {
+            state
+            address
           }
         }
       }

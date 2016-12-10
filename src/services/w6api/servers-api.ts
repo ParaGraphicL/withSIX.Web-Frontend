@@ -1,6 +1,8 @@
 import { ApiBase } from "./api-base";
 import { ICancellationToken } from "../reactive";
 import { W6Context } from "../w6context";
+import { CollectionScope } from "withsix-sync-api";
+import { inject } from "aurelia-framework";
 
 export interface IServerSession { address: string; state: ServerState; message: string; endtime: Date }
 
@@ -12,6 +14,7 @@ enum Action {
   Scale
 }
 
+@inject(W6Context)
 export class ServersApi extends ApiBase {
   constructor(ctx: W6Context) { super(ctx, "/server-manager/servers"); }
 
@@ -41,6 +44,9 @@ export class ServersApi extends ApiBase {
 
 export interface IManagedServer {
   id: string;
+  slug: string;
+  description: string;
+  scope: CollectionScope;
   location: ServerLocation;
   size: ServerSize;
   secondaries: { size: ServerSize }[];

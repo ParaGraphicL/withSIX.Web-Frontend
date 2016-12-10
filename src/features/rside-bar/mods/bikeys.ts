@@ -1,5 +1,5 @@
 import { DbQuery, Query, ViewModel, VoidCommand, W6Context, handlerFor, uiCommand2 } from "../../../framework";
-import { ServerFileUploader } from "../rside-bar";
+import { ServerHandler } from "../control/actions/base";
 import { inject } from "aurelia-framework";
 
 export class BiKeys extends ViewModel {
@@ -40,29 +40,20 @@ export class BiKeys extends ViewModel {
 class GetKeys extends Query<string[]> { }
 
 @handlerFor(GetKeys)
-@inject(W6Context, ServerFileUploader)
-class GetKeysHandler extends DbQuery<GetKeys, string[]> {
-  constructor(ctx: W6Context, private uploader: ServerFileUploader) { super(ctx); }
-
-  handle(request: GetKeys) { return this.uploader.getFiles("keys", ".bikey"); }
+class GetKeysHandler extends ServerHandler<GetKeys, string[]> {
+  handle(request: GetKeys) { return this.client.uploader.getFiles("keys", ".bikey"); }
 }
 
 class UploadKey extends VoidCommand { constructor(public fileName: string, public fileContent: string) { super(); } }
 
 @handlerFor(UploadKey)
-@inject(W6Context, ServerFileUploader)
-class UploadKeyHandler extends DbQuery<UploadKey, void> {
-  constructor(ctx: W6Context, private uploader: ServerFileUploader) { super(ctx); }
-
-  handle(request: UploadKey) { return this.uploader.uploadFile("keys", request.fileName, request.fileContent); }
+class UploadKeyHandler extends ServerHandler<UploadKey, void> {
+  handle(request: UploadKey) { return this.client.uploader.uploadFile("keys", request.fileName, request.fileContent); }
 }
 
 class DeleteKey extends VoidCommand { constructor(public fileName: string) { super(); } }
 
 @handlerFor(DeleteKey)
-@inject(W6Context, ServerFileUploader)
-class DeleteKeyHandler extends DbQuery<DeleteKey, void> {
-  constructor(ctx: W6Context, private uploader: ServerFileUploader) { super(ctx); }
-
-  handle(request: DeleteKey) { return this.uploader.deleteFile("keys", request.fileName); }
+class DeleteKeyHandler extends ServerHandler<DeleteKey, void> {
+  handle(request: DeleteKey) { return this.client.uploader.deleteFile("keys", request.fileName); }
 }

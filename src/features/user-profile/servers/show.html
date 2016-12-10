@@ -8,7 +8,12 @@
         ${server.description | text}
       </p>
 
-      JOIN HERE (todo)
+      <div>
+        ${State[server.status.state]}
+        <div if.bind="isRunning">
+          ${server.status.address} JOIN HERE (todo)
+        </div>
+      </div>
     </div>
   </div>
 </template>

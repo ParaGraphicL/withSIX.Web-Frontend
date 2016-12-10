@@ -17,6 +17,8 @@ export { ModAddedToServer, RemovedModFromServer }
 import { Game } from "./models/game";
 import { ManagedServer } from "./models/managed-server";
 
+export { Game, ManagedServer }
+
 interface IGame { id: string; servers: IManagedServer[]; }
 
 const fragments = {
@@ -36,6 +38,8 @@ const fragments = {
 `,
     basic: gql`
   fragment BasicServerInfo on ManagedServer {
+    slug
+    scope
     id
     name
     gameId
@@ -46,6 +50,7 @@ const fragments = {
     fullServer: gql`
   fragment Server on ManagedServer {
     ...BasicServerInfo
+    description
     adminPassword
     password
     additionalSlots
@@ -96,15 +101,18 @@ export class ServerStore {
         return new ManagedServer({
             additionaSlots: s.additionalSlots,
             adminPassword: s.adminPassword,
+            description: s.description,
             id: s.id,
             location: s.location,
             missions: s.missions.toMap(x => x.id),
             mods: s.mods.toMap(x => x.id),
             name: s.name,
             password: s.password,
+            scope: s.scope,
             secondaries: s.secondaries,
             settings: s.settings,
             size: s.size,
+            slug: s.slug,
             status: s.status,
         });
     }
@@ -113,15 +121,18 @@ export class ServerStore {
         return {
             additionalSlots: s.additionalSlots,
             adminPassword: s.adminPassword,
+            description: s.description,
             id: s.id,
             location: s.location,
             missions: Array.from(s.missions.keys()).map(id => ({ id })),
             mods: Array.from(s.mods.keys()).map(id => ({ id, constraint: (<any>s.mods.get(id)).constraint })),
             name: s.name,
             password: s.password,
+            scope: s.scope,
             secondaries: s.secondaries,
             settings: s.settings,
             size: s.size,
+            slug: s.slug,
             status: s.status,
         };
     }
@@ -248,11 +259,12 @@ export class ServerStore {
 
     // todo; User and GameId from user and game nodes?
     toManagedServer(server: IServerDataNode) {
-        const { additionalSlots, adminPassword, gameId, id, location, name, password, secondaries,
-            settings, size, status, userId, mods, missions } = server;
+        const { additionalSlots, adminPassword, description, gameId, id, location, name, password, scope, secondaries,
+            settings, size, slug, status, userId, mods, missions } = server;
         const man = {
-            additionalSlots, adminPassword, gameId, id: idFromGlobalId(id), location,
-            name, password, secondaries, settings, size, status, userId,
+            additionalSlots, adminPassword, description, gameId, id: idFromGlobalId(id), location,
+            name, password, scope, secondaries, settings, size, status, userId,
+            slug,
             missions: missions.edges.map(x => fromGraphQL(x.node)),
             mods: mods.edges.map(x => ({ constraint: x.constraint, ...fromGraphQL(x.node) })),
         };
@@ -284,8 +296,11 @@ interface IServerData {
 }
 
 interface IServerDataNode {
+    description
     id
     name
+    slug
+    scope
     gameId
     userId
     size: ServerSize

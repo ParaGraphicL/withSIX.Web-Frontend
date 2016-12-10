@@ -7,6 +7,7 @@ import { inject } from "aurelia-framework";
 import { IBasketItem } from "../legacy/baskets";
 
 import { ICancellationToken } from "../reactive";
+import { CollectionScope } from "withsix-sync-api";
 
 import { IManagedServer, IArmaSettings, IServerSession, ServerLocation, ServerSize, ServerState } from "../w6api/servers-api";
 import { IServerClient } from "../w6api/server-client";
@@ -27,6 +28,9 @@ subscription($serverId: ID!) {
 `;
 
   id: string;
+  slug: string;
+  description: string;
+  scope: CollectionScope;
   unsaved: boolean;
 
   location: ServerLocation = ServerLocation.WestEU;
