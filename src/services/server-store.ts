@@ -38,6 +38,8 @@ const fragments = {
 `,
     basic: gql`
   fragment BasicServerInfo on ManagedServer {
+    slug
+    scope
     id
     name
     gameId
@@ -48,6 +50,7 @@ const fragments = {
     fullServer: gql`
   fragment Server on ManagedServer {
     ...BasicServerInfo
+    description
     adminPassword
     password
     additionalSlots
@@ -256,11 +259,12 @@ export class ServerStore {
 
     // todo; User and GameId from user and game nodes?
     toManagedServer(server: IServerDataNode) {
-        const { additionalSlots, adminPassword, gameId, id, location, name, password, secondaries,
-            settings, size, status, userId, mods, missions } = server;
+        const { additionalSlots, adminPassword, description, gameId, id, location, name, password, scope, secondaries,
+            settings, size, slug, status, userId, mods, missions } = server;
         const man = {
-            additionalSlots, adminPassword, gameId, id: idFromGlobalId(id), location,
-            name, password, secondaries, settings, size, status, userId,
+            additionalSlots, adminPassword, description, gameId, id: idFromGlobalId(id), location,
+            name, password, scope, secondaries, settings, size, status, userId,
+            slug,
             missions: missions.edges.map(x => fromGraphQL(x.node)),
             mods: mods.edges.map(x => ({ constraint: x.constraint, ...fromGraphQL(x.node) })),
         };
@@ -292,8 +296,11 @@ interface IServerData {
 }
 
 interface IServerDataNode {
+    description
     id
     name
+    slug
+    scope
     gameId
     userId
     size: ServerSize
