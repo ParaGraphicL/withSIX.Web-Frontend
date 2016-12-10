@@ -7,6 +7,7 @@ import { inject } from "aurelia-framework";
 import { IBasketItem } from "../legacy/baskets";
 
 import { ICancellationToken } from "../reactive";
+import { Observable, Subject } from "rxjs";
 import { CollectionScope } from "withsix-sync-api";
 
 import { IManagedServer, IArmaSettings, IServerSession, ServerLocation, ServerSize, ServerState } from "../w6api/servers-api";
@@ -63,8 +64,23 @@ subscription($serverId: ID!) {
 
   getDefaultState() { return <any>{ state: ServerState.Initializing }; }
 
+  static observe(gcl: GQLClient, serverId: string): Observable<IServerSession> {
+    return Observable.create((obs: Subject<IServerSession>) => {
+      return gcl.ac.subscribe({
+        query: ManagedServer.SUBSCRIPTION_QUERY,
+        variables: { serverId },
+      }).subscribe({
+        error: (err) => obs.error(err),
+        next: (data) => obs.next(data.serverStateChanged),
+      });
+    })
+
+  }
+
   async monitor(client: IServerClient, gcl: GQLClient) {
-    const s = gcl.ac.subscribe({
+    const s = ManagedServer.observe(gcl, this.globalId)
+      .subscribe(x => this.status = x);
+    gcl.ac.subscribe({
       query: ManagedServer.SUBSCRIPTION_QUERY,
       variables: { serverId: this.globalId },
     }).subscribe({
@@ -78,7 +94,7 @@ subscription($serverId: ID!) {
 
   // Optimize this server-side, so that GQL doesnt actually pull in the whole server? :-P
   async graphRefreshState(gcl: GQLClient) {
-    const { data }: IGQLResponse<{ managedServerStatus: { address: string; state: ServerState; message: string; endtime: string } }>
+    const { data }: IGQLResponse<{ managedServerStatus: IServerSession }>
       = await gcl.ac.query({
         forceFetch: true,
         query: gql`
