@@ -1,5 +1,5 @@
 import { ReactiveBase, LooseDisposable } from './base';
-import { Mediator, LegacyMediator, DbQuery } from './mediator';
+import { Mediator, LegacyMediator, DbQuery, IRequest } from './mediator';
 import { Toastr } from './toastr';
 import { ListFactory, ObservableEventAggregator, EventWrapper, uiCommand2 } from './reactive';
 import { Tools } from './tools';
@@ -40,6 +40,8 @@ export class ViewModel extends ReactiveBase {
   get isNavigating() { return this.router.isNavigating; }
 
   get tools() { return Tools; }
+
+  request<T>(req: IRequest<T>) { return this.mediator.request(req); }
 
   // This works around the issue of routing for Angular while Aurelia is involved..angular
   // TODO: Better workaround than the rootscope apply?
