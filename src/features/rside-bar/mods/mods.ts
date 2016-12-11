@@ -10,7 +10,7 @@ export class Index extends ViewModel {
     modInfo.forEach((x) => {
       const m = this.server.mods.get(idFromGlobalId(x.id));
       const { name, avatarUrl, authorDisplayName, authorUrl, sizePacked } = x;
-      Object.assign(m, { name, avatarUrl, authorDisplayName, authorUrl });
+      Object.assign(m, { name, avatarUrl, authorDisplayName, authorUrl, sizePacked });
     });
   }
   get mods() { return this.server.mods; }
