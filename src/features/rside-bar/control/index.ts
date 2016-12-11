@@ -36,8 +36,8 @@ export class Index extends ServerTab<IStatusTab> {
   private _selectedSize: { value: ServerSize };
 
   get selectionChanged() {
-    return (this.selectedSize && this.selectedSize.value !== this.server.size)
-      || this.additionalSlots !== this.server.additionalSlots;
+    return (this.selectedSize && this.selectedSize.value !== this.server.setup.size)
+      || this.additionalSlots !== this.server.setup.additionalSlots;
   }
   get showStatus() { return this.state < ServerState.InstancesShutdown && this.state > ServerState.Initializing; }
   get isExecuting() { return this.commands.some(x => x.isExecuting); }
@@ -64,8 +64,8 @@ export class Index extends ServerTab<IStatusTab> {
 
   activate(model) {
     super.activate(model);
-    this._selectedSize = SharedValues.sizeMap.get(this.server.size);
-    this.additionalSlots = this.server.additionalSlots;
+    this._selectedSize = SharedValues.sizeMap.get(this.server.setup.size);
+    this.additionalSlots = this.server.setup.additionalSlots;
 
     this.start = uiCommand2("Start", () => this.handleStart(), {
       canExecuteObservable: this.observeEx(x => x.canStart),
@@ -107,8 +107,8 @@ export class Index extends ServerTab<IStatusTab> {
 
   handleScale = async () => {
     // TODO: Reverse this and don't do saveChanges?
-    this.server.size = this.selectedSize.value;
-    this.server.additionalSlots = this.additionalSlots;
+    this.server.setup.size = this.selectedSize.value;
+    this.server.setup.additionalSlots = this.additionalSlots;
     await this.saveChanges();
     await new ScaleServer(this.server.id, this.selectedSize.value, this.additionalSlots).handle(this.mediator);
   }

@@ -22,16 +22,16 @@ export class Index extends ServerTab<ISetupTab> {
 
   games = [`Arma 3 v1.66.139494`]
   selectedGame: string;
-
   private _selectedSize;
+
   get selectedSize() { return this._selectedSize; }
-  set selectedSize(value) { this._selectedSize = value; this.server.size = value.value; this.server.additionalSlots = 0; }
-  get totalSlots() { return this.selectedSize.baseSlots + this.server.additionalSlots; }
+  set selectedSize(value) { this._selectedSize = value; this.setup.size = value.value; this.setup.additionalSlots = 0; }
+  get totalSlots() { return this.selectedSize.baseSlots + this.setup.additionalSlots; }
 
   calcCost() {
-    let cost = SharedValues.sizeMap.get(this.server.size).cost;
-    this.server.secondaries.forEach(x => cost += SharedValues.sizeMap.get(x.size).cost);
-    cost += this.server.additionalSlots / 8 * 2;
+    let cost = SharedValues.sizeMap.get(this.setup.size).cost;
+    this.setup.secondaries.forEach(x => cost += SharedValues.sizeMap.get(x.size).cost);
+    cost += this.setup.additionalSlots / 8 * 2;
     return cost;
   }
 
@@ -39,7 +39,7 @@ export class Index extends ServerTab<ISetupTab> {
 
   async activate(model: ISetupTab) {
     super.activate(model);
-    this._selectedSize = SharedValues.sizeMap.get(this.server.size);
+    this._selectedSize = SharedValues.sizeMap.get(this.setup.size);
 
     this.validation = this.validation
       .ensure("server.name")
@@ -52,9 +52,9 @@ export class Index extends ServerTab<ISetupTab> {
     try { await this.validation.validate(); } catch (err) { };
 
     this.subscriptions.subd(d => {
-      const rxl = this.listFactory.getList(this.server.secondaries, ["size"]);
-      d(this.whenAny(x => x.server.size)
-        .merge(this.whenAny(x => x.server.additionalSlots))
+      const rxl = this.listFactory.getList(this.setup.secondaries, ["size"]);
+      d(this.whenAny(x => x.server.setup.size)
+        .merge(this.whenAny(x => x.server.setup.additionalSlots))
         .merge(this.whenAny(x => x.credit))
         .merge(rxl.modified)
         .map(_ => this.calcHours())
@@ -66,15 +66,15 @@ export class Index extends ServerTab<ISetupTab> {
     const r = await super.tryValidate();
     if (!r) {
       // TODO: How to make this behavioral?
-      if (!this.server.adminPassword) { this.server.adminPassword = "_"; setTimeout(() => this.server.adminPassword = "", 10); }
+      if (!this.settings.adminPassword) { this.settings.adminPassword = "_"; setTimeout(() => this.settings.adminPassword = "", 10); }
       if (!this.server.name) { this.server.name = "_"; setTimeout(() => this.server.name = "", 10); }
     }
     return r;
   }
 
-  addSecondary() { this.server.secondaries.push({ size: ServerSize.Normal }); }
-  removeSecondary(s) { this.server.secondaries.removeEl(s); }
+  addSecondary() { this.setup.secondaries.push({ size: ServerSize.Normal }); }
+  removeSecondary(s) { this.setup.secondaries.removeEl(s); }
   generatePassword(length) { return this.tools.Password.generate(length); } // return Math.random().toString(36).slice(-8); }
-  generateServerPassword() { this.server.password = this.generatePassword(6); }
-  generateAdminPassword() { this.server.adminPassword = this.generatePassword(8); }
+  generateServerPassword() { this.settings.password = this.generatePassword(6); }
+  generateAdminPassword() { this.settings.adminPassword = this.generatePassword(8); }
 }

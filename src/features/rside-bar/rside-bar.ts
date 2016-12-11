@@ -133,17 +133,16 @@ export class ServerTab<TModel extends ITabModel<any>> extends ViewModel {
   model: TModel;
   validation: ValidationGroup;
   next;
-  get isValid() {
-    return (<any>this.validation).result.isValid;
-  }
+  get isValid() { return (<any>this.validation).result.isValid; }
   //isValid: boolean;
+  get setup() { return this.server.setup; }
+  get settings() { return this.setup.settings; }
+  get server() { return this.game.activeServer; }
+  get game() { return this.serverStore.activeGame; }
 
   constructor(ui, protected serverStore: ServerStore) {
     super(ui);
   }
-
-  get server() { return this.game.activeServer; }
-  get game() { return this.serverStore.activeGame; }
 
   activate(model: TModel) {
     this.model = model;

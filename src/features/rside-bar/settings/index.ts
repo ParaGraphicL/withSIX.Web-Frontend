@@ -6,5 +6,5 @@ export class Index extends ServerTab<ISettingsTabModel> {
     super.activate(model);
   }
 
-  get m() { return this.server.settings; }
+  get m() { return this.server.setup.settings; }
 }
