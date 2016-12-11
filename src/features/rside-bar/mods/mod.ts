@@ -1,4 +1,4 @@
-import { IBasketItem, ViewModelOf } from "../../../framework";
+import { IBasketItem, MenuItem, uiCommand2, ViewModelOf } from "../../../framework";
 import { EditPlaylistItem } from "../../side-bar/actions";
 import { ToggleModInServer } from "../actions";
 
@@ -7,8 +7,24 @@ interface IContentInServer extends IBasketItem {
 }
 
 export class Mod extends ViewModelOf<IContentInServer> {
+  items;
+  activate(model) {
+    super.activate(model);
+    this.subd((d) => {
+      d(this.edit = uiCommand2("Edit", () =>
+        this.dialog.open({ viewModel: EditPlaylistItem, model: this.model }),
+        { icon: "withSIX-icon-X" }));
+      d(this.remove = uiCommand2("Remove", () => this.request(new ToggleModInServer(this.model)),
+        { icon: "withSIX-icon-Edit-Pencil" }));
+    });
+    this.items = [
+      new MenuItem(this.edit),
+      new MenuItem(this.remove),
+    ];
+  }
   get versionLocked() { return this.model.constraint && this.model.constraint !== this.model.latestStableVersion; };
   get displayVersion() { return this.model.constraint || this.model.latestStableVersion; }
-  edit() { return this.dialog.open({ viewModel: EditPlaylistItem, model: this.model }); }
-  remove() { return this.request(new ToggleModInServer(this.model)); }
+
+  edit;
+  remove;
 }
