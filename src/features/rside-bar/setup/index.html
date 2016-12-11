@@ -28,17 +28,17 @@
           Admin Password
         </label>
         <input class="form-control" required placeholder="admin password" name="admin-password" id="admin-password"
-          type="text" value.bind="server.adminPassword">
+          type="text" value.bind="settings.adminPassword">
       </div>
 
       <button click.delegate="generateServerPassword()" class="text-button ignore-close pull-right">generate</button>
-      <textbox value.bind="server.password" placeholder="optional password">
+      <textbox value.bind="settings.password" placeholder="optional password">
         Password
       </textbox>
 
       <h3>Provisioning</h3>
       <hr />
-      <selectbox class="required" value.bind="server.location" options.bind="locations" disabled.one-time="true">
+      <selectbox class="required" value.bind="setup.location" options.bind="locations" disabled.one-time="true">
         Location
         <template replace-part="item-template">
           <option model.bind="o.value">${o.title || o}</option>
@@ -54,17 +54,17 @@
 
       <br />
 
-      <rangeboxadv value.bind="server.additionalSlots" step.one-time="8" min.one-time="0" max.bind="selectedSize.maxSlots - selectedSize.baseSlots"
+      <rangeboxadv value.bind="setup.additionalSlots" step.one-time="8" min.one-time="0" max.bind="selectedSize.maxSlots - selectedSize.baseSlots"
         if.bind="selectedSize.baseSlots !== selectedSize.maxSlots">
         Additional slots@2/pack of 8 slots
       </rangeboxadv>
 
-      ${server.additionalSlots} additional slots
+      ${setup.additionalSlots} additional slots
 
       <div>
-        <div show.bind="server.secondaries.length > 0">
+        <div show.bind="setup.secondaries.length > 0">
           <h4 title="Headless clients allow you to add additional server power to offload AI">Headless clients (advanced)</h4>
-          <div repeat.for="s of server.secondaries">
+          <div repeat.for="s of setup.secondaries">
             <selectbox class="required" value.bind="s.size" options.bind="sizes">
               HC Size
               <template replace-part="item-template">
@@ -75,7 +75,7 @@
           </div>
         </div>
         <command-button title="Headless clients allow you to add additional server power to offload AI" model.bind="addHc"
-          show.bind="server.secondaries.length < 1"></command-button>
+          show.bind="setup.secondaries.length < 1"></command-button>
       </div>
 
       <hr />

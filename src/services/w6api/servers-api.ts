@@ -4,8 +4,6 @@ import { W6Context } from "../w6context";
 import { CollectionScope } from "withsix-sync-api";
 import { inject } from "aurelia-framework";
 
-export interface IServerSession { address: string; state: ServerState; message: string; endtime: Date }
-
 enum Action {
   Start,
   Stop,
@@ -26,7 +24,7 @@ export class ServersApi extends ApiBase {
 
   list(gameId: string) { return this._get<{ items: IManagedServerListItem[] }>(`/?gameId=${gameId}`); }
   get(id: string) { return this._get<IManagedServer>(`/${id}`); }
-  session(id: string) { return this._get<IServerSession>(`/${id}/session`); }
+  session(id: string) { return this._get<IManagedServerStatus>(`/${id}/session`); }
 
   start(id: string, ct?: ICancellationToken) { return this.changeState(id, Action.Start, undefined, ct); }
   stop(id: string, ct?: ICancellationToken) { return this.changeState(id, Action.Stop, undefined, ct); }
@@ -42,38 +40,40 @@ export class ServersApi extends ApiBase {
   }
 }
 
+export interface IManagedServerSetup {
+  additionalSlots: number;
+  location: ServerLocation;
+  size: ServerSize;
+  secondaries: Array<{ size: ServerSize; }>;
+  settings: IArmaSettings;
+}
+
+export interface IManagedServerStatus {
+  address: string;
+  state: ServerState;
+  message: string;
+  endtime: string;
+}
+
 export interface IManagedServer {
   id: string;
   slug: string;
   description: string;
   scope: CollectionScope;
-  location: ServerLocation;
-  size: ServerSize;
-  secondaries: { size: ServerSize }[];
-
-  additionalSlots: number;
-
   name: string;
-  password: string;
-  adminPassword: string;
-
-  settings: IArmaSettings;
-
-  mods: { id: string, constraint?: string }[];
-  missions: { id: string }[];
-  status: {
-    address
-    state
-    message
-    endtime
-  }
+  mods: Array<{ id: string; constraint?: string; }>;
+  missions: Array<{ id: string }>;
+  setup: IManagedServerSetup;
+  status: IManagedServerStatus;
 }
 
 export interface IManagedServerListItem {
-  id: string; name: string; gameId: string; userId: string
+  id: string; name: string; gameId: string; userId: string;
 }
 
 export interface IArmaSettings {
+  password: string;
+  adminPassword: string;
   battlEye: boolean; verifySignatures: boolean; vonQuality: number;
   persistent: boolean; disableVon: boolean; drawingInMap: boolean; forceRotorLibSimulation: boolean; enableDefaultSecurity: boolean; allowedFilePatching: boolean;
 }

@@ -1,7 +1,7 @@
 import { ITabModel, ServerTab, SharedValues } from "../rside-bar";
+import { GetLog, GetLogs } from "./actions/other"; // todo decompose
 import { Command as ScaleServer } from "./actions/scale";
-import { StartServer, RestartServer, PrepareServer, StopServer, CreateOrUpdateServer, GetLog, GetLogs } from "./actions/other"; // todo decompose
-import { ViewModel, IReactiveCommand, ManagedServer, ServerSize, ServerState, ServerStore, uiCommand2 } from "../../../framework"
+import { ManagedServer, ViewModel } from "../../../framework"
 
 export class Logs extends ViewModel {
   server: ManagedServer;

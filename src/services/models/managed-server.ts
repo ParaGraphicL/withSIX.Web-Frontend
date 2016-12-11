@@ -10,7 +10,7 @@ import { ICancellationToken } from "../reactive";
 import { Observable, Subject } from "rxjs";
 import { CollectionScope } from "withsix-sync-api";
 
-import { IManagedServer, IArmaSettings, IServerSession, ServerLocation, ServerSize, ServerState } from "../w6api/servers-api";
+import { IManagedServer, IManagedServerStatus, IManagedServerSetup, IArmaSettings, ServerLocation, ServerSize, ServerState } from "../w6api/servers-api";
 import { IServerClient } from "../w6api/server-client";
 import { ModAddedToServer } from "../events/mod-added-to-server";
 import { RemovedModFromServer } from "../events/removed-mod-from-server";
@@ -42,24 +42,22 @@ subscription($serverId: ID!) {
   scope: CollectionScope;
   unsaved: boolean;
 
-  location: ServerLocation = ServerLocation.WestEU;
-  size: ServerSize = ServerSize.Normal;
-  secondaries: Array<{ size: ServerSize; }> = [];
-
-  additionalSlots = 0;
-
   name: string;
-  password: string;
-  adminPassword: string;
 
   // TODO: Game specific
-  settings: IArmaSettings = <any>{
-    battlEye: true, drawingInMap: true, enableDefaultSecurity: true, verifySignatures: true, vonQuality: 12,
-  };
+  setup = <IManagedServerSetup>{
+    additionalSlots: 0,
+    location: ServerLocation.WestEU,
+    secondaries: <Array<{ size: ServerSize; }>>[],
+    size: ServerSize.Normal,
+    settings: <IArmaSettings>{
+      battlEye: true, drawingInMap: true, enableDefaultSecurity: true, verifySignatures: true, vonQuality: 12,
+    }
+  }
 
   mods: Map<string, IContentEntry> = new Map<string, IContentEntry>();
   missions: Map<string, { id: string }> = new Map<string, { id: string }>();
-  status: IServerSession;
+  status: IManagedServerStatus;
 
   globalId: string;
 
@@ -72,8 +70,8 @@ subscription($serverId: ID!) {
 
   getDefaultState() { return <any>{ state: ServerState.Initializing }; }
 
-  static observe(gcl: GQLClient, serverId: string): Observable<IServerSession> {
-    return Observable.create((obs: Subject<IServerSession>) => {
+  static observe(gcl: GQLClient, serverId: string): Observable<IManagedServerStatus> {
+    return Observable.create((obs: Subject<IManagedServerStatus>) => {
       return gcl.ac.subscribe({
         query: ManagedServer.SUBSCRIPTION_QUERY,
         variables: { serverId },
@@ -102,7 +100,7 @@ subscription($serverId: ID!) {
 
   // Optimize this server-side, so that GQL doesnt actually pull in the whole server? :-P
   async graphRefreshState(gcl: GQLClient) {
-    const { data }: IGQLResponse<{ managedServerStatus: IServerSession }>
+    const { data }: IGQLResponse<{ managedServerStatus: IManagedServerStatus }>
       = await gcl.ac.query({
         forceFetch: true,
         query: gql`

@@ -8,7 +8,7 @@ import { IBasketItem } from "./legacy/baskets";
 
 import { ICancellationToken } from "./reactive";
 
-import { IManagedServer, IArmaSettings, IServerSession, ServerLocation, ServerSize, ServerState } from "./w6api/servers-api";
+import { IManagedServer, IManagedServerSetup, IManagedServerStatus, IArmaSettings, ServerLocation, ServerSize, ServerState } from "./w6api/servers-api";
 import { IServerClient } from "./w6api/server-client";
 import { ModAddedToServer } from "./events/mod-added-to-server";
 import { RemovedModFromServer } from "./events/removed-mod-from-server";
@@ -24,6 +24,8 @@ interface IGame { id: string; servers: IManagedServer[]; }
 const fragments = {
     interesting: gql`
   fragment InterestingSettings on ManagedServerSettings {
+    adminPassword
+    password
     battlEye
     verifySignatures
     persistent
@@ -44,27 +46,27 @@ const fragments = {
     name
     gameId
     userId
-    size
-    location
   }`,
     fullServer: gql`
   fragment Server on ManagedServer {
     ...BasicServerInfo
     description
-    adminPassword
-    password
-    additionalSlots
-    settings {
-      ...InterestingSettings
+    setup {
+        additionalSlots
+        secondaries {
+            size
+        }
+        size
+        location
+        settings {
+            ...InterestingSettings
+        }
     }
     status {
       state
       address
       message
       endtime
-    }
-    secondaries {
-      size
     }
     mods {
       edges {
@@ -104,39 +106,27 @@ export class ServerStore {
 
     public static storageToServer(s: IManagedServer): ManagedServer {
         return new ManagedServer({
-            additionaSlots: s.additionalSlots,
-            adminPassword: s.adminPassword,
             description: s.description,
             id: s.id,
-            location: s.location,
+            name: s.name,
+            scope: s.scope,
+            slug: s.slug,
+            setup: s.setup,
             missions: s.missions.toMap(x => x.id),
             mods: s.mods.toMap(x => x.id),
-            name: s.name,
-            password: s.password,
-            scope: s.scope,
-            secondaries: s.secondaries,
-            settings: s.settings,
-            size: s.size,
-            slug: s.slug,
             status: s.status,
         });
     }
 
     public static serverToStorage(s: ManagedServer): IManagedServer {
         return {
-            additionalSlots: s.additionalSlots,
-            adminPassword: s.adminPassword,
             description: s.description,
             id: s.id,
-            location: s.location,
             missions: Array.from(s.missions.keys()).map(id => ({ id })),
             mods: Array.from(s.mods.keys()).map(id => ({ id, constraint: (<any>s.mods.get(id)).constraint })),
             name: s.name,
-            password: s.password,
             scope: s.scope,
-            secondaries: s.secondaries,
-            settings: s.settings,
-            size: s.size,
+            setup: s.setup,
             slug: s.slug,
             status: s.status,
         };
@@ -204,7 +194,7 @@ export class ServerStore {
         ${fragments.interesting}
     `, variables: {
                 id: toGlobalId("ManagedServer", id),
-            }
+            },
         });
         const { managedServer } = data;
         const s = ServerStore.storageToServer(this.toManagedServer(managedServer));
@@ -258,20 +248,27 @@ export class ServerStore {
         const firstServer = server ? this.toManagedServer(server.node) : null;
         return {
             firstServer,
-            overview: data.viewer.managedServers.edges.map(x => fromGraphQL(x.node)),
+            overview: data.viewer.managedServers.edges.map((x) => fromGraphQL(x.node)),
         };
     }
 
     // todo; User and GameId from user and game nodes?
     toManagedServer(server: IServerDataNode) {
-        const { additionalSlots, adminPassword, description, gameId, id, location, name, password, scope, secondaries,
-            settings, size, slug, status, userId, mods, missions } = server;
+        const { setup, description, gameId, id, name, scope,
+            slug, status, userId, mods, missions } = server;
         const man = {
-            additionalSlots, adminPassword, description, gameId, id: idFromGlobalId(id), location,
-            name, password, scope, secondaries, settings, size, status, userId,
+            description,
+            gameId,
+            id: idFromGlobalId(id),
+            location,
+            name,
+            scope,
+            userId,
             slug,
-            missions: missions.edges.map(x => fromGraphQL(x.node)),
-            mods: mods.edges.map(x => ({ constraint: x.constraint, ...fromGraphQL(x.node) })),
+            missions: missions.edges.map((x) => fromGraphQL(x.node)),
+            mods: mods.edges.map((x) => ({ constraint: x.constraint, ...fromGraphQL(x.node) })),
+            setup,
+            status,
         };
         return man;
     }
@@ -308,48 +305,24 @@ interface IServerDataNode {
     scope
     gameId
     userId
-    size: ServerSize
-    location: ServerLocation
-    adminPassword
-    password
-    additionalSlots
-    settings: {
-        battlEye
-        verifySignatures
-        persistent
-        disableVon
-        drawingInMap
-        forceRotorLibSimulation
-        allowedFilePatching
-        enableDefaultSecurity
-        vonQuality
-        motd
-    }
-    status: {
-        address
-        state
-        message
-        endtime
-    }
-    secondaries: {
-        size: ServerSize
-    }[]
+    setup: IManagedServerSetup;
+    status: IManagedServerStatus;
     mods: {
-        edges: {
+        edges: Array<{
             constraint
             node: {
-                name
-                id
-            }
-        }[]
-    }
+                name;
+                id;
+            };
+        }>,
+    };
     missions: {
-        edges: {
+        edges: Array<{
             node: {
-                id
-                name
-            }
-        }[]
-    }
+                id;
+                name;
+            },
+        }>,
+    };
 }
 

@@ -1,6 +1,6 @@
 // TODO: Decompose
 
-import { handlerFor, DbQuery, Command, Query, ServerStore, VoidCommand, ServerState, ServerAction, RequestBase, ServerClient, IManagedServer, IServerSession } from "../../../../framework";
+import { handlerFor, DbQuery, Command, Query, ServerStore, VoidCommand, ServerState, ServerAction, RequestBase, ServerClient, IManagedServer, IManagedServerStatus } from "../../../../framework";
 import { ServerHandler } from "./base";
 
 export class CreateOrUpdateServer extends Command<IManagedServer> {
@@ -19,7 +19,7 @@ class CreateOrUpdateServerHandler extends ServerHandler<CreateOrUpdateServer, IM
   }
 }
 
-export class GetServerState extends Query<IServerSession> { constructor(public id: string) { super(); } }
+export class GetServerState extends Query<IManagedServerStatus> { constructor(public id: string) { super(); } }
 
 @handlerFor(GetServerState)
 class GetServerStateHandler extends ServerHandler<GetServerState, IManagedServer> {
