@@ -46,7 +46,7 @@ export class Index extends ServerTab<ISetupTab> {
       .isNotEmpty()
       .hasMinLength(3)
       .hasMaxLength(150)
-      .ensure("server.adminPassword")
+      .ensure("settings.adminPassword")
       .isNotEmpty();
 
     try { await this.validation.validate(); } catch (err) { };

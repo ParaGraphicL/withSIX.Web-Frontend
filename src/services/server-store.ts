@@ -59,7 +59,7 @@ const fragments = {
         size
         location
         settings {
-        ...InterestingSettings
+            ...InterestingSettings
         }
     }
     status {
