@@ -1,8 +1,7 @@
 <template>
   <div class="entry">
     <div class="pull-right">
-      <button class="ignore-close naked-button" click.delegate="remove()"><span class="withSIX-icon-X"></span></button>
-      <button class="ignore-close naked-button" click.delegate="edit()"><span class="withSIX-icon-Edit-Pencil"></span></button>
+      <dropdown-menu items.bind="items"></dropdown-menu>
     </div>
     <div class="imageholder pull-left" back-img.bind="model.avatarUrl">
       <!--<div class="actions content-state-c-bgd">
