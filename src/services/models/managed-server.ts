@@ -14,7 +14,15 @@ import { IManagedServer, IArmaSettings, IServerSession, ServerLocation, ServerSi
 import { IServerClient } from "../w6api/server-client";
 import { ModAddedToServer } from "../events/mod-added-to-server";
 import { RemovedModFromServer } from "../events/removed-mod-from-server";
-export { ModAddedToServer, RemovedModFromServer }
+
+enum ContentType {
+  Mod,
+  Collection
+}
+
+interface IContentEntry {
+  id: string; constraint?: string; type?: ContentType;
+}
 
 export class ManagedServer extends EntityExtends.BaseEntity {
   private static SUBSCRIPTION_QUERY = gql`
@@ -49,7 +57,7 @@ subscription($serverId: ID!) {
     battlEye: true, drawingInMap: true, enableDefaultSecurity: true, verifySignatures: true, vonQuality: 12,
   };
 
-  mods: Map<string, { id: string }> = new Map<string, { id: string }>();
+  mods: Map<string, IContentEntry> = new Map<string, IContentEntry>();
   missions: Map<string, { id: string }> = new Map<string, { id: string }>();
   status: IServerSession;
 
@@ -122,12 +130,13 @@ subscription($serverId: ID!) {
   toggleMod(mod: IBasketItem) {
     if (this.mods.has(mod.id)) {
       this.mods.delete(mod.id);
-      const { id } = this;
-      ManagedServer.eventPublisher(new RemovedModFromServer(mod, id));
+      ManagedServer.eventPublisher(new RemovedModFromServer(mod, this.id));
     } else {
-      this.mods.set(mod.id, mod);
-      const { id } = this;
-      ManagedServer.eventPublisher(new ModAddedToServer(mod, id));
+      const { id, constraint } = mod;
+      this.mods.set(mod.id, {
+        id, constraint, type: ContentType.Mod,
+      });
+      ManagedServer.eventPublisher(new ModAddedToServer(mod, this.id));
     }
   }
 

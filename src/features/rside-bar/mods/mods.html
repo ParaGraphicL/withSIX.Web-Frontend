@@ -1,38 +1,7 @@
 <template>
   <ul class="menu">
     <li repeat.for="[k, m] of mods">
-      <div class="entry">
-        <div class="pull-right">
-          <button class="ignore-close naked-button" click.delegate="remove(m)"><span class="withSIX-icon-X"></span></button>
-        </div>
-        <div class="imageholder pull-left" back-img.bind="m.avatarUrl">
-          <!--<div class="actions content-state-c-bgd">
-          <action-bar items.bind="bottomActions" item-cls="ignore-close"></action-bar>
-        </div>-->
-        </div>
-        <div class="info pull-left">
-          <a href="/p/${w6.activeGame.slug}/mods/${m.id.toShortId()}/${m.name.sluggifyEntityName()}}">
-            <div class="title">
-              <!--<span if.bind="typeScopeIcon" class="icon ${typeScopeIcon} micro"></span>
-          <span if.bind="scopeIcon" class="icon ${scopeIcon} micro"></span>-->
-
-              <span title.bind="name">${m.name}</span>
-            </div>
-            <div class="other-info tiny">
-              <!--
-            <span if.bind="model.type == 'collection'">${model.modsCount} MODS</span>-->
-              <span><span class="version">v${m.constraint || m.latestStableVersion} <span if.bind="m.constraint && m.constraint !== m.latestStableVersion">(${m.latestStableVersion})</span></span>
-
-              <span class="size" innerHTML.bind="m.sizePacked | size"></span>
-              <span class="author" if.bind="m.authorDisplayName" title.bind="m.authorDisplayName">
-              by
-              <conditional-link url.bind="m.authorUrl" text.bind="m.authorDisplayName"></conditional-link>
-            </span>
-            </div>
-          </a>
-        </div>
-        <div class="clearfix"></div>
-      </div>
+      <compose view-model="./mod" model.bind="m"></compose>
     </li>
   </ul>
   <div if.bind="mods.size === 0">

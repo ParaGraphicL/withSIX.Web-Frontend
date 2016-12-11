@@ -70,13 +70,18 @@ const fragments = {
       edges {
         constraint
         node {
-          name
-          id
-          avatarUrl
-          authorUrl
-          authorDisplayName
-          latestStableVersion
-          sizePacked
+            __typename
+            ... on ContentInterface {
+                id
+                name
+                avatarUrl
+                authorUrl
+                authorDisplayName
+                sizePacked
+            }
+            ... on Mod {
+                latestStableVersion
+            }
         }
       }
     }

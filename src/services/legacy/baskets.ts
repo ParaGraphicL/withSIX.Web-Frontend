@@ -1,4 +1,4 @@
-import {_Indexer} from './base';
+import { _Indexer } from './base';
 
 export enum BasketItemType {
   Mod,
@@ -17,6 +17,7 @@ export interface IBasketItem {
   isOnlineCollection?: boolean;
   gameId: string;
   sizePacked: number;
+  version?: string;
 }
 
 export interface IBasketCollection {
