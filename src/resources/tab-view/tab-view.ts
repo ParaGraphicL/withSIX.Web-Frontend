@@ -1,5 +1,6 @@
 import { bindable, inject, bindingMode } from 'aurelia-framework';
 import { ViewModel } from '../../services/viewmodel';
+import { TriggerOf } from "../../services/base";
 import { ShowTabNotification, SelectTab, ITabNotification } from '../../services/api';
 
 interface IProgressInfo {
@@ -33,6 +34,7 @@ export class TabView<T extends ITab> extends ViewModel {
   @bindable tabs: T[] = [];
   @bindable renderView = true;
   @bindable({ defaultBindingMode: bindingMode.twoWay }) selectedTab: T;
+  notificationTrigger: TriggerOf<ITabNotification>;
 
   bind() {
     this.subscriptions.subd(d => {
@@ -40,6 +42,7 @@ export class TabView<T extends ITab> extends ViewModel {
       d(this.eventBus.subscribe(ShowTabNotification, this.showTabNotification));
       d(this.eventBus.subscribe(SelectTab, this.selectTab));
       d(this.whenAnyValue(x => x.selectedTab).subscribe(x => this.tabs.forEach(this.disableNotification)));
+      d(this.notificationTrigger = new TriggerOf<ITab>((tab) => this.disableNotification(tab)));
     });
   }
 
@@ -64,16 +67,16 @@ export class TabView<T extends ITab> extends ViewModel {
 
   showTabNotification = (evt: ShowTabNotification) => {
     let tab = this.tabs.asEnumerable().firstOrDefault(x => (x.name || x.header).toLowerCase() == evt.name.toLowerCase())
-    if (tab == null) return;
+    if (tab == null) { return; }
     this.removeTabNotification(tab);
-    if (this.selectedTab == tab) return;
     this.tools.Debug.log("$$$ Set tab notification", evt);
     tab.notification = evt.notification;
-    if (evt.notification == null) return;
-    tab.notificationCount = 1;
-    tab.notification.active = true;
-    if (tab.notificationTimeOut) clearTimeout(tab.notificationTimeOut);
-    tab.notificationTimeOut = setTimeout(() => this.disableNotification(tab), 1500);
+    if (evt.notification == null) { return; }
+    if (this.selectedTab !== tab) {
+      tab.notificationCount = 1;
+      tab.notification.active = true;
+      this.notificationTrigger.trigger(tab, 1500);
+    }
   }
 
   disableNotification = (tab: ITab) => { if (tab.notification) tab.notification.active = false }

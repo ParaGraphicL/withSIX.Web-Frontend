@@ -1,28 +1,29 @@
-import {inject} from 'aurelia-framework';
-import {DialogController} from 'aurelia-dialog';
-import {breeze, IBasketItem, ModsHelper, IBreezeMod, Base, uiCommand2, Dialog, Query, DbQuery, handlerFor, Mediator, ProcessingState} from '../../../framework';
+import { inject } from 'aurelia-framework';
+import { DialogController } from 'aurelia-dialog';
+import { breeze, IBasketItem, ModsHelper, IBreezeMod, Base, uiCommand2, Dialog, Query, DbQuery, handlerFor, Mediator, ProcessingState } from '../../../framework';
 import VersionCompare from 'version_compare';
 
 export class EditPlaylistItem extends Dialog<IBasketItem> {
+  static autoUpdateStr = "autoupdate";
   constraint: string;
   versions: string[];
-  static autoUpdateStr = "autoupdate";
+
+
+  save = uiCommand2("Save", async () => {
+    this.model.constraint = this.constraint === EditPlaylistItem.autoUpdateStr ? null : this.constraint;
+    this.controller.ok({ ...this.model });
+  }, {
+      cls: "ok",
+    });
+
+  get versionSelected() { return this.constraint !== EditPlaylistItem.autoUpdateStr; }
 
   async activate(model: IBasketItem) {
     super.activate(model);
     this.constraint = model.constraint || EditPlaylistItem.autoUpdateStr;
-    var data = await new GetAvailableVersions(this.model.id).handle(this.mediator);
+    const data = await new GetAvailableVersions(this.model.id).handle(this.mediator);
     this.versions = data.versions;
   }
-
-  save = uiCommand2('Save', async () => {
-    this.model.constraint = this.constraint == EditPlaylistItem.autoUpdateStr ? null : this.constraint;
-    this.controller.ok(null);
-  }, {
-      cls: "ok"
-    });
-
-  get versionSelected() { return this.constraint != EditPlaylistItem.autoUpdateStr; }
 }
 
 interface IAvailableVersions {
@@ -46,7 +47,7 @@ class GetAvailableVersionsHandler extends DbQuery<GetAvailableVersions, IAvailab
       let data = await this.context.executeQuery<IBreezeMod>(query)
       let updates = data.results[0].updates;
       versions = versions.concat(updates
-        .filter(x => x.currentState == ProcessingState[ProcessingState.Finished])
+        .filter(x => x.currentState === ProcessingState[ProcessingState.Finished])
         .asEnumerable()
         .orderByDescending(x => x, ModsHelper.versionCompare)
         .toArray()

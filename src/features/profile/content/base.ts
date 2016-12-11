@@ -1,6 +1,6 @@
 import { inject } from 'aurelia-framework';
 import {
-  IContentGuidSpec, BasketItemType, IBasketItem, BasketService, Base, GameClientInfo, uiCommand, uiCommand2, UiContext, MenuItem, ViewModel, Mediator, Query, DbQuery, DbClientQuery, handlerFor, VoidCommand, IContent, ItemState, IContentState,
+  IContentGuidSpec, BasketItemType, IBasketItem, BasketService, Base, GameClientInfo, uiCommand, uiCommand2, UiContext, MenuItem, ViewModelOf, Mediator, Query, DbQuery, DbClientQuery, handlerFor, VoidCommand, IContent, ItemState, IContentState,
   RemoveRecent, Abort, UninstallContent, LaunchContent, OpenFolder, InstallContent, UnFavoriteContent, FavoriteContent, GameChanged, IMenuItem, FolderType, LaunchAction, IReactiveCommand, Publisher,
   ModsHelper, ServerStore,
 } from '../../../framework';
@@ -14,7 +14,7 @@ import { ServerHandler, ToggleModInServer } from "../../rside-bar/control/action
 interface ISource { img: string; text: string; }
 
 @inject(UiContext, BasketService, ServerStore)
-export class ContentViewModel<TContent extends IContent> extends ViewModel {
+export class ContentViewModel<TContent extends IContent> extends ViewModelOf<TContent> {
   baskets: GameBaskets;
   model: TContent;
   icon: string;
@@ -114,7 +114,7 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
   get type() { return this.model.type; }
 
   async activate(model: TContent) {
-    this.model = model;
+    super.activate(model);
     this.gameInfo = await this.basketService.getGameInfo(this.model.gameId); // hack
     this.baskets = this.basketService.getGameBaskets(model.gameId); // hack
     this.path = this.getPath();
@@ -296,7 +296,8 @@ export class ContentViewModel<TContent extends IContent> extends ViewModel {
       author: this.model.author || "N/A",
       image: this.model.image,
       name: this.model.name,
-      sizePacked: this.model.sizePacked
+      sizePacked: this.model.sizePacked,
+      version: this.model.version,
     }
   }
 
