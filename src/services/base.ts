@@ -1,8 +1,8 @@
-import {inject, Container, BindingEngine} from 'aurelia-framework';
+import { inject, Container, BindingEngine } from 'aurelia-framework';
 import * as Rx from 'rxjs/Rx';
 import * as RxUi from 'rxui';
-import {EventAggregator} from 'aurelia-event-aggregator';
-import {Tools} from './tools';
+import { EventAggregator } from 'aurelia-event-aggregator';
+import { Tools } from './tools';
 
 interface IBindingEngine {
   propertyObserver<T>(obj, propertyName: string): { subscribe: (callback: (newValue: T) => any) => IDisposable }
@@ -19,10 +19,35 @@ class BE implements IBindingEngine {
   collectionObserver = (collection) => this.engine.collectionObserver(collection);
 }
 
-export var bindingEngine: IBindingEngine = new BE();
+export const bindingEngine: IBindingEngine = new BE();
 
 export interface IDisposable {
   dispose: () => void;
+}
+
+
+abstract class TriggerBase implements IDisposable {
+  constructor(private time?: number) { }
+  timeout;
+  dispose() { this.clear(); }
+  protected clear() { if (this.timeout) { clearTimeout(this.timeout); } }
+  protected createTimeout(fnc, timeOverride?) { this.timeout = setTimeout(fnc, timeOverride == null ? this.time : timeOverride); }
+}
+
+export class Trigger extends TriggerBase {
+  constructor(time?: number) { super(time); }
+  trigger(fnc: () => void, timeOverride?: number) {
+    this.clear();
+    this.createTimeout(fnc, timeOverride);
+  }
+}
+
+export class TriggerOf<T> extends TriggerBase {
+  constructor(private fnc: (t: T) => void, time?: number) { super(time); }
+  trigger(t: T, timeOverride?: number) {
+    this.clear();
+    this.createTimeout(() => this.fnc(t), timeOverride);
+  }
 }
 
 export interface LooseDisposable {
