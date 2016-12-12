@@ -4,7 +4,7 @@ import { GQLClient, gql, toGlobalId, idFromGlobalId, fromGraphQL, IGQLResponse, 
 import { Tools } from "./tools";
 import { W6 } from "./withSIX";
 import { inject } from "aurelia-framework";
-import { IBasketItem } from "./legacy/baskets";
+import { BasketItemType, IBasketItem } from "./legacy/baskets";
 
 import { ICancellationToken } from "./reactive";
 
@@ -276,7 +276,7 @@ export class ServerStore {
             userId,
             slug,
             missions: missions.edges.map((x) => fromGraphQL(x.node)),
-            mods: mods.edges.map((x) => ({ constraint: x.constraint, ...fromGraphQL(x.node) })),
+            mods: mods.edges.map((x) => ({ constraint: x.constraint, ...fromGraphQL(x.node), type: BasketItemType[x.node.__typename] })),
             setup,
             status,
         };
@@ -323,6 +323,8 @@ interface IServerDataNode {
             node: {
                 name;
                 id;
+                constraint;
+                __typename;
             };
         }>,
     };

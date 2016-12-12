@@ -8,14 +8,13 @@ export class Index extends ViewModel {
   server: ManagedServer
   async activate(server) {
     this.server = server;
-    // TODO: Collection vs Mod type
     const items = Array.from(this.server.mods.keys()).map((id) => toGlobalId(BasketItemType[this.server.mods.get(id).type], id));
     const modInfo = await this.request(new GetModInfo(server.id, items));
     modInfo.filter(x => !!x).forEach((x) => {
       const m = this.server.mods.get(idFromGlobalId(x.id));
       const { name, avatarUrl, authorDisplayName, authorUrl, sizePacked, latestStableVersion, __typename } = x;
       const type = BasketItemType[__typename];
-      Object.assign(m, { name, avatarUrl, authorDisplayName, authorUrl, sizePacked, latestStableVersion, type });
+      Object.assign(m, { name, avatarUrl, authorDisplayName, authorUrl, sizePacked, latestStableVersion, type, __typename });
     });
   }
   get mods() { return this.server.mods; }

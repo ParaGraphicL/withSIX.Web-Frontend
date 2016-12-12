@@ -28,6 +28,10 @@ export class Show extends ViewModel {
   }
 
   get state() { return <ServerState>this.server.status.state; }
+  get statusText() {
+    if (this.state === 0) { return "Offline"; }
+    return ServerState[this.state];
+  }
 
   get info() {
     return {
