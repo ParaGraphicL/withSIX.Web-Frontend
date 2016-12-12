@@ -139,27 +139,18 @@ export class ServerStore {
     interval = 2 * 1000; // todo; adjust interval based on state, also should restart on each action?
 
     get activeServer() { return this.activeGame.activeServer; }
+    get unsaved() { return this.activeServer.unsaved; }
 
     // TODO: re-monitor on WebSockets reconnect, while the subscription is active
     async monitor(client: IServerClient, gcl: GQLClient, ct: ICancellationToken) {
-        let sub;
-        const sub2 =
-            Base.observeEx(this.activeServer, x => x.unsaved)
-                .combineLatest(Base.observeEx(this.activeServer, x => x.unsaved), (x, y) => null)
-                .switchMap(x => Base.observeEx(this, x => x.activeServer)
-                    .filter(x => !x.unsaved))
-                .flatMap(x => x.monitor(client, gcl))
-                .subscribe(s => {
-                    if (sub) sub.unsubscribe();
-                    sub = s;
-                })
-        const sub3 = Base.observeEx(ct, x => x.isCancellationRequested)
-            .skip(1)
-            .subscribe(x => {
-                if (sub) sub.unsubscribe();
-                sub2.unsubscribe();
-                sub3.unsubscribe();
-            })
+        // If there is an active server, and it is not unsaved, monitor it
+        // When the active server changes, stop monitoring the previous, and start monitoring the next
+        Base.observeEx(this, (x) => x.activeServer)
+            .switchMap((x) => x.prepareMonitor(client, gcl))
+            .takeUntil(Base.observeEx(ct, (x) => x.isCancellationRequested)
+                .skip(1)
+                .take(1))
+            .subscribe();
     }
 
     get activeGame() {
