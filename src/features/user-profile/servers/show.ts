@@ -1,11 +1,11 @@
-import { gql, handlerFor, ManagedServer, Query, ServerState, ViewModel } from "../../../framework";
+import { gql, handlerFor, IManagedServerStatus, ManagedServer, Query, ServerState, ViewModel } from "../../../framework";
+import { Observable } from "rxjs";
 import { ServerHandler } from "../../rside-bar/control/actions/base";
 import { GetServer } from "./server-info";
 
 export class Show extends ViewModel {
-  data;
+  data: Ret;
   State = ServerState;
-
   online = false;
 
   get server() { return this.data.server; }
@@ -41,13 +41,14 @@ export class Show extends ViewModel {
   get isRunning() { return this.server.status.state === ServerState.GameIsRunning; }
 }
 
+interface Ret { server; user; observable: Observable<IManagedServerStatus> }
 
-export class GetUserServer extends Query<{ server; user }> {
+export class GetUserServer extends Query<Ret> {
   constructor(public userSlug: string, public serverSlug: string) { super(); }
 }
 
 @handlerFor(GetUserServer)
-export class GetUserServerHandler extends ServerHandler<GetUserServer, { server; user; }> {
+export class GetUserServerHandler extends ServerHandler<GetUserServer, Ret> {
   async handle(req: GetUserServer) {
     const { data } = await this.gql.ac.query({
       query: gql`
