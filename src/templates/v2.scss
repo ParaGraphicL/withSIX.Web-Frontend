@@ -401,13 +401,13 @@ div.source {
     .form-control {
       height: inherit;
     }
-    $itemH: 32px;
-    $item-height: $itemH+8px;
-    $imageWidth: 46.6px;
     li {
-      height: $item-height;
       overflow: hidden;
       .entry {
+        dropdown-menu {
+          margin-left: 4px;
+          display: none;
+        }
         padding: 4px 0;
         .update-available {
           color: $colorSixOrange;
@@ -415,18 +415,9 @@ div.source {
             font-style: italic;
           }
         }
-        dropdown-menu {
-          margin-left: 4px;
-          display: none;
-          button.dropdown-toggle {
-            height: $itemH;
-          }
-        }
         .imageholder {
           overflow: hidden;
           margin-left: 8px;
-          width: $imageWidth;
-          height: $itemH;
           display: inline-block;
           action-bar {
             li {
@@ -439,18 +430,16 @@ div.source {
           .actions {
             display: none;
             li {
-              width: $imageWidth;
+              span.spacer,
+              span.text {
+                display: none;
+              }
               button.anchor {
-                height: $itemH;
                 width: 100%;
                 text-align: center;
                 &:hover {
                   color: inherit;
                 }
-              }
-              span.spacer,
-              span.text {
-                display: none;
               }
             }
           }
@@ -475,7 +464,6 @@ div.source {
         }
         .content-state-c-bgd-border {
           $borderWidth: 2px;
-          height: 32px;
           border-left-width: $borderWidth;
           border-left-style: solid;
         }
@@ -500,6 +488,36 @@ div.source {
           .title {
             height: 16px;
             @include text-overflow;
+          }
+        }
+      }
+    }
+    ul.big-list {
+      $itemH: 32px;
+      $item-height: $itemH+8px;
+      $imageWidth: 46.6px;
+      li {
+        height: $item-height;
+        .entry {
+          dropdown-menu {
+            button.dropdown-toggle {
+              height: $itemH;
+            }
+          }
+          .imageholder {
+            width: $imageWidth;
+            height: $itemH;
+            .actions {
+              li {
+                width: $imageWidth;
+                button.anchor {
+                  height: $itemH;
+                }
+              }
+            }
+          }
+          .content-state-c-bgd-border {
+            height: $itemH;
           }
         }
       }

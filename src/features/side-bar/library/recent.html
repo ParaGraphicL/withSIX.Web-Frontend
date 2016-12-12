@@ -5,7 +5,7 @@
     <div class="clearfix"></div>
   </header>
 
-  <list-view is-virtual.one-time="features.uiVirtualization" items.bind="model.recent">
+  <list-view list-cls="menu big-list" is-virtual.one-time="features.uiVirtualization" items.bind="model.recent">
     <template replace-part="item-template">
       <compose view-model="features/profile/content/${item.type || itemType}" model.bind="item" view="features/side-bar/library/_item.html"></compose>
     </template>
