@@ -105,7 +105,11 @@ export class ServerStore {
 
 
     public static storageToServer(s: IManagedServer): ManagedServer {
-        return new ManagedServer({
+        return new ManagedServer(this.storeToServerObj(s));
+    }
+
+    public static storeToServerObj(s: IManagedServer) {
+        return {
             description: s.description,
             id: s.id,
             name: s.name,
@@ -115,7 +119,7 @@ export class ServerStore {
             missions: s.missions.toMap(x => x.id),
             mods: s.mods.toMap(x => x.id),
             status: s.status,
-        });
+        }
     }
 
     public static serverToStorage(s: ManagedServer): IManagedServer {
@@ -141,11 +145,18 @@ export class ServerStore {
     get activeServer() { return this.activeGame.activeServer; }
     get unsaved() { return this.activeServer.unsaved; }
 
+    public async createOrUpdate(gameId: string, serverId: string, req, client: IServerClient) {
+        const server = this.get(gameId).servers.get(serverId);
+        const s = await client.servers.createOrUpdate(req);
+        Object.assign(server, ServerStore.storeToServerObj(s), { status: server.status });
+        server.unsaved = undefined;
+    }
+
     // TODO: re-monitor on WebSockets reconnect, while the subscription is active
     async monitor(client: IServerClient, gcl: GQLClient, ct: ICancellationToken) {
         // If there is an active server, and it is not unsaved, monitor it
         // When the active server changes, stop monitoring the previous, and start monitoring the next
-        Base.observeEx(this, (x) => x.activeServer)
+        return Base.observeEx(this, (x) => x.activeServer)
             .switchMap((x) => x.prepareMonitor(client, gcl))
             .takeUntil(Base.observeEx(ct, (x) => x.isCancellationRequested)
                 .skip(1)

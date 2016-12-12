@@ -68,7 +68,7 @@ subscription($serverId: ID!) {
     this.globalId = toGlobalId("ManagedServer", this.id);
   }
 
-  getDefaultState() { return <any>{ state: ServerState.Initializing }; }
+  getDefaultState() { return <IManagedServerStatus>{ state: ServerState.Initializing }; }
 
   // TODO: Make a state/eventID, so that we can ignore older/newer updates
   static observe(gcl: GQLClient, serverId: string): Observable<IManagedServerStatus> {
@@ -93,8 +93,9 @@ subscription($serverId: ID!) {
 
   private monitor(client: IServerClient, gcl: GQLClient) {
     return ManagedServer.observe(gcl, this.globalId)
-      .merge(gcl.wsReconnected.flatMap((x) => this.refreshState(client, gcl)))
-      .merge(Observable.fromPromise(this.refreshState(client, gcl)));
+      .merge(gcl.wsReconnected.flatMap((x) => this.refreshState(client, gcl)));
+    // we already get the state in the query upon save, and upon start..
+    //.merge(Observable.fromPromise(this.refreshState(client, gcl)));
   }
 
   // Optimize this server-side, so that GQL doesnt actually pull in the whole server? :-P
@@ -120,7 +121,7 @@ subscription($serverId: ID!) {
       return this.getDefaultState();
     } else {
       const { state, message, address, endtime } = data.managedServerStatus;
-      return { state, message, address, endtime: endtime ? new Date(endtime) : null };
+      return { state, message, address, endtime };
     }
   }
 
@@ -159,5 +160,7 @@ subscription($serverId: ID!) {
     return this.graphRefreshState(gcl);
   }
 
-  private updateStatus(status) { this.status = status ? status : this.getDefaultState(); }
+  private updateStatus(status: IManagedServerStatus) {
+    this.status = status ? status : this.getDefaultState();
+  }
 }
