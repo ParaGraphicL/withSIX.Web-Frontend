@@ -133,7 +133,7 @@ export class ServerStore {
             description: s.description,
             id: s.id,
             missions: Array.from(s.missions.keys()).map(id => ({ id })),
-            mods: Array.from(s.mods.keys()).map(id => ({ id, constraint: (<any>s.mods.get(id)).constraint })),
+            mods: Array.from(s.mods.keys()).map(id => { const {constraint, type } = (<any>s.mods.get(id)); return ({ id, constraint, type }) }),
             name: s.name,
             scope: s.scope,
             setup: s.setup,

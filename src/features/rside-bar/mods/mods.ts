@@ -1,5 +1,5 @@
 import {
-  BasketItemType, DbQuery, fragments gql, handlerFor, idFromGlobalId, ManagedServer,
+  BasketItemType, DbQuery, fragments, gql, handlerFor, idFromGlobalId, ManagedServer,
   Query, toGlobalId, uiCommand2, ViewModel
 } from "../../../framework";
 import { ServerHandler } from "../actions";
@@ -13,8 +13,9 @@ export class Index extends ViewModel {
     const modInfo = await this.request(new GetModInfo(server.id, items));
     modInfo.filter(x => !!x).forEach((x) => {
       const m = this.server.mods.get(idFromGlobalId(x.id));
-      const { name, avatarUrl, authorDisplayName, authorUrl, sizePacked, latestStableVersion } = x;
-      Object.assign(m, { name, avatarUrl, authorDisplayName, authorUrl, sizePacked, latestStableVersion });
+      const { name, avatarUrl, authorDisplayName, authorUrl, sizePacked, latestStableVersion, __typename } = x;
+      const type = BasketItemType[__typename];
+      Object.assign(m, { name, avatarUrl, authorDisplayName, authorUrl, sizePacked, latestStableVersion, type });
     });
   }
   get mods() { return this.server.mods; }
