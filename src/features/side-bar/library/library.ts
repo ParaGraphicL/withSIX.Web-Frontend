@@ -78,7 +78,7 @@ export class Library extends ViewModelWithModel<ITab> {
   }
 
   attached() {
-    setTimeout(() => { this.shown = true; }, 0.2 * 1000); // animation delay. // TODO: have actual animation end trigger..
+    setTimeout(() => { this.shown = true; }, 0.4 * 1000); // animation delay. // TODO: have actual animation end trigger..
   }
 
   get activeGameName() { return !this.w6.activeGame.id ? "" : this.w6.activeGame.slug.replace("-", " "); }

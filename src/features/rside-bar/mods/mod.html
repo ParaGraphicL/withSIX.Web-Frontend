@@ -1,8 +1,6 @@
 <template>
   <div class="entry">
-    <div class="pull-right">
-      <dropdown-menu items.bind="items"></dropdown-menu>
-    </div>
+    <dropdown-menu class="pull-right" items.bind="items" item-cls="ignore-close" direction="left"></dropdown-menu>
     <div class="imageholder pull-left" back-img.bind="model.avatarUrl">
       <!--<div class="actions content-state-c-bgd">
           <action-bar items.bind="bottomActions" item-cls="ignore-close"></action-bar>
