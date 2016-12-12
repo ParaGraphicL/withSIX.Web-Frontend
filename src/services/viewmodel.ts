@@ -109,9 +109,10 @@ export class ViewModel extends ReactiveBase {
   showMessageDialog = this.ui.showMessageDialog;
   confirm = this.ui.confirm;
 
-  get isLoggedIn() { return this.w6.userInfo.id != null }
+  get isLoggedIn() { return this.userInfo.id != null; }
+  get userInfo() { return this.w6.userInfo; }
   get unchanged() { return !this.changed; }
-  get navigateInternal() { return this.ui.navigateInternal }
+  get navigateInternal() { return this.ui.navigateInternal; }
   get features() { return this.ui.features; }
   get appEvents() { return this.ui.appEvents; }
   get clientWrapper() { return this.ui.clientWrapper; }

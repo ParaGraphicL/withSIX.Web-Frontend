@@ -5,7 +5,7 @@ import {
 import { ServerHandler } from "../actions";
 
 export class Index extends ViewModel {
-  server: ManagedServer
+  server: ManagedServer;
   async activate(server) {
     this.server = server;
     const items = Array.from(this.server.mods.keys()).map((id) => toGlobalId(BasketItemType[this.server.mods.get(id).type], id));
