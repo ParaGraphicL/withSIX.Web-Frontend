@@ -11,7 +11,7 @@ export class Mod extends ViewModelOf<IContentInServer> {
   activate(model) {
     super.activate(model);
     this.subd((d) => {
-      d(this.edit = uiCommand2("Edit", () =>
+      d(this.edit = uiCommand2("Select version", () =>
         this.dialog.open({ viewModel: EditPlaylistItem, model: this.model }),
         { icon: "withSIX-icon-X" }));
       d(this.remove = uiCommand2("Remove", () => this.request(new ToggleModInServer(this.model)),

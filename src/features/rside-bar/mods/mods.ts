@@ -1,4 +1,7 @@
-import { DbQuery, gql, handlerFor, idFromGlobalId, ManagedServer, Query, toGlobalId, uiCommand2, ViewModel } from "../../../framework";
+import {
+  BasketItemType, DbQuery, fragments gql, handlerFor, idFromGlobalId, ManagedServer,
+  Query, toGlobalId, uiCommand2, ViewModel
+} from "../../../framework";
 import { ServerHandler } from "../actions";
 
 export class Index extends ViewModel {
@@ -6,11 +9,12 @@ export class Index extends ViewModel {
   async activate(server) {
     this.server = server;
     // TODO: Collection vs Mod type
-    const modInfo = await this.request(new GetModInfo(server.id, Array.from(this.server.mods.keys()).map((id) => toGlobalId("Mod", id))));
-    modInfo.forEach((x) => {
+    const items = Array.from(this.server.mods.keys()).map((id) => toGlobalId(BasketItemType[this.server.mods.get(id).type], id));
+    const modInfo = await this.request(new GetModInfo(server.id, items));
+    modInfo.filter(x => !!x).forEach((x) => {
       const m = this.server.mods.get(idFromGlobalId(x.id));
-      const { name, avatarUrl, authorDisplayName, authorUrl, sizePacked } = x;
-      Object.assign(m, { name, avatarUrl, authorDisplayName, authorUrl, sizePacked });
+      const { name, avatarUrl, authorDisplayName, authorUrl, sizePacked, latestStableVersion } = x;
+      Object.assign(m, { name, avatarUrl, authorDisplayName, authorUrl, sizePacked, latestStableVersion });
     });
   }
   get mods() { return this.server.mods; }
@@ -25,22 +29,14 @@ class GetModInfoHandler extends ServerHandler<GetModInfo, Array<any>> {
     const { data } = await this.gql.ac.query({
       query: gql`
     query GetContent($ids: [ID]!) {
-      content(ids: $ids) {
+      contents(ids: $ids) {
         __typename
-        ... on ContentInterface {
-          id
-          name
-          avatarUrl
-          authorUrl
-          sizePacked
-        }
-        ... on Mod {
-          packageName
-        }
+        ...ContentInfo
       }
     }
+    ${fragments.contentDisplay}
 `, variables: { ids: req.contentIDs }
     });
-    return data.content;
+    return data.contents;
   }
 }
