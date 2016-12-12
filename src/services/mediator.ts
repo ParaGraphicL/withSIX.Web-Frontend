@@ -1,6 +1,6 @@
 import breeze from "breeze-client";
 import { IUserInfo, IBreezeMod } from "./dtos";
-import { W6Context, IQueryResult } from "./w6context";
+import { HttpErrorCreator, W6Context, IQueryResult } from "./w6context";
 import { BasketService } from "./basket-service";
 import { Toastr } from "./toastr";
 import { Client, IContent } from "withsix-sync-api";
@@ -14,23 +14,49 @@ import { GlobalErrorHandler } from "./legacy/logger";
 import { Tools } from "./tools";
 import { W6 } from "./withSIX";
 import { Container } from "aurelia-framework";
+import { ApolloError } from "apollo-client";
+
 export * from "mediatr";
+
+const isGraphStatus = (msg, statusCode) => msg.startsWith("Failed request " + statusCode);
+const isGraphStatusError = (err: ApolloError, statusCode) => err.graphQLErrors.some(x => isGraphStatus(x.message, statusCode));
+
 
 // App specific starts
 @inject(Mediator, Toastr)
 export class ErrorLoggingMediatorDecorator implements IMediator {
   constructor(private mediator: IMediator, private toastr: Toastr) { }
 
-  request<T>(request: IRequest<T>): Promise<T> {
-    let action = (<any>request.constructor).action;
-    return this.mediator.request<T>(request)
-      .then(x => {
-        if (action) {
-          Tools.Debug.info(action + ": Success");
-          this.toastr.success(action, "Success");
+  async request<T>(request: IRequest<T>): Promise<T> {
+    const action = (<any>request.constructor).action;
+    try {
+      const r = await this.mediator.request<T>(request);
+      if (action) {
+        Tools.Debug.info(action + ": Success");
+        this.toastr.success(action, "Success");
+      }
+      return r;
+    } catch (err) {
+      if (err instanceof ApolloError) {
+        if (isGraphStatusError(<ApolloError>err, 404)) {
+          throw HttpErrorCreator.create404({ status: 404, statusText: "NotFound", body: null }, err);
         }
-        return x;
-      });
+        if (isGraphStatusError(<ApolloError>err, 403)) {
+          throw HttpErrorCreator.create403({ status: 403, statusText: "Forbidden", body: null }, err);
+        }
+        if (isGraphStatusError(<ApolloError>err, 401)) {
+          // localstorage used to work around injection limitations
+          throw HttpErrorCreator.create401(!!localStorage.getItem("aurelia_token"), {
+            status: 401, statusText: "Unauthorized", body: null
+          }, err);
+        }
+        if (isGraphStatusError(<ApolloError>err, 500)) {
+          throw HttpErrorCreator.create500({ status: 500, statusText: "InternalServerError", body: null }, err);
+        }
+        throw HttpErrorCreator.createUnknown({ status: 500, statusText: "UnknownError", body: null }, err);
+      }
+      throw err;
+    }
   }
 }
 
