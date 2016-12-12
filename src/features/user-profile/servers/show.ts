@@ -25,7 +25,6 @@ export class Show extends ViewModel {
       }, 15 * 1000);
       d(() => clearInterval(iv));
     });
-
   }
 
   get state() { return <ServerState>this.server.status.state; }
