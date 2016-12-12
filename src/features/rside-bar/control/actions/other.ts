@@ -3,20 +3,13 @@
 import { handlerFor, DbQuery, Command, Query, ServerStore, VoidCommand, ServerState, ServerAction, RequestBase, ServerClient, IManagedServer, IManagedServerStatus } from "../../../../framework";
 import { ServerHandler } from "./base";
 
-export class CreateOrUpdateServer extends Command<IManagedServer> {
+export class CreateOrUpdateServer extends Command<void> {
   constructor(public gameId: string, public id: string, public serverInfo) { super(); }
 }
 
 @handlerFor(CreateOrUpdateServer)
-class CreateOrUpdateServerHandler extends ServerHandler<CreateOrUpdateServer, IManagedServer> {
-  async handle(request: CreateOrUpdateServer) {
-    const server = this.store.get(request.gameId).servers.get(request.id);
-    const s = await this.client.servers.createOrUpdate(request);
-    // TODO: Store the return in the store?
-    server.unsaved = undefined;
-    server.slug = s.slug;
-    return s;
-  }
+class CreateOrUpdateServerHandler extends ServerHandler<CreateOrUpdateServer, void> {
+  handle(request: CreateOrUpdateServer) { return this.store.createOrUpdate(request.gameId, request.id, request, this.client); }
 }
 
 export class GetServerState extends Query<IManagedServerStatus> { constructor(public id: string) { super(); } }

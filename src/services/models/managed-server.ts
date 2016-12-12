@@ -68,34 +68,34 @@ subscription($serverId: ID!) {
     this.globalId = toGlobalId("ManagedServer", this.id);
   }
 
-  getDefaultState() { return <any>{ state: ServerState.Initializing }; }
+  getDefaultState() { return <IManagedServerStatus>{ state: ServerState.Initializing }; }
 
+  // TODO: Make a state/eventID, so that we can ignore older/newer updates
   static observe(gcl: GQLClient, serverId: string): Observable<IManagedServerStatus> {
     return Observable.create((obs: Subject<IManagedServerStatus>) => {
-      return gcl.ac.subscribe({
+      const sub = gcl.ac.subscribe({
         query: ManagedServer.SUBSCRIPTION_QUERY,
         variables: { serverId },
       }).subscribe({
         error: (err) => obs.error(err),
         next: (data) => obs.next(data.serverStateChanged),
       });
-    })
-
+      return () => sub.unsubscribe();
+    });
   }
 
-  async monitor(client: IServerClient, gcl: GQLClient) {
-    const s = ManagedServer.observe(gcl, this.globalId)
-      .subscribe(x => this.status = x);
-    gcl.ac.subscribe({
-      query: ManagedServer.SUBSCRIPTION_QUERY,
-      variables: { serverId: this.globalId },
-    }).subscribe({
-      error: (err) => Tools.Debug.error("Error while processing event", err),
-      next: (data) => this.status = data.serverStateChanged,
-    });
-    const sub = gcl.wsReconnected.flatMap((x) => this.refreshState(client, gcl)).subscribe((x) => this.updateStatus(x));
-    this.updateStatus(await this.refreshState(client, gcl));
-    return { unsubscribe: () => { s.unsubscribe(); sub.unsubscribe(); } };
+  prepareMonitor(client: IServerClient, gcl: GQLClient) {
+    return Base.observeEx(this, (x) => x.unsaved)
+      .filter((x) => !x)
+      .switchMap((x) => this.monitor(client, gcl))
+      .do((x) => this.updateStatus(x));
+  }
+
+  private monitor(client: IServerClient, gcl: GQLClient) {
+    return ManagedServer.observe(gcl, this.globalId)
+      .merge(gcl.wsReconnected.flatMap((x) => this.refreshState(client, gcl)));
+    // we already get the state in the query upon save, and upon start..
+    //.merge(Observable.fromPromise(this.refreshState(client, gcl)));
   }
 
   // Optimize this server-side, so that GQL doesnt actually pull in the whole server? :-P
@@ -121,7 +121,7 @@ subscription($serverId: ID!) {
       return this.getDefaultState();
     } else {
       const { state, message, address, endtime } = data.managedServerStatus;
-      return { state, message, address, endtime: endtime ? new Date(endtime) : null };
+      return { state, message, address, endtime };
     }
   }
 
@@ -160,5 +160,7 @@ subscription($serverId: ID!) {
     return this.graphRefreshState(gcl);
   }
 
-  private updateStatus(status) { this.status = status ? status : this.getDefaultState(); }
+  private updateStatus(status: IManagedServerStatus) {
+    this.status = status ? status : this.getDefaultState();
+  }
 }

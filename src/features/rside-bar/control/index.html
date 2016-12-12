@@ -53,18 +53,18 @@
     <div if.bind="showStatus">
       <h2>Progress</h2>
       <ul class="menu">
-        <li>${State[jobState.state]}</li>
-        <li if.bind="jobState.address">
-          Address: ${jobState.address}
+        <li>${State[status.state]}</li>
+        <li if.bind="status.address">
+          Address: ${status.address}
         </li>
-        <li if.bind="jobState.endtime">
+        <li if.bind="status.endtime">
           Ends
-          <time-ago time.bind="jobState.endtime"></time-ago>
+          <time-ago time.bind="status.endtime"></time-ago>
         </li>
-        <li if.bind="jobState.message" innerHTML.bind="jobState.message | text">
+        <li if.bind="status.message" innerHTML.bind="status.message | text">
         </li>
       </ul>
-      <i show.bind="jobState.state < 7000">Average startup time is 10 minutes depending on selected content availability.</i>
+      <i show.bind="status.state < 7000">Average startup time is 10 minutes depending on selected content availability.</i>
     </div>
 
     <compose if.bind="!server.unsaved" view-model="./logs" model.bind="server"></compose>

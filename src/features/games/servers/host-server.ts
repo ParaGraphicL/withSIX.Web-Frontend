@@ -45,7 +45,7 @@ export class HostServer extends Dialog<IModel> {
   launch: IReactiveCommand<void>;
   host: IReactiveCommand<void>;
   settings;
-  jobState: IJobInfo;
+  status: IJobInfo;
   State = State;
 
   activate(model: IModel) {
@@ -100,12 +100,12 @@ export class HostServer extends Dialog<IModel> {
   }
   handleHost = async () => {
     const jobId = await new HostW6Server(this.w6.activeGame.id, this.model).handle(this.mediator); //this.model.host(this.model);
-    this.jobState = <any>{ state: State.Initializing };
-    while (this.jobState.state < State.Running) {
-      this.jobState = await new GetJobState(jobId).handle(this.mediator);
+    this.status = <any>{ state: State.Initializing };
+    while (this.status.state < State.Running) {
+      this.status = await new GetStatus(jobId).handle(this.mediator);
       await new Promise(res => setTimeout(() => res(), 2000));
     }
-    if (this.jobState.state === State.Failed) { throw new Error(`Job failed: ${this.jobState.message}`); }
+    if (this.status.state === State.Failed) { throw new Error(`Job failed: ${this.status.message}`); }
     //this.controller.ok();
   }
 }
@@ -302,11 +302,11 @@ class HostW6ServerHandler extends DbQuery<HostW6Server, string> {
   }
 }
 
-class GetJobState extends Query<IJobInfo> { constructor(public id: string) { super(); } }
+class GetStatus extends Query<IJobInfo> { constructor(public id: string) { super(); } }
 
-@handlerFor(GetJobState)
-class GetJobStateHandler extends DbQuery<GetJobState, IJobInfo> {
-  handle(request: GetJobState) {
+@handlerFor(GetStatus)
+class GetStatusHandler extends DbQuery<GetStatus, IJobInfo> {
+  handle(request: GetStatus) {
     return this.context.getCustom(`/server-manager/jobs/${request.id}`);
   }
 }
