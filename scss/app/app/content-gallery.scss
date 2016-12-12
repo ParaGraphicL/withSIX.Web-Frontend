@@ -3,6 +3,7 @@
   float: left;
   position: absolute;
 }
+
 .external-info {
   .interesting-link {
     img {
@@ -11,11 +12,12 @@
     }
   }
 }
+
 .collections-ng,
 card-view,
 sx-content-gallery {
   $height: 48px;
-  .move > .main-content {
+  .move>.main-content {
     margin-left: 220px;
   }
   .controls {
@@ -158,8 +160,8 @@ sx-content-gallery {
   $infoHeightXl: 96px;
   $imgHeight: 144px;
   $imgHeightXl: 204px;
-  $cardHeight: $imgHeight + $infoHeight;
-  $cardHeightXl: $imgHeightXl + $infoHeightXl;
+  $cardHeight: $imgHeight+$infoHeight;
+  $cardHeightXl: $imgHeightXl+$infoHeightXl;
   .content-stateable:hover {
     .details-overlay-footer {
       opacity: 1;
@@ -482,11 +484,12 @@ sx-content-gallery {
     z-index: 10;
   }
 }
+
 .content-basketable {
   .basketable-dropdown.dropdown {
     .dropdown-toggle {
       padding-top: 4px;
-      padding-bottom: 8px;
+      padding-bottom: 4px;
       .caret {
         @include withSIX-icon("\e68b");
         height: initial;
@@ -496,6 +499,7 @@ sx-content-gallery {
     }
   }
 }
+
 .dropdown-toggle.share-caret {
   .caret {
     @include withSIX-icon("\e68b");
@@ -504,6 +508,7 @@ sx-content-gallery {
     border: none;
   }
 }
+
 .show-filter {
   .show-title {
     float: left;
@@ -521,9 +526,11 @@ sx-content-gallery {
     width: 60%;
   }
 }
+
 .filter-sort {
   padding: 12px;
 }
+
 .filter-order {
   width: 46px;
   height: 46px;
@@ -532,6 +539,7 @@ sx-content-gallery {
   margin-right: 5px;
   border: none;
 }
+
 .grid-select {
   position: relative;
   float: right;
@@ -539,6 +547,7 @@ sx-content-gallery {
   margin-bottom: 10px;
   overflow: hidden;
 }
+
 select.grid-type {
   option {
     //height: 40px;
@@ -556,15 +565,16 @@ select.grid-type {
     margin-right: 0;
   }
 }
+
 dropdown-menu.new-style {
   ul.dropdown-menu {
-    & > li {
+    &>li {
       border-bottom: 1px solid lightgray;
     }
-    & > li:last-child {
+    &>li:last-child {
       border-bottom: none;
     }
-    & > li > button {
+    &>li>button {
       padding-top: 7px;
       padding-bottom: 7px;
       color: $colorSixMediumGray !important;
@@ -573,12 +583,13 @@ dropdown-menu.new-style {
       padding-left: 10px;
       width: 100%;
       text-align: left;
-      & > text {
+      &>text {
         padding-left: 10px;
       }
     }
   }
 }
+
 .card.new-item {
   background-color: $colorSixBlue;
   padding-top: 24px;
@@ -601,23 +612,30 @@ dropdown-menu.new-style {
   .new-title {
     font-size: 2em;
   }
-   > button,
-  > a {
+  >button,
+  >a {
     color: $colorSixBlue;
     background-color: white;
     text-decoration: none;
     font-weight: bold;
   }
 }
+
 //@include config($debug, $staging){
 .content-stateable {
-  @each $selector, $primary-color, $secondary-color, $icon, $text, $altIcon in $content-states {
+  @each $selector,
+  $primary-color,
+  $secondary-color,
+  $icon,
+  $text,
+  $altIcon in $content-states {
     &#{$selector} {
       @include content-state-inner($primary-color, $secondary-color, $icon, $text, $altIcon);
     }
   }
   @include progress-class-creator(".content-progress-", ".content-state-progress-width", ".content-state-progress-text");
 }
+
 //}
 @mixin colored-section($color, $secColor: white) {
   border-bottom-color: $color;
@@ -633,13 +651,16 @@ dropdown-menu.new-style {
     color: $color;
   }
 }
+
 .content-basketable {
   @include extend-content-state-colors("bgd-border", true, "border-bottom-color");
 }
+
 div[range-slider] {
   width: 150px;
   display: inline-block;
 }
+
 .additional-filters {
   display: inline-block;
 }

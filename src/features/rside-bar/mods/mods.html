@@ -1,5 +1,6 @@
 <template>
-  <ul class="menu">
+  <require from="./mods.scss"></require>
+  <ul class="menu small-list">
     <li repeat.for="[k, m] of mods">
       <compose view-model="./mod" model.bind="m"></compose>
     </li>

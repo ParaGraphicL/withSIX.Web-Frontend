@@ -83,7 +83,6 @@
     ul.menu.main {
       >li {
         @include text-overflow;
-        margin-top: 8px;
         // &:first-child {
         //   margin-top: 0;
         // }
@@ -374,6 +373,12 @@ div.source {
   }
 }
 
+.tab-header {
+  .dropdown-toggle {
+    margin-top: -4px;
+  }
+}
+
 .tab-content {
   li {
     font-size: $font-size-medium;
@@ -397,11 +402,13 @@ div.source {
       height: inherit;
     }
     $itemH: 32px;
-    $item-height: $itemH+4px;
+    $item-height: $itemH+8px;
+    $imageWidth: 46.6px;
     li {
       height: $item-height;
       overflow: hidden;
       .entry {
+        padding: 4px 0;
         .update-available {
           color: $colorSixOrange;
           .version {
@@ -411,15 +418,30 @@ div.source {
         dropdown-menu {
           margin-left: 4px;
           display: none;
+          button.dropdown-toggle {
+            height: $itemH;
+          }
         }
         .imageholder {
           overflow: hidden;
+          margin-left: 8px;
+          width: $imageWidth;
+          height: $itemH;
+          display: inline-block;
+          action-bar {
+            li {
+              button {
+                margin-top: -1px;
+                margin-left: -1px;
+              }
+            }
+          }
           .actions {
             display: none;
             li {
-              width: 46.6px;
+              width: $imageWidth;
               button.anchor {
-                height: 32px;
+                height: $itemH;
                 width: 100%;
                 text-align: center;
                 &:hover {
@@ -457,15 +479,6 @@ div.source {
           border-left-width: $borderWidth;
           border-left-style: solid;
         }
-        .imageholder {
-          margin-left: 8px;
-          width: 46.6px;
-          height: 32px;
-          display: inline-block;
-        }
-        .right {
-          margin-top: 8px;
-        }
         .info {
           $space: 212px - $scrollBarSize;
           $margin: 8px;
@@ -487,6 +500,34 @@ div.source {
           .title {
             height: 16px;
             @include text-overflow;
+          }
+        }
+      }
+    }
+    ul.small-list {
+      $itemH: 24px;
+      $item-height: $itemH+8px;
+      $imageWidth: 42.6px;
+      li {
+        height: $item-height;
+        .entry {
+          line-height: 1;
+          dropdown-menu {
+            button.dropdown-toggle {
+              height: $itemH;
+            }
+          }
+          .imageholder {
+            width: $imageWidth;
+            height: $itemH;
+            .actions {
+              li {
+                width: $imageWidth;
+                button.anchor {
+                  height: $itemH;
+                }
+              }
+            }
           }
         }
       }
