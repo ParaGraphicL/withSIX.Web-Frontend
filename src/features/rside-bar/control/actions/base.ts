@@ -3,7 +3,7 @@ import { GQLClient, handlerFor, IBasketItem, RequestBase, ServerClient, ServerSt
 
 @inject(ServerClient, ServerStore, GQLClient)
 export abstract class ServerHandler<TRequest, TResponse> extends RequestBase<TRequest, TResponse> {
-  constructor(protected client: ServerClient, protected store: ServerStore, protected gql: GQLClient) { super(); }
+  constructor(protected client: ServerClient, protected store: ServerStore, protected gcl: GQLClient) { super(); }
 }
 
 export class ToggleModInServer extends VoidCommand { constructor(public mod: IBasketItem) { super(); } }

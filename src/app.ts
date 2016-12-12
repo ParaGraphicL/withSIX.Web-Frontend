@@ -189,9 +189,13 @@ export class App extends ViewModel {
         // TODO: This seems to be a fatal error... Must refresh completely to fix!
         if (!x.result || !x.result.output) { return this.redirectToError(500); }
         let err: Error = x.result.output;
-        if (err instanceof Tools.NotFoundException) { return this.redirectToError(404); }
+        // TODO: Or better to rethrow higher up?
+        if (err instanceof Tools.NotFoundException) {
+          return this.redirectToError(404);
+        }
         if (err instanceof Tools.Forbidden) { return this.redirectToError(403); }
-        if (err instanceof Tools.RequiresLogin || err instanceof Tools.LoginNoLongerValid) { return await this.login.login(); }
+        if (err instanceof Tools.RequiresLogin
+          || err instanceof Tools.LoginNoLongerValid) { return await this.login.login(); }
         return this.redirectToError(500);
       }));
 

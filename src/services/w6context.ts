@@ -595,12 +595,33 @@ export class W6Context {
   handleResponseErrorStatus(requestInfo: IRequestInfo<any>, isLoggedIn: boolean) {
     const {status} = requestInfo;
     switch (status) {
-      case 400: throw new Tools.ValidationError("Input not valid", requestInfo);
-      case 401: throw isLoggedIn ? new Tools.LoginNoLongerValid("The login is no longer valid, please retry after logging in again", requestInfo) : new Tools.RequiresLogin("The requested action requires you to be logged-in", requestInfo);
-      case 403: throw new Tools.Forbidden("You do not have access to this resource", requestInfo);
-      case 404: throw new Tools.NotFoundException("The requested resource does not appear to exist", requestInfo);
-      case 500: throw new Tools.HttpException(`Internal server error. We've been notified about the problem and will investigate. For your reference: ${requestInfo.headers.get('x-withsix-requestid')}`, requestInfo);
+      case 400: throw HttpErrorCreator.create400(requestInfo);
+      case 401: throw HttpErrorCreator.create401(isLoggedIn, requestInfo);
+      case 403: throw HttpErrorCreator.create403(requestInfo);
+      case 404: throw HttpErrorCreator.create404(requestInfo);
+      case 500: throw HttpErrorCreator.create500(requestInfo);
     }
-    throw new Tools.HttpException(`Unknown error. For your reference: ${requestInfo.headers.get('x-withsix-requestid')}`, requestInfo);
+    throw HttpErrorCreator.createUnknown(requestInfo);
   }
+}
+
+
+export class HttpErrorCreator {
+  static create400 = (requestInfo, err?: Error) =>
+    new Tools.ValidationError("Input not valid", requestInfo, err);
+  static create401 = (isLoggedIn, requestInfo, err?: Error) => isLoggedIn ?
+    new Tools.LoginNoLongerValid("The login is no longer valid, please retry after logging in again", requestInfo, err)
+    : new Tools.RequiresLogin("The requested action requires you to be logged-in", requestInfo, err);
+  static create403 = (requestInfo, err?: Error) =>
+    new Tools.Forbidden("You do not have access to this resource", requestInfo, err);
+  static create404 = (requestInfo, err?: Error) =>
+    new Tools.NotFoundException("The requested resource does not appear to exist", requestInfo, err);
+  static create500 = (requestInfo, err?: Error) =>
+    new Tools.HttpException(
+      `Internal server error. We've been notified about the problem and will investigate. For your reference: ${requestInfo.headers.get('x-withsix-requestid')}`,
+      requestInfo, err);
+  static createUnknown = (requestInfo, err?: Error) =>
+    new Tools.HttpException(
+      `Unknown error. For your reference: ${requestInfo.headers ? requestInfo.headers.get("x-withsix-requestid") : ""}`,
+      requestInfo, err);
 }

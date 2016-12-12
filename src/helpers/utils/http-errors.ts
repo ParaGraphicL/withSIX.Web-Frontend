@@ -1,9 +1,14 @@
 export const createHttpError = (name: string, proto = Error.prototype): HttpErrorConstructor<any> => {
-  var f = function (message: string, requestInfo: IRequestInfo<any>) {
+  var f = function (message: string, requestInfo: IRequestInfo<any>, inner?: IError) {
     Object.defineProperty(this, 'name', {
       enumerable: false,
       writable: false,
       value: name
+    });
+    Object.defineProperty(this, 'inner', {
+      enumerable: false,
+      writable: false,
+      value: inner,
     });
     Object.defineProperty(this, 'message', {
       enumerable: false,
@@ -72,14 +77,17 @@ export interface IRequestInfo<T> {
 
 
 export interface HttpErrorConstructor<T extends ErrorResponseBody> {
-  new (message: string, requestInfo: IRequestInfo<T>): IHttpException<T>;
+  new (message: string, requestInfo: IRequestInfo<T>, inner?: IError): IHttpException<T>;
 }
 
 export interface ValidationErrorConstructor {
-  new (message: string, requestInfo: IRequestInfo<ValidationResponseBody>): IValidationException;
+  new (message: string, requestInfo: IRequestInfo<ValidationResponseBody>, inner?: IError): IValidationException;
 }
 
-export interface IHttpException<T extends ErrorResponseBody> extends Error, IRequestInfo<T> { }
+export interface IError extends Error {
+  inner?: Error;
+}
+export interface IHttpException<T extends ErrorResponseBody> extends IError, IRequestInfo<T> { }
 export interface IValidationException extends IHttpException<ValidationResponseBody> {
   modelState?;
 }
@@ -89,5 +97,5 @@ export interface ErrorResponseBody {
 }
 
 export interface ValidationResponseBody extends ErrorResponseBody {
-  modelState?
+  modelState?;
 }

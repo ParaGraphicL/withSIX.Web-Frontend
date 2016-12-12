@@ -109,9 +109,10 @@ export class ViewModel extends ReactiveBase {
   showMessageDialog = this.ui.showMessageDialog;
   confirm = this.ui.confirm;
 
-  get isLoggedIn() { return this.w6.userInfo.id != null }
+  get isLoggedIn() { return this.userInfo.id != null; }
+  get userInfo() { return this.w6.userInfo; }
   get unchanged() { return !this.changed; }
-  get navigateInternal() { return this.ui.navigateInternal }
+  get navigateInternal() { return this.ui.navigateInternal; }
   get features() { return this.ui.features; }
   get appEvents() { return this.ui.appEvents; }
   get clientWrapper() { return this.ui.clientWrapper; }
@@ -157,7 +158,7 @@ export class ViewModel extends ReactiveBase {
       if (err instanceof Tools.Forbidden) return this.setErrorView(403);
       if (err instanceof Tools.RequiresLogin || err instanceof Tools.LoginNoLongerValid) {
         await this.w6.openLoginDialog();
-        return this.setErrorView(403)
+        return this.setErrorView(403);
       }
 
       return this.handleUnknownError(err);

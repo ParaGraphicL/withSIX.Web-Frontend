@@ -352,22 +352,40 @@ interface IPageModel<T> {
 
 @inject(UiContext, BasketService)
 export class Browser extends ViewModel {
-  constructor(ui, private basketService: BasketService) { super(ui) }
-  model: IPageModel<IServer>;
 
+  reload;
+  refresh;
+  createServer;
+  createLocalServer;
+  connectHostedServer;
+  clear;
+  model: IPageModel<IServer>;
   filterTest = filterTest();
   columns = columns;
   activeOrder: IOrder = columns[3];
-  toggleOrder(c) {
-    if (this.activeOrder === c) {
-      c.direction = c.direction ? 0 : 1;
-      this.trigger++;
-    } else {
-      this.activeOrder = c;
-      this.trigger++;
-    }
-  }
   trigger = 0;
+
+
+  filters: IFilter<IServer>[] = Browser.getStandardFilters();
+  sort = Browser.getStandardSort();
+  searchFields = ["name"];
+
+  SessionState = SessionState;
+
+  addServerItems = [];
+
+
+  defaultEnabled: Array<IFilter<IServer>> = [{
+    name: "Fresh",
+    filter: item => moment().subtract("hours", 1).isBefore(item.updatedAt),
+    type: "and"
+  }];
+
+  triggerPage = 1;
+
+  params;
+  isActive: boolean;
+
   static getStandardFilters = () => [{
     title: "Has Players",
     name: "hasPlayers",
@@ -450,27 +468,19 @@ export class Browser extends ViewModel {
     title: "Country",
     direction: SortDirection.Asc,
   },]
-  filters: IFilter<IServer>[] = Browser.getStandardFilters();
-  sort = Browser.getStandardSort();
-  searchFields = ["name"];
-
-  SessionState = SessionState;
-
-  addServerItems = [];
 
 
-  defaultEnabled: IFilter<IServer>[] = [
-    {
-      name: "Fresh",
-      filter: item => moment().subtract("hours", 1).isBefore(item.updatedAt),
-      type: "and"
+  constructor(ui, private basketService: BasketService) { super(ui) }
+
+  toggleOrder(c) {
+    if (this.activeOrder === c) {
+      c.direction = c.direction ? 0 : 1;
+      this.trigger++;
+    } else {
+      this.activeOrder = c;
+      this.trigger++;
     }
-  ];
-
-  triggerPage = 1;
-
-  params;
-  isActive: boolean;
+  }
 
   async activate(params) {
     this.params = params;
@@ -497,13 +507,6 @@ export class Browser extends ViewModel {
       items: [], pageNumber: 1, total: 0, pageSize: 16
     }
     this.filteredItems = this.order(this.model.items);
-
-
-    this.addServerItems.push(
-      new MenuItem(this.createLocalServer),
-      new MenuItem(this.connectHostedServer),
-      new MenuItem(this.createServer),
-    );
 
     this.subscriptions.subd(d => {
       const list = this.listFactory.getList(this.filterTest.map(x => x.items).flatten(), ["value"]);
@@ -552,11 +555,33 @@ export class Browser extends ViewModel {
         cls: "unprominent",
         icon: "withSIX-icon-Reload",
       }));
+      d(this.refresh = uiCommand2("Refresh", () => this.refreshServerInfo(this.model.items), {
+        canExecuteObservable: this.observeEx(x => x.features.serverFeatures)
+      }));
+      d(this.createServer = uiCommand2("Host server withSIX", async () => this.openServerBlade()));
+      d(this.createLocalServer = uiCommand2("Host local server", async () => this.openServerBlade(), {
+        canExecuteObservable: Rx.Observable.of(false)
+      }));
+      d(this.connectHostedServer = uiCommand2("Connect hosted server", async () => this.openServerBlade(), {
+        canExecuteObservable: Rx.Observable.of(false)
+      }));
+      d(this.clear = uiCommand2("CLEAR", async () => this.clearFilters(), {
+        cls: "text-button",
+        icon: "withSIX-icon-X",
+      }));
       if (this.features.serverFeatures) {
         const ival = setInterval(() => { if (this.w6.miniClient.isConnected) { this.refresh(); } }, 60 * 1000);
         d(() => clearInterval(ival));
       }
     });
+
+
+    this.addServerItems.push(
+      new MenuItem(this.createLocalServer),
+      new MenuItem(this.connectHostedServer),
+      new MenuItem(this.createServer),
+    );
+
     this.handleBetaDialog();
   }
 
@@ -638,20 +663,9 @@ export class Browser extends ViewModel {
     return servers;
   }
 
-  refresh = uiCommand2("Refresh", () => this.refreshServerInfo(this.model.items), {
-    canExecuteObservable: this.observeEx(x => x.features.serverFeatures)
-  });
-  reload;
 
 
-  createServer = uiCommand2("Host server withSIX", async () => this.eventBus.publish(new ToggleServer(0)));
-  createLocalServer = uiCommand2("Host local server", async () => this.eventBus.publish(new ToggleServer(0)), { canExecuteObservable: Rx.Observable.of(false) });
-  connectHostedServer = uiCommand2("Connect hosted server", async () => this.eventBus.publish(new ToggleServer(0)), { canExecuteObservable: Rx.Observable.of(false) });
-
-  clear = uiCommand2("CLEAR", async () => this.clearFilters(), {
-    cls: "text-button",
-    icon: "withSIX-icon-X",
-  });
+  openServerBlade = () => this.isLoggedIn ? this.eventBus.publish(new ToggleServer(0)) : this.w6.openLoginDialog();
 
   clearGroup = (grp) => {
     grp.items.forEach(f => f.value = f.defaultValue ? f.defaultValue() : null);
