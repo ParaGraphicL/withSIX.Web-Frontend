@@ -121,6 +121,7 @@ export class Index extends ServerTab<IStatusTab> {
     try {
       this.saving = true;
       await new CreateOrUpdateServer(this.w6.activeGame.id, this.server.id, ServerStore.serverToStorage(this.server)).handle(this.mediator);
+      this.navigateInternal(this.serverUrl);
     } finally {
       this.saving = false;
     }
