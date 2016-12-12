@@ -26,7 +26,7 @@ class GetModInfo extends Query<Array<any>> { constructor(public id: string, publ
 @handlerFor(GetModInfo)
 class GetModInfoHandler extends ServerHandler<GetModInfo, Array<any>> {
   async handle(req: GetModInfo) {
-    const { data } = await this.gql.ac.query({
+    const { data } = await this.gcl.ac.query({
       query: gql`
     query GetContent($ids: [ID]!) {
       contents(ids: $ids) {

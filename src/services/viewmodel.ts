@@ -158,7 +158,7 @@ export class ViewModel extends ReactiveBase {
       if (err instanceof Tools.Forbidden) return this.setErrorView(403);
       if (err instanceof Tools.RequiresLogin || err instanceof Tools.LoginNoLongerValid) {
         await this.w6.openLoginDialog();
-        return this.setErrorView(403)
+        return this.setErrorView(403);
       }
 
       return this.handleUnknownError(err);

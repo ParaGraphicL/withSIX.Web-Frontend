@@ -29,7 +29,7 @@ export class GetUserServers extends Query<{ data }> {
 @handlerFor(GetUserServers)
 export class GetUserServersHandler extends ServerHandler<GetUserServers, { data }> {
   handle(req: GetUserServers) {
-    return this.gql.ac.query({
+    return this.gcl.ac.query({
       query: gql`
       query ManagedServers($user: String!) {
           managedServersByUser(user: $user) {

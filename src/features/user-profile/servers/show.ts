@@ -53,7 +53,7 @@ export class GetUserServer extends Query<Ret> {
 @handlerFor(GetUserServer)
 export class GetUserServerHandler extends ServerHandler<GetUserServer, Ret> {
   async handle(req: GetUserServer) {
-    const { data } = await this.gql.ac.query({
+    const { data } = await this.gcl.ac.query({
       query: gql`
       query ManagedServer($user: String!, $name: String!) {
           managedServerByUser(user: $user, name: $name) {
@@ -75,7 +75,7 @@ export class GetUserServerHandler extends ServerHandler<GetUserServer, Ret> {
     });
 
     // TODO: We should be able to do this externally
-    const s = ManagedServer.observe(this.gql, data.managedServerByUser.id);
+    const s = ManagedServer.observe(this.gcl, data.managedServerByUser.id);
 
     return {
       server: data.managedServerByUser,
