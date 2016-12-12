@@ -4,7 +4,7 @@ import { GQLClient, gql, toGlobalId, idFromGlobalId, fromGraphQL, IGQLResponse, 
 import { Tools } from "../tools";
 import { W6 } from "../withSIX";
 import { inject } from "aurelia-framework";
-import { IBasketItem } from "../legacy/baskets";
+import { IBasketItem, BasketItemType } from "../legacy/baskets";
 
 import { ICancellationToken } from "../reactive";
 import { Observable, Subject } from "rxjs";
@@ -15,13 +15,8 @@ import { IServerClient } from "../w6api/server-client";
 import { ModAddedToServer } from "../events/mod-added-to-server";
 import { RemovedModFromServer } from "../events/removed-mod-from-server";
 
-enum ContentType {
-  Mod,
-  Collection
-}
-
 interface IContentEntry {
-  id: string; constraint?: string; type?: ContentType;
+  id: string; constraint?: string; type?: BasketItemType;
 }
 
 export class ManagedServer extends EntityExtends.BaseEntity {
@@ -132,7 +127,7 @@ subscription($serverId: ID!) {
     } else {
       const { id, constraint } = mod;
       this.mods.set(mod.id, {
-        id, constraint, type: ContentType.Mod,
+        id, constraint, type: mod.itemType,
       });
       ManagedServer.eventPublisher(new ModAddedToServer(mod, this.id));
     }

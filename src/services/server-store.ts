@@ -21,7 +21,7 @@ export { Game, ManagedServer }
 
 interface IGame { id: string; servers: IManagedServer[]; }
 
-const fragments = {
+export const fragments = {
     interesting: gql`
   fragment InterestingSettings on ManagedServerSettings {
     adminPassword
@@ -38,6 +38,22 @@ const fragments = {
     motd
   }
 `,
+    contentDisplay: gql`
+    fragment ContentInfo on Content {
+        ... on ContentInterface {
+            id
+            name
+            avatarUrl
+            authorUrl
+            authorDisplayName
+            sizePacked
+            latestStableVersion
+        }
+        ... on Mod {
+            packageName
+        }
+    }
+    `,
     basic: gql`
   fragment BasicServerInfo on ManagedServer {
     slug
@@ -73,17 +89,7 @@ const fragments = {
         constraint
         node {
             __typename
-            ... on ContentInterface {
-                id
-                name
-                avatarUrl
-                authorUrl
-                authorDisplayName
-                sizePacked
-            }
-            ... on Mod {
-                latestStableVersion
-            }
+            ...ContentInfo
         }
       }
     }
@@ -192,6 +198,7 @@ export class ServerStore {
           }
         }
         ${fragments.basic}
+        ${fragments.contentDisplay}
         ${fragments.fullServer}
         ${fragments.interesting}
     `, variables: {
@@ -241,6 +248,7 @@ export class ServerStore {
           }
         }
         ${fragments.basic}
+        ${fragments.contentDisplay}
         ${fragments.fullServer}
         ${fragments.interesting}
     `});
