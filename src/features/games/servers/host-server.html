@@ -50,12 +50,12 @@
             </div>
           </div>
         </div>
-        <div if.bind="jobState">
+        <div if.bind="status">
           This will take about 2-10 minutes, depending on the amount of Content you've selected.
           <h2>Progress</h2>
           <ul>
-            <li>State: ${State[jobState.state]}</li>
-            <li if.bind="jobState.address">Address: ${jobState.address}</li>
+            <li>State: ${State[status.state]}</li>
+            <li if.bind="status.address">Address: ${status.address}</li>
           </ul>
         </div>
         <!--<div if.bind="features.isTestEnvironment">

@@ -42,7 +42,7 @@ export class Index extends ServerTab<IStatusTab> {
   get showStatus() { return this.state < ServerState.InstancesShutdown && this.state > ServerState.Initializing; }
   get isExecuting() { return this.commands.some(x => x.isExecuting); }
 
-  get jobState() { return this.server.status; }
+  get status() { return this.server.status; }
   get selectedSize() { return this._selectedSize; }
   set selectedSize(value) { this._selectedSize = value; this.additionalSlots = 0; }
 
@@ -58,7 +58,7 @@ export class Index extends ServerTab<IStatusTab> {
       || this.state === ServerState.GameIsRunning || this.state >= ServerState.Failed);
   }
   get canScale() { return !this.isExecuting && this.selectionChanged; }
-  get state() { return this.jobState ? this.jobState.state : 0; }
+  get state() { return this.status.state; }
 
   get serverUrl() { return `/u/${this.w6.userInfo.slug}/servers/${this.server.slug}`; }
 
