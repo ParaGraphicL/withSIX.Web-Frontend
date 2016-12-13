@@ -1,6 +1,6 @@
 // TODO: Decompose
 
-import { handlerFor, DbQuery, Command, Query, ServerStore, VoidCommand, ServerState, ServerAction, RequestBase, ServerClient, IManagedServer, IManagedServerStatus } from "../../../../framework";
+import { gql, handlerFor, DbQuery, Command, Query, ServerStore, VoidCommand, ServerState, ServerAction, RequestBase, ServerClient, IManagedServer, IManagedServerStatus } from "../../../../framework";
 import { ServerHandler } from "./base";
 
 export class CreateOrUpdateServer extends Command<void> {
@@ -59,4 +59,24 @@ export class GetLog extends Query<string> {
 @handlerFor(GetLog)
 class GetLogHandler extends ServerHandler<GetLog, string> {
   handle(request: GetLog) { return this.client.uploader.getFile("logs", request.fileName, request.serverId); }
+}
+
+
+export class GetCreditsOverview extends Query<{ current: number }> { }
+
+@handlerFor(GetCreditsOverview)
+class GetCreditsOverviewHandler extends ServerHandler<GetCreditsOverview, { current: number }> {
+  async handle(req: GetCreditsOverview) {
+    const { data } = await this.gcl.ac.query({
+      query: gql`
+      query {
+        viewer {
+          managedServerCredits {
+            current
+          }
+        }
+      }
+      `})
+    return data.viewer.managedServerCredits;
+  }
 }

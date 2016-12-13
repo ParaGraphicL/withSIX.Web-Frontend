@@ -1,4 +1,5 @@
 import { ITabModel, ServerTab, SharedValues } from "../rside-bar";
+import { GetCreditsOverview } from "../control/actions/other";
 import { uiCommand2, ServerSize, ServerLocation } from "../../../framework";
 
 interface ISetup {
@@ -14,7 +15,7 @@ interface ISetupTab extends ITabModel<ISetup> { }
 
 export class Index extends ServerTab<ISetupTab> {
   hours: number;
-  credit = 20; // TODO
+  credit: number;
 
   sizes = SharedValues.sizes;
   locations = SharedValues.locations;
@@ -60,6 +61,9 @@ export class Index extends ServerTab<ISetupTab> {
         .map(_ => this.calcHours())
         .subscribe(x => this.hours = x));
     });
+
+    const { current } = await this.request(new GetCreditsOverview());
+    this.credit = current;
   }
 
   async tryValidate() {
