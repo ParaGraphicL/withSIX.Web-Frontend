@@ -8,7 +8,7 @@ import { BasketItemType, IBasketItem } from "./legacy/baskets";
 
 import { ICancellationToken } from "./reactive";
 
-import { IManagedServer, IManagedServerSetup, IManagedServerStatus, IArmaSettings, ServerLocation, ServerSize, ServerState } from "./w6api/servers-api";
+import { IManagedServer, IManagedServerSetup, IManagedServerSetupBase, IManagedServerStatus, IArmaSettings, ServerLocation, ServerSize, ServerState } from "./w6api/servers-api";
 import { IServerClient } from "./w6api/server-client";
 import { ModAddedToServer } from "./events/mod-added-to-server";
 import { RemovedModFromServer } from "./events/removed-mod-from-server";
@@ -122,7 +122,8 @@ export class ServerStore {
             scope: s.scope,
             slug: s.slug,
             setup: s.setup,
-            missions: s.setup.missions.toMap(x => x.id), mods: s.setup.mods.toMap(x => x.id),
+            missions: s.setup.missions.toMap(x => x.id),
+            mods: s.setup.mods.toMap(x => x.id),
             status: s.status,
         }
     }
@@ -131,10 +132,15 @@ export class ServerStore {
         return {
             description: s.description,
             id: s.id,
+            //gameId: s.gameId,
             name: s.name,
             scope: s.scope,
             setup: {
                 ...s.setup,
+                settings: {
+                    "$type": "withSIX.ServerAgent.Api.Arma3ServerSettings, withSIX.ServerAgent.Api",
+                    ...s.setup.settings,
+                },
                 missions: Array.from(s.missions.keys()).map(id => ({ id })),
                 mods: Array.from(s.mods.keys()).map(id => {
                     const {constraint, type } = (<any>s.mods.get(id)); return ({ id, constraint, type })
@@ -142,6 +148,8 @@ export class ServerStore {
             },
             slug: s.slug,
             status: s.status,
+            //gameId: s.gameId,
+            //
         };
     }
 
@@ -268,7 +276,7 @@ export class ServerStore {
     // todo; User and GameId from user and game nodes?
     toManagedServer(server: IServerDataNode) {
         const { setup, description, gameId, id, name, scope,
-            slug, status, userId, mods, missions } = server;
+            slug, status, userId } = server;
         const man = {
             description,
             gameId,
@@ -278,9 +286,11 @@ export class ServerStore {
             scope,
             userId,
             slug,
-            missions: missions.edges.map((x) => fromGraphQL(x.node)),
-            mods: mods.edges.map((x) => ({ constraint: x.constraint, ...fromGraphQL(x.node), type: BasketItemType[x.node.__typename] })),
-            setup,
+            setup: {
+                ...setup,
+                missions: setup.missions.edges.map((x) => fromGraphQL(x.node)),
+                mods: setup.mods.edges.map((x) => ({ constraint: x.constraint, ...fromGraphQL(x.node), type: BasketItemType[x.node.__typename] })),
+            },
             status,
         };
         return man;
@@ -310,16 +320,7 @@ interface IServerData {
     }[]
 }
 
-interface IServerDataNode {
-    description
-    id
-    name
-    slug
-    scope
-    gameId
-    userId
-    setup: IManagedServerSetup;
-    status: IManagedServerStatus;
+interface IServerSetupNode extends IManagedServerSetupBase {
     mods: {
         edges: Array<{
             constraint
@@ -339,5 +340,17 @@ interface IServerDataNode {
             },
         }>,
     };
+}
+
+interface IServerDataNode {
+    description
+    id
+    name
+    slug
+    scope
+    gameId
+    userId
+    setup: IServerSetupNode;
+    status: IManagedServerStatus;
 }
 

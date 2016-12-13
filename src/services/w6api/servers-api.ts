@@ -40,12 +40,15 @@ export class ServersApi extends ApiBase {
   }
 }
 
-export interface IManagedServerSetup {
+export interface IManagedServerSetupBase {
   additionalSlots: number;
   location: ServerLocation;
   size: ServerSize;
   secondaries: Array<{ size: ServerSize; }>;
   settings: IArmaSettings;
+}
+
+export interface IManagedServerSetup extends IManagedServerSetupBase {
   mods: Array<{ id: string; constraint?: string; }>;
   missions: Array<{ id: string }>;
 }
@@ -65,6 +68,8 @@ export interface IManagedServer {
   name: string;
   setup: IManagedServerSetup;
   status: IManagedServerStatus;
+  //gameId: string;
+  //userId: string;
 }
 
 export interface IManagedServerListItem {
