@@ -605,6 +605,8 @@ export class W6Context {
   }
 }
 
+const getHeaderInfo = (requestInfo) => requestInfo.headers ? `For your reference: ${requestInfo.headers.get('x-withsix-requestid')}` : "";
+
 
 export class HttpErrorCreator {
   static create400 = (requestInfo, err?: Error) =>
@@ -618,10 +620,8 @@ export class HttpErrorCreator {
     new Tools.NotFoundException("The requested resource does not appear to exist", requestInfo, err);
   static create500 = (requestInfo, err?: Error) =>
     new Tools.HttpException(
-      `Internal server error. We've been notified about the problem and will investigate. For your reference: ${requestInfo.headers.get('x-withsix-requestid')}`,
+      `Internal server error. We've been notified about the problem and will investigate. ${getHeaderInfo(requestInfo)}`,
       requestInfo, err);
   static createUnknown = (requestInfo, err?: Error) =>
-    new Tools.HttpException(
-      `Unknown error. For your reference: ${requestInfo.headers ? requestInfo.headers.get("x-withsix-requestid") : ""}`,
-      requestInfo, err);
+    new Tools.HttpException(`Unknown error. ${getHeaderInfo(requestInfo)}`, requestInfo, err);
 }

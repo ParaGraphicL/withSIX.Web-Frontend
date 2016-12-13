@@ -19,7 +19,8 @@ import { ApolloError } from "apollo-client";
 export * from "mediatr";
 
 const isGraphStatus = (msg, statusCode) => msg.startsWith("Failed request " + statusCode);
-const isGraphStatusError = (err: ApolloError, statusCode) => err.graphQLErrors.some(x => isGraphStatus(x.message, statusCode));
+const isGraphStatusError = (err: ApolloError, statusCode) =>
+  err.graphQLErrors && err.graphQLErrors.some((x) => isGraphStatus(x.message, statusCode)); // TODO: network errors
 
 
 // App specific starts
