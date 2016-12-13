@@ -76,7 +76,8 @@ class GetCreditsOverviewHandler extends ServerHandler<GetCreditsOverview, { curr
           }
         }
       }
-      `})
+      `, forceFetch: true
+    })
     return data.viewer.managedServerCredits;
   }
 }
