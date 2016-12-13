@@ -61,9 +61,11 @@ export class Index extends ServerTab<ISetupTab> {
         .map(_ => this.calcHours())
         .subscribe(x => this.hours = x));
     });
-
-    const { current } = await this.request(new GetCreditsOverview());
-    this.credit = current;
+    // TODO
+    setTimeout(async () => {
+      const { current } = await this.request(new GetCreditsOverview());
+      this.credit = current;
+    });
   }
 
   async tryValidate() {
