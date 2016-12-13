@@ -77,29 +77,29 @@ export const fragments = {
         settings {
             ...InterestingSettings
         }
+        mods {
+            edges {
+                constraint
+                node {
+                    __typename
+                    ...ContentInfo
+                }
+            }
+        }
+        missions {
+            edges {
+                node {
+                    id
+                    name
+                }
+            }
+        }
     }
     status {
       state
       address
       message
       endtime
-    }
-    mods {
-      edges {
-        constraint
-        node {
-            __typename
-            ...ContentInfo
-        }
-      }
-    }
-    missions {
-      edges {
-        node {
-          id
-          name
-        }
-      }
     }
   }
   `,
@@ -122,8 +122,7 @@ export class ServerStore {
             scope: s.scope,
             slug: s.slug,
             setup: s.setup,
-            missions: s.missions.toMap(x => x.id),
-            mods: s.mods.toMap(x => x.id),
+            missions: s.setup.missions.toMap(x => x.id), mods: s.setup.mods.toMap(x => x.id),
             status: s.status,
         }
     }
@@ -132,11 +131,15 @@ export class ServerStore {
         return {
             description: s.description,
             id: s.id,
-            missions: Array.from(s.missions.keys()).map(id => ({ id })),
-            mods: Array.from(s.mods.keys()).map(id => { const {constraint, type } = (<any>s.mods.get(id)); return ({ id, constraint, type }) }),
             name: s.name,
             scope: s.scope,
-            setup: s.setup,
+            setup: {
+                ...s.setup,
+                missions: Array.from(s.missions.keys()).map(id => ({ id })),
+                mods: Array.from(s.mods.keys()).map(id => {
+                    const {constraint, type } = (<any>s.mods.get(id)); return ({ id, constraint, type })
+                }),
+            },
             slug: s.slug,
             status: s.status,
         };

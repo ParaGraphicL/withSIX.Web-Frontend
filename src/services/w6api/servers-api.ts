@@ -46,6 +46,8 @@ export interface IManagedServerSetup {
   size: ServerSize;
   secondaries: Array<{ size: ServerSize; }>;
   settings: IArmaSettings;
+  mods: Array<{ id: string; constraint?: string; }>;
+  missions: Array<{ id: string }>;
 }
 
 export interface IManagedServerStatus {
@@ -61,8 +63,6 @@ export interface IManagedServer {
   description: string;
   scope: CollectionScope;
   name: string;
-  mods: Array<{ id: string; constraint?: string; }>;
-  missions: Array<{ id: string }>;
   setup: IManagedServerSetup;
   status: IManagedServerStatus;
 }
