@@ -71,7 +71,9 @@ class GetCreditsOverviewHandler extends ServerHandler<GetCreditsOverview, { curr
       query: gql`
       query {
         viewer {
-          managedServerCredits
+          managedServerCredits {
+            current
+          }
         }
       }
       `})
