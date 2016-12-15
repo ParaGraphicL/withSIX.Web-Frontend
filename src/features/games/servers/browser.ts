@@ -769,11 +769,14 @@ export class Browser extends ViewModel {
     return this.model.pageNumber
   }
 
-  showServer(server: IServer) {
+  showServer(server: IServer, $event) {
+    if ($event.path.some((x) => x instanceof HTMLButtonElement || x instanceof HTMLAnchorElement)) {
+      return;
+    }
     return this.dialog.open({
       model: server,
-      viewModel: ServerRender
-    })
+      viewModel: ServerRender,
+    });
   }
 }
 
