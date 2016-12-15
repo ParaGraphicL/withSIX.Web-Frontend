@@ -11,6 +11,7 @@ export class Servers extends ViewModel {
   }
 
   async add() {
+    if (!this.isLoggedIn) { this.w6.openLoginDialog(); return; }
     await new AddServer(this.w6.activeGame.id).handle(this.mediator);
     this.eventBus.publish(new SelectTab("setup"));
   }

@@ -5,21 +5,19 @@ export class Game {
   activeServer: ManagedServer;
   servers: Map<string, ManagedServer>;
   id: string;
+  overview: { id: string, name: string }[] = []
 
   constructor(data: { id: string, servers: Map<string, ManagedServer> }) {
     this.id = data.id;
     this.servers = data.servers;
     if (this.servers.size > 0) {
       this.activeServer = this.servers[0];
-    } else {
-      this.activeServer = this.create();
+      const { id, name } = this.activeServer;
+      this.overview.push({ id, name });
     }
-    this.overview = [{ id: this.activeServer.id, name: this.activeServer.name }];
   }
 
   get(id: string) { return this.servers.get(id); }
-
-  overview: { id: string, name: string }[] = []
 
   add() {
     const newS = this.create();
