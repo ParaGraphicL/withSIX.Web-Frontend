@@ -7,6 +7,7 @@ import { ValidationGroup } from "aurelia-validation";
 import { inject } from "aurelia-framework";
 import { ServerHandler, ToggleModInServer } from "./control/actions/base";
 
+@inject(UiContext, ServerStore)
 export class RsideBar extends ViewModel {
   static root = "features/rside-bar/";
   tabs: IAwesomeTab[] = [
@@ -37,8 +38,12 @@ export class RsideBar extends ViewModel {
     },
   ];
 
+  constructor(ui, protected serverStore: ServerStore) {
+    super(ui);
+  }
+
   get validSetup() { return this.tabs[0].isValid; }
-  visible = true;
+  get visible() { return !!this.serverStore.activeServer; }
 
   cts: CancelTokenSource;
 
@@ -56,7 +61,8 @@ export class RsideBar extends ViewModel {
       d(this.observeEx(x => x.validSetup).subscribe(x => controlTabs.forEach(t => t.disabled = !x)));
       d(this.observableFromEvent<ToggleServer>(ToggleServer).subscribe(x => {
         const hasTab = x.tab > -1;
-        this.visible = hasTab || !this.visible;
+        const game = this.serverStore.activeGame;
+        if (!this.serverStore.activeServer) { game.activeServer = game.create(); }
         if (this.visible && hasTab) { this.selectedTab = this.tabs[x.tab]; }
       }));
       d(this.observableFromEvent<ModAddedToServer>(ModAddedToServer).subscribe(x => {

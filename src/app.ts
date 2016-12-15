@@ -10,8 +10,6 @@ import { Login } from "./services/auth";
 import { LoginBase, LoginUpdated } from "./services/auth-base";
 import { RenderService } from "./services/renderer/render-service";
 
-import { ToggleServer } from "./features/rside-bar/rside-bar";
-
 import { GameBaskets } from "./features/game-baskets";
 import { AddModsToCollections } from "./features/games/add-mods-to-collections";
 import { CreateCollectionDialog } from "./features/games/collections/create-collection-dialog";

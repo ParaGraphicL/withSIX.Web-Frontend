@@ -159,8 +159,7 @@ export class ServerStore {
 
     interval = 2 * 1000; // todo; adjust interval based on state, also should restart on each action?
 
-    get activeServer() { return this.activeGame.activeServer; }
-    get unsaved() { return this.activeServer.unsaved; }
+    get activeServer() { return this.activeGame ? this.activeGame.activeServer : null; }
 
     public async createOrUpdate(gameId: string, serverId: string, req, client: IServerClient) {
         const server = this.get(gameId).servers.get(serverId);
