@@ -88,11 +88,11 @@ export class Search extends ViewModel {
   closeNow = () => this.open = false;
   openNow = () => this.open = true;
 
-  openIfValid = async () => { this.closeTabs(); if (this.searchInput && this.searchInput.length > 2) this.openNow() }
+  openIfValid = async () => { this.closeTabs(); if (this.searchInput && this.searchInput.length > 2) { this.openNow(); } }
 
   onChange = ($event) => this.debouncer(this.searchInput);
 
-  closeTabs() { this.eventBus.publish(new CloseTabs(this)) }
+  closeTabs() { this.eventBus.publish(new CloseTabs(this)); }
 
   search = uiCommand2("Search", async (fullView?: boolean) => {
     this.closeTabs();

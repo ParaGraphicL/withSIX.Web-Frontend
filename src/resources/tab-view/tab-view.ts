@@ -30,15 +30,15 @@ export interface ITab {
 }
 
 export class TabView<T extends ITab> extends ViewModel {
-  @bindable orientation = 'left';
+  @bindable orientation = "left";
   @bindable tabs: T[] = [];
   @bindable renderView = true;
   @bindable({ defaultBindingMode: bindingMode.twoWay }) selectedTab: T;
   notificationTrigger: TriggerOf<ITabNotification>;
 
   bind() {
-    this.subscriptions.subd(d => {
-      d(this.observableFromEvent<CloseTabs>(CloseTabs).filter(x => x.exclude !== this).subscribe(this.closeNow))
+    this.subscriptions.subd((d) => {
+      d(this.observableFromEvent<CloseTabs>(CloseTabs).filter((x) => x.exclude !== this).subscribe(this.closeNow));
       d(this.eventBus.subscribe(ShowTabNotification, this.showTabNotification));
       d(this.eventBus.subscribe(SelectTab, this.selectTab));
       d(this.whenAnyValue(x => x.selectedTab).subscribe(x => this.tabs.forEach(this.disableNotification)));
@@ -47,14 +47,17 @@ export class TabView<T extends ITab> extends ViewModel {
   }
 
   toggleTab(tab: T, $evt) {
-    if ($evt) $evt.stopPropagation();
+    if ($evt) { $evt.stopPropagation(); }
     this.eventBus.publish(new CloseTabs(this));
-    if (tab && tab.disabled && tab.disabledAction) tab.disabledAction();
-    else this.selectedTab = this.selectedTab === tab ? null : tab;
+    if (tab && tab.disabled && tab.disabledAction) {
+      tab.disabledAction();
+    } else {
+      this.selectedTab = this.selectedTab === tab ? null : tab;
+    }
     return false;
   }
   close = ($event) => {
-    if ($event.ctrlKey || $event.altKey || $event.shiftKey) return true;
+    if ($event.ctrlKey || $event.altKey || $event.shiftKey) { return true; }
     this.closeNow();
     return true;
   }
