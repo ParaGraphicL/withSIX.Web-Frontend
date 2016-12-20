@@ -341,7 +341,7 @@ export class App extends ViewModel {
 
   myKeypressCallback = ($event: KeyboardEvent) => {
     if ($event.keyCode === 27) { // escape
-      this.eventBus.publish(new CloseTabs());
+      this.closeTabs();
     }
   }
 
@@ -382,10 +382,7 @@ export class App extends ViewModel {
   }
 
   closeTabs() {
-    // TODO: Better with event?
-    this.sideBar.selectedTab = null;
-    this.topBar.selectedTab = null;
-    this.rsideBar.selectedTab = null;
+    this.eventBus.publish(new CloseTabs());
     return true;
   }
 
