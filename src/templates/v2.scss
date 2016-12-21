@@ -95,6 +95,9 @@
     }
     &.tab {
       width: $tabWidth;
+      &.additional-tab {
+        width: 2*$tabWidth;
+      }
       background-color: $colorSixDarkGray;
       color: $barColor;
       .tab-content {
@@ -243,10 +246,28 @@
       .tab-content {
         //  @include animate(margin-right, 0px, -$tabWidth);
       }
+      .tab-content-inner {
+        position: absolute;
+        right: 0;
+        width: $tabWidth;
+        top: 0;
+        bottom: 0;
+      }
+      .additional-tab-inner {
+        width: 300px;
+        overflow-x: hidden;
+        overflow-y: auto;
+        height: 100%;
+      }
       .tab-content-container {
         right: 0;
         &.tab {
           @include anim(margin-right, -$tabWidth);
+        }
+        &.additional-tab {
+          &.tab {
+            @include anim(margin-right, -(2*$tabWidth));
+          }
         }
         &.dropdown {
           @include anim(max-height, 0, 300px);

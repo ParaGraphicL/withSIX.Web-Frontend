@@ -27,6 +27,7 @@ export interface ITab {
   notificationTimeOut?; // Timer;
   instant?: boolean;
   disabledAction?: Function;
+  additionalTab?: { viewModel: string; };
 }
 
 export class TabView<T extends ITab> extends ViewModel {

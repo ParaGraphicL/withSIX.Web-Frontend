@@ -8,14 +8,4 @@
   <div if.bind="mods.size === 0">
     <i>No mods found, add some with the "Add to Server" button on Mod cards</i>
   </div>
-
-  <div class="add-mods" click.trigger="handleModsClick($event)">
-    <button click.trigger="showCollections = !showCollections">Switch to ${showCollections ? "Mods" : "Collections"}</button>
-
-    <compose view-model="../../games/mods/index" view="../../games/mods/_content.html" model.bind="modParams"
-      if.bind="!showCollections"></compose>
-
-    <compose view-model="../../games/collections/index" view="../../games/collections/_content.html" model.bind="modParams"
-      if.bind="showCollections"></compose>
-  </div>
 </template>

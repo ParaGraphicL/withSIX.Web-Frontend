@@ -24,7 +24,7 @@ export class RsideBar extends ViewModel {
     {
       header: "Mods", name: "mods", icon: "icon withSIX-icon-Nav-Mod",
       viewModel: `${RsideBar.root}mods/index`, next: (tab: IAwesomeTab) => this.next(tab),
-      id: "3", notificationText: "3",
+      id: "3", notificationText: "3", additionalTab: { viewModel: `${RsideBar.root}mods/content-selector` }
     },
     {
       header: "Missions", name: "missions", icon: "icon withSIX-icon-Nav-Mission",

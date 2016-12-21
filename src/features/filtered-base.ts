@@ -10,8 +10,12 @@ export class FilteredBase<T> extends PaginatedViewModel<T> {
   viewType = ViewType.Card;
   filterInfo: IFilterInfo<T>;
   params;
+  cardColumns = [2, 3, 3, 4];
 
   async activate(params) {
+    if (params.mini) {
+      this.cardColumns = [1, 1, 1, 1];
+    }
     if (this.w6.userInfo.isManager) { if (this.sort.some(x => x.name === 'stat.totalInstall')) this.sort.push({ name: "stat.install", title: "Installs (Local)", direction: SortDirection.Desc }) }
     this.filterInfo = { search: { input: null, fields: this.searchFields }, enabledFilters: this.enabledFilters, sortOrder: this.sort[0] }
     await super.activate(params);
