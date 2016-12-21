@@ -35,7 +35,7 @@ import { Origin } from "aurelia-metadata";
 import { NavigationInstruction, Redirect, Router, RouterConfiguration } from "aurelia-router";
 import { BindingSignaler } from "aurelia-templating-resources";
 
-@inject(UiContext, HttpClient, Login, RouteHandler, TaskQueue, Client, BasketService, LS, ClientMissingHandler, BindingSignaler)
+@inject(UiContext, HttpClient, Login, RouteHandler, TaskQueue, Client, BasketService, LS, ClientMissingHandler, BindingSignaler, FeaturesModule)
 export class App extends ViewModel {
   newVersionInterval;
   modules: any[];
@@ -101,9 +101,9 @@ export class App extends ViewModel {
 
   constructor(ui: UiContext, public http: HttpClient, private login: Login, private routeHandler: RouteHandler,
     private taskQueue: TaskQueue, private client: Client, private basketService: BasketService, private ls: LS,
-    private clientMissingHandler: ClientMissingHandler, private signaler: BindingSignaler) {
+    private clientMissingHandler: ClientMissingHandler, private signaler: BindingSignaler, featuresModule: FeaturesModule) {
     super(ui);
-    this.modules = [new FeaturesModule()];
+    this.modules = [featuresModule];
     this.original = this.w6.enableBasket;
     this.breadcrumbs = this.setupBreadcrumbs();
     this.w6.openLoginDialog = evt => { if (evt) { evt.preventDefault(); } return this.login.login(); };
