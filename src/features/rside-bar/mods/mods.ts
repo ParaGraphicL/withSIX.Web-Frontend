@@ -21,6 +21,7 @@ export class Index extends ViewModel {
   }
   get mods() { return this.server.mods; }
   remove(m) { this.mods.delete(m.id); }
+  handleModsClick($event) { ($event.data || ($event.data = {})).ignoreClose = true; }
 }
 
 class GetModInfo extends Query<Array<any>> { constructor(public id: string, public contentIDs: string[]) { super(); } }

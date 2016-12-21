@@ -68,8 +68,9 @@ export class ViewModel extends ReactiveBase {
       let $this = $((<any>e).backupTarget || e.currentTarget);
       // TODO: Only on a, not buttons?
       if (e.ctrlKey || e.altKey || e.shiftKey) return true;
-      if (!ignoreClasses.some(x => $this.hasClass(x)))
-        setTimeout(() => close());
+      const originalEvent = <any>e.originalEvent;
+      if (originalEvent.data && originalEvent.data.ignoreClose) return;
+      if (!ignoreClasses.some(x => $this.hasClass(x))) { setTimeout(() => close()); }
     });
   }
 
