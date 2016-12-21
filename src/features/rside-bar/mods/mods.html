@@ -9,12 +9,13 @@
     <i>No mods found, add some with the "Add to Server" button on Mod cards</i>
   </div>
 
-  <div class="add-mods" style="position: fixed; left: 64px; right: 364px; top: 48px; bottom: 0px; background-color: deeppink; overflow: auto;"
-    click.trigger="$event.stopPropagation()">
+  <div class="add-mods" click.trigger="handleModsClick($event)">
     <button click.trigger="showCollections = !showCollections">Switch to ${showCollections ? "Mods" : "Collections"}</button>
 
-    <compose view-model="../../games/mods/index" model.bind="modParams" if.bind="!showCollections"></compose>
+    <compose view-model="../../games/mods/index" view="../../games/mods/_content.html" model.bind="modParams"
+      if.bind="!showCollections"></compose>
 
-    <compose view-model="../../games/collections/index" model.bind="modParams" if.bind="showCollections"></compose>
+    <compose view-model="../../games/collections/index" view="../../games/collections/_content.html" model.bind="modParams"
+      if.bind="showCollections"></compose>
   </div>
 </template>
