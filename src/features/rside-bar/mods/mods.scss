@@ -1,3 +1,4 @@
+@import "_base";
 #tab-view-render-mods {
   li {
     .entry {
@@ -5,5 +6,8 @@
         margin-left: 0;
       }
     }
+  }
+  .add-mods {
+    color: $colorSixDarkGray;
   }
 }
