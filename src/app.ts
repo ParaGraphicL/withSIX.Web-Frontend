@@ -84,11 +84,13 @@ export class App extends ViewModel {
   get isRequesting() { return this.login.isRequesting; }
   get showSidebar() { return this.w6.enableBasket; }
 
-  get tabActive() { return (this.sideBar && this.sideBar.selectedTab) || (this.topBar && this.topBar.selectedTab); }
+  get tabActive() { return (this.sideBar && this.sideBar.selectedTab) || (this.topBar && this.topBar.selectedTab) || (this.rsideBar && this.rsideBar.selectedTab); }
   get tabAsTabActive() {
-    let side = this.sideBar && this.sideBar.selectedTab;
-    let top = this.topBar && this.topBar.selectedTab;
-    return (side && side.type !== "dropdown") || (top && top.type !== "dropdown");
+    const side = this.sideBar && this.sideBar.selectedTab;
+    const top = this.topBar && this.topBar.selectedTab;
+    const rside = this.rsideBar && this.rsideBar.selectedTab;
+    return (side && side.type !== "dropdown") || (top && top.type !== "dropdown")
+      || (rside && rside.type !== "dropdown");
   }
 
 
