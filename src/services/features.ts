@@ -25,7 +25,7 @@ export class FeatureToggles {
   get createServers() { return this.isTestEnvironment; }
   get serverClaiming() { return this.isTestEnvironment; }
   get listAvailable() { return this.isTestEnvironment; }
-  get contentTags() { return this.isTestEnvironment; }
+  get contentTags() { return false; } //this.isTestEnvironment; }
 
   get serverFeatures() {
     return !this.isClientConnected ||
