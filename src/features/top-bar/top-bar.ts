@@ -1,4 +1,4 @@
-import { Base, ViewModel, UiContext, MenuItem, uiCommand2, Debouncer, IMenuItem, ITab, ClientMissingHandler, CloseTabs, Rx } from '../../framework';
+import { Base, ViewModel, UiContext, MenuItem, uiCommand2, Debouncer, IMenuItem, ITab, ClientMissingHandler, Rx } from '../../framework';
 import { SideBar } from '../side-bar/side-bar';
 import { Login } from '../../services/auth';
 import { inject, bindable } from 'aurelia-framework'

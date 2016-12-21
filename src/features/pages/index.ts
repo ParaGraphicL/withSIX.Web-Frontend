@@ -1,8 +1,8 @@
-import {FrameworkConfiguration} from 'aurelia-framework';
-import {Router, RouterConfiguration, RouteConfig} from 'aurelia-router';
-import {ViewModel, ILegacyMenuItem} from '../../framework';
+import { FrameworkConfiguration } from 'aurelia-framework';
+import { Router, RouterConfiguration, RouteConfig } from 'aurelia-router';
+import { ViewModel, ILegacyMenuItem } from '../../framework';
 
-export class PagesModule {
+export class PagesModule extends ViewModel {
   configureRouter(config: RouterConfiguration, router: Router, mount: string, routeMount: string) {
     mount = mount + 'pages/';
 
@@ -27,6 +27,12 @@ export class PagesModule {
       //{ route: `${routeMount}go-premium`,         name: 'premium',        moduleId: `${mount}premium`,        nav: true, title:'Go Premium' },
       //{ route: `${routeMount}child-router`,  name: 'child-router', moduleId: `${mount}child-router`, nav: true, title:'Child Router' }
     ]);
+
+    if (this.features.serverHosting) {
+      config.map([
+        { route: `${routeMount}server-hosting`, name: 'server-hosting', moduleId: `${mount}server-hosting`, nav: false, title: 'Server Hosting' },
+      ]);
+    }
   }
 }
 
@@ -41,8 +47,12 @@ export class MainBase extends ViewModel {
       { header: "Community", segment: "community", mainSegment: "" }
     ];
 
-    if (!this.w6.userInfo.isPremium)
+    if (!this.w6.userInfo.isPremium) {
       items.push({ header: "Go Premium", segment: "gopremium", isRight: true, icon: "icon withSIX-icon-Badge-Sponsor", cls: 'gopremium' });
+    }
+    if (this.features.serverHosting) {
+      items.push({ header: "Server Hosting", segment: "server-hosting", isRight: true, icon: "icon withSIX-icon-Nav-Server", cls: 'server-hosting' });
+    }
     this.menuItems = this.getMenuItems(items, "");
   }
 }

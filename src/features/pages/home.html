@@ -1,5 +1,5 @@
 <template>
-  <compose view="./menu.html"></compose>
+  <compose view="./main-menu.html"></compose>
 
   <div class="container-fluid">
     <div class="row">
@@ -9,7 +9,9 @@
           <div class="icon icon-browse"></div>
           <div class="clearfix">
             <h2>Discover</h2>
-            <p>Get the most out of your gaming experience by expanding your game with great fan made content for you to discover on our website - from missions to maps to full conversion modifications and more!</p>
+            <p>Get the most out of your gaming experience by expanding your game with great fan made content
+              for you to discover on our website - from missions to maps to full conversion modifications
+              and more!</p>
             <a href="${w6.url.main}/getting-started" class="btn">
               <span class="fa fa-arrow-right"></span> Learn More
             </a>
@@ -25,7 +27,8 @@
           <div class="icon icon-manage icon-alignright"></div>
           <div class="clearfix">
             <h2>Play</h2>
-            <p>Use custom game content of your choice online with your friends or in single player faster and easier than ever. withSIX takes care of everything, so you can just have fun.</p>
+            <p>Use custom game content of your choice online with your friends or in single player faster
+              and easier than ever. withSIX takes care of everything, so you can just have fun.</p>
 
             <a href="${w6.url.play}" class="btn">
               <span class="fa fa-arrow-right"></span> Learn More
@@ -39,9 +42,10 @@
           <div class="icon icon-connect"></div>
           <div class="clearfix">
             <h2>
-                          Promote
-                      </h2>
-            <p>Present your self-made content to the world by using our wide variety of options to promote, publish and share your creation in no time.</p>
+              Promote
+            </h2>
+            <p>Present your self-made content to the world by using our wide variety of options to promote,
+              publish and share your creation in no time.</p>
             <!--<a href="#" class="btn">
                           <span class="fa fa-arrow-right">
 
@@ -68,43 +72,35 @@
 
         <div class="stats">
           <h3>
-                      Already
-                      <strong>${totalDownloads | amount}</strong>
-                      downloads and
-                      <strong>${totalAccounts | amount}</strong>
-                      registered users.
-                  </h3>
+            Already
+            <strong>${totalDownloads | amount}</strong> downloads and
+            <strong>${totalAccounts | amount}</strong> registered users.
+          </h3>
 
           <p>Supporting:</p>
           <a href="${w6.url.play}/more-games">
-            <img src.bind="w6.versionedAsset('img/withSIX/home/gameicons.png')" width="372" height="121" class="img-responsive" alt="Supported games withSIX" />
+            <img src.bind="w6.versionedAsset('img/withSIX/home/gameicons.png')" width="372" height="121" class="img-responsive"
+              alt="Supported games withSIX" />
           </a>
 
           <br/>
           <br/>
 
           <h4>
-                      with
-                      <strong>${totalCollections | amount}</strong>
-                      collections,
-                      <strong>${totalMods | amount}</strong>
-                      mods,
-                      <strong>${totalMissions | amount}</strong>
-                      missions,
-                      and
-                      <strong>${totalServers | amount}</strong>
-                      servers.
-                      <br/>
-                      <strong>${totalSubscribers | amount}</strong>
-                      subscribers and
-                      <strong>${totalFollowers | amount}</strong>
-                      followers.
-                      <!--
+            with
+            <strong>${totalCollections | amount}</strong> collections,
+            <strong>${totalMods | amount}</strong> mods,
+            <strong>${totalMissions | amount}</strong> missions, and
+            <strong>${totalServers | amount}</strong> servers.
+            <br/>
+            <strong>${totalSubscribers | amount}</strong> subscribers and
+            <strong>${totalFollowers | amount}</strong> followers.
+            <!--
                           and
                           <strong>${totalLikes}</strong>
                           likes
                       -->
-                  </h4>
+          </h4>
         </div>
 
         <ad-unit unit-id="angular-ad2"></ad-unit>

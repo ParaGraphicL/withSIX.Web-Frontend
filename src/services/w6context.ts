@@ -64,35 +64,37 @@ export class W6Context {
 
   get tools() { return Tools }
 
-  constructor(private http: HttpClient, public logger: Toastr, private promiseCache: PromiseCache, public w6: W6, public eventBus: EventAggregator) {
+  constructor(private http: HttpClient, public logger: Toastr,
+    private promiseCache: PromiseCache, public w6: W6, public eventBus: EventAggregator) {
 
     breeze.DataType.parseDateFromServer = function (source) {
-      var date = moment(source);
+      const date = moment(source);
       return date.toDate();
     };
 
     breeze.NamingConvention.camelCase.setAsDefault();
     this.serviceName = this.w6.url.api + '/breeze/withsix';
-    var ajaxAdapter = <any>breeze.config.getAdapterInstance('ajax');
-    if (!ajaxAdapter.defaultSettings) ajaxAdapter.defaultSettings = {}
+    const ajaxAdapter = <any>breeze.config.getAdapterInstance('ajax');
+    if (!ajaxAdapter.defaultSettings) { ajaxAdapter.defaultSettings = {} }
     ajaxAdapter.defaultSettings.requestName = 'breezeRequest';
 
     ajaxAdapter.requestInterceptor = (requestInfo) => {
       if (this.nextBreezeRequestName) {
-        if (!requestInfo.config) requestInfo.config = {}
+        if (!requestInfo.config) { requestInfo.config = {}; }
         requestInfo.config.requestName = this.nextBreezeRequestName;
         this.nextBreezeRequestName = undefined;
       }
 
-      var oldFnc = requestInfo.success;
+      const oldFnc = requestInfo.success;
       requestInfo.success = (response) => {
-        // TODO: Breeze does not parse the date objects when performing a select, because it returns an anonymous object of which it doesnt know the fields
+        // TODO: Breeze does not parse the date objects when performing a select, 
+        // because it returns an anonymous object of which it doesnt know the fields
         // a better solution might be to fix this at the root (as we specify the object type when we execute the query??)
-        if (response.data) response.data = this.w6.convertToClient(response.data, false);
+        if (response.data) { response.data = this.w6.convertToClient(response.data, false); }
         oldFnc(response);
-      }
+      };
 
-      //loadingInterceptor.startedBreeze(requestInfo);
+      // loadingInterceptor.startedBreeze(requestInfo);
     };
     this.fetchMetadata();
     this.loggedIn = this.w6.userInfo.id != null;
@@ -110,34 +112,41 @@ export class W6Context {
     return new breeze.EntityKey(t, id);
   }
 
-  public getUrl(path) { return Tools.uriHasProtocol(path) ? path : (path.startsWith("/") ? this.w6.url.authSsl + path : this.w6.url.api + "/" + path); }
+  public getUrl(path) {
+    return Tools.uriHasProtocol(path) ? path : (path.startsWith("/") ? this.w6.url.authSsl + path : this.w6.url.api + "/" + path);
+  }
 
   public getMd(subPath) { return this.getText(this.w6.url.getSerialUrl("docs/" + subPath)); }
 
-  public getCdnMd(subPath: string) { return this.getText(this.w6.url.docsCdn + "/software/withSIX/drop/docs/" + subPath) } //  + (subPath.includes('?') ? '&' : '?') + "site=" + this.w6.url.site
+  public getCdnMd(subPath: string) {
+    return this.getText(this.w6.url.docsCdn + "/software/withSIX/drop/docs/" + subPath);
+  } //  + (subPath.includes('?') ? '&' : '?') + "site=" + this.w6.url.site
 
   // TODO: We should check for the latest commit or tag on github, every minute or so, and then use that commit SHA
   public async getDocMd(subPath, addTag = false) {
-    var path = 'docs/' + subPath;
+    const path = 'docs/' + subPath;
     return await this.getText('https://raw.githubusercontent.com/SIXNetworks/withsix-docs/master/' + path);
   }
 
   async getLatestCommit(path, repo = 'SIXNetworks/withsix-docs') {
     // TODO: cache per repo for on minute? (promisecache)
-    var commits = await this.getCustom<{ sha: string }[]>('https://api.github.com/repos/' + repo + '/commits?path=' + path);
+    const commits = await this.getCustom<Array<{ sha: string }>>('https://api.github.com/repos/' + repo + '/commits?path=' + path);
     return commits[0].sha;
   }
 
   getTimeTag(minuteGranulary = 5) {
-    var d = new Date();
+    const d = new Date();
     return `${d.getUTCFullYear()}${d.getUTCMonth()}${d.getUTCDay()}${d.getUTCHours()}${Math.round(d.getUTCMinutes() / minuteGranulary)}`
   }
 
   public get = <T>(path, query?) => this.handleJson<T>(this.serviceName + '/' + path, { params: query });
   public getCustom = <T>(path, configOverrides?: IRequestShortcutConfig) => this.handleJson<T>(path, configOverrides)
-  public postCustom = <T>(path, data?, configOverrides?: IRequestShortcutConfig) => this.handleJsonWithBody<T>(path, data, { method: 'POST', ...configOverrides });
-  public putCustom = <T>(path, data, configOverrides?: IRequestShortcutConfig) => this.handleJsonWithBody<T>(path, data, { method: 'PUT', ...configOverrides });
-  public patchCustom = <T>(path, data, configOverrides?: IRequestShortcutConfig) => this.handleJsonWithBody<T>(path, data, { method: 'PATCH', ...configOverrides });
+  public postCustom = <T>(path, data?, configOverrides?: IRequestShortcutConfig) =>
+    this.handleJsonWithBody<T>(path, data, { method: 'POST', ...configOverrides });
+  public putCustom = <T>(path, data, configOverrides?: IRequestShortcutConfig) =>
+    this.handleJsonWithBody<T>(path, data, { method: 'PUT', ...configOverrides });
+  public patchCustom = <T>(path, data, configOverrides?: IRequestShortcutConfig) =>
+    this.handleJsonWithBody<T>(path, data, { method: 'PATCH', ...configOverrides });
 
   public postCustomFormData<T>(path, fd: FormData, configOverrides?: IRequestShortcutConfig) {
     Tools.Debug.log("postCustomFormData", path, fd, configOverrides);
@@ -152,7 +161,7 @@ export class W6Context {
 
   handleJson = async <T>(path, configOverride?) => {
     let r = await this.getResponse(path, configOverride);
-    if (r.status === 204) return <T>null;
+    if (r.status === 204) { return <T>null; }
     //if (r.status === 204) throw new Error("Received a 204 no content response, however expected JSON to be returned")
     return <T>this.w6.convertToClient(await r.json());
   }
@@ -190,30 +199,29 @@ export class W6Context {
       return await polly()
         .handle(err => {
           const r = <any>err;
-          if (r.status && r.status < 500) return false;
+          if (r.status && r.status < 500) { return false; }
           return true;
         }) // TODO: Handle specific errors only 
         .waitAndRetry(3)
         .executeForPromise(() => this.http.fetch(url, configOverride));
     } catch (err) {
       if (err instanceof Response) {
-        let r: Response = err;
+
         let body;
         try {
-          body = this.w6.convertToClient(await r.json());
+          body = this.w6.convertToClient(await err.json());
         } catch (err) {
           body = {};
         }
-        throw this.handleResponseErrorStatus({ status: r.status, statusText: r.statusText, body, headers: r.headers }, this.w6.isLoggedIn);
+        throw this.handleResponseErrorStatus({ ...err, body }, this.w6.isLoggedIn);
       }
       throw err;
     }
   }
 
   public getFormDataFromFiles(files) {
-    var fd = new FormData();
-    for (var i in files)
-      fd.append('file', files[i]);
+    const fd = new FormData();
+    for (let i of files) { fd.append("file", i); }
     return fd;
   }
 
@@ -364,17 +372,17 @@ export class W6Context {
 
   public async queryLocallyOrServerWhenNoResults<T extends breeze.Entity>(query: breeze.EntityQuery): Promise<T[]> {
     let l = await this.executeQueryLocally<T>(query);
-    if (l.length != 0) return l;
+    if (l.length !== 0) { return l; }
     let r = await this.executeQuery<T>(query);
     return r.results;
   }
 
-  public executeQueryT<T extends breeze.Entity>(query, requestName?): Promise<IQueryResult<T>> {
+  public async executeQueryT<T extends breeze.Entity>(query, requestName?): Promise<IQueryResult<T>> {
     Tools.Debug.log(["Executing query: ", query, requestName]);
     this.nextBreezeRequestName = requestName;
     // TODO: Extra check to reset the requestName, e.g if query parsing fails or so?
-    return this.fetchMetadata()
-      .then(() => this.manager.executeQuery(query));
+    await this.fetchMetadata();
+    return <IQueryResult<T>>await this.manager.executeQuery(query);
   }
 
   public rejectChanges() {
@@ -383,10 +391,14 @@ export class W6Context {
 
   public uploadToAmazonWithPolicy(file: File, uploadPolicy: IBreezeAWSUploadPolicy) { return this.uploadToBucket(file, uploadPolicy); }
 
-  private getPolicy(file, authorizationPath, policyType, requestName?) { return this.getCustom(this.serviceName + '/' + authorizationPath, { requestName: requestName, params: { policyType: policyType, filePath: file } }); }
+  private getPolicy(file, authorizationPath, policyType, requestName?) {
+    return this.getCustom(this.serviceName + '/' + authorizationPath, {
+      requestName, params: { policyType, filePath: file }
+    });
+  }
 
   private uploadToBucket = async (file: File, s3Params: IBreezeAWSUploadPolicy, requestName?) => {
-    var data = {
+    const data = {
       key: s3Params.key,
       acl: s3Params.aCL, // ?? acl vs CannedACL ?
       //success_action_redirect: s3Params.callbackUrl,
@@ -399,7 +411,7 @@ export class W6Context {
       //filename: file.name //Required for IE8/9 //,
     };
 
-    var fd = new FormData()
+    const fd = new FormData()
     Object.keys(data).forEach(k => {
       fd.append(k, data[k]);
     });
@@ -410,7 +422,7 @@ export class W6Context {
       body: fd
     });
 
-    if (!r.ok) throw r;
+    if (!r.ok) { throw r; }
     return r;
   }
 

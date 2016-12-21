@@ -1,6 +1,6 @@
-import {ViewModel, Base, uiCommand2, ITab, UiContext, ClientMissingHandler, SwitchSideBarTab, CloseTabs} from '../../framework';
-import {inject} from 'aurelia-framework';
-import {Index as SettingsIndex} from '../settings/index';
+import { ViewModel, Base, uiCommand2, ITab, UiContext, ClientMissingHandler, SwitchSideBarTab, CloseTabs } from '../../framework';
+import { inject } from 'aurelia-framework';
+import { Index as SettingsIndex } from '../settings/index';
 
 @inject(UiContext, ClientMissingHandler)
 export class SideBar extends ViewModel {
@@ -10,7 +10,7 @@ export class SideBar extends ViewModel {
     { header: "Library", name: "library", icon: "icon withSIX-icon-System", viewModel: `${SideBar.root}library/library`, disabledAction: () => this.disabledAction() },
     { header: "Playlist", icon: "icon withSIX-icon-Content-Play-Media", viewModel: `${SideBar.root}playlist/playlist`, disabledAction: () => this.disabledAction() },
     { header: "Activity", name: "downloads", icon: "icon withSIX-icon-Download", disabled: true, viewModel: `${SideBar.root}downloads/downloads`, headerViewModel: `${SideBar.root}downloads/download-header`, location: 'end' },
-  ]
+  ];
   selectedTab = null;
   get isPlayActive() { return this.selectedTab == this.tabs[0] };
   get hasActiveGame() { return this.w6.activeGame.id != null };
