@@ -1,5 +1,5 @@
-import {bindable, inject, bindingMode} from 'aurelia-framework';
-import {ViewModel, ITab, UiContext} from '../../framework';
+import { bindable, inject, bindingMode } from 'aurelia-framework';
+import { ViewModel, ITab, UiContext } from '../../framework';
 
 @inject(Element, UiContext)
 export class TabViewRender extends ViewModel {
@@ -24,4 +24,5 @@ export class TabViewRender extends ViewModel {
   }
 
   get selectedTabName() { return this.lastActiveTab ? (this.lastActiveTab.name || this.lastActiveTab.header.toLowerCase()) : null; }
+  get additionalTab() { return this.lastActiveTab ? this.lastActiveTab.additionalTab : null; }
 }
