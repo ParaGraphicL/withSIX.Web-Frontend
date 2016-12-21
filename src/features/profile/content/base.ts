@@ -51,7 +51,7 @@ export class ContentViewModel<TContent extends IContent> extends ViewModelOf<TCo
   // TODO: This could be modeled by events similar to the state handling?
   static isInBasketFunction = (basket, id) => basket.content.has(id);
 
-  static isInServerFunction = (server: { hasMod: (id) => boolean }, id) => server.hasMod(id);
+  static isInServerFunction = (server: { hasMod: (id) => boolean }, id) => server && server.hasMod(id);
 
   getDefaultState() {
     return {
@@ -319,9 +319,9 @@ export class ContentViewModel<TContent extends IContent> extends ViewModelOf<TCo
           this.addToServer.name = this.serverableText;
           this.addToServer.icon = this.serverableIcon;
 
-          this.addToServer2.cls = this.isInServer ? "ok" : null;
+          this.addToServer2.cls = `add-to-server ${this.isInServer ? "ok" : ""}`;
           this.addToServer2.name = this.isInServer ? "IN SERVER" : "ADD TO SERVER";
-          this.addToServer2.icon = this.isInServer ? "withSIX-icon-Checkmark" : "withSIX-icon-Add";
+          this.addToServer2.icon = this.isInServer ? "withSIX-icon-Nav-Server" : "withSIX-icon-Add";
         }));
       }
 

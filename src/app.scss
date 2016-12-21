@@ -556,3 +556,20 @@ menu {
     }
   }
 }
+
+action-bar {
+  button.add-to-server {
+    display: none;
+    &.ok {
+      display: block;
+    }
+  }
+  &:hover {
+    button.add-to-server {
+      display: block;
+      .text {
+        display: inline-block !important;
+      }
+    }
+  }
+}

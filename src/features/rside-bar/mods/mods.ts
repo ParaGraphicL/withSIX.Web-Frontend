@@ -6,8 +6,10 @@ import { ServerHandler } from "../actions";
 
 export class Index extends ViewModel {
   server: ManagedServer;
+  modParams: { gameSlug: string; };
   async activate(server) {
     this.server = server;
+    this.modParams = { gameSlug: this.w6.activeGame.slug };
     const items = Array.from(this.server.mods.keys()).map((id) => toGlobalId(BasketItemType[this.server.mods.get(id).type], id));
     const modInfo = await this.request(new GetModInfo(server.id, items));
     modInfo.filter(x => !!x).forEach((x) => {
