@@ -164,21 +164,82 @@
         <div class="hidden-sm hidden-md col-lg-1">&nbsp;</div>
       </div>
 
-      <h2>Secure servers with <b>DDOS protection</b></h2>
+      <h2><span class="icon withSIX-icon-Protection-Full"></span> Secure servers with <b>DDOS protection</b></h2>
     </div>
 
     <div class="subscribe container-fluid">
+      <h2><b>Sign-up</b> for the limited access beta</h2>
       <div class="row">
-        <div class="col-md-8">
-          <div>Account info</div>
-          <div>Questionaire yadi yadi</div>
+        <div class="col-md-6">
+          <div if.bind="isLoggedIn">
+            <div class="pull-right">This isn't me (<button class="anchor" click.delegate="w6.logout()">log out</button>)</div>
+            <h2>Account info</h2>
+            <img src.bind="avatarUrl" />
+            <span innerHTML.bind="userInfo.userName"></span>
+            <span if.bind="userInfo.isPremium"><span class="icon withSIX-icon-Badge-Sponsor"></span>Premium</span>
+            <textbox disabled.one-time="true" value.bind="userInfo.email"></textbox>
+          </div>
+          <div>
+            <div>
+              <!-- TODO: Radio -->
+              <checkbox value.bind="model.community.partOf">Are you part of a community?</checkbox>
+            </div>
+
+            <div if.bind="model.community.partOf === null || model.community.partOf">
+              <fieldset disabled.bind="!model.community.partOf & removeAttribute">
+                <textbox value.bind="model.community.name" placeholder="Name of your community...">
+                  <h2>What is the name of your community?</h2>
+                  <i>You can only sign-up for one community at a time</i>
+                </textbox>
+                <textbox value.bind="model.community.url" placeholder="URL to website, social media, BI Units or steam group..."></textbox>
+
+                <textbox value.bind="model.community.role" placeholder="Admin, Server manager, Team member, Player...">
+                  <h2>What is your role within the Community?</h2>
+                </textbox>
+
+                <div>
+                  <h2>How many <b>active members</b> are in your community?</h2>
+                  <checkbox value.bind="model.activeMembers" model="< 10">&lt; 10</checkbox>
+                  <checkbox value.bind="model.activeMembers" model="10-30">10-30</checkbox>
+                  <checkbox value.bind="model.activeMembers" model="30-50">30-50</checkbox>
+                  <checkbox value.bind="model.activeMembers" model="> 50">&gt; 50</checkbox>
+                  <!-- TODO: Radio -->
+                </div>
+              </fieldset>
+            </div>
+            <div>
+              <div>
+                <h2>What game-mode(s) do you mostly play?</h2>
+                <checkbox value.bind="model.gameModes" model.bind="m" repeat.for="m of gameModes">${m}</checkbox>
+                <textbox value.bind="model.otherGameModes" placeholder="other game-mode(s)"></textbox>
+              </div>
+
+              <textbox value.bind="model.serverTypes">
+                <h2>What type of servers do you run (CPU, RAM, OS, Location)</h2>
+              </textbox>
+
+              <textbox value.bind="model.mods">
+                <h2>What kind of mods (if any) are you using?</h2>
+              </textbox>
+
+              <textbox value.bind="model.modsHosted" disabled.bind="!model.mods">
+                <h2>Where are your mods hosted, how do you install and share them?</h2>
+              </textbox>
+
+            </div>
+          </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-1">
+          &nbsp;
+        </div>
+        <div class="col-md-5">
           <h2>Beta testing</h2>
-          <b>We've been working hard on creating an awesome new servie and are getting ready to release it to the public.
+          <p>
+            <b>We've been working hard on creating an awesome new servie and are getting ready to release it to the public.
           This beta test will help us ensure to deliver a high quality new feature and measure the UX of our UI. 
           We offer a limited number of premium users early-access to set up their own servers now.
           </b> etc. etc.
+          </p>
 
           <button><b>Sign-up</b> for free beta access</button>
           <checkbox value.bind="model.agree">I agree with the terms of service and privacy policy</checkbox>

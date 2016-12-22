@@ -308,9 +308,9 @@ export class LoginBase {
       this.clearIdToken();
       return userInfo;
     }
-    var req = await this.httpFetch.fetch(this.w6Url.authSsl + '/identity/connect/userinfo');
-    var r = await req.json();
-    var roles = typeof (r["role"]) == "string" ? [r["role"]] : r["role"];
+    const req = await this.httpFetch.fetch(this.w6Url.authSsl + '/identity/connect/userinfo');
+    const r = await req.json();
+    const roles = typeof (r["role"]) === "string" ? [r["role"]] : r["role"];
 
     let uInfo = {
       id: r["sub"],
@@ -322,11 +322,12 @@ export class LoginBase {
       avatarURL: r["withsix:avatar_url"],
       hasAvatar: r["withsix:has_avatar"],
       avatarUpdatedAt: new Date(r["withsix:avatar_updated_at"]),
+      email: r["withsix:email"],
       emailMd5: r["withsix:email_md5"],
       passwordSet: r["withsix:password_set"],
       emailConfirmed: r["withsix:email_confirmed"],
       hasGroups: r["withsix:has_groups"],
-      roles: roles,
+      roles,
       isAdmin: roles.indexOf("admin") > -1,
       isManager: roles.indexOf("manager") > -1,
       isPremium: roles.indexOf("premium") > -1
