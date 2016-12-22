@@ -6,7 +6,7 @@ export class Radiobox extends Field {
   @bindable({ defaultBindingMode: bindingMode.twoWay }) valueB: boolean;
   @bindable({ defaultBindingMode: bindingMode.twoWay }) model;
   @bindable label: string;
-  @bindable useId = Field.generateId('check');
+  @bindable useId = Field.generateId('radio');
   @bindable name;
   @bindable cls = "form-control";
 }
