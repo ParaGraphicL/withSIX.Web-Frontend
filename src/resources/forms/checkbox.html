@@ -1,13 +1,11 @@
 <template>
-  <div class="form-group">
-    <label for.one-time="useId" class="${value ? 'active' : ''}">
-        <div class="pull-left" style="width: 16px">
-            <input class.bind="cls" name.one-time="useId" id.one-time="useId" checked.bind="value" model.bind="model" type="checkbox" />
-        </div>
-        <div class="pull-left" style="margin-left: 4px">
-            <slot>${label}</slot>
-        </div>
-        <div class="clearfix"></div>
-    </label>
-  </div>
+  <label for.one-time="useId" class="${value ? 'active' : ''}">
+    <div class="pull-left" style="width: 16px">
+        <input class.bind="cls" name.one-time="useId" id.one-time="useId" checked.bind="value" model.bind="model" value.bind="valueB" type.bind="type" />
+    </div>
+    <div class="pull-left" style="margin-left: 4px">
+        <slot>${label}</slot>
+    </div>
+    <div class="clearfix"></div>
+</label>
 </template>

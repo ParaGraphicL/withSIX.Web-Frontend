@@ -1,9 +1,7 @@
 <template>
-  <div class="form-group">
-    <label for.one-time="useId"><slot>${label}</slot></label>
-    <input placeholder.bind="placeholder & removeAttribute" if.bind="!multiLine" class.bind="cls" name.one-time="useId"
-      id.one-time="useId" type="text" value.bind="value" disabled.bind="disabled & removeAttribute">
-    <textarea if.bind="multiLine" class.bind="cls" name.one-time="useId" id.one-time="useId" value.bind="value"
-      placeholder.bind="placeholder & removeAttribute" disabled.bind="disabled & removeAttribute"></textarea>
-  </div>
+  <label for.one-time="useId"><slot>${label}</slot></label>
+  <input placeholder.bind="placeholder & removeAttribute" if.bind="!multiLine" class.bind="cls" name.one-time="useId"
+    id.one-time="useId" type="text" value.bind="value" disabled.bind="disabled & removeAttribute">
+  <textarea if.bind="multiLine" class.bind="cls" name.one-time="useId" id.one-time="useId" value.bind="value"
+    placeholder.bind="placeholder & removeAttribute" disabled.bind="disabled & removeAttribute"></textarea>
 </template>

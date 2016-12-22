@@ -1,12 +1,10 @@
 <template>
-  <div class="form-group">
-    <label for.one-time="useId"><slot>${label}</slot></label>
-    <slot name="prepend"></slot>
-    <select name.one-time="useId" id.one-time="useId" value.bind="value" class.bind="cls" disabled.bind="disabled & removeAttribute">
-        <option repeat.for="o of options" model.bind="o" part="item-template">
-            ${o}
-        </option>
-    </select>
-    <slot name="append"></slot>
-  </div>
+  <label for.one-time="useId"><slot>${label}</slot></label>
+  <slot name="prepend"></slot>
+  <select name.one-time="useId" id.one-time="useId" value.bind="value" class.bind="cls" disabled.bind="disabled & removeAttribute">
+      <option repeat.for="o of options" model.bind="o" part="item-template">
+          ${o}
+      </option>
+  </select>
+  <slot name="append"></slot>
 </template>

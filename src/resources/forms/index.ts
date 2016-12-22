@@ -1,4 +1,4 @@
-import { FrameworkConfiguration } from 'aurelia-framework';
+import { FrameworkConfiguration } from "aurelia-framework";
 
 export function configure(config: FrameworkConfiguration) {
   config.globalResources('./textbox');
@@ -9,4 +9,5 @@ export function configure(config: FrameworkConfiguration) {
   config.globalResources('./fileupload');
   config.globalResources('./rangebox');
   config.globalResources('./rangeboxadv');
+  config.globalResources('./formgroup');
 }
