@@ -173,14 +173,7 @@ card-view {
         @include small;
       }
       &.small-card {
-        div.img {
-          width: 170px;
-        }
-        .basket-content-progess-bar,
-        .imageholder,
-        div.info {
-          height: 92px;
-        }
+        @include small;
       }
     }
   }

@@ -96,7 +96,7 @@
     &.tab {
       width: $tabWidth;
       &.additional-tab {
-        width: 2*$tabWidth;
+        width: $tabWidth + $additionalTabWidth;
       }
       background-color: $colorSixDarkGray;
       color: $barColor;
@@ -254,7 +254,7 @@
         bottom: 0;
       }
       .additional-tab-inner {
-        width: 300px;
+        width: $additionalTabWidth;
         overflow-x: hidden;
         overflow-y: auto;
         height: 100%;
