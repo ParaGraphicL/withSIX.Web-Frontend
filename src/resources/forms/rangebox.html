@@ -1,8 +1,7 @@
 <template>
-	<div class="form-group">
-		<label for.one-time="useId">
-          <slot>${label}</slot>
-    </label>
-		<input class.bind="cls" name.one-time="useId" id.one-time="useId" value.bind="value" type="range" min.bind="min" max.bind="max"></input>
-	</div>
+  <label for.one-time="useId">
+				<slot>${label}</slot>
+	</label>
+  <input class.bind="cls" name.one-time="useId" id.one-time="useId" value.bind="value" type="range" min.bind="min"
+    max.bind="max"></input>
 </template>

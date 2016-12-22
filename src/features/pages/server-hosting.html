@@ -181,51 +181,63 @@
           </div>
           <div>
             <div>
-              <!-- TODO: Radio -->
-              <checkbox value.bind="model.community.partOf">Are you part of a community?</checkbox>
+              <h2>Are you part of a community?</h2>
+              <formgroup>
+                <radiobox value.bind="model.community.partOf" name="has-community" model.bind="true" type="radio">Yes</radiobox>
+                <radiobox value.bind="model.community.partOf" name="has-community" model.bind="false" type="radio">No</radiobox>
+              </formgroup>
             </div>
 
             <div if.bind="model.community.partOf === null || model.community.partOf">
               <fieldset disabled.bind="!model.community.partOf & removeAttribute">
-                <textbox value.bind="model.community.name" placeholder="Name of your community...">
-                  <h2>What is the name of your community?</h2>
-                  <i>You can only sign-up for one community at a time</i>
-                </textbox>
-                <textbox value.bind="model.community.url" placeholder="URL to website, social media, BI Units or steam group..."></textbox>
+                <formgroup>
+                  <textbox value.bind="model.community.name" placeholder="Name of your community...">
+                    <h2>What is the name of your community?</h2>
+                    <i>You can only sign-up for one community at a time</i>
+                  </textbox>
+                  <textbox value.bind="model.community.url" placeholder="URL to website, social media, BI Units or steam group..."></textbox>
+                </formgroup>
 
-                <textbox value.bind="model.community.role" placeholder="Admin, Server manager, Team member, Player...">
-                  <h2>What is your role within the Community?</h2>
-                </textbox>
+                <formgroup>
+                  <textbox value.bind="model.community.role" placeholder="Admin, Server manager, Team member, Player...">
+                    <h2>What is your role within the Community?</h2>
+                  </textbox>
+                </formgroup>
 
                 <div>
                   <h2>How many <b>active members</b> are in your community?</h2>
-                  <checkbox value.bind="model.activeMembers" model="< 10">&lt; 10</checkbox>
-                  <checkbox value.bind="model.activeMembers" model="10-30">10-30</checkbox>
-                  <checkbox value.bind="model.activeMembers" model="30-50">30-50</checkbox>
-                  <checkbox value.bind="model.activeMembers" model="> 50">&gt; 50</checkbox>
-                  <!-- TODO: Radio -->
+                  <formgroup>
+                    <radiobox repeat.for="p of playerChoices" name="player-count" value.bind="model.activeMembers" model.bind="p">${p}</radiobox>
+                  </formgroup>
                 </div>
               </fieldset>
             </div>
             <div>
               <div>
-                <h2>What game-mode(s) do you mostly play?</h2>
-                <checkbox value.bind="model.gameModes" model.bind="m" repeat.for="m of gameModes">${m}</checkbox>
-                <textbox value.bind="model.otherGameModes" placeholder="other game-mode(s)"></textbox>
+                <formgroup>
+                  <h2>What game-mode(s) do you mostly play?</h2>
+                  <checkbox value.bind="model.gameModes" model.bind="m" repeat.for="m of gameModes">${m}</checkbox>
+                  <textbox value.bind="model.otherGameModes" placeholder="other game-mode(s)"></textbox>
+                </formgroup>
               </div>
 
-              <textbox value.bind="model.serverTypes">
-                <h2>What type of servers do you run (CPU, RAM, OS, Location)</h2>
-              </textbox>
+              <formgroup>
+                <textbox value.bind="model.serverTypes">
+                  <h2>What type of servers do you run (CPU, RAM, OS, Location)</h2>
+                </textbox>
+              </formgroup>
 
-              <textbox value.bind="model.mods">
-                <h2>What kind of mods (if any) are you using?</h2>
-              </textbox>
+              <formgroup>
+                <textbox value.bind="model.mods">
+                  <h2>What kind of mods (if any) are you using?</h2>
+                </textbox>
+              </formgroup>
 
-              <textbox value.bind="model.modsHosted" disabled.bind="!model.mods">
-                <h2>Where are your mods hosted, how do you install and share them?</h2>
-              </textbox>
-
+              <formgroup>
+                <textbox value.bind="model.modsHosted" disabled.bind="!model.mods">
+                  <h2>Where are your mods hosted, how do you install and share them?</h2>
+                </textbox>
+              </formgroup>
             </div>
           </div>
         </div>

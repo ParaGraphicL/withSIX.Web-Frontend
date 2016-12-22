@@ -4,6 +4,7 @@ export class ServerHosting extends ViewModel {
   avatarUrl: string;
 
   gameModes = ["Co-op", "PVP", "DM", "KotH", "Other"];
+  playerChoices = ["< 10", "10-30", "30-50", "> 50"];
 
   model = {
     gameModes: [],
@@ -12,6 +13,7 @@ export class ServerHosting extends ViewModel {
     mods: "",
     modsHosted: "",
     community: {
+      partOf: null,
       name: "",
       url: "",
       role: "",
