@@ -1,10 +1,27 @@
 @import "_base";
+.tab-content-container.mods {
+  .additional-tab-inner {
+    color: $colorSixDarkGray;
+    background-color: $colorSixSoftGray;
+  }
+}
+
 #content-selector {
-  color: $colorSixDarkGray;
-  background-color: $colorSixSoftGray;
   //position: fixed;
   //right: 364px;
   //top: 48px;
   //bottom: 0px;
+  font-size: 12px;
   padding: 16px;
+  .filters-area input {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+  .small-card {
+    action-bar {
+      button.add-to-server {
+        display: block;
+      }
+    }
+  }
 }

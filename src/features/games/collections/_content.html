@@ -3,8 +3,8 @@
     typeahead-options.bind="typeahead" items.bind="model.items" filters.bind="filters" search-fields.bind="searchFields"
     sort.bind="sort" view-types.bind="availableViewTypes"></filters>
 
-  <card-view card-columns.bind="cardColumns" items.bind="model.items" show-ads.one-time="true" view-path="features/profile/content/"
-    item-type="collection">
+  <card-view card-columns.bind="cardColumns" card-cls.bind="cardCls" items.bind="model.items" show-ads.one-time="true"
+    view-path="features/profile/content/" item-type="collection" item-type-override.bind="itemType">
   </card-view>
 
   <command-button model.bind="loadMore"></command-button>

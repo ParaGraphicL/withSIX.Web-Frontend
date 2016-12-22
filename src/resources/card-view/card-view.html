@@ -7,7 +7,7 @@
     <div if.bind="!isVirtual">
       <template repeat.for="item of items">
         <card-view-item item.bind="item" card-container-cls.bind="cardContainerCls" card-cls.bind="cardCls" item-type.bind="itemType"
-          view-path.bind="viewPath" view.bind="view">
+          item-type-override.bind="itemTypeOverride" view-path.bind="viewPath" view.bind="view">
           <div slot="item-template" if.bind="replaced">
             <template replaceable part="item-template"></template>
           </div>
@@ -20,7 +20,8 @@
     <div if.bind="isVirtual" class="virtual-container">
       <template virtual-repeat.for="item of items">
         <card-view-item class="virtual-row" item.bind="item" card-container-cls.bind="cardContainerCls" card-cls.bind="cardCls"
-          item-type.bind="itemType" view-path.bind="viewPath" view.bind="view">
+          item-type.bind="itemType" item-type-override.bind="itemTypeOverride" view-path.bind="viewPath"
+          view.bind="view">
           <div slot="item-template" if.bind="replaced">
             <template replaceable part="item-template"></template>
           </div>
@@ -34,7 +35,7 @@
     <div if.bind="!isVirtual">
       <template repeat.for="[key, item] of itemsMap">
         <card-view-item item.bind="item" card-container-cls.bind="cardContainerCls" card-cls.bind="cardCls" item-type.bind="itemType"
-          view-path.bind="viewPath" view.bind="view">
+          item-type-override.bind="itemTypeOverride" view-path.bind="viewPath" view.bind="view">
           <div slot="item-template" if.bind="replaced">
             <template replaceable part="item-template"></template>
           </div>
@@ -46,7 +47,8 @@
     <div if.bind="isVirtual" class="virtual-container">
       <template virtual-repeat.for="item of itemsMap | mapToAry">
         <card-view-item class="virtual-row" item.bind="item" card-container-cls.bind="cardContainerCls" card-cls.bind="cardCls"
-          item-type.bind="itemType" view-path.bind="viewPath" view.bind="view">
+          item-type.bind="itemType" item-type-override.bind="itemTypeOverride" view-path.bind="viewPath"
+          view.bind="view">
           <div slot="item-template" if.bind="replaced">
             <template replaceable part="item-template"></template>
           </div>
