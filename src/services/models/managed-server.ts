@@ -125,9 +125,9 @@ subscription($serverId: ID!) {
       this.mods.delete(mod.id);
       ManagedServer.eventPublisher(new RemovedModFromServer(mod, this.id));
     } else {
-      const { id, constraint } = mod;
-      this.mods.set(mod.id, {
-        id, constraint, type: mod.itemType,
+      const { id, constraint, name, image, version, author, sizePacked } = mod;
+      this.mods.set(mod.id, <any>{
+        id, constraint, type: mod.itemType, name, sizePacked, avatarUrl: image, latestStableVersion: version, authorDisplayName: author
       });
       ManagedServer.eventPublisher(new ModAddedToServer(mod, this.id));
     }
