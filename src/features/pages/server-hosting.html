@@ -22,12 +22,15 @@
             </div>
 
             <div class="tile text">
-              <h2>What is <b>Host withSIX</b></h2>
+              <h2>
+                <markdown>What is **Host withSIX**</markdown>
+              </h2>
               <p>
-                <i>Host withSIX is an innovative new server hosting service.</i> Power by the withSIX
-                network we are able to introduce the most flexible way to rent and run your own servers.
-                With the goal of creating the easiest way to set up a fully modded server session in
-                just minutes!
+                <markdown>
+                  _Host withSIX is an innovative new server hosting service._ Powered by the withSIX network we are able
+                  to introduce the most flexible way to rent and run your own servers. With the goal
+                  of creating the easiest way to set up a fully modded server session in just minutes!
+                </markdown>
               </p>
             </div>
           </article>
@@ -102,11 +105,13 @@
 
               <div class="tile text">
                 <h2>
-                  <b>Session based</b> rental
+                  <markdown>**Session based** rental</markdown>
                 </h2>
                 <p>
-                  Set up your server for just the moments you play on them. Run a single night-long session or your weekly
-                  training sessions without the need...
+                  <markdown>
+                    Prepare your server and **pay only for the time you play** on it. Host single missions, weekly sessions
+                    or massive events instantly, without monthly subscriptions or long term commitment.
+                  </markdown>
                 </p>
               </div>
             </article>
@@ -118,10 +123,13 @@
 
               <div class="tile text">
                 <h2>
-                  Powerful <b>mods &amp; missions network</b>
+                  <markdown>Powerful mods & missions network</markdown>
                 </h2>
                 <p>
-                  Access all the content you need, versions that have been released and collections used by....
+                  <markdown>
+                    Run your server with any mission or mod you want. Choose from **thousands of mods** and collections available
+                    on withSIX.com or upload your own with ease.
+                  </markdown>
                 </p>
               </div>
             </article>
@@ -135,10 +143,13 @@
 
               <div class="tile text">
                 <h2>
-                  <b>Easy access through</b> custom server pages
+                  <markdown>Easy access and automatic synchronization</markdown>
                 </h2>
                 <p>
-                  Share your page to players and allow them to join with a single click. Manage the page for your...
+                  <markdown>
+                    Customize and share your very own server page. Let your friends **join your server with a single click**,
+                    while all required content is synchronized automatically.
+                  </markdown>
                 </p>
               </div>
             </article>
@@ -150,11 +161,13 @@
 
               <div class="tile text">
                 <h2>
-                  <b>Admin controls &amp; insights</b>
+                  <markdown>Web based admin control panel</markdown>
                 </h2>
                 <p>
-                  Use the web interface to control your server from any device that you're logged in to. Launch, stop and
-                  restart your server with the...
+                  <markdown>
+                    Use the web interface to control every aspect of your server from any device. Prepare, launch and edit
+                    your server and **manage your session in real-time**.
+                  </markdown>
                 </p>
               </div>
             </article>
@@ -254,16 +267,16 @@
           &nbsp;
         </div>
         <div class="col-md-5">
-          <h2>Beta testing</h2>
+          <h2>
+            <markdown>How to help beta testing</markdown>
+          </h2>
           <p>
-            <b>We've been working hard on creating an awesome new servie and are getting ready to release it to the public.
-          This beta test will help us ensure to deliver a high quality new feature and measure the UX of our UI. 
-          We offer a limited number of premium users early-access to set up their own servers now.
-          </b> etc. etc.
+            <markdown model.bind="betaText"></markdown>
           </p>
 
           <form-group required.one-time="true">
             <command-button cls="ok" model.bind="signup"><b>Sign-up</b> for free beta access</command-button>
+            <br />
             <checkbox value.bind="model.agree">I agree with the terms of service and privacy policy</checkbox>
           </form-group>
         </div>
