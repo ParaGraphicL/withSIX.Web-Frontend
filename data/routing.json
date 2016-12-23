@@ -47,6 +47,9 @@
     },
     "/changelog/:nolayout?": {},
     "/gopremium": {},
+    "/server-hosting": {
+      "type": "aurelia"
+    },
     "/download": {
       "type": "aurelia"
     },

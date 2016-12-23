@@ -10,7 +10,7 @@ export class Index extends FilteredBase<IModInContent> {
 
 
   async activate(params) {
-    if (!this.w6.collection2) throw new this.tools.NotFoundException("Collection not found", { statusText: "NotFound", status: 404, body: "" });
+    if (!this.w6.collection2) throw new this.tools.NotFoundException("Collection not found", { statusText: "NotFound", status: 404, data: "" });
     await super.activate(params);
   }
 

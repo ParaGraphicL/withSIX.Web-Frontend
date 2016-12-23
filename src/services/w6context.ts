@@ -206,14 +206,14 @@ export class W6Context {
         .executeForPromise(() => this.http.fetch(url, configOverride));
     } catch (err) {
       if (err instanceof Response) {
-
-        let body;
+        let data;
         try {
-          body = this.w6.convertToClient(await err.json());
+          data = this.w6.convertToClient(await err.json());
         } catch (err) {
-          body = {};
+          data = {};
         }
-        throw this.handleResponseErrorStatus({ ...err, body }, this.w6.isLoggedIn);
+        (<any>err).data = data;
+        throw this.handleResponseErrorStatus(err, this.w6.isLoggedIn);
       }
       throw err;
     }
