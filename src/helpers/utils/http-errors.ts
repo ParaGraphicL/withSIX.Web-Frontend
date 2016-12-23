@@ -1,5 +1,8 @@
 export const createHttpError = (name: string, proto = Error.prototype): HttpErrorConstructor<any> => {
-  var f = function (message: string, requestInfo: IRequestInfo<any>, inner?: IError) {
+  const f = function (message: string, requestInfo: IRequestInfo<any>, inner?: IError) {
+    if (!requestInfo.headers) {
+      requestInfo.headers = new Headers();
+    }
     Object.defineProperty(this, 'name', {
       enumerable: false,
       writable: false,
@@ -25,10 +28,11 @@ export const createHttpError = (name: string, proto = Error.prototype): HttpErro
       writable: false,
       value: requestInfo.statusText
     });
+    // TODO: 'data'
     Object.defineProperty(this, 'body', {
       enumerable: false,
       writable: false,
-      value: requestInfo.body
+      value: requestInfo.data
     });
     Object.defineProperty(this, 'headers', {
       enumerable: false,
@@ -38,14 +42,14 @@ export const createHttpError = (name: string, proto = Error.prototype): HttpErro
     Object.defineProperty(this, 'requestID', {
       enumerable: false,
       writable: true,
-      value: requestInfo.headers ? requestInfo.headers.get('x-withsix-requestid') : null
+      value: requestInfo.headers.get('x-withsix-requestid')
     });
 
-    if (requestInfo.body && requestInfo.body.modelState) {
+    if (requestInfo.data && requestInfo.data.modelState) {
       Object.defineProperty(this, 'modelState', {
         enumerable: false,
         writable: true,
-        value: requestInfo.body.modelState
+        value: requestInfo.data.modelState
       });
     }
 
@@ -71,7 +75,8 @@ export const createHttpError = (name: string, proto = Error.prototype): HttpErro
 export interface IRequestInfo<T> {
   status: number;
   statusText: string;
-  body: T;
+  //body;
+  data?: T;
   headers?: Headers;
 }
 
