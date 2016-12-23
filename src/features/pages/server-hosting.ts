@@ -1,5 +1,6 @@
 import { ValidationGroup } from "aurelia-validation";
-import { uiCommand2, ViewModel } from "../../framework";
+import { handlerFor, uiCommand2, ViewModel, VoidCommand } from "../../framework";
+import { ServerHandler } from "../rside-bar/control/actions/base";
 
 export class ServerHosting extends ViewModel {
   static inCheck(arr) { return arr.indexOf("Other") > -1; }
@@ -28,7 +29,8 @@ export class ServerHosting extends ViewModel {
 
   signup = uiCommand2("Sign up", async () => {
     await this.validation.validate();
-    alert("TODO");
+    await this.request(new Signup(this.model));
+    alert("Thanks for signing up. Check your email. TODO");
   }, { cls: "ok" });
 
   get otherGameModeChecked() { return ServerHosting.inCheck(this.model.gameModes); }
@@ -73,5 +75,16 @@ export class ServerHosting extends ViewModel {
       .isNotEmpty()
       .ensure("model.community.role")
       .isNotEmpty();
+  }
+}
+
+class Signup extends VoidCommand {
+  constructor(public model) { super(); }
+}
+
+@handlerFor(Signup)
+class SignupHandler extends ServerHandler<Signup, void> {
+  handle(signup: Signup) {
+    return this.client.signup.signup(signup.model);
   }
 }

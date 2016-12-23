@@ -40,6 +40,13 @@ export class ServersApi extends ApiBase {
   }
 }
 
+@inject(W6Context)
+export class ServerSignupApi extends ApiBase {
+  constructor(ctx: W6Context) { super(ctx, "/api/server-hosting"); }
+
+  signup(model) { return this._post<void>("/", { model }); }
+}
+
 export interface IManagedServerSetupBase {
   additionalSlots: number;
   location: ServerLocation;
