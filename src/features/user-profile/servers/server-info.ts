@@ -8,7 +8,7 @@ import { ServerRenderBase } from "../../games/servers/server-render-base";
 export class Show extends ServerRenderBase {
   async activate(model: { address: string }) {
     const servers = await new GetServer(this.w6.activeGame.id, [model.address]).handle(this.mediator);
-    if (servers.items.length === 0) { throw new this.tools.NotFoundException("The specified server could not be found!", { body: null, status: 404, statusText: "NotFound" }); };
+    if (servers.items.length === 0) { throw new this.tools.NotFoundException("The specified server could not be found!", { status: 404, statusText: "NotFound" }); };
     await super.activateInternal(servers.items[0]);
   }
 }

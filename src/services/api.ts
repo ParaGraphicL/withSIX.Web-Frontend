@@ -157,7 +157,7 @@ export class Api extends Base {
 
   handleHttpError(r: IHttpException<ErrorResponseBody>) {
     Tools.Debug.error('ERROR during request, Request ID: ' + r.headers.get('x-withsix-requestid'), r);
-    let message = r.body && r.body.message || '';
+    let message = r.data && r.data.message || '';
     if (r instanceof Tools.ValidationError && r.modelState) angular.forEach(r.modelState, (v, k) => message += "\n" + v);
     let status = r.status && r.statusText ? "\n(" + r.status + ": " + r.statusText + ")" : '';
     return [message + status, `Request failed`];
