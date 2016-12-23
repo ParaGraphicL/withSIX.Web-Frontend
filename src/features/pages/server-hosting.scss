@@ -17,6 +17,9 @@
     font-size: 42px;
     text-align: center;
   }
+  .center {
+    text-align: center;
+  }
   .details {
     section {
       p {
@@ -78,6 +81,11 @@
     #secure {
       .img {
         background-color: $colorSixGreen;
+      }
+    }
+    #powerful {
+      .img {
+        background-color: $colorSixSoftRed;
       }
     }
     #improvements {
@@ -182,6 +190,7 @@
   }
   h2.group-header {
     font-size: 20px;
+    margin-top: 64px;
   }
   .subscribe {
     margin-top: 16px;
