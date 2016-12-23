@@ -20,7 +20,6 @@ export class MarkdownCustomElement {
     this.converter = getConverter(this.htmlSafe);
     this.root = this.element.shadowRoot || this.element;
     if (!this.model) {
-      console.log("$$$$ ", this.element, this.element.firstChild);
       const el = this.element;
       this.valueChanged(el.innerHTML);
     } else {
