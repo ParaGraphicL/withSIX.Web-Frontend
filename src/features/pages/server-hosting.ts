@@ -78,7 +78,8 @@ export class ServerHosting extends ViewModel {
   }
 
   // doing this in here because VSCode's formatter otherwise removes the empty lines etc.
-  betaText = `**Your feedback is crucial for us to get this awesome new feature ready for public release.**
+  betaText = `## How to help beta testing
+  **Your feedback is crucial for us to get this awesome new feature ready for public release.**
 
 As a tester, we want you to use our servers for your gaming sessions and report any issue you come across on our bug tracker. 
 
