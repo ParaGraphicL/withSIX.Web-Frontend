@@ -26,11 +26,12 @@ export class ServerHosting extends ViewModel {
     },
   };
   validation: ValidationGroup;
+  done = false;
 
   signup = uiCommand2("Sign up", async () => {
     await this.validation.validate();
     await this.request(new Signup(this.model));
-    alert("Thanks for signing up. Check your email. TODO");
+    this.done = true;
   }, { cls: "ok" });
 
   get otherGameModeChecked() { return ServerHosting.inCheck(this.model.gameModes); }

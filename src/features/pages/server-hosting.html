@@ -4,6 +4,16 @@
   <compose view-model="./main-menu"></compose>
 
   <div id="server-hosting">
+    <div if.bind="done" class="tile">
+      <div class="row">
+        <div class="col-md-3">&nbsp;</div>
+        <div class="col-md-6">
+          <compose view="./server-hosting/thanks.html"></compose>
+        </div>
+        <div class="col-md-3">&nbsp;</div>
+      </div>
+    </div>
+    <div if.bind="!done">
     <div class="container-fluid details">
       <h1>
         <b>Host withSIX</b> limited access beta
@@ -272,5 +282,6 @@
         </div>
       </div>
     </div>
+  </div>
   </div>
 </template>
