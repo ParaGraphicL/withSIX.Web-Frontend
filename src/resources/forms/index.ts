@@ -10,5 +10,5 @@ export function configure(config: FrameworkConfiguration) {
   config.globalResources('./fileupload');
   config.globalResources('./rangebox');
   config.globalResources('./rangeboxadv');
-  config.globalResources('./formgroup');
+  config.globalResources('./form-group');
 }

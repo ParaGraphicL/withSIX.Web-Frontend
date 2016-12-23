@@ -179,66 +179,75 @@
             <span if.bind="userInfo.isPremium"><span class="icon withSIX-icon-Badge-Sponsor"></span>Premium</span>
             <textbox disabled.one-time="true" value.bind="userInfo.email"></textbox>
           </div>
-          <div>
-            <div>
-              <h2>Are you part of a community?</h2>
-              <formgroup>
-                <radiobox value.bind="model.community.partOf" name="has-community" model.bind="true" type="radio">Yes</radiobox>
-                <radiobox value.bind="model.community.partOf" name="has-community" model.bind="false" type="radio">No</radiobox>
-              </formgroup>
-            </div>
-
-            <div if.bind="model.community.partOf === null || model.community.partOf">
-              <fieldset disabled.bind="!model.community.partOf & removeAttribute">
-                <formgroup>
-                  <textbox value.bind="model.community.name" placeholder="Name of your community...">
-                    <h2>What is the name of your community?</h2>
-                    <i>You can only sign-up for one community at a time</i>
-                  </textbox>
-                  <textbox value.bind="model.community.url" placeholder="URL to website, social media, BI Units or steam group..."></textbox>
-                </formgroup>
-
-                <formgroup>
-                  <textbox value.bind="model.community.role" placeholder="Admin, Server manager, Team member, Player...">
-                    <h2>What is your role within the Community?</h2>
-                  </textbox>
-                </formgroup>
-
-                <div>
-                  <h2>How many <b>active members</b> are in your community?</h2>
-                  <formgroup>
-                    <radiobox repeat.for="p of playerChoices" name="player-count" value.bind="model.activeMembers" model.bind="p">${p}</radiobox>
-                  </formgroup>
-                </div>
-              </fieldset>
-            </div>
-            <div>
+          <div if.bind="!isLoggedIn">
+            Please <button click.delegate="w6.openLoginDialog()">login first</button>
+          </div>
+          <div if.bind="userInfo.isPremium">
+            <form role="form" validate.bind="validation">
               <div>
-                <formgroup>
-                  <h2>What game-mode(s) do you mostly play?</h2>
-                  <checkbox value.bind="model.gameModes" model.bind="m" repeat.for="m of gameModes">${m}</checkbox>
-                  <textbox value.bind="model.otherGameModes" placeholder="other game-mode(s)"></textbox>
-                </formgroup>
+                <h2>Are you part of a community?</h2>
+                <form-group required.one-time="true">
+                  <radiobox value.bind="model.community.partOf" name="has-community" model.bind="true" type="radio">Yes</radiobox>
+                  <radiobox value.bind="model.community.partOf" name="has-community" model.bind="false" type="radio">No</radiobox>
+                </form-group>
               </div>
 
-              <formgroup>
-                <textbox value.bind="model.serverTypes">
-                  <h2>What type of servers do you run (CPU, RAM, OS, Location)</h2>
-                </textbox>
-              </formgroup>
+              <div if.bind="model.community.partOf === null || model.community.partOf">
+                <fieldset disabled.bind="!model.community.partOf & removeAttribute">
+                  <form-group required.one-time="true">
+                    <textbox value.bind="model.community.name" placeholder="Name of your community...">
+                      <h2>What is the name of your community?</h2>
+                      <i>You can only sign-up for one community at a time</i>
+                    </textbox>
+                    <textbox value.bind="model.community.url" placeholder="URL to website, social media, BI Units or steam group..."></textbox>
+                  </form-group>
 
-              <formgroup>
-                <textbox value.bind="model.mods">
-                  <h2>What kind of mods (if any) are you using?</h2>
-                </textbox>
-              </formgroup>
+                  <form-group required.one-time="true">
+                    <textbox value.bind="model.community.role" placeholder="Admin, Server manager, Team member, Player...">
+                      <h2>What is your role within the Community?</h2>
+                    </textbox>
+                  </form-group>
 
-              <formgroup>
-                <textbox value.bind="model.modsHosted" disabled.bind="!model.mods">
-                  <h2>Where are your mods hosted, how do you install and share them?</h2>
-                </textbox>
-              </formgroup>
-            </div>
+                  <div>
+                    <h2>How many <b>active members</b> are in your community?</h2>
+                    <form-group required.one-time="true">
+                      <radiobox repeat.for="p of playerChoices" name="player-count" value.bind="model.activeMembers" model.bind="p">${p}</radiobox>
+                    </form-group>
+                  </div>
+                </fieldset>
+              </div>
+              <div>
+                <div>
+                  <form-group required.one-time="true">
+                    <h2>What game-mode(s) do you mostly play?</h2>
+                    <checkbox value.bind="model.gameModes" model.bind="m" repeat.for="m of gameModes">${m}</checkbox>
+                    <textbox value.bind="model.otherGameModes" placeholder="other game-mode(s)" disabled.bind="!otherGameModeChecked"></textbox>
+                  </form-group>
+                </div>
+
+                <form-group>
+                  <textbox value.bind="model.serverTypes">
+                    <h2>What type of servers do you run (if any) (CPU, RAM, OS, Location)</h2>
+                  </textbox>
+                </form-group>
+
+                <form-group>
+                  <textbox value.bind="model.mods">
+                    <h2>What kind of mods (if any) are you using?</h2>
+                  </textbox>
+                </form-group>
+
+                <form-group>
+                  <textbox value.bind="model.modsHosted" disabled.bind="!model.mods">
+                    <h2>Where are your mods hosted, how do you install and share them?</h2>
+                  </textbox>
+                </form-group>
+              </div>
+            </form>
+          </div>
+
+          <div if.bind="!userInfo.isPremium">
+            At this time we only provide early access to <a href="/gopremium">Premium users</a>
           </div>
         </div>
         <div class="col-md-1">
@@ -253,8 +262,10 @@
           </b> etc. etc.
           </p>
 
-          <button><b>Sign-up</b> for free beta access</button>
-          <checkbox value.bind="model.agree">I agree with the terms of service and privacy policy</checkbox>
+          <form-group required.one-time="true">
+            <command-button cls="ok" model.bind="signup"><b>Sign-up</b> for free beta access</command-button>
+            <checkbox value.bind="model.agree">I agree with the terms of service and privacy policy</checkbox>
+          </form-group>
         </div>
       </div>
     </div>
