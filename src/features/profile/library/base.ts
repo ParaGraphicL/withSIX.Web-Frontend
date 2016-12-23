@@ -30,7 +30,7 @@ export class BaseGame extends ViewModel {
     this.libraryParent = this.w6.libraryParent;
     this.game = this.libraryParent.model.game;
     if (!this.game) {
-      throw new this.tools.NotFoundException("The specified game could not be found!", { body: null, status: 404, statusText: "NotFound" });
+      throw new this.tools.NotFoundException("The specified game could not be found!", { status: 404, statusText: "NotFound" });
     }
     this.selectedGame = this.libraryParent.getGame(this.game.id);
     let itemSlug = this.itemType ? "/" + this.itemType + "s" : "";

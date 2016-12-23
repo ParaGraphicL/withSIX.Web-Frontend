@@ -40,21 +40,21 @@ export class ErrorLoggingMediatorDecorator implements IMediator {
     } catch (err) {
       if (err instanceof ApolloError) {
         if (isGraphStatusError(<ApolloError>err, 404)) {
-          throw HttpErrorCreator.create404({ status: 404, statusText: "NotFound", body: null }, err);
+          throw HttpErrorCreator.create404({ status: 404, statusText: "NotFound" }, err);
         }
         if (isGraphStatusError(<ApolloError>err, 403)) {
-          throw HttpErrorCreator.create403({ status: 403, statusText: "Forbidden", body: null }, err);
+          throw HttpErrorCreator.create403({ status: 403, statusText: "Forbidden" }, err);
         }
         if (isGraphStatusError(<ApolloError>err, 401)) {
           // localstorage used to work around injection limitations
           throw HttpErrorCreator.create401(!!localStorage.getItem("aurelia_token"), {
-            status: 401, statusText: "Unauthorized", body: null
+            status: 401, statusText: "Unauthorized"
           }, err);
         }
         if (isGraphStatusError(<ApolloError>err, 500)) {
-          throw HttpErrorCreator.create500({ status: 500, statusText: "InternalServerError", body: null }, err);
+          throw HttpErrorCreator.create500({ status: 500, statusText: "InternalServerError" }, err);
         }
-        throw HttpErrorCreator.createUnknown({ status: 500, statusText: "UnknownError", body: null }, err);
+        throw HttpErrorCreator.createUnknown({ status: 500, statusText: "UnknownError" }, err);
       }
       throw err;
     }
@@ -116,10 +116,10 @@ export class DbQuery<TRequest, TResponse> extends RequestBase<TRequest, TRespons
     try {
       result = await promise;
     } catch (failure) {
-      if (failure.status === 404) throw new Tools.NotFoundException("The server responded with 404", { status: 404, statusText: "NotFound", body: {} });
+      if (failure.status === 404) throw new Tools.NotFoundException("The server responded with 404", { status: 404, statusText: "NotFound" });
       else throw failure;
     }
-    if (result.results.length === 0) throw new Tools.NotFoundException("There were no results returned from the server", { status: 404, statusText: "NotFound", body: {} });
+    if (result.results.length === 0) throw new Tools.NotFoundException("There were no results returned from the server", { status: 404, statusText: "NotFound" });
     return result.results[0];
   }
 
