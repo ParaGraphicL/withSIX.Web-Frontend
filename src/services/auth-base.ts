@@ -365,4 +365,5 @@ export class UserInfo extends EntityExtends.UserBase implements IUserInfo {
   emailConfirmed: boolean;
   passwordSet: boolean;
   hasGroups: boolean;
+  email: string;
 }
