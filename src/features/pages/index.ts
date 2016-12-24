@@ -30,7 +30,7 @@ export class PagesModule extends ViewModel {
 
     if (this.features.serverHosting) {
       config.map([
-        { route: `${routeMount}server-hosting`, name: 'server-hosting', moduleId: `${mount}server-hosting`, nav: false, title: 'Server Hosting', auth: true },
+        { route: `${routeMount}server-hosting`, name: 'server-hosting', moduleId: `${mount}server-hosting`, nav: false, title: 'Server Hosting' },
       ]);
     }
   }
