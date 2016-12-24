@@ -68,7 +68,7 @@ export class TopBar extends ViewModel {
       this.tabs.push(userTab)
     }
 
-    if (this.features.createServers) {
+    if (this.features.createServers && this.isLoggedIn && this.userInfo.isPremium) {
       this.tabs.push({
         header: "Servers",
         icon: "icon withSIX-icon-Nav-Server",

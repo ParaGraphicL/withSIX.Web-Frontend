@@ -1,5 +1,10 @@
 @import "_base";
 #server-hosting {
+  .agree-cb {
+    input {
+      margin-top: -6px;
+    }
+  }
   #bulkoptions {
     background-color: $colorSixBlue;
     padding: 16px;
@@ -63,9 +68,6 @@
       .img {
         background-color: $colorSixBlue;
         @include squareImg($size, 0.75);
-        span {
-          top: 0;
-        }
       }
     }
     #ad-removal {
@@ -161,6 +163,7 @@
   #experience-gamer {
     .img span {
       color: $colorSixBlue;
+      font-weight: bold;
     }
   }
   #experience-mod {

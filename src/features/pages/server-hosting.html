@@ -29,20 +29,14 @@
           <div class="col-sm-10 col-lg-8">
             <article id="what-is">
 
-              <div class="img pull-left">
-                <span class="icon withSIX-icon-Logo-Sync"></span>
+              <div class="img pull-left" style="overflow: hidden;">
+                <!--<span class="icon withSIX-icon-Logo-Sync"></span>-->
+                <img src="${w6.url.cdn}/img/hosting-logo.png" style="    height: 128px;    width: 153.6px;    margin-left: -13px;    margin-top: 2px;"
+                />
               </div>
 
               <div class="tile text">
-                <markdown>
-                  ## What is **Host withSIX**
-                  <noop>
-                    _Host withSIX is an innovative new hosting service for game servers._ Powered by the withSIX network
-                    we are able to introduce the most flexible way to rent and run your own servers.
-                    With the goal of creating the easiest way to set up a fully modded server session
-                    in just minutes!
-                  </noop>
-                </markdown>
+                <markdown model.bind="headerText"></markdown>
               </div>
             </article>
           </div>
@@ -100,6 +94,7 @@
                     <div class="text">
                       <b>Support Class</b>
                       <br/>Headless clients<br/> Extra
+                      <br />&nbsp;
                     </div>
                   </article>
                 </div>
@@ -198,16 +193,18 @@
                 <img src.bind="avatarUrl" />
                 <span innerHTML.bind="userInfo.userName"></span>
                 <span if.bind="userInfo.isPremium"><span class="icon withSIX-icon-Badge-Sponsor"></span>Premium</span>
+                <br />
                 <textbox disabled.one-time="true" value.bind="userInfo.email"></textbox>
               </div>
               <div if.bind="!isLoggedIn">
-                Please <button click.delegate="w6.openLoginDialog()">login first</button>
+                Please <button class="naked-button default" click.delegate="w6.openLoginDialog()">login first</button>
               </div>
               <div if.bind="userInfo.isPremium">
                 <form role="form" validate.bind="validation">
                   <div>
-                    <h2>Are you part of a community?</h2>
-                    <form-group required.one-time="true">
+
+                    <h2 class="required"><label>Are you part of a community?</label></h2>
+                    <form-group>
                       <radiobox value.bind="model.community.partOf" name="has-community" model.bind="true" type="radio">Yes</radiobox>
                       <radiobox value.bind="model.community.partOf" name="has-community" model.bind="false" type="radio">No</radiobox>
                     </form-group>
@@ -215,23 +212,23 @@
 
                   <div if.bind="model.community.partOf === null || model.community.partOf">
                     <fieldset disabled.bind="!model.community.partOf & removeAttribute">
-                      <form-group required.one-time="true">
+                      <form-group>
                         <textbox value.bind="model.community.name" placeholder="Name of your community...">
-                          <h2>What is the name of your community?</h2>
+                          <h2 class="required"><label>What is the name of your community?</label></h2>
                           <i>You can only sign-up for one community at a time</i>
                         </textbox>
                         <textbox value.bind="model.community.url" placeholder="URL to website, social media, BI Units or steam group..."></textbox>
                       </form-group>
 
-                      <form-group required.one-time="true">
+                      <form-group>
                         <textbox value.bind="model.community.role" placeholder="Admin, Server manager, Team member, Player...">
-                          <h2>What is your role within the Community?</h2>
+                          <h2 class="required"><label>What is your role within the Community?</label></h2>
                         </textbox>
                       </form-group>
 
                       <div>
-                        <h2>How many <b>active members</b> are in your community?</h2>
-                        <form-group required.one-time="true">
+                        <h2 class="required"><label>How many <b>active members</b> are in your community?</label></h2>
+                        <form-group>
                           <radiobox repeat.for="p of playerChoices" name="player-count" value.bind="model.activeMembers" model.bind="p">${p}</radiobox>
                         </form-group>
                       </div>
@@ -239,8 +236,8 @@
                   </div>
                   <div>
                     <div>
-                      <form-group required.one-time="true">
-                        <h2>What game-mode(s) do you mostly play?</h2>
+                      <form-group>
+                        <h2 class="required"><label>What game-mode(s) do you mostly play?</label></h2>
                         <checkbox value.bind="model.gameModes" model.bind="m" repeat.for="m of gameModes">${m}</checkbox>
                         <textbox value.bind="model.otherGameModes" placeholder="other game-mode(s)" disabled.bind="!otherGameModeChecked"></textbox>
                       </form-group>
@@ -268,19 +265,21 @@
               </div>
 
               <div if.bind="!userInfo.isPremium">
-                This feature is currently available exclusively for <a href="/gopremium">Premium users</a>.
+                <h2>This feature is currently available exclusively for <a href="/gopremium">Premium users</a>.</h2>
               </div>
             </div>
             <div class="col-md-1">
               &nbsp;
             </div>
-            <div class="col-md-5">
+            <div class="col-md-5" if.bind="userInfo.isPremium">
               <markdown model.bind="betaText"></markdown>
 
-              <form-group required.one-time="true">
-                <command-button cls="ok" model.bind="signup"><b>Sign-up</b> for free beta access</command-button>
+              <form-group>
                 <br />
-                <checkbox value.bind="model.agree">I agree with the terms of service and privacy policy</checkbox>
+                <command-button cls="ok" model.bind="signup"><b>Sign-up</b> for free beta access</command-button>
+                <br /><br />
+                <span class="required"><label><checkbox class="agree-cb" value.bind="model.agree">I agree with the terms of service and privacy policy</checkbox></label></span>
+
               </form-group>
             </div>
           </div>
