@@ -1,4 +1,5 @@
-import { bindable, noView, customElement, inject, processContent } from 'aurelia-framework';
+import { bindable, noView, customElement, inject, processContent, Container } from 'aurelia-framework';
+import { W6 } from "../services/withSIX";
 //import showdown from 'showdown';
 //import prism from 'prism';
 
@@ -8,13 +9,13 @@ const getConverter = (htmlSafe) => htmlSafe ? new Markdown.Converter() : Markdow
 @processContent(false)
 @customElement("markdown")
 @noView
-@inject(Element)
+@inject(Element, W6)
 export class MarkdownCustomElement {
   root; converter;
   @bindable htmlSafe = true;
   @bindable model = null;
 
-  constructor(private element: Element) { }
+  constructor(private element: Element, private w6: W6) { }
 
   attached() {
     this.converter = getConverter(this.htmlSafe);
@@ -33,7 +34,7 @@ export class MarkdownCustomElement {
 
   valueChanged(newValue) {
     if (!this.root) return;
-    this.root.innerHTML = this.converter.makeHtml(dedent(newValue));
+    this.root.innerHTML = this.converter.makeHtml(dedent(newValue.replace("${userInfo.email}", this.w6.userInfo.email)));
     /*
     var codes = this.root.querySelectorAll('pre code');
     for(var node of codes) {

@@ -21,6 +21,7 @@ export interface IUserInfo {
   lastName: string;
   profileUrl: string; // computed
   emailConfirmed: boolean;
+  email: string;
   passwordSet: boolean;
   hasGroups: boolean;
   clearAvatars(): void;
