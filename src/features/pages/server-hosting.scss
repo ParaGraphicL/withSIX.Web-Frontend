@@ -1,5 +1,10 @@
 @import "_base";
 #server-hosting {
+  .agree-cb {
+    input {
+      margin-top: -6px;
+    }
+  }
   #bulkoptions {
     background-color: $colorSixBlue;
     padding: 16px;

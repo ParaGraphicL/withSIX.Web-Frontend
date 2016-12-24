@@ -191,10 +191,11 @@
                 <img src.bind="avatarUrl" />
                 <span innerHTML.bind="userInfo.userName"></span>
                 <span if.bind="userInfo.isPremium"><span class="icon withSIX-icon-Badge-Sponsor"></span>Premium</span>
+                <br />
                 <textbox disabled.one-time="true" value.bind="userInfo.email"></textbox>
               </div>
               <div if.bind="!isLoggedIn">
-                Please <button click.delegate="w6.openLoginDialog()">login first</button>
+                Please <button class="naked-button default" click.delegate="w6.openLoginDialog()">login first</button>
               </div>
               <div if.bind="userInfo.isPremium">
                 <form role="form" validate.bind="validation">
@@ -262,20 +263,20 @@
               </div>
 
               <div if.bind="!userInfo.isPremium">
-                This feature is currently available exclusively for <a href="/gopremium">Premium users</a>.
+                <h2>This feature is currently available exclusively for <a href="/gopremium">Premium users</a>.</h2>
               </div>
             </div>
             <div class="col-md-1">
               &nbsp;
             </div>
-            <div class="col-md-5">
+            <div class="col-md-5" if.bind="userInfo.isPremium">
               <markdown model.bind="betaText"></markdown>
 
               <form-group>
-                <br /><br />
+                <br />
                 <command-button cls="ok" model.bind="signup"><b>Sign-up</b> for free beta access</command-button>
                 <br /><br />
-                <span class="required"><label><checkbox value.bind="model.agree">I agree with the terms of service and privacy policy</checkbox></label></span>
+                <span class="required"><label><checkbox class="agree-cb" value.bind="model.agree">I agree with the terms of service and privacy policy</checkbox></label></span>
 
               </form-group>
             </div>
