@@ -63,9 +63,6 @@
       .img {
         background-color: $colorSixBlue;
         @include squareImg($size, 0.75);
-        span {
-          top: 0;
-        }
       }
     }
     #ad-removal {
