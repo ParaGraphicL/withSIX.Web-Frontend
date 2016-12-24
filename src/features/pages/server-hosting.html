@@ -4,11 +4,13 @@
   <compose view-model="./main-menu"></compose>
 
   <div id="server-hosting">
-    <div if.bind="done" class="tile">
+    <div if.bind="done" class="container-fluid">
       <div class="row">
         <div class="col-md-3">&nbsp;</div>
         <div class="col-md-6">
-          <compose view="./server-hosting/thanks.html"></compose>
+          <div class="tile">
+            <compose view="./server-hosting/thanks.html"></compose>
+          </div>
         </div>
         <div class="col-md-3">&nbsp;</div>
       </div>
