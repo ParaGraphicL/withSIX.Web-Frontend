@@ -14,9 +14,7 @@ export class MainMenu extends ViewModel {
     if (!this.w6.userInfo.isPremium) {
       items.push({ header: "Go Premium", segment: "gopremium", isRight: true, icon: "icon withSIX-icon-Badge-Sponsor", cls: 'gopremium' });
     }
-    if (this.features.serverHosting) {
-      items.push({ header: "Server Hosting", segment: "server-hosting", isRight: true, icon: "icon withSIX-icon-Nav-Server", cls: 'server-hosting' });
-    }
+    items.push({ header: "Server Hosting", segment: "server-hosting", isRight: true, icon: "icon withSIX-icon-Nav-Server", cls: 'server-hosting' });
     this.menuItems = this.getMenuItems(items, "");
   }
 }
