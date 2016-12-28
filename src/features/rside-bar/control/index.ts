@@ -1,7 +1,7 @@
 import { ITabModel, ServerTab, SharedValues } from "../rside-bar";
 import { Command as ScaleServer } from "./actions/scale";
-import { StartServer, RestartServer, PrepareServer, StopServer, CreateOrUpdateServer, GetLog, GetLogs } from "./actions/other"; // todo decompose
-import { IManagedServerStatus, IReactiveCommand, ServerSize, ServerState, ServerStore, uiCommand2 } from "../../../framework"
+import { GetAvailableServersInfo, StartServer, RestartServer, PrepareServer, StopServer, CreateOrUpdateServer, GetLog, GetLogs } from "./actions/other"; // todo decompose
+import { IManagedServerStatus, IReactiveCommand, Rx, ServerLocation, ServerSize, ServerState, ServerStore, uiCommand2 } from "../../../framework"
 
 interface IStatusTab extends ITabModel<any> { }
 
@@ -20,6 +20,8 @@ export class Index extends ServerTab<IStatusTab> {
   unlock: IReactiveCommand<void>;
 
   commands = [];
+
+  availableServers = 0;
 
   players = [
     { name: "Player X" },
@@ -75,6 +77,7 @@ export class Index extends ServerTab<IStatusTab> {
         canExecuteObservable: this.observeEx(x => x.canStop),
         cls: "ignore-close danger",
       }));
+      d(Rx.Observable.interval(15 * 1024).merge(Rx.Observable.of(1)).concatMap(() => this.refreshAvailableServers()).subscribe());
       d(this.restart = uiCommand2("Restart", () => this.handleRestart(), {
         canExecuteObservable: this.observeEx(x => x.canRestart),
         cls: "ignore-close warn",
@@ -115,6 +118,10 @@ export class Index extends ServerTab<IStatusTab> {
     this.server.setup.additionalSlots = this.additionalSlots;
     await this.saveChanges();
     await new ScaleServer(this.server.id, this.selectedSize.value, this.additionalSlots).handle(this.mediator);
+  }
+
+  async refreshAvailableServers() {
+    this.availableServers = await this.request(new GetAvailableServersInfo(this.server.setup.location || ServerLocation.WestEU));
   }
 
   async saveChanges() {

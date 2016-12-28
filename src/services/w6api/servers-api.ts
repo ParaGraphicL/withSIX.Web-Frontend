@@ -26,6 +26,8 @@ export class ServersApi extends ApiBase {
   get(id: string) { return this._get<IManagedServer>(`/${id}`); }
   session(id: string) { return this._get<IManagedServerStatus>(`/${id}/session`); }
 
+  getAvailableServers(location: ServerLocation) { return this._get<{ count: number }>(`/locations/${location}`); }
+
   start(id: string, ct?: ICancellationToken) { return this.changeState(id, Action.Start, undefined, ct); }
   stop(id: string, ct?: ICancellationToken) { return this.changeState(id, Action.Stop, undefined, ct); }
   restart(id: string, ct?: ICancellationToken) { return this.changeState(id, Action.Restart, undefined, ct); }
