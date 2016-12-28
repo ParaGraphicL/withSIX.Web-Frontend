@@ -22,6 +22,7 @@
           </li>
           <li if.bind="model.isDedicated">DEDICATED SERVER</li>
           <li>Version: ARMA 3 <b>v${model.serverVersion}</b></li>
+          <li>Address: ${model.connectionAddress}</li>
           <li> Last Updated
             <time-ago time.bind="model.updatedAt"></time-ago>
             <br /> First appearance
