@@ -1,6 +1,6 @@
 // TODO: Decompose
 
-import { gql, handlerFor, DbQuery, Command, Query, ServerStore, VoidCommand, ServerState, ServerAction, RequestBase, ServerClient, IManagedServer, IManagedServerStatus } from "../../../../framework";
+import { gql, handlerFor, DbQuery, Command, Query, ServerStore, VoidCommand, ServerState, ServerAction, ServerLocation, RequestBase, ServerClient, IManagedServer, IManagedServerStatus } from "../../../../framework";
 import { ServerHandler } from "./base";
 
 export class CreateOrUpdateServer extends Command<void> {
@@ -79,5 +79,17 @@ class GetCreditsOverviewHandler extends ServerHandler<GetCreditsOverview, { curr
       `, forceFetch: true
     })
     return data.viewer.managedServerCredits;
+  }
+}
+
+export class GetAvailableServersInfo extends Query<number> {
+  constructor(public location: ServerLocation) { super() }
+}
+
+@handlerFor(GetAvailableServersInfo)
+class GetAvailableServersInfoHandler extends ServerHandler<GetAvailableServersInfo, number> {
+  async handle(req: GetAvailableServersInfo) {
+    const r = await this.client.servers.getAvailableServers(req.location);
+    return r.count;
   }
 }
