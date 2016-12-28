@@ -10,8 +10,8 @@
 
       <div>
         ${statusText}
-        <div if.bind="isRunning">
-          ${server.status.address} JOIN HERE (todo)
+        <div if.bind="isRunning && !online">
+          ${server.status.address} retrieving server info...
         </div>
       </div>
 
