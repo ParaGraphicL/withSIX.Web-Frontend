@@ -58,6 +58,12 @@ export class RsideBar extends ViewModel {
         this.cts.cancel();
         //this.cts.dispose();
       });
+      d(this.whenAnyValue((x) => x.serverStore.activeServer)
+        .map((x) => ({ value: x && !x.unsaved ? true : null, server: x }))
+        .subscribe((x) => this.tabs.forEach((t) => {
+          t.isValid = this.isValidTab(t, x);
+          setupTab(t);
+        })));
       d(this.observeEx(x => x.validSetup).subscribe(x => controlTabs.forEach(t => t.disabled = !x)));
       d(this.observableFromEvent<ToggleServer>(ToggleServer).subscribe(x => {
         const hasTab = x.tab > -1;
@@ -88,6 +94,13 @@ export class RsideBar extends ViewModel {
     //     this.serverData = await new GetServerData().handle(this.mediator);
 
   }
+
+  isValidTab = (t: IAwesomeTab, { value, server }) => {
+    if (t === this.tabs[2]) { return value && server.mods.size > 0 ? value : null; }
+    if (t === this.tabs[3]) { return value && server.missions.size > 0 ? value : null; }
+    return value;
+  }
+
 
   getItemHref = (item: { id: string; name: string }) => item.id ? `/p/${this.w6.activeGame.slug}/mods/${item.id.toShortId()}/${item.name.sluggify()}` : null;
 
@@ -134,6 +147,16 @@ export class SharedValues {
   static sizeMap = SharedValues.sizes.toMap(x => x.value);
 }
 
+const setupTab = (tab: IAwesomeTab) => {
+  if (tab.id !== "0") {
+    if (tab.isValid == null) { tab.notificationText = tab.id; tab.notificationCls = "orangebg"; }
+    else {
+      if (tab.isValid) { tab.notificationText = "v"; tab.notificationCls = "greenbg"; }
+      else { tab.notificationText = "!"; tab.notificationCls = "redbg"; }
+    }
+  }
+}
+
 @inject(UiContext, ServerStore)
 export class ServerTab<TModel extends ITabModel<any>> extends ViewModel {
   model: TModel;
@@ -157,15 +180,10 @@ export class ServerTab<TModel extends ITabModel<any>> extends ViewModel {
     //this.validation.onValidate(() => this.isValid = true, () => this.isValid = false);
 
     this.subd(d => {
-      d(this
-        .observeEx(x => x.isValid)
+      d(this.observeEx(x => x.isValid)
         .subscribe(x => {
           this.model.isValid = x;
-          if (this.model.id !== "0") {
-            if (x == null) { this.model.notificationText = this.model.id; this.model.notificationCls = "orangebg"; }
-            else if (x) { this.model.notificationText = "v"; this.model.notificationCls = "greenbg"; }
-            else { this.model.notificationText = "!"; this.model.notificationCls = "redbg"; }
-          }
+          setupTab(this.model);
         }));
     });
 
