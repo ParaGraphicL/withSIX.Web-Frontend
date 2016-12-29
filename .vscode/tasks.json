@@ -19,5 +19,11 @@
   }, {
     "taskName": "test",
     "args": ["run", "test"]
+  }, {
+    "taskName": "deploy",
+    "args": ["run", "deploy"]
+  }, {
+    "taskName": "deploy production",
+    "args": ["run", "deploy-production"]
   }]
 }
