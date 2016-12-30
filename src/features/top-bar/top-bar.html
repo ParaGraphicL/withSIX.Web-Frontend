@@ -28,8 +28,7 @@
         <tab-view view-model.ref="tabView" id="top-right-tabs" orientation="top" tabs.bind="tabs" selected-tab.bind="selectedTab"
           render-view="">
           <button class="login" click.delegate="login.login()" title="or register" if.bind="!isLoggedIn" slot="start">Login</button>
-          <button class="server-toggle" slot="middle" click.delegate="toggleServer()" if.bind="features.serverHosting && w6.activeGame.id && w6.userInfo.id"
-            disabled="disabled">
+          <button class="server-toggle" slot="middle" if.bind="features.serverHosting && w6.activeGame.id" disabled="disabled">
             Server
           </button>
         </tab-view>

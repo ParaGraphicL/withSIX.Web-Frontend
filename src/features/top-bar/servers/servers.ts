@@ -13,7 +13,7 @@ export class Servers extends ViewModel {
   async add() {
     if (!this.isLoggedIn) { this.w6.openLoginDialog(); return; }
     await new AddServer(this.w6.activeGame.id).handle(this.mediator);
-    this.eventBus.publish(new SelectTab("setup"));
+    this.eventBus.publish(new SelectTab("setup")); // todo: should rather Be "ServerAdded", and then respond to that..
   }
 }
 

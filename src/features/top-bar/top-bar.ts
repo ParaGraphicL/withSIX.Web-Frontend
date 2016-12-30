@@ -68,7 +68,7 @@ export class TopBar extends ViewModel {
       this.tabs.push(userTab)
     }
 
-    if (this.features.createServers && this.isLoggedIn && this.userInfo.isPremium) {
+    if (this.features.createServers) {
       this.tabs.push({
         header: "Servers",
         icon: "icon withSIX-icon-Nav-Server",
@@ -79,8 +79,8 @@ export class TopBar extends ViewModel {
     }
   }
 
-  get hasActiveGame() { return this.w6.activeGame.id != null }
-  get isLoggedin() { return this.w6.userInfo.id != null }
+  get hasActiveGame() { return this.w6.activeGame.id != null; }
+  get isLoggedin() { return this.w6.userInfo.id != null; }
 
   toggleServer() {
     this.eventBus.publish(new ToggleServer());
