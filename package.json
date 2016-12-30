@@ -141,7 +141,9 @@
     "server:prod": "http-server dist --cors",
     "webpack": "cross-env TS_NODE_PROJECT=tsconfig.tsnode.json TS_NODE_FAST=true ./node_modules/.bin/webpack",
     "webpack-dev-server": "cross-env TS_NODE_PROJECT=tsconfig.tsnode.json TS_NODE_FAST=true ./node_modules/.bin/webpack-dev-server",
-    "version": "version-uc"
+    "version": "version-uc",
+    "deploy": "cd C:/projects/sn/withsix.website-deploy && deploy-staging && git push preview",
+    "deploy-production": "npm run deploy && git push origin"
   },
   "dependencies": {
     "apollo-client": "^0.5.25",
