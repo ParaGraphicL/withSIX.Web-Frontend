@@ -77,26 +77,6 @@ export class ServerHosting extends ViewModel {
       .ensure("model.community.role")
       .isNotEmpty();
   }
-
-  // doing this in here because VSCode's formatter otherwise removes the empty lines etc.
-  betaText = `## How to help beta testing
-  **Your feedback is crucial for us to get this awesome new feature ready for public release.**
-
-As a tester, we want you to use our servers for your gaming sessions and report any issue you come across on our bug tracker. 
-
-Since the requirements for communities can differ quite a bit, **share your expectations for our hosting service**. How can we make your gaming sessions even easier?
-
-Write us your feedback on our forum and on Discord.
-
-This is a beta release, so expect lots of changes as we continue improve on it. Even with the hours of testing we have already put into it, things might still break during usage. Since stability is the most important aspect of server hosting, we want you to immediately share any unexpected behavior with us.
-
-AVAILABLE TEST Servers
-
-For testing purposes, we will provide up to five servers for FREE testing. 
-
-**Dedicated testes will be rewarded with free credits for their help upon the public release.**
-`;
-
 }
 
 class Signup extends VoidCommand {
