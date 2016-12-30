@@ -13,18 +13,21 @@ export class Show extends ViewModel {
 
   async activate({ slug, serverSlug }) {
     this.data = await this.request(new GetUserServer(slug, serverSlug));
+    await this.handleServerInfo();
     this.subd(d => {
       // It's not great to have the observable passed from the app layer, but how else to do it..
-      d(this.data.observable.subscribe(x => this.server.status = x));
-      const iv = setInterval(async () => {
-        if (this.state !== ServerState.GameIsRunning || this.online) {
-          return;
-        }
-        const servers = await this.request(new GetServer(this.w6.activeGame.id, [this.info.address]));
-        this.online = servers.items.length > 0;
-      }, 15 * 1000);
+      d(this.data.observable.subscribe((x) => this.server.status = x));
+      const iv = setInterval(async () => this.handleServerInfo(), 15 * 1000);
       d(() => clearInterval(iv));
     });
+  }
+
+  async handleServerInfo() {
+    if (this.state !== ServerState.GameIsRunning || this.online) {
+      return;
+    }
+    const servers = await this.request(new GetServer(this.w6.activeGame.id, [this.info.address]));
+    this.online = servers.items.length > 0;
   }
 
   get state() { return <ServerState>this.server.status.state; }
