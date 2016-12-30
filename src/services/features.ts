@@ -23,7 +23,7 @@ export class FeatureToggles {
   get serverHosting() { return this.isManager || this.isServerBeta; }
   get serverRemoteControl() { return this.isTestEnvironment; }
 
-  get createServers() { return this.isTestEnvironment; }
+  get createServers() { return this.serverHosting; }
   get serverClaiming() { return this.isTestEnvironment; }
   get listAvailable() { return this.isTestEnvironment; }
   get contentTags() { return false; } //this.isTestEnvironment; }

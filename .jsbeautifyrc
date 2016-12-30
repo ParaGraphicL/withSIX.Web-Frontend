@@ -12,7 +12,7 @@
     "cite",
     "code", "data", "datalist", "del", "dfn", "em", "embed", "i", "iframe",
     "img",
-    "input", "ins", "kbd", "keygen", "label", "map", "mark", "math", "meter",
+    "input", "ins", "kbd", "keygen", "label", "map", "mark", "markdown", "math", "meter",
     "noscript",
     "object", "output", "progress", "q", "ruby", "s", "samp", /* "script", */
     "select", "small",
