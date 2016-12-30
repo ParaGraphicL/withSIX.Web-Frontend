@@ -6,6 +6,7 @@ import { Tools } from "./tools";
 @inject(W6)
 export class FeatureToggles {
   loggedIn = this.w6.userInfo.id != null;
+  private isServerBeta = this.loggedIn && this.w6.userInfo.isInRole("server_beta");
   private isManager = this.w6.userInfo.isManager || this.w6.userInfo.isAdmin;
   private syncFeatures = !this.w6.isClient;
   isTestEnvironment = EnvironmentHost.env !== Environment.Production; // Also excludes preview
@@ -19,7 +20,7 @@ export class FeatureToggles {
 
   constructor(private w6: W6) { }
 
-  get serverHosting() { return this.isTestEnvironment || this.isPreviewEnvironment; }
+  get serverHosting() { return this.isManager || this.isServerBeta; }
   get serverRemoteControl() { return this.isTestEnvironment; }
 
   get createServers() { return this.isTestEnvironment; }
