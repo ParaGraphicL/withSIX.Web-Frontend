@@ -18,8 +18,8 @@ export class ServersApi extends ApiBase {
 
   async createOrUpdate(server) {
     // TODO: Creation/Updating could be a long running op, in such case we should adopt the same Operation model as the actions (start/stop etc)
-    const opId = await this._post<string>(`/`, server);
-    return await this.get(opId);
+    const id = await this._post<string>(`/`, server);
+    return await this.get(id);
   }
 
   list(gameId: string) { return this._get<{ items: IManagedServerListItem[] }>(`/?gameId=${gameId}`); }
