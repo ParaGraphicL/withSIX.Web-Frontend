@@ -1,0 +1,21 @@
+<template>
+  <ai-dialog class="ai-dialog" id="host-server">
+    <ai-dialog-header>
+      <h2>Welcome Beta Tester!</h2>
+    </ai-dialog-header>
+    <ai-dialog-body>
+      <markdown>
+Thanks for signing up. You have been selected to participate in our limited-access Host withSIX beta. 
+
+A new section has been added to your GUI on the right. You are now be able to create, launch & manage your own dedicated servers directly on withSIX.com. Setup your server with any of our hardware types, add mods, missions and have your friends join until your *free credits* run out.
+
+Tell us about your experience and notify us of any issues on our FORUM.
+Reach out for a chat with us on DISCORD (BETA GROUP).
+        </markdown>
+    </ai-dialog-body>
+    <ai-dialog-footer>
+      <command-button model.bind="cancel"></command-button>
+      <command-button model.bind="createServer"></command-button>
+    </ai-dialog-footer>
+  </ai-dialog>
+</template>

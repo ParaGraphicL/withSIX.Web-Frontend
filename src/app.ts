@@ -13,8 +13,9 @@ import { RenderService } from "./services/renderer/render-service";
 import { GameBaskets } from "./features/game-baskets";
 import { AddModsToCollections } from "./features/games/add-mods-to-collections";
 import { CreateCollectionDialog } from "./features/games/collections/create-collection-dialog";
-import { BetaDialog } from "./features/games/servers/beta-dialog";
 import { GetClientDialog } from "./features/games/get-client-dialog";
+import { AcceptedDialog } from "./features/games/servers/accepted-dialog";
+import { BetaDialog } from "./features/games/servers/beta-dialog";
 import { HostServer } from "./features/games/servers/host-server";
 import { ServerRender } from "./features/games/servers/server-render";
 import { FeaturesModule } from "./features/index";
@@ -22,14 +23,14 @@ import { Finalize } from "./features/login/finalize";
 import { MessageDialog } from "./features/message-dialog";
 import { EditDependency } from "./features/profile/content/edit-dependency";
 import { NewGroupDialog } from "./features/profile/groups/new-group-dialog";
+import { RsideBar } from "./features/rside-bar/rside-bar";
 import { Index as SettingsIndex } from "./features/settings/index";
 import { EditPlaylistItem } from "./features/side-bar/playlist/edit-playlist-item";
 import { SideBar } from "./features/side-bar/side-bar";
-import { RsideBar } from "./features/rside-bar/rside-bar";
 import { TopBar } from "./features/top-bar/top-bar";
 import { UserErrorDialog } from "./features/user-error-dialog";
 
-import { Container, TaskQueue, inject } from "aurelia-framework";
+import { Container, inject, TaskQueue } from "aurelia-framework";
 import { HttpClient } from "aurelia-http-client";
 import { Origin } from "aurelia-metadata";
 import { NavigationInstruction, Redirect, Router, RouterConfiguration } from "aurelia-router";
@@ -108,13 +109,11 @@ export class App extends ViewModel {
     this.modules = [featuresModule];
     this.original = this.w6.enableBasket;
     this.breadcrumbs = this.setupBreadcrumbs();
-    this.w6.openLoginDialog = evt => { if (evt) { evt.preventDefault(); } return this.login.login(); };
+    this.w6.openLoginDialog = (evt) => { if (evt) { evt.preventDefault(); } return this.login.login(); };
     this.w6.logout = () => this.logout();
     setInterval(() => signaler.signal("timeago"), 60 * 1000);
-    this.w6.api.openGeneralDialog = (model: { model; viewModel: string }) => {
-      return this.dialog.open({ model, viewModel: "features/general-dialog" });
-    };
-
+    this.w6.api.openGeneralDialog = (model: { model; viewModel: string }) =>
+      this.dialog.open({ model, viewModel: "features/general-dialog" });
     let rs: RenderService = Container.instance.get(RenderService);
     this.w6.api.render = (options) => rs.open(options);
 
@@ -160,6 +159,7 @@ export class App extends ViewModel {
     Origin.set(GetClientDialog, { moduleId: "features/games/get-client-dialog", moduleMember: "GetClientDialog" });
     Origin.set(HostServer, { moduleId: "features/games/servers/host-server", moduleMember: "HostServer" });
     Origin.set(ServerRender, { moduleId: "features/games/servers/server-render", moduleMember: "ServerRender" });
+    Origin.set(AcceptedDialog, { moduleId: "features/games/servers/accepted-dialog", moduleMember: "AcceptedDialog" });
 
     let isSync = window.location.search.includes("sync=1") ? true : false;
     if (isSync) { this.w6.updateSettings(x => x.hasSync = true); }
@@ -271,6 +271,10 @@ export class App extends ViewModel {
         this.finalizeAccount();
         x.remindedFinalize = true;
       });
+    }
+
+    if (this.features.serverHosting) {
+      this.dialog.open({ viewModel: AcceptedDialog });
     }
   }
 
