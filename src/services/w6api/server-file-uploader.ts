@@ -14,7 +14,7 @@ export class ServerFileUploader {
     return this.context.getCustom<string[]>(this.buildPath(directory, fileType, serverId));
   }
   getFile(directory: string, fileType: string, serverId?: string) {
-    return this.context.getCustom<string>(this.buildPath(directory, fileType, serverId));
+    return this.context.getCustom<string>(this.buildPath(directory, fileType, serverId) + "/content");
   }
   buildPath(directory: string, fileName: string, serverId?: string) {
     const serverFrag = serverId ? `/servers/${serverId}` : "";
