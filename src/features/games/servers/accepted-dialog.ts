@@ -6,5 +6,6 @@ export class AcceptedDialog extends Dialog<{}> {
   createServer = uiCommand2("Create server", async () => {
     await new AddServer(this.w6.activeGame.id).handle(this.mediator);
     this.eventBus.publish(new SelectTab("setup")); // todo: should rather Be "ServerAdded", and then respond to that..
-  });
+    this.controller.ok();
+  }, { cls: "ok" });
 }
